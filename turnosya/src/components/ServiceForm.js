@@ -6,7 +6,6 @@ import { onValueChange, createService } from '../actions';
 
 class ServiceForm extends Component {
     onButtonPressHandler = () => {
-        console.log('eia');
         const { name, duration, price, description } = this.props;
 
         this.props.createService({ name, duration, price, description });
@@ -57,6 +56,7 @@ class ServiceForm extends Component {
 
 const mapStateToProps = (state) => {
     const { name, duration, price, description } = state.serviceForm;
+    
     return { name, duration, price, description };
 }
 
