@@ -1,6 +1,6 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { ON_VALUE_CHANGE, CREATE_SERVICE } from "./types";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import { ON_VALUE_CHANGE, CREATE_SERVICE } from './types';
 
 export const onValueChange = ({ prop, value }) => {
   return { type: ON_VALUE_CHANGE, payload: { prop, value } };
