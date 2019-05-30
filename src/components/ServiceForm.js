@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import { CardSection, Button, Input } from './common';
-import { onValueChange, createService } from '../actions';
+import { onValueChange, serviceCreate } from '../actions';
 
 class ServiceForm extends Component {
     onButtonPressHandler = () => {
         const { name, duration, price, description } = this.props;
 
-        this.props.createService({ name, duration, price, description });
+        this.props.serviceCreate({ name, duration, price, description });
     }
 
     render() {
@@ -60,4 +60,4 @@ const mapStateToProps = (state) => {
     return { name, duration, price, description };
 }
 
-export default connect(mapStateToProps, { onValueChange, createService })(ServiceForm);
+export default connect(mapStateToProps, { onValueChange, serviceCreate })(ServiceForm);

@@ -1,4 +1,4 @@
-import { ON_VALUE_CHANGE, CREATE_SERVICE } from '../actions/types';
+import { ON_VALUE_CHANGE, SERVICE_CREATE } from '../actions/types';
 
 const INITIAL_STATE = {
     name: '',
@@ -11,7 +11,7 @@ export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ON_VALUE_CHANGE:
             return { ...state, [action.payload.prop]: action.payload.value };
-        case CREATE_SERVICE:
+        case SERVICE_CREATE:
             return INITIAL_STATE;
         default:
             return state;
