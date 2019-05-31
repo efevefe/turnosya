@@ -1,14 +1,35 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import { CardSection, Button, Input } from './common';
-import { onValueChange, serviceCreate } from '../actions';
+import { onValueChange, serviceCreate, serviceUpdate } from '../actions';
 
 class ServiceForm extends Component {
+    componentWillMount() {
+        const { params } = this.props.navigation.state;
+        if (params) {
+            _.each(params.service, (value, prop) => {
+                this.props.onValueChange({ prop, value });
+            });
+        }
+    }
+
     onButtonPressHandler = () => {
         const { name, duration, price, description } = this.props;
 
-        this.props.serviceCreate({ name, duration, price, description });
+        const { params } = this.props.navigation.state;
+
+        if (params) {
+            const { id } = this.props.navigation.state.params.service;
+
+            this.props.serviceUpdate({ name, duration, price, description, id });
+        } else {
+
+            this.props.serviceCreate({ name, duration, price, description });
+        }
+
+        this.props.navigation.goBack();
     }
 
     render() {
@@ -56,8 +77,8 @@ class ServiceForm extends Component {
 
 const mapStateToProps = (state) => {
     const { name, duration, price, description } = state.serviceForm;
-    
+
     return { name, duration, price, description };
 }
 
-export default connect(mapStateToProps, { onValueChange, serviceCreate })(ServiceForm);
+export default connect(mapStateToProps, { onValueChange, serviceCreate, serviceUpdate })(ServiceForm);

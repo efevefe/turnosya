@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { ListItem, Button, Overlay, Divider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import { serviceDelete } from '../actions';
 
 class ServicesListItem extends Component {
+    constructor() {
+        super();
+    }
+
     state = { visible: false };
 
     onOptionsPress() {
@@ -13,9 +18,20 @@ class ServicesListItem extends Component {
     }
 
     onDeletePress() {
-        this.props.serviceDelete({ id: this.props.service });
+        this.props.serviceDelete({ id: this.props.service.id });
 
         this.setState({ visible: !this.state.visible });
+    }
+
+    onUpdatePress() {
+        const navigateAction = NavigationActions.navigate({
+             routeName: 'serviceForm',
+             params: { service: this.props.service }
+        });
+
+        this.setState({ visible: !this.state.visible });
+
+        this.props.navigation.navigate(navigateAction);
     }
 
     render() {
@@ -27,12 +43,15 @@ class ServicesListItem extends Component {
                     height='auto'
                     overlayStyle={{ padding: 0 }}
                     onBackdropPress={this.onOptionsPress.bind(this)}
-                    isVisible={this.state.visible}  >
+                    isVisible={this.state.visible} 
+                    animationType='fade'
+                    >
                     <View>
                         <Button
                             type='clear'
                             title='Editar'
                             buttonStyle={{ padding: 15 }}
+                            onPress={this.onUpdatePress.bind(this)}
                         />
                         <Divider style={{ backgroundColor: 'grey', marginLeft: 10, marginRight: 10 }} />
                         <Button

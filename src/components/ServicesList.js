@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { ListView, View } from 'react-native';
 import { connect } from 'react-redux';
 import ServicesListItem from './ServicesListItem';
-import { servicesFetch } from '../actions';
+import { servicesRead } from '../actions';
 
 class ServicesList extends Component {
     state = { visible: false };
 
     componentWillMount() {
-        this.props.servicesFetch();
+        this.props.servicesRead();
 
         this.createDataSource(this.props);
     }
@@ -26,7 +26,7 @@ class ServicesList extends Component {
     }
 
     renderRow(service) {
-        return <ServicesListItem service={service} />;
+        return <ServicesListItem service={service} navigation={this.props.navigation} />;
     }
 
     render() {
@@ -35,7 +35,7 @@ class ServicesList extends Component {
                 <ListView
                     enableEmptySections
                     dataSource={this.dataSource}
-                    renderRow={this.renderRow}
+                    renderRow={this.renderRow.bind(this)}
                 />
             </View>
         );
@@ -46,4 +46,4 @@ const mapStateToProps = state => {
     return { services: state.servicesList };
 }
 
-export default connect(mapStateToProps, { servicesFetch })(ServicesList);
+export default connect(mapStateToProps, { servicesRead })(ServicesList);
