@@ -25,18 +25,6 @@ class ServicesList extends Component {
         this.dataSource = ds.cloneWithRows(services);
     }
 
-    onOptionsPress() {
-        this.setState({ visible: !this.state.visible });
-    }
-
-    onEditPress() {
-        this.setState({ visible: !this.state.visible });
-    }
-
-    onDeletePress() {
-        this.setState({ visible: !this.state.visible });
-    }
-
     renderRow(service) {
         return <ServicesListItem service={service} />;
     }

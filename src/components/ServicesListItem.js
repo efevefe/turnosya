@@ -8,30 +8,40 @@ import { serviceDelete } from '../actions';
 class ServicesListItem extends Component {
     state = { visible: false };
 
-    onRowPress() {
+    onOptionsPress() {
         this.setState({ visible: !this.state.visible });
     }
 
     onDeletePress() {
-        const { id } = this.props.service;
+        this.props.serviceDelete({ id: this.props.service });
 
-        this.props.serviceDelete({ id });
+        this.setState({ visible: !this.state.visible });
     }
 
     render() {
         const { name, duration, price, id } = this.props.service;
 
         return (
-            <View style={{flex: 1}}>
-                <Overlay height='auto' onBackdropPress={this.onRowPress.bind(this)} isVisible={this.state.visible} >
-                    <View >
-                        <View style={{padding: 5}}>
-                            <Button type='clear' title='Editar' />
-                        </View>
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <View style={{padding: 5}}>
-                            <Button type='clear' titleStyle={{color: 'red'}} title='Eliminar' onPress={this.onDeletePress.bind(this)} />
-                        </View>
+            <View style={{ flex: 1 }}>
+                <Overlay
+                    height='auto'
+                    overlayStyle={{ padding: 0 }}
+                    onBackdropPress={this.onOptionsPress.bind(this)}
+                    isVisible={this.state.visible}  >
+                    <View>
+                        <Button
+                            type='clear'
+                            title='Editar'
+                            buttonStyle={{ padding: 15 }}
+                        />
+                        <Divider style={{ backgroundColor: 'grey', marginLeft: 10, marginRight: 10 }} />
+                        <Button
+                            type='clear'
+                            title='Eliminar'
+                            buttonStyle={{ padding: 15 }}
+                            titleStyle={{ color: 'red' }}
+                            onPress={this.onDeletePress.bind(this)}
+                        />
                     </View>
                 </Overlay>
 
@@ -40,22 +50,23 @@ class ServicesListItem extends Component {
                     subtitle={`Duracion: ${duration} min.`}
                     rightTitle={`$${price}`}
                     key={id}
-                    onLongPress={this.onRowPress.bind(this)}
-                    bottomDivider
+                    onLongPress={this.onOptionsPress.bind(this)}
                     rightElement={
                         <Button
                             type='clear'
                             buttonStyle={{ padding: 0 }}
-                            onPress={this.onRowPress.bind(this)}
+                            containerStyle={{ borderRadius: 15, overflow: 'hidden' }}
+                            onPress={this.onOptionsPress.bind(this)}
                             icon={
                                 <Icon
                                     name='more-vert'
-                                    size={20}
+                                    size={22}
                                     color='grey'
                                 />
                             }
                         />
                     }
+                    bottomDivider
                 />
             </View>
         );
