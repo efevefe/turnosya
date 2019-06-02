@@ -36,7 +36,7 @@ export const servicesRead = () => {
     dispatch({ type: SERVICES_READING });
 
     //db.collection(`Commerces/${currentUser.uid}/Services`).get()
-    db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`).where('softDelete', '==', null)
+    db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`).where('softDelete', '==', null).orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var services = [];
         snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
