@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Text } from 'react-native';
 import { Card, Input, Button } from 'react-native-elements';
-import { CardSection } from './common';
+import { CardSection, Spinner } from './common';
+import { validateValueType } from './common/validate';
 
 //import { CardSection, Button, Input } from './common';
 import { onValueChange, serviceCreate, serviceUpdate } from '../actions';
@@ -18,26 +20,73 @@ class ServiceForm extends Component {
     }
 
     onButtonPressHandler() {
-        const { name, duration, price, description } = this.props;
+        this.setState({ loading: true });
+        if (this.validateMinimumData()) {
+            const { name, duration, price, description } = this.props;
 
-        const { params } = this.props.navigation.state;
+            const { params } = this.props.navigation.state;
 
-        if (params) {
-            const { id } = this.props.navigation.state.params.service;
+            if (params) {
+                const { id } = this.props.navigation.state.params.service;
 
-            this.props.serviceUpdate({ name, duration, price, description, id });
+                this.props.serviceUpdate({
+                    name,
+                    duration,
+                    price,
+                    description,
+                    id,
+                });
+            } else {
+                this.props.serviceCreate({
+                    name,
+                    duration,
+                    price,
+                    description,
+                });
+            }
+
+            this.props.navigation.goBack();
         } else {
-            this.props.serviceCreate({ name, duration, price, description });
+            this.props.onValueChange({
+                prop: 'error',
+                value: 'Ingrese todos los valores mínimos porfavor.',
+            });
         }
-
-        this.props.navigation.goBack();
+        this.setState({ loading: false });
     }
 
+    renderPriceError = () => {
+        if (this.props.price !== '') {
+            if (!validateValueType('number', this.props.price)) {
+                return 'Número inválido.';
+            }
+        }
+    };
+
+    validateMinimumData = () => {
+        return (
+            validateValueType('string', this.props.name) &&
+            validateValueType('number', this.props.price)
+        );
+    };
+
     render() {
-        const { inputContainerStyle, inputStyle, labelStyle, buttonStyle } = styles;
+        const {
+            inputContainerStyle,
+            inputStyle,
+            labelStyle,
+            buttonStyle,
+            errorStyle,
+        } = styles;
 
         return (
-            <Card containerStyle={{ padding: 5, paddingTop: 10, borderRadius: 10 }}>
+            <Card
+                containerStyle={{
+                    padding: 5,
+                    paddingTop: 10,
+                    borderRadius: 10,
+                }}
+            >
                 <CardSection>
                     <Input
                         label="Nombre:"
@@ -45,21 +94,30 @@ class ServiceForm extends Component {
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
-                        onChangeText={value => this.props.onValueChange({ prop: 'name', value })}
+                        onChangeText={value =>
+                            this.props.onValueChange({ prop: 'name', value })
+                        }
                         value={this.props.name}
                     />
                 </CardSection>
                 <CardSection>
                     <Input
-                        label="Duracion:"
-                        placeholder="Duracion del servicio"
+                        label="Duración:"
+                        placeholder="Duración del servicio"
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
-                        onChangeText={value => this.props.onValueChange({ prop: 'duration', value })}
+                        onChangeText={value =>
+                            this.props.onValueChange({
+                                prop: 'duration',
+                                value,
+                            })
+                        }
                         value={this.props.duration}
                     />
                 </CardSection>
+                {/* <Text style={{ marginLeft: 10, color: red }}>falta el validate de duration</Text> */}
+
                 <CardSection>
                     <Input
                         label="Precio:"
@@ -67,29 +125,40 @@ class ServiceForm extends Component {
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
-                        onChangeText={value => this.props.onValueChange({ prop: 'price', value })}
+                        onChangeText={value =>
+                            this.props.onValueChange({ prop: 'price', value })
+                        }
                         value={this.props.price}
                     />
                 </CardSection>
+                <Text style={errorStyle}>{this.renderPriceError()}</Text>
+
                 <CardSection>
                     <Input
-                        label="Descripcion:"
-                        placeholder="Descripcion del servicio"
+                        label="Descripción:"
+                        placeholder="Descripción del servicio"
                         multiline={true}
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
-                        onChangeText={value => this.props.onValueChange({ prop: 'description', value })}
+                        onChangeText={value =>
+                            this.props.onValueChange({
+                                prop: 'description',
+                                value,
+                            })
+                        }
                         value={this.props.description}
                     />
                 </CardSection>
+
                 <CardSection>
                     <Button
-                        title='Guardar'
+                        title="Guardar"
                         buttonStyle={buttonStyle}
                         onPress={this.onButtonPressHandler.bind(this)}
                     />
                 </CardSection>
+                <Text style={errorStyle}>{this.props.error}</Text>
             </Card>
         );
     }
@@ -100,29 +169,37 @@ const red = '#c72c41';
 const styles = {
     inputContainerStyle: {
         borderBottomWidth: 2,
-        borderColor: red
+        borderColor: red,
     },
     inputStyle: {
         marginLeft: 10,
-        marginRight: 10,  
-        fontSize: 16
+        marginRight: 10,
+        fontSize: 16,
     },
     labelStyle: {
         color: red,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
     },
     buttonStyle: {
-        borderRadius: 10, 
-        padding: 10, 
+        borderRadius: 10,
+        padding: 10,
         margin: 10,
-        backgroundColor: red
-    }
-}
+        backgroundColor: red,
+    },
+    errorStyle: {
+        color: red,
+        textAlign: 'center',
+        alignSelf: 'center',
+    },
+};
 
-const mapStateToProps = (state) => {
-    const { name, duration, price, description } = state.serviceForm;
+const mapStateToProps = state => {
+    const { name, duration, price, description, error } = state.serviceForm;
 
-    return { name, duration, price, description };
-}
+    return { name, duration, price, description, error };
+};
 
-export default connect(mapStateToProps, { onValueChange, serviceCreate, serviceUpdate })(ServiceForm);
+export default connect(
+    mapStateToProps,
+    { onValueChange, serviceCreate, serviceUpdate }
+)(ServiceForm);
