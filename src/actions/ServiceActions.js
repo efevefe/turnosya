@@ -1,6 +1,13 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { ON_VALUE_CHANGE, SERVICE_CREATE, SERVICES_READ, SERVICE_DELETE, SERVICE_UPDATE } from './types';
+import { 
+  ON_VALUE_CHANGE, 
+  SERVICE_CREATE, 
+  SERVICES_READING, 
+  SERVICES_READ, 
+  SERVICE_DELETE, 
+  SERVICE_UPDATE
+} from './types';
 
 export const onValueChange = ({ prop, value }) => {
   return { type: ON_VALUE_CHANGE, payload: { prop, value } };
@@ -23,6 +30,7 @@ export const servicesRead = () => {
   var db = firebase.firestore();
 
   return dispatch => {
+    dispatch({ type: SERVICES_READING });
     //db.collection(`Commerces/${currentUser.uid}/Services`).get()
     db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`).where('softDelete', '==', null)
       .onSnapshot(snapshot => {
