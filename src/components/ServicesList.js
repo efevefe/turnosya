@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, ListView, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from './common';
 import ServicesListItem from './ServicesListItem';
