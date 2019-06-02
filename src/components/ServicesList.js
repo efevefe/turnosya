@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ListView, View } from 'react-native';
+import { FlatList, ListView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from './common';
 import ServicesListItem from './ServicesListItem';
@@ -8,24 +8,10 @@ import { servicesRead } from '../actions';
 class ServicesList extends Component {
     componentWillMount() {
         this.props.servicesRead();
-
-        this.createDataSource(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.createDataSource(nextProps);
-    }
-
-    createDataSource({ services }) {
-        const ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2
-        });
-
-        this.dataSource = ds.cloneWithRows(services);
-    }
-
-    renderRow(service) {
-        return <ServicesListItem service={service} navigation={this.props.navigation} />;
+    renderRow({ item }) {
+        return <ServicesListItem service={item} navigation={this.props.navigation} />;
     }
 
     renderList() {
@@ -34,10 +20,10 @@ class ServicesList extends Component {
         } else {
             return (
                 <View style={{ flex: 1 }}>
-                    <ListView
-                        enableEmptySections
-                        dataSource={this.dataSource}
-                        renderRow={this.renderRow.bind(this)}
+                    <FlatList
+                        data={this.props.services}
+                        renderItem={this.renderRow.bind(this)}
+                        keyExtractor={service => service.id}
                     />
                 </View>
             );
