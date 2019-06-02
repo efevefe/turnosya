@@ -5,8 +5,6 @@ import ServicesListItem from './ServicesListItem';
 import { servicesRead } from '../actions';
 
 class ServicesList extends Component {
-    state = { visible: false };
-
     componentWillMount() {
         this.props.servicesRead();
 

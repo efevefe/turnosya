@@ -10,11 +10,12 @@ const navigationOptions = {
         headerStyle: {
             backgroundColor: '#c72c41'
         },
+        headerTintColor: 'white',
         headerTitleStyle: {
             textAlign: 'center',
             alignSelf: 'center',
             fontSize: 20,
-            color: '#fff',
+            color: 'white',
             fontWeight: 'bold'
         }
     }
@@ -39,13 +40,13 @@ const commerceScreenStack = createStackNavigator({
     serviceForm: {
         screen: ServiceForm,
         navigationOptions: ({ navigation }) => ({
-            title: 'Servicios'
+            title: navigation.getParam('title', 'Nuevo Servicio')
         })
     }
 },
     navigationOptions
 )
 
-const CommerceLogged = createAppContainer(commerceScreenStack)
+const CommerceNavigation = createAppContainer(commerceScreenStack)
 
-export default CommerceLogged;
+export default CommerceNavigation;

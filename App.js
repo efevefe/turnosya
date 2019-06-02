@@ -4,12 +4,9 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
-import CommerceLogged from './src/navigation/CommerceLogged';
+import CommerceNavigation from './src/navigation/CommerceNavigation';
 
 import reducers from './src/reducers';
-import { Header } from './src/components/common';
-import ServiceForm from './src/components/ServiceForm';
-import ServicesList from './src/components/ServicesList';
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -35,7 +32,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <CommerceLogged />
+          <CommerceNavigation />
         </View>
       </Provider>
     );
