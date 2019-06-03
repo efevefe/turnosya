@@ -12,6 +12,7 @@ import { onValueChange, serviceCreate, serviceUpdate } from '../actions';
 class ServiceForm extends Component {
     componentWillMount() {
         const { params } = this.props.navigation.state;
+        
         if (params) {
             _.each(params.service, (value, prop) => {
                 this.props.onValueChange({ prop, value });
@@ -155,6 +156,7 @@ class ServiceForm extends Component {
                     <Button
                         title="Guardar"
                         buttonStyle={buttonStyle}
+                        loading={this.props.loading}
                         onPress={this.onButtonPressHandler.bind(this)}
                     />
                 </CardSection>
@@ -193,11 +195,11 @@ const styles = {
     },
 };
 
-const mapStateToProps = state => {
-    const { name, duration, price, description, error } = state.serviceForm;
+const mapStateToProps = (state) => {
+    const { name, duration, price, description, error, loading } = state.serviceForm;
 
-    return { name, duration, price, description, error };
-};
+    return { name, duration, price, description, error, loading };
+}
 
 export default connect(
     mapStateToProps,
