@@ -10,13 +10,18 @@ const INITIAL_STATE = {
     duration: '',
     price: '',
     description: '',
+    error: '',
     loading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ON_VALUE_CHANGE:
-            return { ...state, [action.payload.prop]: action.payload.value };
+            return {
+                ...state,
+                error: '',
+                [action.payload.prop]: action.payload.value,
+            };
         case SERVICE_FORM_SUBMIT:
             return { ...state, loading: true };
         case SERVICE_CREATE:
