@@ -1,18 +1,17 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text } from 'react-native';
 import { Card, Input, Button } from 'react-native-elements';
-import { CardSection, Spinner } from './common';
+import { CardSection } from './common';
 import { validateValueType } from './common/validate';
-
-//import { CardSection, Button, Input } from './common';
 import { onValueChange, serviceCreate, serviceUpdate } from '../actions';
 
 class ServiceForm extends Component {
+    state = { nameError: '', durationError: '', priceError: '' };
+
     componentWillMount() {
         const { params } = this.props.navigation.state;
-        
+
         if (params) {
             _.each(params.service, (value, prop) => {
                 this.props.onValueChange({ prop, value });
@@ -21,7 +20,6 @@ class ServiceForm extends Component {
     }
 
     onButtonPressHandler() {
-        this.setState({ loading: true });
         if (this.validateMinimumData()) {
             const { name, duration, price, description } = this.props;
 
@@ -47,27 +45,50 @@ class ServiceForm extends Component {
             }
 
             this.props.navigation.goBack();
-        } else {
-            this.props.onValueChange({
-                prop: 'error',
-                value: 'Ingrese todos los valores mínimos porfavor.',
-            });
         }
-        this.setState({ loading: false });
+    }
+
+    renderNameError = () => {
+        if (this.props.name === '') {
+            this.setState({ nameError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ nameError: '' });
+            return true;
+        }
+    }
+
+    renderDurationError = () => {
+        if (this.props.duration === '') {
+            this.setState({ durationError: 'Dato requerido' });
+            return false;
+        } else if (!validateValueType('int', this.props.duration)) {
+            this.setState({ durationError: 'Debe ingresar un valor numerico' });
+            return false;
+        } else {
+            this.setState({ durationError: '' });
+            return true;
+        }
     }
 
     renderPriceError = () => {
-        if (this.props.price !== '') {
-            if (!validateValueType('number', this.props.price)) {
-                return 'Número inválido.';
-            }
+        if (this.props.price === '') {
+            this.setState({ priceError: 'Dato requerido' });
+            return false;
+        } else if (!validateValueType('number', this.props.price)) {
+            this.setState({ priceError: 'Debe ingresar un valor numerico' });
+            return false;
+        } else {
+            this.setState({ priceError: '' });
+            return true;
         }
     };
 
     validateMinimumData = () => {
         return (
-            validateValueType('string', this.props.name) &&
-            validateValueType('number', this.props.price)
+            this.renderNameError() &&
+            this.renderDurationError() &&
+            this.renderPriceError()
         );
     };
 
@@ -77,7 +98,6 @@ class ServiceForm extends Component {
             inputStyle,
             labelStyle,
             buttonStyle,
-            errorStyle,
         } = styles;
 
         return (
@@ -95,44 +115,50 @@ class ServiceForm extends Component {
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
+                        value={this.props.name}
                         onChangeText={value =>
                             this.props.onValueChange({ prop: 'name', value })
                         }
-                        value={this.props.name}
+                        errorMessage={this.state.nameError}
+                        onFocus={() => this.setState({ nameError: '' })}
+                        onBlur={this.renderNameError}
                     />
                 </CardSection>
                 <CardSection>
                     <Input
                         label="Duración:"
                         placeholder="Duración del servicio"
+                        keyboardType='numeric'
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
-                        onChangeText={value =>
-                            this.props.onValueChange({
-                                prop: 'duration',
-                                value,
-                            })
-                        }
                         value={this.props.duration}
+                        onChangeText={value => {
+                            this.props.onValueChange({ prop: 'duration', value });
+                        }}
+                        errorMessage={this.state.durationError}
+                        onFocus={() => this.setState({ durationError: '' })}
+                        onBlur={this.renderDurationError}
                     />
                 </CardSection>
-                {/* <Text style={{ marginLeft: 10, color: red }}>falta el validate de duration</Text> */}
 
                 <CardSection>
                     <Input
                         label="Precio:"
                         placeholder="Precio del servicio"
+                        keyboardType='numeric'
                         inputStyle={inputStyle}
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
+                        value={this.props.price}
                         onChangeText={value =>
                             this.props.onValueChange({ prop: 'price', value })
                         }
-                        value={this.props.price}
+                        errorMessage={this.state.priceError}
+                        onFocus={() => this.setState({ priceError: '' })}
+                        onBlur={this.renderPriceError}
                     />
                 </CardSection>
-                <Text style={errorStyle}>{this.renderPriceError()}</Text>
 
                 <CardSection>
                     <Input
@@ -143,10 +169,7 @@ class ServiceForm extends Component {
                         inputContainerStyle={inputContainerStyle}
                         labelStyle={labelStyle}
                         onChangeText={value =>
-                            this.props.onValueChange({
-                                prop: 'description',
-                                value,
-                            })
+                            this.props.onValueChange({ prop: 'description', value })
                         }
                         value={this.props.description}
                     />
@@ -160,7 +183,6 @@ class ServiceForm extends Component {
                         onPress={this.onButtonPressHandler.bind(this)}
                     />
                 </CardSection>
-                <Text style={errorStyle}>{this.props.error}</Text>
             </Card>
         );
     }
