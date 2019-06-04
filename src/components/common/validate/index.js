@@ -1,7 +1,7 @@
 export const validateValueType = (type, value) => {
     switch (type) {
         case 'int':
-            return Number.isInteger(value);
+            return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
         case 'number':
             return !isNaN(parseFloat(value)) && !isNaN(value - 0);
         case 'string':
