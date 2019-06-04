@@ -7,7 +7,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { CardSection } from './common';
 import { validateValueType } from './common/validate';
-import { onValueChange, serviceCreate, serviceUpdate } from '../actions';
+import { mainColor } from '../constants';
+import { onValueChange, onFormOpen, serviceCreate, serviceUpdate } from '../actions';
 
 class ServiceForm extends Component {
     state = { nameError: '', durationError: '', priceError: '' };
@@ -19,6 +20,8 @@ class ServiceForm extends Component {
             _.each(params.service, (value, prop) => {
                 this.props.onValueChange({ prop, value });
             });
+        } else {
+            this.props.onFormOpen();
         }
     }
 
@@ -214,12 +217,10 @@ class ServiceForm extends Component {
     }
 }
 
-const red = '#c72c41';
-
 const styles = {
     inputContainerStyle: {
         borderBottomWidth: 2,
-        borderColor: red,
+        borderColor: mainColor,
     },
     inputStyle: {
         marginLeft: 10,
@@ -227,17 +228,17 @@ const styles = {
         fontSize: 16,
     },
     labelStyle: {
-        color: red,
+        color: mainColor,
         fontWeight: 'normal',
     },
     buttonStyle: {
         borderRadius: 10,
         padding: 10,
         margin: 10,
-        backgroundColor: red,
+        backgroundColor: mainColor,
     },
     errorStyle: {
-        color: red,
+        color: mainColor,
         textAlign: 'center',
         alignSelf: 'center',
     },
@@ -258,5 +259,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { onValueChange, serviceCreate, serviceUpdate }
+    { onValueChange, onFormOpen, serviceCreate, serviceUpdate }
 )(ServiceForm);

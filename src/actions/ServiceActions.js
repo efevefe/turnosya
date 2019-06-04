@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { 
   ON_VALUE_CHANGE, 
+  ON_FORM_OPEN,
   SERVICE_CREATE, 
   SERVICES_READING, 
   SERVICES_READ, 
@@ -13,6 +14,10 @@ import {
 export const onValueChange = ({ prop, value }) => {
   return { type: ON_VALUE_CHANGE, payload: { prop, value } };
 };
+
+export const onFormOpen = () => {
+  return { type: ON_FORM_OPEN };
+}
 
 export const serviceCreate = ({ name, duration, price, description }) => {
   const { currentUser } = firebase.auth();

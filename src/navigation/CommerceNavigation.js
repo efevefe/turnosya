@@ -4,11 +4,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
+import { mainColor } from '../constants';
 
 const navigationOptions = {
     defaultNavigationOptions: {
         headerStyle: {
-            backgroundColor: '#c72c41'
+            backgroundColor: mainColor
         },
         headerTintColor: 'white',
         headerTitleStyle: {
