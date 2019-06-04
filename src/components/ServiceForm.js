@@ -109,7 +109,7 @@ class ServiceForm extends Component {
         return (
             <KeyboardAwareScrollView
                 enableOnAndroid
-                extraScrollHeight={25}
+                extraScrollHeight={60}
             >
                 <View>
                     <Card
@@ -189,6 +189,8 @@ class ServiceForm extends Component {
                                 label="Descripción:"
                                 placeholder="Descripción del servicio"
                                 multiline={true}
+                                maxLength={250}
+                                maxHeight={180}
                                 inputStyle={inputStyle}
                                 inputContainerStyle={inputContainerStyle}
                                 labelStyle={labelStyle}
