@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Input, Button } from 'react-native-elements';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { CardSection } from './common';
@@ -105,7 +105,6 @@ class ServiceForm extends Component {
 
         return (
             <KeyboardAwareScrollView
-                // contentContainerStyle={{ flexGrow: 1 }}
                 enableOnAndroid
                 extraScrollHeight={25}
             >
