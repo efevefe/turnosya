@@ -238,12 +238,7 @@ const styles = {
         padding: 10,
         margin: 10,
         backgroundColor: MAIN_COLOR,
-    },
-    errorStyle: {
-        color: MAIN_COLOR,
-        textAlign: 'center',
-        alignSelf: 'center',
-    },
+    }
 };
 
 const mapStateToProps = state => {
