@@ -7,7 +7,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { CardSection } from './common';
 import { validateValueType } from './common/validate';
-import { mainColor } from '../constants';
+import { MAIN_COLOR } from '../constants';
 import { onValueChange, onFormOpen, serviceCreate, serviceUpdate } from '../actions';
 
 class ServiceForm extends Component {
@@ -222,7 +222,7 @@ class ServiceForm extends Component {
 const styles = {
     inputContainerStyle: {
         borderBottomWidth: 2,
-        borderColor: mainColor,
+        borderColor: MAIN_COLOR,
     },
     inputStyle: {
         marginLeft: 10,
@@ -230,17 +230,17 @@ const styles = {
         fontSize: 16,
     },
     labelStyle: {
-        color: mainColor,
+        color: MAIN_COLOR,
         fontWeight: 'normal',
     },
     buttonStyle: {
         borderRadius: 10,
         padding: 10,
         margin: 10,
-        backgroundColor: mainColor,
+        backgroundColor: MAIN_COLOR,
     },
     errorStyle: {
-        color: mainColor,
+        color: MAIN_COLOR,
         textAlign: 'center',
         alignSelf: 'center',
     },
