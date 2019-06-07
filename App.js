@@ -5,6 +5,7 @@ import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import CommerceNavigation from './src/navigation/CommerceNavigation';
+import GuestNavigation from './src/navigation/GuestNavigation';
 
 import reducers from './src/reducers';
 
@@ -15,7 +16,7 @@ var firebaseConfig = {
   projectId: 'proyecto-turnosya',
   storageBucket: 'proyecto-turnosya.appspot.com',
   messagingSenderId: '425889819253',
-  appId: '1:425889819253:web:22821710c1e913a5',
+  appId: '1:425889819253:web:22821710c1e913a5'
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -32,7 +33,8 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <CommerceNavigation />
+          {/* <CommerceNavigation /> */}
+          <GuestNavigation />
         </View>
       </Provider>
     );
@@ -44,6 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignSelf: 'stretch',
-    justifyContent: 'flex-start',
-  },
+    justifyContent: 'flex-start'
+  }
 });
