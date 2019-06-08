@@ -6,9 +6,14 @@ import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { CardSection } from './common';
-import { validateValueType } from './common/validate';
+import { validateValueType } from '../utils';
 import { MAIN_COLOR } from '../constants';
-import { onValueChange, onFormOpen, serviceCreate, serviceUpdate } from '../actions';
+import {
+    onValueChange,
+    onFormOpen,
+    serviceCreate,
+    serviceUpdate,
+} from '../actions';
 
 class ServiceForm extends Component {
     state = { nameError: '', durationError: '', priceError: '' };
@@ -69,7 +74,7 @@ class ServiceForm extends Component {
             this.setState({ durationError: 'Dato requerido' });
             return false;
         } else if (!validateValueType('int', this.props.duration)) {
-            this.setState({ durationError: 'Debe ingresar un valor numerico' });
+            this.setState({ durationError: 'Debe ingresar un valor numérico' });
             return false;
         } else {
             this.setState({ durationError: '' });
@@ -82,7 +87,7 @@ class ServiceForm extends Component {
             this.setState({ priceError: 'Dato requerido' });
             return false;
         } else if (!validateValueType('number', this.props.price)) {
-            this.setState({ priceError: 'Debe ingresar un valor numerico' });
+            this.setState({ priceError: 'Debe ingresar un valor numérico' });
             return false;
         } else {
             this.setState({ priceError: '' });
@@ -107,10 +112,7 @@ class ServiceForm extends Component {
         } = styles;
 
         return (
-            <KeyboardAwareScrollView
-                enableOnAndroid
-                extraScrollHeight={60}
-            >
+            <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
                 <View>
                     <Card
                         containerStyle={{
@@ -238,7 +240,7 @@ const styles = {
         padding: 10,
         margin: 10,
         backgroundColor: MAIN_COLOR,
-    }
+    },
 };
 
 const mapStateToProps = state => {
