@@ -17,7 +17,6 @@ class LoginForm extends Component {
           padding: 15
         }}
       >
-        <View />
         <View
           style={{
             flex: 1,
@@ -41,7 +40,12 @@ class LoginForm extends Component {
               title="Iniciar Sesion"
             />
           </CardSection>
-          <Divider style={{ backgroundColor: 'grey', margin: 15 }} />
+          <Divider
+            style={{
+              backgroundColor: 'grey',
+              margin: 15
+            }}
+          />
           <CardSection>
             <Button
               buttonStyle={styles.googleButtonStyle}
@@ -74,7 +78,8 @@ class LoginForm extends Component {
             <Button
               buttonStyle={styles.createButtonStyle}
               title="Crear cuenta"
-              type="outline"
+              type="clear"
+              titleStyle={{ color: MAIN_COLOR }}
             />
           </CardSection>
         </View>
@@ -103,10 +108,8 @@ const styles = {
     backgroundColor: '#de5145'
   },
   createButtonStyle: {
-    borderRadius: 10,
     padding: 10,
-    margin: 10,
-    borderColor: '#fff'
+    margin: 10
   }
 };
 
