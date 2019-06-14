@@ -6,8 +6,17 @@ import { CardSection } from './common';
 import { MAIN_COLOR } from '../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { onLogin, onValueChange } from '../actions';
+import { NavigationActions } from 'react-navigation';
 
 class LoginForm extends Component {
+  onCreateAcount() {
+    const navigateAction = NavigationActions.navigate({
+      routeName: 'registerForm'
+    });
+
+    this.props.navigation.navigate(navigateAction);
+  }
+
   render() {
     return (
       <View
@@ -106,6 +115,7 @@ class LoginForm extends Component {
               title="Crear cuenta"
               type="clear"
               titleStyle={{ color: MAIN_COLOR }}
+              onPress={this.onCreateAcount.bind(this)}
             />
           </CardSection>
         </View>

@@ -6,33 +6,33 @@ import { MAIN_COLOR } from '../constants';
 
 const navigationOptions = {
   defaultNavigationOptions: {
-      headerStyle: {
-          backgroundColor: MAIN_COLOR
-      },
-      headerTintColor: 'white',
-      headerTitleStyle: {
-          textAlign: 'center',
-          alignSelf: 'center',
-          fontSize: 20,
-          color: 'white',
-          fontWeight: 'bold'
-      }
+    headerStyle: {
+      backgroundColor: MAIN_COLOR
+    },
+    headerTintColor: 'white',
+    headerTitleStyle: {
+      textAlign: 'center',
+      alignSelf: 'center',
+      fontSize: 20,
+      color: 'white',
+      fontWeight: 'bold'
+    }
   }
 };
 
 const guestScreenStack = createStackNavigator(
   {
-    registerForm: {
-      screen: RegisterForm,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Registrarse'
-    })
-    },
     loginForm: {
       screen: LoginForm,
       navigationOptions: () => ({
         header: null
-    })
+      })
+    },
+    registerForm: {
+      screen: RegisterForm,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Registrarse'
+      })
     }
   },
   navigationOptions
