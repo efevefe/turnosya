@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Input, Button, Divider } from 'react-native-elements';
-import { View, Text } from 'react-native';
+import { Input, Button, Divider } from 'react-native-elements';
+import { View } from 'react-native';
 import { CardSection } from './common';
 import { MAIN_COLOR } from '../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { onLogin, onValueChange } from '../actions';
 
 class LoginForm extends Component {
   render() {
@@ -29,15 +30,40 @@ class LoginForm extends Component {
             <Input
               style={{ textAlign: 'center' }}
               placeholder="Correo electrónico"
+              value={this.props.email}
+              onChangeText={value =>
+                this.props.onValueChange({
+                  prop: 'email',
+                  value
+                })
+              }
             />
           </CardSection>
           <CardSection>
-            <Input placeholder="Contraseña" />
+            <Input
+              placeholder="Contraseña"
+              value={this.props.password}
+              onChangeText={value =>
+                this.props.onValueChange({
+                  prop: 'password',
+                  value
+                })
+              }
+              errorMessage={this.props.error}
+              secureTextEntry
+            />
           </CardSection>
           <CardSection>
             <Button
               buttonStyle={styles.loginButtonStyle}
               title="Iniciar Sesion"
+              loading={this.props.loading}
+              onPress={() =>
+                this.props.onLogin({
+                  email: this.props.email,
+                  password: this.props.password
+                })
+              }
             />
           </CardSection>
           <Divider
@@ -113,4 +139,13 @@ const styles = {
   }
 };
 
-export default LoginForm;
+const mapStateToProps = state => {
+  const { email, password, loading, error } = state.auth;
+
+  return { email, password, loading, error };
+};
+
+export default connect(
+  mapStateToProps,
+  { onLogin, onValueChange }
+)(LoginForm);

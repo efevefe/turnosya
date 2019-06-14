@@ -22,18 +22,17 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 //logueo para facilitar las pruebas
-firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
+//firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
 
 console.disableYellowBox = true;
 
-export default class App extends React.Component {
+class App extends React.Component {
   render() {
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          {/* <CommerceNavigation /> */}
           <GuestNavigation />
         </View>
       </Provider>
@@ -49,3 +48,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start'
   }
 });
+
+export default App;
