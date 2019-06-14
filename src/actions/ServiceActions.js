@@ -1,23 +1,24 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { 
-  ON_VALUE_CHANGE, 
+import {
+  ON_VALUE_CHANGE,
   ON_FORM_OPEN,
-  SERVICE_CREATE, 
-  SERVICES_READING, 
-  SERVICES_READ, 
+  SERVICE_CREATE,
+  SERVICES_READING,
+  SERVICES_READ,
   SERVICE_FORM_SUBMIT,
-  SERVICE_DELETE, 
+  SERVICE_DELETE,
   SERVICE_UPDATE
 } from './types';
 
 export const onValueChange = ({ prop, value }) => {
+  //pasar a un CommonActions.js
   return { type: ON_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
-}
+};
 
 export const serviceCreate = ({ name, duration, price, description }) => {
   const { currentUser } = firebase.auth();
@@ -41,7 +42,9 @@ export const servicesRead = () => {
     dispatch({ type: SERVICES_READING });
 
     //db.collection(`Commerces/${currentUser.uid}/Services`).get()
-    db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`).where('softDelete', '==', null).orderBy('name', 'asc')
+    db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`)
+      .where('softDelete', '==', null)
+      .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var services = [];
         snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
@@ -60,7 +63,7 @@ export const serviceDelete = ({ id }) => {
       .update({ softDelete: new Date() })
       .then(() => dispatch({ type: SERVICE_DELETE }));
   };
-}
+};
 
 export const serviceUpdate = ({ id, name, duration, price, description }) => {
   //const { currentUser } = firebase.auth();
@@ -74,4 +77,4 @@ export const serviceUpdate = ({ id, name, duration, price, description }) => {
       .update({ name, duration, price, description })
       .then(() => dispatch({ type: SERVICE_UPDATE }));
   };
-}
+};
