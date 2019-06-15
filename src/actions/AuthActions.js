@@ -18,7 +18,7 @@ export const onLoginFacebook = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN });
     Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
-      permissions: ['public_profile']
+      permissions: ['public_profile', 'email']
     })
       .then(({ type, token }) => {
         if (type === 'success') {
