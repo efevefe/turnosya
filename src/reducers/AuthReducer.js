@@ -23,7 +23,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOGIN_FAIL:
       return {
         ...state,
-        error: 'Email o contraseña invalidos',
+        error: action.payload,
         loading: false
       };
     default:

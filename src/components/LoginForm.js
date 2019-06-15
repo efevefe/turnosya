@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { CardSection } from './common';
 import { MAIN_COLOR } from '../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { onLogin, onValueChange } from '../actions';
+import { onLogin, onLoginFacebook, onValueChange } from '../actions';
 import { NavigationActions } from 'react-navigation';
 
 class LoginForm extends Component {
@@ -97,6 +97,10 @@ class LoginForm extends Component {
             <Button
               buttonStyle={styles.facebookButtonStyle}
               title="Facebook"
+              loading={this.props.loading}
+              onPress={() =>
+                this.props.onLoginFacebook()
+              }
               icon={
                 <Icon
                   name="facebook-square"
@@ -157,5 +161,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLogin, onValueChange }
+  { onLogin, onLoginFacebook, onValueChange }
 )(LoginForm);
