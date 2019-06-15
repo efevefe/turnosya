@@ -4,10 +4,13 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
+import { MAIN_COLOR } from './src/constants';
+import { Spinner } from './src/components/common';
 import CommerceNavigation from './src/navigation/CommerceNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
-
 import reducers from './src/reducers';
+
+console.disableYellowBox = true;
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -21,19 +24,43 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-//logueo para facilitar las pruebas
 //firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
+//firebase.auth().signOut();
 
-console.disableYellowBox = true;
+const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
 class App extends React.Component {
-  render() {
-    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+  state = { logged: false, screenLoading: true };
 
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ logged: true, screenLoading: false });
+      } else {
+        this.setState({ logged: false, screenLoading: false });
+      }
+    });
+  }
+
+  renderNavigation = () => {
+    const { screenLoading, logged } = this.state;
+
+    if (screenLoading) {
+      return <Spinner size='large' color={MAIN_COLOR} />;
+    } else {
+      if (logged) {
+        return <CommerceNavigation />;
+      } else {
+        return <GuestNavigation />;
+      }
+    }
+  }
+
+  render() {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <GuestNavigation />
+          {this.renderNavigation()}
         </View>
       </Provider>
     );
