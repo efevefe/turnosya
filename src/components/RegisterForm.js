@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { Button, Input } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection } from './common';
 import { MAIN_COLOR } from '../constants';
 import { NavigationActions } from 'react-navigation';
 import { onRegister, onValueChange } from '../actions';
 import { validateValueType } from './common/validate';
+
 class RegisterForm extends Component {
   //   state = { email: '', password: '', repeatPassword: '' };
 
@@ -31,9 +31,9 @@ class RegisterForm extends Component {
         email: this.props.email,
         password: this.props.password
       });
-
-      this.props.navigation.goBack();
     }
+    
+    this.props.navigation.goBack();
   }
 
   renderEmailError = () => {
@@ -142,6 +142,7 @@ class RegisterForm extends Component {
           <Button
             title="Registrar"
             buttonStyle={buttonStyle}
+            loading={this.props.loading}
             onPress={this.onButtonPressHandler.bind(this)}
           />
         </CardSection>
@@ -169,9 +170,9 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { email, password, confirmPassword } = state.registerForm;
+  const { email, password, confirmPassword, loading } = state.registerForm;
 
-  return { email, password, confirmPassword };
+  return { email, password, confirmPassword, loading };
 };
 
 export default connect(

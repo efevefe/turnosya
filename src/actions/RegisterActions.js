@@ -1,22 +1,15 @@
 import firebase from 'firebase';
 
-import { ON_REGISTER } from './types';
+import { ON_REGISTER, ON_REGISTER_SUCCESS, ON_REGISTER_FAIL } from './types';
 
 export const onRegister = ({ email, password }) => {
   return dispatch => {
-    console.log(email);
-
     dispatch({ type: ON_REGISTER });
-    console.log(email);
 
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log('Bienvenidooo perriii');
-      })
-      .catch(err => {
-        console.log('errorr');
-      });
+      .then(user => dispatch({ type: ON_REGISTER_SUCCESS, payload: user }))
+      .catch(error => dispatch({ type: ON_REGISTER_FAIL, payload: error }));
   };
 };

@@ -16,3 +16,5 @@ export const ON_LOGIN_FAIL = 'on_login_fail';
 
 // Register types
 export const ON_REGISTER = 'on_register';
+export const ON_REGISTER_SUCCESS = 'on_register_success';
+export const ON_REGISTER_FAIL = 'on_register_fail';
