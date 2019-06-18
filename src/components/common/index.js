@@ -2,6 +2,4 @@
 export * from './Button';
 export * from './CardSection';
 export * from './Input';
-export * from './Spinner';
-export * from './InputPicker';
-export * from './Confirm';
+export * from './Spinner';  

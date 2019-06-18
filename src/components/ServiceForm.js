@@ -1,13 +1,11 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Input, Button } from 'react-native-elements';
+import { Card } from 'react-native-elements';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
-import { CardSection } from './common';
+import { CardSection, Button as TYButton, Input as TYInput } from './common';
 import { validateValueType } from './common/validate';
-import { MAIN_COLOR } from '../constants';
 import { onValueChange, onFormOpen, serviceCreate, serviceUpdate } from '../actions';
 
 class ServiceForm extends Component {
@@ -99,12 +97,7 @@ class ServiceForm extends Component {
     };
 
     render() {
-        const {
-            inputContainerStyle,
-            inputStyle,
-            labelStyle,
-            buttonStyle,
-        } = styles;
+        const { cardStyle } = styles;
 
         return (
             <KeyboardAwareScrollView
@@ -112,88 +105,68 @@ class ServiceForm extends Component {
                 extraScrollHeight={60}
             >
                 <View>
-                    <Card
-                        containerStyle={{
-                            padding: 5,
-                            paddingTop: 10,
-                            borderRadius: 10,
-                        }}
-                    >
+                    <Card containerStyle={cardStyle} >
                         <CardSection>
-                            <Input
+                            <TYInput
                                 label="Nombre:"
                                 placeholder="Nombre del servicio"
-                                inputStyle={inputStyle}
-                                inputContainerStyle={inputContainerStyle}
-                                labelStyle={labelStyle}
                                 value={this.props.name}
+                                errorMessage={this.state.nameError}
                                 onChangeText={value =>
                                     this.props.onValueChange({
                                         prop: 'name',
                                         value,
                                     })
                                 }
-                                errorMessage={this.state.nameError}
                                 onFocus={() => this.setState({ nameError: '' })}
                                 onBlur={this.renderNameError}
                             />
                         </CardSection>
                         <CardSection>
-                            <Input
+                            <TYInput
                                 label="Duración:"
                                 placeholder="Duración del servicio"
                                 keyboardType="numeric"
-                                inputStyle={inputStyle}
-                                inputContainerStyle={inputContainerStyle}
-                                labelStyle={labelStyle}
                                 value={this.props.duration}
+                                errorMessage={this.state.durationError}
                                 onChangeText={value => {
                                     this.props.onValueChange({
                                         prop: 'duration',
                                         value,
                                     });
                                 }}
-                                errorMessage={this.state.durationError}
                                 onFocus={() =>
                                     this.setState({ durationError: '' })
                                 }
                                 onBlur={this.renderDurationError}
                             />
                         </CardSection>
-
                         <CardSection>
-                            <Input
+                            <TYInput
                                 label="Precio:"
                                 placeholder="Precio del servicio"
                                 keyboardType="numeric"
-                                inputStyle={inputStyle}
-                                inputContainerStyle={inputContainerStyle}
-                                labelStyle={labelStyle}
                                 value={this.props.price}
+                                errorMessage={this.state.priceError}
                                 onChangeText={value =>
                                     this.props.onValueChange({
                                         prop: 'price',
                                         value,
                                     })
                                 }
-                                errorMessage={this.state.priceError}
                                 onFocus={() =>
                                     this.setState({ priceError: '' })
                                 }
                                 onBlur={this.renderPriceError}
                             />
                         </CardSection>
-
                         <CardSection>
-                            <Input
+                            <TYInput
                                 label="Descripción:"
                                 placeholder="Descripción del servicio"
                                 multiline={true}
                                 maxLength={250}
                                 maxHeight={180}
-                                inputStyle={inputStyle}
-                                inputContainerStyle={inputContainerStyle}
-                                labelStyle={labelStyle}
                                 onChangeText={value =>
                                     this.props.onValueChange({
                                         prop: 'description',
@@ -203,11 +176,9 @@ class ServiceForm extends Component {
                                 value={this.props.description}
                             />
                         </CardSection>
-
                         <CardSection>
-                            <Button
+                            <TYButton
                                 title="Guardar"
-                                buttonStyle={buttonStyle}
                                 loading={this.props.loading}
                                 onPress={this.onButtonPressHandler.bind(this)}
                             />
@@ -220,26 +191,12 @@ class ServiceForm extends Component {
 }
 
 const styles = {
-    inputContainerStyle: {
-        borderBottomWidth: 2,
-        borderColor: MAIN_COLOR,
-    },
-    inputStyle: {
-        marginLeft: 10,
-        marginRight: 10,
-        fontSize: 16,
-    },
-    labelStyle: {
-        color: MAIN_COLOR,
-        fontWeight: 'normal',
-    },
-    buttonStyle: {
+    cardStyle: {
+        padding: 5,
+        paddingTop: 10,
         borderRadius: 10,
-        padding: 10,
-        margin: 10,
-        backgroundColor: MAIN_COLOR,
     }
-};
+}
 
 const mapStateToProps = state => {
     const {

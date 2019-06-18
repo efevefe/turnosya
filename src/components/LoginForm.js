@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Input, Button, Divider } from 'react-native-elements';
 import { View } from 'react-native';
-import { CardSection } from './common';
-import { MAIN_COLOR } from '../constants';
+import { Divider } from 'react-native-elements';
+import { CardSection, Button, Input } from './common';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { onLogin, onLoginFacebook, onValueChange } from '../actions';
 import { NavigationActions } from 'react-navigation';
@@ -18,27 +17,16 @@ class LoginForm extends Component {
   }
 
   render() {
+    const { containerStyle, loginContainerStyle, createAccountContainerStyle } = styles;
+
     return (
-      <View
-        style={{
-          justifyContent: 'center',
-          flex: 1,
-          alignSelf: 'stretch',
-          padding: 15
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            // alignSelf: 'stretch',
-            marginBottom: 20
-          }}
-        >
+      <View style={containerStyle} >
+        <View style={loginContainerStyle} >
           <CardSection>
             <Input
-              style={{ textAlign: 'center' }}
-              placeholder="Correo electrónico"
+              placeholder="E-Mail"
+              autoCapitalize='none'
+              keyboardType='email-address'
               value={this.props.email}
               onChangeText={value =>
                 this.props.onValueChange({
@@ -51,20 +39,19 @@ class LoginForm extends Component {
           <CardSection>
             <Input
               placeholder="Contraseña"
+              secureTextEntry
               value={this.props.password}
+              errorMessage={this.props.error}
               onChangeText={value =>
                 this.props.onValueChange({
                   prop: 'password',
                   value
                 })
               }
-              errorMessage={this.props.error}
-              secureTextEntry
             />
           </CardSection>
           <CardSection>
             <Button
-              buttonStyle={styles.loginButtonStyle}
               title="Iniciar Sesion"
               loading={this.props.loading}
               onPress={() =>
@@ -78,25 +65,25 @@ class LoginForm extends Component {
           <Divider
             style={{
               backgroundColor: 'grey',
-              margin: 15
+              margin: 12
             }}
           />
           <CardSection>
             <Button
-              buttonStyle={styles.googleButtonStyle}
-              title="Gmail"
+              title="Conectar con Google"
+              color='#de5145'
               icon={
                 <Icon
                   name="google"
-                  size={22}
-                  color="#fff"
+                  size={20}
+                  color="white"
                   style={{ marginRight: 10 }}
                 />
               }
             />
             <Button
-              buttonStyle={styles.facebookButtonStyle}
-              title="Facebook"
+              title="Conectar con Facebook"
+              color='#4267b2'
               loading={this.props.loading}
               onPress={() =>
                 this.props.onLoginFacebook()
@@ -104,21 +91,20 @@ class LoginForm extends Component {
               icon={
                 <Icon
                   name="facebook-square"
-                  size={22}
-                  color="#fff"
+                  size={20}
+                  color="white"
                   style={{ marginRight: 10 }}
                 />
               }
             />
           </CardSection>
         </View>
-        <View style={{ justifyContent: 'flex-end' }}>
+        <View style={createAccountContainerStyle}>
           <CardSection>
             <Button
-              buttonStyle={styles.createButtonStyle}
-              title="Crear cuenta"
+              title="Crear Cuenta"
               type="clear"
-              titleStyle={{ color: MAIN_COLOR }}
+              color='white'
               onPress={this.onCreateAcount.bind(this)}
             />
           </CardSection>
@@ -129,27 +115,19 @@ class LoginForm extends Component {
 }
 
 const styles = {
-  loginButtonStyle: {
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    backgroundColor: MAIN_COLOR
+  containerStyle: {
+    justifyContent: 'center',
+    flex: 1,
+    alignSelf: 'stretch',
+    padding: 15
   },
-  facebookButtonStyle: {
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    backgroundColor: '#4267b2'
+  loginContainerStyle: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 20
   },
-  googleButtonStyle: {
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    backgroundColor: '#de5145'
-  },
-  createButtonStyle: {
-    padding: 10,
-    margin: 10
+  createAccountContainerStyle: { 
+    justifyContent: 'flex-end' 
   }
 };
 
