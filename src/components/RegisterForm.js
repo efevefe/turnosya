@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
-import { NavigationActions } from 'react-navigation';
 import { onRegister, onValueChange } from '../actions';
 import { validateValueType } from './common/validate';
 
@@ -16,7 +15,7 @@ class RegisterForm extends Component {
         password: this.props.password
       });
       
-      this.props.navigation.goBack();
+      //this.props.navigation.goBack();
     }
   }
 

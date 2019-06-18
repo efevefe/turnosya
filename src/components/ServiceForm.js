@@ -25,8 +25,7 @@ class ServiceForm extends Component {
 
     onButtonPressHandler() {
         if (this.validateMinimumData()) {
-            const { name, duration, price, description } = this.props;
-
+            const { name, duration, price, description, navigation } = this.props;
             const { params } = this.props.navigation.state;
 
             if (params) {
@@ -38,17 +37,19 @@ class ServiceForm extends Component {
                     price,
                     description,
                     id,
-                });
+                },
+                navigation
+                );
             } else {
                 this.props.serviceCreate({
                     name,
                     duration,
                     price,
                     description,
-                });
+                },
+                navigation
+                );
             }
-
-            this.props.navigation.goBack();
         }
     }
 
