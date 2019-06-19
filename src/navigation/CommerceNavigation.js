@@ -43,11 +43,11 @@ const commerceScreenStack = createStackNavigator({
         navigationOptions: ({ navigation }) => ({
             title: navigation.getParam('title', 'Nuevo Servicio')
         })
-    }
+    },
 },
     navigationOptions
 )
 
-const CommerceNavigation = createAppContainer(commerceScreenStack)
+const CommerceNavigation = createAppContainer(commerceScreenStack);
 
 export default CommerceNavigation;
