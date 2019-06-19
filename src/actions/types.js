@@ -13,6 +13,9 @@ export const SERVICE_UPDATE = 'service_update';
 export const ON_LOGIN = 'on_login';
 export const ON_LOGIN_SUCCESS = 'on_login_success';
 export const ON_LOGIN_FAIL = 'on_login_fail';
+export const ON_LOGOUT = 'on_logout';
+export const ON_LOGOUT_SUCCESS = 'on_logout_success';
+export const ON_LOGOUT_FAIL = 'on_logout_fail';
 
 // Register types
 export const ON_REGISTER = 'on_register';

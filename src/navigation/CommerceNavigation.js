@@ -1,7 +1,6 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import { MAIN_COLOR } from '../constants';
@@ -24,10 +23,18 @@ const navigationOptions = {
 
 const rightIcon = (navigation, icon, nextScreen) => <Icon
     name={icon}
-    style={{ marginRight: 15 }}
     size={30}
     color='white'
+    style={{ marginRight: 15 }}
     onPress={() => navigation.navigate(nextScreen)}
+/>
+
+const leftIcon = (navigation, icon) => <Icon
+    name={icon}
+    size={30}
+    color='white'
+    style={{ marginLeft: 15 }}
+    onPress={() => navigation.openDrawer()}
 />
 
 const commerceScreenStack = createStackNavigator({
@@ -35,15 +42,16 @@ const commerceScreenStack = createStackNavigator({
         screen: ServicesList,
         navigationOptions: ({ navigation }) => ({
             title: 'Servicios',
-            headerRight: rightIcon(navigation, 'add', 'serviceForm')
+            headerRight: rightIcon(navigation, 'add', 'serviceForm'),
+            headerLeft: leftIcon(navigation, 'menu')
         })
     },
     serviceForm: {
         screen: ServiceForm,
         navigationOptions: ({ navigation }) => ({
-            title: navigation.getParam('title', 'Nuevo Servicio')
+            title: navigation.getParam('title', 'Nuevo Servicio'),
         })
-    },
+    }
 },
     navigationOptions
 )

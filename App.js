@@ -50,7 +50,7 @@ class App extends React.Component {
       return <Spinner size='large' color={MAIN_COLOR} />;
     } else {
       if (logged) {
-        return <CommerceNavigation />;
+        return <CommerceDrawer />;
       } else {
         return <GuestNavigation />;
       }

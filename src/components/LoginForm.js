@@ -72,6 +72,7 @@ class LoginForm extends Component {
             <Button
               title="Conectar con Google"
               color='#de5145'
+              loading={this.props.loading}
               icon={
                 <Icon
                   name="google"

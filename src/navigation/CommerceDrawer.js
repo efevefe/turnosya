@@ -1,51 +1,31 @@
 import React from 'react';
-import { createAppContainer, createDrawerNavigator } from 'react-navigation';
-import LoginForm from '../components/LoginForm';
-import Ionicons from '@expo/vector-icons';
-import { MAIN_COLOR } from '../constants';
+import { ScrollView } from 'react-native';
+import { createAppContainer, createDrawerNavigator, SafeAreaView } from 'react-navigation';
+import firebase from 'firebase';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { DrawerItem } from '../components/common';
+import CommerceNavigation from './CommerceNavigation';
 
-/*
-const drawerOptions = {
-    drawerType: 'slide',
-    drawerWidth: 200
-};
-
-const renderIcon = (icon, focused) => <Ionicons
-    name={icon}
-    style={{ marginRight: 15 }}
-    size={30}
-    color={focused ? MAIN_COLOR : 'black'}
-/>
-
-const commerceScreenDrawer = createDrawerNavigator({
-    signOut: {
-        screen: ServicesList,
-        navigationOptions: ({ focused }) => ({
-            drawerLabel: 'Cerrar Sesion',
-            drawerIcon: renderIcon('log-out', focused)
-        })
-    }
-},
-    drawerOptions
+const leftIcon = (name) => (
+    <Icon name={name} size={20} color='black' style={{ marginRight: 8 }} />
 );
-*/
+
+const CustomDrawerContentComponent = props => (
+    <ScrollView>
+        <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always', horizontal: 'never' }}>
+            <DrawerItem {...props} title='Cerrar Sesion' icon={leftIcon('sign-out')} onPress={() => firebase.auth().signOut()} />
+        </SafeAreaView>
+    </ScrollView>
+);
 
 const drawerOptions = {
     drawerType: 'slide',
-    drawerWidth: 200
+    drawerWidth: 200,
+    contentComponent: CustomDrawerContentComponent
 };
 
-const renderIcon = (icon, focused) => <Ionicons
-    name={icon}
-    style={{ marginRight: 15 }}
-    size={30}
-    color={focused ? MAIN_COLOR : 'black'}
-/>
-
 const commerceScreenDrawer = createDrawerNavigator({
-    signOut: {
-        screen: LoginForm
-    }
+    home: CommerceNavigation
 },
     drawerOptions
 );
