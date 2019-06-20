@@ -7,6 +7,7 @@ import ReduxThunk from 'redux-thunk';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
 import CommerceNavigation from './src/navigation/CommerceNavigation';
+import CommerceDrawer from './src/navigation/CommerceDrawer';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
@@ -49,7 +50,7 @@ class App extends React.Component {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
       if (logged) {
-        return <CommerceNavigation />;
+        return <CommerceDrawer />;
       } else {
         return <GuestNavigation />;
       }

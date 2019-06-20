@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 
-import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL } from './types';
+import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS, ON_LOGIN_FACEBOOK } from './types';
 
 export const onLogin = ({ email, password }) => {
   return dispatch => {
@@ -18,7 +18,7 @@ export const onLogin = ({ email, password }) => {
 
 export const onFacebookLogin = () => {
   return dispatch => {
-    dispatch({ type: ON_LOGIN });
+    dispatch({ type: ON_LOGIN_FACEBOOK });
 
     Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
       permissions: ['public_profile', 'email']
@@ -78,3 +78,14 @@ export const onGoogleLogin = () => {
       );
   };
 };
+
+//no se esta usando por ahora
+export const onLogout = () => {
+  return dispatch => {
+    dispatch({ type: ON_LOGOUT })
+    
+    firebase.auth().signOut()
+    .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
+    .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
+  }
+}

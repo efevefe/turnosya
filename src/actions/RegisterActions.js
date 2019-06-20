@@ -10,6 +10,6 @@ export const onRegister = ({ email, password }) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => dispatch({ type: ON_REGISTER_SUCCESS, payload: user }))
-      .catch(error => dispatch({ type: ON_REGISTER_FAIL, payload: error }));
+      .catch(error => dispatch({ type: ON_REGISTER_FAIL, payload: error.message }));
   };
 };
