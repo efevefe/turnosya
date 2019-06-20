@@ -29,7 +29,6 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOGIN:
       return {
-        ...INITIAL_STATE,
         ...state,
         error: '',
         loadingLogin: true,
@@ -59,7 +58,9 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: action.payload,
-        loading: false
+        loadingLogin: false,
+        loadingFacebook: false,
+        loadingGoogle: false,
       };
     case ON_LOGOUT:
       return { ...INITIAL_STATE, loading: true };

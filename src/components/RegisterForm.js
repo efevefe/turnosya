@@ -18,10 +18,13 @@ class RegisterForm extends Component {
   }
 
   renderEmailError = () => {
-    if (!validateValueType('email', this.props.email)) {
+     if( this.props.email==''){
       this.setState({ emailError: 'Dato requerido' });
       return false;
-    } else {
+    }else if (!validateValueType('email', this.props.email)) {
+      this.setState({ emailError: 'Formato incorrecto' });
+      return false;
+    }else {
       this.setState({ emailError: '' });
       return true;
     }

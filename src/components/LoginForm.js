@@ -5,6 +5,7 @@ import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection, Button, Input } from './common';
+import { validateValueType } from './common/validate';
 import {
   onLogin,
   onValueChange,
@@ -13,14 +14,36 @@ import {
 } from '../actions';
 
 class LoginForm extends Component {
+  state = { emailError: ''};
+  onButonPressHandler(){
+    if(this.renderEmailError()){
+      this.props.onLogin({
+        email: this.props.email,
+        password: this.props.password
+    })
+  }}
+  
   onCreateAcount() {
-    const navigateAction = NavigationActions.navigate({
+    
+      const navigateAction = NavigationActions.navigate({
       routeName: 'registerForm'
     });
 
     this.props.navigation.navigate(navigateAction);
   }
-
+  
+  renderEmailError = () => {
+    if( this.props.email==''){
+     this.setState({ emailError: 'Dato requerido' });
+     return false;
+   }else if (!validateValueType('email', this.props.email)) {
+     this.setState({ emailError: 'Formato incorrecto' });
+     return false;
+   }else {
+     this.setState({ emailError: '' });
+     return true;
+   }
+ };
   render() {
     const {
       containerStyle,
@@ -40,12 +63,14 @@ class LoginForm extends Component {
               autoCapitalize="none"
               keyboardType="email-address"
               value={this.props.email}
+              errorMessage={this.state.emailError}
               onChangeText={value =>
                 this.props.onValueChange({
                   prop: 'email',
                   value
                 })
               }
+              onFocus={() => this.setState({ emailError: '' })}
             />
           </CardSection>
           <CardSection>
@@ -66,12 +91,7 @@ class LoginForm extends Component {
             <Button
               title="Iniciar Sesion"
               loading={this.props.loadingLogin}
-              onPress={() =>
-                this.props.onLogin({
-                  email: this.props.email,
-                  password: this.props.password
-                })
-              }
+              onPress={this.onButonPressHandler.bind(this)}
             />
           </CardSection>
           <Divider
