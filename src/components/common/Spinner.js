@@ -10,13 +10,13 @@ const Spinner = ({ size, color }) => {
     );
 };
 
-const styles = {
-    containerStyle:{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10
-    }
-}
+const styles = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10
+  }
+});
 
-export {Spinner};
+export { Spinner };
