@@ -4,7 +4,12 @@ import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { CardSection, Button, Input } from './common';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { onLogin, onLoginFacebook, onValueChange } from '../actions';
+import {
+  onLogin,
+  onValueChange,
+  onFacebookLogin,
+  onGoogleLogin
+} from '../actions';
 import { NavigationActions } from 'react-navigation';
 
 class LoginForm extends Component {
@@ -17,16 +22,20 @@ class LoginForm extends Component {
   }
 
   render() {
-    const { containerStyle, loginContainerStyle, createAccountContainerStyle } = styles;
+    const {
+      containerStyle,
+      loginContainerStyle,
+      createAccountContainerStyle
+    } = styles;
 
     return (
-      <View style={containerStyle} >
-        <View style={loginContainerStyle} >
+      <View style={containerStyle}>
+        <View style={loginContainerStyle}>
           <CardSection>
             <Input
               placeholder="E-Mail"
-              autoCapitalize='none'
-              keyboardType='email-address'
+              autoCapitalize="none"
+              keyboardType="email-address"
               value={this.props.email}
               onChangeText={value =>
                 this.props.onValueChange({
@@ -71,7 +80,9 @@ class LoginForm extends Component {
           <CardSection>
             <Button
               title="Conectar con Google"
-              color='#de5145'
+              color="#de5145"
+              loading={this.props.loading}
+              onPress={() => this.props.onGoogleLogin()}
               icon={
                 <Icon
                   name="google"
@@ -83,11 +94,9 @@ class LoginForm extends Component {
             />
             <Button
               title="Conectar con Facebook"
-              color='#4267b2'
+              color="#4267b2"
               loading={this.props.loading}
-              onPress={() =>
-                this.props.onLoginFacebook()
-              }
+              onPress={() => this.props.onFacebookLogin()}
               icon={
                 <Icon
                   name="facebook-square"
@@ -104,7 +113,7 @@ class LoginForm extends Component {
             <Button
               title="Crear Cuenta"
               type="clear"
-              color='white'
+              color="white"
               onPress={this.onCreateAcount.bind(this)}
             />
           </CardSection>
@@ -126,8 +135,8 @@ const styles = {
     justifyContent: 'flex-end',
     marginBottom: 20
   },
-  createAccountContainerStyle: { 
-    justifyContent: 'flex-end' 
+  createAccountContainerStyle: {
+    justifyContent: 'flex-end'
   }
 };
 
@@ -139,5 +148,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLogin, onLoginFacebook, onValueChange }
+  { onLogin, onGoogleLogin, onFacebookLogin, onValueChange }
 )(LoginForm);
