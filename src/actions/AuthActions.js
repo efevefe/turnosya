@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 
-import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS } from './types';
+import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS, ON_LOGIN_FACEBOOK } from './types';
 
 export const onLogin = ({ email, password }) => {
   return dispatch => {
@@ -16,7 +16,7 @@ export const onLogin = ({ email, password }) => {
 
 export const onLoginFacebook = () => {
   return dispatch => {
-    dispatch({ type: ON_LOGIN });
+    dispatch({ type: ON_LOGIN_FACEBOOK });
     Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
       permissions: ['public_profile', 'email']
     })

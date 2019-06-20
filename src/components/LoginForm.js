@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { Divider } from 'react-native-elements';
-import { CardSection, Button, Input } from './common';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { onLogin, onLoginFacebook, onValueChange } from '../actions';
 import { NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { CardSection, Button, Input } from './common';
+import { onLogin, onLoginFacebook, onValueChange } from '../actions';
 
 class LoginForm extends Component {
   onCreateAcount() {
@@ -22,6 +22,9 @@ class LoginForm extends Component {
     return (
       <View style={containerStyle} >
         <View style={loginContainerStyle} >
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={require('../../assets/icon.png')} style={{ height: 135, width: 135 }} />
+          </View>
           <CardSection>
             <Input
               placeholder="E-Mail"
@@ -53,7 +56,7 @@ class LoginForm extends Component {
           <CardSection>
             <Button
               title="Iniciar Sesion"
-              loading={this.props.loading}
+              loading={this.props.loadingLogin}
               onPress={() =>
                 this.props.onLogin({
                   email: this.props.email,
@@ -72,7 +75,7 @@ class LoginForm extends Component {
             <Button
               title="Conectar con Google"
               color='#de5145'
-              loading={this.props.loading}
+              loading={this.props.loadingGoogle}
               icon={
                 <Icon
                   name="google"
@@ -85,7 +88,7 @@ class LoginForm extends Component {
             <Button
               title="Conectar con Facebook"
               color='#4267b2'
-              loading={this.props.loading}
+              loading={this.props.loadingFacebook}
               onPress={() =>
                 this.props.onLoginFacebook()
               }
@@ -127,15 +130,37 @@ const styles = {
     justifyContent: 'flex-end',
     marginBottom: 20
   },
-  createAccountContainerStyle: { 
-    justifyContent: 'flex-end' 
+  createAccountContainerStyle: {
+    justifyContent: 'flex-end'
   }
 };
 
 const mapStateToProps = state => {
-  const { email, password, loading, error } = state.auth;
+  const { 
+    email, 
+    password, 
+    error,
+    loadingLogin,
+    loadingFacebook,
+    loadingGoogle,
+    disabledLogin,
+    disabledFacebook,
+    disabledGoogle,
+    disabledCreateAccount
+  } = state.auth;
 
-  return { email, password, loading, error };
+  return { 
+    email, 
+    password, 
+    error,
+    loadingLogin,
+    loadingFacebook,
+    loadingGoogle,
+    disabledLogin,
+    disabledFacebook,
+    disabledGoogle,
+    disabledCreateAccount
+  };
 };
 
 export default connect(

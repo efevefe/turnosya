@@ -7,6 +7,7 @@ class DrawerItem extends Component {
             <Button
                 { ...this.props }
                 type='clear'
+                loadingProps={{ color: color }}
                 buttonStyle={[ styles.buttonStyle, this.props.buttonStyle ]}
                 containerStyle={[ styles.containerStyle, this.props.containerStyle ]}
                 titleStyle={[ styles.titleStyle, this.props.titleStyle ]}
@@ -16,6 +17,7 @@ class DrawerItem extends Component {
 }
 
 const borderRadius = 0;
+const color = 'black';
 
 const styles = {
     buttonStyle: {
@@ -32,7 +34,7 @@ const styles = {
     },
     titleStyle: {
         fontSize: 15,
-        color: 'black'
+        color: color
     }
 }
 

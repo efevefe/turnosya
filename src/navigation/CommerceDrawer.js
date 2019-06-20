@@ -1,38 +1,12 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
-import {
-    createAppContainer,
-    createDrawerNavigator,
-    SafeAreaView,
-} from 'react-navigation';
+import { createAppContainer, createDrawerNavigator } from 'react-navigation';
 import CommerceNavigation from './CommerceNavigation';
-import DrawerListOptions from '../components/DrawerListOptions';
-
-const CustomDrawerContentComponent = props => (
-    <SafeAreaView
-        style={{ flex: 1 }}
-        forceInset={{ top: 'always', horizontal: 'never' }}
-    >
-        <View
-            style={{
-                height: 150,
-                backgroundColor: 'white',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <Text style={{ fontSize: 30 }}>TURNOSYA</Text>
-        </View>
-        <ScrollView>
-            <DrawerListOptions />
-        </ScrollView>
-    </SafeAreaView>
-);
+import CommerceDrawerContent from './CommerceDrawerContent';
 
 const drawerOptions = {
     drawerType: 'slide',
     drawerWidth: 200,
-    contentComponent: CustomDrawerContentComponent,
+    contentComponent: CommerceDrawerContent,
 };
 
 const commerceScreenDrawer = createDrawerNavigator(

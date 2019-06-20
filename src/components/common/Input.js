@@ -26,7 +26,7 @@ const styles = {
     inputStyle: {
         marginLeft: 5,
         marginRight: 5,
-        fontSize: 17,
+        fontSize: 16,
     },
     labelStyle: {
         fontSize: 14,

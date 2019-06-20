@@ -11,6 +11,8 @@ export const SERVICE_UPDATE = 'service_update';
 
 // Authentication types
 export const ON_LOGIN = 'on_login';
+export const ON_LOGIN_FACEBOOK = 'on_login_facebook';
+export const ON_LOGIN_GOOGLE = 'on_login_google';
 export const ON_LOGIN_SUCCESS = 'on_login_success';
 export const ON_LOGIN_FAIL = 'on_login_fail';
 export const ON_LOGOUT = 'on_logout';
