@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 import { Input as RNEInput } from 'react-native-elements';
 import { MAIN_COLOR } from '../../constants';
 

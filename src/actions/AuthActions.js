@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 
-import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS, ON_LOGIN_FACEBOOK } from './types';
+import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS, ON_LOGIN_FACEBOOK, ON_LOGIN_GOOGLE } from './types';
 
 export const onLogin = ({ email, password }) => {
   return dispatch => {
@@ -47,7 +47,7 @@ export const onFacebookLogin = () => {
 
 export const onGoogleLogin = () => {
   return dispatch => {
-    dispatch({ type: ON_LOGIN });
+    dispatch({ type: ON_LOGIN_GOOGLE });
 
     Expo.Google.logInAsync({
       iosClientId:

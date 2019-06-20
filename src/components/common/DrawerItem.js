@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
 
 class DrawerItem extends Component {
@@ -19,7 +20,7 @@ class DrawerItem extends Component {
 const borderRadius = 0;
 const color = 'black';
 
-const styles = {
+const styles = StyleSheet.create({
     buttonStyle: {
         borderRadius,
         padding: 10,
@@ -36,6 +37,6 @@ const styles = {
         fontSize: 15,
         color: color
     }
-}
+});
 
 export {DrawerItem};

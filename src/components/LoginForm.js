@@ -11,7 +11,6 @@ import {
   onFacebookLogin,
   onGoogleLogin
 } from '../actions';
-import { NavigationActions } from 'react-navigation';
 
 class LoginForm extends Component {
   onCreateAcount() {

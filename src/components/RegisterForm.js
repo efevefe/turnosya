@@ -14,8 +14,6 @@ class RegisterForm extends Component {
         email: this.props.email,
         password: this.props.password
       });
-      
-      //this.props.navigation.goBack();
     }
   }
 

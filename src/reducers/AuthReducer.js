@@ -6,7 +6,8 @@ import {
   ON_LOGOUT,
   ON_LOGOUT_SUCCESS,
   ON_LOGOUT_FAIL,
-  ON_LOGIN_FACEBOOK
+  ON_LOGIN_FACEBOOK,
+  ON_LOGIN_GOOGLE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -37,12 +38,20 @@ export default (state = INITIAL_STATE, action) => {
         disabledCreateAccount: true
       };
     case ON_LOGIN_FACEBOOK:
-      return { 
-        ...INITIAL_STATE, 
-        loadingFacebook: true, 
-        disabledLogin: true, 
-        disabledGoogle: true, 
-        disabledCreateAccount: true 
+      return {
+        ...INITIAL_STATE,
+        loadingFacebook: true,
+        disabledLogin: true,
+        disabledGoogle: true,
+        disabledCreateAccount: true
+      };
+    case ON_LOGIN_GOOGLE:
+      return {
+        ...INITIAL_STATE,
+        loadingGoogle: true,
+        disabledLogin: true,
+        disabledFacebook: true,
+        disabledCreateAccount: true
       }
     case ON_LOGIN_SUCCESS:
       return INITIAL_STATE;
