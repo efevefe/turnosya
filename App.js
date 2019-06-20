@@ -25,7 +25,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 //firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
-//firebase.auth().signOut();
+firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
@@ -46,7 +46,7 @@ class App extends React.Component {
     const { screenLoading, logged } = this.state;
 
     if (screenLoading) {
-      return <Spinner size='large' color={MAIN_COLOR} />;
+      return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
       if (logged) {
         return <CommerceNavigation />;
@@ -54,14 +54,12 @@ class App extends React.Component {
         return <GuestNavigation />;
       }
     }
-  }
+  };
 
   render() {
     return (
       <Provider store={store}>
-        <View style={styles.container}>
-          {this.renderNavigation()}
-        </View>
+        <View style={styles.container}>{this.renderNavigation()}</View>
       </Provider>
     );
   }
