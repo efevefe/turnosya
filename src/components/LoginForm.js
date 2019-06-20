@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { CardSection, Button, Input } from './common';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -123,7 +123,7 @@ class LoginForm extends Component {
   }
 }
 
-const styles = {
+const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
@@ -138,7 +138,7 @@ const styles = {
   createAccountContainerStyle: {
     justifyContent: 'flex-end'
   }
-};
+});
 
 const mapStateToProps = state => {
   const { email, password, loading, error } = state.auth;

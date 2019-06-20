@@ -19,6 +19,7 @@ export const onLogin = ({ email, password }) => {
 export const onFacebookLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN });
+
     Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
       permissions: ['public_profile', 'email']
     })
@@ -47,6 +48,7 @@ export const onFacebookLogin = () => {
 export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN });
+
     Expo.Google.logInAsync({
       iosClientId:
         '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
