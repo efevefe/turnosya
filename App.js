@@ -6,7 +6,6 @@ import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
-import CommerceNavigation from './src/navigation/CommerceNavigation';
 import CommerceDrawer from './src/navigation/CommerceDrawer';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
@@ -26,7 +25,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 //firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
-firebase.auth().signOut();
+//firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 

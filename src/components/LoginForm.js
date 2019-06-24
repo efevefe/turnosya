@@ -8,7 +8,7 @@ import { CardSection, Button, Input } from './common';
 import { validateValueType } from './common/validate';
 import {
   onLogin,
-  onValueChange,
+  onLoginValueChange,
   onFacebookLogin,
   onGoogleLogin
 } from '../actions';
@@ -65,7 +65,7 @@ class LoginForm extends Component {
               value={this.props.email}
               errorMessage={this.state.emailError}
               onChangeText={value =>
-                this.props.onValueChange({
+                this.props.onLoginValueChange({
                   prop: 'email',
                   value
                 })
@@ -80,7 +80,7 @@ class LoginForm extends Component {
               value={this.props.password}
               errorMessage={this.props.error}
               onChangeText={value =>
-                this.props.onValueChange({
+                this.props.onLoginValueChange({
                   prop: 'password',
                   value
                 })
@@ -193,5 +193,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLogin, onGoogleLogin, onFacebookLogin, onValueChange }
+  { onLogin, onGoogleLogin, onFacebookLogin, onLoginValueChange }
 )(LoginForm);

@@ -1,6 +1,19 @@
 import firebase from 'firebase';
 
-import { ON_LOGIN, ON_LOGIN_SUCCESS, ON_LOGIN_FAIL, ON_LOGOUT, ON_LOGOUT_SUCCESS, ON_LOGIN_FACEBOOK, ON_LOGIN_GOOGLE } from './types';
+import { 
+  ON_LOGIN_VALUE_CHANGE, 
+  ON_LOGIN, 
+  ON_LOGIN_SUCCESS, 
+  ON_LOGIN_FAIL, 
+  ON_LOGOUT, 
+  ON_LOGOUT_SUCCESS, 
+  ON_LOGIN_FACEBOOK, 
+  ON_LOGIN_GOOGLE 
+} from './types';
+
+export const onLoginValueChange = ({ prop, value }) => {
+  return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
+};
 
 export const onLogin = ({ email, password }) => {
   return dispatch => {

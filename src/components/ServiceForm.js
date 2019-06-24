@@ -7,7 +7,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { CardSection, Button as TYButton, Input as TYInput } from './common';
 import { validateValueType } from './common/validate';
 import {
-  onValueChange,
+  onServiceValueChange,
   onFormOpen,
   serviceCreate,
   serviceUpdate
@@ -21,7 +21,7 @@ class ServiceForm extends Component {
 
     if (params) {
       _.each(params.service, (value, prop) => {
-        this.props.onValueChange({ prop, value });
+        this.props.onServiceValueChange({ prop, value });
       });
     } else {
       this.props.onFormOpen();
@@ -118,7 +118,7 @@ class ServiceForm extends Component {
                 value={this.props.name}
                 errorMessage={this.state.nameError}
                 onChangeText={value =>
-                  this.props.onValueChange({
+                  this.props.onServiceValueChange({
                     prop: 'name',
                     value
                   })
@@ -135,7 +135,7 @@ class ServiceForm extends Component {
                 value={this.props.duration}
                 errorMessage={this.state.durationError}
                 onChangeText={value => {
-                  this.props.onValueChange({
+                  this.props.onServiceValueChange({
                     prop: 'duration',
                     value
                   });
@@ -152,7 +152,7 @@ class ServiceForm extends Component {
                 value={this.props.price}
                 errorMessage={this.state.priceError}
                 onChangeText={value =>
-                  this.props.onValueChange({
+                  this.props.onServiceValueChange({
                     prop: 'price',
                     value
                   })
@@ -169,7 +169,7 @@ class ServiceForm extends Component {
                 maxLength={250}
                 maxHeight={180}
                 onChangeText={value =>
-                  this.props.onValueChange({
+                  this.props.onServiceValueChange({
                     prop: 'description',
                     value
                   })
@@ -214,5 +214,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onValueChange, onFormOpen, serviceCreate, serviceUpdate }
+  { onServiceValueChange, onFormOpen, serviceCreate, serviceUpdate }
 )(ServiceForm);

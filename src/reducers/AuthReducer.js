@@ -1,5 +1,5 @@
 import {
-  ON_VALUE_CHANGE,
+  ON_LOGIN_VALUE_CHANGE,
   ON_LOGIN,
   ON_LOGIN_SUCCESS,
   ON_LOGIN_FAIL,
@@ -25,7 +25,7 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_VALUE_CHANGE:
+    case ON_LOGIN_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOGIN:
       return {

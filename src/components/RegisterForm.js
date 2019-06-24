@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
-import { onRegister, onValueChange } from '../actions';
+import { onRegister, onRegisterValueChange } from '../actions';
 import { validateValueType } from './common/validate';
 
 class RegisterForm extends Component {
@@ -55,7 +55,7 @@ class RegisterForm extends Component {
             value={this.props.email}
             errorMessage={this.state.emailError}
             onChangeText={value =>
-              this.props.onValueChange({
+              this.props.onRegisterValueChange({
                 prop: 'email',
                 value
               })
@@ -69,7 +69,7 @@ class RegisterForm extends Component {
             secureTextEntry
             value={this.props.password}
             onChangeText={value =>
-              this.props.onValueChange({
+              this.props.onRegisterValueChange({
                 prop: 'password',
                 value
               })
@@ -83,7 +83,7 @@ class RegisterForm extends Component {
             value={this.props.confirmPassword}
             errorMessage={this.state.passwordError}
             onChangeText={value =>
-              this.props.onValueChange({
+              this.props.onRegisterValueChange({
                 prop: 'confirmPassword',
                 value
               })
@@ -111,5 +111,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onRegister, onValueChange }
+  { onRegister, onRegisterValueChange }
 )(RegisterForm);

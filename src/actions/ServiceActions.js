@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  ON_VALUE_CHANGE,
+  ON_SERVICE_VALUE_CHANGE,
   ON_FORM_OPEN,
   SERVICE_CREATE,
   SERVICES_READING,
@@ -11,9 +11,8 @@ import {
   SERVICE_UPDATE
 } from './types';
 
-export const onValueChange = ({ prop, value }) => {
-  //pasar a un CommonActions.js
-  return { type: ON_VALUE_CHANGE, payload: { prop, value } };
+export const onServiceValueChange = ({ prop, value }) => {
+  return { type: ON_SERVICE_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const onFormOpen = () => {
