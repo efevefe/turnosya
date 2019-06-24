@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Dimensions } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,6 +12,8 @@ import {
   onFacebookLogin,
   onGoogleLogin
 } from '../actions';
+
+const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
 
 class LoginForm extends Component {
   state = { emailError: '', passwordError: '' };
@@ -69,16 +71,17 @@ class LoginForm extends Component {
   render() {
     const {
       containerStyle,
+      logoContainerStyle,
       loginContainerStyle,
       createAccountContainerStyle
     } = styles;
 
     return (
       <View style={containerStyle} >
-        <View style={loginContainerStyle} >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={require('../../assets/icon.png')} style={{ height: 125, width: 125 }} />
+        <View style={logoContainerStyle}>
+            <Image source={require('../../assets/icon.png')} style={{ height: iconSize, width: iconSize }} />
           </View>
+        <View style={loginContainerStyle} >
           <CardSection>
             <Input
               placeholder="E-Mail"
@@ -123,7 +126,7 @@ class LoginForm extends Component {
           <Divider
             style={{
               backgroundColor: 'grey',
-              margin: 12
+              margin: 10
             }}
           />
           <CardSection>
@@ -174,15 +177,20 @@ class LoginForm extends Component {
 
 const styles = StyleSheet.create({
   containerStyle: {
-    justifyContent: 'center',
-    flex: 1,
-    alignSelf: 'stretch',
-    padding: 15
-  },
-  loginContainerStyle: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 20
+    alignSelf: 'stretch',
+    padding: 15,
+    paddingBottom: 10
+  },
+  logoContainerStyle: { 
+    flex: 1,
+    justifyContent: 'center', 
+    alignItems: 'center',
+    paddingTop: 10 
+  },
+  loginContainerStyle: {
+    justifyContent: 'center'
   },
   createAccountContainerStyle: {
     justifyContent: 'flex-end'
