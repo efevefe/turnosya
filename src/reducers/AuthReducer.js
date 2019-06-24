@@ -58,6 +58,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: 'Usuario o contraseña incorrectos',
+        //error: action.payload,
         loadingLogin: false,
         loadingFacebook: false,
         loadingGoogle: false,

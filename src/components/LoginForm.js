@@ -77,7 +77,7 @@ class LoginForm extends Component {
       <View style={containerStyle} >
         <View style={loginContainerStyle} >
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={require('../../assets/icon.png')} style={{ height: 135, width: 135 }} />
+            <Image source={require('../../assets/icon.png')} style={{ height: 125, width: 125 }} />
           </View>
           <CardSection>
             <Input
@@ -100,6 +100,7 @@ class LoginForm extends Component {
             <Input
               placeholder="Contraseña"
               secureTextEntry
+              autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
               onChangeText={value =>
