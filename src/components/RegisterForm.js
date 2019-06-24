@@ -6,7 +6,7 @@ import { onRegister, onRegisterValueChange } from '../actions';
 import { validateValueType } from './common/validate';
 
 class RegisterForm extends Component {
-  state = { emailError: '', passwordError: '' };
+  state = { emailError: '', passwordError: '', confirmPasswordError: '' };
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
@@ -18,30 +18,50 @@ class RegisterForm extends Component {
   }
 
   renderEmailError = () => {
-     if( this.props.email==''){
+    if (this.props.email == '') {
       this.setState({ emailError: 'Dato requerido' });
       return false;
-    }else if (!validateValueType('email', this.props.email)) {
-      this.setState({ emailError: 'Formato incorrecto' });
+    } else if (!validateValueType('email', this.props.email)) {
+      this.setState({ emailError: 'Formato de email incorrecto' });
       return false;
-    }else {
+    } else {
       this.setState({ emailError: '' });
       return true;
     }
   };
 
   renderPasswordError = () => {
-    if (this.props.password == this.props.confirmPassword) {
+    if (this.props.password == '') {
+      this.setState({ passwordError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('password', this.props.password)) {
+      this.setState({ passwordError: 'La contraseña debe ser alfanumerica y contener al menos 6 caracteres' });
+      return false;
+    } else {
       this.setState({ passwordError: '' });
       return true;
-    } else {
-      this.setState({ passwordError: 'Las contraseñas no coinciden' });
+    }
+  }
+
+  renderConfirmPasswordError = () => {
+    if (this.props.confirmPassword == '') {
+      this.setState({ confirmPasswordError: 'Dato requerido' });
       return false;
+    } else if (this.props.password != this.props.confirmPassword) {
+      this.setState({ confirmPasswordError: 'Las contraseñas no coinciden' });
+      return false;
+    } else {
+      this.setState({ confirmPasswordError: '' });
+      return true;
     }
   };
 
   validateMinimumData = () => {
-    return this.renderEmailError() && this.renderPasswordError();
+    return (
+      this.renderEmailError() &&
+      this.renderPasswordError() &&
+      this.renderConfirmPasswordError()
+    );
   };
 
   render() {
@@ -61,6 +81,7 @@ class RegisterForm extends Component {
               })
             }
             onFocus={() => this.setState({ emailError: '' })}
+            onBlur={this.renderEmailError}
           />
         </CardSection>
         <CardSection>
@@ -68,12 +89,15 @@ class RegisterForm extends Component {
             placeholder="Contraseña"
             secureTextEntry
             value={this.props.password}
+            errorMessage={this.state.passwordError}
             onChangeText={value =>
               this.props.onRegisterValueChange({
                 prop: 'password',
                 value
               })
             }
+            onFocus={() => this.setState({ passwordError: '' })}
+            onBlur={this.renderPasswordError}
           />
         </CardSection>
         <CardSection>
@@ -81,14 +105,15 @@ class RegisterForm extends Component {
             placeholder="Repetir Contraseña"
             secureTextEntry
             value={this.props.confirmPassword}
-            errorMessage={this.state.passwordError}
+            errorMessage={this.state.confirmPasswordError}
             onChangeText={value =>
               this.props.onRegisterValueChange({
                 prop: 'confirmPassword',
                 value
               })
             }
-            onFocus={() => this.setState({ passwordError: '' })}
+            onFocus={() => this.setState({ confirmPasswordError: '' })}
+            onBlur={this.renderConfirmPasswordError}
           />
         </CardSection>
         <CardSection>

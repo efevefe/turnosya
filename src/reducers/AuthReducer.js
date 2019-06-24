@@ -57,7 +57,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOGIN_FAIL:
       return {
         ...state,
-        error: action.payload,
+        error: 'Usuario o contraseña incorrectos',
         loadingLogin: false,
         loadingFacebook: false,
         loadingGoogle: false,

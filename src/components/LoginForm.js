@@ -14,36 +14,58 @@ import {
 } from '../actions';
 
 class LoginForm extends Component {
-  state = { emailError: ''};
-  onButonPressHandler(){
-    if(this.renderEmailError()){
+  state = { emailError: '', passwordError: '' };
+  
+  onButonPressHandler() {
+    if (this.validateMinimumData()) {
       this.props.onLogin({
         email: this.props.email,
         password: this.props.password
-    })
-  }}
-  
+      })
+    }
+  }
+
   onCreateAcount() {
-    
-      const navigateAction = NavigationActions.navigate({
+    const navigateAction = NavigationActions.navigate({
       routeName: 'registerForm'
     });
 
     this.props.navigation.navigate(navigateAction);
   }
-  
+
   renderEmailError = () => {
-    if( this.props.email==''){
-     this.setState({ emailError: 'Dato requerido' });
-     return false;
-   }else if (!validateValueType('email', this.props.email)) {
-     this.setState({ emailError: 'Formato incorrecto' });
-     return false;
-   }else {
-     this.setState({ emailError: '' });
-     return true;
-   }
- };
+    if (this.props.email == '') {
+      this.setState({ emailError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('email', this.props.email)) {
+      this.setState({ emailError: 'Formato de email incorrecto' });
+      return false;
+    } else {
+      this.setState({ emailError: '' });
+      return true;
+    }
+  };
+
+  renderPasswordError = () => {
+    if (this.props.password == '') {
+      this.setState({ passwordError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('password', this.props.password)) {
+      this.setState({ passwordError: 'La contraseña debe ser alfanumerica y contener al menos 6 caracteres' });
+      return false;
+    } else {
+      this.setState({ passwordError: '' });
+      return true;
+    }
+  }
+
+  validateMinimumData = () => {
+    return (
+      this.renderEmailError() &&
+      this.renderPasswordError()
+    )
+  }
+
   render() {
     const {
       containerStyle,
@@ -71,6 +93,7 @@ class LoginForm extends Component {
                 })
               }
               onFocus={() => this.setState({ emailError: '' })}
+              onBlur={this.renderEmailError}
             />
           </CardSection>
           <CardSection>
@@ -78,13 +101,15 @@ class LoginForm extends Component {
               placeholder="Contraseña"
               secureTextEntry
               value={this.props.password}
-              errorMessage={this.props.error}
+              errorMessage={this.state.passwordError || this.props.error}
               onChangeText={value =>
                 this.props.onLoginValueChange({
                   prop: 'password',
                   value
                 })
               }
+              onFocus={() => this.setState({ passwordError: '' })}
+              onBlur={this.renderPasswordError}
             />
           </CardSection>
           <CardSection>
@@ -164,9 +189,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { 
-    email, 
-    password, 
+  const {
+    email,
+    password,
     error,
     loadingLogin,
     loadingFacebook,
@@ -177,9 +202,9 @@ const mapStateToProps = state => {
     disabledCreateAccount
   } = state.auth;
 
-  return { 
-    email, 
-    password, 
+  return {
+    email,
+    password,
     error,
     loadingLogin,
     loadingFacebook,
