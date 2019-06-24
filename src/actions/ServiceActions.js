@@ -27,7 +27,7 @@ export const serviceCreate = ({ name, duration, price, description }, navigation
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
     db.collection(`Commerces/${currentUser.uid}/Services`)
-    //db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`)
+    //db.collection(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services`)
       .add({ name, duration, price, description, softDelete: null })
       .then(() => {
         dispatch({ type: SERVICE_CREATE });
@@ -45,7 +45,7 @@ export const servicesRead = () => {
     dispatch({ type: SERVICES_READING });
 
     db.collection(`Commerces/${currentUser.uid}/Services`)
-    //db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`)
+    //db.collection(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services`)
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
@@ -62,7 +62,7 @@ export const serviceDelete = ({ id }) => {
 
   return dispatch => {
     db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
-    //db.doc(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services/${id}`)
+    //db.doc(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services/${id}`)
       .update({ softDelete: new Date() })
       .then(() => dispatch({ type: SERVICE_DELETE }))
       .catch(error => console.log(error));
@@ -77,7 +77,7 @@ export const serviceUpdate = ({ id, name, duration, price, description }, naviga
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
     db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
-    //db.doc(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services/${id}`)
+    //db.doc(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services/${id}`)
       .update({ name, duration, price, description })
       .then(() => {
         dispatch({ type: SERVICE_UPDATE });
