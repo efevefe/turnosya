@@ -73,7 +73,7 @@ class RegisterForm extends Component {
             autoCapitalize="none"
             keyboardType="email-address"
             value={this.props.email}
-            errorMessage={this.state.emailError}
+            errorMessage={this.state.emailError || this.props.error}
             onChangeText={value =>
               this.props.onRegisterValueChange({
                 prop: 'email',
@@ -131,9 +131,9 @@ class RegisterForm extends Component {
 }
 
 const mapStateToProps = state => {
-  const { email, password, confirmPassword, loading } = state.registerForm;
+  const { email, password, confirmPassword, loading, error } = state.registerForm;
 
-  return { email, password, confirmPassword, loading };
+  return { email, password, confirmPassword, loading, error };
 };
 
 export default connect(
