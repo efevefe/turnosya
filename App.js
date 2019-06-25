@@ -4,9 +4,13 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
-import CommerceNavigation from './src/navigation/CommerceNavigation';
-
+import { MAIN_COLOR } from './src/constants';
+import { Spinner } from './src/components/common';
+import CommerceDrawer from './src/navigation/CommerceDrawer';
+import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
+
+console.disableYellowBox = true;
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -15,25 +19,47 @@ var firebaseConfig = {
   projectId: 'proyecto-turnosya',
   storageBucket: 'proyecto-turnosya.appspot.com',
   messagingSenderId: '425889819253',
-  appId: '1:425889819253:web:22821710c1e913a5',
+  appId: '1:425889819253:web:22821710c1e913a5'
 };
 
 firebase.initializeApp(firebaseConfig);
 
-//logueo para facilitar las pruebas
-firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
+//firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
+//firebase.auth().signOut();
 
-console.disableYellowBox = true;
+const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
-export default class App extends React.Component {
+class App extends React.Component {
+  state = { logged: false, screenLoading: true };
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ logged: true, screenLoading: false });
+      } else {
+        this.setState({ logged: false, screenLoading: false });
+      }
+    });
+  }
+
+  renderNavigation = () => {
+    const { screenLoading, logged } = this.state;
+
+    if (screenLoading) {
+      return <Spinner size="large" color={MAIN_COLOR} />;
+    } else {
+      if (logged) {
+        return <CommerceDrawer />;
+      } else {
+        return <GuestNavigation />;
+      }
+    }
+  };
+
   render() {
-    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
-
     return (
       <Provider store={store}>
-        <View style={styles.container}>
-          <CommerceNavigation />
-        </View>
+        <View style={styles.container}>{this.renderNavigation()}</View>
       </Provider>
     );
   }
@@ -44,6 +70,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignSelf: 'stretch',
-    justifyContent: 'flex-start',
-  },
+    justifyContent: 'flex-start'
+  }
 });
+
+export default App;

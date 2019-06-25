@@ -1,25 +1,25 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { 
-  ON_VALUE_CHANGE, 
+import {
+  ON_SERVICE_VALUE_CHANGE,
   ON_FORM_OPEN,
-  SERVICE_CREATE, 
-  SERVICES_READING, 
-  SERVICES_READ, 
+  SERVICE_CREATE,
+  SERVICES_READING,
+  SERVICES_READ,
   SERVICE_FORM_SUBMIT,
-  SERVICE_DELETE, 
+  SERVICE_DELETE,
   SERVICE_UPDATE
 } from './types';
 
-export const onValueChange = ({ prop, value }) => {
-  return { type: ON_VALUE_CHANGE, payload: { prop, value } };
+export const onServiceValueChange = ({ prop, value }) => {
+  return { type: ON_SERVICE_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
-}
+};
 
-export const serviceCreate = ({ name, duration, price, description }) => {
+export const serviceCreate = ({ name, duration, price, description }, navigation) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -27,21 +27,27 @@ export const serviceCreate = ({ name, duration, price, description }) => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
     db.collection(`Commerces/${currentUser.uid}/Services`)
+    //db.collection(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services`)
       .add({ name, duration, price, description, softDelete: null })
-      .then(() => dispatch({ type: SERVICE_CREATE }))
+      .then(() => {
+        dispatch({ type: SERVICE_CREATE });
+        navigation.goBack();
+      })
       .catch(error => console.log(error));
   };
 };
 
 export const servicesRead = () => {
-  //const { currentUser } = firebase.auth();
+  const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICES_READING });
 
-    //db.collection(`Commerces/${currentUser.uid}/Services`).get()
-    db.collection(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services`).where('softDelete', '==', null).orderBy('name', 'asc')
+    db.collection(`Commerces/${currentUser.uid}/Services`)
+    //db.collection(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services`)
+      .where('softDelete', '==', null)
+      .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var services = [];
         snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
@@ -51,27 +57,32 @@ export const servicesRead = () => {
 };
 
 export const serviceDelete = ({ id }) => {
-  //const { currentUser } = firebase.auth();
+  const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    //db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
-    db.doc(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services/${id}`)
+    db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
+    //db.doc(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services/${id}`)
       .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: SERVICE_DELETE }));
+      .then(() => dispatch({ type: SERVICE_DELETE }))
+      .catch(error => console.log(error));
   };
-}
+};
 
-export const serviceUpdate = ({ id, name, duration, price, description }) => {
-  //const { currentUser } = firebase.auth();
+export const serviceUpdate = ({ id, name, duration, price, description }, navigation) => {
+  const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
-    //db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
-    db.doc(`Commerces/dRUgwONi3CWOTwuxAm0c9SSKcs03/Services/${id}`)
+    db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
+    //db.doc(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services/${id}`)
       .update({ name, duration, price, description })
-      .then(() => dispatch({ type: SERVICE_UPDATE }));
+      .then(() => {
+        dispatch({ type: SERVICE_UPDATE });
+        navigation.goBack();
+      })
+      .catch(error => console.log(error));
   };
-}
+};

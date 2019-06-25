@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Spinner } from './common';
 import ServicesListItem from './ServicesListItem';
 import { servicesRead } from '../actions';
+import { MAIN_COLOR } from '../constants';
 
 class ServicesList extends Component {
     componentWillMount() {
@@ -16,7 +17,7 @@ class ServicesList extends Component {
 
     renderList() {
         if (this.props.loading) {
-            return <Spinner size='large' color='#c72c41' />;
+            return <Spinner size='large' color={MAIN_COLOR} />;
         } else {
             return (
                 <View style={{ flex: 1 }}>
