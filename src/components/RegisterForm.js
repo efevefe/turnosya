@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { onRegister, onRegisterValueChange } from '../actions';
-import { validateValueType } from './common/validate';
+import { validateValueType } from '../utils';
 
 class RegisterForm extends Component {
   state = { emailError: '', passwordError: '', confirmPasswordError: '' };
@@ -35,13 +35,16 @@ class RegisterForm extends Component {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
-      this.setState({ passwordError: 'La contraseña debe ser alfanumerica y contener al menos 6 caracteres' });
+      this.setState({
+        passwordError:
+          'La contraseña debe ser alfanumerica y contener al menos 6 caracteres'
+      });
       return false;
     } else {
       this.setState({ passwordError: '' });
       return true;
     }
-  }
+  };
 
   renderConfirmPasswordError = () => {
     if (this.props.confirmPassword == '') {
@@ -131,7 +134,13 @@ class RegisterForm extends Component {
 }
 
 const mapStateToProps = state => {
-  const { email, password, confirmPassword, loading, error } = state.registerForm;
+  const {
+    email,
+    password,
+    confirmPassword,
+    loading,
+    error
+  } = state.registerForm;
 
   return { email, password, confirmPassword, loading, error };
 };

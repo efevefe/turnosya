@@ -1,14 +1,14 @@
 import firebase from 'firebase';
 
-import { 
-  ON_LOGIN_VALUE_CHANGE, 
-  ON_LOGIN, 
-  ON_LOGIN_SUCCESS, 
-  ON_LOGIN_FAIL, 
-  ON_LOGOUT, 
-  ON_LOGOUT_SUCCESS, 
-  ON_LOGIN_FACEBOOK, 
-  ON_LOGIN_GOOGLE 
+import {
+  ON_LOGIN_VALUE_CHANGE,
+  ON_LOGIN,
+  ON_LOGIN_SUCCESS,
+  ON_LOGIN_FAIL,
+  ON_LOGOUT,
+  ON_LOGOUT_SUCCESS,
+  ON_LOGIN_FACEBOOK,
+  ON_LOGIN_GOOGLE
 } from './types';
 
 export const onLoginValueChange = ({ prop, value }) => {
@@ -44,7 +44,22 @@ export const onFacebookLogin = () => {
           firebase
             .auth()
             .signInWithCredential(credential)
-            .then(user => dispatch({ type: ON_LOGIN_SUCCESS, payload: user }))
+            .then(({ user, additionalUserInfo }) => {
+              if (additionalUserInfo.isNewUser) {
+                let db = firebase.firestore();
+
+                db.collection('Profiles')
+                  .add({
+                    uid: user.uid,
+                    firstName: additionalUserInfo.profile.first_name,
+                    lastName: additionalUserInfo.profile.last_name,
+                    softDelete: false
+                  })
+                  .then(() =>
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
+                  );
+              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+            })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
             );
@@ -78,7 +93,22 @@ export const onGoogleLogin = () => {
           firebase
             .auth()
             .signInWithCredential(credential)
-            .then(user => dispatch({ type: ON_LOGIN_SUCCESS, payload: user }))
+            .then(({ user, additionalUserInfo }) => {
+              if (additionalUserInfo.isNewUser) {
+                let db = firebase.firestore();
+
+                db.collection('Profiles')
+                  .add({
+                    uid: user.uid,
+                    firstName: additionalUserInfo.profile.given_name,
+                    lastName: additionalUserInfo.profile.family_name,
+                    softDelete: false
+                  })
+                  .then(() =>
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
+                  );
+              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+            })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
             );
@@ -95,10 +125,12 @@ export const onGoogleLogin = () => {
 //no se esta usando por ahora
 export const onLogout = () => {
   return dispatch => {
-    dispatch({ type: ON_LOGOUT })
-    
-    firebase.auth().signOut()
-    .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
-    .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
-  }
-}
+    dispatch({ type: ON_LOGOUT });
+
+    firebase
+      .auth()
+      .signOut()
+      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
+      .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
+  };
+};

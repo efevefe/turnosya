@@ -5,7 +5,7 @@ import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection, Button, Input } from './common';
-import { validateValueType } from './common/validate';
+import { validateValueType } from '../utils';
 import {
   onLogin,
   onLoginValueChange,
@@ -17,13 +17,13 @@ const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
 
 class LoginForm extends Component {
   state = { emailError: '', passwordError: '' };
-  
+
   onButonPressHandler() {
     if (this.validateMinimumData()) {
       this.props.onLogin({
         email: this.props.email,
         password: this.props.password
-      })
+      });
     }
   }
 
@@ -53,20 +53,20 @@ class LoginForm extends Component {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
-      this.setState({ passwordError: 'La contraseña debe ser alfanumerica y contener al menos 6 caracteres' });
+      this.setState({
+        passwordError:
+          'La contraseña debe ser alfanumerica y contener al menos 6 caracteres'
+      });
       return false;
     } else {
       this.setState({ passwordError: '' });
       return true;
     }
-  }
+  };
 
   validateMinimumData = () => {
-    return (
-      this.renderEmailError() &&
-      this.renderPasswordError()
-    )
-  }
+    return this.renderEmailError() && this.renderPasswordError();
+  };
 
   render() {
     const {
@@ -77,11 +77,14 @@ class LoginForm extends Component {
     } = styles;
 
     return (
-      <View style={containerStyle} >
+      <View style={containerStyle}>
         <View style={logoContainerStyle}>
-            <Image source={require('../../assets/icon.png')} style={{ height: iconSize, width: iconSize }} />
-          </View>
-        <View style={loginContainerStyle} >
+          <Image
+            source={require('../../assets/icon.png')}
+            style={{ height: iconSize, width: iconSize }}
+          />
+        </View>
+        <View style={loginContainerStyle}>
           <CardSection>
             <Input
               placeholder="E-Mail"
@@ -132,7 +135,7 @@ class LoginForm extends Component {
           <CardSection>
             <Button
               title="Conectar con Google"
-              color='#de5145'
+              color="#de5145"
               loading={this.props.loadingGoogle}
               onPress={() => this.props.onGoogleLogin()}
               icon={
@@ -146,7 +149,7 @@ class LoginForm extends Component {
             />
             <Button
               title="Conectar con Facebook"
-              color='#4267b2'
+              color="#4267b2"
               loading={this.props.loadingFacebook}
               onPress={() => this.props.onFacebookLogin()}
               icon={
@@ -183,11 +186,11 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingBottom: 10
   },
-  logoContainerStyle: { 
+  logoContainerStyle: {
     flex: 1,
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10 
+    paddingTop: 10
   },
   loginContainerStyle: {
     justifyContent: 'center'
