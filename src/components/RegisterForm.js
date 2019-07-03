@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { onRegister, onRegisterValueChange } from '../actions';
-import { validateValueType } from './common/validate';
+import { validateValueType } from '../utils';
 
 class RegisterForm extends Component {
   state = { emailError: '', passwordError: '', confirmPasswordError: '' };
