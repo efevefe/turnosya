@@ -5,7 +5,7 @@ import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection, Button, Input } from './common';
-import { validateValueType } from './common/validate';
+import { validateValueType } from '../utils';
 import {
   onLogin,
   onLoginValueChange,
