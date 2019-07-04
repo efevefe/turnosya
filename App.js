@@ -10,6 +10,8 @@ import CommerceDrawer from './src/navigation/CommerceDrawer';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
+import CourtForm from './src/components/CourtForm';
+
 console.disableYellowBox = true;
 
 var firebaseConfig = {
@@ -48,11 +50,12 @@ class App extends React.Component {
     if (screenLoading) {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
-      if (logged) {
-        return <CommerceDrawer />;
-      } else {
-        return <GuestNavigation />;
-      }
+      //if (logged) {
+      return <CourtForm />;
+      //   return <CommerceDrawer />;
+      // } else {
+      //   return <GuestNavigation />;
+      // }
     }
   };
 

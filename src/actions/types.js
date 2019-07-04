@@ -25,3 +25,7 @@ export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+
+// Court types
+export const ON_COURT_VALUE_CHANGE = 'on_court_value_change';
+export const ON_COURT_CREATE = 'on_court_create';
