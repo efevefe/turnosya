@@ -20,9 +20,9 @@ class CourtForm extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   this.getDataBaseData();
-  // }
+  componentDidMount() {
+    this.getDataBaseData();
+  }
 
   getDataBaseData = () => {
     firebase
@@ -30,31 +30,31 @@ class CourtForm extends Component {
       .collection('CourtType')
       .get()
       .then(querySnapshot => {
-        let id = ['Elija una opcion ...'];
-        let data = [{ '0': 'Elija una opcion ...' }];
+        let id = [];
+        let data = [];
+        let i = 1;
         querySnapshot.forEach(doc => {
-          id.push(doc.id);
-          data.push(doc.data());
+          id.push({ value: i, label: doc.id });
+          data.push({ value: i, label: doc.data().groundType });
+          i++;
         });
         this.setState({ id, data });
       });
   };
 
-  renderPicker = () => {
-    return this.state.id.map((item, index) => {
-      return <Picker.Item key={index} label={item} value={item} />;
-    });
-  };
-
-  renderPicker2 = () => {
+  renderGroundItems = () => {
     if (this.state.indexSelected) {
-      const values = this.state.data[this.state.indexSelected];
-      const arr = values.groundType;
-      return arr.map((item, index) => {
-        return <Picker.Item key={index} label={item} value={item} />;
+      console.log(this.state.data);
+      const grounds = this.state.data[this.state.indexSelected - 1].label;
+      let i = 0;
+      const res = [];
+      grounds.forEach(ground => {
+        i++;
+        return res.push({ value: i, label: ground });
       });
+      return res;
     } else {
-      return null;
+      return placeHolder;
     }
   };
 
@@ -75,45 +75,34 @@ class CourtForm extends Component {
               }
             />
           </CardSection>
-
-          <Picker items={datos} />
-
-          {/* <CardSection>
-            <Picker
-              selectedValue={this.state.typeSelected}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({
-                  indexSelected: itemIndex,
-                  typeSelected: itemValue,
-                  pickerEnable: true
-                })
-              }
-            >
-              {this.renderPicker()}
-            </Picker>
-          </CardSection>
-
           <CardSection>
             <Picker
-              enable={this.state.pickerEnable}
-              selectedValue={this.state.typeSelected2}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({
-                  indexSelected2: itemIndex,
-                  typeSelected2: itemValue
-                })
-              }
-            >
-              {this.renderPicker2()}
-            </Picker>
-          </CardSection> */}
+              placeholder={placeHolder}
+              items={this.state.id}
+              onValueChange={value => {
+                this.setState({ indexSelected: value });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            <Picker
+              placeholder={placeHolder}
+              items={this.renderGroundItems()}
+              // onValueChange={value => {
+              //   this.setState({ indexSelected: value });
+              // }}
+            />
+          </CardSection>
         </Card>
       </View>
     );
   }
 }
-const datos = [{ label: 'tnis', value: 't' }, { label: 'ddd', value: 'aa' }];
 
+const placeHolder = {
+  label: 'Elija una opcion...',
+  value: null
+};
 const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
