@@ -53,7 +53,10 @@ export const onFacebookLogin = () => {
                     uid: user.uid,
                     firstName: additionalUserInfo.profile.first_name,
                     lastName: additionalUserInfo.profile.last_name,
-                    softDelete: false
+                    email: user.email,
+                    phone: user.phoneNumber,
+                    /*picture: additionalUserInfo.profile.picture.data.url*/
+                    softDelete: null
                   })
                   .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
@@ -102,7 +105,10 @@ export const onGoogleLogin = () => {
                     uid: user.uid,
                     firstName: additionalUserInfo.profile.given_name,
                     lastName: additionalUserInfo.profile.family_name,
-                    softDelete: false
+                    email: user.email,
+                    phone: user.phoneNumber,
+                    /*picture: user.photoURL*/
+                    softDelete: null
                   })
                   .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
