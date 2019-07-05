@@ -20,14 +20,14 @@ class CourtForm extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getDataBaseData();
-  }
+  // componentDidMount() {
+  //   this.getDataBaseData();
+  // }
 
   getDataBaseData = () => {
     firebase
       .firestore()
-      .collection('CourteType')
+      .collection('CourtType')
       .get()
       .then(querySnapshot => {
         let id = ['Elija una opcion ...'];
@@ -41,22 +41,18 @@ class CourtForm extends Component {
   };
 
   renderPicker = () => {
-    if (this.state.id.length > 0) {
-      return this.state.id.map((item, index) => {
-        return <Picker.Item key={index} label={item} value={item} />;
-      });
-    } else {
-      return null;
-    }
+    return this.state.id.map((item, index) => {
+      return <Picker.Item key={index} label={item} value={item} />;
+    });
   };
 
   renderPicker2 = () => {
     if (this.state.indexSelected) {
-      return Object.values(this.state.data[this.state.indexSelected]).map(
-        (item, index) => {
-          return <Picker.Item key={index} label={item} value={item} />;
-        }
-      );
+      const values = this.state.data[this.state.indexSelected];
+      const arr = values.groundType;
+      return arr.map((item, index) => {
+        return <Picker.Item key={index} label={item} value={item} />;
+      });
     } else {
       return null;
     }
@@ -80,7 +76,9 @@ class CourtForm extends Component {
             />
           </CardSection>
 
-          <CardSection>
+          <Picker items={datos} />
+
+          {/* <CardSection>
             <Picker
               selectedValue={this.state.typeSelected}
               onValueChange={(itemValue, itemIndex) =>
@@ -108,12 +106,13 @@ class CourtForm extends Component {
             >
               {this.renderPicker2()}
             </Picker>
-          </CardSection>
+          </CardSection> */}
         </Card>
       </View>
     );
   }
 }
+const datos = [{ label: 'tnis', value: 't' }, { label: 'ddd', value: 'aa' }];
 
 const styles = StyleSheet.create({
   cardStyle: {

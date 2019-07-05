@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
-import { Picker as RNPicker, View } from 'react-native';
+import { View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 class Picker extends Component {
   render() {
     return (
       <View>
-        <RNPicker
+        <RNPickerSelect
           {...this.props}
-          selectedValue={this.props.selectedValue}
           style={{ height: 50, width: 100 }}
+          items={this.props.items}
           // onValueChange={(itemValue, itemIndex) =>
           //   this.setState({ language: itemValue })
           // }
-        >
-          {this.props.children}
-        </RNPicker>
+        />
       </View>
     );
   }
