@@ -45,23 +45,27 @@ export const onFacebookLogin = () => {
             .auth()
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
+              const { first_name, last_name } = additionalUserInfo.profile;
+
+              const userData = {
+                uid: user.uid,
+                firstName: first_name,
+                lastName: last_name,
+                email: user.email,
+                phone: user.phoneNumber,
+                /*picture: additionalUserInfo.profile.picture.data.url*/
+                softDelete: null
+              };
+
               if (additionalUserInfo.isNewUser) {
                 let db = firebase.firestore();
 
                 db.collection('Profiles')
-                  .add({
-                    uid: user.uid,
-                    firstName: additionalUserInfo.profile.first_name,
-                    lastName: additionalUserInfo.profile.last_name,
-                    email: user.email,
-                    phone: user.phoneNumber,
-                    /*picture: additionalUserInfo.profile.picture.data.url*/
-                    softDelete: null
-                  })
+                  .add(userData)
                   .then(() =>
-                    dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
@@ -97,23 +101,26 @@ export const onGoogleLogin = () => {
             .auth()
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
+              const { given_name, family_name } = additionalUserInfo.profile;
+
+              const userData = {
+                uid: user.uid,
+                firstName: given_name,
+                lastName: family_name,
+                email: user.email,
+                phone: user.phoneNumber,
+                /*picture: additionalUserInfo.profile.picture.data.url*/
+                softDelete: null
+              };
               if (additionalUserInfo.isNewUser) {
                 let db = firebase.firestore();
 
                 db.collection('Profiles')
-                  .add({
-                    uid: user.uid,
-                    firstName: additionalUserInfo.profile.given_name,
-                    lastName: additionalUserInfo.profile.family_name,
-                    email: user.email,
-                    phone: user.phoneNumber,
-                    /*picture: user.photoURL*/
-                    softDelete: null
-                  })
+                  .add({ userData })
                   .then(() =>
-                    dispatch({ type: ON_LOGIN_SUCCESS, payload: user })
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
