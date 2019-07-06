@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { CardSection, Input, Picker } from './common';
 import { onCourtValueChange, onFormOpen } from '../actions';
+import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
   constructor() {
@@ -44,7 +45,6 @@ class CourtForm extends Component {
 
   renderGroundItems = () => {
     if (this.state.indexSelected) {
-      console.log(this.state.data);
       const grounds = this.state.data[this.state.indexSelected - 1].label;
       let i = 0;
       const res = [];
@@ -76,6 +76,7 @@ class CourtForm extends Component {
             />
           </CardSection>
           <CardSection>
+            <Text style={styles.textStyle}>Tipo de cancha:</Text>
             <Picker
               placeholder={placeHolder}
               items={this.state.id}
@@ -85,12 +86,28 @@ class CourtForm extends Component {
             />
           </CardSection>
           <CardSection>
+            <Text style={styles.textStyle}>Tipo de suelo:</Text>
+
             <Picker
               placeholder={placeHolder}
               items={this.renderGroundItems()}
-              // onValueChange={value => {
-              //   this.setState({ indexSelected: value });
-              // }}
+              onValueChange={value => {
+                this.setState({ indexSelected2: value });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Precio:"
+              placeholder="Precio de la cancha"
+              keyboardType="numeric"
+              value={this.props.price}
+              onChangeText={value =>
+                this.props.onCourtValueChange({
+                  prop: 'price',
+                  value
+                })
+              }
             />
           </CardSection>
         </Card>
@@ -108,6 +125,14 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingTop: 10,
     borderRadius: 10
+  },
+  textStyle: {
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: MAIN_COLOR,
+    marginRight: 10,
+    marginLeft: 10
+    //padding: 5
   }
 });
 
