@@ -54,6 +54,7 @@ class CourtForm extends Component {
       });
       return res;
     } else {
+      console.log(placeHolder[0])
       return placeHolder;
     }
   };
@@ -78,7 +79,7 @@ class CourtForm extends Component {
           <CardSection>
             <Text style={styles.textStyle}>Tipo de cancha:</Text>
             <Picker
-              placeholder={placeHolder}
+              placeholder={placeHolder[0]}
               items={this.state.id}
               onValueChange={value => {
                 this.setState({ indexSelected: value });
@@ -89,7 +90,7 @@ class CourtForm extends Component {
             <Text style={styles.textStyle}>Tipo de suelo:</Text>
 
             <Picker
-              placeholder={placeHolder}
+              placeholder={placeHolder[0]}
               items={this.renderGroundItems()}
               onValueChange={value => {
                 this.setState({ indexSelected2: value });
@@ -116,10 +117,10 @@ class CourtForm extends Component {
   }
 }
 
-const placeHolder = {
+const placeHolder = [{
   label: 'Elija una opcion...',
-  value: null
-};
+  value: 0
+}];
 const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
