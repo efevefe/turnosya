@@ -1,60 +1,38 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { CardSection, Input, Picker } from './common';
-import { onCourtValueChange, onFormOpen } from '../actions';
-import { MAIN_COLOR } from '../constants';
+import { onCourtValueChange, getCourtAndGroundTypes } from '../actions';
 
 class CourtForm extends Component {
   constructor() {
     super();
+
     this.state = {
-      id: [],
-      data: [],
-      indexSelected: null,
-      typeSelected: null,
-      pickerEnable: false,
-      typeSelected2: null,
-      indexSelected2: null
+      indexCourtSelected: null,
+      indexGroundSelected: null
     };
   }
 
   componentDidMount() {
-    this.getDataBaseData();
+    this.props.getCourtAndGroundTypes();
   }
 
-  getDataBaseData = () => {
-    firebase
-      .firestore()
-      .collection('CourtType')
-      .get()
-      .then(querySnapshot => {
-        let id = [];
-        let data = [];
-        let i = 1;
-        querySnapshot.forEach(doc => {
-          id.push({ value: i, label: doc.id });
-          data.push({ value: i, label: doc.data().groundType });
-          i++;
-        });
-        this.setState({ id, data });
-      });
-  };
-
   renderGroundItems = () => {
-    if (this.state.indexSelected) {
-      const grounds = this.state.data[this.state.indexSelected - 1].label;
+    const { indexCourtSelected } = this.state;
+
+    if (indexCourtSelected) {
+      const groundType = this.props.grounds[indexCourtSelected - 1].label;
       let i = 0;
       const res = [];
-      grounds.forEach(ground => {
+      groundType.forEach(ground => {
         i++;
         return res.push({ value: i, label: ground });
       });
+
       return res;
     } else {
-      console.log(placeHolder[0])
       return placeHolder;
     }
   };
@@ -76,24 +54,31 @@ class CourtForm extends Component {
               }
             />
           </CardSection>
+
           <CardSection>
-            <Text style={styles.textStyle}>Tipo de cancha:</Text>
             <Picker
+              title={'Tipo de cancha:'}
               placeholder={placeHolder[0]}
-              items={this.state.id}
+              items={this.props.courts}
               onValueChange={value => {
-                this.setState({ indexSelected: value });
+                /* habria que tirar un console.log de value, para ver que te trae, o en vez de que traiga value solo */
+                /* hacer la funcion con dos parametros. Algo como: (value, label) => {...} y ver que valores traen */
+                this.setState({ indexCourtSelected: value });
+                /* hay que ver la forma de que el 'value' te de el label que es el que vamos a guardar */
+                /* this.props.onCourtValueChange({ prop: 'court', value: value.label(oalgo asi) }); */
               }}
             />
           </CardSection>
-          <CardSection>
-            <Text style={styles.textStyle}>Tipo de suelo:</Text>
 
+          <CardSection>
             <Picker
+              title={'Tipo de suelo:'}
               placeholder={placeHolder[0]}
               items={this.renderGroundItems()}
               onValueChange={value => {
-                this.setState({ indexSelected2: value });
+                /* aca lo mismo que con el de arriba */
+                this.setState({ indexGroundSelected: value });
+                /* this.props.onCourtValueChange({ prop: 'court', value: value.label(oalgo asi) }); */
               }}
             />
           </CardSection>
@@ -117,33 +102,27 @@ class CourtForm extends Component {
   }
 }
 
-const placeHolder = [{
-  label: 'Elija una opcion...',
-  value: 0
-}];
+const placeHolder = [
+  {
+    label: 'Elija una opcion...',
+    value: 0
+  }
+];
 const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
     paddingTop: 10,
     borderRadius: 10
-  },
-  textStyle: {
-    fontSize: 14,
-    fontWeight: 'normal',
-    color: MAIN_COLOR,
-    marginRight: 10,
-    marginLeft: 10
-    //padding: 5
   }
 });
 
 const mapStateToProps = state => {
-  const { name, typeCourt, typeGround, price, loading } = state.courtForm;
+  const { name, courts, court, grounds, ground, price } = state.courtForm;
 
-  return { name, typeCourt, typeGround, price, loading };
+  return { name, courts, court, grounds, ground, price };
 };
 
 export default connect(
   mapStateToProps,
-  { onCourtValueChange, onFormOpen }
+  { onCourtValueChange, getCourtAndGroundTypes }
 )(CourtForm);

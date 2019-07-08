@@ -6,8 +6,10 @@ import {
 
 const INITIAL_STATE = {
   name: '',
-  typeCourt: '',
-  typeGround: '',
+  courts: [],
+  court: '',
+  grouds: [],
+  ground: '',
   price: '',
   loading: false
 };
