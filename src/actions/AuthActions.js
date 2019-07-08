@@ -48,7 +48,6 @@ export const onFacebookLogin = () => {
               const { first_name, last_name } = additionalUserInfo.profile;
 
               const userData = {
-                uid: user.uid,
                 firstName: first_name,
                 lastName: last_name,
                 email: user.email,
@@ -61,7 +60,8 @@ export const onFacebookLogin = () => {
                 let db = firebase.firestore();
 
                 db.collection('Profiles')
-                  .add(userData)
+                  .doc(user.uid)
+                  .set(userData)
                   .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
@@ -104,7 +104,6 @@ export const onGoogleLogin = () => {
               const { given_name, family_name } = additionalUserInfo.profile;
 
               const userData = {
-                uid: user.uid,
                 firstName: given_name,
                 lastName: family_name,
                 email: user.email,
@@ -116,7 +115,8 @@ export const onGoogleLogin = () => {
                 let db = firebase.firestore();
 
                 db.collection('Profiles')
-                  .add({ userData })
+                  .doc(user.uid)
+                  .set(userData)
                   .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
