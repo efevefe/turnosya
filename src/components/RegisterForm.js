@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { CardSection, Button, Input } from './common';
-import { onRegister, onRegisterValueChange } from '../actions';
+import { onRegisterValueChange } from '../actions';
 import { validateValueType } from '../utils';
 
 class RegisterForm extends Component {
@@ -10,10 +11,11 @@ class RegisterForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      this.props.onRegister({
-        email: this.props.email,
-        password: this.props.password
+      const navigateAction = NavigationActions.navigate({
+        routeName: 'registerFormTwo'
       });
+
+      this.props.navigation.navigate(navigateAction);
     }
   }
 
@@ -123,7 +125,7 @@ class RegisterForm extends Component {
         </CardSection>
         <CardSection>
           <Button
-            title="Registrar"
+            title="Continuar"
             loading={this.props.loading}
             onPress={this.onButtonPressHandler.bind(this)}
           />
@@ -147,5 +149,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onRegister, onRegisterValueChange }
+  { onRegisterValueChange }
 )(RegisterForm);

@@ -1,9 +1,17 @@
-import { ON_REGISTER_VALUE_CHANGE, ON_REGISTER, ON_REGISTER_SUCCESS, ON_REGISTER_FAIL } from '../actions/types';
+import {
+  ON_REGISTER_VALUE_CHANGE,
+  ON_REGISTER,
+  ON_REGISTER_SUCCESS,
+  ON_REGISTER_FAIL
+} from '../actions/types';
 
 const INITIAL_STATE = {
   email: '',
   password: '',
   confirmPassword: '',
+  firstName: '',
+  lastName: '',
+  phone: -1,
   loading: false,
   error: ''
 };

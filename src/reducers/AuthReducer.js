@@ -11,12 +11,6 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  uid: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  phone: -1,
   loadingLogin: false,
   loadingFacebook: false,
   loadingGoogle: false,
@@ -57,16 +51,7 @@ export default (state = INITIAL_STATE, action) => {
         disabledCreateAccount: true
       };
     case ON_LOGIN_SUCCESS:
-      const { uid, firstName, lastName, email, phone } = action.payload;
-
-      return {
-        ...INITIAL_STATE,
-        uid,
-        firstName,
-        lastName,
-        email,
-        phone
-      };
+      return INITIAL_STATE;
     case ON_LOGIN_FAIL:
       return {
         ...state,

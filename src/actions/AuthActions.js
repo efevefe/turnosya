@@ -57,7 +57,7 @@ export const onFacebookLogin = () => {
               };
 
               if (additionalUserInfo.isNewUser) {
-                let db = firebase.firestore();
+                const db = firebase.firestore();
 
                 db.collection('Profiles')
                   .doc(user.uid)
