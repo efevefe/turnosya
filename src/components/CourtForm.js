@@ -131,7 +131,7 @@ class CourtForm extends Component {
 const placeHolder = [
   {
     label: 'Elija una opcion...',
-    value: 0
+    value: 1
   }
 ];
 const styles = StyleSheet.create({
