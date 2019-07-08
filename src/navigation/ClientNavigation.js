@@ -78,7 +78,7 @@ const favoritesStack = createStackNavigator({
 )
 
 const profileStack = createStackNavigator({
-    perfil: {
+    profile: {
         screen: EmptyScreen,
         navigationOptions: ({ navigation }) => ({
             title: 'Perfil',
