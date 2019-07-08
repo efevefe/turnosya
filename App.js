@@ -6,7 +6,7 @@ import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
-import CommerceDrawer from './src/navigation/CommerceDrawer';
+import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
@@ -49,7 +49,7 @@ class App extends React.Component {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
       if (logged) {
-        return <CommerceDrawer />;
+        return <MainNavigation />;
       } else {
         return <GuestNavigation />;
       }
