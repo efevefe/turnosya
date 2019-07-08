@@ -106,7 +106,7 @@ class ServiceForm extends Component {
 
   render() {
     const { cardStyle } = styles;
-
+    console.log('COURT: ', this.props.court);
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
         <View>

@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
-import { CardSection, Input, Picker } from './common';
-import { onCourtValueChange, getCourtAndGroundTypes } from '../actions';
+import { CardSection, Input, Picker, Button } from './common';
+import {
+  onCourtValueChange,
+  getCourtAndGroundTypes,
+  courtCreate
+} from '../actions';
 
 class CourtForm extends Component {
   constructor() {
@@ -19,11 +23,20 @@ class CourtForm extends Component {
     this.props.getCourtAndGroundTypes();
   }
 
+  onButtonPressHandler() {
+    const { name, court, ground, price } = this.props;
+
+    this.props.courtCreate({ name, court, ground, price });
+
+    this.setState({ indexCourtSelected: null, indexGroundSelected: null });
+  }
+
   renderGroundItems = () => {
     const { indexCourtSelected } = this.state;
 
     if (indexCourtSelected) {
-      const groundType = this.props.grounds[indexCourtSelected - 1].label;
+      groundType = this.props.grounds[indexCourtSelected - 1].label;
+
       let i = 0;
       const res = [];
       groundType.forEach(ground => {
@@ -38,6 +51,8 @@ class CourtForm extends Component {
   };
 
   render() {
+    console.log('COURT: ', this.props.court, 'GROUND: ', this.props.ground);
+
     return (
       <View>
         <Card containerStyle={styles.cardStyle}>
@@ -61,11 +76,13 @@ class CourtForm extends Component {
               placeholder={placeHolder[0]}
               items={this.props.courts}
               onValueChange={value => {
-                /* habria que tirar un console.log de value, para ver que te trae, o en vez de que traiga value solo */
-                /* hacer la funcion con dos parametros. Algo como: (value, label) => {...} y ver que valores traen */
-                this.setState({ indexCourtSelected: value });
-                /* hay que ver la forma de que el 'value' te de el label que es el que vamos a guardar */
-                /* this.props.onCourtValueChange({ prop: 'court', value: value.label(oalgo asi) }); */
+                this.setState({
+                  indexCourtSelected: value
+                });
+                this.props.onCourtValueChange({
+                  prop: 'court',
+                  value: this.props.courts[value - 1].label
+                });
               }}
             />
           </CardSection>
@@ -76,9 +93,12 @@ class CourtForm extends Component {
               placeholder={placeHolder[0]}
               items={this.renderGroundItems()}
               onValueChange={value => {
-                /* aca lo mismo que con el de arriba */
                 this.setState({ indexGroundSelected: value });
-                /* this.props.onCourtValueChange({ prop: 'court', value: value.label(oalgo asi) }); */
+                this.props.onCourtValueChange({
+                  prop: 'ground',
+                  value: this.props.grounds[this.state.indexCourtSelected - 1]
+                    .label[value - 1]
+                });
               }}
             />
           </CardSection>
@@ -94,6 +114,12 @@ class CourtForm extends Component {
                   value
                 })
               }
+            />
+          </CardSection>
+          <CardSection>
+            <Button
+              title="Guardar"
+              onPress={this.onButtonPressHandler.bind(this)}
             />
           </CardSection>
         </Card>
@@ -124,5 +150,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCourtValueChange, getCourtAndGroundTypes }
+  { onCourtValueChange, getCourtAndGroundTypes, courtCreate }
 )(CourtForm);
