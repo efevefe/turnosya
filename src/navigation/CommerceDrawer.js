@@ -1,21 +1,20 @@
-import React from 'react';
 import { createAppContainer, createDrawerNavigator } from 'react-navigation';
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 
-const drawerOptions = {
+const drawerNavigationOptions = {
     drawerType: 'slide',
     drawerWidth: 200,
     contentComponent: CommerceDrawerContent,
 };
 
-const commerceScreenDrawer = createDrawerNavigator(
+const commerceDrawer = createDrawerNavigator(
     {
-        home: CommerceNavigation,
+        tabs: CommerceNavigation,
     },
-    drawerOptions
+    drawerNavigationOptions
 );
 
-const CommerceDrawer = createAppContainer(commerceScreenDrawer);
+const CommerceDrawer = createAppContainer(commerceDrawer);
 
 export default CommerceDrawer;
