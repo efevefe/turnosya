@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
+import ClientProfile from '../components/ClientProfile';
 import { MAIN_COLOR } from '../constants';
 
 // Stack navigation options
@@ -79,9 +80,10 @@ const favoritesStack = createStackNavigator({
 
 const profileStack = createStackNavigator({
     profile: {
-        screen: EmptyScreen,
+        screen: ClientProfile,
         navigationOptions: ({ navigation }) => ({
             title: 'Perfil',
+            headerRight: rightIcon(navigation, 'md-create', 'profile'),
             headerLeft: leftIcon(navigation, 'md-menu')
         })
     }
@@ -110,6 +112,7 @@ const tabNavigationOptions = {
             return <Ionicons name={iconName} size={30} color={tintColor} style={{ opacity: focused ? 1 : 0.5 }} />;
         }
     }),
+    initialRouteName: 'profile',
     tabBarOptions: {
         showLabel: false,
         activeTintColor: 'white',

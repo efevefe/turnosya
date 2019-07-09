@@ -22,7 +22,9 @@ var firebaseConfig = {
   appId: '1:425889819253:web:22821710c1e913a5'
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 //firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
 //firebase.auth().signOut();
