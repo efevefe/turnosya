@@ -11,6 +11,7 @@ import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
 import CourtForm from './src/components/CourtForm';
+import CourtList from './src/components/CourtList';
 
 console.disableYellowBox = true;
 
@@ -50,12 +51,12 @@ class App extends React.Component {
     if (screenLoading) {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
-      //if (logged) {
-      return <CourtForm />;
-      //   return <CommerceDrawer />;
-      // } else {
-      //   return <GuestNavigation />;
-      // }
+      if (logged) {
+        // return <CourtList />;
+        return <CommerceDrawer />;
+      } else {
+        return <GuestNavigation />;
+      }
     }
   };
 

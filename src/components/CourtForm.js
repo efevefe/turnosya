@@ -5,7 +5,9 @@ import { View, StyleSheet } from 'react-native';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
-  courtCreate
+  courtCreate,
+  onCourtFormOpen,
+  courtUpdate
 } from '../actions';
 import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
@@ -25,6 +27,7 @@ class CourtForm extends Component {
 
   state = {
     indexCourtSelected: null,
+    save: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
@@ -35,18 +38,48 @@ class CourtForm extends Component {
     this.props.getCourtAndGroundTypes();
   }
 
+  componentWillMount() {
+    const { params } = this.props.navigation.state;
+
+    if (params) {
+      _.each(params.court, (value, prop) => {
+        this.props.onCourtValueChange({ prop, value });
+      });
+    } else {
+      this.props.onCourtFormOpen();
+    }
+  }
+
   onButtonPressHandler() {
+    // this.setState({save: true})
     if (this.validateMinimumData()) {
       const { name, court, ground, price, navigation } = this.props;
-      //const { params } = this.props.navigation.state;
-
+      const { params } = this.props.navigation.state;
       //aca despues hay que ver el bien el tema de hacer todo con el navigation
-      this.props.courtCreate({
-        name,
-        court,
-        ground,
-        price
-      });
+      this.setState({ indexCourtSelected: null });
+      if (params) {
+        const { id } = this.props.navigation.state.params.court;
+        this.props.courtUpdate(
+          {
+            name,
+            court,
+            ground,
+            price,
+            id
+          },
+          navigation
+        );
+      } else {
+        this.props.courtCreate(
+          {
+            name,
+            court,
+            ground,
+            price
+          },
+          navigation
+        );
+      }
 
       // creo que con lo siguiente reinicas el this.state: " this.setState(this.state) "
 
@@ -142,7 +175,6 @@ class CourtForm extends Component {
 
   renderGroundItems = () => {
     const { indexCourtSelected } = this.state;
-
     if (indexCourtSelected > 0) {
       groundType = this.props.grounds[indexCourtSelected - 1].label;
 
@@ -267,5 +299,11 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCourtValueChange, getCourtAndGroundTypes, courtCreate }
+  {
+    onCourtValueChange,
+    getCourtAndGroundTypes,
+    courtCreate,
+    courtUpdate,
+    onCourtFormOpen
+  }
 )(CourtForm);

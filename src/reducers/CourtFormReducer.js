@@ -3,7 +3,8 @@ import {
   ON_FORM_OPEN,
   COURT_CREATE,
   COURT_FORM_SUMBIT,
-  COURT_EXISTED
+  COURT_EXISTED,
+  ON_COURT_FORM_OPEN
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -25,7 +26,7 @@ export default (state = INITIAL_STATE, action) => {
         [action.payload.prop]: action.payload.value,
         existedError: false
       };
-    case ON_FORM_OPEN:
+    case ON_COURT_FORM_OPEN:
       return INITIAL_STATE;
     case COURT_FORM_SUMBIT:
       return { ...state, loading: true, existedError: false };
