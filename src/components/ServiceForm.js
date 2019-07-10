@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { CardSection, Button as TYButton, Input as TYInput } from './common';
+import { CardSection, Button, Input } from './common';
 import { validateValueType } from '../utils';
 import {
   onServiceValueChange,
@@ -112,7 +112,7 @@ class ServiceForm extends Component {
         <View>
           <Card containerStyle={cardStyle}>
             <CardSection>
-              <TYInput
+              <Input
                 label="Nombre:"
                 placeholder="Nombre del servicio"
                 value={this.props.name}
@@ -128,7 +128,7 @@ class ServiceForm extends Component {
               />
             </CardSection>
             <CardSection>
-              <TYInput
+              <Input
                 label="Duración:"
                 placeholder="Duración del servicio"
                 keyboardType="numeric"
@@ -145,7 +145,7 @@ class ServiceForm extends Component {
               />
             </CardSection>
             <CardSection>
-              <TYInput
+              <Input
                 label="Precio:"
                 placeholder="Precio del servicio"
                 keyboardType="numeric"
@@ -162,7 +162,7 @@ class ServiceForm extends Component {
               />
             </CardSection>
             <CardSection>
-              <TYInput
+              <Input
                 label="Descripción:"
                 placeholder="Descripción del servicio"
                 multiline={true}
@@ -178,7 +178,7 @@ class ServiceForm extends Component {
               />
             </CardSection>
             <CardSection>
-              <TYButton
+              <Button
                 title="Guardar"
                 loading={this.props.loading}
                 onPress={this.onButtonPressHandler.bind(this)}

@@ -83,7 +83,6 @@ const profileStack = createStackNavigator({
         screen: ClientProfile,
         navigationOptions: ({ navigation }) => ({
             title: 'Perfil',
-            headerRight: rightIcon(navigation, 'md-create', 'profile'),
             headerLeft: leftIcon(navigation, 'md-menu')
         })
     }

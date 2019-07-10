@@ -25,3 +25,5 @@ export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+export const ON_USER_READING = 'on_user_reading';
+export const ON_USER_READ = 'on_user_read';
