@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     },
     titleStyle: {
         fontSize: 15,
-        color: color
+        color: color,
+        paddingLeft: 15
     }
 });
 

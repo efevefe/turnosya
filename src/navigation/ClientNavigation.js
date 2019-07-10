@@ -1,9 +1,8 @@
 import React from 'react';
-import { createStackNavigator, createAppContainer, createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
-import ServicesList from '../components/ServicesList';
-import ServiceForm from '../components/ServiceForm';
 import EmptyScreen from '../components/EmptyScreen';
+import ClientProfile from '../components/ClientProfile';
 import { MAIN_COLOR } from '../constants';
 
 // Stack navigation options
@@ -11,13 +10,14 @@ import { MAIN_COLOR } from '../constants';
 const stackNavigationOptions = {
     defaultNavigationOptions: {
         headerStyle: {
-            backgroundColor: MAIN_COLOR
+            backgroundColor: MAIN_COLOR,
+            height: 50
         },
         headerTintColor: 'white',
         headerTitleStyle: {
             textAlign: 'center',
             alignSelf: 'center',
-            fontSize: 20,
+            fontSize: 18,
             color: 'white',
             fontWeight: 'bold'
         }
@@ -26,7 +26,7 @@ const stackNavigationOptions = {
 
 const rightIcon = (navigation, icon, nextScreen) => <Ionicons
     name={icon}
-    size={30}
+    size={28}
     color='white'
     style={{ marginRight: 15 }}
     onPress={() => navigation.navigate(nextScreen)}
@@ -34,7 +34,7 @@ const rightIcon = (navigation, icon, nextScreen) => <Ionicons
 
 const leftIcon = (navigation, icon) => <Ionicons
     name={icon}
-    size={30}
+    size={28}
     color='white'
     style={{ marginLeft: 15 }}
     onPress={() => navigation.openDrawer()}
@@ -42,60 +42,54 @@ const leftIcon = (navigation, icon) => <Ionicons
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const calendarStack = createStackNavigator({
-    calendar: {
+const searchStack = createStackNavigator({
+    commercesList: {
         screen: EmptyScreen,
         navigationOptions: ({ navigation }) => ({
-            title: 'Calendario',
+            title: 'Buscar Negocios',
             headerLeft: leftIcon(navigation, 'md-menu')
-        })
-    }
-},
-    stackNavigationOptions
-);
-
-const servicesStack = createStackNavigator({
-    servicesList: {
-        screen: ServicesList,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Servicios',
-            headerRight: rightIcon(navigation, 'md-add', 'serviceForm'),
-            headerLeft: leftIcon(navigation, 'md-menu')
-        })
-    },
-    serviceForm: {
-        screen: ServiceForm,
-        navigationOptions: ({ navigation }) => ({
-            title: navigation.getParam('title', 'Nuevo Servicio'),
         })
     }
 },
     stackNavigationOptions
 )
 
-const courtsStack = createStackNavigator({
-    courtsList: {
+const calendarStack = createStackNavigator({
+    reservations: {
         screen: EmptyScreen,
         navigationOptions: ({ navigation }) => ({
-            title: 'Canchas',
+            title: 'Mis Turnos',
             headerLeft: leftIcon(navigation, 'md-menu')
         })
     }
 },
     stackNavigationOptions
-);
+)
+
+const favoritesStack = createStackNavigator({
+    favoritesList: {
+        screen: EmptyScreen,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Favoritos',
+            headerLeft: leftIcon(navigation, 'md-menu')
+        })
+    }
+},
+    stackNavigationOptions
+)
 
 const profileStack = createStackNavigator({
     profile: {
-        screen: EmptyScreen,
+        screen: ClientProfile,
         navigationOptions: ({ navigation }) => ({
             title: 'Perfil',
+            headerRight: rightIcon(navigation, 'md-create', 'profile'),
             headerLeft: leftIcon(navigation, 'md-menu')
         })
     }
 },
     stackNavigationOptions
-);
+)
 
 // Tab navigation options
 
@@ -105,12 +99,12 @@ const tabNavigationOptions = {
             const { routeName } = navigation.state;
             let iconName;
 
-            if (routeName === 'courts') {
-                iconName = `md-football`;
-            } else if (routeName === 'services') {
-                iconName = `md-cut`;
+            if (routeName === 'search') {
+                iconName = `md-search`;
             } else if (routeName === 'calendar') {
                 iconName = `md-calendar`;
+            } else if (routeName === 'favorites') {
+                iconName = `md-heart`;
             } else if (routeName === 'profile') {
                 iconName = `md-person`;
             }
@@ -118,6 +112,7 @@ const tabNavigationOptions = {
             return <Ionicons name={iconName} size={30} color={tintColor} style={{ opacity: focused ? 1 : 0.5 }} />;
         }
     }),
+    initialRouteName: 'profile',
     tabBarOptions: {
         showLabel: false,
         activeTintColor: 'white',
@@ -131,15 +126,15 @@ const tabNavigationOptions = {
 
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
-const commerceTabs = createBottomTabNavigator({
-    courts: courtsStack,
-    services: servicesStack,
+const clientTabs = createBottomTabNavigator({
+    search: searchStack,
     calendar: calendarStack,
+    favorites: favoritesStack,
     profile: profileStack
 },
     tabNavigationOptions
 );
 
-const CommerceNavigation = createAppContainer(commerceTabs);
+const ClientNavigation = createAppContainer(clientTabs);
 
-export default CommerceNavigation;
+export default ClientNavigation;
