@@ -3,7 +3,8 @@ import 'firebase/firestore';
 import {
   ON_COURT_VALUE_CHANGE,
   COURT_CREATE,
-  COURT_FORM_SUBMIT
+  COURT_FORM_SUBMIT,
+  COURT_EXISTED
 } from './types';
 
 export const onCourtValueChange = ({ prop, value }) => {
@@ -45,13 +46,21 @@ export const courtCreate = ({ name, court, ground, price }) => {
 
   return dispatch => {
     dispatch({ type: COURT_FORM_SUBMIT });
-
     db.collection(`Commerces/${currentUser.uid}/Courts`)
-
-      .add({ name, court, ground, price, softDelete: null })
-      .then(() => {
-        dispatch({ type: COURT_CREATE });
-      })
-      .catch(error => console.log(error));
+      .where('name', '==', name)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          //Means that court's name already exists
+          dispatch({ type: COURT_EXISTED });
+        } else {
+          db.collection(`Commerces/${currentUser.uid}/Courts`)
+            .add({ name, court, ground, price, softDelete: null })
+            .then(() => {
+              dispatch({ type: COURT_CREATE });
+            })
+            .catch(error => console.log(error));
+        }
+      });
   };
 };

@@ -4,11 +4,19 @@ import RNPickerSelect from 'react-native-picker-select';
 import { MAIN_COLOR } from '../../constants';
 
 class Picker extends Component {
+  renderErrorMessage = () => {
+    if (this.props.errorMessage) {
+      return (
+        <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
+      );
+    }
+  };
   render() {
     return (
       <View>
         <Text style={styles.textStyle}>{this.props.title}</Text>
         <RNPickerSelect {...this.props} style={{ ...pickerStyles }} />
+        {this.renderErrorMessage()}
       </View>
     );
   }
@@ -27,8 +35,8 @@ const pickerStyles = StyleSheet.create({
   },
   inputAndroid: {
     height: 40,
-    fontSize: 17,
-    fontWeight: 'normal',
+    // fontSize: 17,
+    // fontWeight: 'normal',
     borderBottomWidth: 1.5,
     marginRight: 10,
     marginLeft: 10,
@@ -44,6 +52,11 @@ const styles = StyleSheet.create({
     color: MAIN_COLOR,
     marginRight: 10,
     marginLeft: 10
+  },
+  errorMessageStyle: {
+    marginLeft: 10,
+    color: 'red',
+    fontSize: 12
   }
 });
 

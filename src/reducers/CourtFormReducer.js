@@ -2,7 +2,8 @@ import {
   ON_COURT_VALUE_CHANGE,
   ON_FORM_OPEN,
   COURT_CREATE,
-  COURT_FORM_SUMBIT
+  COURT_FORM_SUMBIT,
+  COURT_EXISTED
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -12,19 +13,26 @@ const INITIAL_STATE = {
   grouds: [],
   ground: '',
   price: '',
-  loading: false
+  loading: false,
+  existedError: false
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COURT_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      return {
+        ...state,
+        [action.payload.prop]: action.payload.value,
+        existedError: false
+      };
     case ON_FORM_OPEN:
       return INITIAL_STATE;
     case COURT_FORM_SUMBIT:
-      return { ...state, loading: true };
+      return { ...state, loading: true, existedError: false };
     case COURT_CREATE:
       return INITIAL_STATE;
+    case COURT_EXISTED:
+      return { ...state, existedError: true };
     default:
       return state;
   }
