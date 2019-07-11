@@ -12,7 +12,7 @@ class CourtList extends Component {
   }
 
   renderRow({ item }) {
-    return <CourtListItem court={item} />;
+    return <CourtListItem court={item} navigation={this.props.navigation} />;
   }
 
   renderList() {

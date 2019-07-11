@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
@@ -23,6 +24,7 @@ class CourtForm extends Component {
   };
 
   componentDidMount() {
+    console.log('aca entra');
     this.props.getCourtAndGroundTypes();
   }
 
@@ -176,6 +178,11 @@ class CourtForm extends Component {
   };
 
   render() {
+    console.log('courts: ', this.props.courts);
+    console.log('court: ', this.props.court);
+    console.log('grounds: ', this.props.grounds);
+    console.log('ground: ', this.props.ground);
+
     return (
       <View>
         <Card containerStyle={styles.cardStyle}>
