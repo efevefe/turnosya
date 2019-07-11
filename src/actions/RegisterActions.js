@@ -34,8 +34,8 @@ export const onUserRead = () => {
     dispatch({ type: ON_USER_READING });
 
     db.doc(`Profiles/${currentUser.uid}`)
-      .where('softDelete', '==', null)
       .get()
-      .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }));
+      .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
+      .catch(error => console.log(error));
   }
 }

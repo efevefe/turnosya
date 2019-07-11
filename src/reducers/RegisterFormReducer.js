@@ -1,4 +1,11 @@
-import { ON_REGISTER_VALUE_CHANGE, ON_REGISTER, ON_REGISTER_SUCCESS, ON_REGISTER_FAIL } from '../actions/types';
+import { 
+  ON_REGISTER_VALUE_CHANGE, 
+  ON_REGISTER, 
+  ON_REGISTER_SUCCESS, 
+  ON_REGISTER_FAIL, 
+  ON_USER_READING, 
+  ON_USER_READ 
+} from '../actions/types';
 
 const INITIAL_STATE = {
   email: '',
@@ -18,6 +25,10 @@ export default (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
     case ON_REGISTER_FAIL:
       return { ...state, loading: false, error: 'Usuario existente' };
+    case ON_USER_READING:
+      return { ...INITIAL_STATE, loading: true };
+    case ON_USER_READ:
+      return { ...INITIAL_STATE, ...action.payload };
     default:
       return INITIAL_STATE;
   }

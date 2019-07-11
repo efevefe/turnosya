@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Text, Divider } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
-import { CardSection, Input } from '../components/common';
+import { connect } from 'react-redux';
+import { CardSection, Input, Spinner } from '../components/common';
 import { MAIN_COLOR } from '../constants';
+import { onUserRead, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
     state = { enabled: false };
@@ -14,7 +16,8 @@ class ClientProfile extends Component {
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
+        this.props.onUserRead();
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
 
@@ -53,8 +56,22 @@ class ClientProfile extends Component {
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
 
+    renderFullName = () => {
+        const { firstName, lastName } = this.props;
+
+        if (firstName || lastName) {
+            return `${firstName} ${lastName}`;
+        } else {
+            return `Sin Nombre`;
+        }
+    }
+
     render() {
         const { containerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
+
+        if (this.props.loading) {
+            return <Spinner />;
+        }
 
         return (
             <View style={containerStyle} >
@@ -65,7 +82,7 @@ class ClientProfile extends Component {
                         size='xlarge'
                         containerStyle={avatarStyle}
                     />
-                    <Text h4>Nicolas Lazzos</Text>
+                    <Text h4>{this.renderFullName()}</Text>
                     <Text>Unquillo, Cordoba</Text>
                 </View>
                 <Divider
@@ -80,28 +97,32 @@ class ClientProfile extends Component {
                     <CardSection>
                         <Input
                             label='Nombre:'
-                            value='Nicolas'
+                            value={this.props.firstName}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
                             editable={this.state.enabled}
                         />
                     </CardSection>
                     <CardSection>
                         <Input
                             label='Apellido:'
-                            value='Lazzos'
+                            value={this.props.lastName}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
                             editable={this.state.enabled}
                         />
                     </CardSection>
                     <CardSection>
                         <Input
                             label='Telefono:'
-                            value='0351-155-8259'
+                            value={this.props.phone}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'phoneName', value })}
+                            keyboardType='numeric'
                             editable={this.state.enabled}
                         />
                     </CardSection>
                     <CardSection>
                         <Input
                             label='E-Mail:'
-                            value='nicolaslazzos14@gmail.com'
+                            value={this.props.email}
                             editable={false}
                         />
                     </CardSection>
@@ -132,4 +153,10 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ClientProfile;
+const mapStateToProps = state => {
+    const { firstName, lastName, phone, email, loading } = state.registerForm;
+
+    return { firstName, lastName, phone, email, loading };
+}
+
+export default connect(mapStateToProps, { onUserRead, onRegisterValueChange })(ClientProfile);
