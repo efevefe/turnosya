@@ -83,10 +83,11 @@ class CourtListItem extends Component {
           titleStyle={{ textAlign: 'justify', fontSize: 22, display: 'flex' }}
           rightTitle={`$${price}`}
           key={id}
-          subtitle={<Text>{`${court}\n${ground}`}</Text>}
+          subtitle={<Text>{`${court} - ${ground}`}</Text>}
           // leftElement={
           //   <Text style={{ display: 'flex' }}>{`${court}\n\n${ground}`}</Text>
-          // } Otra forma de ver la lista (como esta en prototipo), alinear el texto del titulo al centro
+          // }
+          // Otra forma de ver la lista (como esta en prototipo), alinear el texto del titulo al centro
 
           onLongPress={this.onOptionsPress.bind(this)}
           rightElement={

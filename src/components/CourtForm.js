@@ -13,18 +13,6 @@ import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
 
 class CourtForm extends Component {
-  constructor() {
-    super();
-
-    // this.state = {
-    //   indexCourtSelected: null,
-    //   nameError: '',
-    //   courtError: '',
-    //   groundTypeError: '',
-    //   priceError: ''
-    // };
-  }
-
   state = {
     indexCourtSelected: null,
     save: false,
@@ -51,12 +39,12 @@ class CourtForm extends Component {
   }
 
   onButtonPressHandler() {
-    // this.setState({save: true})
     if (this.validateMinimumData()) {
       const { name, court, ground, price, navigation } = this.props;
       const { params } = this.props.navigation.state;
-      //aca despues hay que ver el bien el tema de hacer todo con el navigation
+
       this.setState({ indexCourtSelected: null });
+
       if (params) {
         const { id } = this.props.navigation.state.params.court;
         this.props.courtUpdate(
@@ -80,10 +68,6 @@ class CourtForm extends Component {
           navigation
         );
       }
-
-      // creo que con lo siguiente reinicas el this.state: " this.setState(this.state) "
-
-      // en realidad despues de crear va a tirar error, porque habria que ir a otra pantalla, pero despues lo vemos
     }
   }
 
@@ -270,7 +254,7 @@ class CourtForm extends Component {
 
 const placeHolder = [
   {
-    label: 'Elija una opcion...',
+    label: 'Elija una opción...',
     value: 0
   }
 ];
