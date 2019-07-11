@@ -3,8 +3,12 @@ import { createStackNavigator, createAppContainer, createBottomTabNavigator } fr
 import { Ionicons } from '@expo/vector-icons';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
-import EmptyScreen from '../components/EmptyScreen';
+import CourtList from '../components/CourtList';
+import CourtForm from '../components/CourtForm';
+
 import { MAIN_COLOR } from '../constants';
+
+import EmptyScreen from '../components/EmptyScreen';
 
 // Stack navigation options
 
@@ -22,25 +26,26 @@ const stackNavigationOptions = {
             fontWeight: 'bold'
         }
     }
+  }
 };
 
 const rightIcon = (navigation, icon, nextScreen) => <Ionicons
     name={icon}
     size={30}
-    color='white'
+    color="white"
     style={{ marginRight: 15 }}
     onPress={() => navigation.navigate(nextScreen)}
-/>
+  />
 
 const leftIcon = (navigation, icon) => <Ionicons
     name={icon}
     size={30}
-    color='white'
+    color="white"
     style={{ marginLeft: 15 }}
     onPress={() => navigation.openDrawer()}
-/>
-
-// Aca hay un stack por cada tab que tiene el tab navigation
+  />
+      
+      // Aca hay un stack por cada tab que tiene el tab navigation
 
 const calendarStack = createStackNavigator({
     calendar: {
@@ -71,15 +76,22 @@ const servicesStack = createStackNavigator({
     }
 },
     stackNavigationOptions
-)
+);
 
 const courtsStack = createStackNavigator({
     courtsList: {
-        screen: EmptyScreen,
+        screen: CourtList,
         navigationOptions: ({ navigation }) => ({
             title: 'Canchas',
-            headerLeft: leftIcon(navigation, 'md-menu')
+            headerRight: rightIcon(navigation, 'add', 'courtForm'),
+            headerLeft: leftIcon(navigation, 'menu')
         })
+    },
+  courtForm: {
+      screen: CourtForm,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Nueva Cancha')
+      })
     }
 },
     stackNavigationOptions

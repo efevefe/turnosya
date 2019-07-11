@@ -10,6 +10,9 @@ import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
+import CourtForm from './src/components/CourtForm';
+import CourtList from './src/components/CourtList';
+
 console.disableYellowBox = true;
 
 var firebaseConfig = {
@@ -26,8 +29,8 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-//firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-//firebase.auth().signOut();
+firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
+firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
