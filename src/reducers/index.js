@@ -4,11 +4,13 @@ import ServicesListReducer from './ServicesListReducer';
 import AuthReducer from './AuthReducer';
 import RegisterFormReducer from './RegisterFormReducer';
 import CourtFormReducer from './CourtFormReducer';
+import CourtListReducer from './CourtListReducer';
 
 export default combineReducers({
   auth: AuthReducer,
   registerForm: RegisterFormReducer,
   serviceForm: ServiceFormReducer,
   servicesList: ServicesListReducer,
-  courtForm: CourtFormReducer
+  courtForm: CourtFormReducer,
+  courtsList: CourtListReducer
 });
