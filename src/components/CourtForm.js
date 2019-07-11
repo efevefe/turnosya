@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Switch } from 'react-native';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
@@ -186,6 +186,7 @@ class CourtForm extends Component {
     return (
       <View>
         <Card containerStyle={styles.cardStyle}>
+          <Switch disabled={true}/>
           <CardSection>
             <Input
               label="Nombre:"

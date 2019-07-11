@@ -113,7 +113,7 @@ export const courtUpdate = ({ id, name, court, ground, price }, navigation) => {
     db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
       .update({ name, court, ground, price })
       .then(() => {
-        dispatch({ type: SERVICE_UPDATE });
+        dispatch({ type: COURT_UPDATE });
         navigation.goBack();
       })
       .catch(error => console.log(error));
