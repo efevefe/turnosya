@@ -1,21 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { View, Text } from 'react-native';
 import { CardSection, Button, Input } from './common';
-import { onRegisterValueChange } from '../actions';
+import { onRegisterValueChange, onRegister } from '../actions';
 import { validateValueType } from '../utils';
 
 class RegisterForm extends Component {
-  state = { emailError: '', passwordError: '', confirmPasswordError: '' };
+  state = {
+    emailError: '',
+    passwordError: '',
+    confirmPasswordError: '',
+    firstNameError: '',
+    lastNameError: '',
+    phoneError: ''
+  };
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const navigateAction = NavigationActions.navigate({
-        routeName: 'registerFormTwo'
+      this.props.onRegister({
+        email: this.props.email,
+        password: this.props.password,
+        firstName: this.props.firstName,
+        lastName: this.props.lastName,
+        phone: this.props.phone
       });
-
-      this.props.navigation.navigate(navigateAction);
     }
   }
 
@@ -61,11 +69,53 @@ class RegisterForm extends Component {
     }
   };
 
+  renderFirstNameError = () => {
+    if (this.props.firstName === '') {
+      this.setState({ firstNameError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('name', this.props.firstName)) {
+      this.setState({ firstNameError: 'El formato del nombre es inválido' });
+      return false;
+    } else {
+      this.setState({ firstNameError: '' });
+      return true;
+    }
+  };
+
+  renderLastNameError = () => {
+    if (this.props.lastName === '') {
+      this.setState({ lastNameError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('name', this.props.lastName)) {
+      this.setState({ lastNameError: 'El formato del apellido es inválido' });
+      return false;
+    } else {
+      this.setState({ lastNameError: '' });
+      return true;
+    }
+  };
+
+  renderPhoneError = () => {
+    if (this.props.phone === '') {
+      this.setState({ phoneError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('phone', this.props.phone)) {
+      this.setState({ phoneError: 'El formato del número es inválido' });
+      return false;
+    } else {
+      this.setState({ phoneError: '' });
+      return true;
+    }
+  };
+
   validateMinimumData = () => {
     return (
       this.renderEmailError() &&
       this.renderPasswordError() &&
-      this.renderConfirmPasswordError()
+      this.renderConfirmPasswordError() &&
+      this.renderFirstNameError() &&
+      this.renderLastNameError() &&
+      this.renderPhoneError()
     );
   };
 
@@ -106,7 +156,7 @@ class RegisterForm extends Component {
             onBlur={this.renderPasswordError}
           />
         </CardSection>
-        <CardSection>
+        <CardSection style={{ paddingBottom: 20 }}>
           <Input
             placeholder="Repetir Contraseña"
             secureTextEntry
@@ -124,8 +174,57 @@ class RegisterForm extends Component {
           />
         </CardSection>
         <CardSection>
+          <Input
+            placeholder="Nombre"
+            autoCapitalize="words"
+            value={this.props.firstName}
+            errorMessage={this.state.firstNameError}
+            onChangeText={value =>
+              this.props.onRegisterValueChange({
+                prop: 'firstName',
+                value
+              })
+            }
+            onFocus={() => this.setState({ firstNameError: '' })}
+            onBlur={this.renderFirstNameError}
+          />
+        </CardSection>
+        <CardSection>
+          <Input
+            placeholder="Apellido"
+            autoCapitalize="words"
+            value={this.props.lastName}
+            errorMessage={this.state.lastNameError}
+            onChangeText={value =>
+              this.props.onRegisterValueChange({
+                prop: 'lastName',
+                value
+              })
+            }
+            onFocus={() => this.setState({ lastNameError: '' })}
+            onBlur={this.renderLastNameError}
+          />
+        </CardSection>
+        <CardSection style={{ paddingBottom: 20 }}>
+          <Input
+            placeholder="Número de Teléfono"
+            keyboardType="phone-pad"
+            textContentType="telephoneNumber"
+            value={this.props.phone}
+            errorMessage={this.state.phoneError}
+            onChangeText={value =>
+              this.props.onRegisterValueChange({
+                prop: 'phone',
+                value
+              })
+            }
+            onFocus={() => this.setState({ phoneError: '' })}
+            onBlur={this.renderPhoneError}
+          />
+        </CardSection>
+        <CardSection>
           <Button
-            title="Continuar"
+            title="Confirmar"
             loading={this.props.loading}
             onPress={this.onButtonPressHandler.bind(this)}
           />
@@ -140,14 +239,26 @@ const mapStateToProps = state => {
     email,
     password,
     confirmPassword,
+    firstName,
+    lastName,
+    phone,
     loading,
     error
   } = state.registerForm;
 
-  return { email, password, confirmPassword, loading, error };
+  return {
+    email,
+    password,
+    confirmPassword,
+    firstName,
+    lastName,
+    phone,
+    loading,
+    error
+  };
 };
 
 export default connect(
   mapStateToProps,
-  { onRegisterValueChange }
+  { onRegisterValueChange, onRegister }
 )(RegisterForm);

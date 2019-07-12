@@ -11,7 +11,7 @@ const INITIAL_STATE = {
   confirmPassword: '',
   firstName: '',
   lastName: '',
-  phone: -1,
+  phone: '',
   loading: false,
   error: ''
 };
