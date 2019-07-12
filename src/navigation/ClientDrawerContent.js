@@ -7,36 +7,39 @@ import { onLogout } from '../actions/AuthActions';
 import { DrawerItem } from '../components/common';
 
 class ClientDrawerContent extends Component {
-    leftIcon = name => (
-        <Ionicons name={name} size={20} color="black" style={{ marginRight: 8 }} />
-    );
+  leftIcon = name => (
+    <Ionicons name={name} size={20} color="black" style={{ marginRight: 8 }} />
+  );
 
-    render() {
-        return (
-            <ScrollView>
-                <SafeAreaView
-                    style={{ flex: 1 }}
-                    forceInset={{ top: 'always', horizontal: 'never' }}
-                >
-                    <DrawerItem
-                        title="Mi Negocio"
-                        icon={this.leftIcon('ios-briefcase')}
-                        onPress={() => this.props.navigation.navigate('commerce')}
-                    />
-                    <DrawerItem
-                        title="Cerrar Sesion"
-                        icon={this.leftIcon('md-exit')}
-                        loading={this.props.loading}
-                        onPress={() => this.props.onLogout()}
-                    />
-                </SafeAreaView>
-            </ScrollView>
-        );
-    }
+  render() {
+    return (
+      <ScrollView>
+        <SafeAreaView
+          style={{ flex: 1 }}
+          forceInset={{ top: 'always', horizontal: 'never' }}
+        >
+          <DrawerItem
+            title="Mi Negocio"
+            icon={this.leftIcon('ios-briefcase')}
+            onPress={() => this.props.navigation.navigate('commerceRegister')}
+          />
+          <DrawerItem
+            title="Cerrar Sesion"
+            icon={this.leftIcon('md-exit')}
+            loading={this.props.loading}
+            onPress={() => this.props.onLogout()}
+          />
+        </SafeAreaView>
+      </ScrollView>
+    );
+  }
 }
 
 const mapStateToProps = state => {
-    return { loading: state.auth.loading };
-}
+  return { loading: state.auth.loading };
+};
 
-export default connect(mapStateToProps, { onLogout })(ClientDrawerContent);
+export default connect(
+  mapStateToProps,
+  { onLogout }
+)(ClientDrawerContent);

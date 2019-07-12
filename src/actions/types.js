@@ -25,3 +25,11 @@ export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+
+//Commerce Profile
+export const COMMERCE_READING = 'commerce_reading';
+export const COMMERCE_READ = 'commerce_read';
+export const COMMERCE_FAIL = 'commerce_fail';
+export const ON_COMMERCE_PROFILE_VALUE_CHANGE =
+  'on_commerce_profile_value_change';
+export const COMMERCE_PROFILE_CREATE = 'commerce_profile_create';
