@@ -31,7 +31,7 @@ class CourtListItem extends Component {
   }
 
   render() {
-    const { name, court, ground, price, id } = this.props.court;
+    const { name, court, ground, price, courtState, id } = this.props.court;
     return (
       <View style={{ flex: 1 }}>
         <Overlay
@@ -82,6 +82,8 @@ class CourtListItem extends Component {
           title={name}
           titleStyle={{ textAlign: 'justify', fontSize: 22, display: 'flex' }}
           rightTitle={`$${price}`}
+          rightSubtitle={`Estado: ${courtState}`}
+          rightSubtitleStyle={{ fontSize: 8 }}
           key={id}
           subtitle={<Text>{`${court} - ${ground}`}</Text>}
           // leftElement={

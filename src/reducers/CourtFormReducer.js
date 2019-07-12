@@ -1,6 +1,5 @@
 import {
   ON_COURT_VALUE_CHANGE,
-  ON_FORM_OPEN,
   COURT_CREATE,
   COURT_FORM_SUMBIT,
   COURT_EXISTED,
@@ -14,6 +13,7 @@ const INITIAL_STATE = {
   grouds: [],
   ground: '',
   price: '',
+  courtState: 'Disponible',
   loading: false,
   existedError: false
 };

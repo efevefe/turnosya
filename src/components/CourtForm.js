@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card } from 'react-native-elements';
-import { View, StyleSheet, Switch } from 'react-native';
+import { Card, Overlay } from 'react-native-elements';
+import { View, StyleSheet, Switch, Text } from 'react-native';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
@@ -12,11 +12,14 @@ import {
 } from '../actions';
 import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
   state = {
     indexCourtSelected: null,
-    save: false,
+    save: true,
+    helpVisible: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
@@ -24,7 +27,6 @@ class CourtForm extends Component {
   };
 
   componentDidMount() {
-    console.log('aca entra');
     this.props.getCourtAndGroundTypes();
   }
 
@@ -42,7 +44,7 @@ class CourtForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, court, ground, price, navigation } = this.props;
+      const { name, court, ground, price, courtState, navigation } = this.props;
       const { params } = this.props.navigation.state;
 
       this.setState({ indexCourtSelected: null });
@@ -55,6 +57,7 @@ class CourtForm extends Component {
             court,
             ground,
             price,
+            courtState,
             id
           },
           navigation
@@ -65,7 +68,8 @@ class CourtForm extends Component {
             name,
             court,
             ground,
-            price
+            price,
+            courtState
           },
           navigation
         );
@@ -125,6 +129,26 @@ class CourtForm extends Component {
     );
   };
 
+  onHelpPress() {
+    this.setState({ helpVisible: !this.state.helpVisible });
+  }
+
+  onCourtStateChangeHandle = value => {
+    // console.log('VALUE', value);
+    this.setState({ save: value });
+    if (value) {
+      this.props.onCourtValueChange({
+        prop: 'courtState',
+        value: 'Disponible'
+      });
+    } else {
+      this.props.onCourtValueChange({
+        prop: 'courtState',
+        value: 'No Disponible'
+      });
+    }
+  };
+
   onCourtTypeChangeHandle = value => {
     this.setState({
       indexCourtSelected: value,
@@ -178,15 +202,43 @@ class CourtForm extends Component {
   };
 
   render() {
-    console.log('courts: ', this.props.courts);
-    console.log('court: ', this.props.court);
-    console.log('grounds: ', this.props.grounds);
-    console.log('ground: ', this.props.ground);
+    //console.log('STATE', this.props.courtState);
 
     return (
       <View>
+        <Overlay
+          height="auto"
+          animationType="fade"
+          overlayStyle={{ padding: 0 }}
+          isVisible={this.state.helpVisible}
+          onBackdropPress={this.onHelpPress.bind(this)}
+        >
+          <View>
+            <Text>Aqui iria el texto de ayuda</Text>
+          </View>
+        </Overlay>
         <Card containerStyle={styles.cardStyle}>
-          <Switch disabled={true}/>
+          <CardSection>
+            <View
+              style={{
+                flexDirection: 'row-reverse'
+              }}
+            >
+              <Switch
+                style={{ alignSelf: 'flex-end' }}
+                onValueChange={this.onCourtStateChangeHandle}
+                value={this.state.save}
+              />
+              <Button
+                type="clear"
+                color="white"
+                buttonStyle={{}}
+                onPress={this.onHelpPress.bind(this)}
+                icon={<Icon name="help" size={22} color="grey" />}
+              />
+            </View>
+          </CardSection>
+
           <CardSection>
             <Input
               label="Nombre:"
@@ -283,10 +335,20 @@ const mapStateToProps = state => {
     grounds,
     ground,
     price,
+    courtState,
     existedError
   } = state.courtForm;
 
-  return { name, courts, court, grounds, ground, price, existedError };
+  return {
+    name,
+    courts,
+    court,
+    grounds,
+    ground,
+    price,
+    courtState,
+    existedError
+  };
 };
 
 export default connect(
