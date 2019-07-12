@@ -24,7 +24,6 @@ class CourtForm extends Component {
   };
 
   componentDidMount() {
-    console.log('aca entra');
     this.props.getCourtAndGroundTypes();
   }
 
@@ -45,8 +44,6 @@ class CourtForm extends Component {
       const { name, court, ground, price, navigation } = this.props;
       const { params } = this.props.navigation.state;
 
-      this.setState({ indexCourtSelected: null });
-
       if (params) {
         const { id } = this.props.navigation.state.params.court;
         this.props.courtUpdate(
@@ -60,6 +57,7 @@ class CourtForm extends Component {
           navigation
         );
       } else {
+        //Mejorar esa espera que hay entre que apretas el botón y se termine de guardar.
         this.props.courtCreate(
           {
             name,
@@ -70,6 +68,8 @@ class CourtForm extends Component {
           navigation
         );
       }
+
+      this.setState({ indexCourtSelected: null });
     }
   }
 
@@ -126,6 +126,10 @@ class CourtForm extends Component {
   };
 
   onCourtTypeChangeHandle = value => {
+    console.log('ACA ENTRA');
+    console.log('court: ', this.props.court);
+    console.log('ground: ', this.props.ground);
+
     this.setState({
       indexCourtSelected: value,
       courtError: ''
@@ -144,6 +148,9 @@ class CourtForm extends Component {
   };
 
   onGroundTypeChangeHandle = value => {
+    console.log('SEGUNDO PICKER');
+    console.log('ground: ', this.props.ground);
+    console.log('court: ', this.props.court);
     const { indexCourtSelected } = this.state;
     const { grounds, onCourtValueChange } = this.props;
 
@@ -177,16 +184,19 @@ class CourtForm extends Component {
     }
   };
 
-  render() {
-    console.log('courts: ', this.props.courts);
-    console.log('court: ', this.props.court);
-    console.log('grounds: ', this.props.grounds);
-    console.log('ground: ', this.props.ground);
+  disabledGroundPicker = () => {
+    const { indexCourtSelected, groundTypeError } = this.state;
+    return (
+      (!indexCourtSelected || indexCourtSelected === 0) &&
+      groundTypeError === ''
+    );
+  };
 
+  render() {
     return (
       <View>
         <Card containerStyle={styles.cardStyle}>
-          <Switch disabled={true}/>
+          <Switch disabled={true} />
           <CardSection>
             <Input
               label="Nombre:"
@@ -220,10 +230,7 @@ class CourtForm extends Component {
               placeholder={placeHolder[0]}
               items={this.renderGroundItems()}
               onValueChange={this.onGroundTypeChangeHandle}
-              disabled={
-                !this.state.indexCourtSelected &&
-                this.state.groundTypeError !== ''
-              }
+              disabled={this.disabledGroundPicker()}
               errorMessage={this.state.groundTypeError}
             />
           </CardSection>
