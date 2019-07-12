@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { CardSection, Input, Spinner } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { onUserRead, onRegisterValueChange } from '../actions/RegisterActions';
+import { onUserRead, onUserUpdate, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
     state = { enabled: false };
@@ -51,8 +51,11 @@ class ClientProfile extends Component {
     }
 
     onSavePress = () => {
+        const { firstName, lastName, phone } = this.props;
+
+        this.props.onUserUpdate({ firstName, lastName, phone });
+
         this.setState({ enabled: false });
-        //aca deberia ir una llamada a una action de editar
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
 
@@ -63,6 +66,12 @@ class ClientProfile extends Component {
             return `${firstName} ${lastName}`;
         } else {
             return `Sin Nombre`;
+        }
+    }
+
+    renderEditSpinner = () => {
+        if (this.props.loadingUpdate) {
+            return <Spinner type='transparent' />
         }
     }
 
@@ -78,8 +87,8 @@ class ClientProfile extends Component {
                 <View style={avatarContainerStyle} >
                     <Avatar
                         rounded
-                        source={require('../../assets/avatar-placeholder.png')}
                         size='xlarge'
+                        icon={{ name: 'person' }}
                         containerStyle={avatarStyle}
                     />
                     <Text h4>{this.renderFullName()}</Text>
@@ -127,6 +136,8 @@ class ClientProfile extends Component {
                         />
                     </CardSection>
                 </View>
+                
+                {this.renderEditSpinner()}
             </View>
         );
     }
@@ -154,9 +165,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { firstName, lastName, phone, email, loading } = state.registerForm;
+    const { firstName, lastName, phone, email, loading, loadingUpdate } = state.registerForm;
 
-    return { firstName, lastName, phone, email, loading };
+    return { firstName, lastName, phone, email, loading, loadingUpdate };
 }
 
-export default connect(mapStateToProps, { onUserRead, onRegisterValueChange })(ClientProfile);
+export default connect(mapStateToProps, { onUserRead, onUserUpdate, onRegisterValueChange })(ClientProfile);

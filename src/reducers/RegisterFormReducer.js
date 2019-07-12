@@ -4,7 +4,9 @@ import {
   ON_REGISTER_SUCCESS, 
   ON_REGISTER_FAIL, 
   ON_USER_READING, 
-  ON_USER_READ 
+  ON_USER_READ, 
+  ON_USER_UPDATING,
+  ON_USER_UPDATED
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -12,6 +14,7 @@ const INITIAL_STATE = {
   password: '',
   confirmPassword: '',
   loading: false,
+  loadingUpdate: false,
   error: ''
 };
 
@@ -29,6 +32,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...INITIAL_STATE, loading: true };
     case ON_USER_READ:
       return { ...INITIAL_STATE, ...action.payload };
+    case ON_USER_UPDATING:
+      return { ...state, loadingUpdate: true };
+    case ON_USER_UPDATED:
+      return { ...state, loadingUpdate: false };
     default:
       return INITIAL_STATE;
   }
