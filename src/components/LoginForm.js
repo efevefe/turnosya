@@ -137,7 +137,7 @@ class LoginForm extends Component {
           </CardSection>
           <CardSection>
             <Button
-              title="Iniciar Sesion"
+              title="Iniciar Sesión"
               loading={this.props.loadingLogin}
               onPress={this.onButonPressHandler.bind(this)}
             />
