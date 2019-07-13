@@ -9,11 +9,13 @@ import { MAIN_COLOR } from '../constants';
 import { onUserRead, onUserUpdate, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
-    state = { editEnabled: false, photoOptionsVisible: false, photo: null };
+    state = { editEnabled: false, photoOptionsVisible: false, newPhoto: null };
 
     static navigationOptions = ({ navigation }) => {
         return {
-            headerRight: navigation.getParam('rightIcon')
+            headerTitle: navigation.getParam('title'),
+            headerRight: navigation.getParam('rightIcon'),
+            headerLeft: navigation.getParam('leftIcon')
         }
     }
 
@@ -46,18 +48,34 @@ class ClientProfile extends Component {
         );
     }
 
+    renderCancelButton = () => {
+        return (
+            <Ionicons
+                name='md-close'
+                size={28}
+                color='white'
+                style={{ marginLeft: 15 }}
+                onPress={() => console.log('Cancelar')}
+            />
+        );
+    }
+
     onEditPress = () => {
         this.setState({ editEnabled: true });
-        this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
+        this.props.navigation.setParams({ title: 'Modificar Datos', rightIcon: this.renderSaveButton(), leftIcon: this.renderCancelButton() });
     }
 
     onSavePress = () => {
-        const { firstName, lastName, phone } = this.props;
+        const { firstName, lastName, phone, photo } = this.props;
 
-        this.props.onUserUpdate({ firstName, lastName, phone });
+        this.props.onUserUpdate({ firstName, lastName, phone, photo });
 
         this.setState({ editEnabled: false });
-        this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+        this.props.navigation.setParams({ title: 'Perfil', rightIcon: this.renderEditButton(), leftIcon: null });
+    }
+
+    onCancelPress = () => {
+        console.log('Cancelar');
     }
 
     renderEditPhotoButton = () => {
@@ -96,7 +114,7 @@ class ClientProfile extends Component {
         let response = await ImagePicker.launchImageLibraryAsync(options);
 
         if (!response.cancelled) {
-            this.setState({ photo: response.uri });
+            this.setState({ newPhoto: response.uri });
         }
     }
 
@@ -115,7 +133,7 @@ class ClientProfile extends Component {
         let response = await ImagePicker.launchCameraAsync(options);
 
         if (!response.cancelled) {
-            this.setState({ photo: response.uri });
+            this.setState({ newPhoto: response.uri });
         }
     }
 
@@ -148,7 +166,7 @@ class ClientProfile extends Component {
                     <View style={avatarContainerStyle} >
                         <Avatar
                             rounded
-                            source={this.state.photo ? { uri: this.state.photo } : null}
+                            source={{ uri: this.state.newPhoto ? this.state.newPhoto : this.props.photo }}
                             size='xlarge'
                             icon={{ name: 'person' }}
                             containerStyle={avatarStyle}
@@ -264,9 +282,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { firstName, lastName, phone, email, loading, loadingUpdate } = state.registerForm;
+    const { firstName, lastName, phone, email, photo, loading, loadingUpdate } = state.registerForm;
 
-    return { firstName, lastName, phone, email, loading, loadingUpdate };
+    return { firstName, lastName, phone, email, photo, loading, loadingUpdate };
 }
 
 export default connect(mapStateToProps, { onUserRead, onUserUpdate, onRegisterValueChange })(ClientProfile);

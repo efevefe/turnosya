@@ -42,7 +42,7 @@ export const onUserRead = () => {
   }
 }
 
-export const onUserUpdate = ({ firstName, lastName, phone }) => {
+export const onUserUpdate = ({ firstName, lastName, phone, photo }) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -50,7 +50,7 @@ export const onUserUpdate = ({ firstName, lastName, phone }) => {
     dispatch({ type: ON_USER_UPDATING });
 
     db.doc(`Profiles/${currentUser.uid}`)
-      .update({ firstName, lastName, phone })
+      .update({ firstName, lastName, phone, photo })
       .then(dispatch({ type: ON_USER_UPDATED}))
       .catch(error => console.log(error));
   }
