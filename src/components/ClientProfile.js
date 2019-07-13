@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Avatar, Text, Divider } from 'react-native-elements';
+import { Avatar, Text, Divider, Overlay, Icon, Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import { ImagePicker, Permissions, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { CardSection, Input, Spinner } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { onUserRead, onUserUpdate, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
-    state = { enabled: false };
+    state = { editEnabled: false, photoOptionsVisible: false, photo: null };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -46,7 +47,7 @@ class ClientProfile extends Component {
     }
 
     onEditPress = () => {
-        this.setState({ enabled: true });
+        this.setState({ editEnabled: true });
         this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
     }
 
@@ -55,8 +56,67 @@ class ClientProfile extends Component {
 
         this.props.onUserUpdate({ firstName, lastName, phone });
 
-        this.setState({ enabled: false });
+        this.setState({ editEnabled: false });
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+    }
+
+    renderEditPhotoButton = () => {
+        if (this.state.editEnabled) {
+            return (
+                <Icon
+                    name='md-camera'
+                    color={MAIN_COLOR}
+                    type='ionicon'
+                    size={20}
+                    reverse
+                    containerStyle={{ padding: 5, position: 'absolute' }}
+                    onPress={this.onEditPhotoPress}
+                />
+            );
+        }
+    }
+
+    onEditPhotoPress = () => {
+        this.setState({ photoOptionsVisible: !this.state.photoOptionsVisible });
+    }
+
+    onChoosePhotoPress = async () => {
+        this.onEditPhotoPress();
+
+        if (Constants.platform.ios) {
+            await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        }
+
+        const options = {
+            mediaTypes: 'Images',
+            allowsEditing: true,
+            aspect: [1, 1]
+        }
+
+        let response = await ImagePicker.launchImageLibraryAsync(options);
+
+        if (!response.cancelled) {
+            this.setState({ photo: response.uri });
+        }
+    }
+
+    onTakePhotoPress = async () => {
+        this.onEditPhotoPress();
+
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        await Permissions.askAsync(Permissions.CAMERA);
+
+        const options = {
+            mediaTypes: 'Images',
+            allowsEditing: true,
+            aspect: [1, 1]
+        }
+
+        let response = await ImagePicker.launchCameraAsync(options);
+
+        if (!response.cancelled) {
+            this.setState({ photo: response.uri });
+        }
     }
 
     renderFullName = () => {
@@ -76,7 +136,7 @@ class ClientProfile extends Component {
     }
 
     render() {
-        const { containerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
+        const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
 
         if (this.props.loading) {
             return <Spinner />;
@@ -84,13 +144,18 @@ class ClientProfile extends Component {
 
         return (
             <View style={containerStyle} >
-                <View style={avatarContainerStyle} >
-                    <Avatar
-                        rounded
-                        size='xlarge'
-                        icon={{ name: 'person' }}
-                        containerStyle={avatarStyle}
-                    />
+                <View style={headerContainerStyle} >
+                    <View style={avatarContainerStyle} >
+                        <Avatar
+                            rounded
+                            source={this.state.photo ? { uri: this.state.photo } : null}
+                            size='xlarge'
+                            icon={{ name: 'person' }}
+                            containerStyle={avatarStyle}
+                        />
+
+                        {this.renderEditPhotoButton()}
+                    </View>
                     <Text h4>{this.renderFullName()}</Text>
                     <Text>Unquillo, Cordoba</Text>
                 </View>
@@ -108,7 +173,7 @@ class ClientProfile extends Component {
                             label='Nombre:'
                             value={this.props.firstName}
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
-                            editable={this.state.enabled}
+                            editable={this.state.editEnabled}
                         />
                     </CardSection>
                     <CardSection>
@@ -116,7 +181,7 @@ class ClientProfile extends Component {
                             label='Apellido:'
                             value={this.props.lastName}
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
-                            editable={this.state.enabled}
+                            editable={this.state.editEnabled}
                         />
                     </CardSection>
                     <CardSection>
@@ -125,7 +190,7 @@ class ClientProfile extends Component {
                             value={this.props.phone}
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'phoneName', value })}
                             keyboardType='numeric'
-                            editable={this.state.enabled}
+                            editable={this.state.editEnabled}
                         />
                     </CardSection>
                     <CardSection>
@@ -136,8 +201,38 @@ class ClientProfile extends Component {
                         />
                     </CardSection>
                 </View>
-                
+
                 {this.renderEditSpinner()}
+
+                <Overlay
+                    height='auto'
+                    overlayStyle={{ padding: 0 }}
+                    onBackdropPress={this.onEditPhotoPress}
+                    isVisible={this.state.photoOptionsVisible}
+                    animationType='fade'
+                >
+                    <View>
+                        <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
+                            <Text style={{ fontWeight: 'bold', color: 'black', fontSize: 16, margin: 15 }}>Foto de Perfil</Text>
+                        </View>
+                        <Divider style={{ backgroundColor: 'grey' }} />
+                        <Button
+                            type='clear'
+                            title='Elegir de la Galeria'
+                            buttonStyle={{ padding: 15 }}
+                            titleStyle={{ color: 'grey' }}
+                            onPress={this.onChoosePhotoPress}
+                        />
+                        <Divider style={{ backgroundColor: 'grey', marginLeft: 10, marginRight: 10 }} />
+                        <Button
+                            type='clear'
+                            title='Tomar Foto'
+                            buttonStyle={{ padding: 15 }}
+                            titleStyle={{ color: 'grey' }}
+                            onPress={this.onTakePhotoPress}
+                        />
+                    </View>
+                </Overlay>
             </View>
         );
     }
@@ -148,10 +243,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'stretch'
     },
-    avatarContainerStyle: {
+    headerContainerStyle: {
         alignSelf: 'stretch',
         alignItems: 'center',
         padding: 20
+    },
+    avatarContainerStyle: {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end'
     },
     avatarStyle: {
         borderWidth: 4,
