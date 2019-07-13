@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Text, Divider, Overlay, Icon, Button } from 'react-native-elements';
@@ -9,7 +10,7 @@ import { MAIN_COLOR } from '../constants';
 import { onUserRead, onUserUpdate, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
-    state = { editEnabled: false, photoOptionsVisible: false, newPhoto: null };
+    state = { editEnabled: false, photoOptionsVisible: false, newPhoto: null, stateBeforeChanges: null };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -55,27 +56,35 @@ class ClientProfile extends Component {
                 size={28}
                 color='white'
                 style={{ marginLeft: 15 }}
-                onPress={() => console.log('Cancelar')}
+                onPress={this.onCancelPress}
             />
         );
     }
 
     onEditPress = () => {
-        this.setState({ editEnabled: true });
+        const { firstName, lastName, phone } = this.props;
+        this.setState({ editEnabled: true, stateBeforeChanges: { firstName, lastName, phone } });
         this.props.navigation.setParams({ title: 'Modificar Datos', rightIcon: this.renderSaveButton(), leftIcon: this.renderCancelButton() });
     }
 
     onSavePress = () => {
         const { firstName, lastName, phone, photo } = this.props;
-
         this.props.onUserUpdate({ firstName, lastName, phone, photo });
 
-        this.setState({ editEnabled: false });
-        this.props.navigation.setParams({ title: 'Perfil', rightIcon: this.renderEditButton(), leftIcon: null });
+        this.disableEdit();
     }
 
     onCancelPress = () => {
-        console.log('Cancelar');
+        _.each(this.state.stateBeforeChanges, (value, prop) => {
+            this.props.onRegisterValueChange({ prop, value });
+        });
+
+        this.disableEdit();
+    }
+
+    disableEdit = () => {
+        this.setState({ editEnabled: false });
+        this.props.navigation.setParams({ title: 'Perfil', rightIcon: this.renderEditButton(), leftIcon: null });
     }
 
     renderEditPhotoButton = () => {
