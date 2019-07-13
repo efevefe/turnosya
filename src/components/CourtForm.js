@@ -146,6 +146,13 @@ class CourtForm extends Component {
           index = obj.key;
           return;
         }
+      });
+
+      this.setState({ indexCourtSelected: index });
+
+      this.setState({ isUpdating: false });
+    }
+  };
 
   onHelpPress() {
     this.setState({ helpVisible: !this.state.helpVisible });
@@ -223,8 +230,8 @@ class CourtForm extends Component {
     return (
       (indexCourtSelected === null || indexCourtSelected < 0) &&
       groundTypeError === ''
-      );
-  }
+    );
+  };
 
   render() {
     if (!this.props.grounds) {
@@ -264,8 +271,8 @@ class CourtForm extends Component {
                 />
               </View>
             </CardSection>
-    
-    <CardSection>
+
+            <CardSection>
               <Input
                 label="Nombre:"
                 placeholder="Cancha 1"
@@ -331,7 +338,6 @@ class CourtForm extends Component {
                 }
               />
             </CardSection>
-            
           </Card>
         </View>
       );
@@ -364,11 +370,21 @@ const mapStateToProps = state => {
     ground,
     price,
     loading,
-    existedError
+    existedError,
     courtState
   } = state.courtForm;
 
-  return { name, courts, court, grounds, ground, price, loading, existedError, courtState };
+  return {
+    name,
+    courts,
+    court,
+    grounds,
+    ground,
+    price,
+    loading,
+    existedError,
+    courtState
+  };
 };
 
 export default connect(
