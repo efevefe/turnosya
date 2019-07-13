@@ -15,6 +15,8 @@ import { validateValueType } from '../utils';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { MAIN_COLOR } from '../constants';
 
+import { Spinner } from './common';
+
 class CourtForm extends Component {
   state = {
     indexCourtSelected: null,
@@ -23,12 +25,9 @@ class CourtForm extends Component {
     nameError: '',
     courtError: '',
     groundTypeError: '',
-    priceError: ''
+    priceError: '',
+    isUpdating: false
   };
-
-  componentDidMount() {
-    this.props.getCourtAndGroundTypes();
-  }
 
   componentWillMount() {
     const { params } = this.props.navigation.state;
@@ -37,17 +36,21 @@ class CourtForm extends Component {
       _.each(params.court, (value, prop) => {
         this.props.onCourtValueChange({ prop, value });
       });
+
+      this.setState({ isUpdating: true });
     } else {
       this.props.onCourtFormOpen();
     }
+  }
+
+  componentDidMount() {
+    this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
       const { name, court, ground, price, courtState, navigation } = this.props;
       const { params } = this.props.navigation.state;
-
-      this.setState({ indexCourtSelected: null });
 
       if (params) {
         const { id } = this.props.navigation.state.params.court;
@@ -63,6 +66,7 @@ class CourtForm extends Component {
           navigation
         );
       } else {
+        //Mejorar esa espera que hay entre que apretas el botón y se termine de guardar.
         this.props.courtCreate(
           {
             name,
@@ -74,6 +78,8 @@ class CourtForm extends Component {
           navigation
         );
       }
+
+      this.setState({ indexCourtSelected: null });
     }
   }
 
@@ -112,7 +118,7 @@ class CourtForm extends Component {
       this.setState({ priceError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('number', this.props.price)) {
-      this.setState({ priceError: 'Debe ingresar un valor numerico' });
+      this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ priceError: '' });
@@ -128,6 +134,18 @@ class CourtForm extends Component {
       this.renderPriceError()
     );
   };
+
+  setPickersValues = () => {
+    if (this.props.courts && this.props.courts.length > 0) {
+      const { courts, court } = this.props;
+
+      let index = null;
+
+      courts.some(obj => {
+        if (obj.label === court) {
+          index = obj.key;
+          return;
+        }
 
   onHelpPress() {
     this.setState({ helpVisible: !this.state.helpVisible });
@@ -149,173 +167,183 @@ class CourtForm extends Component {
     }
   };
 
-  onCourtTypeChangeHandle = value => {
-    this.setState({
-      indexCourtSelected: value,
-      courtError: ''
-    });
-    if (value > 0) {
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value: this.props.courts[value - 1].label
+  onCourtTypeChangeHandle = (value, key) => {
+    if (!this.state.isUpdating) {
+      this.setState({
+        indexCourtSelected: key - 1,
+        courtError: ''
       });
+      if (key > 0) {
+        this.props.onCourtValueChange({
+          prop: 'court',
+          value
+        });
+      } else {
+        this.props.onCourtValueChange({
+          prop: 'court',
+          value: ''
+        });
+      }
     } else {
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value: ''
-      });
+      this.setPickersValues();
     }
   };
 
-  onGroundTypeChangeHandle = value => {
-    const { indexCourtSelected } = this.state;
-    const { grounds, onCourtValueChange } = this.props;
+  onGroundTypeChangeHandle = (value, key) => {
+    if (!this.state.isUpdating) {
+      const { grounds, onCourtValueChange } = this.props;
 
-    this.setState({ groundTypeError: '' });
+      this.setState({ groundTypeError: '' });
 
-    if (grounds && value > 0) {
-      onCourtValueChange({
-        prop: 'ground',
-        value: grounds[indexCourtSelected - 1].label[value - 1]
-      });
+      if (grounds !== null && key > 0) {
+        onCourtValueChange({
+          prop: 'ground',
+          value
+        });
+      } else {
+        onCourtValueChange({ prop: 'ground', value: '' });
+      }
     } else {
-      onCourtValueChange({ prop: 'ground', value: '' });
+      this.setPickersValues();
     }
   };
 
   renderGroundItems = () => {
     const { indexCourtSelected } = this.state;
-    if (indexCourtSelected > 0) {
-      groundType = this.props.grounds[indexCourtSelected - 1].label;
-
-      let i = 0;
-      const res = [];
-      groundType.forEach(ground => {
-        i++;
-        return res.push({ value: i, label: ground });
-      });
-
-      return res;
+    if (indexCourtSelected !== null && indexCourtSelected > -1) {
+      return this.props.grounds[indexCourtSelected];
     } else {
       return placeHolder;
     }
   };
 
-  render() {
-    //console.log('STATE', this.props.courtState);
+  disabledGroundPicker = () => {
+    const { indexCourtSelected, groundTypeError } = this.state;
 
     return (
-      <View>
-        <Overlay
-          height="auto"
-          animationType="fade"
-          overlayStyle={{ padding: 0 }}
-          isVisible={this.state.helpVisible}
-          onBackdropPress={this.onHelpPress.bind(this)}
-        >
-          <View>
-            <Text>Aqui iria el texto de ayuda</Text>
-          </View>
-        </Overlay>
-        <Card containerStyle={styles.cardStyle}>
-          <CardSection>
-            <View
-              style={{
-                flexDirection: 'row-reverse'
-              }}
-            >
-              <Switch
-                style={{ alignSelf: 'flex-end' }}
-                onValueChange={this.onCourtStateChangeHandle}
-                value={this.state.save}
-              />
-              <Button
-                type="clear"
-                color="white"
-                buttonStyle={{}}
-                onPress={this.onHelpPress.bind(this)}
-                icon={<Icon name="help" size={22} color="grey" />}
-              />
+      (indexCourtSelected === null || indexCourtSelected < 0) &&
+      groundTypeError === ''
+      );
+  }
+
+  render() {
+    if (!this.props.grounds) {
+      return <Spinner size="large" />;
+    } else {
+      return (
+        <View>
+          <Overlay
+            height="auto"
+            animationType="fade"
+            overlayStyle={{ padding: 0 }}
+            isVisible={this.state.helpVisible}
+            onBackdropPress={this.onHelpPress.bind(this)}
+          >
+            <View>
+              <Text>Aqui iria el texto de ayuda</Text>
             </View>
-          </CardSection>
+          </Overlay>
+          <Card containerStyle={styles.cardStyle}>
+            <CardSection>
+              <View
+                style={{
+                  flexDirection: 'row-reverse'
+                }}
+              >
+                <Switch
+                  style={{ alignSelf: 'flex-end' }}
+                  onValueChange={this.onCourtStateChangeHandle}
+                  value={this.state.save}
+                />
+                <Button
+                  type="clear"
+                  color="white"
+                  buttonStyle={{}}
+                  onPress={this.onHelpPress.bind(this)}
+                  icon={<Icon name="help" size={22} color="grey" />}
+                />
+              </View>
+            </CardSection>
+    
+    <CardSection>
+              <Input
+                label="Nombre:"
+                placeholder="Cancha 1"
+                value={this.props.name}
+                errorMessage={this.state.nameError}
+                onChangeText={value =>
+                  this.props.onCourtValueChange({
+                    prop: 'name',
+                    value
+                  })
+                }
+                onFocus={() => this.setState({ nameError: '' })}
+                onBlur={this.renderNameError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Input
-              label="Nombre:"
-              placeholder="Cancha 1"
-              value={this.props.name}
-              errorMessage={this.state.nameError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'name',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ nameError: '' })}
-              onBlur={this.renderNameError}
-            />
-          </CardSection>
+            <CardSection>
+              <Picker
+                title={'Tipo de cancha:'}
+                placeholder={placeHolder[0]}
+                value={this.props.court}
+                items={this.props.courts}
+                onValueChange={this.onCourtTypeChangeHandle}
+                errorMessage={this.state.courtError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Picker
-              title={'Tipo de cancha:'}
-              placeholder={placeHolder[0]}
-              items={this.props.courts}
-              onValueChange={this.onCourtTypeChangeHandle}
-              errorMessage={this.state.courtError}
-            />
-          </CardSection>
+            <CardSection>
+              <Picker
+                title={'Tipo de suelo:'}
+                placeholder={placeHolder[0]}
+                value={this.props.ground}
+                items={this.renderGroundItems()}
+                onValueChange={this.onGroundTypeChangeHandle}
+                disabled={this.disabledGroundPicker()}
+                errorMessage={this.state.groundTypeError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Picker
-              title={'Tipo de suelo:'}
-              placeholder={placeHolder[0]}
-              items={this.renderGroundItems()}
-              onValueChange={this.onGroundTypeChangeHandle}
-              disabled={
-                !this.state.indexCourtSelected &&
-                this.state.groundTypeError !== ''
-              }
-              errorMessage={this.state.groundTypeError}
-            />
-          </CardSection>
-
-          <CardSection>
-            <Input
-              label="Precio por turno:"
-              placeholder="Precio de la cancha"
-              keyboardType="numeric"
-              value={this.props.price}
-              errorMessage={this.state.priceError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'price',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ priceError: '' })}
-              onBlur={this.renderPriceError}
-            />
-          </CardSection>
-          <CardSection>
-            <Button
-              title="Guardar"
-              onPress={this.onButtonPressHandler.bind(this)}
-              errorMessage={
-                this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
-              }
-            />
-          </CardSection>
-        </Card>
-      </View>
-    );
+            <CardSection>
+              <Input
+                label="Precio por turno:"
+                placeholder="Precio de la cancha"
+                keyboardType="numeric"
+                value={this.props.price}
+                errorMessage={this.state.priceError}
+                onChangeText={value =>
+                  this.props.onCourtValueChange({
+                    prop: 'price',
+                    value
+                  })
+                }
+                onFocus={() => this.setState({ priceError: '' })}
+                onBlur={this.renderPriceError}
+              />
+            </CardSection>
+            <CardSection>
+              <Button
+                title="Guardar"
+                onPress={this.onButtonPressHandler.bind(this)}
+                errorMessage={
+                  this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
+                }
+              />
+            </CardSection>
+            
+          </Card>
+        </View>
+      );
+    }
   }
 }
 
 const placeHolder = [
   {
     label: 'Elija una opción...',
-    value: 0
+    value: 'Elija una opción...',
+    key: -1
   }
 ];
 
@@ -335,20 +363,12 @@ const mapStateToProps = state => {
     grounds,
     ground,
     price,
-    courtState,
+    loading,
     existedError
+    courtState
   } = state.courtForm;
 
-  return {
-    name,
-    courts,
-    court,
-    grounds,
-    ground,
-    price,
-    courtState,
-    existedError
-  };
+  return { name, courts, court, grounds, ground, price, loading, existedError, courtState };
 };
 
 export default connect(

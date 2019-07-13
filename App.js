@@ -10,11 +10,6 @@ import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
-import CourtForm from './src/components/CourtForm';
-import CourtList from './src/components/CourtList';
-
-console.disableYellowBox = true;
-
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
   authDomain: 'proyecto-turnosya.firebaseapp.com',
