@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card } from 'react-native-elements';
-import { View, StyleSheet, Switch } from 'react-native';
+import { Card, Overlay } from 'react-native-elements';
+import { View, StyleSheet, Switch, Text } from 'react-native';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
@@ -12,12 +12,16 @@ import {
 } from '../actions';
 import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MAIN_COLOR } from '../constants';
 
 import { Spinner } from './common';
 
 class CourtForm extends Component {
   state = {
     indexCourtSelected: null,
+    save: true,
+    helpVisible: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
@@ -45,7 +49,7 @@ class CourtForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, court, ground, price, navigation } = this.props;
+      const { name, court, ground, price, courtState, navigation } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {
@@ -56,6 +60,7 @@ class CourtForm extends Component {
             court,
             ground,
             price,
+            courtState,
             id
           },
           navigation
@@ -67,7 +72,8 @@ class CourtForm extends Component {
             name,
             court,
             ground,
-            price
+            price,
+            courtState
           },
           navigation
         );
@@ -140,10 +146,24 @@ class CourtForm extends Component {
           index = obj.key;
           return;
         }
-      });
-      this.setState({ indexCourtSelected: index });
 
-      this.setState({ isUpdating: false });
+  onHelpPress() {
+    this.setState({ helpVisible: !this.state.helpVisible });
+  }
+
+  onCourtStateChangeHandle = value => {
+    // console.log('VALUE', value);
+    this.setState({ save: value });
+    if (value) {
+      this.props.onCourtValueChange({
+        prop: 'courtState',
+        value: 'Disponible'
+      });
+    } else {
+      this.props.onCourtValueChange({
+        prop: 'courtState',
+        value: 'No Disponible'
+      });
     }
   };
 
@@ -203,8 +223,8 @@ class CourtForm extends Component {
     return (
       (indexCourtSelected === null || indexCourtSelected < 0) &&
       groundTypeError === ''
-    );
-  };
+      );
+  }
 
   render() {
     if (!this.props.grounds) {
@@ -212,9 +232,40 @@ class CourtForm extends Component {
     } else {
       return (
         <View>
+          <Overlay
+            height="auto"
+            animationType="fade"
+            overlayStyle={{ padding: 0 }}
+            isVisible={this.state.helpVisible}
+            onBackdropPress={this.onHelpPress.bind(this)}
+          >
+            <View>
+              <Text>Aqui iria el texto de ayuda</Text>
+            </View>
+          </Overlay>
           <Card containerStyle={styles.cardStyle}>
-            <Switch disabled={true} />
             <CardSection>
+              <View
+                style={{
+                  flexDirection: 'row-reverse'
+                }}
+              >
+                <Switch
+                  style={{ alignSelf: 'flex-end' }}
+                  onValueChange={this.onCourtStateChangeHandle}
+                  value={this.state.save}
+                />
+                <Button
+                  type="clear"
+                  color="white"
+                  buttonStyle={{}}
+                  onPress={this.onHelpPress.bind(this)}
+                  icon={<Icon name="help" size={22} color="grey" />}
+                />
+              </View>
+            </CardSection>
+    
+    <CardSection>
               <Input
                 label="Nombre:"
                 placeholder="Cancha 1"
@@ -280,6 +331,7 @@ class CourtForm extends Component {
                 }
               />
             </CardSection>
+            
           </Card>
         </View>
       );
@@ -313,9 +365,10 @@ const mapStateToProps = state => {
     price,
     loading,
     existedError
+    courtState
   } = state.courtForm;
 
-  return { name, courts, court, grounds, ground, price, loading, existedError };
+  return { name, courts, court, grounds, ground, price, loading, existedError, courtState };
 };
 
 export default connect(

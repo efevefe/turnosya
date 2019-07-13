@@ -58,7 +58,10 @@ export const getCourtAndGroundTypes = () => {
   };
 };
 
-export const courtCreate = ({ name, court, ground, price }, navigation) => {
+export const courtCreate = (
+  { name, court, ground, price, courtState },
+  navigation
+) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -73,7 +76,7 @@ export const courtCreate = ({ name, court, ground, price }, navigation) => {
           dispatch({ type: COURT_EXISTED });
         } else {
           db.collection(`Commerces/${currentUser.uid}/Courts`)
-            .add({ name, court, ground, price, softDelete: null })
+            .add({ name, court, ground, price, courtState, softDelete: null })
             .then(() => {
               dispatch({ type: COURT_CREATE });
               navigation.goBack();
@@ -113,14 +116,17 @@ export const courtDelete = ({ id }) => {
   };
 };
 
-export const courtUpdate = ({ id, name, court, ground, price }, navigation) => {
+export const courtUpdate = (
+  { id, name, court, ground, price, courtState },
+  navigation
+) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: COURT_FORM_SUBMIT });
     db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
-      .update({ name, court, ground, price })
+      .update({ name, court, ground, price, courtState })
       .then(() => {
         dispatch({ type: COURT_UPDATE });
         navigation.goBack();
