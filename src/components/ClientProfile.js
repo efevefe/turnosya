@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Text, Divider, Overlay, Icon, Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
-import { ImagePicker, Permissions, Constants } from 'expo';
+import { ImagePicker, Permissions, Constants, Location } from 'expo';
 import { connect } from 'react-redux';
 import { CardSection, Input, Spinner } from '../components/common';
 import { MAIN_COLOR } from '../constants';
@@ -23,6 +23,8 @@ class ClientProfile extends Component {
     componentWillMount() {
         this.props.onUserRead();
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+
+        this.getLocation();
     }
 
     renderEditButton = () => {
@@ -162,8 +164,27 @@ class ClientProfile extends Component {
         }
     }
 
+    getLocation = async () => {
+        await Permissions.askAsync(Permissions.LOCATION);
+
+        let position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+
+        let location = await Location.reverseGeocodeAsync({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+
+        this.props.onRegisterValueChange({ prop: 'location', value: { ...location[0] } });
+    }
+
+    renderLocation = () => {
+        if (this.props.location) {
+            const { region, city } = this.props.location;
+            return `${region}, ${city}`;
+        } else {
+            return `Sin Ubicacion`;
+        }
+    }
+
     render() {
-        const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
+        const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, locationContainerStyle, infoContainerStyle } = styles;
 
         if (this.props.loading) {
             return <Spinner />;
@@ -184,7 +205,10 @@ class ClientProfile extends Component {
                         {this.renderEditPhotoButton()}
                     </View>
                     <Text h4>{this.renderFullName()}</Text>
-                    <Text>Unquillo, Cordoba</Text>
+                    <View style={locationContainerStyle}>
+                        <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
+                        <Text>{this.renderLocation()}</Text>
+                    </View>
                 </View>
                 <Divider
                     style={{
@@ -284,6 +308,11 @@ const styles = StyleSheet.create({
         borderColor: MAIN_COLOR,
         margin: 10
     },
+    locationContainerStyle: { 
+        justifyContent: 'space-around', 
+        flexDirection: 'row', 
+        alignItems: 'center' 
+    },
     infoContainerStyle: {
         alignSelf: 'stretch',
         padding: 10
@@ -291,9 +320,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { firstName, lastName, phone, email, photo, loading, loadingUpdate } = state.registerForm;
+    const { firstName, lastName, phone, email, photo, location, loading, loadingUpdate } = state.registerForm;
 
-    return { firstName, lastName, phone, email, photo, loading, loadingUpdate };
+    return { firstName, lastName, phone, email, photo, location, loading, loadingUpdate };
 }
 
 export default connect(mapStateToProps, { onUserRead, onUserUpdate, onRegisterValueChange })(ClientProfile);
