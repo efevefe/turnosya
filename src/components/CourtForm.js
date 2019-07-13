@@ -13,20 +13,19 @@ import {
 import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { MAIN_COLOR } from '../constants';
 
 import { Spinner } from './common';
 
 class CourtForm extends Component {
   state = {
-    indexCourtSelected: null,
     save: true,
     helpVisible: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
     priceError: '',
-    isUpdating: false
+    isUpdating: false,
+    selectedGrounds: []
   };
 
   componentWillMount() {
@@ -148,7 +147,7 @@ class CourtForm extends Component {
         }
       });
 
-      this.setState({ indexCourtSelected: index });
+      this.setState({ selectedGrounds: this.props.grounds[index] });
 
       this.setState({ isUpdating: false });
     }
@@ -159,7 +158,6 @@ class CourtForm extends Component {
   }
 
   onCourtStateChangeHandle = value => {
-    // console.log('VALUE', value);
     this.setState({ save: value });
     if (value) {
       this.props.onCourtValueChange({
@@ -175,17 +173,19 @@ class CourtForm extends Component {
   };
 
   onCourtTypeChangeHandle = (value, key) => {
+    debugger;
     if (!this.state.isUpdating) {
       this.setState({
-        indexCourtSelected: key - 1,
         courtError: ''
       });
       if (key > 0) {
+        this.setState({ selectedGrounds: this.props.grounds[key - 1] });
         this.props.onCourtValueChange({
           prop: 'court',
           value
         });
       } else {
+        this.setState({ selectedGrounds: [] });
         this.props.onCourtValueChange({
           prop: 'court',
           value: ''
@@ -215,22 +215,10 @@ class CourtForm extends Component {
     }
   };
 
-  renderGroundItems = () => {
-    const { indexCourtSelected } = this.state;
-    if (indexCourtSelected !== null && indexCourtSelected > -1) {
-      return this.props.grounds[indexCourtSelected];
-    } else {
-      return placeHolder;
-    }
-  };
-
   disabledGroundPicker = () => {
-    const { indexCourtSelected, groundTypeError } = this.state;
+    const { selectedGrounds, groundTypeError } = this.state;
 
-    return (
-      (indexCourtSelected === null || indexCourtSelected < 0) &&
-      groundTypeError === ''
-    );
+    return selectedGrounds.length === 0 && groundTypeError === '';
   };
 
   render() {
@@ -305,7 +293,7 @@ class CourtForm extends Component {
                 title={'Tipo de suelo:'}
                 placeholder={placeHolder[0]}
                 value={this.props.ground}
-                items={this.renderGroundItems()}
+                items={this.state.selectedGrounds}
                 onValueChange={this.onGroundTypeChangeHandle}
                 disabled={this.disabledGroundPicker()}
                 errorMessage={this.state.groundTypeError}
