@@ -13,19 +13,17 @@ import {
 import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType } from '../utils';
 
+import { Spinner } from './common';
+
 class CourtForm extends Component {
   state = {
     indexCourtSelected: null,
-    save: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
-    priceError: ''
+    priceError: '',
+    isUpdating: false
   };
-
-  componentDidMount() {
-    this.props.getCourtAndGroundTypes();
-  }
 
   componentWillMount() {
     const { params } = this.props.navigation.state;
@@ -34,9 +32,15 @@ class CourtForm extends Component {
       _.each(params.court, (value, prop) => {
         this.props.onCourtValueChange({ prop, value });
       });
+
+      this.setState({ isUpdating: true });
     } else {
       this.props.onCourtFormOpen();
     }
+  }
+
+  componentDidMount() {
+    this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler() {
@@ -108,7 +112,7 @@ class CourtForm extends Component {
       this.setState({ priceError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('number', this.props.price)) {
-      this.setState({ priceError: 'Debe ingresar un valor numerico' });
+      this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ priceError: '' });
@@ -125,60 +129,69 @@ class CourtForm extends Component {
     );
   };
 
-  onCourtTypeChangeHandle = value => {
-    console.log('ACA ENTRA');
-    console.log('court: ', this.props.court);
-    console.log('ground: ', this.props.ground);
+  setPickersValues = () => {
+    if (this.props.courts && this.props.courts.length > 0) {
+      const { courts, court } = this.props;
 
-    this.setState({
-      indexCourtSelected: value,
-      courtError: ''
-    });
-    if (value > 0) {
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value: this.props.courts[value - 1].label
+      let index = null;
+
+      courts.some(obj => {
+        if (obj.label === court) {
+          index = obj.key;
+          return;
+        }
       });
-    } else {
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value: ''
-      });
+      this.setState({ indexCourtSelected: index });
+
+      this.setState({ isUpdating: false });
     }
   };
 
-  onGroundTypeChangeHandle = value => {
-    console.log('SEGUNDO PICKER');
-    console.log('ground: ', this.props.ground);
-    console.log('court: ', this.props.court);
-    const { indexCourtSelected } = this.state;
-    const { grounds, onCourtValueChange } = this.props;
-
-    this.setState({ groundTypeError: '' });
-
-    if (grounds && value > 0) {
-      onCourtValueChange({
-        prop: 'ground',
-        value: grounds[indexCourtSelected - 1].label[value - 1]
+  onCourtTypeChangeHandle = (value, key) => {
+    if (!this.state.isUpdating) {
+      this.setState({
+        indexCourtSelected: key - 1,
+        courtError: ''
       });
+      if (key > 0) {
+        this.props.onCourtValueChange({
+          prop: 'court',
+          value
+        });
+      } else {
+        this.props.onCourtValueChange({
+          prop: 'court',
+          value: ''
+        });
+      }
     } else {
-      onCourtValueChange({ prop: 'ground', value: '' });
+      this.setPickersValues();
+    }
+  };
+
+  onGroundTypeChangeHandle = (value, key) => {
+    if (!this.state.isUpdating) {
+      const { grounds, onCourtValueChange } = this.props;
+
+      this.setState({ groundTypeError: '' });
+
+      if (grounds !== null && key > 0) {
+        onCourtValueChange({
+          prop: 'ground',
+          value
+        });
+      } else {
+        onCourtValueChange({ prop: 'ground', value: '' });
+      }
+    } else {
+      this.setPickersValues();
     }
   };
 
   renderGroundItems = () => {
     const { indexCourtSelected } = this.state;
-    if (indexCourtSelected > 0) {
-      groundType = this.props.grounds[indexCourtSelected - 1].label;
-
-      let i = 0;
-      const res = [];
-      groundType.forEach(ground => {
-        i++;
-        return res.push({ value: i, label: ground });
-      });
-
-      return res;
+    if (indexCourtSelected !== null && indexCourtSelected > -1) {
+      return this.props.grounds[indexCourtSelected];
     } else {
       return placeHolder;
     }
@@ -186,91 +199,99 @@ class CourtForm extends Component {
 
   disabledGroundPicker = () => {
     const { indexCourtSelected, groundTypeError } = this.state;
+
     return (
-      (!indexCourtSelected || indexCourtSelected === 0) &&
+      (indexCourtSelected === null || indexCourtSelected < 0) &&
       groundTypeError === ''
     );
   };
 
   render() {
-    return (
-      <View>
-        <Card containerStyle={styles.cardStyle}>
-          <Switch disabled={true} />
-          <CardSection>
-            <Input
-              label="Nombre:"
-              placeholder="Cancha 1"
-              value={this.props.name}
-              errorMessage={this.state.nameError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'name',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ nameError: '' })}
-              onBlur={this.renderNameError}
-            />
-          </CardSection>
+    if (!this.props.grounds) {
+      return <Spinner size="large" />;
+    } else {
+      return (
+        <View>
+          <Card containerStyle={styles.cardStyle}>
+            <Switch disabled={true} />
+            <CardSection>
+              <Input
+                label="Nombre:"
+                placeholder="Cancha 1"
+                value={this.props.name}
+                errorMessage={this.state.nameError}
+                onChangeText={value =>
+                  this.props.onCourtValueChange({
+                    prop: 'name',
+                    value
+                  })
+                }
+                onFocus={() => this.setState({ nameError: '' })}
+                onBlur={this.renderNameError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Picker
-              title={'Tipo de cancha:'}
-              placeholder={placeHolder[0]}
-              items={this.props.courts}
-              onValueChange={this.onCourtTypeChangeHandle}
-              errorMessage={this.state.courtError}
-            />
-          </CardSection>
+            <CardSection>
+              <Picker
+                title={'Tipo de cancha:'}
+                placeholder={placeHolder[0]}
+                value={this.props.court}
+                items={this.props.courts}
+                onValueChange={this.onCourtTypeChangeHandle}
+                errorMessage={this.state.courtError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Picker
-              title={'Tipo de suelo:'}
-              placeholder={placeHolder[0]}
-              items={this.renderGroundItems()}
-              onValueChange={this.onGroundTypeChangeHandle}
-              disabled={this.disabledGroundPicker()}
-              errorMessage={this.state.groundTypeError}
-            />
-          </CardSection>
+            <CardSection>
+              <Picker
+                title={'Tipo de suelo:'}
+                placeholder={placeHolder[0]}
+                value={this.props.ground}
+                items={this.renderGroundItems()}
+                onValueChange={this.onGroundTypeChangeHandle}
+                disabled={this.disabledGroundPicker()}
+                errorMessage={this.state.groundTypeError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Input
-              label="Precio por turno:"
-              placeholder="Precio de la cancha"
-              keyboardType="numeric"
-              value={this.props.price}
-              errorMessage={this.state.priceError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'price',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ priceError: '' })}
-              onBlur={this.renderPriceError}
-            />
-          </CardSection>
-          <CardSection>
-            <Button
-              title="Guardar"
-              onPress={this.onButtonPressHandler.bind(this)}
-              errorMessage={
-                this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
-              }
-            />
-          </CardSection>
-        </Card>
-      </View>
-    );
+            <CardSection>
+              <Input
+                label="Precio por turno:"
+                placeholder="Precio de la cancha"
+                keyboardType="numeric"
+                value={this.props.price}
+                errorMessage={this.state.priceError}
+                onChangeText={value =>
+                  this.props.onCourtValueChange({
+                    prop: 'price',
+                    value
+                  })
+                }
+                onFocus={() => this.setState({ priceError: '' })}
+                onBlur={this.renderPriceError}
+              />
+            </CardSection>
+            <CardSection>
+              <Button
+                title="Guardar"
+                onPress={this.onButtonPressHandler.bind(this)}
+                errorMessage={
+                  this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
+                }
+              />
+            </CardSection>
+          </Card>
+        </View>
+      );
+    }
   }
 }
 
 const placeHolder = [
   {
     label: 'Elija una opción...',
-    value: 0
+    value: 'Elija una opción...',
+    key: -1
   }
 ];
 
@@ -290,10 +311,11 @@ const mapStateToProps = state => {
     grounds,
     ground,
     price,
+    loading,
     existedError
   } = state.courtForm;
 
-  return { name, courts, court, grounds, ground, price, existedError };
+  return { name, courts, court, grounds, ground, price, loading, existedError };
 };
 
 export default connect(

@@ -29,10 +29,17 @@ export const getCourtAndGroundTypes = () => {
       .then(querySnapshot => {
         let courts = [];
         let grounds = [];
-        let i = 1;
+        let i = 0;
         querySnapshot.forEach(doc => {
-          courts.push({ value: i, label: doc.id });
-          grounds.push({ value: i, label: doc.data().groundType });
+          courts.push({ value: doc.id, label: doc.id, key: i });
+
+          const ground = [];
+          doc.data().groundType.forEach((value, j) => {
+            ground.push({ value, label: value, key: j });
+          });
+
+          grounds.push(ground);
+
           i++;
         });
 
@@ -44,6 +51,8 @@ export const getCourtAndGroundTypes = () => {
           type: ON_COURT_VALUE_CHANGE,
           payload: { prop: 'grounds', value: grounds }
         });
+
+        dispatch({ type: COURT_FORM_SUBMIT });
       })
       .catch(err => console.log(err));
   };
