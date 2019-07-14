@@ -1,83 +1,57 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  COMMERCE_READING,
-  COMMERCE_READ,
-  COMMERCE_FAIL,
+  ON_REGISTER_COMMERCE,
   COMMERCE_PROFILE_CREATE,
-  ON_COMMERCE_PROFILE_VALUE_CHANGE
+  ON_COMMERCE_VALUE_CHANGE,
+  COMMERCE_FAIL
 } from './types';
 
 export const onComemrceValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_PROFILE_VALUE_CHANGE, payload: { prop, value } };
+  return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const verifyExistsCommerce = navigation => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
-  db.doc(`Commerces/${currentUser.uid}`)
+
+  db.doc(`Profiles/${currentUser.uid}`)
     .get()
-    .then(valor => {
-      console.log(valor.exists);
-      if (valor.exists) {
-        navigation.navigate('commerce');
-      } else {
+    .then(doc => {
+      console.log(doc.data(), currentUser.uid, doc.data().commerceId == null)
+      if (doc.data().commerceId == null) {
         navigation.navigate('commerceRegister');
+      } else {
+        navigation.navigate('commerce');
       }
     })
     .catch(error => {
       console.log(error);
     });
 };
-
 export const onCreateProfile = (
-  { name, avatar, description, cuit, location, email, phone },
+  { name, avatar, description, cuit, email, phone, address, city, sector, province },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
   return dispatch => {
+    dispatch({ type: ON_REGISTER_COMMERCE });
     db.runTransaction(() => {
+      console.log('1')
       db.collection(`Commerces`)
-        .add({ name, avatar, description, cuit, location, email, phone })
+        .add({ name, avatar, description, cuit, email, phone, address, city, sector, province })
         .then(reference => {
           db.doc(`Profiles/${currentUser.uid}`)
             .set({ commerceId: reference.id })
             .then(() => {
+              console.log('2')
               dispatch({ type: COMMERCE_PROFILE_CREATE });
               navigation.navigate('commerce');
             })
-            .catch(error => console.log('4', error));
+            .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
         })
-        .catch(error => console.log('5', error));
-    }).catch(error => console.log('6', error));
+        .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+    }).catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
   };
 };
-/* export const commerceProfileRead = () => {
-  const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: COMMERCE_READING });
-
-    db.collection(`Commerces/${currentUser.uid}`)
-      //db.collection(`Commerces/465ExfH0AHaIGXrDpZcnYBCTdLy1/Services`)
-      .get()
-      .then(doc => {
-        if (!doc.exists) {
-          console.log('No such document!');
-        } else {
-          dispatch({
-            action: COMMERCE_READ,
-            payload: doc
-          });
-        }
-      })
-      .catch(error => {
-        dispatch({
-          action: COMMERCE_FAIL,
-          payload: error
-        });
-      });
-  };
-}; */

@@ -3,27 +3,15 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCreateProfile, onComemrceValueChange } from '../actions';
+import { onComemrceValueChange } from '../actions';
 import { validateValueType } from '../utils';
 
-class RegisterCommerceProfile extends Component {
+class RegisterCommerce extends Component {
   state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      this.props.onCreateProfile(
-        {
-          name: this.props.name,
-          description: this.props.description,
-          avatar: this.props.avatar,
-          cuit: this.props.cuit,
-          location: this.props.location,
-          email: this.props.email,
-          phone: this.props.phone
-        },
-
-        this.props.navigation
-      );
+      this.props.navigation.navigate('commerceRegisterProfile1')
     }
   }
   validateMinimumData = () => {
@@ -147,30 +135,6 @@ class RegisterCommerceProfile extends Component {
           </CardSection>
           <CardSection>
             <Input
-              label="Dirección"
-              placeholder="Dirección"
-              onChangeText={value =>
-                this.props.onComemrceValueChange({
-                  prop: 'location',
-                  value
-                })
-              }
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="Avatar"
-              placeholder="Avatar"
-              onChangeText={value =>
-                this.props.onComemrceValueChange({
-                  prop: 'avatar',
-                  value
-                })
-              }
-            />
-          </CardSection>
-          <CardSection>
-            <Input
               label="Descripción"
               placeholder="Descripción"
               multiline={true}
@@ -186,8 +150,7 @@ class RegisterCommerceProfile extends Component {
           </CardSection>
           <CardSection>
             <Button
-              title="Registrar"
-              loading={this.props.loading}
+              title="Continuar"
               onPress={this.onButtonPressHandler.bind(this)}
             />
           </CardSection>
@@ -201,28 +164,22 @@ const mapStateToProps = state => {
   const {
     name,
     description,
-    avatar,
     cuit,
-    location,
     email,
     phone,
     error,
-    loading
   } = state.commerceProfile;
 
   return {
     name,
-    avatar,
     description,
     error,
-    loading,
     cuit,
-    location,
     email,
     phone
   };
 };
 export default connect(
   mapStateToProps,
-  { onComemrceValueChange, onCreateProfile }
-)(RegisterCommerceProfile);
+  { onComemrceValueChange }
+)(RegisterCommerce);

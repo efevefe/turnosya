@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { onLogout } from '../actions/AuthActions';
 import { DrawerItem } from '../components/common';
+import { verifyExistsCommerce } from '../actions';
+
 
 class ClientDrawerContent extends Component {
   leftIcon = name => (
@@ -21,7 +23,7 @@ class ClientDrawerContent extends Component {
           <DrawerItem
             title="Mi Negocio"
             icon={this.leftIcon('ios-briefcase')}
-            onPress={() => this.props.navigation.navigate('commerceRegister')}
+            onPress={() => verifyExistsCommerce(this.props.navigation)}
           />
           <DrawerItem
             title="Cerrar Sesion"

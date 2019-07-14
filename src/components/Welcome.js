@@ -2,15 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
 import { CardSection, Button, Input } from './common';
-import { verifyExistsCommerce } from '../actions';
 
 class Welcome extends Component {
-  componentWillMount() {
-    //this.props.navigation.navigate
-    verifyExistsCommerce(this.props.navigation);
-  }
   onButtonPressHandler() {
-    this.props.navigation.navigate('commerceRegister');
+    this.props.navigation.navigate('commerceRegisterProfile');
   }
 
   render() {

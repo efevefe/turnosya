@@ -9,7 +9,6 @@ import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
-import RegisterCommerceProfile from '../components/RegisterCommerceProfile';
 
 // Stack navigation options
 
@@ -108,12 +107,6 @@ const profileStack = createStackNavigator(
         headerRight: rightIcon(navigation, 'md-create', 'editProfile')
       })
     },
-    editProfile: {
-      screen: RegisterCommerceProfile,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Perfil'
-      })
-    }
   },
   stackNavigationOptions
 );

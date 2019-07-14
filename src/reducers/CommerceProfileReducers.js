@@ -1,9 +1,8 @@
 import {
+  ON_COMMERCE_VALUE_CHANGE,
+  COMMERCE_PROFILE_CREATE,
   COMMERCE_FAIL,
-  COMMERCE_READ,
-  COMMERCE_READING,
-  ON_COMMERCE_PROFILE_VALUE_CHANGE,
-  COMMERCE_PROFILE_CREATE
+  ON_REGISTER_COMMERCE,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -11,22 +10,25 @@ const INITIAL_STATE = {
   description: '',
   avatar: null,
   cuit: '',
-  location: '',
   email: '',
   phone: '',
+  address:'',
+  city:'',
+  province:'',
+  sector:'',
   error: '',
   loading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_COMMERCE_PROFILE_VALUE_CHANGE:
+    case ON_COMMERCE_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case COMMERCE_FAIL:
       return { ...state, error: action.payload, loading: false };
-    case COMMERCE_READING:
+    case ON_REGISTER_COMMERCE:
       return { ...state, loading: true };
-    case COMMERCE_READ:
+    case COMMERCE_PROFILE_CREATE:
       return { ...state, loading: false };
     default:
       return state;
