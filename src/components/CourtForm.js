@@ -15,10 +15,11 @@ import { validateValueType } from '../utils';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { Spinner } from './common';
+import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
   state = {
-    save: true,
+    switch: true,
     helpVisible: false,
     nameError: '',
     courtError: '',
@@ -158,7 +159,7 @@ class CourtForm extends Component {
   }
 
   onCourtStateChangeHandle = value => {
-    this.setState({ save: value });
+    this.setState({ switch: value });
     if (value) {
       this.props.onCourtValueChange({
         prop: 'courtState',
@@ -235,11 +236,13 @@ class CourtForm extends Component {
             onBackdropPress={this.onHelpPress.bind(this)}
           >
             <View>
-              <Text>Aqui iria el texto de ayuda</Text>
+              <Text style={{ textAlign: 'justify', fontSize: 15 }}>
+                {helpText}
+              </Text>
             </View>
           </Overlay>
           <Card containerStyle={styles.cardStyle}>
-            <CardSection>
+            <CardSection style={{ marginTop: 0 }}>
               <View
                 style={{
                   flexDirection: 'row-reverse'
@@ -248,14 +251,20 @@ class CourtForm extends Component {
                 <Switch
                   style={{ alignSelf: 'flex-end' }}
                   onValueChange={this.onCourtStateChangeHandle}
-                  value={this.state.save}
+                  value={this.state.switch}
                 />
                 <Button
                   type="clear"
                   color="white"
-                  buttonStyle={{}}
+                  buttonStyle={{
+                    width: 20,
+                    marginRigth: 8,
+                    marginTop: 0,
+                    margin: 4,
+                    padding: 0
+                  }}
                   onPress={this.onHelpPress.bind(this)}
-                  icon={<Icon name="help" size={22} color="grey" />}
+                  icon={<Icon name="help" size={22} color={MAIN_COLOR} />}
                 />
               </View>
             </CardSection>
@@ -348,6 +357,10 @@ const styles = StyleSheet.create({
     borderRadius: 10
   }
 });
+
+const helpText =
+  'Cuando esta encendido indica que el estado de la cancha es "Disponible", \
+en cambio si esta apagado indica que el estado de la cancha es "No Disponible"';
 
 const mapStateToProps = state => {
   const {
