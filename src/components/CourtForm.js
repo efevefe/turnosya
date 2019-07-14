@@ -258,7 +258,7 @@ class CourtForm extends Component {
                   color="white"
                   buttonStyle={{
                     width: 20,
-                    marginRigth: 8,
+                    marginRight: 8,
                     marginTop: 0,
                     margin: 4,
                     padding: 0
