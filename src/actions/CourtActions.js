@@ -69,6 +69,7 @@ export const courtCreate = (
     dispatch({ type: COURT_FORM_SUBMIT });
     db.collection(`Commerces/${currentUser.uid}/Courts`)
       .where('name', '==', name)
+      .where('softDelete', '==', null)
       .get()
       .then(function(querySnapshot) {
         if (!querySnapshot.empty) {

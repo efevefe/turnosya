@@ -13,7 +13,7 @@ const INITIAL_STATE = {
   grouds: [],
   ground: '',
   price: '',
-  courtState: 'Disponible',
+  courtState: true,
   loading: false,
   existedError: false
 };

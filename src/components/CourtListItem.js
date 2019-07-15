@@ -82,7 +82,9 @@ class CourtListItem extends Component {
           title={name}
           titleStyle={{ textAlign: 'justify', fontSize: 22, display: 'flex' }}
           rightTitle={`$${price}`}
-          rightSubtitle={`Estado: ${courtState}`}
+          rightSubtitle={`Estado: ${
+            courtState ? 'Disponible' : 'No Disponible'
+          }`}
           rightSubtitleStyle={{ fontSize: 8 }}
           key={id}
           subtitle={<Text>{`${court} - ${ground}`}</Text>}

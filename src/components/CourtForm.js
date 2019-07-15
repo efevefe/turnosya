@@ -1,8 +1,9 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Overlay } from 'react-native-elements';
 import { View, StyleSheet, Switch, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
@@ -10,22 +11,17 @@ import {
   onCourtFormOpen,
   courtUpdate
 } from '../actions';
-import { CardSection, Input, Picker, Button } from './common';
+import { CardSection, Input, Picker, Button, Spinner } from './common';
 import { validateValueType } from '../utils';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-import { Spinner } from './common';
 import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
   state = {
-    switch: true,
     helpVisible: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
     priceError: '',
-    isUpdating: false,
     selectedGrounds: []
   };
 
@@ -33,11 +29,11 @@ class CourtForm extends Component {
     const { params } = this.props.navigation.state;
 
     if (params) {
-      _.each(params.court, (value, prop) => {
-        this.props.onCourtValueChange({ prop, value });
-      });
+      const { court } = params;
 
-      this.setState({ isUpdating: true });
+      for (prop in params.court) {
+        this.props.onCourtValueChange({ prop, value: court[prop] });
+      }
     } else {
       this.props.onCourtFormOpen();
     }
@@ -78,8 +74,6 @@ class CourtForm extends Component {
           navigation
         );
       }
-
-      this.setState({ indexCourtSelected: null });
     }
   }
 
@@ -135,91 +129,42 @@ class CourtForm extends Component {
     );
   };
 
-  setPickersValues = () => {
-    if (this.props.courts && this.props.courts.length > 0) {
-      const { courts, court } = this.props;
-
-      let index = null;
-
-      courts.some(obj => {
-        if (obj.label === court) {
-          index = obj.key;
-          return;
-        }
-      });
-
-      this.setState({ selectedGrounds: this.props.grounds[index] });
-
-      this.setState({ isUpdating: false });
-    }
-  };
-
   onHelpPress() {
     this.setState({ helpVisible: !this.state.helpVisible });
   }
 
-  onCourtStateChangeHandle = value => {
-    this.setState({ switch: value });
-    if (value) {
-      this.props.onCourtValueChange({
-        prop: 'courtState',
-        value: 'Disponible'
-      });
-    } else {
-      this.props.onCourtValueChange({
-        prop: 'courtState',
-        value: 'No Disponible'
-      });
-    }
-  };
-
   onCourtTypeChangeHandle = (value, key) => {
-    debugger;
-    if (!this.state.isUpdating) {
-      this.setState({
-        courtError: ''
+    this.setState({
+      courtError: ''
+    });
+    if (key > 0) {
+      this.setState({ selectedGrounds: this.props.grounds[key - 1] });
+      this.props.onCourtValueChange({
+        prop: 'court',
+        value
       });
-      if (key > 0) {
-        this.setState({ selectedGrounds: this.props.grounds[key - 1] });
-        this.props.onCourtValueChange({
-          prop: 'court',
-          value
-        });
-      } else {
-        this.setState({ selectedGrounds: [] });
-        this.props.onCourtValueChange({
-          prop: 'court',
-          value: ''
-        });
-      }
     } else {
-      this.setPickersValues();
+      this.setState({ selectedGrounds: [] });
+      this.props.onCourtValueChange({
+        prop: 'court',
+        value: ''
+      });
     }
   };
 
   onGroundTypeChangeHandle = (value, key) => {
-    if (!this.state.isUpdating) {
-      const { grounds, onCourtValueChange } = this.props;
+    const { grounds, onCourtValueChange } = this.props;
 
-      this.setState({ groundTypeError: '' });
+    this.setState({ groundTypeError: '' });
 
-      if (grounds !== null && key > 0) {
-        onCourtValueChange({
-          prop: 'ground',
-          value
-        });
-      } else {
-        onCourtValueChange({ prop: 'ground', value: '' });
-      }
+    if (grounds !== null && key > 0) {
+      onCourtValueChange({
+        prop: 'ground',
+        value
+      });
     } else {
-      this.setPickersValues();
+      onCourtValueChange({ prop: 'ground', value: '' });
     }
-  };
-
-  disabledGroundPicker = () => {
-    const { selectedGrounds, groundTypeError } = this.state;
-
-    return selectedGrounds.length === 0 && groundTypeError === '';
   };
 
   render() {
@@ -228,6 +173,7 @@ class CourtForm extends Component {
     } else {
       return (
         <View>
+          {console.log('state: ', this.props.courtState)}
           <Overlay
             height="auto"
             animationType="fade"
@@ -250,8 +196,10 @@ class CourtForm extends Component {
               >
                 <Switch
                   style={{ alignSelf: 'flex-end' }}
-                  onValueChange={this.onCourtStateChangeHandle}
-                  value={this.state.switch}
+                  onValueChange={value =>
+                    this.props.onCourtValueChange({ prop: 'courtState', value })
+                  }
+                  value={this.props.courtState}
                 />
                 <Button
                   type="clear"
@@ -304,7 +252,7 @@ class CourtForm extends Component {
                 value={this.props.ground}
                 items={this.state.selectedGrounds}
                 onValueChange={this.onGroundTypeChangeHandle}
-                disabled={this.disabledGroundPicker()}
+                disabled={this.state.selectedGrounds.length === 0}
                 errorMessage={this.state.groundTypeError}
               />
             </CardSection>
