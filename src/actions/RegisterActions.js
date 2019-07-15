@@ -29,12 +29,12 @@ export const onRegister = ({ email, password }) => {
   };
 };
 
-export const onUserRead = () => {
+export const onUserRead = ( loadingType ) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_USER_READING });
+    dispatch({ type: ON_USER_READING, payload: loadingType });
 
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
@@ -56,7 +56,7 @@ export const onUserUpdateNoPicture = ({ firstName, lastName, phone, profilePictu
     dispatch({ type: ON_USER_UPDATING });
 
     db.doc(`Profiles/${currentUser.uid}`)
-      .update({ firstName, lastName, phone })
+      .update({ firstName, lastName, phone, profilePicture })
       .then(dispatch({ type: ON_USER_UPDATED, payload: profilePicture }))
       .catch(error => {
         dispatch({ type: ON_USER_UPDATE_FAIL })

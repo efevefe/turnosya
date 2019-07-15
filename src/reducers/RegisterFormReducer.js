@@ -18,7 +18,7 @@ const INITIAL_STATE = {
   profilePicture: null,
   location: null,
   loading: false,
-  loadingUpdate: false,
+  refreshing: false,
   error: ''
 };
 
@@ -33,17 +33,17 @@ export default (state = INITIAL_STATE, action) => {
     case ON_REGISTER_FAIL:
       return { ...state, loading: false, error: 'Usuario existente' };
     case ON_USER_READING:
-      return { ...INITIAL_STATE, loading: true };
+      return { ...state, [action.payload]: true };
     case ON_USER_READ:
       return { ...INITIAL_STATE, ...action.payload };
     case ON_USER_READ_FAIL:
       return { ...INITIAL_STATE };
     case ON_USER_UPDATING:
-      return { ...state, loadingUpdate: true };
+      return { ...state, refreshing: true };
     case ON_USER_UPDATED:
-      return { ...state, profilePicture: action.payload, loadingUpdate: false };
+      return { ...state, profilePicture: action.payload, refreshing: false };
     case ON_USER_UPDATE_FAIL:
-      return { ...state, loadingUpdate: false };
+      return { ...state, refreshing: false };
     default:
       return INITIAL_STATE;
   }

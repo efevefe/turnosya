@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Overlay, Icon, Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants, Location } from 'expo';
 import { connect } from 'react-redux';
-import { CardSection, Input, Spinner } from '../components/common';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { CardSection, Input, Spinner, Menu, MenuItem } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob } from '../utils';
 import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions/RegisterActions';
@@ -22,9 +23,14 @@ class ClientProfile extends Component {
     }
 
     componentWillMount() {
-        this.props.onUserRead();
+        this.props.onUserRead('loading');
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
 
+        this.getLocation();
+    }
+
+    onRefresh = () => {
+        this.props.onUserRead('refreshing');
         this.getLocation();
     }
 
@@ -158,17 +164,21 @@ class ClientProfile extends Component {
         }
     }
 
+    onDeletePicturePress = () => {
+        this.props.onRegisterValueChange({ prop: 'profilePicture', value: null });
+        this.onEditPicturePress();
+    }
+
     renderFullName = () => {
         const { firstName, lastName } = this.props;
 
         if (firstName || lastName) {
-            return `${firstName} ${lastName}`;
-        } else {
-            return `Sin Nombre`;
+            return <Text h4>{`${firstName} ${lastName}`}</Text>;
         }
     }
 
     renderEditSpinner = () => {
+        // por ahora a esto lo cambio por el spinner del refresh a menos que haya algo malo
         if (this.props.loadingUpdate) {
             return <Spinner type='transparent' />
         }
@@ -187,9 +197,14 @@ class ClientProfile extends Component {
     renderLocation = () => {
         if (this.props.location) {
             const { city, region } = this.props.location;
-            return `${city}, ${region}`;
-        } else {
-            return `Sin Ubicacion`;
+            const { locationContainerStyle } = styles;
+
+            return (
+                <View style={locationContainerStyle}>
+                    <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
+                    <Text>{`${city}, ${region}`}</Text>
+                </View>
+            );
         }
     }
 
@@ -201,100 +216,101 @@ class ClientProfile extends Component {
         }
 
         return (
-            <View style={containerStyle} >
-                <View style={headerContainerStyle} >
-                    <View style={avatarContainerStyle} >
-                        <Avatar
-                            rounded
-                            source={{ uri: this.props.profilePicture }}
-                            size='xlarge'
-                            icon={{ name: 'person' }}
-                            containerStyle={avatarStyle}
+            <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
+                <ScrollView
+                    style={containerStyle}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.props.refreshing}
+                            onRefresh={this.onRefresh}
+                            colors={[MAIN_COLOR]}
+                            tintColor={MAIN_COLOR}
                         />
-
-                        {this.renderEditPictureButton()}
-                    </View>
-                    <Text h4>{this.renderFullName()}</Text>
-                    <View style={locationContainerStyle}>
-                        <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
-                        <Text>{this.renderLocation()}</Text>
-                    </View>
-                </View>
-                <Divider
-                    style={{
-                        backgroundColor: 'grey',
-                        margin: 5,
-                        marginLeft: 10,
-                        marginRight: 10
-                    }}
-                />
-                <View style={infoContainerStyle}>
-                    <CardSection>
-                        <Input
-                            label='Nombre:'
-                            value={this.props.firstName}
-                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
-                            editable={this.state.editEnabled}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Input
-                            label='Apellido:'
-                            value={this.props.lastName}
-                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
-                            editable={this.state.editEnabled}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Input
-                            label='Telefono:'
-                            value={this.props.phone}
-                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'phoneName', value })}
-                            keyboardType='numeric'
-                            editable={this.state.editEnabled}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Input
-                            label='E-Mail:'
-                            value={this.props.email}
-                            editable={false}
-                        />
-                    </CardSection>
-                </View>
-
-                {this.renderEditSpinner()}
-
-                <Overlay
-                    height='auto'
-                    overlayStyle={{ padding: 0 }}
-                    onBackdropPress={this.onEditPicturePress}
-                    isVisible={this.state.pictureOptionsVisible}
-                    animationType='fade'
+                    }
                 >
-                    <View>
-                        <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
-                            <Text style={{ fontWeight: 'bold', color: 'black', fontSize: 16, margin: 15 }}>Foto de Perfil</Text>
+                    <View style={headerContainerStyle} >
+                        <View style={avatarContainerStyle} >
+                            <Avatar
+                                rounded
+                                source={{ uri: this.props.profilePicture }}
+                                size='xlarge'
+                                icon={{ name: 'person' }}
+                                containerStyle={avatarStyle}
+                            />
+
+                            {this.renderEditPictureButton()}
                         </View>
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <Button
-                            type='clear'
-                            title='Elegir de la Galeria'
-                            buttonStyle={{ padding: 15 }}
-                            titleStyle={{ color: 'grey' }}
+                        {this.renderFullName()}
+                        {this.renderLocation()}
+                    </View>
+                    <Divider
+                        style={{
+                            backgroundColor: 'grey',
+                            margin: 5,
+                            marginLeft: 10,
+                            marginRight: 10
+                        }}
+                    />
+                    <View style={infoContainerStyle}>
+                        <CardSection>
+                            <Input
+                                label='Nombre:'
+                                value={this.props.firstName}
+                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
+                                editable={this.state.editEnabled}
+                            />
+                        </CardSection>
+                        <CardSection>
+                            <Input
+                                label='Apellido:'
+                                value={this.props.lastName}
+                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
+                                editable={this.state.editEnabled}
+                            />
+                        </CardSection>
+                        <CardSection>
+                            <Input
+                                label='Telefono:'
+                                value={this.props.phone}
+                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'phoneName', value })}
+                                keyboardType='numeric'
+                                editable={this.state.editEnabled}
+                            />
+                        </CardSection>
+                        <CardSection>
+                            <Input
+                                label='E-Mail:'
+                                value={this.props.email}
+                                editable={false}
+                            />
+                        </CardSection>
+                    </View>
+
+                    <Menu
+                        title='Foto de Perfil'
+                        onBackdropPress={this.onEditPicturePress}
+                        isVisible={this.state.pictureOptionsVisible}
+                    >
+                        <MenuItem
+                            title='Elegir de la galeria'
+                            icon='md-photos'
                             onPress={this.onChoosePicturePress}
                         />
-                        <Divider style={{ backgroundColor: 'grey', marginLeft: 10, marginRight: 10 }} />
-                        <Button
-                            type='clear'
+                        <Divider style={{ backgroundColor: 'grey' }} />
+                        <MenuItem
                             title='Tomar Foto'
-                            buttonStyle={{ padding: 15 }}
-                            titleStyle={{ color: 'grey' }}
+                            icon='md-camera'
                             onPress={this.onTakePicturePress}
                         />
-                    </View>
-                </Overlay>
-            </View>
+                        <Divider style={{ backgroundColor: 'grey' }} />
+                        <MenuItem
+                            title='Eliminar'
+                            icon='md-trash'
+                            onPress={this.onDeletePicturePress}
+                        />
+                    </Menu>
+                </ScrollView>
+            </KeyboardAwareScrollView>
         );
     }
 }
@@ -330,9 +346,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { firstName, lastName, phone, email, profilePicture, location, loading, loadingUpdate } = state.registerForm;
+    const { firstName, lastName, phone, email, profilePicture, location, loading, refreshing } = state.registerForm;
 
-    return { firstName, lastName, phone, email, profilePicture, location, loading, loadingUpdate };
+    return { firstName, lastName, phone, email, profilePicture, location, loading, refreshing };
 }
 
 export default connect(mapStateToProps, { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange })(ClientProfile);

@@ -3,13 +3,14 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { MAIN_COLOR } from '../../constants';
 
 const Spinner = ({ size, color, style, type }) => {
-    const background = ( type == 'transparent' ) ? 'rgba(0, 0, 0, 0.6)' : 'white';
+  // cuando se pone en transparente, el spinner se debe agregar debajo de los demas elementos en el DOM, para que se superponga
+  const background = (type == 'transparent') ? 'rgba(0, 0, 0, 0.6)' : 'white';
 
-    return (
-        <View style={[styles.containerStyle, { backgroundColor: background }, style]}>
-            <ActivityIndicator color={color || MAIN_COLOR} size={size || 'large'}/>
-        </View>
-    );
+  return (
+    <View style={[styles.containerStyle, { backgroundColor: background }, style]}>
+      <ActivityIndicator color={color || MAIN_COLOR} size={size || 'large'} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
