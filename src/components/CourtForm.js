@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Overlay } from 'react-native-elements';
+import { Card, Tooltip } from 'react-native-elements';
 import { View, StyleSheet, Switch, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
@@ -17,12 +17,12 @@ import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
   state = {
-    helpVisible: false,
     nameError: '',
     courtError: '',
     groundTypeError: '',
     priceError: '',
-    selectedGrounds: []
+    selectedGrounds: [],
+    save: false
   };
 
   componentWillMount() {
@@ -47,7 +47,7 @@ class CourtForm extends Component {
     if (this.validateMinimumData()) {
       const { name, court, ground, price, courtState, navigation } = this.props;
       const { params } = this.props.navigation.state;
-
+      this.setState({ save: true });
       if (params) {
         const { id } = this.props.navigation.state.params.court;
         this.props.courtUpdate(
@@ -129,10 +129,6 @@ class CourtForm extends Component {
     );
   };
 
-  onHelpPress() {
-    this.setState({ helpVisible: !this.state.helpVisible });
-  }
-
   onCourtTypeChangeHandle = (value, key) => {
     this.setState({
       courtError: ''
@@ -171,121 +167,128 @@ class CourtForm extends Component {
     if (!this.props.grounds) {
       return <Spinner size="large" />;
     } else {
-      return (
-        <View>
-          {console.log('state: ', this.props.courtState)}
-          <Overlay
-            height="auto"
-            animationType="fade"
-            overlayStyle={{ padding: 0 }}
-            isVisible={this.state.helpVisible}
-            onBackdropPress={this.onHelpPress.bind(this)}
-          >
+      if (this.state.save) {
+        return <Spinner size="large" />;
+      } else {
+        return (
+          <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
             <View>
-              <Text style={{ textAlign: 'justify', fontSize: 15 }}>
-                {helpText}
-              </Text>
+              {console.log('state: ', this.props.courtState)}
+
+              <Card containerStyle={styles.cardStyle}>
+                <CardSection style={{ marginTop: 0 }}>
+                  <View
+                    style={{
+                      flexDirection: 'row-reverse'
+                    }}
+                  >
+                    <Switch
+                      style={{ alignSelf: 'flex-end' }}
+                      onValueChange={value =>
+                        this.props.onCourtValueChange({
+                          prop: 'courtState',
+                          value
+                        })
+                      }
+                      value={this.props.courtState}
+                    />
+                    <Tooltip
+                      popover={
+                        <Text style={{ color: 'white', textAlign: 'justify' }}>
+                          {helpText}
+                        </Text>
+                      }
+                      height={120}
+                      width={250}
+                      backgroundColor={MAIN_COLOR}
+                    >
+                      <Icon
+                        name="help"
+                        size={22}
+                        color={MAIN_COLOR}
+                        style={{
+                          marginRight: 6,
+                          marginTop: 3,
+                          padding: 0
+                        }}
+                      />
+                    </Tooltip>
+                  </View>
+                </CardSection>
+
+                <CardSection>
+                  <Input
+                    label="Nombre:"
+                    placeholder="Cancha 1"
+                    value={this.props.name}
+                    errorMessage={this.state.nameError}
+                    onChangeText={value =>
+                      this.props.onCourtValueChange({
+                        prop: 'name',
+                        value
+                      })
+                    }
+                    onFocus={() => this.setState({ nameError: '' })}
+                    onBlur={this.renderNameError}
+                  />
+                </CardSection>
+
+                <CardSection>
+                  <Picker
+                    title={'Tipo de cancha:'}
+                    placeholder={placeHolder[0]}
+                    value={this.props.court}
+                    items={this.props.courts}
+                    onValueChange={this.onCourtTypeChangeHandle}
+                    errorMessage={this.state.courtError}
+                  />
+                </CardSection>
+
+                <CardSection>
+                  <Picker
+                    title={'Tipo de suelo:'}
+                    placeholder={placeHolder[0]}
+                    value={this.props.ground}
+                    items={this.state.selectedGrounds}
+                    onValueChange={this.onGroundTypeChangeHandle}
+                    disabled={this.state.selectedGrounds.length === 0}
+                    errorMessage={this.state.groundTypeError}
+                  />
+                </CardSection>
+
+                <CardSection>
+                  <Input
+                    label="Precio por turno:"
+                    placeholder="Precio de la cancha"
+                    keyboardType="numeric"
+                    value={this.props.price}
+                    errorMessage={this.state.priceError}
+                    onChangeText={value =>
+                      this.props.onCourtValueChange({
+                        prop: 'price',
+                        value
+                      })
+                    }
+                    onFocus={() => this.setState({ priceError: '' })}
+                    onBlur={this.renderPriceError}
+                  />
+                </CardSection>
+                <CardSection>
+                  <Button
+                    title="Guardar"
+                    onPress={this.onButtonPressHandler.bind(this)}
+                    errorMessage={
+                      this.props.existedError
+                        ? 'NOMBRE DE CANCHA YA EXISTENTE'
+                        : ''
+                    }
+                  />
+                </CardSection>
+              </Card>
             </View>
-          </Overlay>
-          <Card containerStyle={styles.cardStyle}>
-            <CardSection style={{ marginTop: 0 }}>
-              <View
-                style={{
-                  flexDirection: 'row-reverse'
-                }}
-              >
-                <Switch
-                  style={{ alignSelf: 'flex-end' }}
-                  onValueChange={value =>
-                    this.props.onCourtValueChange({ prop: 'courtState', value })
-                  }
-                  value={this.props.courtState}
-                />
-                <Button
-                  type="clear"
-                  color="white"
-                  buttonStyle={{
-                    width: 20,
-                    marginRight: 8,
-                    marginTop: 0,
-                    margin: 4,
-                    padding: 0
-                  }}
-                  onPress={this.onHelpPress.bind(this)}
-                  icon={<Icon name="help" size={22} color={MAIN_COLOR} />}
-                />
-              </View>
-            </CardSection>
-
-            <CardSection>
-              <Input
-                label="Nombre:"
-                placeholder="Cancha 1"
-                value={this.props.name}
-                errorMessage={this.state.nameError}
-                onChangeText={value =>
-                  this.props.onCourtValueChange({
-                    prop: 'name',
-                    value
-                  })
-                }
-                onFocus={() => this.setState({ nameError: '' })}
-                onBlur={this.renderNameError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Picker
-                title={'Tipo de cancha:'}
-                placeholder={placeHolder[0]}
-                value={this.props.court}
-                items={this.props.courts}
-                onValueChange={this.onCourtTypeChangeHandle}
-                errorMessage={this.state.courtError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Picker
-                title={'Tipo de suelo:'}
-                placeholder={placeHolder[0]}
-                value={this.props.ground}
-                items={this.state.selectedGrounds}
-                onValueChange={this.onGroundTypeChangeHandle}
-                disabled={this.state.selectedGrounds.length === 0}
-                errorMessage={this.state.groundTypeError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Input
-                label="Precio por turno:"
-                placeholder="Precio de la cancha"
-                keyboardType="numeric"
-                value={this.props.price}
-                errorMessage={this.state.priceError}
-                onChangeText={value =>
-                  this.props.onCourtValueChange({
-                    prop: 'price',
-                    value
-                  })
-                }
-                onFocus={() => this.setState({ priceError: '' })}
-                onBlur={this.renderPriceError}
-              />
-            </CardSection>
-            <CardSection>
-              <Button
-                title="Guardar"
-                onPress={this.onButtonPressHandler.bind(this)}
-                errorMessage={
-                  this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
-                }
-              />
-            </CardSection>
-          </Card>
-        </View>
-      );
+          </KeyboardAwareScrollView>
+        );
+      }
     }
   }
 }
