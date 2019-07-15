@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   email: '',
   password: '',
   confirmPassword: '',
+  profilePicture: null,
   location: null,
   loading: false,
   loadingUpdate: false,
@@ -36,7 +37,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_USER_UPDATING:
       return { ...state, loadingUpdate: true };
     case ON_USER_UPDATED:
-      return { ...state, loadingUpdate: false };
+      return { ...state, profilePicture: action.payload, loadingUpdate: false };
     default:
       return INITIAL_STATE;
   }

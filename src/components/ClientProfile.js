@@ -7,10 +7,11 @@ import { ImagePicker, Permissions, Constants, Location } from 'expo';
 import { connect } from 'react-redux';
 import { CardSection, Input, Spinner } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { onUserRead, onUserUpdate, onRegisterValueChange } from '../actions/RegisterActions';
+import { imageToBlob } from '../utils';
+import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
-    state = { editEnabled: false, photoOptionsVisible: false, newPhoto: null, stateBeforeChanges: null };
+    state = { editEnabled: false, pictureOptionsVisible: false, newProfilePicture: false, stateBeforeChanges: null };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -64,14 +65,21 @@ class ClientProfile extends Component {
     }
 
     onEditPress = () => {
-        const { firstName, lastName, phone } = this.props;
-        this.setState({ editEnabled: true, stateBeforeChanges: { firstName, lastName, phone } });
+        const { firstName, lastName, phone, profilePicture } = this.props;
+        this.setState({ editEnabled: true, stateBeforeChanges: { firstName, lastName, phone, profilePicture } });
         this.props.navigation.setParams({ title: 'Modificar Datos', rightIcon: this.renderSaveButton(), leftIcon: this.renderCancelButton() });
     }
 
-    onSavePress = () => {
-        const { firstName, lastName, phone, photo } = this.props;
-        this.props.onUserUpdate({ firstName, lastName, phone, photo });
+    onSavePress = async () => {
+        var { firstName, lastName, phone, profilePicture } = this.props;
+        const { newProfilePicture } = this.state;
+
+        if (newProfilePicture) {
+            var profilePicture = await imageToBlob(profilePicture);
+            this.props.onUserUpdateWithPicture({ firstName, lastName, phone, profilePicture });
+        } else {
+            this.props.onUserUpdateNoPicture({ firstName, lastName, phone, profilePicture });
+        }
 
         this.disableEdit();
     }
@@ -85,11 +93,11 @@ class ClientProfile extends Component {
     }
 
     disableEdit = () => {
-        this.setState({ editEnabled: false });
+        this.setState({ editEnabled: false, newProfilePicture: false, stateBeforeChanges: null });
         this.props.navigation.setParams({ title: 'Perfil', rightIcon: this.renderEditButton(), leftIcon: null });
     }
 
-    renderEditPhotoButton = () => {
+    renderEditPictureButton = () => {
         if (this.state.editEnabled) {
             return (
                 <Icon
@@ -99,18 +107,18 @@ class ClientProfile extends Component {
                     size={20}
                     reverse
                     containerStyle={{ padding: 5, position: 'absolute' }}
-                    onPress={this.onEditPhotoPress}
+                    onPress={this.onEditPicturePress}
                 />
             );
         }
     }
 
-    onEditPhotoPress = () => {
-        this.setState({ photoOptionsVisible: !this.state.photoOptionsVisible });
+    onEditPicturePress = () => {
+        this.setState({ pictureOptionsVisible: !this.state.pictureOptionsVisible });
     }
 
-    onChoosePhotoPress = async () => {
-        this.onEditPhotoPress();
+    onChoosePicturePress = async () => {
+        this.onEditPicturePress();
 
         if (Constants.platform.ios) {
             await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -125,12 +133,13 @@ class ClientProfile extends Component {
         let response = await ImagePicker.launchImageLibraryAsync(options);
 
         if (!response.cancelled) {
-            this.setState({ newPhoto: response.uri });
+            this.props.onRegisterValueChange({ prop: 'profilePicture', value: response.uri });
+            this.setState({ newProfilePicture: true });
         }
     }
 
-    onTakePhotoPress = async () => {
-        this.onEditPhotoPress();
+    onTakePicturePress = async () => {
+        this.onEditPicturePress();
 
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
         await Permissions.askAsync(Permissions.CAMERA);
@@ -144,7 +153,8 @@ class ClientProfile extends Component {
         let response = await ImagePicker.launchCameraAsync(options);
 
         if (!response.cancelled) {
-            this.setState({ newPhoto: response.uri });
+            this.props.onRegisterValueChange({ prop: 'profilePicture', value: response.uri });
+            this.setState({ newProfilePicture: true });
         }
     }
 
@@ -176,8 +186,8 @@ class ClientProfile extends Component {
 
     renderLocation = () => {
         if (this.props.location) {
-            const { region, city } = this.props.location;
-            return `${region}, ${city}`;
+            const { city, region } = this.props.location;
+            return `${city}, ${region}`;
         } else {
             return `Sin Ubicacion`;
         }
@@ -196,13 +206,13 @@ class ClientProfile extends Component {
                     <View style={avatarContainerStyle} >
                         <Avatar
                             rounded
-                            source={{ uri: this.state.newPhoto ? this.state.newPhoto : this.props.photo }}
+                            source={{ uri: this.props.profilePicture }}
                             size='xlarge'
                             icon={{ name: 'person' }}
                             containerStyle={avatarStyle}
                         />
 
-                        {this.renderEditPhotoButton()}
+                        {this.renderEditPictureButton()}
                     </View>
                     <Text h4>{this.renderFullName()}</Text>
                     <View style={locationContainerStyle}>
@@ -258,8 +268,8 @@ class ClientProfile extends Component {
                 <Overlay
                     height='auto'
                     overlayStyle={{ padding: 0 }}
-                    onBackdropPress={this.onEditPhotoPress}
-                    isVisible={this.state.photoOptionsVisible}
+                    onBackdropPress={this.onEditPicturePress}
+                    isVisible={this.state.pictureOptionsVisible}
                     animationType='fade'
                 >
                     <View>
@@ -272,7 +282,7 @@ class ClientProfile extends Component {
                             title='Elegir de la Galeria'
                             buttonStyle={{ padding: 15 }}
                             titleStyle={{ color: 'grey' }}
-                            onPress={this.onChoosePhotoPress}
+                            onPress={this.onChoosePicturePress}
                         />
                         <Divider style={{ backgroundColor: 'grey', marginLeft: 10, marginRight: 10 }} />
                         <Button
@@ -280,7 +290,7 @@ class ClientProfile extends Component {
                             title='Tomar Foto'
                             buttonStyle={{ padding: 15 }}
                             titleStyle={{ color: 'grey' }}
-                            onPress={this.onTakePhotoPress}
+                            onPress={this.onTakePicturePress}
                         />
                     </View>
                 </Overlay>
@@ -308,10 +318,10 @@ const styles = StyleSheet.create({
         borderColor: MAIN_COLOR,
         margin: 10
     },
-    locationContainerStyle: { 
-        justifyContent: 'space-around', 
-        flexDirection: 'row', 
-        alignItems: 'center' 
+    locationContainerStyle: {
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     infoContainerStyle: {
         alignSelf: 'stretch',
@@ -320,9 +330,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { firstName, lastName, phone, email, photo, location, loading, loadingUpdate } = state.registerForm;
+    const { firstName, lastName, phone, email, profilePicture, location, loading, loadingUpdate } = state.registerForm;
 
-    return { firstName, lastName, phone, email, photo, location, loading, loadingUpdate };
+    return { firstName, lastName, phone, email, profilePicture, location, loading, loadingUpdate };
 }
 
-export default connect(mapStateToProps, { onUserRead, onUserUpdate, onRegisterValueChange })(ClientProfile);
+export default connect(mapStateToProps, { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange })(ClientProfile);

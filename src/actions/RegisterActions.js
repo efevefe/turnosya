@@ -1,13 +1,12 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-
-import { 
-  ON_REGISTER_VALUE_CHANGE, 
-  ON_REGISTER, 
-  ON_REGISTER_SUCCESS, 
-  ON_REGISTER_FAIL, 
+import {
+  ON_REGISTER_VALUE_CHANGE,
+  ON_REGISTER,
+  ON_REGISTER_SUCCESS,
+  ON_REGISTER_FAIL,
   ON_USER_READING,
-  ON_USER_READ, 
+  ON_USER_READ,
   ON_USER_UPDATING,
   ON_USER_UPDATED
 } from './types';
@@ -42,7 +41,8 @@ export const onUserRead = () => {
   }
 }
 
-export const onUserUpdate = ({ firstName, lastName, phone, photo }) => {
+export const onUserUpdateNoPicture = ({ firstName, lastName, phone, profilePicture }) => {
+  // en esta funcion, profilePicture es una URL
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -50,8 +50,37 @@ export const onUserUpdate = ({ firstName, lastName, phone, photo }) => {
     dispatch({ type: ON_USER_UPDATING });
 
     db.doc(`Profiles/${currentUser.uid}`)
-      .update({ firstName, lastName, phone, photo })
-      .then(dispatch({ type: ON_USER_UPDATED}))
+      .update({ firstName, lastName, phone })
+      .then(dispatch({ type: ON_USER_UPDATED, payload: profilePicture }))
       .catch(error => console.log(error));
+  }
+}
+
+export const onUserUpdateWithPicture = ({ firstName, lastName, phone, profilePicture }) => {
+  // en esta funcion, profilePicture es un BLOB
+  const { currentUser } = firebase.auth();
+  var ref = firebase.storage().ref(`Users/${currentUser.uid}`).child(`${currentUser.uid}-ProfilePicture`);
+  var db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_USER_UPDATING });
+
+    ref.put(profilePicture)
+      .then(snapshot => {
+        console.log('guardo foto');
+        profilePicture.close();
+        snapshot.ref.getDownloadURL()
+          .then(url => {
+            console.log('obtuvo url');
+            db.doc(`Profiles/${currentUser.uid}`)
+              .update({ firstName, lastName, phone, profilePicture: url })
+              .then(dispatch({ type: ON_USER_UPDATED, payload: url }))
+              .catch(error => console.log(error));
+          });
+      })
+      .catch((error) => {
+        profilePicture.close();
+        console.log(error);
+      });
   }
 }
