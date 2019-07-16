@@ -25,6 +25,12 @@ export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+export const ON_USER_READING = 'on_user_reading';
+export const ON_USER_READ = 'on_user_read';
+export const ON_USER_READ_FAIL = 'on_user_read_fail';
+export const ON_USER_UPDATING = 'on_user_updating';
+export const ON_USER_UPDATED = 'on_user_updated';
+export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
 //Commerce Profile
 export const COMMERCE_FAIL = 'commerce_fail';
