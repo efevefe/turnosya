@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Avatar, Text, Divider, Overlay, Icon, Button } from 'react-native-elements';
+import { Avatar, Text, Divider, Icon } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants, Location } from 'expo';
 import { connect } from 'react-redux';
@@ -209,7 +209,7 @@ class ClientProfile extends Component {
     }
 
     render() {
-        const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, locationContainerStyle, infoContainerStyle } = styles;
+        const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
 
         if (this.props.loading) {
             return <Spinner />;
@@ -272,7 +272,7 @@ class ClientProfile extends Component {
                             <Input
                                 label='Telefono:'
                                 value={this.props.phone}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'phoneName', value })}
+                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'phone', value })}
                                 keyboardType='numeric'
                                 editable={this.state.editEnabled}
                             />
