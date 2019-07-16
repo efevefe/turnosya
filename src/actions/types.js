@@ -31,3 +31,10 @@ export const ON_USER_READ_FAIL = 'on_user_read_fail';
 export const ON_USER_UPDATING = 'on_user_updating';
 export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
+
+//Commerce Profile
+export const COMMERCE_FAIL = 'commerce_fail';
+export const ON_REGISTER_COMMERCE = 'on_register_commerce';
+export const ON_COMMERCE_VALUE_CHANGE =
+  'on_commerce_value_change';
+export const COMMERCE_PROFILE_CREATE = 'commerce_profile_create';
