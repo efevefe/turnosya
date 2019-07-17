@@ -216,100 +216,99 @@ class ClientProfile extends Component {
         }
 
         return (
-            <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
-                <ScrollView
-                    style={containerStyle}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.props.refreshing}
-                            onRefresh={this.onRefresh}
-                            colors={[MAIN_COLOR]}
-                            tintColor={MAIN_COLOR}
-                        />
-                    }
-                >
-                    <View style={headerContainerStyle} >
-                        <View style={avatarContainerStyle} >
-                            <Avatar
-                                rounded
-                                source={{ uri: this.props.profilePicture }}
-                                size='xlarge'
-                                icon={{ name: 'person' }}
-                                containerStyle={avatarStyle}
-                            />
-
-                            {this.renderEditPictureButton()}
-                        </View>
-                        {this.renderFullName()}
-                        {this.renderLocation()}
-                    </View>
-                    <Divider
-                        style={{
-                            backgroundColor: 'grey',
-                            margin: 5,
-                            marginLeft: 10,
-                            marginRight: 10
-                        }}
+            <KeyboardAwareScrollView
+                enableOnAndroid
+                extraScrollHeight={60} style={containerStyle}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.props.refreshing}
+                        onRefresh={this.onRefresh}
+                        colors={[MAIN_COLOR]}
+                        tintColor={MAIN_COLOR}
                     />
-                    <View style={infoContainerStyle}>
-                        <CardSection>
-                            <Input
-                                label='Nombre:'
-                                value={this.props.firstName}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Apellido:'
-                                value={this.props.lastName}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Telefono:'
-                                value={this.props.phone}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'phone', value })}
-                                keyboardType='numeric'
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='E-Mail:'
-                                value={this.props.email}
-                                editable={false}
-                            />
-                        </CardSection>
-                    </View>
+                }
+            >
+                <View style={headerContainerStyle} >
+                    <View style={avatarContainerStyle} >
+                        <Avatar
+                            rounded
+                            source={{ uri: this.props.profilePicture }}
+                            size='xlarge'
+                            icon={{ name: 'person' }}
+                            containerStyle={avatarStyle}
+                        />
 
-                    <Menu
-                        title='Foto de Perfil'
-                        onBackdropPress={this.onEditPicturePress}
-                        isVisible={this.state.pictureOptionsVisible}
-                    >
-                        <MenuItem
-                            title='Elegir de la galeria'
-                            icon='md-photos'
-                            onPress={this.onChoosePicturePress}
+                        {this.renderEditPictureButton()}
+                    </View>
+                    {this.renderFullName()}
+                    {this.renderLocation()}
+                </View>
+                <Divider
+                    style={{
+                        backgroundColor: 'grey',
+                        margin: 5,
+                        marginLeft: 10,
+                        marginRight: 10
+                    }}
+                />
+                <View style={infoContainerStyle}>
+                    <CardSection>
+                        <Input
+                            label='Nombre:'
+                            value={this.props.firstName}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
+                            editable={this.state.editEnabled}
                         />
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <MenuItem
-                            title='Tomar Foto'
-                            icon='md-camera'
-                            onPress={this.onTakePicturePress}
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Apellido:'
+                            value={this.props.lastName}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
+                            editable={this.state.editEnabled}
                         />
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <MenuItem
-                            title='Eliminar'
-                            icon='md-trash'
-                            onPress={this.onDeletePicturePress}
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Telefono:'
+                            value={this.props.phone}
+                            onChangeText={value => this.props.onRegisterValueChange({ prop: 'phone', value })}
+                            keyboardType='numeric'
+                            editable={this.state.editEnabled}
                         />
-                    </Menu>
-                </ScrollView>
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='E-Mail:'
+                            value={this.props.email}
+                            editable={false}
+                        />
+                    </CardSection>
+                </View>
+
+                <Menu
+                    title='Foto de Perfil'
+                    onBackdropPress={this.onEditPicturePress}
+                    isVisible={this.state.pictureOptionsVisible}
+                >
+                    <MenuItem
+                        title='Elegir de la galeria'
+                        icon='md-photos'
+                        onPress={this.onChoosePicturePress}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title='Tomar Foto'
+                        icon='md-camera'
+                        onPress={this.onTakePicturePress}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title='Eliminar'
+                        icon='md-trash'
+                        onPress={this.onDeletePicturePress}
+                    />
+                </Menu>
             </KeyboardAwareScrollView>
         );
     }

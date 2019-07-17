@@ -6,10 +6,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { CardSection, Input, Spinner, Menu, MenuItem } from '../components/common';
+import { CardSection, Input, Spinner, Menu, MenuItem, Picker } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob } from '../utils';
-import { onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions/RegisterActions';
+import { 
+    onCommerceRead, 
+    onCommerceUpdateWithPicture, 
+    onCommerceUpdateNoPicture, 
+    onCommerceValueChange, 
+    onProvincesRead, 
+    onAreasRead 
+} from '../actions/CommerceProfileActions';
 
 class CommerceProfile extends Component {
     state = { editEnabled: false, pictureOptionsVisible: false, newProfilePicture: false, stateBeforeChanges: null };
@@ -23,12 +30,12 @@ class CommerceProfile extends Component {
     }
 
     componentWillMount() {
-        //this.props.onUserRead('loading'); ACA DEBE IR EL ACTION DE onCommerceRead
+        this.props.onCommerceRead('loading');
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
 
     onRefresh = () => {
-        this.props.onUserRead('refreshing');
+        this.props.onCommerceRead('refreshing');
     }
 
     renderEditButton = () => {
@@ -67,29 +74,32 @@ class CommerceProfile extends Component {
         );
     }
 
-    onEditPress = () => {/* ACA DEBERIA COPIAR LOS DATOS DEL NEGOCIO
-        const { firstName, lastName, phone, profilePicture } = this.props;
-        this.setState({ editEnabled: true, stateBeforeChanges: { firstName, lastName, phone, profilePicture } });*/
+    onEditPress = () => {
+        this.props.onProvincesRead();
+        this.props.onAreasRead();
+
+        const { name, cuit, email, phone, description, address, city, province, area, profilePicture } = this.props;
+        this.setState({ editEnabled: true, stateBeforeChanges: { name, cuit, email, phone, description, address, city, province, area, profilePicture } });
         this.props.navigation.setParams({ title: 'Modificar Datos', rightIcon: this.renderSaveButton(), leftIcon: this.renderCancelButton() });
     }
 
-    onSavePress = async () => {/* ACA LO MISMO PERO PARA EL NEGOCIO
-        var { firstName, lastName, phone, profilePicture } = this.props;
+    onSavePress = async () => {
+        var { name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId } = this.props;
         const { newProfilePicture } = this.state;
 
         if (newProfilePicture) {
             var profilePicture = await imageToBlob(profilePicture);
-            this.props.onUserUpdateWithPicture({ firstName, lastName, phone, profilePicture });
+            this.props.onCommerceUpdateWithPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
         } else {
-            this.props.onUserUpdateNoPicture({ firstName, lastName, phone, profilePicture });
-        }*/
+            this.props.onCommerceUpdateNoPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
+        }
 
         this.disableEdit();
     }
 
     onCancelPress = () => {
         _.each(this.state.stateBeforeChanges, (value, prop) => {
-            this.props.onRegisterValueChange({ prop, value });
+            this.props.onCommerceValueChange({ prop, value });
         });
 
         this.disableEdit();
@@ -136,7 +146,7 @@ class CommerceProfile extends Component {
         let response = await ImagePicker.launchImageLibraryAsync(options);
 
         if (!response.cancelled) {
-            this.props.onRegisterValueChange({ prop: 'profilePicture', value: response.uri });
+            this.props.onCommerceValueChange({ prop: 'profilePicture', value: response.uri });
             this.setState({ newProfilePicture: true });
         }
     }
@@ -156,22 +166,47 @@ class CommerceProfile extends Component {
         let response = await ImagePicker.launchCameraAsync(options);
 
         if (!response.cancelled) {
-            this.props.onRegisterValueChange({ prop: 'profilePicture', value: response.uri });
+            this.props.onCommerceValueChange({ prop: 'profilePicture', value: response.uri });
             this.setState({ newProfilePicture: true });
         }
     }
 
     onDeletePicturePress = () => {
-        this.props.onRegisterValueChange({ prop: 'profilePicture', value: null });
+        this.props.onCommerceValueChange({ prop: 'profilePicture', value: null });
         this.onEditPicturePress();
     }
 
-    renderName = () => {/* ACA IRIA SOLO EL NOMBRE DEL NEGOCIO
-        const { firstName, lastName } = this.props;
+    renderName = () => {
+        const { name } = this.props;
 
-        if (firstName || lastName) {
-            return <Text h4>{`${firstName} ${lastName}`}</Text>;
-        }*/
+        if (name) {
+            return <Text h4>{name}</Text>;
+        }
+    }
+
+    renderLocation = () => {
+        const { address, city, province } = this.props;
+
+        if (address || city || province) {
+            const { locationContainerStyle } = styles;
+
+            return (
+                <View style={locationContainerStyle}>
+                    <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
+                    <Text>{`${address}, ${city}, ${province.name}`}</Text>
+                </View>
+            );
+        }
+    }
+
+    onProvincePickerChange = (index) => {
+        const { value, label } = this.props.provincesList[index - 1];
+        this.props.onCommerceValueChange({ prop: 'province', value: { provinceId: value, name: label } });
+    }
+
+    onAreaPickerChange = (index) => {
+        const { value, label } = this.props.areasList[index - 1];
+        this.props.onCommerceValueChange({ prop: 'area', value: { areaId: value, name: label } });
     }
 
     render() {
@@ -182,135 +217,149 @@ class CommerceProfile extends Component {
         }
 
         return (
-            <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
-                <ScrollView
-                    style={containerStyle}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.props.refreshing}
-                            onRefresh={this.onRefresh}
-                            colors={[MAIN_COLOR]}
-                            tintColor={MAIN_COLOR}
-                        />
-                    }
-                >
-                    <View style={headerContainerStyle} >
-                        <View style={avatarContainerStyle} >
-                            <Avatar
-                                rounded
-                                source={{ uri: this.props.profilePicture }}
-                                size='xlarge'
-                                icon={{ name: 'person' }}
-                                containerStyle={avatarStyle}
-                            />
-
-                            {this.renderEditPictureButton()}
-                        </View>
-                        {this.renderName()}
-                    </View>
-                    <Divider
-                        style={{
-                            backgroundColor: 'grey',
-                            margin: 5,
-                            marginLeft: 10,
-                            marginRight: 10
-                        }}
+            <KeyboardAwareScrollView
+                enableOnAndroid
+                extraScrollHeight={60}
+                style={containerStyle}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.props.refreshing}
+                        onRefresh={this.onRefresh}
+                        colors={[MAIN_COLOR]}
+                        tintColor={MAIN_COLOR}
                     />
-                    <View style={infoContainerStyle}>
-                        <CardSection>
-                            <Input
-                                label='Razon Social:'
-                                placeholder='Razon Social'
-                                value={this.props.firstName}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='CUIT:'
-                                placeholder='20-00000000-9'
-                                value={this.props.lastName}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Telefono:'
-                                placeholder='Numero de telefono'
-                                value={this.props.phone}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'phone', value })}
-                                keyboardType='numeric'
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='E-Mail:'
-                                placeholder='Direccion de email'
-                                value={this.props.email}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'email', value })}
-                                keyboardType='email-address'
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Descripcion:'
-                                placeholder='Descripcion (opcional)'
-                                value={this.props.description}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'description', value })}
-                                editable={this.state.editEnabled}
-                                multiline={true}
-                                maxLength={250}
-                                maxHeight={180}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Direccion:'
-                                placeholder='Calle Falsa 123'
-                                value={this.props.address}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'address', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Input
-                                label='Ciudad:'
-                                placeholder='Cordoba'
-                                value={this.props.city}
-                                onChangeText={value => this.props.onRegisterValueChange({ prop: 'city', value })}
-                                editable={this.state.editEnabled}
-                            />
-                        </CardSection>
-                    </View>
+                }
+            >
+                <View style={headerContainerStyle} >
+                    <View style={avatarContainerStyle} >
+                        <Avatar
+                            rounded
+                            source={{ uri: this.props.profilePicture }}
+                            size='xlarge'
+                            icon={{ name: 'person' }}
+                            containerStyle={avatarStyle}
+                        />
 
-                    <Menu
-                        title='Foto de Perfil'
-                        onBackdropPress={this.onEditPicturePress}
-                        isVisible={this.state.pictureOptionsVisible}
-                    >
-                        <MenuItem
-                            title='Elegir de la galeria'
-                            icon='md-photos'
-                            onPress={this.onChoosePicturePress}
+                        {this.renderEditPictureButton()}
+                    </View>
+                    {this.renderName()}
+                    {this.renderLocation()}
+                </View>
+                <Divider
+                    style={{
+                        backgroundColor: 'grey',
+                        margin: 5,
+                        marginLeft: 10,
+                        marginRight: 10
+                    }}
+                />
+                <View style={infoContainerStyle}>
+                    <CardSection>
+                        <Input
+                            label='Razon Social:'
+                            value={this.props.name}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'name', value })}
+                            editable={this.state.editEnabled}
                         />
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <MenuItem
-                            title='Tomar Foto'
-                            icon='md-camera'
-                            onPress={this.onTakePicturePress}
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='CUIT:'
+                            value={this.props.cuit}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'cuit', value })}
+                            editable={this.state.editEnabled}
                         />
-                        <Divider style={{ backgroundColor: 'grey' }} />
-                        <MenuItem
-                            title='Eliminar'
-                            icon='md-trash'
-                            onPress={this.onDeletePicturePress}
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Telefono:'
+                            value={this.props.phone}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'phone', value })}
+                            keyboardType='numeric'
+                            editable={this.state.editEnabled}
                         />
-                    </Menu>
-                </ScrollView>
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='E-Mail:'
+                            value={this.props.email}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'email', value })}
+                            keyboardType='email-address'
+                            editable={this.state.editEnabled}
+                        />
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Descripcion:'
+                            value={this.props.description}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'description', value })}
+                            editable={this.state.editEnabled}
+                            multiline={true}
+                            maxLength={250}
+                            maxHeight={180}
+                        />
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Direccion:'
+                            value={this.props.address}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'address', value })}
+                            editable={this.state.editEnabled}
+                        />
+                    </CardSection>
+                    <CardSection>
+                        <Input
+                            label='Ciudad:'
+                            value={this.props.city}
+                            onChangeText={value => this.props.onCommerceValueChange({ prop: 'city', value })}
+                            editable={this.state.editEnabled}
+                        />
+                    </CardSection>
+                    <CardSection>
+                        <Picker
+                            title='Provincia:'
+                            placeholder={{ label: 'Seleccionar...', value: null }}
+                            items={this.props.provincesList}
+                            value={this.props.province.provinceId}
+                            onValueChange={(value, index) => this.onProvincePickerChange(index)}
+                            disabled={!this.state.editEnabled}
+                        />
+                    </CardSection>
+                    <CardSection>
+                        <Picker
+                            title='Rubro:'
+                            placeholder={{ label: 'Seleccionar...', value: null }}
+                            items={this.props.areasList}
+                            value={this.props.area.areaId}
+                            onValueChange={(value, index) => this.onAreaPickerChange(index)}
+                            disabled={!this.state.editEnabled}
+                        />
+                    </CardSection>
+                </View>
+
+                <Menu
+                    title='Foto de Perfil'
+                    onBackdropPress={this.onEditPicturePress}
+                    isVisible={this.state.pictureOptionsVisible}
+                >
+                    <MenuItem
+                        title='Elegir de la galeria'
+                        icon='md-photos'
+                        onPress={this.onChoosePicturePress}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title='Tomar Foto'
+                        icon='md-camera'
+                        onPress={this.onTakePicturePress}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title='Eliminar'
+                        icon='md-trash'
+                        onPress={this.onDeletePicturePress}
+                    />
+                </Menu>
             </KeyboardAwareScrollView>
         );
     }
@@ -335,16 +384,62 @@ const styles = StyleSheet.create({
         borderColor: MAIN_COLOR,
         margin: 10
     },
+    locationContainerStyle: {
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     infoContainerStyle: {
         alignSelf: 'stretch',
         padding: 10
     }
 });
 
-const mapStateToProps = state => {/* ACA PONER LOS DATOS DEL NEGOCIO
-    const { firstName, lastName, phone, email, profilePicture, location, loading, refreshing } = state.registerForm;
+const mapStateToProps = state => {
+    const {
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        provincesList,
+        area,
+        areasList,
+        profilePicture,
+        commerceId,
+        loading,
+        refreshing
+    } = state.commerceProfile;
 
-    return { firstName, lastName, phone, email, profilePicture, location, loading, refreshing };*/
+    return {
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        provincesList,
+        area,
+        areasList,
+        profilePicture,
+        commerceId,
+        loading,
+        refreshing
+    };
 }
 
-export default connect(mapStateToProps, { onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange })(CommerceProfile);
+export default connect(
+    mapStateToProps, {
+        onCommerceRead,
+        onCommerceUpdateWithPicture,
+        onCommerceUpdateNoPicture,
+        onCommerceValueChange,
+        onProvincesRead,
+        onAreasRead
+    }
+)(CommerceProfile);
