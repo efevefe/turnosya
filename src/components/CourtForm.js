@@ -38,8 +38,24 @@ class CourtForm extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    debugger;
+    if (this.props.grounds !== prevProps.grounds) {
+      const firstIndex = this.props.courts.findIndex(
+        item => item.value === this.props.court
+      );
+      this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
+    }
+  }
+
   componentDidMount() {
-    this.props.getCourtAndGroundTypes();
+    // 1. tener cargado el array
+    // 2. tener cargado el array de arrays
+    // 3. utilizar el valor del primer array y encontrar el indice array.indexOf(valor)
+    // 4. Con ese indice, en el segundo array encontrar el subarray indicado
+    // 5. Encontrar el valor del segundo array array2.indexOf(segundoValor)
+
+    if (!this.props.courts.length) this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler() {
@@ -162,6 +178,7 @@ class CourtForm extends Component {
   };
 
   render() {
+    // debugger;
     if (!this.props.grounds) {
       return <Spinner size="large" />;
     } else {
@@ -236,7 +253,7 @@ class CourtForm extends Component {
                   errorMessage={this.state.courtError}
                 />
               </CardSection>
-
+              {console.log('jdjdj: ', this.props.grounds)}
               <CardSection>
                 <Picker
                   title={'Tipo de suelo:'}

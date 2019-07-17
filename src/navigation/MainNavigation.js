@@ -8,8 +8,8 @@ const mainNavigation = createSwitchNavigator(
     commerce: CommerceDrawer
   },
   {
-    // initialRouteName: 'client',
-    initialRouteName: 'commerce'
+    initialRouteName: 'client'
+    // initialRouteName: 'commerce'
   }
 );
 
