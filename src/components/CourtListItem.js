@@ -7,17 +7,22 @@ import { connect } from 'react-redux';
 import { courtDelete } from '../actions';
 
 class CourtListItem extends Component {
-  state = { optionsVisible: false };
+  state = { optionsVisible: false, deleteVisible: false };
 
   onOptionsPress() {
     this.setState({ optionsVisible: !this.state.optionsVisible });
   }
 
   onDeletePress() {
-    this.props.courtDelete({ id: this.props.court.id });
-    this.setState({ optionsVisible: !this.state.optionsVisible });
+    //this.props.courtDelete({ id: this.props.court.id });
+    this.setState({ optionsVisible: false });
+    this.setState({ deleteVisible: !this.state.deleteVisible });
   }
 
+  onConfirmDeletePress() {
+    this.props.courtDelete({ id: this.props.court.id });
+    this.setState({ deleteVisible: !this.deleteVisible });
+  }
   onUpdatePress() {
     const navigateAction = NavigationActions.navigate({
       routeName: 'courtForm',
@@ -77,12 +82,57 @@ class CourtListItem extends Component {
             />
           </View>
         </Overlay>
+        <Overlay
+          height="auto"
+          overlayStyle={{ padding: 0 }}
+          onBackdropPress={this.onDeletePress.bind(this)}
+          isVisible={this.state.deleteVisible}
+          animationType="fade"
+        >
+          <View>
+            <View>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  color: 'grey',
+                  fontSize: 16,
+                  margin: 15
+                }}
+              >
+                ¿Esta seguro que desea eliminar "{name}"?
+              </Text>
+            </View>
+            <Divider style={{ backgroundColor: 'grey' }} />
+            <Button
+              type="clear"
+              title="Si"
+              buttonStyle={{ padding: 15 }}
+              onPress={this.onConfirmDeletePress.bind(this)}
+            />
+            <Divider
+              style={{
+                backgroundColor: 'grey',
+                marginLeft: 10,
+                marginRight: 10
+              }}
+            />
+            <Button
+              type="clear"
+              title="No"
+              buttonStyle={{ padding: 15 }}
+              titleStyle={{ color: 'red' }}
+              onPress={this.onDeletePress.bind(this)}
+            />
+          </View>
+        </Overlay>
 
         <ListItem
           title={name}
           titleStyle={{ textAlign: 'justify', fontSize: 22, display: 'flex' }}
           rightTitle={`$${price}`}
-          rightSubtitle={`Estado: ${courtState}`}
+          rightSubtitle={`Estado: ${
+            courtState ? 'Disponible' : 'No Disponible'
+          }`}
           rightSubtitleStyle={{ fontSize: 8 }}
           key={id}
           subtitle={<Text>{`${court} - ${ground}`}</Text>}
