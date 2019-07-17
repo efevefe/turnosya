@@ -52,7 +52,7 @@ export const getCourtAndGroundTypes = () => {
           payload: { prop: 'grounds', value: grounds }
         });
 
-        dispatch({ type: COURT_FORM_SUBMIT });
+        //dispatch({ type: COURT_FORM_SUBMIT });
       })
       .catch(err => console.log(err));
   };
@@ -126,12 +126,24 @@ export const courtUpdate = (
 
   return dispatch => {
     dispatch({ type: COURT_FORM_SUBMIT });
-    db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
-      .update({ name, court, ground, price, courtState })
-      .then(() => {
-        dispatch({ type: COURT_UPDATE });
-        navigation.goBack();
-      })
-      .catch(error => console.log(error));
+
+    db.collection(`Commerces/${currentUser.uid}/Courts`)
+      .where('name', '==', name)
+      .where('softDelete', '==', null)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          //Means that court's name already exists
+          dispatch({ type: COURT_EXISTED });
+        } else {
+          db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
+            .update({ name, court, ground, price, courtState })
+            .then(() => {
+              dispatch({ type: COURT_UPDATE });
+              navigation.goBack();
+            })
+            .catch(error => console.log(error));
+        }
+      });
   };
 };
