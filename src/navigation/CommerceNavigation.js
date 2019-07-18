@@ -7,6 +7,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
+import CommerceProfile from '../components/CommerceProfile';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
 
@@ -100,11 +101,10 @@ const courtsStack = createStackNavigator(
 const profileStack = createStackNavigator(
   {
     profile: {
-      screen: EmptyScreen,
+      screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: leftIcon(navigation, 'md-menu'),
-        headerRight: rightIcon(navigation, 'md-create', 'editProfile')
+        headerLeft: navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
       })
     },
   },
@@ -139,6 +139,7 @@ const tabNavigationOptions = {
       );
     }
   }),
+  initialRouteName: 'profile',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',
