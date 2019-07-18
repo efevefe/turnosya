@@ -499,6 +499,7 @@ class CommerceProfile extends Component {
                             value={this.props.area.areaId}
                             onValueChange={(value, index) => this.onAreaPickerChange(index)}
                             disabled={true}
+                            errorMessage={this.state.areaError}
                         />
                     </CardSection>
                 </View>
