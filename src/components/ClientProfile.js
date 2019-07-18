@@ -8,11 +8,19 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Input, Spinner, Menu, MenuItem } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob } from '../utils';
+import { imageToBlob, validateValueType } from '../utils';
 import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions/RegisterActions';
 
 class ClientProfile extends Component {
-    state = { editEnabled: false, pictureOptionsVisible: false, newProfilePicture: false, stateBeforeChanges: null };
+    state = {
+        editEnabled: false,
+        pictureOptionsVisible: false,
+        newProfilePicture: false,
+        stateBeforeChanges: null,
+        firstNameError: '',
+        lastNameError: '',
+        phoneError: ''
+    };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -77,17 +85,19 @@ class ClientProfile extends Component {
     }
 
     onSavePress = async () => {
-        var { firstName, lastName, phone, profilePicture } = this.props;
-        const { newProfilePicture } = this.state;
+        if (this.validateMinimumData()) {
+            var { firstName, lastName, phone, profilePicture } = this.props;
+            const { newProfilePicture } = this.state;
 
-        if (newProfilePicture) {
-            var profilePicture = await imageToBlob(profilePicture);
-            this.props.onUserUpdateWithPicture({ firstName, lastName, phone, profilePicture });
-        } else {
-            this.props.onUserUpdateNoPicture({ firstName, lastName, phone, profilePicture });
+            if (newProfilePicture) {
+                var profilePicture = await imageToBlob(profilePicture);
+                this.props.onUserUpdateWithPicture({ firstName, lastName, phone, profilePicture });
+            } else {
+                this.props.onUserUpdateNoPicture({ firstName, lastName, phone, profilePicture });
+            }
+
+            this.disableEdit();
         }
-
-        this.disableEdit();
     }
 
     onCancelPress = () => {
@@ -95,6 +105,7 @@ class ClientProfile extends Component {
             this.props.onRegisterValueChange({ prop, value });
         });
 
+        this.cleanErrors();
         this.disableEdit();
     }
 
@@ -208,6 +219,52 @@ class ClientProfile extends Component {
         }
     }
 
+    renderFirstNameError = () => {
+        if (this.props.firstName === '') {
+            this.setState({ firstNameError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ firstNameError: '' });
+            return true;
+        }
+    }
+
+    renderLastNameError = () => {
+        if (this.props.lastName === '') {
+            this.setState({ lastNameError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ lastNameError: '' });
+            return true;
+        }
+    }
+
+    renderPhoneError = () => {
+        if (this.props.phone != '' && !validateValueType('phone', this.props.phone)) {
+            this.setState({ phoneError: 'Formato de telefono incorrecto' });
+            return false;
+        } else {
+            this.setState({ phoneError: '' });
+            return true;
+        }
+    };
+
+    cleanErrors = () => {
+        this.setState({
+            firstNameError: '',
+            lastNameError: '',
+            phoneError: ''
+        });
+    }
+
+    validateMinimumData = () => {
+        return (
+            this.renderFirstNameError() &&
+            this.renderLastNameError() &&
+            this.renderPhoneError()
+        );
+    }
+
     render() {
         const { containerStyle, headerContainerStyle, avatarContainerStyle, avatarStyle, infoContainerStyle } = styles;
 
@@ -258,6 +315,9 @@ class ClientProfile extends Component {
                             value={this.props.firstName}
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'firstName', value })}
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.firstNameError}
+                            onFocus={() => this.setState({ firstNameError: '' })}
+                            onBlur={this.renderFirstNameError}
                         />
                     </CardSection>
                     <CardSection>
@@ -266,6 +326,9 @@ class ClientProfile extends Component {
                             value={this.props.lastName}
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'lastName', value })}
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.lastNameError}
+                            onFocus={() => this.setState({ lastNameError: '' })}
+                            onBlur={this.renderLastNameError}
                         />
                     </CardSection>
                     <CardSection>
@@ -275,6 +338,9 @@ class ClientProfile extends Component {
                             onChangeText={value => this.props.onRegisterValueChange({ prop: 'phone', value })}
                             keyboardType='numeric'
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.phoneError}
+                            onFocus={() => this.setState({ phoneError: '' })}
+                            onBlur={this.renderPhoneError}
                         />
                     </CardSection>
                     <CardSection>
