@@ -17,8 +17,7 @@ export const validateValueType = (type, value) => {
       const cuitRe = /^[0-9]{11,}$/;
       return cuitRe.test(String(value));
     case 'phone':
-      //const phoneRe = /^[+]{0,1}[(]{0,1}[0-9]*[)]{0,1}[-\s0-9]+$/;
-      const phoneRe = /^[+]{0,1}[-\s/0-9]*$/;
+      const phoneRe = /^[+]{0,1}[(]{0,1}[0-9]*[)]{0,1}[-\s0-9]+$/;
       return phoneRe.test(String(value));
     default:
       return null;

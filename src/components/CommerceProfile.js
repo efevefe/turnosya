@@ -279,11 +279,11 @@ class CommerceProfile extends Component {
         if (this.props.phone == '') {
             this.setState({ phoneError: 'Dato requerido' });
             return false;
-            /*
-        } else if (!validateValueType('email', this.props.phone)) {
+            
+        } else if (!validateValueType('phone', this.props.phone)) {
             this.setState({ phoneError: 'Formato de telefono incorrecto' });
             return false;
-        */
+        
         } else {
             this.setState({ phoneError: '' });
             return true;
@@ -344,7 +344,7 @@ class CommerceProfile extends Component {
 
     validateMinimumData = () => {
         return (
-            this.renderName() &&
+            this.renderNameError() &&
             this.renderCuitError() &&
             this.renderEmailError() &&
             this.renderPhoneError() &&
