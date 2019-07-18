@@ -18,7 +18,6 @@ class ServiceForm extends Component {
 
   componentWillMount() {
     const { params } = this.props.navigation.state;
-
     if (params) {
       _.each(params.service, (value, prop) => {
         this.props.onServiceValueChange({ prop, value });
