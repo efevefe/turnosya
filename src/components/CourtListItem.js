@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { ListItem, Button, Overlay, Divider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { courtDelete } from '../actions';
+import { courtDelete, onCourtFormOpen } from '../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -14,7 +14,6 @@ class CourtListItem extends Component {
   }
 
   onDeletePress() {
-    //this.props.courtDelete({ id: this.props.court.id });
     this.setState({ optionsVisible: false });
     this.setState({ deleteVisible: !this.state.deleteVisible });
   }
@@ -24,6 +23,7 @@ class CourtListItem extends Component {
     this.setState({ deleteVisible: !this.deleteVisible });
   }
   onUpdatePress() {
+    this.props.onCourtFormOpen();
     const navigateAction = NavigationActions.navigate({
       routeName: 'courtForm',
       params: { court: this.props.court, title: 'Editar Cancha' }
@@ -160,5 +160,5 @@ class CourtListItem extends Component {
 
 export default connect(
   null,
-  { courtDelete }
+  { courtDelete, onCourtFormOpen }
 )(CourtListItem);

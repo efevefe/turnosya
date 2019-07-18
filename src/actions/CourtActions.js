@@ -96,6 +96,7 @@ export const courtsRead = () => {
     dispatch({ type: COURT_READING });
     db.collection(`Commerces/${currentUser.uid}/Courts`)
       .where('softDelete', '==', null)
+      .orderBy('courtState', 'desc')
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var courts = [];
