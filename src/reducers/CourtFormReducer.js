@@ -15,6 +15,8 @@ const INITIAL_STATE = {
   grouds: [],
   ground: '',
   price: '',
+  lightPrice: '',
+  checked: false,
   courtState: true,
   loading: false,
   existedError: false

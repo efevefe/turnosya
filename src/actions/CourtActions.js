@@ -59,7 +59,7 @@ export const getCourtAndGroundTypes = () => {
 };
 
 export const courtCreate = (
-  { name, court, ground, price, courtState },
+  { name, court, ground, price, lightPrice, checked, courtState },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -77,7 +77,16 @@ export const courtCreate = (
           dispatch({ type: COURT_EXISTED });
         } else {
           db.collection(`Commerces/${currentUser.uid}/Courts`)
-            .add({ name, court, ground, price, courtState, softDelete: null })
+            .add({
+              name,
+              court,
+              ground,
+              price,
+              lightPrice,
+              checked,
+              courtState,
+              softDelete: null
+            })
             .then(() => {
               dispatch({ type: COURT_CREATE });
               navigation.goBack();
@@ -96,6 +105,8 @@ export const courtsRead = () => {
     dispatch({ type: COURT_READING });
     db.collection(`Commerces/${currentUser.uid}/Courts`)
       .where('softDelete', '==', null)
+      .orderBy('courtState', 'desc')
+
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var courts = [];
@@ -118,12 +129,11 @@ export const courtDelete = ({ id }) => {
 };
 
 export const courtUpdate = (
-  { id, name, court, ground, price, courtState },
+  { id, oldName, name, court, ground, price, lightPrice, checked, courtState },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
-
   return dispatch => {
     dispatch({ type: COURT_FORM_SUBMIT });
 
@@ -133,11 +143,36 @@ export const courtUpdate = (
       .get()
       .then(function(querySnapshot) {
         if (!querySnapshot.empty) {
-          //Means that court's name already exists
-          dispatch({ type: COURT_EXISTED });
+          if (oldName != name) {
+            dispatch({ type: COURT_EXISTED });
+          } else {
+            db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
+              .update({
+                name,
+                court,
+                ground,
+                price,
+                lightPrice,
+                checked,
+                courtState
+              })
+              .then(() => {
+                dispatch({ type: COURT_UPDATE });
+                navigation.goBack();
+              })
+              .catch(error => console.log(error));
+          }
         } else {
           db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
-            .update({ name, court, ground, price, courtState })
+            .update({
+              name,
+              court,
+              ground,
+              price,
+              lightPrice,
+              checked,
+              courtState
+            })
             .then(() => {
               dispatch({ type: COURT_UPDATE });
               navigation.goBack();

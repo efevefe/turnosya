@@ -24,7 +24,7 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-firebase.auth().signInWithEmailAndPassword('mail@mail.com', '123456');
+firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
 firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));

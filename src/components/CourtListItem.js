@@ -36,7 +36,16 @@ class CourtListItem extends Component {
   }
 
   render() {
-    const { name, court, ground, price, courtState, id } = this.props.court;
+    const {
+      name,
+      court,
+      ground,
+      price,
+      lightPrice,
+      checked,
+      courtState,
+      id
+    } = this.props.court;
     return (
       <View style={{ flex: 1 }}>
         <Overlay
@@ -127,20 +136,47 @@ class CourtListItem extends Component {
         </Overlay>
 
         <ListItem
+          containerStyle={
+            courtState ? {} : { backgroundColor: 'rgb(242, 242, 242)' }
+          }
           title={name}
-          titleStyle={{ textAlign: 'justify', fontSize: 22, display: 'flex' }}
-          rightTitle={`$${price}`}
-          rightSubtitle={`Estado: ${
-            courtState ? 'Disponible' : 'No Disponible'
-          }`}
-          rightSubtitleStyle={{ fontSize: 8 }}
+          titleStyle={
+            courtState
+              ? { textAlign: 'justify', fontSize: 22, display: 'flex' }
+              : {
+                  textAlign: 'justify',
+                  fontSize: 22,
+                  display: 'flex',
+                  color: 'grey',
+                  fontStyle: 'italic'
+                }
+          }
+          // rightTitle={`$${price}`}
+          rightTitle={
+            checked ? (
+              <Text
+                style={
+                  courtState
+                    ? { textAlign: 'right', color: 'black' }
+                    : {
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
+                }
+              >{`Sin luz: $${price}\nCon luz: $${lightPrice}`}</Text>
+            ) : (
+              <Text
+                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+              >{`Sin luz: $${price}`}</Text>
+            )
+          }
           key={id}
-          subtitle={<Text>{`${court} - ${ground}`}</Text>}
-          // leftElement={
-          //   <Text style={{ display: 'flex' }}>{`${court}\n\n${ground}`}</Text>
-          // }
-          // Otra forma de ver la lista (como esta en prototipo), alinear el texto del titulo al centro
-
+          subtitle={
+            <Text
+              style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+            >{`${court} - ${ground}`}</Text>
+          }
           onLongPress={this.onOptionsPress.bind(this)}
           rightElement={
             <Button
