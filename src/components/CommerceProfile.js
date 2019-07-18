@@ -8,18 +8,32 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Input, Spinner, Menu, MenuItem, Picker } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob } from '../utils';
-import { 
-    onCommerceRead, 
-    onCommerceUpdateWithPicture, 
-    onCommerceUpdateNoPicture, 
-    onCommerceValueChange, 
-    onProvincesRead, 
-    onAreasRead 
+import { imageToBlob, validateValueType } from '../utils';
+import {
+    onCommerceRead,
+    onCommerceUpdateWithPicture,
+    onCommerceUpdateNoPicture,
+    onCommerceValueChange,
+    onProvincesRead,
+    onAreasRead
 } from '../actions/CommerceProfileActions';
 
 class CommerceProfile extends Component {
-    state = { editEnabled: false, pictureOptionsVisible: false, newProfilePicture: false, stateBeforeChanges: null };
+    state = {
+        editEnabled: false,
+        pictureOptionsVisible: false,
+        newProfilePicture: false,
+        stateBeforeChanges: null,
+        pickerPlaceholder: { value: null, label: 'Seleccionar...' },
+        nameError: '',
+        cuitError: '',
+        emailError: '',
+        phoneError: '',
+        addressError: '',
+        cityError: '',
+        provinceError: '',
+        areaError: ''
+    };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -84,17 +98,19 @@ class CommerceProfile extends Component {
     }
 
     onSavePress = async () => {
-        var { name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId } = this.props;
-        const { newProfilePicture } = this.state;
+        if (this.validateMinimumData()) {
+            var { name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId } = this.props;
+            const { newProfilePicture } = this.state;
 
-        if (newProfilePicture) {
-            var profilePicture = await imageToBlob(profilePicture);
-            this.props.onCommerceUpdateWithPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
-        } else {
-            this.props.onCommerceUpdateNoPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
+            if (newProfilePicture) {
+                var profilePicture = await imageToBlob(profilePicture);
+                this.props.onCommerceUpdateWithPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
+            } else {
+                this.props.onCommerceUpdateNoPicture({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId });
+            }
+
+            this.disableEdit();
         }
-
-        this.disableEdit();
     }
 
     onCancelPress = () => {
@@ -102,6 +118,7 @@ class CommerceProfile extends Component {
             this.props.onCommerceValueChange({ prop, value });
         });
 
+        this.cleanErrors();
         this.disableEdit();
     }
 
@@ -185,28 +202,157 @@ class CommerceProfile extends Component {
     }
 
     renderLocation = () => {
-        const { address, city, province } = this.props;
+        const { address, city } = this.props;
+        const { provinceId, name } = this.props.province;
 
-        if (address || city || province) {
+        if (address || city || provinceId) {
             const { locationContainerStyle } = styles;
 
             return (
                 <View style={locationContainerStyle}>
                     <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
-                    <Text>{`${address}, ${city}, ${province.name}`}</Text>
+                    <Text>{`${address}, ${city}, ${name}`}</Text>
                 </View>
             );
         }
     }
 
-    onProvincePickerChange = (index) => {
-        const { value, label } = this.props.provincesList[index - 1];
-        this.props.onCommerceValueChange({ prop: 'province', value: { provinceId: value, name: label } });
+    onProvincePickerChange = async (index) => {
+        if (index > 0) {
+            var { value, label } = this.props.provincesList[index - 1];
+        } else {
+            var { value, label } = this.state.pickerPlaceholder;
+        }
+
+        await this.props.onCommerceValueChange({ prop: 'province', value: { provinceId: value, name: label } });
+        this.renderProvinceError();
     }
 
-    onAreaPickerChange = (index) => {
-        const { value, label } = this.props.areasList[index - 1];
-        this.props.onCommerceValueChange({ prop: 'area', value: { areaId: value, name: label } });
+    onAreaPickerChange = async (index) => {
+        if (index > 0) {
+            var { value, label } = this.props.areasList[index - 1];
+        } else {
+            var { value, label } = this.state.pickerPlaceholder;
+        }
+
+        await this.props.onCommerceValueChange({ prop: 'area', value: { areaId: value, name: label } });
+        this.renderAreaError();
+    }
+
+    renderNameError = () => {
+        if (this.props.name === '') {
+            this.setState({ nameError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ nameError: '' });
+            return true;
+        }
+    }
+
+    renderCuitError = () => {
+        if (this.props.cuit === '') {
+            this.setState({ cuitError: 'Dato requerido' });
+            return false;
+        } else if (!validateValueType('cuit', this.props.cuit)) {
+            this.setState({ cuitError: 'Formato incorrecto' });
+            return false;
+        } else {
+            this.setState({ cuitError: '' });
+            return true;
+        }
+    }
+
+    renderEmailError = () => {
+        if (this.props.email == '') {
+            this.setState({ emailError: 'Dato requerido' });
+            return false;
+        } else if (!validateValueType('email', this.props.email)) {
+            this.setState({ emailError: 'Formato de email incorrecto' });
+            return false;
+        } else {
+            this.setState({ emailError: '' });
+            return true;
+        }
+    };
+
+    renderPhoneError = () => {
+        if (this.props.phone == '') {
+            this.setState({ phoneError: 'Dato requerido' });
+            return false;
+            /*
+        } else if (!validateValueType('email', this.props.phone)) {
+            this.setState({ phoneError: 'Formato de telefono incorrecto' });
+            return false;
+        */
+        } else {
+            this.setState({ phoneError: '' });
+            return true;
+        }
+    };
+
+    renderAddressError = () => {
+        if (this.props.address === '') {
+            this.setState({ addressError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ addressError: '' });
+            return true;
+        }
+    }
+
+    renderCityError = () => {
+        if (this.props.city === '') {
+            this.setState({ cityError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ cityError: '' });
+            return true;
+        }
+    }
+
+    renderProvinceError = () => {
+        if (this.props.province.provinceId === null) {
+            this.setState({ provinceError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ provinceError: '' });
+            return true;
+        }
+    }
+
+    renderAreaError = () => {
+        if (this.props.area.areaId === null) {
+            this.setState({ areaError: 'Dato requerido' });
+            return false;
+        } else {
+            this.setState({ areaError: '' });
+            return true;
+        }
+    }
+
+    cleanErrors = () => {
+        this.setState({
+            nameError: '',
+            cuitError: '',
+            emailError: '',
+            phoneError: '',
+            addressError: '',
+            cityError: '',
+            provinceError: ''
+        });
+    }
+
+    validateMinimumData = () => {
+        return (
+            this.renderName() &&
+            this.renderCuitError() &&
+            this.renderEmailError() &&
+            this.renderPhoneError() &&
+            this.renderAddressError() &&
+            this.renderCityError() &&
+            this.renderProvinceError() &&
+            this.renderAreaError()
+        );
     }
 
     render() {
@@ -260,6 +406,9 @@ class CommerceProfile extends Component {
                             value={this.props.name}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'name', value })}
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.nameError}
+                            onFocus={() => this.setState({ nameError: '' })}
+                            onBlur={this.renderNameError}
                         />
                     </CardSection>
                     <CardSection>
@@ -267,7 +416,11 @@ class CommerceProfile extends Component {
                             label='CUIT:'
                             value={this.props.cuit}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'cuit', value })}
+                            keyboardType='numeric'
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.cuitError}
+                            onFocus={() => this.setState({ cuitError: '' })}
+                            onBlur={this.renderCuitError}
                         />
                     </CardSection>
                     <CardSection>
@@ -277,6 +430,9 @@ class CommerceProfile extends Component {
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'phone', value })}
                             keyboardType='numeric'
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.phoneError}
+                            onFocus={() => this.setState({ phoneError: '' })}
+                            onBlur={this.renderPhoneError}
                         />
                     </CardSection>
                     <CardSection>
@@ -286,6 +442,9 @@ class CommerceProfile extends Component {
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'email', value })}
                             keyboardType='email-address'
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.emailError}
+                            onFocus={() => this.setState({ emailError: '' })}
+                            onBlur={this.renderEmailError}
                         />
                     </CardSection>
                     <CardSection>
@@ -305,6 +464,9 @@ class CommerceProfile extends Component {
                             value={this.props.address}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'address', value })}
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.addressError}
+                            onFocus={() => this.setState({ addressError: '' })}
+                            onBlur={this.renderAddressError}
                         />
                     </CardSection>
                     <CardSection>
@@ -313,26 +475,30 @@ class CommerceProfile extends Component {
                             value={this.props.city}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'city', value })}
                             editable={this.state.editEnabled}
+                            errorMessage={this.state.cityError}
+                            onFocus={() => this.setState({ cityError: '' })}
+                            onBlur={this.renderCityError}
                         />
                     </CardSection>
                     <CardSection>
                         <Picker
                             title='Provincia:'
-                            placeholder={{ label: 'Seleccionar...', value: null }}
+                            placeholder={this.state.pickerPlaceholder}
                             items={this.props.provincesList}
                             value={this.props.province.provinceId}
                             onValueChange={(value, index) => this.onProvincePickerChange(index)}
                             disabled={!this.state.editEnabled}
+                            errorMessage={this.state.provinceError}
                         />
                     </CardSection>
                     <CardSection>
                         <Picker
                             title='Rubro:'
-                            placeholder={{ label: 'Seleccionar...', value: null }}
+                            placeholder={this.state.pickerPlaceholder}
                             items={this.props.areasList}
                             value={this.props.area.areaId}
                             onValueChange={(value, index) => this.onAreaPickerChange(index)}
-                            disabled={!this.state.editEnabled}
+                            disabled={true}
                         />
                     </CardSection>
                 </View>
