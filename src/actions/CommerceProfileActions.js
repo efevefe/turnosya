@@ -7,7 +7,7 @@ import {
   COMMERCE_FAIL
 } from './types';
 
-export const onComemrceValueChange = ({ prop, value }) => {
+export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
 };
 
@@ -18,7 +18,6 @@ export const verifyExistsCommerce = navigation => {
   db.doc(`Profiles/${currentUser.uid}`)
     .get()
     .then(doc => {
-      console.log(doc.data(), currentUser.uid, doc.data().commerceId == null)
       if (doc.data().commerceId == null) {
         navigation.navigate('commerceRegister');
       } else {
@@ -29,8 +28,8 @@ export const verifyExistsCommerce = navigation => {
       console.log(error);
     });
 };
-export const onCreateProfile = (
-  { name, avatar, description, cuit, email, phone, address, city, sector, province },
+export const onCreateCommerce = (
+  { name, description, cuit, email, phone, address, city, area, province },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -38,14 +37,22 @@ export const onCreateProfile = (
   return dispatch => {
     dispatch({ type: ON_REGISTER_COMMERCE });
     db.runTransaction(() => {
-      console.log('1')
       db.collection(`Commerces`)
-        .add({ name, avatar, description, cuit, email, phone, address, city, sector, province })
+        .add({
+          name,
+          description,
+          cuit,
+          email,
+          phone,
+          address,
+          city,
+          area,
+          province
+        })
         .then(reference => {
           db.doc(`Profiles/${currentUser.uid}`)
             .set({ commerceId: reference.id })
             .then(() => {
-              console.log('2')
               dispatch({ type: COMMERCE_PROFILE_CREATE });
               navigation.navigate('commerce');
             })

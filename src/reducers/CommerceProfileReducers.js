@@ -2,7 +2,7 @@ import {
   ON_COMMERCE_VALUE_CHANGE,
   COMMERCE_PROFILE_CREATE,
   COMMERCE_FAIL,
-  ON_REGISTER_COMMERCE,
+  ON_REGISTER_COMMERCE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -12,10 +12,10 @@ const INITIAL_STATE = {
   cuit: '',
   email: '',
   phone: '',
-  address:'',
-  city:'',
-  province:'',
-  sector:'',
+  address: '',
+  city: '',
+  province: '',
+  area: '',
   error: '',
   loading: false
 };
