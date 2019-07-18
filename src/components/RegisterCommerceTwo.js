@@ -3,16 +3,28 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCommerceValueChange } from '../actions';
+import { onCreateCommerce, onCommerceValueChange } from '../actions';
 import { validateValueType } from '../utils';
 
-class RegisterCommerce extends Component {
+class RegisterCommerceTwo extends Component {
   state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
 
   onButtonPressHandler() {
-    if (this.validateMinimumData()) {
-      this.props.navigation.navigate('commerceRegisterProfile1')
-    }
+    this.props.onCreateCommerce(
+      {
+        name: this.props.name,
+        description: this.props.description,
+        cuit: this.props.cuit,
+        address: this.props.address,
+        email: this.props.email,
+        phone: this.props.phone,
+        area: this.props.area,
+        province: this.props.province,
+        city: this.props.city
+      },
+
+      this.props.navigation
+    );
   }
   validateMinimumData = () => {
     return (
@@ -73,76 +85,11 @@ class RegisterCommerce extends Component {
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
             <Input
-              label="Razon Social"
-              placeholder="Razon Social"
-              errorMessage={this.state.nameError}
+              label="Dirección"
+              placeholder="9 de Julio 456"
               onChangeText={value =>
                 this.props.onCommerceValueChange({
-                  prop: 'name',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ nameError: '' })}
-              onBlur={this.renderNameError}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="Cuit"
-              placeholder="Cuit"
-              keyboardType="numeric"
-              errorMessage={this.state.cuitError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'cuit',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ cuitError: '' })}
-              onBlur={this.renderCuitError}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="Telefono"
-              placeholder="Telefono"
-              keyboardType="numeric"
-              errorMessage={this.state.phoneError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'phone',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ phoneError: '' })}
-              onBlur={this.renderPhoneError}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="E-mail"
-              placeholder="E-mail"
-              errorMessage={this.state.emailError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'email',
-                  value
-                })
-              }
-              onFocus={() => this.setState({ emailError: '' })}
-              onBlur={this.renderEmailError}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="Descripción"
-              placeholder="Descripción"
-              multiline={true}
-              maxLength={250}
-              maxHeight={180}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'description',
+                  prop: 'address',
                   value
                 })
               }
@@ -150,7 +97,8 @@ class RegisterCommerce extends Component {
           </CardSection>
           <CardSection>
             <Button
-              title="Continuar"
+              title="Registrar"
+              loading={this.props.loading}
               onPress={this.onButtonPressHandler.bind(this)}
             />
           </CardSection>
@@ -167,19 +115,29 @@ const mapStateToProps = state => {
     cuit,
     email,
     phone,
+    city,
+    province,
+    area,
+    address,
     error,
+    loading
   } = state.commerceProfile;
 
   return {
     name,
     description,
     error,
+    loading,
     cuit,
     email,
-    phone
+    phone,
+    address,
+    city,
+    province,
+    area
   };
 };
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange }
-)(RegisterCommerce);
+  { onCommerceValueChange, onCreateCommerce }
+)(RegisterCommerceTwo);
