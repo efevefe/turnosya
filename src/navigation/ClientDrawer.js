@@ -8,7 +8,7 @@ import ClientDrawerContent from './ClientDrawerContent';
 import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
 import { MAIN_COLOR } from '../constants';
-import RegisterCommerce1 from '../components/RegisterCommerce1';
+import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
 
 const drawerNavigationOptions = {
   drawerType: 'slide',
@@ -47,8 +47,8 @@ const CommerceRegisterStack = createStackNavigator(
         title: 'Registrarse'
       })
     },
-    commerceRegisterProfile1:{
-      screen: RegisterCommerce1,
+    commerceRegisterProfile1: {
+      screen: RegisterCommerceTwo,
       navigationOptions: ({ navigation }) => ({
         title: 'Registrarse'
       })

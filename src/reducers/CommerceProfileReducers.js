@@ -24,7 +24,6 @@ const INITIAL_STATE = {
   city: '',
   province: { provinceId: null, name: '' },
   provincesList: [],
-  sector: '', //este lo reemplazo por area
   area: { areaId: null, name: '' },
   areasList: [],
   profilePicture: null,
