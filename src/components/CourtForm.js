@@ -55,14 +55,12 @@ class CourtForm extends Component {
         courtState,
         navigation
       } = this.props;
+
       const { params } = this.props.navigation.state;
       if (params) {
         const { id } = this.props.navigation.state.params.court;
-        const oldName = this.props.navigation.state.params.court.name;
         this.props.courtUpdate(
           {
-            oldName,
-            name,
             name,
             court,
             ground,
@@ -75,7 +73,6 @@ class CourtForm extends Component {
           navigation
         );
       } else {
-        //Mejorar esa espera que hay entre que apretas el botón y se termine de guardar.
         this.props.courtCreate(
           {
             name,
@@ -270,6 +267,7 @@ class CourtForm extends Component {
                       })
                     }
                     value={this.props.courtState}
+                    trackColor={{ false: 'grey', true: MAIN_COLOR }}
                   />
                   <Tooltip
                     popover={

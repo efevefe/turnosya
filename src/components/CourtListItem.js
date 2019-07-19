@@ -14,7 +14,6 @@ class CourtListItem extends Component {
   }
 
   onDeletePress() {
-    //this.props.courtDelete({ id: this.props.court.id });
     this.setState({ optionsVisible: false });
     this.setState({ deleteVisible: !this.state.deleteVisible });
   }

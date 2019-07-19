@@ -129,11 +129,12 @@ export const courtDelete = ({ id }) => {
 };
 
 export const courtUpdate = (
-  { id, oldName, name, court, ground, price, lightPrice, checked, courtState },
+  { id, name, court, ground, price, lightPrice, checked, courtState },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
+
   return dispatch => {
     dispatch({ type: COURT_FORM_SUBMIT });
 
@@ -142,26 +143,8 @@ export const courtUpdate = (
       .where('softDelete', '==', null)
       .get()
       .then(function(querySnapshot) {
-        if (!querySnapshot.empty) {
-          if (oldName != name) {
-            dispatch({ type: COURT_EXISTED });
-          } else {
-            db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
-              .update({
-                name,
-                court,
-                ground,
-                price,
-                lightPrice,
-                checked,
-                courtState
-              })
-              .then(() => {
-                dispatch({ type: COURT_UPDATE });
-                navigation.goBack();
-              })
-              .catch(error => console.log(error));
-          }
+        if (!querySnapshot.empty && querySnapshot.docs[0].id !== id) {
+          dispatch({ type: COURT_EXISTED });
         } else {
           db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
             .update({
