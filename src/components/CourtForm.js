@@ -39,8 +39,18 @@ class CourtForm extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.grounds !== prevProps.grounds) {
+      const firstIndex = this.props.courts.findIndex(
+        item => item.value === this.props.court
+      );
+      if (firstIndex > -1)
+        this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
+    }
+  }
+
   componentDidMount() {
-    this.props.getCourtAndGroundTypes();
+    if (!this.props.courts.length) this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler() {
