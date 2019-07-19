@@ -51,8 +51,6 @@ export const getCourtAndGroundTypes = () => {
           type: ON_COURT_VALUE_CHANGE,
           payload: { prop: 'grounds', value: grounds }
         });
-
-        //dispatch({ type: COURT_FORM_SUBMIT });
       })
       .catch(err => console.log(err));
   };
