@@ -10,13 +10,12 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_PROVINCES_READ,
-  ON_AREAS_READ,
+  ON_AREAS_READ
 } from '../actions/types';
 
 const INITIAL_STATE = {
   name: '',
   description: '',
-  avatar: null, //este lo reemplazo por profilePicture
   cuit: '',
   email: '',
   phone: '',

@@ -11,7 +11,7 @@ class RegisterCommerce extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      this.props.navigation.navigate('commerceRegisterProfile1')
+      this.props.navigation.navigate('commerceRegisterProfile1');
     }
   }
   validateMinimumData = () => {
@@ -59,8 +59,8 @@ class RegisterCommerce extends Component {
     if (this.props.cuit === '') {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('int', this.props.cuit)) {
-      this.setState({ cuitError: 'Debe ingresar un valor numerico' });
+    } else if (!validateValueType('cuit', this.props.cuit)) {
+      this.setState({ cuitError: 'Formato incorrecto' });
       return false;
     } else {
       this.setState({ cuitError: '' });
@@ -167,7 +167,7 @@ const mapStateToProps = state => {
     cuit,
     email,
     phone,
-    error,
+    error
   } = state.commerceProfile;
 
   return {
