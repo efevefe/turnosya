@@ -208,14 +208,17 @@ class ClientProfile extends Component {
     renderLocation = () => {
         if (this.props.location) {
             const { city, region } = this.props.location;
-            const { locationContainerStyle } = styles;
 
-            return (
-                <View style={locationContainerStyle}>
-                    <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
-                    <Text>{`${city}, ${region}`}</Text>
-                </View>
-            );
+            if (city || region) {
+                const { locationContainerStyle } = styles;
+
+                return (
+                    <View style={locationContainerStyle}>
+                        <Icon name='md-pin' type='ionicon' size={16} containerStyle={{ marginRight: 5 }} />
+                        <Text>{`${city}, ${region}`}</Text>
+                    </View>
+                );
+            }
         }
     }
 

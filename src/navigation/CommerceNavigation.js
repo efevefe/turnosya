@@ -145,7 +145,7 @@ const tabNavigationOptions = {
     activeTintColor: 'white',
     inactiveTintColor: 'white',
     style: {
-      backgroundColor: '#c72c41',
+      backgroundColor: MAIN_COLOR,
       height: 50
     }
   }
