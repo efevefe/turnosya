@@ -5,10 +5,9 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { onLogout } from '../actions/AuthActions';
 import { DrawerItem } from '../components/common';
-
 class CommerceDrawerContent extends Component {
   leftIcon = name => (
-    <Icon name={name} size={20} color="black" style={{ marginRight: 8 }} />
+    <Ionicons name={name} size={20} color="black" style={{ marginRight: 8 }} />
   );
 
   render() {
@@ -19,8 +18,13 @@ class CommerceDrawerContent extends Component {
           forceInset={{ top: 'always', horizontal: 'never' }}
         >
           <DrawerItem
-            title="Cerrar Sesión"
-            icon={this.leftIcon('sign-out')}
+            title="Ser Cliente"
+            icon={this.leftIcon('md-person')}
+            onPress={() => this.props.navigation.navigate('client')}
+          />
+          <DrawerItem
+            title="Cerrar Sesion"
+            icon={this.leftIcon('md-exit')}
             loading={this.props.loading}
             onPress={() => this.props.onLogout()}
           />

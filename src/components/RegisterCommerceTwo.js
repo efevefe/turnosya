@@ -121,7 +121,7 @@ const mapStateToProps = state => {
     address,
     error,
     loading
-  } = state.commerceProfile;
+  } = state.commerceData;
 
   return {
     name,

@@ -20,7 +20,7 @@ import {
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
   onRegisterValueChange
-} from '../actions/RegisterActions';
+} from '../actions/ClientDataActions';
 
 class ClientProfile extends Component {
   state = {
@@ -497,7 +497,7 @@ const mapStateToProps = state => {
     location,
     loading,
     refreshing
-  } = state.registerForm;
+  } = state.clientData;
 
   return {
     firstName,

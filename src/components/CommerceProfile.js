@@ -16,9 +16,9 @@ import {
     onCommerceValueChange,
     onProvincesRead,
     onAreasRead
-} from '../actions/CommerceProfileActions';
+} from '../actions/CommerceDataActions';
 
-class CommerceProfile extends Component {
+class commerceData extends Component {
     state = {
         editEnabled: false,
         pictureOptionsVisible: false,
@@ -579,7 +579,7 @@ const mapStateToProps = state => {
         commerceId,
         loading,
         refreshing
-    } = state.commerceProfile;
+    } = state.commerceData;
 
     return {
         name,
@@ -609,4 +609,4 @@ export default connect(
         onProvincesRead,
         onAreasRead
     }
-)(CommerceProfile);
+)(commerceData);

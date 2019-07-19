@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { ListItem, Button, Overlay, Divider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
+import { Menu, MenuItem } from '../components/common';
 import { courtDelete, onCourtFormOpen } from '../actions';
 
 class CourtListItem extends Component {
@@ -48,92 +49,33 @@ class CourtListItem extends Component {
     } = this.props.court;
     return (
       <View style={{ flex: 1 }}>
-        <Overlay
-          height="auto"
-          overlayStyle={{ padding: 0 }}
+        <Menu
+          title={name}
           onBackdropPress={this.onOptionsPress.bind(this)}
           isVisible={this.state.optionsVisible}
-          animationType="fade"
         >
-          <View>
-            <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: 'grey',
-                  fontSize: 16,
-                  margin: 15
-                }}
-              >
-                {name}
-              </Text>
-            </View>
-            <Divider style={{ backgroundColor: 'grey' }} />
-            <Button
-              type="clear"
-              title="Editar"
-              buttonStyle={{ padding: 15 }}
-              onPress={this.onUpdatePress.bind(this)}
-            />
-            <Divider
-              style={{
-                backgroundColor: 'grey',
-                marginLeft: 10,
-                marginRight: 10
-              }}
-            />
-            <Button
-              type="clear"
-              title="Eliminar"
-              buttonStyle={{ padding: 15 }}
-              titleStyle={{ color: 'red' }}
-              onPress={this.onDeletePress.bind(this)}
-            />
-          </View>
-        </Overlay>
-        <Overlay
-          height="auto"
-          overlayStyle={{ padding: 0 }}
+          <MenuItem
+            title="Editar"
+            icon="md-create"
+            onPress={this.onUpdatePress.bind(this)}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Eliminar"
+            icon="md-trash"
+            onPress={this.onDeletePress.bind(this)}
+          />
+        </Menu>
+
+        <Menu
+          title={`¿Esta seguro que desea eliminar "${name}"?`}
           onBackdropPress={this.onDeletePress.bind(this)}
           isVisible={this.state.deleteVisible}
-          animationType="fade"
         >
-          <View>
-            <View>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: 'grey',
-                  fontSize: 16,
-                  margin: 15
-                }}
-              >
-                ¿Esta seguro que desea eliminar "{name}"?
-              </Text>
-            </View>
-            <Divider style={{ backgroundColor: 'grey' }} />
-            <Button
-              type="clear"
-              title="Si"
-              buttonStyle={{ padding: 15 }}
-              onPress={this.onConfirmDeletePress.bind(this)}
-            />
-            <Divider
-              style={{
-                backgroundColor: 'grey',
-                marginLeft: 10,
-                marginRight: 10
-              }}
-            />
-            <Button
-              type="clear"
-              title="No"
-              buttonStyle={{ padding: 15 }}
-              titleStyle={{ color: 'red' }}
-              onPress={this.onDeletePress.bind(this)}
-            />
-          </View>
-        </Overlay>
+          <MenuItem title="Si" onPress={this.onConfirmDeletePress.bind(this)} />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem title="No" onPress={this.onDeletePress.bind(this)} />
+        </Menu>
 
         <ListItem
           containerStyle={

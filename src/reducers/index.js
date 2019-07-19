@@ -2,17 +2,17 @@ import { combineReducers } from 'redux';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
 import AuthReducer from './AuthReducer';
-import RegisterFormReducer from './RegisterFormReducer';
+import ClientDataReducer from './ClientDataReducer';
 import CourtFormReducer from './CourtFormReducer';
 import CourtListReducer from './CourtListReducer';
-import CommerceProfileReducers from './CommerceProfileReducers';
+import CommerceDataReducer from './CommerceDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
-  registerForm: RegisterFormReducer,
+  clientData: ClientDataReducer,
   serviceForm: ServiceFormReducer,
   servicesList: ServicesListReducer,
   courtForm: CourtFormReducer,
   courtsList: CourtListReducer,
-  commerceProfile: CommerceProfileReducers
+  commerceData: CommerceDataReducer
 });

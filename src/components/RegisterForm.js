@@ -244,7 +244,7 @@ const mapStateToProps = state => {
     phone,
     loading,
     error
-  } = state.registerForm;
+  } = state.clientData;
 
   return {
     email,
