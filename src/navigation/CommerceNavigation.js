@@ -18,17 +18,18 @@ import { MAIN_COLOR } from '../constants';
 
 const stackNavigationOptions = {
   defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 20,
-      color: 'white',
-      fontWeight: 'bold'
-    }
+      headerStyle: {
+          backgroundColor: MAIN_COLOR,
+          height: 50
+      },
+      headerTintColor: 'white',
+      headerTitleStyle: {
+          textAlign: 'center',
+          alignSelf: 'center',
+          fontSize: 18,
+          color: 'white',
+          fontWeight: 'bold'
+      }
   }
 };
 
@@ -149,7 +150,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'profile',
+  initialRouteName: 'courts',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',

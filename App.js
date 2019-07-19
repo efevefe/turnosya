@@ -24,6 +24,8 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
+console.disableYellowBox = true;
+
 // firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
 // firebase.auth().signOut();
 

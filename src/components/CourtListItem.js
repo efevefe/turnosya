@@ -84,39 +84,50 @@ class CourtListItem extends Component {
           title={name}
           titleStyle={
             courtState
-              ? { textAlign: 'justify', fontSize: 22, display: 'flex' }
+              ? { textAlign: 'left', display: 'flex' }
               : {
-                  textAlign: 'justify',
-                  fontSize: 22,
-                  display: 'flex',
-                  color: 'grey',
-                  fontStyle: 'italic'
-                }
+                textAlign: 'left',
+                display: 'flex',
+                color: 'grey',
+                fontStyle: 'italic'
+              }
           }
-          // rightTitle={`$${price}`}
           rightTitle={
             checked ? (
-              <Text
-                style={
-                  courtState
-                    ? { textAlign: 'right', color: 'black' }
-                    : {
+              <View style={{ justifyContent: 'space-between' }}>
+                <Text
+                  style={
+                    courtState
+                      ? { textAlign: 'right', color: 'black' }
+                      : {
                         textAlign: 'right',
                         color: 'grey',
                         fontStyle: 'italic'
                       }
-                }
-              >{`Sin luz: $${price}\nCon luz: $${lightPrice}`}</Text>
+                  }
+                >{`Sin luz: $${price}`}</Text>
+                <Text
+                  style={
+                    courtState
+                      ? { textAlign: 'right', color: 'black' }
+                      : {
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
+                  }
+                >{`Con luz: $${lightPrice}`}</Text>
+              </View>
             ) : (
-              <Text
-                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
-              >{`Sin luz: $${price}`}</Text>
-            )
+                <Text
+                  style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+                >{`Sin luz: $${price}`}</Text>
+              )
           }
           key={id}
           subtitle={
             <Text
-              style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+              style={courtState ? { color: 'grey' } : { color: 'grey', fontStyle: 'italic' }}
             >{`${court} - ${ground}`}</Text>
           }
           onLongPress={this.onOptionsPress.bind(this)}

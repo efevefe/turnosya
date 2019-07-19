@@ -266,7 +266,8 @@ class CourtForm extends Component {
               <CardSection style={{ marginTop: 0 }}>
                 <View
                   style={{
-                    flexDirection: 'row-reverse'
+                    flexDirection: 'row-reverse',
+                    paddingLeft: 5
                   }}
                 >
                   <Switch
@@ -278,7 +279,8 @@ class CourtForm extends Component {
                       })
                     }
                     value={this.props.courtState}
-                    trackColor={{ false: 'grey', true: MAIN_COLOR }}
+                    trackColor={{ false: '#c4c4c4', true: '#e48592' }}
+                    thumbColor={ this.props.courtState ? MAIN_COLOR : 'grey' }
                   />
                   <Tooltip
                     popover={
@@ -286,7 +288,7 @@ class CourtForm extends Component {
                         {helpText}
                       </Text>
                     }
-                    height={120}
+                    height='auto'
                     width={250}
                     backgroundColor={MAIN_COLOR}
                   >

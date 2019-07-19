@@ -12,7 +12,7 @@ const INITIAL_STATE = {
   name: '',
   courts: [],
   court: '',
-  grouds: [],
+  grounds: [],
   ground: '',
   price: '',
   lightPrice: '',
