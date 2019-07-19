@@ -10,6 +10,8 @@ import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
 
+import CommerceProfile from '../components/CommerceProfile';
+import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
 
 import EmptyScreen from '../components/EmptyScreen';
@@ -110,10 +112,11 @@ const courtsStack = createStackNavigator(
 const profileStack = createStackNavigator(
   {
     profile: {
-      screen: EmptyScreen,
+      screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft:
+          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
       })
     }
   },
@@ -148,12 +151,13 @@ const tabNavigationOptions = {
       );
     }
   }),
+  initialRouteName: 'profile',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',
     inactiveTintColor: 'white',
     style: {
-      backgroundColor: '#c72c41',
+      backgroundColor: MAIN_COLOR,
       height: 50
     }
   }

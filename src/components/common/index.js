@@ -4,4 +4,6 @@ export * from './CardSection';
 export * from './Input';
 export * from './Spinner';
 export * from './DrawerItem';
+export * from './Menu';
+export * from './MenuItem';
 export * from './Picker';
