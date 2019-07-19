@@ -189,7 +189,7 @@ class commerceData extends Component {
     }
 
     onDeletePicturePress = () => {
-        this.props.onCommerceValueChange({ prop: 'profilePicture', value: null });
+        this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
         this.onEditPicturePress();
     }
 

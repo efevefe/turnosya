@@ -225,7 +225,7 @@ class ClientProfile extends Component {
   };
 
   onDeletePicturePress = () => {
-    this.props.onRegisterValueChange({ prop: 'profilePicture', value: null });
+    this.props.onRegisterValueChange({ prop: 'profilePicture', value: '' });
     this.onEditPicturePress();
   };
 
@@ -234,13 +234,6 @@ class ClientProfile extends Component {
 
     if (firstName || lastName) {
       return <Text h4>{`${firstName} ${lastName}`}</Text>;
-    }
-  };
-
-  renderEditSpinner = () => {
-    // por ahora a esto lo cambio por el spinner del refresh a menos que haya algo malo
-    if (this.props.loadingUpdate) {
-      return <Spinner type="transparent" />;
     }
   };
 

@@ -13,6 +13,8 @@ import {
   ON_AREAS_READ
 } from '../actions/types';
 
+const pickerPlaceholder = { value: null, label: 'Seleccionar...' };
+
 const INITIAL_STATE = {
   name: '',
   description: '',
@@ -22,9 +24,9 @@ const INITIAL_STATE = {
   address: '',
   city: '',
   province: { provinceId: null, name: '' },
-  provincesList: [{ value: null, label: '' }],
+  provincesList: [pickerPlaceholder],
   area: { areaId: null, name: '' },
-  areasList: [{ value: null, label: '' }],
+  areasList: [pickerPlaceholder],
   profilePicture: '',
   commerceId: null,
   error: '',
