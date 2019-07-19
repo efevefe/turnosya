@@ -1,10 +1,10 @@
-import { 
-  ON_REGISTER_VALUE_CHANGE, 
-  ON_REGISTER, 
-  ON_REGISTER_SUCCESS, 
-  ON_REGISTER_FAIL, 
-  ON_USER_READING, 
-  ON_USER_READ, 
+import {
+  ON_REGISTER_VALUE_CHANGE,
+  ON_REGISTER,
+  ON_REGISTER_SUCCESS,
+  ON_REGISTER_FAIL,
+  ON_USER_READING,
+  ON_USER_READ,
   ON_USER_UPDATING,
   ON_USER_UPDATED,
   ON_USER_UPDATE_FAIL,
@@ -17,6 +17,9 @@ const INITIAL_STATE = {
   confirmPassword: '',
   profilePicture: null,
   location: null,
+  firstName: '',
+  lastName: '',
+  phone: '',
   loading: false,
   refreshing: false,
   error: ''
