@@ -96,7 +96,6 @@ class CourtForm extends Component {
           navigation
         );
       }
-      this.props.onCourtFormOpen();
     }
   }
 
