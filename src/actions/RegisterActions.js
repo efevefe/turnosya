@@ -25,11 +25,13 @@ export const onRegister = ({ email, password }) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => dispatch({ type: ON_REGISTER_SUCCESS, payload: user }))
-      .catch(error => dispatch({ type: ON_REGISTER_FAIL, payload: error.message }));
+      .catch(error =>
+        dispatch({ type: ON_REGISTER_FAIL, payload: error.message })
+      );
   };
 };
 
-export const onUserRead = ( loadingType ) => {
+export const onUserRead = loadingType => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -41,12 +43,17 @@ export const onUserRead = ( loadingType ) => {
       .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
       .catch(error => {
         dispatch({ type: ON_USER_READ_FAIL });
-        console.log(error)
+        console.log(error);
       });
-  }
-}
+  };
+};
 
-export const onUserUpdateNoPicture = ({ firstName, lastName, phone, profilePicture }) => {
+export const onUserUpdateNoPicture = ({
+  firstName,
+  lastName,
+  phone,
+  profilePicture
+}) => {
   // en esta funcion, profilePicture es una URL
 
   const { currentUser } = firebase.auth();
@@ -59,44 +66,54 @@ export const onUserUpdateNoPicture = ({ firstName, lastName, phone, profilePictu
       .update({ firstName, lastName, phone, profilePicture })
       .then(dispatch({ type: ON_USER_UPDATED, payload: profilePicture }))
       .catch(error => {
-        dispatch({ type: ON_USER_UPDATE_FAIL })
+        dispatch({ type: ON_USER_UPDATE_FAIL });
         console.log(error);
       });
-  }
-}
+  };
+};
 
-export const onUserUpdateWithPicture = ({ firstName, lastName, phone, profilePicture }) => {
+export const onUserUpdateWithPicture = ({
+  firstName,
+  lastName,
+  phone,
+  profilePicture
+}) => {
   // en esta funcion, profilePicture es un BLOB
-  
+
   const { currentUser } = firebase.auth();
-  var ref = firebase.storage().ref(`Users/${currentUser.uid}`).child(`${currentUser.uid}-ProfilePicture`);
+  var ref = firebase
+    .storage()
+    .ref(`Users/${currentUser.uid}`)
+    .child(`${currentUser.uid}-ProfilePicture`);
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_USER_UPDATING });
 
-    ref.put(profilePicture)
+    ref
+      .put(profilePicture)
       .then(snapshot => {
         profilePicture.close();
-        snapshot.ref.getDownloadURL()
+        snapshot.ref
+          .getDownloadURL()
           .then(url => {
             db.doc(`Profiles/${currentUser.uid}`)
               .update({ firstName, lastName, phone, profilePicture: url })
               .then(dispatch({ type: ON_USER_UPDATED, payload: url }))
               .catch(error => {
-                dispatch({ type: ON_USER_UPDATE_FAIL })
+                dispatch({ type: ON_USER_UPDATE_FAIL });
                 console.log(error);
               });
           })
           .catch(error => {
-            dispatch({ type: ON_USER_UPDATE_FAIL })
+            dispatch({ type: ON_USER_UPDATE_FAIL });
             console.log(error);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         profilePicture.close();
-        dispatch({ type: ON_USER_UPDATE_FAIL })
+        dispatch({ type: ON_USER_UPDATE_FAIL });
         console.log(error);
       });
-  }
-}
+  };
+};

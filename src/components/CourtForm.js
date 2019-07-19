@@ -50,7 +50,7 @@ class CourtForm extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.courts.length) this.props.getCourtAndGroundTypes();
+    this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler() {
@@ -96,6 +96,7 @@ class CourtForm extends Component {
           navigation
         );
       }
+      this.props.onCourtFormOpen();
     }
   }
 

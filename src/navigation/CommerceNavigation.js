@@ -14,8 +14,6 @@ import CommerceProfile from '../components/CommerceProfile';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
 
-import EmptyScreen from '../components/EmptyScreen';
-
 // Stack navigation options
 
 const stackNavigationOptions = {
