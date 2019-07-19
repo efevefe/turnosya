@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Tooltip } from 'react-native-elements';
+import { Card, Tooltip, CheckBox } from 'react-native-elements';
 import { View, StyleSheet, Switch, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -21,6 +21,7 @@ class CourtForm extends Component {
     courtError: '',
     groundTypeError: '',
     priceError: '',
+    lightPriceError: '',
     selectedGrounds: []
   };
 
@@ -54,7 +55,17 @@ class CourtForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, court, ground, price, courtState, navigation } = this.props;
+      const {
+        name,
+        court,
+        ground,
+        price,
+        lightPrice,
+        checked,
+        courtState,
+        navigation
+      } = this.props;
+
       const { params } = this.props.navigation.state;
       if (params) {
         const { id } = this.props.navigation.state.params.court;
@@ -64,19 +75,22 @@ class CourtForm extends Component {
             court,
             ground,
             price,
+            lightPrice,
+            checked,
             courtState,
             id
           },
           navigation
         );
       } else {
-        //Mejorar esa espera que hay entre que apretas el botón y se termine de guardar.
         this.props.courtCreate(
           {
             name,
             court,
             ground,
             price,
+            lightPrice,
+            checked,
             courtState
           },
           navigation
@@ -128,12 +142,23 @@ class CourtForm extends Component {
     }
   };
 
+  renderLightPriceError = () => {
+    if (this.props.lightPrice === '' && this.props.checked === true) {
+      this.setState({ lightPriceError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ lightPriceError: '' });
+      return true;
+    }
+  };
+
   validateMinimumData = () => {
     return (
       this.renderNameError() &&
       this.renderCourtError() &&
       this.renderGroundTypeError() &&
-      this.renderPriceError()
+      this.renderPriceError() &&
+      this.renderLightPriceError()
     );
   };
 
@@ -171,6 +196,64 @@ class CourtForm extends Component {
     }
   };
 
+  onCheckBoxPress = () => {
+    const { checked, onCourtValueChange } = this.props;
+
+    if (checked) {
+      onCourtValueChange({ prop: 'checked', value: false });
+      onCourtValueChange({ prop: 'lightPrice', value: '' });
+    } else {
+      onCourtValueChange({ prop: 'checked', value: true });
+    }
+  };
+
+  renderInput() {
+    if (this.props.checked) {
+      return (
+        <View>
+          <Input
+            label="Precio por turno (con luz):"
+            placeholder="Precio de la cancha"
+            keyboardType="numeric"
+            value={this.props.lightPrice}
+            errorMessage={this.state.lightPriceError}
+            onChangeText={value =>
+              this.props.onCourtValueChange({
+                prop: 'lightPrice',
+                value
+              })
+            }
+            onFocus={() => this.setState({ lightPriceError: '' })}
+            onBlur={this.renderLightPriceError}
+          />
+          <CheckBox
+            containerStyle={{ marginTop: 10, marginLeft: 5, marginRight: 5 }}
+            title="Agregar precio con luz"
+            iconType="material"
+            checkedIcon="clear"
+            checkedColor={MAIN_COLOR}
+            checkedTitle="Borrar precio con luz"
+            checked={this.props.checked}
+            onPress={this.onCheckBoxPress}
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <CheckBox
+            title="Agregar precio con luz"
+            iconType="material"
+            uncheckedIcon="add"
+            uncheckedColor={MAIN_COLOR}
+            checked={this.props.checked}
+            onPress={this.onCheckBoxPress}
+          />
+        </View>
+      );
+    }
+  }
+
   render() {
     if (!this.props.grounds) {
       return <Spinner size="large" />;
@@ -194,6 +277,7 @@ class CourtForm extends Component {
                       })
                     }
                     value={this.props.courtState}
+                    trackColor={{ false: 'grey', true: MAIN_COLOR }}
                   />
                   <Tooltip
                     popover={
@@ -261,7 +345,7 @@ class CourtForm extends Component {
 
               <CardSection>
                 <Input
-                  label="Precio por turno:"
+                  label="Precio por turno (sin luz):"
                   placeholder="Precio de la cancha"
                   keyboardType="numeric"
                   value={this.props.price}
@@ -276,6 +360,7 @@ class CourtForm extends Component {
                   onBlur={this.renderPriceError}
                 />
               </CardSection>
+              <CardSection>{this.renderInput()}</CardSection>
               <CardSection>
                 <Button
                   title="Guardar"
@@ -324,6 +409,8 @@ const mapStateToProps = state => {
     grounds,
     ground,
     price,
+    lightPrice,
+    checked,
     loading,
     existedError,
     courtState
@@ -336,6 +423,8 @@ const mapStateToProps = state => {
     grounds,
     ground,
     price,
+    lightPrice,
+    checked,
     loading,
     existedError,
     courtState

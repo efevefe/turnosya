@@ -59,7 +59,7 @@ export const getCourtAndGroundTypes = () => {
 };
 
 export const courtCreate = (
-  { name, court, ground, price, courtState },
+  { name, court, ground, price, lightPrice, checked, courtState },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -77,7 +77,16 @@ export const courtCreate = (
           dispatch({ type: COURT_EXISTED });
         } else {
           db.collection(`Commerces/${currentUser.uid}/Courts`)
-            .add({ name, court, ground, price, courtState, softDelete: null })
+            .add({
+              name,
+              court,
+              ground,
+              price,
+              lightPrice,
+              checked,
+              courtState,
+              softDelete: null
+            })
             .then(() => {
               dispatch({ type: COURT_CREATE });
               navigation.goBack();
@@ -119,7 +128,7 @@ export const courtDelete = ({ id }) => {
 };
 
 export const courtUpdate = (
-  { id, name, court, ground, price, courtState },
+  { id, name, court, ground, price, lightPrice, checked, courtState },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -133,12 +142,19 @@ export const courtUpdate = (
       .where('softDelete', '==', null)
       .get()
       .then(function(querySnapshot) {
-        if (!querySnapshot.empty) {
-          //Means that court's name already exists
+        if (!querySnapshot.empty && querySnapshot.docs[0].id !== id) {
           dispatch({ type: COURT_EXISTED });
         } else {
           db.doc(`Commerces/${currentUser.uid}/Courts/${id}`)
-            .update({ name, court, ground, price, courtState })
+            .update({
+              name,
+              court,
+              ground,
+              price,
+              lightPrice,
+              checked,
+              courtState
+            })
             .then(() => {
               dispatch({ type: COURT_UPDATE });
               navigation.goBack();
