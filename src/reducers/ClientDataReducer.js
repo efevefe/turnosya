@@ -15,7 +15,7 @@ const INITIAL_STATE = {
   email: '',
   password: '',
   confirmPassword: '',
-  profilePicture: null,
+  profilePicture: '',
   location: null,
   firstName: '',
   lastName: '',
