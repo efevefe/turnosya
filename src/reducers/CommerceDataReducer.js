@@ -10,7 +10,8 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_PROVINCES_READ,
-  ON_AREAS_READ
+  ON_AREAS_READ,
+  ON_COMMERCE_OPEN
 } from '../actions/types';
 
 const pickerPlaceholder = { value: null, label: 'Seleccionar...' };
@@ -36,6 +37,8 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case ON_COMMERCE_OPEN:
+      return { ...state, commerceId: action.payload }
     case ON_COMMERCE_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case COMMERCE_FAIL:

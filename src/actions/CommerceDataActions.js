@@ -12,29 +12,34 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_PROVINCES_READ,
-  ON_AREAS_READ
+  ON_AREAS_READ,
+  ON_COMMERCE_OPEN
 } from './types';
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
 };
 
-export const verifyExistsCommerce = navigation => {
+export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
-  db.doc(`Profiles/${currentUser.uid}`)
-    .get()
-    .then(doc => {
-      if (doc.data().commerceId == null) {
-        navigation.navigate('commerceRegister');
-      } else {
-        navigation.navigate('commerce');
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  return dispatch => {
+    db.doc(`Profiles/${currentUser.uid}`)
+      .get()
+      .then(doc => {
+        if (doc.data().commerceId == null) {
+          navigation.navigate('commerceRegister');
+        } else {
+          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId })
+
+          navigation.navigate('commerce');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
 };
 
 export const onCreateCommerce = (

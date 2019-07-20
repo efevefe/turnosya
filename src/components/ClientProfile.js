@@ -20,7 +20,7 @@ import {
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
   onRegisterValueChange
-} from '../actions/ClientDataActions';
+} from '../actions';
 
 class ClientProfile extends Component {
   state = {

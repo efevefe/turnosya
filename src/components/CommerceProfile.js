@@ -16,7 +16,7 @@ import {
     onCommerceValueChange,
     onProvincesRead,
     onAreasRead
-} from '../actions/CommerceDataActions';
+} from '../actions';
 
 class commerceData extends Component {
     state = {
