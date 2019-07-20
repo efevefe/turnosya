@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import {
   ON_REGISTER_VALUE_CHANGE,
   ON_REGISTER,
@@ -29,7 +29,7 @@ export const onRegister = ({ email, password, firstName, lastName, phone }) => {
       .then(user => {
         db.collection('Profiles')
           .doc(user.user.uid)
-          .set({ firstName, lastName, email, phone, softDelete: null })
+          .set({ firstName, lastName, email, phone, commerceId: null, softDelete: null })
           .then(() => dispatch({ type: ON_REGISTER_SUCCESS, payload: user }))
           .catch(error =>
             dispatch({ type: ON_REGISTER_FAIL, payload: error.message })

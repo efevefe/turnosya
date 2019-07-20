@@ -150,7 +150,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'courts',
+  initialRouteName: 'profile',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',

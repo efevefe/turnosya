@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import {
   ON_LOGIN_VALUE_CHANGE,
   ON_LOGIN,
@@ -52,7 +52,8 @@ export const onFacebookLogin = () => {
                 lastName: last_name,
                 email: user.email,
                 phone: user.phoneNumber,
-                /*picture: additionalUserInfo.profile.picture.data.url*/
+                profilePicture: additionalUserInfo.profile.picture.data.url,
+                commerceId: null,
                 softDelete: null
               };
 
@@ -97,6 +98,7 @@ export const onGoogleLogin = () => {
             idToken,
             accessToken
           );
+
           firebase
             .auth()
             .signInWithCredential(credential)
@@ -108,9 +110,11 @@ export const onGoogleLogin = () => {
                 lastName: family_name,
                 email: user.email,
                 phone: user.phoneNumber,
-                /*picture: additionalUserInfo.profile.picture.data.url*/
+                profilePicture: additionalUserInfo.profile.picture,
+                commerceId: null,
                 softDelete: null
               };
+
               if (additionalUserInfo.isNewUser) {
                 let db = firebase.firestore();
 
@@ -135,7 +139,6 @@ export const onGoogleLogin = () => {
   };
 };
 
-//no se esta usando por ahora
 export const onLogout = () => {
   return dispatch => {
     dispatch({ type: ON_LOGOUT });
