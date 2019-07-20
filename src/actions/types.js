@@ -25,6 +25,17 @@ export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+
+// Court types
+export const ON_COURT_FORM_OPEN = 'on_court_form_open';
+export const ON_COURT_VALUE_CHANGE = 'on_court_value_change';
+export const COURT_CREATE = 'court_create';
+export const COURT_FORM_SUBMIT = 'court_form_submit';
+export const COURT_EXISTED = 'court_existed';
+export const COURT_READING = 'court_reading';
+export const COURT_READ = 'court_read';
+export const COURT_DELETE = 'court_delete';
+export const COURT_UPDATE = 'court_update';
 export const ON_USER_READING = 'on_user_reading';
 export const ON_USER_READ = 'on_user_read';
 export const ON_USER_READ_FAIL = 'on_user_read_fail';
@@ -33,6 +44,7 @@ export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
 //Commerce Profile
+export const ON_COMMERCE_OPEN = 'on_commerce_open'
 export const COMMERCE_FAIL = 'commerce_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';

@@ -7,6 +7,9 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
+import CourtList from '../components/CourtList';
+import CourtForm from '../components/CourtForm';
+
 import CommerceProfile from '../components/CommerceProfile';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
@@ -15,17 +18,18 @@ import { MAIN_COLOR } from '../constants';
 
 const stackNavigationOptions = {
   defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 20,
-      color: 'white',
-      fontWeight: 'bold'
-    }
+      headerStyle: {
+          backgroundColor: MAIN_COLOR,
+          height: 50
+      },
+      headerTintColor: 'white',
+      headerTitleStyle: {
+          textAlign: 'center',
+          alignSelf: 'center',
+          fontSize: 18,
+          color: 'white',
+          fontWeight: 'bold'
+      }
   }
 };
 
@@ -87,11 +91,17 @@ const servicesStack = createStackNavigator(
 const courtsStack = createStackNavigator(
   {
     courtsList: {
-      screen: EmptyScreen,
+      screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerRight: rightIcon(navigation, 'md-add', 'serviceForm'),
+        headerRight: rightIcon(navigation, 'md-add', 'courtForm'),
         headerLeft: leftIcon(navigation, 'md-menu')
+      })
+    },
+    courtForm: {
+      screen: CourtForm,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Nueva Cancha')
       })
     }
   },
@@ -104,9 +114,10 @@ const profileStack = createStackNavigator(
       screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
+        headerLeft:
+          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
       })
-    },
+    }
   },
   stackNavigationOptions
 );
@@ -145,7 +156,7 @@ const tabNavigationOptions = {
     activeTintColor: 'white',
     inactiveTintColor: 'white',
     style: {
-      backgroundColor: '#c72c41',
+      backgroundColor: MAIN_COLOR,
       height: 50
     }
   }

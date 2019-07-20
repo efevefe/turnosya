@@ -24,8 +24,8 @@ class Input extends Component {
       <RNEInput
         {...this.props}
         inputContainerStyle={[
-          styles.inputContainerStyle,
-          { borderColor: inputColor, borderBottomWidth: enabled ? 1.5 : 1 }
+          { borderColor: inputColor, borderBottomWidth: enabled ? 1.5 : 1 },
+          this.props.inputContainerStyle
         ]}
         inputStyle={[
           styles.inputStyle,
@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
   inputStyle: {
     marginLeft: 5,
     marginRight: 5,
-    fontSize: 17
+    fontSize: 17,
+    lineHeight: 25
   },
   labelStyle: {
     fontSize: 12,

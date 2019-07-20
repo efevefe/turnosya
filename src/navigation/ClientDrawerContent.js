@@ -3,9 +3,8 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { onLogout } from '../actions/AuthActions';
 import { DrawerItem } from '../components/common';
-import { verifyExistsCommerce } from '../actions';
+import { onCommerceOpen, onLogout } from '../actions';
 
 
 class ClientDrawerContent extends Component {
@@ -23,7 +22,7 @@ class ClientDrawerContent extends Component {
           <DrawerItem
             title="Mi Negocio"
             icon={this.leftIcon('ios-briefcase')}
-            onPress={() => verifyExistsCommerce(this.props.navigation)}
+            onPress={() => this.props.onCommerceOpen(this.props.navigation)}
           />
           <DrawerItem
             title="Cerrar Sesion"
@@ -43,5 +42,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLogout }
+  { onCommerceOpen, onLogout }
 )(ClientDrawerContent);

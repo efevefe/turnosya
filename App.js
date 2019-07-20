@@ -10,8 +10,6 @@ import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 
-console.disableYellowBox = true;
-
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
   authDomain: 'proyecto-turnosya.firebaseapp.com',
@@ -26,8 +24,10 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-//firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-//firebase.auth().signOut();
+console.disableYellowBox = true;
+
+// firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
+// firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 

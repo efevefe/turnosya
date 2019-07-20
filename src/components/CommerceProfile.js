@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants } from 'expo';
@@ -18,7 +18,7 @@ import {
     onAreasRead
 } from '../actions';
 
-class CommerceProfile extends Component {
+class commerceData extends Component {
     state = {
         editEnabled: false,
         pictureOptionsVisible: false,
@@ -43,7 +43,7 @@ class CommerceProfile extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.onCommerceRead('loading');
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
@@ -189,7 +189,7 @@ class CommerceProfile extends Component {
     }
 
     onDeletePicturePress = () => {
-        this.props.onCommerceValueChange({ prop: 'profilePicture', value: null });
+        this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
         this.onEditPicturePress();
     }
 
@@ -609,4 +609,4 @@ export default connect(
         onProvincesRead,
         onAreasRead
     }
-)(CommerceProfile);
+)(commerceData);
