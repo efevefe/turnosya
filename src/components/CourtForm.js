@@ -290,6 +290,7 @@ class CourtForm extends Component {
                   height="auto"
                   width={250}
                   backgroundColor={MAIN_COLOR}
+                  withOverlay={false}
                 >
                   <Icon
                     name="help"
