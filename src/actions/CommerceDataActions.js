@@ -43,7 +43,7 @@ export const onCommerceOpen = navigation => {
 };
 
 export const onCreateCommerce = (
-  { name, description, cuit, email, phone, address, city, area, province },
+  { name, cuit, email, phone, description, address, city, province, area },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -56,14 +56,14 @@ export const onCreateCommerce = (
       db.collection(`Commerces`)
         .add({
           name,
-          description,
           cuit,
           email,
           phone,
+          description,
           address,
           city,
-          area,
-          province
+          province,
+          area
         })
         .then(reference => {
           db.doc(`Profiles/${currentUser.uid}`)
@@ -98,7 +98,7 @@ export const onCommerceRead = (loadingType) => {
 
             //rubro
             var { name, areaId } = doc.data().area;
-            const area = { value: areaId, label: name }
+            const area = { value: areaId, label: name };
 
             dispatch({
               type: ON_COMMERCE_READ,
@@ -119,8 +119,8 @@ export const onCommerceRead = (loadingType) => {
         dispatch({ type: ON_COMMERCE_READ_FAIL });
         console.log(error);
       });
-  }
-}
+  };
+};
 
 export const onCommerceUpdateNoPicture = ({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId }) => {
   const db = firebase.firestore();
@@ -134,9 +134,9 @@ export const onCommerceUpdateNoPicture = ({ name, cuit, email, phone, descriptio
       .catch(error => {
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
         console.log(error);
-      })
-  }
-}
+      });
+  };
+};
 
 export const onCommerceUpdateWithPicture = ({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId }) => {
   var ref = firebase.storage().ref(`Commerces/${commerceId}`).child(`${commerceId}-ProfilePicture`);
@@ -154,49 +154,50 @@ export const onCommerceUpdateWithPicture = ({ name, cuit, email, phone, descript
               .update({ name, cuit, email, phone, description, address, city, province, area, profilePicture: url })
               .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: url }))
               .catch(error => {
-                dispatch({ type: ON_COMMERCE_UPDATE_FAIL })
+                dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
                 console.log(error);
               });
           })
           .catch(error => {
-            dispatch({ type: ON_COMMERCE_UPDATE_FAIL })
+            dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
             console.log(error);
           });
       })
       .catch((error) => {
         profilePicture.close();
-        dispatch({ type: ON_COMMERCE_UPDATE_FAIL })
+        dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
         console.log(error);
       });
-  }
-}
+  };
+};
 
 export const onProvincesRead = () => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection('Provinces').
-      orderBy('name', 'asc').
-      get()
+    db.collection('Provinces')
+      .get()
       .then(snapshot => {
         var provincesList = [];
-        snapshot.forEach(doc => provincesList.push({ value: doc.id, label: doc.data().name }));
-        dispatch({ type: ON_PROVINCES_READ, payload: provincesList })
-      })
-  }
-}
+        snapshot.forEach(doc =>
+          provincesList.push({ value: doc.id, label: doc.data().name })
+        );
+        dispatch({ type: ON_PROVINCES_READ, payload: provincesList });
+      });
+  };
+};
 
 export const onAreasRead = () => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection('Areas').
-      orderBy('name', 'asc').
-      get()
+    db.collection('Areas')
+      .orderBy('name', 'asc')
+      .get()
       .then(snapshot => {
         var areasList = [];
         snapshot.forEach(doc => areasList.push({ value: doc.id, label: doc.data().name }));
-        dispatch({ type: ON_AREAS_READ, payload: areasList })
-      })
-  }
-}
+        dispatch({ type: ON_AREAS_READ, payload: areasList });
+      });
+  };
+};

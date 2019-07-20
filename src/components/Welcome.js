@@ -7,7 +7,9 @@ class Welcome extends Component {
   onButtonPressHandler() {
     this.props.navigation.navigate('commerceRegisterProfile');
   }
-
+  onButtonPressHandlerBack() {
+    this.props.navigation.navigate('tabs');
+  }
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -20,6 +22,12 @@ class Welcome extends Component {
           <Button
             title="Continuar"
             onPress={this.onButtonPressHandler.bind(this)}
+          />
+        </CardSection>
+        <CardSection>
+          <Button
+            title="Volver"
+            onPress={this.onButtonPressHandlerBack.bind(this)}
           />
         </CardSection>
       </View>

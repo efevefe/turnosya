@@ -38,7 +38,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COMMERCE_OPEN:
-      return { ...state, commerceId: action.payload }
+      return { ...state, commerceId: action.payload };
     case ON_COMMERCE_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case COMMERCE_FAIL:

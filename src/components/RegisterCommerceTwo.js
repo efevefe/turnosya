@@ -1,98 +1,194 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input } from './common';
+import { CardSection, Button, Input, Picker } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCreateCommerce, onCommerceValueChange } from '../actions';
-import { validateValueType } from '../utils';
+import {
+  onCreateCommerce,
+  onCommerceValueChange,
+  onAreasRead,
+  onProvincesRead
+} from '../actions';
 
 class RegisterCommerceTwo extends Component {
-  state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
+  state = {
+    areaLoaded: false,
+    provincesLoaded: false,
+    pickerPlaceholder: { value: null, label: 'Seleccionar...' },
+    addressError: '',
+    cityError: '',
+    provinceError: '',
+    areaError: ''
+  };
+
+  componentWillMount() {
+    this.props.onProvincesRead();
+    this.props.onAreasRead();
+  }
 
   onButtonPressHandler() {
-    this.props.onCreateCommerce(
-      {
-        name: this.props.name,
-        description: this.props.description,
-        cuit: this.props.cuit,
-        address: this.props.address,
-        email: this.props.email,
-        phone: this.props.phone,
-        area: this.props.area,
-        province: this.props.province,
-        city: this.props.city
-      },
-
-      this.props.navigation
-    );
+    if (this.validateMinimumData()) {
+      var {
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        area
+      } = this.props;
+      this.props.onCreateCommerce(
+        {
+          name,
+          cuit,
+          email,
+          phone,
+          description,
+          address,
+          city,
+          province,
+          area
+        },
+        this.props.navigation
+      );
+    }
   }
+
+  onProvincePickerChange = async index => {
+    if (index > 0) {
+      var { value, label } = this.props.provincesList[index - 1];
+    } else {
+      var { value, label } = this.state.pickerPlaceholder;
+    }
+
+    await this.props.onCommerceValueChange({
+      prop: 'province',
+      value: { provinceId: value, name: label }
+    });
+    if (!provincesLoaded) {
+      return this.setState({ provincesLoaded: true });
+    }
+    this.renderProvinceError();
+  };
+
+  onAreaPickerChange = async index => {
+    if (index > 0) {
+      var { value, label } = this.props.areasList[index - 1];
+    } else {
+      var { value, label } = this.state.pickerPlaceholder;
+    }
+
+    await this.props.onCommerceValueChange({
+      prop: 'area',
+      value: { areaId: value, name: label }
+    });
+    if (!areaLoaded) {
+      return this.setState({ areaLoaded: true });
+    }
+    this.renderAreaError();
+  };
+
+  renderAddressError = () => {
+    if (this.props.address === '') {
+      this.setState({ addressError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ addressError: '' });
+      return true;
+    }
+  };
+
+  renderCityError = () => {
+    if (this.props.city === '') {
+      this.setState({ cityError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ cityError: '' });
+      return true;
+    }
+  };
+
+  renderProvinceError = () => {
+    if (this.props.province.provinceId === null) {
+      this.setState({ provinceError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ provinceError: '' });
+      return true;
+    }
+  };
+
+  renderAreaError = () => {
+    if (this.props.area.areaId === null) {
+      this.setState({ areaError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ areaError: '' });
+      return true;
+    }
+  };
+
   validateMinimumData = () => {
     return (
-      this.renderNameError() &&
-      this.renderCuitError() &&
-      this.renderPhoneError() &&
-      this.renderEmailError()
+      this.renderAreaError() &&
+      this.renderProvinceError() &&
+      this.renderCityError() &&
+      this.renderAddressError()
     );
   };
-  renderEmailError = () => {
-    if (this.props.email == '') {
-      this.setState({ emailError: 'Dato requerido' });
-      return false;
-    } else if (!validateValueType('email', this.props.email)) {
-      this.setState({ emailError: 'Formato de email incorrecto' });
-      return false;
-    } else {
-      this.setState({ emailError: '' });
-      return true;
-    }
-  };
-  renderNameError = () => {
-    if (this.props.name === '') {
-      this.setState({ nameError: 'Dato requerido' });
-      return false;
-    } else {
-      this.setState({ nameError: '' });
-      return true;
-    }
-  };
-  renderPhoneError = () => {
-    if (this.props.phone === '') {
-      this.setState({ phoneError: 'Dato requerido' });
-      return false;
-    } else if (!validateValueType('int', this.props.phone)) {
-      this.setState({ phoneError: 'Debe ingresar un valor numerico' });
-      return false;
-    } else {
-      this.setState({ phoneError: '' });
-      return true;
-    }
-  };
-  renderCuitError = () => {
-    if (this.props.cuit === '') {
-      this.setState({ cuitError: 'Dato requerido' });
-      return false;
-    } else if (!validateValueType('int', this.props.cuit)) {
-      this.setState({ cuitError: 'Debe ingresar un valor numerico' });
-      return false;
-    } else {
-      this.setState({ cuitError: '' });
-      return true;
-    }
-  };
+
   render() {
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
+            <Picker
+              title="Rubro:"
+              placeholder={this.state.pickerPlaceholder}
+              items={this.props.areasList}
+              value={this.props.area.areaId}
+              onValueChange={(value, index) => this.onAreaPickerChange(index)}
+              errorMessage={this.state.areaError}
+            />
+          </CardSection>
+          <CardSection>
+            <Picker
+              title="Provincia:"
+              placeholder={this.state.pickerPlaceholder}
+              items={this.props.provincesList}
+              value={this.props.province.provinceId}
+              onValueChange={(value, index) =>
+                this.onProvincePickerChange(index)
+              }
+              errorMessage={this.state.provinceError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Ciudad:"
+              value={this.props.city}
+              onChangeText={value =>
+                this.props.onCommerceValueChange({ prop: 'city', value })
+              }
+              errorMessage={this.state.cityError}
+              onFocus={() => this.setState({ cityError: '' })}
+              onBlur={this.renderCityError}
+            />
+          </CardSection>
+          <CardSection>
             <Input
               label="Dirección"
-              placeholder="9 de Julio 456"
               onChangeText={value =>
                 this.props.onCommerceValueChange({
                   prop: 'address',
                   value
                 })
               }
+              errorMessage={this.state.addressError}
+              onFocus={() => this.setState({ addressError: '' })}
+              onBlur={this.renderAddressError}
             />
           </CardSection>
           <CardSection>
@@ -111,16 +207,18 @@ class RegisterCommerceTwo extends Component {
 const mapStateToProps = state => {
   const {
     name,
-    description,
     cuit,
     email,
     phone,
+    description,
+    address,
     city,
     province,
+    provincesList,
     area,
-    address,
-    error,
-    loading
+    areasList,
+    loading,
+    error
   } = state.commerceData;
 
   return {
@@ -134,10 +232,12 @@ const mapStateToProps = state => {
     address,
     city,
     province,
-    area
+    area,
+    areasList,
+    provincesList
   };
 };
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange, onCreateCommerce }
+  { onCommerceValueChange, onCreateCommerce, onAreasRead, onProvincesRead }
 )(RegisterCommerceTwo);

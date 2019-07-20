@@ -14,7 +14,7 @@ export const validateValueType = (type, value) => {
       const passRe = /^(?=.*\d)[0-9a-zA-Z]{6,}$/;
       return passRe.test(String(value));
     case 'cuit':
-      const cuitRe = /^[0-9]{11,}$/;
+      const cuitRe = /^[0-9]{10,11}$/;
       return cuitRe.test(String(value));
     case 'name':
       const nameRe = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\-,.'"´`]+$/;

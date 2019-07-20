@@ -15,12 +15,7 @@ import {
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType } from '../utils';
-import {
-  onUserRead,
-  onUserUpdateWithPicture,
-  onUserUpdateNoPicture,
-  onRegisterValueChange
-} from '../actions';
+import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions';
 
 class ClientProfile extends Component {
   state = {
