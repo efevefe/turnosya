@@ -9,7 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { CardSection, Input, Spinner, Menu, MenuItem } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType } from '../utils';
-import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions/RegisterActions';
+import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions';
 
 class ClientProfile extends Component {
     state = {

@@ -219,7 +219,7 @@ const mapStateToProps = state => {
     areasList,
     loading,
     error
-  } = state.commerceProfile;
+  } = state.commerceData;
 
   return {
     name,

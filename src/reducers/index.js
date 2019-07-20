@@ -3,12 +3,12 @@ import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
 import AuthReducer from './AuthReducer';
 import RegisterFormReducer from './RegisterFormReducer';
-import CommerceProfileReducers from './CommerceProfileReducers';
+import CommerceDataReducer from './CommerceDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
   registerForm: RegisterFormReducer,
   serviceForm: ServiceFormReducer,
   servicesList: ServicesListReducer,
-  commerceProfile: CommerceProfileReducers
+  commerceData: CommerceDataReducer
 });

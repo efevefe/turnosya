@@ -168,7 +168,7 @@ const mapStateToProps = state => {
     email,
     phone,
     error
-  } = state.commerceProfile;
+  } = state.commerceData;
 
   return {
     name,

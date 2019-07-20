@@ -16,7 +16,7 @@ import {
     onCommerceValueChange,
     onProvincesRead,
     onAreasRead
-} from '../actions/CommerceProfileActions';
+} from '../actions';
 
 class CommerceProfile extends Component {
     state = {
@@ -579,7 +579,7 @@ const mapStateToProps = state => {
         commerceId,
         loading,
         refreshing
-    } = state.commerceProfile;
+    } = state.commerceData;
 
     return {
         name,
