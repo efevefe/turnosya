@@ -19,7 +19,6 @@ export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
 };
 
-
 export const verifyExistsCommerce = navigation => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
@@ -37,6 +36,7 @@ export const verifyExistsCommerce = navigation => {
       console.log(error);
     });
 };
+
 export const onCreateCommerce = (
   { name, description, cuit, email, phone, address, city, area, province },
   navigation
@@ -74,7 +74,7 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = ( loadingType ) => {
+export const onCommerceRead = (loadingType) => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -95,14 +95,14 @@ export const onCommerceRead = ( loadingType ) => {
             var { name, areaId } = doc.data().area;
             const area = { value: areaId, label: name }
 
-            dispatch({ 
-              type: ON_COMMERCE_READ, 
-              payload: { 
-                ...doc.data(), 
-                provincesList: [province], 
+            dispatch({
+              type: ON_COMMERCE_READ,
+              payload: {
+                ...doc.data(),
+                provincesList: [province],
                 areasList: [area],
-                commerceId: doc.id 
-              } 
+                commerceId: doc.id
+              }
             });
           })
           .catch(error => {
@@ -170,7 +170,9 @@ export const onProvincesRead = () => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection('Provinces').get()
+    db.collection('Provinces').
+      orderBy('name', 'asc').
+      get()
       .then(snapshot => {
         var provincesList = [];
         snapshot.forEach(doc => provincesList.push({ value: doc.id, label: doc.data().name }));
@@ -183,7 +185,9 @@ export const onAreasRead = () => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection('Areas').get()
+    db.collection('Areas').
+      orderBy('name', 'asc').
+      get()
       .then(snapshot => {
         var areasList = [];
         snapshot.forEach(doc => areasList.push({ value: doc.id, label: doc.data().name }));

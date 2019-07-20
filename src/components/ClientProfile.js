@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants, Location } from 'expo';
@@ -41,7 +41,7 @@ class ClientProfile extends Component {
     };
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onUserRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
 
