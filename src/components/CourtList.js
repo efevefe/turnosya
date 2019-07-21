@@ -8,7 +8,7 @@ import { MAIN_COLOR } from '../constants';
 
 class CourtList extends Component {
   componentWillMount() {
-    this.props.courtsRead();
+    this.props.courtsRead(this.props.commerceId);
   }
 
   renderRow({ item }) {
@@ -38,8 +38,9 @@ class CourtList extends Component {
 
 const mapStateToProps = state => {
   const { courts, loading } = state.courtsList;
+  const { commerceId } = state.commerceData;
 
-  return { courts, loading };
+  return { courts, loading, commerceId };
 };
 
 export default connect(
