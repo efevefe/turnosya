@@ -63,6 +63,7 @@ class CourtForm extends Component {
         lightPrice,
         checked,
         courtState,
+        commerceId,
         navigation
       } = this.props;
 
@@ -78,7 +79,8 @@ class CourtForm extends Component {
             lightPrice,
             checked,
             courtState,
-            id
+            id,
+            commerceId
           },
           navigation
         );
@@ -91,7 +93,8 @@ class CourtForm extends Component {
             price,
             lightPrice,
             checked,
-            courtState
+            courtState,
+            commerceId
           },
           navigation
         );
@@ -416,6 +419,8 @@ const mapStateToProps = state => {
     courtState
   } = state.courtForm;
 
+  const { commerceId } = state.commerceData;
+
   return {
     name,
     courts,
@@ -427,7 +432,8 @@ const mapStateToProps = state => {
     checked,
     loading,
     existedError,
-    courtState
+    courtState,
+    commerceId
   };
 };
 
