@@ -24,7 +24,7 @@ class commerceData extends Component {
         pictureOptionsVisible: false,
         newProfilePicture: false,
         stateBeforeChanges: null,
-        pickerPlaceholder: { value: null, label: 'Seleccionar...' },
+        pickerPlaceholder: { value: '', label: 'Seleccionar...' },
         nameError: '',
         cuitError: '',
         emailError: '',
@@ -43,7 +43,7 @@ class commerceData extends Component {
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.props.onCommerceRead('loading');
         this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
     }
@@ -217,9 +217,11 @@ class commerceData extends Component {
         }
     }
 
-    onProvincePickerChange = async (index) => {
-        if (index > 0) {
-            var { value, label } = this.props.provincesList[index - 1];
+    onProvincePickerChange = async (value) => {
+        const selected = this.props.provincesList.find(province => province.value == value);
+
+        if (selected) {
+            var { value, label } = selected;
         } else {
             var { value, label } = this.state.pickerPlaceholder;
         }
@@ -228,9 +230,11 @@ class commerceData extends Component {
         this.renderProvinceError();
     }
 
-    onAreaPickerChange = async (index) => {
-        if (index > 0) {
-            var { value, label } = this.props.areasList[index - 1];
+    onAreaPickerChange = async (value) => {
+        const selected = this.props.areasList.find(area => area.value == value);
+
+        if (selected) {
+            var { value, label } = selected;
         } else {
             var { value, label } = this.state.pickerPlaceholder;
         }
@@ -311,7 +315,7 @@ class commerceData extends Component {
     }
 
     renderProvinceError = () => {
-        if (this.props.province.provinceId === null) {
+        if (this.props.province.provinceId === '') {
             this.setState({ provinceError: 'Dato requerido' });
             return false;
         } else {
@@ -321,7 +325,7 @@ class commerceData extends Component {
     }
 
     renderAreaError = () => {
-        if (this.props.area.areaId === null) {
+        if (this.props.area.areaId === '') {
             this.setState({ areaError: 'Dato requerido' });
             return false;
         } else {
@@ -486,7 +490,7 @@ class commerceData extends Component {
                             placeholder={this.state.pickerPlaceholder}
                             items={this.props.provincesList}
                             value={this.props.province.provinceId}
-                            onValueChange={(value, index) => this.onProvincePickerChange(index)}
+                            onValueChange={(value) => this.onProvincePickerChange(value)}
                             disabled={!this.state.editEnabled}
                             errorMessage={this.state.provinceError}
                         />
@@ -497,8 +501,8 @@ class commerceData extends Component {
                             placeholder={this.state.pickerPlaceholder}
                             items={this.props.areasList}
                             value={this.props.area.areaId}
-                            onValueChange={(value, index) => this.onAreaPickerChange(index)}
-                            disabled={true}
+                            onValueChange={(value) => this.onAreaPickerChange(value)}
+                            disabled={!this.state.editEnabled}
                             errorMessage={this.state.areaError}
                         />
                     </CardSection>

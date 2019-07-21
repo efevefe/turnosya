@@ -176,6 +176,7 @@ export const onProvincesRead = () => {
 
   return dispatch => {
     db.collection('Provinces')
+      .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
         var provincesList = [];

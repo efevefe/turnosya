@@ -14,8 +14,6 @@ import {
   ON_COMMERCE_OPEN
 } from '../actions/types';
 
-const pickerPlaceholder = { value: null, label: 'Seleccionar...' };
-
 const INITIAL_STATE = {
   name: '',
   description: '',
@@ -25,9 +23,9 @@ const INITIAL_STATE = {
   address: '',
   city: '',
   province: { provinceId: '', name: '' },
-  provincesList: [pickerPlaceholder],
+  provincesList: [{ value: '', label: '' }],
   area: { areaId: '', name: '' },
-  areasList: [pickerPlaceholder],
+  areasList: [{ value: '', label: '' }],
   profilePicture: '',
   commerceId: null,
   error: '',
