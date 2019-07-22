@@ -15,7 +15,12 @@ import {
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType } from '../utils';
-import { onUserRead, onUserUpdateWithPicture, onUserUpdateNoPicture, onRegisterValueChange } from '../actions';
+import {
+  onUserRead,
+  onUserUpdateWithPicture,
+  onUserUpdateNoPicture,
+  onRegisterValueChange
+} from '../actions';
 
 class ClientProfile extends Component {
   state = {
@@ -297,7 +302,7 @@ class ClientProfile extends Component {
       this.props.phone != '' &&
       !validateValueType('phone', this.props.phone)
     ) {
-      this.setState({ phoneError: 'Formato de telefono incorrecto' });
+      this.setState({ phoneError: 'Formato de teléfono incorrecto' });
       return false;
     } else {
       this.setState({ phoneError: '' });
@@ -400,7 +405,7 @@ class ClientProfile extends Component {
           </CardSection>
           <CardSection>
             <Input
-              label="Telefono:"
+              label="Teléfono:"
               value={this.props.phone}
               onChangeText={value =>
                 this.props.onRegisterValueChange({ prop: 'phone', value })
@@ -423,7 +428,7 @@ class ClientProfile extends Component {
           isVisible={this.state.pictureOptionsVisible}
         >
           <MenuItem
-            title="Elegir de la galeria"
+            title="Elegir de la galería"
             icon="md-photos"
             onPress={this.onChoosePicturePress}
           />

@@ -48,7 +48,7 @@ class RegisterCommerce extends Component {
       this.setState({ phoneError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('int', this.props.phone)) {
-      this.setState({ phoneError: 'Debe ingresar un valor numerico' });
+      this.setState({ phoneError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ phoneError: '' });
@@ -104,8 +104,8 @@ class RegisterCommerce extends Component {
           </CardSection>
           <CardSection>
             <Input
-              label="Telefono"
-              placeholder="Telefono"
+              label="Teléfono"
+              placeholder="Teléfono"
               keyboardType="numeric"
               errorMessage={this.state.phoneError}
               onChangeText={value =>
@@ -161,14 +161,7 @@ class RegisterCommerce extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    name,
-    description,
-    cuit,
-    email,
-    phone,
-    error
-  } = state.commerceData;
+  const { name, description, cuit, email, phone, error } = state.commerceData;
 
   return {
     name,

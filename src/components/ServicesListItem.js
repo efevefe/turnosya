@@ -27,7 +27,6 @@ class ServicesListItem extends Component {
 
     this.setState({ optionsVisible: !this.state.optionsVisible });
 
-    //hay que ver la forma de que esto se haga en el .then() del update()
     this.props.navigation.navigate(navigateAction);
   }
 
@@ -82,7 +81,7 @@ class ServicesListItem extends Component {
 
         <ListItem
           title={name}
-          subtitle={`Duracion: ${duration} min.`}
+          subtitle={`Duración: ${duration} min.`}
           rightTitle={`$${price}`}
           key={id}
           onLongPress={this.onOptionsPress.bind(this)}

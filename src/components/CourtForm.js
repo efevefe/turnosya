@@ -401,8 +401,8 @@ const styles = StyleSheet.create({
 });
 
 const helpText =
-  'Cuando esta encendido indica que el estado de la cancha es "Disponible", \
-en cambio si esta apagado indica que el estado de la cancha es "No Disponible"';
+  'Encendido indica que el estado de la cancha es "Disponible", \
+en cambio, apagado indica que el estado de la cancha es "No Disponible"';
 
 const mapStateToProps = state => {
   const {

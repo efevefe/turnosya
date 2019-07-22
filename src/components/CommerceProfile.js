@@ -285,7 +285,7 @@ class commerceData extends Component {
             return false;
             
         } else if (!validateValueType('phone', this.props.phone)) {
-            this.setState({ phoneError: 'Formato de telefono incorrecto' });
+            this.setState({ phoneError: 'Formato de teléfono incorrecto' });
             return false;
         
         } else {
@@ -406,7 +406,7 @@ class commerceData extends Component {
                 <View style={infoContainerStyle}>
                     <CardSection>
                         <Input
-                            label='Razon Social:'
+                            label='Razón Social:'
                             value={this.props.name}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'name', value })}
                             editable={this.state.editEnabled}
@@ -429,7 +429,7 @@ class commerceData extends Component {
                     </CardSection>
                     <CardSection>
                         <Input
-                            label='Telefono:'
+                            label='Teléfono:'
                             value={this.props.phone}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'phone', value })}
                             keyboardType='numeric'
@@ -453,7 +453,7 @@ class commerceData extends Component {
                     </CardSection>
                     <CardSection>
                         <Input
-                            label='Descripcion:'
+                            label='Descripción:'
                             value={this.props.description}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'description', value })}
                             editable={this.state.editEnabled}
@@ -464,7 +464,7 @@ class commerceData extends Component {
                     </CardSection>
                     <CardSection>
                         <Input
-                            label='Direccion:'
+                            label='Dirección:'
                             value={this.props.address}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'address', value })}
                             editable={this.state.editEnabled}
@@ -514,7 +514,7 @@ class commerceData extends Component {
                     isVisible={this.state.pictureOptionsVisible}
                 >
                     <MenuItem
-                        title='Elegir de la galeria'
+                        title='Elegir de la galería'
                         icon='md-photos'
                         onPress={this.onChoosePicturePress}
                     />

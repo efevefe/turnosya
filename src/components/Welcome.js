@@ -15,7 +15,7 @@ class Welcome extends Component {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <CardSection>
           <Text style={{ textAlign: 'center', fontSize: 20 }}>
-            Bienvenido Registra tu Negocio
+            Bienvenido!! Registra tu Negocio
           </Text>
         </CardSection>
         <CardSection>

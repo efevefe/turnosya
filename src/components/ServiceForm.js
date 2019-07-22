@@ -74,7 +74,7 @@ class ServiceForm extends Component {
       this.setState({ durationError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('int', this.props.duration)) {
-      this.setState({ durationError: 'Debe ingresar un valor numerico' });
+      this.setState({ durationError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ durationError: '' });
@@ -87,7 +87,7 @@ class ServiceForm extends Component {
       this.setState({ priceError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('number', this.props.price)) {
-      this.setState({ priceError: 'Debe ingresar un valor numerico' });
+      this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ priceError: '' });

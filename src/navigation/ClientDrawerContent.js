@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { DrawerItem } from '../components/common';
 import { onCommerceOpen, onLogout } from '../actions';
 
-
 class ClientDrawerContent extends Component {
   leftIcon = name => (
     <Ionicons name={name} size={20} color="black" style={{ marginRight: 8 }} />
@@ -25,7 +24,7 @@ class ClientDrawerContent extends Component {
             onPress={() => this.props.onCommerceOpen(this.props.navigation)}
           />
           <DrawerItem
-            title="Cerrar Sesion"
+            title="Cerrar Sesión"
             icon={this.leftIcon('md-exit')}
             loading={this.props.loading}
             onPress={() => this.props.onLogout()}

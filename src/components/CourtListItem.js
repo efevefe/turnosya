@@ -68,11 +68,11 @@ class CourtListItem extends Component {
         </Menu>
 
         <Menu
-          title={`¿Esta seguro que desea eliminar "${name}"?`}
+          title={`¿Seguro que desea eliminar "${name}"?`}
           onBackdropPress={this.onDeletePress.bind(this)}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem title="Si" onPress={this.onConfirmDeletePress.bind(this)} />
+          <MenuItem title="Sí" onPress={this.onConfirmDeletePress.bind(this)} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="No" onPress={this.onDeletePress.bind(this)} />
         </Menu>
@@ -86,11 +86,11 @@ class CourtListItem extends Component {
             courtState
               ? { textAlign: 'left', display: 'flex' }
               : {
-                textAlign: 'left',
-                display: 'flex',
-                color: 'grey',
-                fontStyle: 'italic'
-              }
+                  textAlign: 'left',
+                  display: 'flex',
+                  color: 'grey',
+                  fontStyle: 'italic'
+                }
           }
           rightTitle={
             checked ? (
@@ -100,10 +100,10 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
+                          textAlign: 'right',
+                          color: 'grey',
+                          fontStyle: 'italic'
+                        }
                   }
                 >{`Sin luz: $${price}`}</Text>
                 <Text
@@ -111,23 +111,27 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
+                          textAlign: 'right',
+                          color: 'grey',
+                          fontStyle: 'italic'
+                        }
                   }
                 >{`Con luz: $${lightPrice}`}</Text>
               </View>
             ) : (
-                <Text
-                  style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
-                >{`Sin luz: $${price}`}</Text>
-              )
+              <Text
+                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+              >{`Sin luz: $${price}`}</Text>
+            )
           }
           key={id}
           subtitle={
             <Text
-              style={courtState ? { color: 'grey' } : { color: 'grey', fontStyle: 'italic' }}
+              style={
+                courtState
+                  ? { color: 'grey' }
+                  : { color: 'grey', fontStyle: 'italic' }
+              }
             >{`${court} - ${ground}`}</Text>
           }
           onLongPress={this.onOptionsPress.bind(this)}

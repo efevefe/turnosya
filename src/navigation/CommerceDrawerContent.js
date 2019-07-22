@@ -23,7 +23,7 @@ class CommerceDrawerContent extends Component {
             onPress={() => this.props.navigation.navigate('client')}
           />
           <DrawerItem
-            title="Cerrar Sesion"
+            title="Cerrar Sesión"
             icon={this.leftIcon('md-exit')}
             loading={this.props.loading}
             onPress={() => this.props.onLogout()}

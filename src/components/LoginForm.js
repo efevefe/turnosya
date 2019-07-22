@@ -71,7 +71,7 @@ class LoginForm extends Component {
     } else if (!validateValueType('password', this.props.password)) {
       this.setState({
         passwordError:
-          'La contraseña debe ser alfanumerica y contener al menos 6 caracteres'
+          'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
       });
       return false;
     } else {
