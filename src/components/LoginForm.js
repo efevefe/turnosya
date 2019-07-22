@@ -20,20 +20,6 @@ const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
 class LoginForm extends Component {
   state = { emailError: '', passwordError: '' };
 
-  // pruebaFoto() {
-  //   async function getCameraPermsAsync() {
-  //     // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
-  //     const { status, permissions } = await Permissions.askAsync(
-  //       Permissions.CAMERA_ROLL
-  //     );
-  //     const { status2, permissions2 } = await Permissions.askAsync(
-  //       Permissions.CAMERA
-  //     );
-  //   }
-
-  //   getCameraPermsAsync().then(() => ImagePicker.launchImageLibraryAsync());
-  // }
-
   onButonPressHandler() {
     if (this.validateMinimumData()) {
       this.props.onLogin({
@@ -188,17 +174,6 @@ class LoginForm extends Component {
             />
           </CardSection>
         </View>
-        {/*}
-        <View style={createAccountContainerStyle}>
-          <CardSection>
-            <Button
-              title="Elegir foto"
-              type="clear"
-              color="white"
-              onPress={this.pruebaFoto.bind(this)}
-            />
-          </CardSection>
-            </View>{*/}
       </View>
     );
   }
