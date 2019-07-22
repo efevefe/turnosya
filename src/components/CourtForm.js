@@ -290,7 +290,6 @@ class CourtForm extends Component {
                       {helpText}
                     </Text>
                   }
-                  height="auto"
                   width={250}
                   backgroundColor={MAIN_COLOR}
                   withOverlay={false}
@@ -329,7 +328,7 @@ class CourtForm extends Component {
             <CardSection>
               <Picker
                 title={'Tipo de cancha:'}
-                placeholder={placeHolder[0]}
+                placeholder={{ value: null, label: 'Elija una opción...' }}
                 value={this.props.court}
                 items={this.props.courts}
                 onValueChange={this.onCourtTypeChangeHandle}
@@ -340,7 +339,7 @@ class CourtForm extends Component {
             <CardSection>
               <Picker
                 title={'Tipo de suelo:'}
-                placeholder={placeHolder[0]}
+                placeholder={{ value: null, label: 'Elija una opción...' }}
                 value={this.props.ground}
                 items={this.state.selectedGrounds}
                 onValueChange={this.onGroundTypeChangeHandle}
@@ -383,14 +382,6 @@ class CourtForm extends Component {
     );
   }
 }
-
-const placeHolder = [
-  {
-    label: 'Elija una opción...',
-    value: 'Elija una opción...',
-    key: -1
-  }
-];
 
 const styles = StyleSheet.create({
   cardStyle: {
