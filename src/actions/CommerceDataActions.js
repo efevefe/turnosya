@@ -31,7 +31,7 @@ export const onCommerceOpen = navigation => {
         if (doc.data().commerceId == null) {
           navigation.navigate('commerceRegister');
         } else {
-          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId })
+          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
 
           navigation.navigate('commerce');
         }
@@ -39,7 +39,7 @@ export const onCommerceOpen = navigation => {
       .catch(error => {
         console.log(error);
       });
-  }
+  };
 };
 
 export const onCreateCommerce = (
@@ -67,7 +67,7 @@ export const onCreateCommerce = (
         })
         .then(reference => {
           db.doc(`Profiles/${currentUser.uid}`)
-            .set({ commerceId: reference.id })
+            .update({ commerceId: reference.id })
             .then(() => {
               dispatch({ type: COMMERCE_PROFILE_CREATE });
               navigation.navigate('commerce');
@@ -79,7 +79,7 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = (loadingType) => {
+export const onCommerceRead = loadingType => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
@@ -88,9 +88,11 @@ export const onCommerceRead = (loadingType) => {
 
     //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO PRIMERO COMO CLIENTE ESTO NO HARIA
     //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
-    db.doc(`Profiles/${currentUser.uid}`).get()
+    db.doc(`Profiles/${currentUser.uid}`)
+      .get()
       .then(doc => {
-        db.doc(`Commerces/${doc.data().commerceId}`).get()
+        db.doc(`Commerces/${doc.data().commerceId}`)
+          .get()
           .then(doc => {
             //provincia
             var { name, provinceId } = doc.data().province;
@@ -122,14 +124,37 @@ export const onCommerceRead = (loadingType) => {
   };
 };
 
-export const onCommerceUpdateNoPicture = ({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId }) => {
+export const onCommerceUpdateNoPicture = ({
+  name,
+  cuit,
+  email,
+  phone,
+  description,
+  address,
+  city,
+  province,
+  area,
+  profilePicture,
+  commerceId
+}) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_UPDATING });
 
     db.doc(`Commerces/${commerceId}`)
-      .update({ name, cuit, email, phone, description, address, city, province, area, profilePicture })
+      .update({
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        area,
+        profilePicture
+      })
       .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture }))
       .catch(error => {
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
@@ -138,20 +163,48 @@ export const onCommerceUpdateNoPicture = ({ name, cuit, email, phone, descriptio
   };
 };
 
-export const onCommerceUpdateWithPicture = ({ name, cuit, email, phone, description, address, city, province, area, profilePicture, commerceId }) => {
-  var ref = firebase.storage().ref(`Commerces/${commerceId}`).child(`${commerceId}-ProfilePicture`);
+export const onCommerceUpdateWithPicture = ({
+  name,
+  cuit,
+  email,
+  phone,
+  description,
+  address,
+  city,
+  province,
+  area,
+  profilePicture,
+  commerceId
+}) => {
+  var ref = firebase
+    .storage()
+    .ref(`Commerces/${commerceId}`)
+    .child(`${commerceId}-ProfilePicture`);
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_UPDATING });
 
-    ref.put(profilePicture)
+    ref
+      .put(profilePicture)
       .then(snapshot => {
         profilePicture.close();
-        snapshot.ref.getDownloadURL()
+        snapshot.ref
+          .getDownloadURL()
           .then(url => {
             db.doc(`Commerces/${commerceId}`)
-              .update({ name, cuit, email, phone, description, address, city, province, area, profilePicture: url })
+              .update({
+                name,
+                cuit,
+                email,
+                phone,
+                description,
+                address,
+                city,
+                province,
+                area,
+                profilePicture: url
+              })
               .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: url }))
               .catch(error => {
                 dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
@@ -163,7 +216,7 @@ export const onCommerceUpdateWithPicture = ({ name, cuit, email, phone, descript
             console.log(error);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         profilePicture.close();
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
         console.log(error);
@@ -197,7 +250,9 @@ export const onAreasRead = () => {
       .get()
       .then(snapshot => {
         var areasList = [];
-        snapshot.forEach(doc => areasList.push({ value: doc.id, label: doc.data().name }));
+        snapshot.forEach(doc =>
+          areasList.push({ value: doc.id, label: doc.data().name })
+        );
         dispatch({ type: ON_AREAS_READ, payload: areasList });
       });
   };
