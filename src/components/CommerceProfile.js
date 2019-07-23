@@ -248,7 +248,7 @@ class commerceData extends Component {
             this.setState({ cuitError: 'Dato requerido' });
             return false;
         } else if (!validateValueType('cuit', this.props.cuit)) {
-            this.setState({ cuitError: 'Formato incorrecto' });
+            this.setState({ cuitError: 'CUIT incorrecto' });
             return false;
         } else {
             this.setState({ cuitError: '' });
