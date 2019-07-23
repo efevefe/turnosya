@@ -218,28 +218,18 @@ class commerceData extends Component {
     }
 
     onProvincePickerChange = async (value) => {
-        const selected = this.props.provincesList.find(province => province.value == value);
-
-        if (selected) {
-            var { value, label } = selected;
-        } else {
-            var { value, label } = this.state.pickerPlaceholder;
-        }
-
-        await this.props.onCommerceValueChange({ prop: 'province', value: { provinceId: value, name: label } });
+        if (value) {
+            var { value, label } = this.props.provincesList.find(province => province.value == value);
+            await this.props.onCommerceValueChange({ prop: 'province', value: { provinceId: value, name: label } });
+        } 
         this.renderProvinceError();
     }
 
     onAreaPickerChange = async (value) => {
-        const selected = this.props.areasList.find(area => area.value == value);
-
-        if (selected) {
-            var { value, label } = selected;
-        } else {
-            var { value, label } = this.state.pickerPlaceholder;
+        if (value) {
+            var { value, label } = this.props.areasList.find(area => area.value == value);
+            await this.props.onCommerceValueChange({ prop: 'area', value: { areaId: value, name: label } });
         }
-
-        await this.props.onCommerceValueChange({ prop: 'area', value: { areaId: value, name: label } });
         this.renderAreaError();
     }
 

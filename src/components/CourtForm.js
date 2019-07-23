@@ -103,7 +103,10 @@ class CourtForm extends Component {
   }
 
   renderNameError = () => {
-    if (this.props.name === '') {
+    const { name, onCourtValueChange } = this.props;
+
+    onCourtValueChange({ prop: 'name', value: name.trim() });
+    if (name.trim() === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -133,7 +136,10 @@ class CourtForm extends Component {
   };
 
   renderPriceError = () => {
-    if (this.props.price === '') {
+    const { price, onCourtValueChange } = this.props;
+
+    onCourtValueChange({ prop: 'price', value: price.trim() });
+    if (price.trim() === '') {
       this.setState({ priceError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('number', this.props.price)) {
@@ -146,7 +152,10 @@ class CourtForm extends Component {
   };
 
   renderLightPriceError = () => {
-    if (this.props.lightPrice === '' && this.props.checked === true) {
+    const { lightPrice, checked, onCourtValueChange } = this.props;
+
+    onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
+    if (lightPrice.trim() === '' && checked === true) {
       this.setState({ lightPriceError: 'Dato requerido' });
       return false;
     } else {
