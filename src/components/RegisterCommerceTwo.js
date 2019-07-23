@@ -14,7 +14,7 @@ class RegisterCommerceTwo extends Component {
   state = {
     areaLoaded: false,
     provincesLoaded: false,
-    pickerPlaceholder: { value: null, label: 'Seleccionar...' },
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
     provinceError: '',
