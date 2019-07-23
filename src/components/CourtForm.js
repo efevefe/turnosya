@@ -290,7 +290,7 @@ class CourtForm extends Component {
                     })
                   }
                   value={this.props.courtState}
-                  trackColor={{ false: '#c4c4c4', true: '#e48592' }}
+                  trackColor={{ false: '#c4c4c4', true: '#efb5bd' }}
                   thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
                 />
                 <Tooltip
@@ -299,6 +299,7 @@ class CourtForm extends Component {
                       {helpText}
                     </Text>
                   }
+                  height={120}
                   width={250}
                   backgroundColor={MAIN_COLOR}
                   withOverlay={false}

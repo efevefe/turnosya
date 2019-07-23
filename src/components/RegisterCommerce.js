@@ -14,6 +14,7 @@ class RegisterCommerce extends Component {
       this.props.navigation.navigate('commerceRegisterProfile1');
     }
   }
+
   validateMinimumData = () => {
     return (
       this.renderNameError() &&
@@ -22,6 +23,7 @@ class RegisterCommerce extends Component {
       this.renderEmailError()
     );
   };
+
   renderEmailError = () => {
     if (this.props.email == '') {
       this.setState({ emailError: 'Dato requerido' });
@@ -34,6 +36,7 @@ class RegisterCommerce extends Component {
       return true;
     }
   };
+
   renderNameError = () => {
     if (this.props.name === '') {
       this.setState({ nameError: 'Dato requerido' });
@@ -43,6 +46,7 @@ class RegisterCommerce extends Component {
       return true;
     }
   };
+
   renderPhoneError = () => {
     if (this.props.phone === '') {
       this.setState({ phoneError: 'Dato requerido' });
@@ -55,18 +59,20 @@ class RegisterCommerce extends Component {
       return true;
     }
   };
+
   renderCuitError = () => {
     if (this.props.cuit === '') {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('cuit', this.props.cuit)) {
-      this.setState({ cuitError: 'Formato incorrecto' });
+      this.setState({ cuitError: 'CUIT incorrecto' });
       return false;
     } else {
       this.setState({ cuitError: '' });
       return true;
     }
   };
+
   render() {
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
@@ -173,6 +179,7 @@ const mapStateToProps = state => {
     phone
   };
 };
+
 export default connect(
   mapStateToProps,
   { onCommerceValueChange }

@@ -3,10 +3,10 @@ export const imageToBlob = async uri => {
 
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
+    xhr.onload = function () {
       resolve(xhr.response);
     };
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';
@@ -45,8 +45,7 @@ export const validateValueType = (type, value) => {
       const passRe = /^(?=.*\d)[0-9a-zA-Z]{6,}$/;
       return passRe.test(String(value));
     case 'cuit':
-      const cuitRe = /^[0-9]{10,11}$/;
-      return cuitRe.test(String(value));
+      return validarCuit(value);
     case 'name':
       const nameRe = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\-,.'"´`]+$/;
       return nameRe.test(String(value));
@@ -57,3 +56,31 @@ export const validateValueType = (type, value) => {
       return null;
   }
 };
+
+const validarCuit = (cuit) => {
+  //regex para cuit unicamente de negocio
+  const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
+
+  if (!cuitRe.test(String(cuit))) {
+    return false;
+  }
+
+  if (cuit.length != 11) {
+    return false;
+  }
+
+  var acumulado = 0;
+  var digitos = cuit.split("");
+  var digito = digitos.pop();
+
+  for (var i = 0; i < digitos.length; i++) {
+    acumulado += digitos[9 - i] * (2 + (i % 6));
+  }
+
+  var verif = 11 - (acumulado % 11);
+  if (verif == 11) {
+    verif = 0;
+  }
+
+  return digito == verif;
+}
