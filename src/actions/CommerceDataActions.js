@@ -52,31 +52,29 @@ export const onCreateCommerce = (
   return dispatch => {
     dispatch({ type: ON_REGISTER_COMMERCE });
 
-    db.runTransaction(() => {
-      db.collection(`Commerces`)
-        .add({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area
-        })
-        .then(reference => {
-          db.doc(`Profiles/${currentUser.uid}`)
-            .update({ commerceId: reference.id })
-            .then(() => {
-              dispatch({ type: COMMERCE_PROFILE_CREATE });
-              navigation.navigate('commerce');
-            })
-            .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-        })
-        .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-    }).catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  };
+    db.collection(`Commerces`)
+      .add({
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        area
+      })
+      .then(reference => {
+        db.doc(`Profiles/${currentUser.uid}`)
+          .update({ commerceId: reference.id })
+          .then(() => {
+            dispatch({ type: COMMERCE_PROFILE_CREATE });
+            navigation.navigate('commerce');
+          })
+          .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+      })
+      .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+  }
 };
 
 export const onCommerceRead = loadingType => {

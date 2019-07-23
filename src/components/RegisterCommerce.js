@@ -122,6 +122,7 @@ class RegisterCommerce extends Component {
             <Input
               label="E-mail"
               placeholder="E-mail"
+              autoCapitalize='none'
               errorMessage={this.state.emailError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
