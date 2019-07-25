@@ -3,11 +3,15 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCommerceValueChange } from '../actions';
+import { onCommerceValueChange, onCommerceFormOpen } from '../actions';
 import { validateValueType } from '../utils';
 
 class RegisterCommerce extends Component {
   state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
+
+  componentDidMount() {
+    this.props.onCommerceFormOpen();
+  }
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
@@ -182,5 +186,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange }
+  { onCommerceValueChange, onCommerceFormOpen }
 )(RegisterCommerce);

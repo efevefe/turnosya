@@ -44,6 +44,7 @@ export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
 //Commerce Profile
+export const ON_COMMERCE_CREATING = 'on_commerce_creating';
 export const ON_COMMERCE_OPEN = 'on_commerce_open'
 export const COMMERCE_FAIL = 'commerce_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';

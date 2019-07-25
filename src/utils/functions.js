@@ -41,8 +41,9 @@ export const validateValueType = (type, value) => {
       const emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return emailRe.test(String(value).toLowerCase());
     case 'password':
-      //alfanumerica y minimo 6 caracteres
-      const passRe = /^(?=.*\d)[0-9a-zA-Z]{6,}$/;
+      //alfanumerica, de minimo 6 caracteres y maximo 16
+      // al menos un digito numerico y una minuscula
+      const passRe = /^(?=\w*\d)(?=\w*[a-z])\S{6,16}$/;
       return passRe.test(String(value));
     case 'cuit':
       return validarCuit(value);

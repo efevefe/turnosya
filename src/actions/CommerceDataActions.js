@@ -13,12 +13,17 @@ import {
   ON_COMMERCE_UPDATE_FAIL,
   ON_PROVINCES_READ,
   ON_AREAS_READ,
-  ON_COMMERCE_OPEN
+  ON_COMMERCE_OPEN,
+  ON_COMMERCE_CREATING
 } from './types';
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
 };
+
+export const onCommerceFormOpen = () => {
+  return { type: ON_COMMERCE_CREATING };
+}
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
