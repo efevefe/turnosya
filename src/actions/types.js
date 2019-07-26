@@ -45,7 +45,7 @@ export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
 //Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
-export const ON_COMMERCE_OPEN = 'on_commerce_open'
+export const ON_COMMERCE_OPEN = 'on_commerce_open';
 export const COMMERCE_FAIL = 'commerce_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';
@@ -59,3 +59,7 @@ export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
 export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
+
+//Commerces List
+export const COMMERCE_LIST_READ = 'commerce_list_read';
+export const COMMERCE_LIST_READING = 'commerce_list_reading';
