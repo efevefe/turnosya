@@ -116,7 +116,7 @@ class RegisterCommerce extends Component {
             <Input
               label="Teléfono"
               placeholder="Teléfono"
-              keyboardType="numeric"
+              keyboardType="phone-pad"
               errorMessage={this.state.phoneError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
@@ -132,7 +132,8 @@ class RegisterCommerce extends Component {
             <Input
               label="E-mail"
               placeholder="E-mail"
-              autoCapitalize='none'
+              autoCapitalize="none"
+              keyboardType="email-address"
               errorMessage={this.state.emailError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
