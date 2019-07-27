@@ -59,3 +59,6 @@ export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
 export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
+export const ON_COMMERCE_DELETING = 'on_commerce_deleting';
+export const ON_COMMERCE_DELETED = 'on_commerce_deleted';
+export const ON_COMMERCE_DELETE_FAIL = 'on_commerce_delete_fail';

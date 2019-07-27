@@ -33,25 +33,25 @@ const stackNavigationOptions = {
   }
 };
 
-const navigationOptions = { header: null };
-
 const CommerceRegisterStack = createStackNavigator(
   {
     welcome: {
       screen: Welcome,
-      navigationOptions
+      navigationOptions: {
+        header: null
+      }
     },
     commerceRegisterProfile: {
       screen: RegisterCommerce,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Registrarse'
-      })
+      }
     },
     commerceRegisterProfile1: {
       screen: RegisterCommerceTwo,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Registrarse'
-      })
+      }
     }
   },
   stackNavigationOptions

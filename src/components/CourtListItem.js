@@ -72,9 +72,9 @@ class CourtListItem extends Component {
           onBackdropPress={this.onDeletePress.bind(this)}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem title="Sí" onPress={this.onConfirmDeletePress.bind(this)} />
+          <MenuItem title="Sí" icon='md-checkmark' onPress={this.onConfirmDeletePress.bind(this)} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="No" onPress={this.onDeletePress.bind(this)} />
+          <MenuItem title="No" icon='md-close' onPress={this.onDeletePress.bind(this)} />
         </Menu>
 
         <ListItem

@@ -14,7 +14,10 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  ON_COMMERCE_DELETING,
+  ON_COMMERCE_DELETED,
+  ON_COMMERCE_DELETE_FAIL
 } from './types';
 
 export const onCommerceValueChange = ({ prop, value }) => {
@@ -260,3 +263,31 @@ export const onAreasRead = () => {
       });
   };
 };
+
+export const onCommerceDelete = (navigation) => {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_COMMERCE_DELETING });
+
+    var userRef = db.doc(`Profiles/${currentUser.uid}`);
+
+    db.runTransaction(transaction => {
+      return transaction.get(userRef).then(userDoc => {
+        var commerceRef = db.doc(`Commerces/${userDoc.data().commerceId}`);
+        
+        transaction.update(userRef, { commerceId: null });
+        transaction.update(commerceRef, { softDelete: new Date() });
+      })
+    })
+    .then(() => {
+      dispatch({ type: ON_COMMERCE_DELETED });
+      navigation.navigate('client');
+    })
+    .catch(error => {
+      console.log(error);
+      dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+    });
+  }
+}
