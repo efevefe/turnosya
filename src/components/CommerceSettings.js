@@ -15,10 +15,11 @@ class CommerceSettings extends Component {
                 onBackdropPress={() => this.setState({ confirmDeleteVisible: false })}
                 isVisible={this.state.confirmDeleteVisible}
             >
-                <CardSection>
+                <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
                     <Input
                         label='Escriba "Eliminar" para confirmar:'
                         value={this.state.confirmDelete}
+                        color='black'
                         onChangeText={value => this.setState({ confirmDelete: value })}
                         errorMessage={this.state.confirmDeleteError}
                         onFocus={() => this.setState({ confirmDeleteError: '' })}
@@ -28,6 +29,7 @@ class CommerceSettings extends Component {
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
+                    loading={this.props.loadingDelete}
                     onPress={this.confirmDelete}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
@@ -70,4 +72,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(null, { onCommerceDelete })(CommerceSettings);
+const mapStateToProps = state => {
+    return { loadingDelete: state.commerceData.loading };
+}
+
+export default connect(mapStateToProps, { onCommerceDelete })(CommerceSettings);

@@ -12,7 +12,10 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  ON_COMMERCE_DELETING,
+  ON_COMMERCE_DELETED,
+  ON_COMMERCE_DELETE_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -64,6 +67,12 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, provincesList: action.payload };
     case ON_AREAS_READ:
       return { ...state, areasList: action.payload };
+    case ON_COMMERCE_DELETING:
+      return { ...state, loading: true };
+    case ON_COMMERCE_DELETED:
+      return INITIAL_STATE;
+    case ON_COMMERCE_DELETE_FAIL:
+      return { ...state, loading: false };
     default:
       return state;
   }
