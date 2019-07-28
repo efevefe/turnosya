@@ -142,7 +142,7 @@ class CourtForm extends Component {
     if (price.trim() === '') {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', this.props.price)) {
+    } else if (!validateValueType('number', price.trim())) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -157,6 +157,9 @@ class CourtForm extends Component {
     onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
     if (lightPrice.trim() === '' && checked === true) {
       this.setState({ lightPriceError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('number', lightPrice.trim())) {
+      this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
       this.setState({ lightPriceError: '' });
