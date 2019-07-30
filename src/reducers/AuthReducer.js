@@ -11,8 +11,6 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  email: '',
-  password: '',
   loadingLogin: false,
   loadingFacebook: false,
   loadingGoogle: false,
@@ -51,7 +49,7 @@ export default (state = INITIAL_STATE, action) => {
         disabledLogin: true,
         disabledFacebook: true,
         disabledCreateAccount: true
-      }
+      };
     case ON_LOGIN_SUCCESS:
       return INITIAL_STATE;
     case ON_LOGIN_FAIL:
@@ -61,7 +59,7 @@ export default (state = INITIAL_STATE, action) => {
         //error: action.payload,
         loadingLogin: false,
         loadingFacebook: false,
-        loadingGoogle: false,
+        loadingGoogle: false
       };
     case ON_LOGOUT:
       return { ...INITIAL_STATE, loading: true };

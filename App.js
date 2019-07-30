@@ -6,11 +6,9 @@ import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
-import CommerceDrawer from './src/navigation/CommerceDrawer';
+import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
-
-console.disableYellowBox = true;
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -22,10 +20,14 @@ var firebaseConfig = {
   appId: '1:425889819253:web:22821710c1e913a5'
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-//firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-//firebase.auth().signOut();
+console.disableYellowBox = true;
+
+// firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
+// firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
@@ -49,7 +51,7 @@ class App extends React.Component {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
       if (logged) {
-        return <CommerceDrawer />;
+        return <MainNavigation />;
       } else {
         return <GuestNavigation />;
       }

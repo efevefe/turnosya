@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
