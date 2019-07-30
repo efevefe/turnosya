@@ -492,7 +492,7 @@ class commerceData extends Component {
                             items={this.props.areasList}
                             value={this.props.area.areaId}
                             onValueChange={(value) => this.onAreaPickerChange(value)}
-                            disabled={!this.state.editEnabled}
+                            disabled={true}
                             errorMessage={this.state.areaError}
                         />
                     </CardSection>
