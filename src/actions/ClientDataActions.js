@@ -10,7 +10,10 @@ import {
   ON_USER_UPDATING,
   ON_USER_UPDATED,
   ON_USER_UPDATE_FAIL,
-  ON_USER_READ_FAIL
+  ON_USER_READ_FAIL,
+  ON_USER_DELETING,
+  ON_USER_DELETED,
+  ON_USER_DELETE_FAIL
 } from './types';
 
 export const onRegisterValueChange = ({ prop, value }) => {
@@ -134,3 +137,30 @@ export const onUserUpdateWithPicture = ({
       });
   };
 };
+
+export const onUserDelete = () => {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_USER_DELETING });
+
+    db.doc(`Profiles/${currentUser.uid}`)
+      .update({ softDelete: new Date() })
+      .then(() => {
+        currentUser
+          .delete()
+          .then(() => {
+            dispatch({ type: ON_USER_DELETED });
+          })
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: ON_USER_DELETE_FAIL });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_USER_DELETE_FAIL });
+      });
+  }
+}

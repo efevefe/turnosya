@@ -24,6 +24,11 @@ class ClientDrawerContent extends Component {
             onPress={() => this.props.onCommerceOpen(this.props.navigation)}
           />
           <DrawerItem
+            title="Configuración"
+            icon={this.leftIcon('md-settings')}
+            onPress={() => this.props.navigation.navigate('clientSettings')}
+          />
+          <DrawerItem
             title="Cerrar Sesión"
             icon={this.leftIcon('md-exit')}
             loading={this.props.loading}

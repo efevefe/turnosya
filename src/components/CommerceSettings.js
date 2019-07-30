@@ -8,6 +8,12 @@ import { MenuItem, Menu, Input, CardSection } from '../components/common';
 class CommerceSettings extends Component {
     state = { confirmDelete: '', confirmDeleteVisible: false, confirmDeleteError: '' };
 
+    static navigationOptions = ({ navigation }) => {
+        return {
+            headerLeft: <HeaderBackButton tintColor='white' onPress={() => navigation.goBack(null)} />
+        }
+    }
+    
     renderConfirmDelete = () => {
         return (
             <Menu

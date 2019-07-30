@@ -9,12 +9,7 @@ import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
 import { MAIN_COLOR } from '../constants';
 import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
-
-const drawerNavigationOptions = {
-  drawerType: 'slide',
-  drawerWidth: 200,
-  contentComponent: ClientDrawerContent
-};
+import ClientSettings from '../components/ClientSettings';
 
 const stackNavigationOptions = {
   defaultNavigationOptions: {
@@ -57,10 +52,29 @@ const CommerceRegisterStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const ClientSettingsStack = createStackNavigator(
+  {
+      settings: {
+          screen: ClientSettings,
+          navigationOptions: {
+              title: 'Configuración'
+          }
+      }
+  },
+  stackNavigationOptions
+);
+
+const drawerNavigationOptions = {
+  drawerType: 'slide',
+  drawerWidth: 200,
+  contentComponent: ClientDrawerContent
+};
+
 const clientDrawer = createDrawerNavigator(
   {
     tabs: ClientNavigation,
-    commerceRegister: CommerceRegisterStack
+    commerceRegister: CommerceRegisterStack,
+    clientSettings: ClientSettingsStack
   },
   drawerNavigationOptions
 );
