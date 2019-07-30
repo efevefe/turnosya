@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Divider, Button } from 'react-native-elements';
+import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { Menu, MenuItem } from './common';
-import { commercesRead } from '../actions';
 
 class CommerceListItem extends Component {
   state = { favorite: false };
@@ -15,8 +13,7 @@ class CommerceListItem extends Component {
   }
   render() {
     const { name, address, profilePicture } = this.props.commerce;
-    const { areaName } = this.props.commerce.area.name;
-    console.log(this.props.commerce.area.name);
+    const areaName = this.props.commerce.area.name;
     return (
       <View>
         <ListItem
@@ -25,7 +22,7 @@ class CommerceListItem extends Component {
             size: 'medium'
           }}
           title={name}
-          subtitle={`${this.props.commerce.area.name}\n${address}`}
+          subtitle={`${areaName}\n${address}`}
           rightIcon={
             <Button
               type="clear"

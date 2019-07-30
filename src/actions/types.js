@@ -63,3 +63,4 @@ export const ON_AREAS_READ = 'on_areas_read';
 //Commerces List
 export const COMMERCE_LIST_READ = 'commerce_list_read';
 export const COMMERCE_LIST_READING = 'commerce_list_reading';
+export const ON_COMMERCE_LIST_OPEN = 'on_commerce_list_open';
