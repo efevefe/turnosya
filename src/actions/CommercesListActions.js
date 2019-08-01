@@ -6,10 +6,6 @@ import {
   ON_COMMERCE_LIST_OPEN
 } from './types';
 
-export const onCommercesListOpen = () => {
-  return { type: ON_COMMERCE_LIST_OPEN };
-};
-
 export const commercesRead = () => {
   var db = firebase.firestore();
 
@@ -17,8 +13,8 @@ export const commercesRead = () => {
     dispatch({ type: ON_COMMERCE_LIST_OPEN });
     dispatch({ type: COMMERCE_LIST_READING });
     db.collection('Commerces')
-
       .where('softDelete', '==', null)
+      .orderBy('name', 'asc')
       .onSnapshot(snapShot => {
         var commerces = [];
         snapShot.forEach(doc => commerces.push({ ...doc.data(), id: doc.id }));
@@ -31,6 +27,7 @@ export const searchCommerces = search => {
   var db = firebase.firestore();
 
   return dispatch => {
+    //dispatch({ type: ON_COMMERCE_LIST_OPEN });
     db.collection('Commerces')
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')

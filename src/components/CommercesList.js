@@ -23,7 +23,7 @@ class CommercesList extends Component {
     this.setState({
       search: search
     });
-    if (search.length >= 2) {
+    if (search.length >= 1) {
       setTimeout(() => {
         this.props.searchCommerces(search);
       }, 200);
