@@ -21,7 +21,7 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS
 } from './types';
-import { userReauthenticate } from '../actions'
+import { userReauthenticate } from './AuthActions';
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };

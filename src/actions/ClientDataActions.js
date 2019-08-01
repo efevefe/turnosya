@@ -17,7 +17,7 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS
 } from './types';
-import { userReauthenticate } from '../actions'
+import { userReauthenticate } from './AuthActions';
 
 // este se deberia llamar onClientValueChange / onUserValueChange
 export const onRegisterValueChange = ({ prop, value }) => {
