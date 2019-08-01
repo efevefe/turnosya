@@ -23,9 +23,11 @@ const INITIAL_STATE = {
   firstName: '',
   lastName: '',
   phone: '',
+  commerceId: null,
   loading: false,
   refreshing: false,
-  error: ''
+  error: '',
+  confirmDeleteVisible: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -57,6 +59,6 @@ export default (state = INITIAL_STATE, action) => {
     case ON_USER_DELETE_FAIL:
       return { ...state, loading: false };
     default:
-      return INITIAL_STATE;
+      return state;
   }
 };

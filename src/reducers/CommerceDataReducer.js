@@ -34,7 +34,8 @@ const INITIAL_STATE = {
   commerceId: null,
   error: '',
   loading: false,
-  refreshing: false
+  refreshing: false,
+  confirmDeleteVisible: false
 };
 
 export default (state = INITIAL_STATE, action) => {

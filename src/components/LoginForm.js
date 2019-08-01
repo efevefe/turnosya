@@ -208,11 +208,7 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle,
-    disabledLogin,
-    disabledFacebook,
-    disabledGoogle,
-    disabledCreateAccount
+    loadingGoogle
   } = state.auth;
 
   return {
@@ -221,11 +217,7 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle,
-    disabledLogin,
-    disabledFacebook,
-    disabledGoogle,
-    disabledCreateAccount
+    loadingGoogle
   };
 };
 

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { HeaderBackButton } from 'react-navigation';
-import { onUserDelete, onCommerceDelete } from '../actions';
+import firebase from 'firebase';
 import { MenuItem, Menu, Input, CardSection } from '../components/common';
+import { onUserDelete, onCommerceDelete, onLoginValueChange, onCommerceValueChange, onRegisterValueChange } from '../actions';
 
 class ClientSettings extends Component {
-    state = { confirmDelete: '', confirmUserDeleteVisible: false, confirmCommerceDeleteVisible: false, confirmDeleteError: '' };
+    state = { cantDeleteUser: false, dontHaveCommerce: false };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -15,92 +16,135 @@ class ClientSettings extends Component {
         }
     }
 
+    renderPasswordInput = () => {
+        // muestra el input de contraseña para confirmar eliminacion de cuenta o negocio si ese es el metodo de autenticacion
+        if (firebase.auth().currentUser.providerData[0].providerId == 'password') {
+            return (
+                <View style={{ alignSelf: 'stretch' }}>
+                    <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
+                        <Input
+                            label='Contraseña:'
+                            value={this.props.password}
+                            color='black'
+                            onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}
+                            errorMessage={this.props.reauthError}
+                            onFocus={() => this.props.onLoginValueChange({ prop: 'error', value: '' })}
+                        />
+                    </CardSection>
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                </View>
+            );
+        }
+    }
+
+    onUserDeletePress = () => {
+        if (this.props.commerceId) {
+            // ESTO SE DEBERIA REEMPLAZAR POR UN TOAST
+            this.setState({ cantDeleteUser: true });
+        } else {
+            this.props.onRegisterValueChange({ prop: 'confirmDeleteVisible', value: true });
+        }
+    }
+
     renderConfirmUserDelete = () => {
+        // ventana de confirmacion para eliminar cuenta
         return (
             <Menu
                 title='¿Esta seguro que desea eliminar la cuenta?'
                 onBackdropPress={this.onBackdropPress}
-                isVisible={this.state.confirmUserDeleteVisible}
+                isVisible={this.props.confirmUserDeleteVisible}
             >
-                <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
-                    <Input
-                        label='Escriba "Eliminar" para confirmar:'
-                        value={this.state.confirmDelete}
-                        color='black'
-                        onChangeText={value => this.setState({ confirmDelete: value })}
-                        errorMessage={this.state.confirmDeleteError}
-                        onFocus={() => this.setState({ confirmDeleteError: '' })}
-                    />
-                </CardSection>
-                <Divider style={{ backgroundColor: 'grey' }} />
+                {this.renderPasswordInput()}
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
                     loading={this.props.loadingUserDelete}
-                    onPress={this.confirmUserDelete}
+                    onPress={() => this.props.onUserDelete(this.props.password)}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
                     title='Cancelar'
                     icon='md-close'
-                    onPress={() => this.setState({ confirmUserDeleteVisible: false })}
+                    onPress={this.onBackdropPress}
                 />
             </Menu>
         );
     }
 
+    renderCantDeleteUser = () => {
+        return (
+            <Menu
+                title='No puedes eliminar tu cuenta porque tienes un negocio'
+                onBackdropPress={() => this.setState({ cantDeleteUser: false })}
+                isVisible={this.state.cantDeleteUser}
+            >
+                <MenuItem
+                    title='Cerrar'
+                    icon='md-close'
+                    onPress={() => this.setState({ cantDeleteUser: false })}
+                />
+            </Menu>
+        );
+    }
+
+    onCommerceDeletePress = () => {
+        if (this.props.commerceId) {
+            this.props.onCommerceValueChange({ prop: 'confirmDeleteVisible', value: true });
+        } else {
+            // ESTO SE DEBERIA REEMPLAZAR CON UN TOAST
+            this.setState({ dontHaveCommerce: true })
+        }
+    }
+
     renderConfirmCommerceDelete = () => {
+        // ventana de confirmacion para eliminar negocio
         return (
             <Menu
                 title='¿Esta seguro que desea eliminar su negocio?'
                 onBackdropPress={this.onBackdropPress}
-                isVisible={this.state.confirmCommerceDeleteVisible}
+                isVisible={this.props.confirmCommerceDeleteVisible}
             >
-                <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
-                    <Input
-                        label='Escriba "Eliminar" para confirmar:'
-                        value={this.state.confirmDelete}
-                        color='black'
-                        onChangeText={value => this.setState({ confirmDelete: value })}
-                        errorMessage={this.state.confirmDeleteError}
-                        onFocus={() => this.setState({ confirmDeleteError: '' })}
-                    />
-                </CardSection>
-                <Divider style={{ backgroundColor: 'grey' }} />
+                {this.renderPasswordInput()}
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
                     loading={this.props.loadingCommerceDelete}
-                    onPress={this.confirmCommerceDelete}
+                    onPress={() => this.props.onCommerceDelete(this.props.password)}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
                     title='Cancelar'
                     icon='md-close'
-                    onPress={() => this.setState({ confirmCommerceDeleteVisible: false })}
+                    onPress={this.onBackdropPress}
                 />
             </Menu>
         );
     }
 
-    confirmUserDelete = () => {
-        if (this.state.confirmDelete == 'Eliminar') {
-            this.props.onUserDelete();
-        } else {
-            this.setState({ confirmDeleteError: 'Incorrecto' })
-        }
-    }
-
-    confirmCommerceDelete = () => {
-        if (this.state.confirmDelete == 'Eliminar') {
-            this.props.onCommerceDelete(this.props.navigation);
-        } else {
-            this.setState({ confirmDeleteError: 'Incorrecto' })
-        }
+    renderDontHaveCommerce = () => {
+        return (
+            <Menu
+                title='No tienes ningun negocio'
+                onBackdropPress={() => this.setState({ dontHaveCommerce: false })}
+                isVisible={this.state.dontHaveCommerce}
+            >
+                <MenuItem
+                    title='Cerrar'
+                    icon='md-close'
+                    onPress={() => this.setState({ dontHaveCommerce: false })}
+                />
+            </Menu>
+        );
     }
 
     onBackdropPress = () => {
-        this.setState({ confirmDelete: '', confirmUserDeleteVisible: false, confirmCommerceDeleteVisible: false, confirmDeleteError: '' });
+        // auth
+        this.props.onLoginValueChange({ prop: 'password', value: '' });
+        this.props.onLoginValueChange({ prop: 'error', value: '' });
+        // client
+        this.props.onRegisterValueChange({ prop: 'confirmDeleteVisible', value: false });
+        // commerce
+        this.props.onCommerceValueChange({ prop: 'confirmDeleteVisible', value: false });
     }
 
     render() {
@@ -109,16 +153,18 @@ class ClientSettings extends Component {
                 <MenuItem
                     title="Eliminar Mi Negocio"
                     icon='md-trash'
-                    onPress={() => this.setState({ confirmCommerceDeleteVisible: true })}
+                    onPress={this.onCommerceDeletePress}
                 />
                 <MenuItem
                     title="Eliminar Cuenta"
                     icon='md-trash'
-                    onPress={() => this.setState({ confirmUserDeleteVisible: true })}
+                    onPress={this.onUserDeletePress}
                 />
 
                 {this.renderConfirmUserDelete()}
+                {this.renderCantDeleteUser()}
                 {this.renderConfirmCommerceDelete()}
+                {this.renderDontHaveCommerce()}
             </ScrollView>
         );
     }
@@ -132,7 +178,34 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    return { loadingUserDelete: state.clientData.loading, loadingCommerceDelete: state.commerceData.loading };
+    // client
+    const loadingUserDelete = state.clientData.loading
+    const confirmUserDeleteVisible = state.clientData.confirmDeleteVisible;
+    const { commerceId } = state.clientData;
+    // commerce
+    const loadingCommerceDelete = state.commerceData.loading
+    const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
+    // auth
+    const { password, error } = state.auth;
+
+    return {
+        loadingUserDelete,
+        loadingCommerceDelete,
+        commerceId,
+        password,
+        reauthError: error,
+        confirmUserDeleteVisible,
+        confirmCommerceDeleteVisible
+    };
 }
 
-export default connect(mapStateToProps, { onUserDelete, onCommerceDelete })(ClientSettings);
+export default connect(
+    mapStateToProps,
+    {
+        onUserDelete,
+        onCommerceDelete,
+        onLoginValueChange,
+        onCommerceValueChange,
+        onRegisterValueChange
+    }
+)(ClientSettings);

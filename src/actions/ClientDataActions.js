@@ -13,13 +13,18 @@ import {
   ON_USER_READ_FAIL,
   ON_USER_DELETING,
   ON_USER_DELETED,
-  ON_USER_DELETE_FAIL
+  ON_USER_DELETE_FAIL,
+  ON_REAUTH_FAIL,
+  ON_REAUTH_SUCCESS
 } from './types';
+import { userReauthenticate } from '../actions'
 
+// este se deberia llamar onClientValueChange / onUserValueChange
 export const onRegisterValueChange = ({ prop, value }) => {
   return { type: ON_REGISTER_VALUE_CHANGE, payload: { prop, value } };
 };
 
+// este se deberia llamar onUserCreate
 export const onRegister = ({ email, password, firstName, lastName, phone }) => {
   return dispatch => {
     dispatch({ type: ON_REGISTER });
@@ -138,20 +143,29 @@ export const onUserUpdateWithPicture = ({
   };
 };
 
-export const onUserDelete = () => {
+export const onUserDelete = (password) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_USER_DELETING });
 
-    db.doc(`Profiles/${currentUser.uid}`)
-      .update({ softDelete: new Date() })
+    userReauthenticate(password)
       .then(() => {
-        currentUser
-          .delete()
+        dispatch({ type: ON_REAUTH_SUCCESS });
+
+        db.doc(`Profiles/${currentUser.uid}`)
+          .update({ softDelete: new Date() })
           .then(() => {
-            dispatch({ type: ON_USER_DELETED });
+            currentUser
+              .delete()
+              .then(() => {
+                dispatch({ type: ON_USER_DELETED });
+              })
+              .catch(error => {
+                console.log(error);
+                dispatch({ type: ON_USER_DELETE_FAIL });
+              });
           })
           .catch(error => {
             console.log(error);
@@ -160,7 +174,9 @@ export const onUserDelete = () => {
       })
       .catch(error => {
         console.log(error);
+        dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_USER_DELETE_FAIL });
       });
+
   }
 }
