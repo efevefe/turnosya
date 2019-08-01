@@ -43,7 +43,7 @@ class ClientProfile extends Component {
   };
 
   componentDidMount() {
-    //this.props.onUserRead('loading');
+    this.props.onUserRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
 
     this.getLocation();
