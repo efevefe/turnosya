@@ -64,3 +64,8 @@ export const ON_AREAS_READ = 'on_areas_read';
 export const COMMERCE_LIST_READ = 'commerce_list_read';
 export const COMMERCE_LIST_READING = 'commerce_list_reading';
 export const ON_COMMERCE_LIST_OPEN = 'on_commerce_list_open';
+
+//Register Schedule
+export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
+export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
+export const SCHEDULE_FORM_SUBMIT = 'on_schedule_form_submit';
