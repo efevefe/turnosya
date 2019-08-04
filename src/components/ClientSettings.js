@@ -8,7 +8,7 @@ import { MenuItem, Menu, Input, CardSection } from '../components/common';
 import { onUserDelete, onCommerceDelete, onLoginValueChange, onCommerceValueChange, onRegisterValueChange } from '../actions';
 
 class ClientSettings extends Component {
-    state = { cantDeleteUser: false, dontHaveCommerce: false };
+    state = { cantDeleteUser: false, dontHaveCommerce: false, providerId: null };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -16,14 +16,19 @@ class ClientSettings extends Component {
         }
     }
 
+    componentWillMount() {
+        this.setState({ providerId: firebase.auth().currentUser.providerData[0].providerId });
+    }
+
     renderPasswordInput = () => {
         // muestra el input de contraseña para confirmar eliminacion de cuenta o negocio si ese es el metodo de autenticacion
-        if (firebase.auth().currentUser.providerData[0].providerId == 'password') {
+        if (this.state.providerId == 'password') {
             return (
                 <View style={{ alignSelf: 'stretch' }}>
                     <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
                         <Input
                             label='Contraseña:'
+                            secureTextEntry
                             value={this.props.password}
                             color='black'
                             onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}
@@ -59,7 +64,7 @@ class ClientSettings extends Component {
                     title='Confirmar'
                     icon='md-checkmark'
                     loading={this.props.loadingUserDelete}
-                    onPress={() => this.props.onUserDelete(this.props.password)}
+                    onPress={() => this.props.onUserDelete(this.props.password, this.props.navigation)}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem

@@ -26,9 +26,6 @@ if (!firebase.apps.length) {
 
 console.disableYellowBox = true;
 
-// firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-// firebase.auth().signOut();
-
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
 class App extends React.Component {
@@ -48,7 +45,7 @@ class App extends React.Component {
     const { screenLoading, logged } = this.state;
 
     if (screenLoading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
+      return <Spinner />;
     } else {
       if (logged) {
         return <MainNavigation />;

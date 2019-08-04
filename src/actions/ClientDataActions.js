@@ -143,7 +143,7 @@ export const onUserUpdateWithPicture = ({
   };
 };
 
-export const onUserDelete = (password) => {
+export const onUserDelete = (password, navigation) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
@@ -161,6 +161,7 @@ export const onUserDelete = (password) => {
               .delete()
               .then(() => {
                 dispatch({ type: ON_USER_DELETED });
+                navigation.navigate('')
               })
               .catch(error => {
                 console.log(error);

@@ -8,20 +8,27 @@ import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../
 import { MenuItem, Menu, Input, CardSection } from '../components/common';
 
 class CommerceSettings extends Component {
+    state = { providerId: null };
+
     static navigationOptions = ({ navigation }) => {
         return {
             headerLeft: <HeaderBackButton tintColor='white' onPress={() => navigation.goBack(null)} />
         }
     }
+    
+    componentWillMount() {
+        this.setState({ providerId: firebase.auth().currentUser.providerData[0].providerId });
+    }
 
     renderPasswordInput = () => {
         // muestra el input de contraseña para confirmar eliminacion de cuenta o negocio si ese es el metodo de autenticacion
-        if (firebase.auth().currentUser.providerData[0].providerId == 'password') {
+        if (this.state.providerId == 'password') {
             return (
                 <View style={{ alignSelf: 'stretch' }}>
                     <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
                         <Input
                             label='Contraseña:'
+                            secureTextEntry
                             value={this.props.password}
                             color='black'
                             onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}
