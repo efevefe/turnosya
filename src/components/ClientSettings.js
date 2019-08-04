@@ -64,7 +64,7 @@ class ClientSettings extends Component {
                     title='Confirmar'
                     icon='md-checkmark'
                     loading={this.props.loadingUserDelete}
-                    onPress={() => this.props.onUserDelete(this.props.password, this.props.navigation)}
+                    onPress={() => this.props.onUserDelete(this.props.password)}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
