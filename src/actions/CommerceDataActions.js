@@ -19,7 +19,8 @@ import {
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
-  ON_REAUTH_SUCCESS
+  ON_REAUTH_SUCCESS,
+  ON_REGISTER_VALUE_CHANGE
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
@@ -290,6 +291,7 @@ export const onCommerceDelete = (password, navigation = null) => {
         })
           .then(() => {
             dispatch({ type: ON_COMMERCE_DELETED });
+            dispatch({ type: ON_REGISTER_VALUE_CHANGE, payload: { prop: 'commerceId', value: null } })
 
             if (navigation) {
               navigation.navigate('client');
