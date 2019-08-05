@@ -6,23 +6,24 @@ import { Ionicons } from '@expo/vector-icons';
 import DatePicker from 'react-native-datepicker';
 import { onScheduleFormOpen, onScheduleValueChange } from '../actions';
 import { Card, CheckBox } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MAIN_COLOR } from '../constants';
 
 class RegisterSchedule extends Component {
-  state = { check: false };
-
-  onCheckBoxPress = () => {
-    this.setState({ check: !this.state.check });
-  };
-
-  renderDay() {
-    console.log(this.state.check);
-    if (this.state.check) {
+  renderSecondTurn(
+    checkValue,
+    checkProp,
+    openValue,
+    openProp,
+    closeValue,
+    closeProp
+  ) {
+    if (checkValue) {
       return (
         <View>
           <View style={styles.viewPickerDate}>
             <DatePicker
-              date={this.props.mondayTimeOpen}
+              date={openValue}
               mode="time"
               placeholder="Seleccione hora de apertura"
               confirmBtnText="Confirmar"
@@ -39,14 +40,14 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'mondayTimeOpen',
+                  prop: openProp,
                   value
                 });
               }}
             />
 
             <DatePicker
-              date={this.props.mondayTimeClose}
+              date={closeValue}
               mode="time"
               placeholder="Seleccione hora de cierre"
               confirmBtnText="Confirmar"
@@ -63,21 +64,34 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'mondayTimeClose',
+                  prop: closeProp,
                   value
                 });
               }}
             />
           </View>
           <CheckBox
-            containerStyle={{ marginTop: 10, marginLeft: 5, marginRight: 5 }}
-            title="Miercoles"
+            containerStyle={{ flex: 1 }}
+            title="Agregar segundo turno"
             iconType="material"
             checkedIcon="clear"
             checkedColor={MAIN_COLOR}
             checkedTitle="Borrar segundo turno"
-            checked={this.state.check}
-            onPress={this.onCheckBoxPress}
+            checked={checkValue}
+            onPress={() => {
+              this.props.onScheduleValueChange({
+                prop: checkProp,
+                value: false
+              });
+              this.props.onScheduleValueChange({
+                prop: openProp,
+                value: ''
+              });
+              this.props.onScheduleValueChange({
+                prop: closeProp,
+                value: ''
+              });
+            }}
           />
         </View>
       );
@@ -88,8 +102,10 @@ class RegisterSchedule extends Component {
           iconType="material"
           uncheckedIcon="add"
           uncheckedColor={MAIN_COLOR}
-          checked={this.state.check}
-          onPress={this.onCheckBoxPress}
+          checked={checkValue}
+          onPress={() =>
+            this.props.onScheduleValueChange({ prop: checkProp, value: true })
+          }
           containerStyle={{ flex: 1 }}
         />
       );
@@ -97,11 +113,11 @@ class RegisterSchedule extends Component {
 
   render() {
     return (
-      <View>
+      <KeyboardAwareScrollView>
         <Card containerStyle={styles.cardStyle} title="Lunes">
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
-              date={this.props.mondayTimeOpen}
+              date={this.props.mondayOpen}
               mode="time"
               placeholder="Seleccione hora de apertura"
               confirmBtnText="Confirmar"
@@ -118,14 +134,14 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'mondayTimeOpen',
+                  prop: 'mondayOpen',
                   value
                 });
               }}
             />
 
             <DatePicker
-              date={this.props.mondayTimeClose}
+              date={this.props.mondayClose}
               mode="time"
               placeholder="Seleccione hora de cierre"
               confirmBtnText="Confirmar"
@@ -142,21 +158,28 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'mondayTimeClose',
+                  prop: 'mondayClose',
                   value
                 });
               }}
             />
           </CardSection>
-          <CardSection style={styles.viewPickerDate}>
-            {this.renderDay()}
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.mondayCheck,
+              'mondayCheck',
+              this.props.mondayOpen2,
+              'mondayOpen2',
+              this.props.mondayClose2,
+              'mondayClose2'
+            )}
           </CardSection>
         </Card>
 
         <Card containerStyle={styles.cardStyle} title="Martes">
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
-              date={this.props.thuesdayTimeOpen}
+              date={this.props.thuesdayOpen}
               mode="time"
               placeholder="Seleccione hora de apertura"
               confirmBtnText="Confirmar"
@@ -173,14 +196,14 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'thuesdayTimeOpen',
+                  prop: 'thuesdayOpen',
                   value
                 });
               }}
             />
 
             <DatePicker
-              date={this.props.thuesdayTimeClose}
+              date={this.props.thuesdayClose}
               mode="time"
               placeholder="Seleccione hora de cierre"
               confirmBtnText="Confirmar"
@@ -197,14 +220,338 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'thuesdayTimeClose',
+                  prop: 'thuesdayClose',
                   value
                 });
               }}
             />
           </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.thuesdayCheck,
+              'thuesdayCheck',
+              this.props.thuesdayOpen2,
+              'thuesdayOpen2',
+              this.props.thuesdayClose2,
+              'thuesdayClose2'
+            )}
+          </CardSection>
         </Card>
-      </View>
+        <Card containerStyle={styles.cardStyle} title="Miercoles">
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.wednesdayOpen}
+              mode="time"
+              placeholder="Seleccione hora de apertura"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'wednesdayOpen',
+                  value
+                });
+              }}
+            />
+
+            <DatePicker
+              date={this.props.wednesdayClose}
+              mode="time"
+              placeholder="Seleccione hora de cierre"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'wednesdayClose',
+                  value
+                });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.wednesdayCheck,
+              'wednesdayCheck',
+              this.props.wednesdayOpen2,
+              'wednesdayOpen2',
+              this.props.wednesdayClose2,
+              'wednesdayClose2'
+            )}
+          </CardSection>
+        </Card>
+        <Card containerStyle={styles.cardStyle} title="Jueves">
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.thursdayOpen}
+              mode="time"
+              placeholder="Seleccione hora de apertura"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'thursdayOpen',
+                  value
+                });
+              }}
+            />
+
+            <DatePicker
+              date={this.props.thursdayClose}
+              mode="time"
+              placeholder="Seleccione hora de cierre"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'thursdayClose',
+                  value
+                });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.thursdayCheck,
+              'thursdayCheck',
+              this.props.thursdayOpen2,
+              'thursdayOpen2',
+              this.props.thursdayClose2,
+              'thursdayClose2'
+            )}
+          </CardSection>
+        </Card>
+        <Card containerStyle={styles.cardStyle} title="Viernes">
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.fridayOpen}
+              mode="time"
+              placeholder="Seleccione hora de apertura"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'fridayOpen',
+                  value
+                });
+              }}
+            />
+
+            <DatePicker
+              date={this.props.fridayClose}
+              mode="time"
+              placeholder="Seleccione hora de cierre"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'fridayClose',
+                  value
+                });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.fridayCheck,
+              'fridayCheck',
+              this.props.fridayOpen2,
+              'fridayOpen2',
+              this.props.fridayClose2,
+              'fridayClose2'
+            )}
+          </CardSection>
+        </Card>
+
+        <Card containerStyle={styles.cardStyle} title="Sabado">
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.saturdayOpen}
+              mode="time"
+              placeholder="Seleccione hora de apertura"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'saturdayOpen',
+                  value
+                });
+              }}
+            />
+
+            <DatePicker
+              date={this.props.saturdayClose}
+              mode="time"
+              placeholder="Seleccione hora de cierre"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'saturdayClose',
+                  value
+                });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.saturdayCheck,
+              'saturdayCheck',
+              this.props.saturdayOpen2,
+              'saturdayOpen2',
+              this.props.saturdayClose2,
+              'saturdayClose2'
+            )}
+          </CardSection>
+        </Card>
+
+        <Card containerStyle={styles.cardStyle} title="Domingo">
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.sundayOpen}
+              mode="time"
+              placeholder="Seleccione hora de apertura"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'sundayOpen',
+                  value
+                });
+              }}
+            />
+
+            <DatePicker
+              date={this.props.sundayClose}
+              mode="time"
+              placeholder="Seleccione hora de cierre"
+              confirmBtnText="Confirmar"
+              cancelBtnText="Cancelar"
+              iconComponent={<Ionicons name="md-time" size={30} />}
+              customStyles={{
+                dateInput: {
+                  borderColor: 'transparent'
+                },
+                placeholderText: {
+                  textAlign: 'center',
+                  fontSize: 10
+                }
+              }}
+              onDateChange={value => {
+                this.props.onScheduleValueChange({
+                  prop: 'sundayClose',
+                  value
+                });
+              }}
+            />
+          </CardSection>
+          <CardSection>
+            {this.renderSecondTurn(
+              this.props.sundayCheck,
+              'sundayCheck',
+              this.props.sundayOpen2,
+              'sundayOpen2',
+              this.props.sundayClose2,
+              'sundayClose2'
+            )}
+          </CardSection>
+        </Card>
+
+        <Button
+          style={styles.cardStyle}
+          title="Guardar"
+          loading={this.props.loading}
+          //onPress={this.onButtonPressHandler.bind(this)}
+        />
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -224,18 +571,80 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const {
-    mondayTimeOpen,
-    mondayTimeClose,
-    thuesdayTimeOpen,
-    thuesdayTimeClose,
+    mondayOpen,
+    mondayClose,
+    mondayOpen2,
+    mondayClose2,
+    mondayCheck,
+    thuesdayOpen,
+    thuesdayClose,
+    thuesdayOpen2,
+    thuesdayClose2,
+    thuesdayCheck,
+    wednesdayOpen,
+    wednesdayClose,
+    wednesdayOpen2,
+    wednesdayClose2,
+    wednesdayCheck,
+    thursdayOpen,
+    thursdayClose,
+    thursdayOpen2,
+    thursdayClose2,
+    thursdayCheck,
+    fridayOpen,
+    fridayClose,
+    fridayOpen2,
+    fridayClose2,
+    fridayCheck,
+    saturdayOpen,
+    saturdayClose,
+    saturdayOpen2,
+    saturdayClose2,
+    saturdayCheck,
+    sundayOpen,
+    sundayClose,
+    sundayOpen2,
+    sundayClose2,
+    sundayCheck,
     loading
   } = state.registerSchedule;
 
   return {
-    mondayTimeOpen,
-    mondayTimeClose,
-    thuesdayTimeOpen,
-    thuesdayTimeClose,
+    mondayOpen,
+    mondayClose,
+    mondayOpen2,
+    mondayClose2,
+    mondayCheck,
+    thuesdayOpen,
+    thuesdayClose,
+    thuesdayOpen2,
+    thuesdayClose2,
+    thuesdayCheck,
+    wednesdayOpen,
+    wednesdayClose,
+    wednesdayOpen2,
+    wednesdayClose2,
+    wednesdayCheck,
+    thursdayOpen,
+    thursdayClose,
+    thursdayOpen2,
+    thursdayClose2,
+    thursdayCheck,
+    fridayOpen,
+    fridayClose,
+    fridayOpen2,
+    fridayClose2,
+    fridayCheck,
+    saturdayOpen,
+    saturdayClose,
+    saturdayOpen2,
+    saturdayClose2,
+    saturdayCheck,
+    sundayOpen,
+    sundayClose,
+    sundayOpen2,
+    sundayClose2,
+    sundayCheck,
     loading
   };
 };
