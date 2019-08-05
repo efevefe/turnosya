@@ -12,7 +12,7 @@ import {
   courtUpdate
 } from '../actions';
 import { CardSection, Input, Picker, Button, Spinner } from './common';
-import { validateValueType } from '../utils';
+import { validateValueType, trimString } from '../utils';
 import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
@@ -104,9 +104,10 @@ class CourtForm extends Component {
 
   renderNameError = () => {
     const { name, onCourtValueChange } = this.props;
+    const value = trimString(name);
+    onCourtValueChange({ prop: 'name', value });
 
-    onCourtValueChange({ prop: 'name', value: name.trim() });
-    if (name.trim() === '') {
+    if (value === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -152,19 +153,21 @@ class CourtForm extends Component {
   };
 
   renderLightPriceError = () => {
-    const { lightPrice, checked, onCourtValueChange } = this.props;
+    if (this.props.checked) {
+      const { lightPrice, onCourtValueChange } = this.props;
 
-    onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
-    if (lightPrice.trim() === '' && checked === true) {
-      this.setState({ lightPriceError: 'Dato requerido' });
-      return false;
-    } else if (!validateValueType('number', lightPrice.trim())) {
-      this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
-      return false;
-    } else {
-      this.setState({ lightPriceError: '' });
-      return true;
+      onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
+      if (lightPrice.trim() === '') {
+        this.setState({ lightPriceError: 'Dato requerido' });
+        return false;
+      } else if (!validateValueType('number', lightPrice.trim())) {
+        this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
+        return false;
+      }
     }
+
+    this.setState({ lightPriceError: '' });
+    return true;
   };
 
   validateMinimumData = () => {

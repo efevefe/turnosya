@@ -14,7 +14,12 @@ import {
   MenuItem
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob, validateValueType } from '../utils';
+import {
+  imageToBlob,
+  validateValueType,
+  removeDoubleSpaces,
+  trimString
+} from '../utils';
 import {
   onUserRead,
   onUserUpdateWithPicture,
@@ -278,7 +283,10 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    if (this.props.firstName === '') {
+    const { firstName, onRegisterValueChange } = this.props;
+
+    onRegisterValueChange({ prop: 'firstName', value: trimString(firstName) });
+    if (trimString(firstName) === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -288,7 +296,10 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    if (this.props.lastName === '') {
+    const { lastName, onRegisterValueChange } = this.props;
+
+    onRegisterValueChange({ prop: 'lastName', value: trimString(lastName) });
+    if (trimString(lastName) === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -382,7 +393,10 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               onChangeText={value =>
-                this.props.onRegisterValueChange({ prop: 'firstName', value })
+                this.props.onRegisterValueChange({
+                  prop: 'firstName',
+                  value
+                })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}

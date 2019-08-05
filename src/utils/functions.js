@@ -3,10 +3,10 @@ export const imageToBlob = async uri => {
 
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = function() {
       resolve(xhr.response);
     };
-    xhr.onerror = function () {
+    xhr.onerror = function() {
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';
@@ -21,11 +21,40 @@ export const imageToBlob = async uri => {
 //@param: strings -> es un array de strings
 //Valida que el parametro sea un array y devuelve un array de los valores trimeados.
 //Si llega a no ser un array de strings. Devuelve un array vacio
-export const trimStrings = strings => {
+const trimStrings = strings => {
   try {
-    return strings.map(string => string.trim());
+    const spaces = strings.map(string => removeDoubleSpaces(string));
+    return spaces.map(string => {
+      const res = string.trim();
+      res.replace(/  +/g, ' ');
+      return res;
+    });
   } catch (err) {
     return [];
+  }
+};
+
+//Función para eliminar espacios vacíos antes y despues de un string, y eliminar espacios dobles.
+//@param: string -> es string
+//Valida que el valor sea un array y devuelve el valor trimeado.
+//Si llega a no ser un string. Devuelve un string vacío
+export const trimString = string => {
+  try {
+    const res = trimStrings([string]);
+    if (res.length > 0) return res[0];
+  } catch (err) {
+    return '';
+  }
+};
+
+//Función para eliminar doble espacios vacíos.
+//@param: value -> string
+//Si llega a haber un error, devuelve un string vacío
+export const removeDoubleSpaces = value => {
+  try {
+    return value.replace(/  +/g, ' ');
+  } catch (err) {
+    return '';
   }
 };
 
@@ -41,8 +70,8 @@ export const validateValueType = (type, value) => {
       const emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return emailRe.test(String(value).toLowerCase());
     case 'password':
-      //alfanumerica, de minimo 6 caracteres y maximo 16
-      // al menos un digito numerico y una minuscula
+      //alfanumérica, de mínimo 6 caracteres y máximo 16
+      // al menos un dígito numérico y una minúscula
       const passRe = /^(?=\w*\d)(?=\w*[a-z])\S{6,16}$/;
       return passRe.test(String(value));
     case 'cuit':
@@ -58,8 +87,8 @@ export const validateValueType = (type, value) => {
   }
 };
 
-const validarCuit = (cuit) => {
-  //regex para cuit unicamente de negocio
+const validarCuit = cuit => {
+  //regex para cuit únicamente de negocio
   const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
 
   if (!cuitRe.test(String(cuit))) {
@@ -71,7 +100,7 @@ const validarCuit = (cuit) => {
   }
 
   var acumulado = 0;
-  var digitos = cuit.split("");
+  var digitos = cuit.split('');
   var digito = digitos.pop();
 
   for (var i = 0; i < digitos.length; i++) {
@@ -84,4 +113,4 @@ const validarCuit = (cuit) => {
   }
 
   return digito == verif;
-}
+};
