@@ -9,8 +9,8 @@ import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
-
 import CommerceProfile from '../components/CommerceProfile';
+import CommerceSchedule from '../components/CommerceSchedule';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
 
@@ -58,7 +58,7 @@ const leftIcon = (navigation, icon) => (
 const calendarStack = createStackNavigator(
   {
     calendar: {
-      screen: EmptyScreen,
+      screen: CommerceSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
         headerLeft: leftIcon(navigation, 'md-menu')
@@ -150,7 +150,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'profile',
+  initialRouteName: 'calendar',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',
