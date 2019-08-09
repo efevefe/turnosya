@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import moment from 'moment';
-import { Calendar } from './common';
+import { Calendar, Button } from './common';
+import { getHourMinutes } from '../utils';
 
 let datesWhitelist = [
     {
@@ -20,23 +21,23 @@ class CommerceSchedule extends Component {
         slotSize: 30,
         shifts: { // los numeros son los dias de la semana (el domingo es el 0)
             '2': [
-                { shiftStartHour: 9, shiftStartMinutes: 0, shiftEndHour: 13, shiftEndMinutes: 0 },
-                { shiftStartHour: 17, shiftStartMinutes: 0, shiftEndHour: 21, shiftEndMinutes: 0 }
+                { shiftStart: '09:00', shiftEnd: '13:00' },
+                { shiftStart: '17:00', shiftEnd: '21:00' }
             ],
             '3': [
-                { shiftStartHour: 9, shiftStartMinutes: 0, shiftEndHour: 12, shiftEndMinutes: 0 },
-                { shiftStartHour: 16, shiftStartMinutes: 0, shiftEndHour: 21, shiftEndMinutes: 0 }
+                { shiftStart: '08:00', shiftEnd: '12:00' },
+                { shiftStart: '16:00', shiftEnd: '22:00' }
             ],
             '4': [
-                { shiftStartHour: 15, shiftStartMinutes: 0, shiftEndHour: 22, shiftEndMinutes: 0 }
+                { shiftStart: '09:00', shiftEnd: '13:00' }
             ],
             '5': [
-                { shiftStartHour: 9, shiftStartMinutes: 0, shiftEndHour: 13, shiftEndMinutes: 0 },
-                { shiftStartHour: 17, shiftStartMinutes: 0, shiftEndHour: 21, shiftEndMinutes: 0 }
+                { shiftStart: '08:00', shiftEnd: '13:00' },
+                { shiftStart: '17:00', shiftEnd: '20:00' }
             ],
             '6': [
-                { shiftStartHour: 9, shiftStartMinutes: 0, shiftEndHour: 13, shiftEndMinutes: 0 },
-                { shiftStartHour: 17, shiftStartMinutes: 0, shiftEndHour: 21, shiftEndMinutes: 0 }
+                { shiftStart: '09:00', shiftEnd: '13:00' },
+                { shiftStart: '16:00', shiftEnd: '20:00' }
             ]
         }
     };
@@ -63,15 +64,17 @@ class CommerceSchedule extends Component {
         //si hay horario de atencion ese dia, genera los slots
         if (dayShift) {
             for (var i = 0; i < dayShift.length; i++) {
-                const { shiftStartHour, shiftStartMinutes, shiftEndHour, shiftEndMinutes } = dayShift[i];
+                var { shiftStart, shiftEnd } = dayShift[i];
+                shiftStart = getHourMinutes(shiftStart);
+                shiftEnd = getHourMinutes(shiftEnd);
 
-                var shiftStart = moment.utc([year, month, date, shiftStartHour, shiftStartMinutes]); //horario inicio turno
-                var shiftEnd = moment.utc([year, month, date, shiftEndHour, shiftEndMinutes]); //horario fin turno
-                var slotStart = moment.utc(shiftStart); //aca se va guardando el horario de inicio de cada turno
+                var shiftStartDate = moment.utc([year, month, date, shiftStart.hour, shiftStart.minutes]);
+                var shiftEndDate = moment.utc([year, month, date, shiftEnd.hour, shiftEnd.minutes]);
+                var slotStartDate = moment.utc(shiftStart);
 
-                for (var j = 0; shiftStart.add(slotSize, 'minutes') <= shiftEnd; j++) {
-                    slots.push({ id: slotId, startHour: moment.utc(slotStart), available: true });
-                    slotStart.add(slotSize, 'minutes');
+                for (var j = 0; shiftStartDate.add(slotSize, 'minutes') <= shiftEndDate; j++) {
+                    slots.push({ id: slotId, startHour: moment.utc(slotStartDate), endHour: moment(shiftStartDate), available: true });
+                    slotStartDate.add(slotSize, 'minutes');
                     slotId++;
                 }
             }
