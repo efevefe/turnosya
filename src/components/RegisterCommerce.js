@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCommerceValueChange, onCommerceFormOpen } from '../actions';
+import {
+  onCommerceValueChange,
+  onCommerceFormOpen,
+  validateCuit
+} from '../actions';
 import { validateValueType } from '../utils';
 
 class RegisterCommerce extends Component {
@@ -14,6 +18,7 @@ class RegisterCommerce extends Component {
   }
 
   onButtonPressHandler() {
+    this.renderCuitErrorAsync();
     if (this.validateMinimumData()) {
       this.props.navigation.navigate('commerceRegisterProfile1');
     }
@@ -63,13 +68,19 @@ class RegisterCommerce extends Component {
       return true;
     }
   };
-
+  renderCuitErrorAsync = async () => {
+    await this.props.validateCuit(this.props.cuit);
+    this.renderCuitError();
+  };
   renderCuitError = () => {
     if (this.props.cuit === '') {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('cuit', this.props.cuit)) {
       this.setState({ cuitError: 'CUIT incorrecto' });
+      return false;
+    } else if (this.props.cuitExists) {
+      this.setState({ cuitError: 'CUIT ya registrado' });
       return false;
     } else {
       this.setState({ cuitError: '' });
@@ -109,7 +120,7 @@ class RegisterCommerce extends Component {
                 })
               }
               onFocus={() => this.setState({ cuitError: '' })}
-              onBlur={this.renderCuitError}
+              onBlur={this.renderCuitErrorAsync}
             />
           </CardSection>
           <CardSection>
@@ -173,7 +184,15 @@ class RegisterCommerce extends Component {
 }
 
 const mapStateToProps = state => {
-  const { name, description, cuit, email, phone, error } = state.commerceData;
+  const {
+    name,
+    description,
+    cuit,
+    email,
+    phone,
+    error,
+    cuitExists
+  } = state.commerceData;
 
   return {
     name,
@@ -181,11 +200,12 @@ const mapStateToProps = state => {
     error,
     cuit,
     email,
-    phone
+    phone,
+    cuitExists
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange, onCommerceFormOpen }
+  { onCommerceValueChange, onCommerceFormOpen, validateCuit }
 )(RegisterCommerce);

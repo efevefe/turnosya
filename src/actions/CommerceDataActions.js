@@ -14,7 +14,9 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  CUIT_NOT_EXISTS,
+  CUIT_EXISTS
 } from './types';
 
 export const onCommerceValueChange = ({ prop, value }) => {
@@ -23,7 +25,7 @@ export const onCommerceValueChange = ({ prop, value }) => {
 
 export const onCommerceFormOpen = () => {
   return { type: ON_COMMERCE_CREATING };
-}
+};
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
@@ -80,7 +82,7 @@ export const onCreateCommerce = (
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
       .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  }
+  };
 };
 
 export const onCommerceRead = loadingType => {
@@ -258,6 +260,24 @@ export const onAreasRead = () => {
           areasList.push({ value: doc.id, label: doc.data().name })
         );
         dispatch({ type: ON_AREAS_READ, payload: areasList });
+      });
+  };
+};
+
+export const validateCuit = cuit => {
+  var db = firebase.firestore();
+
+  return dispatch => {
+    db.collection(`Commerces/`)
+      .where('cuit', '==', cuit)
+      .where('softDelete', '==', null)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          dispatch({ type: CUIT_EXISTS });
+        } else {
+          dispatch({ type: CUIT_NOT_EXISTS });
+        }
       });
   };
 };

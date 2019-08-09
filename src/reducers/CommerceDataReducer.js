@@ -12,7 +12,9 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  CUIT_EXISTS,
+  CUIT_NOT_EXISTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -31,7 +33,8 @@ const INITIAL_STATE = {
   commerceId: null,
   error: '',
   loading: false,
-  refreshing: false
+  refreshing: false,
+  cuitExists: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -64,6 +67,12 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, provincesList: action.payload };
     case ON_AREAS_READ:
       return { ...state, areasList: action.payload };
+    case CUIT_EXISTS:
+      console.log(1);
+      return { ...state, cuitExists: true };
+    case CUIT_NOT_EXISTS:
+      console.log(2);
+      return { ...state, cuitExists: false };
     default:
       return state;
   }
