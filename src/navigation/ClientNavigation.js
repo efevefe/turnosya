@@ -8,7 +8,6 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import RegisterSchedule from '../components/RegisterSchedule';
 import { MAIN_COLOR } from '../constants';
 
 // Stack navigation options
@@ -55,8 +54,7 @@ const leftIcon = (navigation, icon) => (
 const searchStack = createStackNavigator(
   {
     commercesList: {
-      screen: RegisterSchedule,
-      // screen: CommercesList,
+      screen: CommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
         headerLeft: leftIcon(navigation, 'md-menu')

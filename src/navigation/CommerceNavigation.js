@@ -9,7 +9,7 @@ import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
-
+import RegisterSchedule from '../components/RegisterSchedule';
 import CommerceProfile from '../components/CommerceProfile';
 import EmptyScreen from '../components/EmptyScreen';
 import { MAIN_COLOR } from '../constants';
@@ -18,18 +18,18 @@ import { MAIN_COLOR } from '../constants';
 
 const stackNavigationOptions = {
   defaultNavigationOptions: {
-      headerStyle: {
-          backgroundColor: MAIN_COLOR,
-          height: 50
-      },
-      headerTintColor: 'white',
-      headerTitleStyle: {
-          textAlign: 'center',
-          alignSelf: 'center',
-          fontSize: 18,
-          color: 'white',
-          fontWeight: 'bold'
-      }
+    headerStyle: {
+      backgroundColor: MAIN_COLOR,
+      height: 50
+    },
+    headerTintColor: 'white',
+    headerTitleStyle: {
+      textAlign: 'center',
+      alignSelf: 'center',
+      fontSize: 18,
+      color: 'white',
+      fontWeight: 'bold'
+    }
   }
 };
 
@@ -61,7 +61,14 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: leftIcon(navigation, 'md-menu'),
+        headerRight: rightIcon(navigation, 'md-add', 'registerSchedule')
+      })
+    },
+    registerSchedule: {
+      screen: RegisterSchedule,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Generar calendario'
       })
     }
   },
@@ -150,7 +157,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'profile',
+  initialRouteName: 'calendar',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',

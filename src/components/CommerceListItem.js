@@ -18,7 +18,7 @@ class CommerceListItem extends Component {
       <View>
         <ListItem
           leftAvatar={{
-            source: { uri: profilePicture },
+            source: profilePicture ? { uri: profilePicture } : null,
             size: 'medium'
           }}
           title={name}
