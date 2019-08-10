@@ -1,25 +1,13 @@
 import React, { Component } from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Spinner, Button } from './common';
-import RegisterScheduleItem from './RegisterScheduleItem';
-import {} from '../actions';
-import { MAIN_COLOR } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
+import { MAIN_COLOR } from '../constants';
+import { FlatList, View, StyleSheet } from 'react-native';
+import { Spinner, Button } from './common';
+import { onScheduleValueChange } from '../actions';
+import RegisterScheduleItem from './RegisterScheduleItem';
 
 class RegisterSchedule extends Component {
-  state = {
-    cards: [
-      {
-        id: 1,
-        firstOpen: '10:00',
-        firstClose: '13:00',
-        days: [1, 2, 3]
-      }
-    ],
-    days: []
-  };
-
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon')
@@ -43,7 +31,12 @@ class RegisterSchedule extends Component {
   };
 
   onAddPress = () => {
-    this.setState({ cards: this.state.cards.concat([card2]) });
+    const { cards, onScheduleValueChange } = this.props;
+
+    onScheduleValueChange({
+      prop: 'cards',
+      value: cards.concat([{ ...emptyCard, id: cards.length }])
+    });
   };
 
   renderRow = ({ item }) => {
@@ -53,17 +46,19 @@ class RegisterSchedule extends Component {
   };
 
   renderList() {
+    const { cards, loading } = this.props;
+
     return (
       <View style={{ flex: 1 }}>
         <FlatList
-          data={this.state.cards}
+          data={cards.length > 0 ? cards : [{ ...emptyCard, id: 0 }]}
           renderItem={this.renderRow}
-          keyExtractor={card => card.id}
+          keyExtractor={card => card.id.toString()}
         />
         <Button
           style={styles.cardStyle}
           title="Guardar"
-          loading={this.props.loading}
+          loading={loading}
           //onPress={this.onButtonPressHandler.bind(this)}
         />
       </View>
@@ -75,11 +70,10 @@ class RegisterSchedule extends Component {
   }
 }
 
-const card2 = {
-  id: 2,
-  firstOpen: '10:00',
-  firstClose: '13:00',
-  disableDays: [1, 2, 3],
+const emptyCard = {
+  firstOpen: '',
+  firstClose: '',
+  disableDays: [],
   days: []
 };
 
@@ -92,11 +86,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { loading } = state.registerSchedule;
-  return { loading };
+  const { cards, selectedDays, loading } = state.registerSchedule;
+  return { cards, selectedDays, loading };
 };
 
 export default connect(
   mapStateToProps,
-  {}
+  { onScheduleValueChange }
 )(RegisterSchedule);

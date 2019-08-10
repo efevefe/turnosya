@@ -5,18 +5,8 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  // card: [
-  //   {
-  //     id: 2,
-  //     firstOpen: '',
-  //     firstClose: '',
-  //     secondOpen: '',
-  //     secondClose: '',
-  //     disableDays: [],
-  //     days: []
-  //   }
-  // ],
-  disabledDays: [],
+  cards: [],
+  selectedDays: [],
   loading: false
 };
 
@@ -25,7 +15,14 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_FORM_OPEN:
       return INITIAL_STATE;
     case ON_SCHEDULE_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      const { prop, value } = action.payload;
+
+      if (prop === 'selectedDays' || prop === 'loading' || prop === 'cards')
+        return { ...state, [prop]: value };
+
+      const cardChanged = { ...card[value.id], [prop]: value.value };
+
+      return { ...state, cards: [...cards, cardChanged] };
     case SCHEDULE_FORM_SUBMIT:
       return { ...state, loading: true };
     default:

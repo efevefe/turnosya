@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, StyleSheet } from 'react-native';
-import { CardSection } from './common';
 import { Ionicons } from '@expo/vector-icons';
-import DatePicker from 'react-native-datepicker';
-import { onScheduleFormOpen, onScheduleValueChange } from '../actions';
 import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
+import DatePicker from 'react-native-datepicker';
+import { View, StyleSheet } from 'react-native';
 import { MAIN_COLOR } from '../constants';
+import { onScheduleValueChange } from '../actions';
+import { CardSection } from './common';
 
 class RegisterSchedule extends Component {
   state = { checked: false };
@@ -18,10 +18,10 @@ class RegisterSchedule extends Component {
   }
 
   updateIndex = selectedIndexes => {
-    // this.props.onScheduleValueChange({
-    //   prop: 'days',
-    //   value: selectedIndexes
-    // });
+    this.props.onScheduleValueChange({
+      prop: 'days',
+      value: selectedIndexes
+    });
   };
 
   renderSecondTurn() {
@@ -48,7 +48,7 @@ class RegisterSchedule extends Component {
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'secondOpen',
-                  value
+                  value: { id: this.props.card.id, value }
                 });
               }}
             />
@@ -72,7 +72,7 @@ class RegisterSchedule extends Component {
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'secondOpen',
-                  value
+                  value: { id: this.props.card.id, value }
                 });
               }}
             />
@@ -88,11 +88,11 @@ class RegisterSchedule extends Component {
             onPress={() => {
               this.props.onScheduleValueChange({
                 prop: 'secondOpen',
-                value: ''
+                value: { id: this.props.card.id, value: '' }
               });
               this.props.onScheduleValueChange({
                 prop: 'secondClose',
-                value: ''
+                value: { id: this.props.card.id, value: '' }
               });
               this.setState({ checked: !this.state.checked });
             }}
@@ -113,11 +113,8 @@ class RegisterSchedule extends Component {
       );
   }
 
-  // { firstOpen, firstClose, secondOpen, secondClose, days } = this.props.card
-
   render() {
     const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    // const { selectedIndexes } = this.state;
     return (
       <View>
         <Card containerStyle={styles.cardStyle} title="Horarios">
@@ -141,7 +138,7 @@ class RegisterSchedule extends Component {
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstOpen',
-                  value
+                  value: { id: this.props.card.id, value }
                 });
               }}
             />
@@ -165,7 +162,7 @@ class RegisterSchedule extends Component {
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstClose',
-                  value
+                  value: { id: this.props.card.id, value }
                 });
               }}
             />
@@ -177,7 +174,7 @@ class RegisterSchedule extends Component {
             <ButtonGroup
               onPress={index => this.updateIndex(index)}
               selectedIndexes={this.props.card.days}
-              disabled={this.props.card.days}
+              disabled={this.props.selectedDays}
               buttons={buttons}
               selectMultiple
               containerStyle={{ borderWidth: 0, height: 50 }}
@@ -220,5 +217,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onScheduleFormOpen, onScheduleValueChange }
+  { onScheduleValueChange }
 )(RegisterSchedule);
