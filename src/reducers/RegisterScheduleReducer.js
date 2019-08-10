@@ -5,8 +5,15 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  cards: [],
-  selectedDays: [],
+  cards: [
+    {
+      id: 0,
+      firstOpen: '',
+      firstClose: '',
+      days: [3]
+    }
+  ],
+  selectedDays: [3],
   loading: false
 };
 
@@ -20,9 +27,10 @@ export default (state = INITIAL_STATE, action) => {
       if (prop === 'selectedDays' || prop === 'loading' || prop === 'cards')
         return { ...state, [prop]: value };
 
-      const cardChanged = { ...card[value.id], [prop]: value.value };
+      const cardChanged = { ...state.cards[value.id], [prop]: value.value };
+      state.cards[value.id] = cardChanged;
 
-      return { ...state, cards: [...cards, cardChanged] };
+      return { ...state };
     case SCHEDULE_FORM_SUBMIT:
       return { ...state, loading: true };
     default:

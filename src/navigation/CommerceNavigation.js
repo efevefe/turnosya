@@ -62,7 +62,7 @@ const calendarStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
         headerLeft: leftIcon(navigation, 'md-menu'),
-        headerRight: rightIcon(navigation, 'md-add', 'registerSchedule')
+        headerRight: rightIcon(navigation, 'md-settings', 'registerSchedule')
       })
     },
     registerSchedule: {

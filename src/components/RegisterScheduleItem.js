@@ -9,19 +9,66 @@ import { onScheduleValueChange } from '../actions';
 import { CardSection } from './common';
 
 class RegisterSchedule extends Component {
-  state = { checked: false };
+  state = { checked: false, prevDays: [] };
 
   async componentDidMount() {
     await this.setState({
-      checked: !!this.props.card.secondOpen
+      checked: !!this.props.card.secondOpen,
+      prevDays: this.props.card.days
     });
   }
 
+  getDisableDays = () => {
+    return this.props.selectedDays.filter(
+      obj => this.props.card.days.indexOf(obj) === -1
+    );
+  };
+
   updateIndex = selectedIndexes => {
-    this.props.onScheduleValueChange({
+    const { card, selectedDays, onScheduleValueChange } = this.props;
+    onScheduleValueChange({
       prop: 'days',
-      value: selectedIndexes
+      value: { id: card.id, value: selectedIndexes }
     });
+
+    // this.props.onCardChange({
+    //   prop: 'days',
+    //   value: { id: card.id, value: selectedIndexes }
+    // });
+
+    const newValue = selectedIndexes.filter(
+      obj => this.state.prevDays.indexOf(obj) === -1
+    );
+
+    if (newValue.length) {
+      //Significa que seleccionó un nuevo día
+      onScheduleValueChange({
+        prop: 'selectedDays',
+        value: selectedDays.concat(selectedIndexes)
+      });
+
+      // this.props.onCardChange({
+      //   prop: 'selectedDays',
+      //   value: selectedDays.concat(newValue)
+      // });
+    } else {
+      //Significa que borró un día
+      const valueErased = this.state.prevDays.filter(
+        obj => selectedIndexes.indexOf(obj) === -1
+      );
+
+      onScheduleValueChange({
+        prop: 'selectedDays',
+        value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
+      });
+
+      // this.props.onCardChange({
+      //   prop: 'selectedDays',
+      //   value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
+      // });
+    }
+
+    this.setState({ prevDays: selectedDays });
   };
 
   renderSecondTurn() {
@@ -174,7 +221,7 @@ class RegisterSchedule extends Component {
             <ButtonGroup
               onPress={index => this.updateIndex(index)}
               selectedIndexes={this.props.card.days}
-              disabled={this.props.selectedDays}
+              disabled={this.getDisableDays()}
               buttons={buttons}
               selectMultiple
               containerStyle={{ borderWidth: 0, height: 50 }}

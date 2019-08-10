@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { MAIN_COLOR } from '../constants';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { Spinner, Button } from './common';
 import { onScheduleValueChange } from '../actions';
@@ -39,9 +38,17 @@ class RegisterSchedule extends Component {
     });
   };
 
+  // onCardChange = ({ prop, value }) => {
+  //   this.props.onScheduleValueChange({ prop, value });
+  // };
+
   renderRow = ({ item }) => {
     return (
-      <RegisterScheduleItem card={item} navigation={this.props.navigation} />
+      <RegisterScheduleItem
+        card={item}
+        navigation={this.props.navigation}
+        // onCardChange={this.onCardChange}
+      />
     );
   };
 
@@ -51,7 +58,7 @@ class RegisterSchedule extends Component {
     return (
       <View style={{ flex: 1 }}>
         <FlatList
-          data={cards.length > 0 ? cards : [{ ...emptyCard, id: 0 }]}
+          data={cards}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
         />
