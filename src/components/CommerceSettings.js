@@ -54,8 +54,8 @@ class CommerceSettings extends Component {
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
-                    loading={this.props.loadingCommerceDelete}
-                    onPress={() => this.props.onCommerceDelete(this.props.password, this.props.navigation)}
+                    loadingWithText={this.props.loadingCommerceDelete}
+                    onPress={this.onConfirmCommerceDelete}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
@@ -65,6 +65,14 @@ class CommerceSettings extends Component {
                 />
             </Menu>
         );
+    }
+
+    onConfirmCommerceDelete = () => {
+        if (this.state.providerId != 'password') {
+            this.onBackdropPress();
+        }
+
+        this.props.onCommerceDelete(this.props.password, this.props.navigation);
     }
 
     onBackdropPress = () => {
@@ -81,6 +89,7 @@ class CommerceSettings extends Component {
                 <MenuItem
                     title="Eliminar Negocio"
                     icon='md-trash'
+                    loadingWithText={this.props.loadingCommerceDelete}
                     onPress={() => this.props.onCommerceValueChange({ prop: 'confirmDeleteVisible', value: true })}
                 />
 

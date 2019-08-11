@@ -63,8 +63,8 @@ class ClientSettings extends Component {
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
-                    loading={this.props.loadingUserDelete}
-                    onPress={() => this.props.onUserDelete(this.props.password)}
+                    loadingWithText={this.props.loadingUserDelete}
+                    onPress={this.onConfirmUserDelete}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
@@ -74,6 +74,14 @@ class ClientSettings extends Component {
                 />
             </Menu>
         );
+    }
+
+    onConfirmUserDelete = () => {
+        if (this.state.providerId != 'password') {
+            this.onBackdropPress();
+        }
+
+        this.props.onUserDelete(this.props.password);
     }
 
     renderCantDeleteUser = () => {
@@ -113,8 +121,8 @@ class ClientSettings extends Component {
                 <MenuItem
                     title='Confirmar'
                     icon='md-checkmark'
-                    loading={this.props.loadingCommerceDelete}
-                    onPress={() => this.props.onCommerceDelete(this.props.password)}
+                    loadingWithText={this.props.loadingCommerceDelete}
+                    onPress={this.onConfirmCommerceDelete}
                 />
                 <Divider style={{ backgroundColor: 'grey' }} />
                 <MenuItem
@@ -124,6 +132,14 @@ class ClientSettings extends Component {
                 />
             </Menu>
         );
+    }
+
+    onConfirmCommerceDelete = () => {
+        if (this.state.providerId != 'password') {
+            this.onBackdropPress();
+        }
+
+        this.props.onCommerceDelete(this.props.password);
     }
 
     renderDontHaveCommerce = () => {
@@ -158,11 +174,13 @@ class ClientSettings extends Component {
                 <MenuItem
                     title="Eliminar Mi Negocio"
                     icon='md-trash'
+                    loadingWithText={this.props.loadingCommerceDelete}
                     onPress={this.onCommerceDeletePress}
                 />
                 <MenuItem
                     title="Eliminar Cuenta"
                     icon='md-trash'
+                    loadingWithText={this.props.loadingUserDelete}
                     onPress={this.onUserDeletePress}
                 />
 
