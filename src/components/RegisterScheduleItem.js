@@ -42,9 +42,15 @@ class RegisterSchedule extends Component {
 
     if (newValue.length) {
       //Significa que seleccionó un nuevo día
+
       onScheduleValueChange({
         prop: 'selectedDays',
-        value: selectedDays.concat(selectedIndexes)
+        value: selectedDays
+          .concat(selectedIndexes)
+          .filter(
+            (valor, indiceActual, arreglo) =>
+              arreglo.indexOf(valor) === indiceActual
+          )
       });
 
       // this.props.onCardChange({
@@ -53,13 +59,14 @@ class RegisterSchedule extends Component {
       // });
     } else {
       //Significa que borró un día
-      const valueErased = this.state.prevDays.filter(
-        obj => selectedIndexes.indexOf(obj) === -1
+      const valueErased = this.state.prevDays.filter(obj =>
+        selectedIndexes.indexOf(obj)
       );
 
       onScheduleValueChange({
         prop: 'selectedDays',
-        value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
+        //value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
+        value: selectedDays.splice(valueErased, 1)
       });
 
       // this.props.onCardChange({
@@ -69,6 +76,11 @@ class RegisterSchedule extends Component {
     }
 
     this.setState({ prevDays: selectedDays });
+
+    this.props.onScheduleValueChange({
+      prop: 'refresh',
+      value: !this.props.refresh
+    });
   };
 
   renderSecondTurn() {
@@ -97,6 +109,10 @@ class RegisterSchedule extends Component {
                   prop: 'secondOpen',
                   value: { id: this.props.card.id, value }
                 });
+                this.props.onScheduleValueChange({
+                  prop: 'refresh',
+                  value: !this.props.refresh
+                });
               }}
             />
 
@@ -118,8 +134,12 @@ class RegisterSchedule extends Component {
               }}
               onDateChange={value => {
                 this.props.onScheduleValueChange({
-                  prop: 'secondOpen',
+                  prop: 'secondClose',
                   value: { id: this.props.card.id, value }
+                });
+                this.props.onScheduleValueChange({
+                  prop: 'refresh',
+                  value: !this.props.refresh
                 });
               }}
             />
@@ -187,6 +207,10 @@ class RegisterSchedule extends Component {
                   prop: 'firstOpen',
                   value: { id: this.props.card.id, value }
                 });
+                this.props.onScheduleValueChange({
+                  prop: 'refresh',
+                  value: !this.props.refresh
+                });
               }}
             />
 
@@ -210,6 +234,10 @@ class RegisterSchedule extends Component {
                 this.props.onScheduleValueChange({
                   prop: 'firstClose',
                   value: { id: this.props.card.id, value }
+                });
+                this.props.onScheduleValueChange({
+                  prop: 'refresh',
+                  value: !this.props.refresh
                 });
               }}
             />
@@ -255,10 +283,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { selectedDays } = state.registerSchedule;
+  const { selectedDays, refresh } = state.registerSchedule;
 
   return {
-    selectedDays
+    selectedDays,
+    refresh
   };
 };
 

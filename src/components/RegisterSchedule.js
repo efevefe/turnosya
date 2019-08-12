@@ -61,6 +61,7 @@ class RegisterSchedule extends Component {
           data={cards}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
+          extraData={this.props.refresh}
         />
         <Button
           style={styles.cardStyle}
@@ -93,8 +94,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, loading } = state.registerSchedule;
-  return { cards, selectedDays, loading };
+  const { cards, selectedDays, loading, refresh } = state.registerSchedule;
+  return { cards, selectedDays, loading, refresh };
 };
 
 export default connect(

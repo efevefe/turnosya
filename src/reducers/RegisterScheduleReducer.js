@@ -10,11 +10,12 @@ const INITIAL_STATE = {
       id: 0,
       firstOpen: '',
       firstClose: '',
-      days: [3]
+      days: []
     }
   ],
-  selectedDays: [3],
-  loading: false
+  selectedDays: [],
+  loading: false,
+  refresh: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -24,7 +25,12 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_VALUE_CHANGE:
       const { prop, value } = action.payload;
 
-      if (prop === 'selectedDays' || prop === 'loading' || prop === 'cards')
+      if (
+        prop === 'selectedDays' ||
+        prop === 'loading' ||
+        prop === 'cards' ||
+        prop === 'refresh'
+      )
         return { ...state, [prop]: value };
 
       const cardChanged = { ...state.cards[value.id], [prop]: value.value };
