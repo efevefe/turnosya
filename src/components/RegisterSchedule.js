@@ -32,10 +32,12 @@ class RegisterSchedule extends Component {
   onAddPress = () => {
     const { cards, onScheduleValueChange } = this.props;
 
-    onScheduleValueChange({
-      prop: 'cards',
-      value: cards.concat([{ ...emptyCard, id: cards.length }])
-    });
+    if (this.props.selectedDays.length < 7) {
+      onScheduleValueChange({
+        prop: 'cards',
+        value: cards.concat([{ ...emptyCard, id: cards.length }])
+      });
+    }
   };
 
   // onCardChange = ({ prop, value }) => {

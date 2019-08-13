@@ -31,51 +31,33 @@ class RegisterSchedule extends Component {
       value: { id: card.id, value: selectedIndexes }
     });
 
-    // this.props.onCardChange({
-    //   prop: 'days',
-    //   value: { id: card.id, value: selectedIndexes }
-    // });
+    const newValue = selectedIndexes
+      .concat(this.state.prevDays)
+      .filter((value, index, array) => array.indexOf(value) === index);
 
-    const newValue = selectedIndexes.filter(
-      obj => this.state.prevDays.indexOf(obj) === -1
-    );
-
-    if (newValue.length) {
+    if (newValue.length != this.state.prevDays.length) {
       //Significa que seleccionó un nuevo día
 
       onScheduleValueChange({
         prop: 'selectedDays',
         value: selectedDays
           .concat(selectedIndexes)
-          .filter(
-            (valor, indiceActual, arreglo) =>
-              arreglo.indexOf(valor) === indiceActual
-          )
+          .filter((value, index, array) => array.indexOf(value) === index)
       });
-
-      // this.props.onCardChange({
-      //   prop: 'selectedDays',
-      //   value: selectedDays.concat(newValue)
-      // });
     } else {
       //Significa que borró un día
-      const valueErased = this.state.prevDays.filter(obj =>
-        selectedIndexes.indexOf(obj)
+
+      const valueErased = this.state.prevDays.filter(
+        obj => selectedIndexes.indexOf(obj) === -1
       );
 
       onScheduleValueChange({
         prop: 'selectedDays',
-        //value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
-        value: selectedDays.splice(valueErased, 1)
+        value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
       });
-
-      // this.props.onCardChange({
-      //   prop: 'selectedDays',
-      //   value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
-      // });
     }
 
-    this.setState({ prevDays: selectedDays });
+    this.setState({ prevDays: selectedIndexes });
 
     this.props.onScheduleValueChange({
       prop: 'refresh',
