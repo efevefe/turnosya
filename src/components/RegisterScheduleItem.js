@@ -15,7 +15,7 @@ class RegisterSchedule extends Component {
 
   async componentDidMount() {
     await this.setState({
-      checked: this.props.card.secondOpen,
+      checked: !!this.props.card.secondOpen,
       prevDays: this.props.card.days
     });
   }
