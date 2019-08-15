@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
-import DatePicker from 'react-native-datepicker';
+import { Card, CheckBox, ButtonGroup, Divider } from 'react-native-elements';
 import { View, StyleSheet, Text } from 'react-native';
 import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange } from '../actions';
-import { CardSection } from './common';
+import { CardSection, DatePicker } from './common';
 
 class RegisterSchedule extends Component {
   state = {
@@ -128,6 +126,10 @@ class RegisterSchedule extends Component {
       prop: 'secondClose',
       value: { id: this.props.card.id, value: '' }
     });
+    this.props.onScheduleValueChange({
+      prop: 'refresh',
+      value: !this.props.refresh
+    });
     this.setState({ checked: !this.state.checked });
   };
 
@@ -169,8 +171,7 @@ class RegisterSchedule extends Component {
 
           <DatePicker
             date={this.props.card.secondClose}
-            mode="time"
-            placeholder="Seleccione hora de cierre"
+            placeholder="Hora de Cierre"
             confirmBtnText="Confirmar"
             cancelBtnText="Cancelar"
             iconComponent={<Ionicons name="md-time" size={30} />}
@@ -212,20 +213,7 @@ class RegisterSchedule extends Component {
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
-              mode="time"
-              placeholder="Seleccione hora de apertura"
-              confirmBtnText="Confirmar"
-              cancelBtnText="Cancelar"
-              iconComponent={<Ionicons name="md-time" size={30} />}
-              customStyles={{
-                dateInput: {
-                  borderColor: 'transparent'
-                },
-                placeholderText: {
-                  textAlign: 'center',
-                  fontSize: 10
-                }
-              }}
+              placeholder="Hora de Apertura"
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstOpen',
@@ -239,23 +227,7 @@ class RegisterSchedule extends Component {
             />
             <DatePicker
               date={this.props.card.firstClose}
-              mode="time"
-              placeholder="Seleccione hora de cierre"
-              confirmBtnText="Confirmar"
-              cancelBtnText="Cancelar"
-              iconComponent={<Ionicons name="md-time" size={30} />}
-              customStyles={{
-                dateInput: {
-                  borderColor: 'transparent'
-                },
-                placeholderText: {
-                  textAlign: 'center',
-                  fontSize: 10
-                },
-                disabled: {
-                  backgroundColor: 'transparent'
-                }
-              }}
+              placeholder="Hora de Cierre"
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstClose',
