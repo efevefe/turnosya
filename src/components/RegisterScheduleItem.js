@@ -46,7 +46,9 @@ class RegisterSchedule extends Component {
     if (firstOpen < value) {
       this.setState({ firstCloseError: '' });
     } else {
-      this.setState({ firstCloseError: 'Error' });
+      this.setState({
+        firstCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
     }
   };
 
@@ -56,7 +58,9 @@ class RegisterSchedule extends Component {
     if (value > firstClose) {
       this.setState({ secondOpenError: '' });
     } else {
-      this.setState({ secondOpenError: 'Error' });
+      this.setState({
+        secondOpenError: `Segundo turno debe \n ser mayor al primero`
+      });
     }
   };
 
@@ -66,7 +70,9 @@ class RegisterSchedule extends Component {
     if (secondOpen < value) {
       this.setState({ secondCloseError: '' });
     } else {
-      this.setState({ secondCloseError: 'Error' });
+      this.setState({
+        secondCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
     }
   };
 
@@ -141,21 +147,6 @@ class RegisterSchedule extends Component {
             date={this.props.card.secondOpen}
             mode="time"
             placeholder="Seleccione hora de apertura"
-            confirmBtnText="Confirmar"
-            cancelBtnText="Cancelar"
-            iconComponent={<Ionicons name="md-time" size={30} />}
-            customStyles={{
-              dateInput: {
-                borderColor: 'transparent'
-              },
-              placeholderText: {
-                textAlign: 'center',
-                fontSize: 10
-              },
-              disabled: {
-                backgroundColor: 'transparent'
-              }
-            }}
             onDateChange={value => {
               this.props.onScheduleValueChange({
                 prop: 'secondOpen',
@@ -167,26 +158,12 @@ class RegisterSchedule extends Component {
               });
               this.renderPickerSecondOpen(value);
             }}
+            errorMessage={this.state.secondOpenError}
           />
 
           <DatePicker
             date={this.props.card.secondClose}
             placeholder="Hora de Cierre"
-            confirmBtnText="Confirmar"
-            cancelBtnText="Cancelar"
-            iconComponent={<Ionicons name="md-time" size={30} />}
-            customStyles={{
-              dateInput: {
-                borderColor: 'transparent'
-              },
-              placeholderText: {
-                textAlign: 'center',
-                fontSize: 10
-              },
-              disabled: {
-                backgroundColor: 'transparent'
-              }
-            }}
             onDateChange={value => {
               this.props.onScheduleValueChange({
                 prop: 'secondClose',
@@ -199,6 +176,7 @@ class RegisterSchedule extends Component {
               this.renderPickerSecondClose(value);
             }}
             disabled={this.getDisabledSecondPickerClose()}
+            errorMessage={this.state.secondCloseError}
           />
         </CardSection>
       );
@@ -240,6 +218,7 @@ class RegisterSchedule extends Component {
                 this.renderPickerFirstClose(value);
               }}
               disabled={!this.props.card.firstOpen}
+              errorMessage={this.state.firstCloseError}
             />
           </CardSection>
 
