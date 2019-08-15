@@ -10,6 +10,8 @@ const INITIAL_STATE = {
       id: 0,
       firstOpen: '',
       firstClose: '',
+      secondOpen: '',
+      secondClose: '',
       days: []
     }
   ],

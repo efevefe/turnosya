@@ -31,7 +31,6 @@ class RegisterSchedule extends Component {
 
   onAddPress = () => {
     const { cards, onScheduleValueChange } = this.props;
-
     if (this.props.selectedDays.length < 7) {
       onScheduleValueChange({
         prop: 'cards',

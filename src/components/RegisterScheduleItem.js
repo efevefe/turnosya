@@ -12,45 +12,63 @@ class RegisterSchedule extends Component {
   state = {
     checked: false,
     prevDays: [],
-    firstCloseError: ''
+    firstCloseError: '',
+    secondOpenError: '',
+    secondCloseError: ''
   };
 
   async componentDidMount() {
     await this.setState({
-      checked: this.props.card.secondOpen,
+      checked: !!this.props.card.secondOpen,
       prevDays: this.props.card.days
     });
   }
 
-  getDisablePicker = () => {
-    const { firstOpen } = this.props.card;
-
-    if (firstOpen === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   getDisabledCheckBox = () => {
-    if (this.props.card.firstClose === '') {
+    if (
+      this.props.card.firstClose === '' ||
+      this.state.firstCloseError !== ''
+    ) {
       return true;
     } else {
       return false;
     }
   };
 
-  renderPickerClose = value => {
+  getDisabledSecondPickerClose = () => {
+    if (!this.props.card.secondOpen || this.state.secondOpenError !== '') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  renderPickerFirstClose = value => {
     const { firstOpen } = this.props.card;
-
-    console.log('O: ', firstOpen);
-
-    console.log('C: ', value);
-
     if (firstOpen < value) {
       this.setState({ firstCloseError: '' });
     } else {
       this.setState({ firstCloseError: 'Error' });
+    }
+  };
+
+  renderPickerSecondOpen = value => {
+    const { firstClose } = this.props.card;
+
+    if (value > firstClose) {
+      this.setState({ secondOpenError: '' });
+    } else {
+      this.setState({ secondOpenError: 'Error' });
+    }
+  };
+
+  renderPickerSecondClose = value => {
+    const { secondOpen } = this.props.card;
+
+    if (secondOpen < value) {
+      this.setState({ secondCloseError: '' });
+    } else {
+      this.setState({ secondCloseError: 'Error' });
     }
   };
 
@@ -111,7 +129,7 @@ class RegisterSchedule extends Component {
       value: { id: this.props.card.id, value: '' }
     });
     this.setState({ checked: !this.state.checked });
-  }
+  };
 
   renderSecondTurn() {
     if (this.state.checked) {
@@ -131,6 +149,9 @@ class RegisterSchedule extends Component {
               placeholderText: {
                 textAlign: 'center',
                 fontSize: 10
+              },
+              disabled: {
+                backgroundColor: 'transparent'
               }
             }}
             onDateChange={value => {
@@ -142,6 +163,7 @@ class RegisterSchedule extends Component {
                 prop: 'refresh',
                 value: !this.props.refresh
               });
+              this.renderPickerSecondOpen(value);
             }}
           />
 
@@ -159,6 +181,9 @@ class RegisterSchedule extends Component {
               placeholderText: {
                 textAlign: 'center',
                 fontSize: 10
+              },
+              disabled: {
+                backgroundColor: 'transparent'
               }
             }}
             onDateChange={value => {
@@ -170,7 +195,9 @@ class RegisterSchedule extends Component {
                 prop: 'refresh',
                 value: !this.props.refresh
               });
+              this.renderPickerSecondClose(value);
             }}
+            disabled={this.getDisabledSecondPickerClose()}
           />
         </CardSection>
       );
@@ -179,11 +206,6 @@ class RegisterSchedule extends Component {
 
   render() {
     const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    console.log('open', this.props.card.firstOpen);
-
-    console.log('close', this.props.card.firstClose);
-    console.log('E: ', this.state.firstCloseError);
-
     return (
       <View>
         <Card containerStyle={styles.cardStyle} title="Horarios">
@@ -243,9 +265,9 @@ class RegisterSchedule extends Component {
                   prop: 'refresh',
                   value: !this.props.refresh
                 });
-                this.renderPickerClose(value);
+                this.renderPickerFirstClose(value);
               }}
-              disabled={this.getDisablePicker()}
+              disabled={!this.props.card.firstOpen}
             />
           </CardSection>
 
@@ -256,14 +278,14 @@ class RegisterSchedule extends Component {
               containerStyle={{ flex: 1 }}
               title="Agregar segundo turno"
               iconType="material"
-              checkedIcon='clear'
-              uncheckedIcon='add'
+              checkedIcon="clear"
+              uncheckedIcon="add"
               checkedColor={MAIN_COLOR}
               uncheckedColor={MAIN_COLOR}
               checkedTitle="Borrar segundo turno"
               checked={this.state.checked}
               onPress={this.onSecondTurnPress}
-              disabled={!this.props.card.firstClose}
+              disabled={this.getDisabledCheckBox()}
             />
           </CardSection>
 
