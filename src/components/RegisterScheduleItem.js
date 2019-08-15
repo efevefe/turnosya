@@ -17,7 +17,7 @@ class RegisterSchedule extends Component {
 
   async componentDidMount() {
     await this.setState({
-      checked: !!this.props.card.secondOpen,
+      checked: this.props.card.secondOpen,
       prevDays: this.props.card.days
     });
   }
@@ -101,102 +101,80 @@ class RegisterSchedule extends Component {
     });
   };
 
+  onSecondTurnPress = () => {
+    this.props.onScheduleValueChange({
+      prop: 'secondOpen',
+      value: { id: this.props.card.id, value: '' }
+    });
+    this.props.onScheduleValueChange({
+      prop: 'secondClose',
+      value: { id: this.props.card.id, value: '' }
+    });
+    this.setState({ checked: !this.state.checked });
+  }
+
   renderSecondTurn() {
     if (this.state.checked) {
       return (
-        <View>
-          <View style={styles.viewPickerDate}>
-            <DatePicker
-              date={this.props.card.secondOpen}
-              mode="time"
-              placeholder="Seleccione hora de apertura"
-              confirmBtnText="Confirmar"
-              cancelBtnText="Cancelar"
-              iconComponent={<Ionicons name="md-time" size={30} />}
-              customStyles={{
-                dateInput: {
-                  borderColor: 'transparent'
-                },
-                placeholderText: {
-                  textAlign: 'center',
-                  fontSize: 10
-                }
-              }}
-              onDateChange={value => {
-                this.props.onScheduleValueChange({
-                  prop: 'secondOpen',
-                  value: { id: this.props.card.id, value }
-                });
-                this.props.onScheduleValueChange({
-                  prop: 'refresh',
-                  value: !this.props.refresh
-                });
-              }}
-            />
-
-            <DatePicker
-              date={this.props.card.secondClose}
-              mode="time"
-              placeholder="Seleccione hora de cierre"
-              confirmBtnText="Confirmar"
-              cancelBtnText="Cancelar"
-              iconComponent={<Ionicons name="md-time" size={30} />}
-              customStyles={{
-                dateInput: {
-                  borderColor: 'transparent'
-                },
-                placeholderText: {
-                  textAlign: 'center',
-                  fontSize: 10
-                }
-              }}
-              onDateChange={value => {
-                this.props.onScheduleValueChange({
-                  prop: 'secondClose',
-                  value: { id: this.props.card.id, value }
-                });
-                this.props.onScheduleValueChange({
-                  prop: 'refresh',
-                  value: !this.props.refresh
-                });
-              }}
-            />
-          </View>
-          <CheckBox
-            containerStyle={{ flex: 1 }}
-            title="Agregar segundo turno"
-            iconType="material"
-            checkedIcon="clear"
-            checkedColor={MAIN_COLOR}
-            checkedTitle="Borrar segundo turno"
-            checked={this.state.checked}
-            onPress={() => {
+        <CardSection style={styles.viewPickerDate}>
+          <DatePicker
+            date={this.props.card.secondOpen}
+            mode="time"
+            placeholder="Seleccione hora de apertura"
+            confirmBtnText="Confirmar"
+            cancelBtnText="Cancelar"
+            iconComponent={<Ionicons name="md-time" size={30} />}
+            customStyles={{
+              dateInput: {
+                borderColor: 'transparent'
+              },
+              placeholderText: {
+                textAlign: 'center',
+                fontSize: 10
+              }
+            }}
+            onDateChange={value => {
               this.props.onScheduleValueChange({
                 prop: 'secondOpen',
-                value: { id: this.props.card.id, value: '' }
+                value: { id: this.props.card.id, value }
               });
               this.props.onScheduleValueChange({
-                prop: 'secondClose',
-                value: { id: this.props.card.id, value: '' }
+                prop: 'refresh',
+                value: !this.props.refresh
               });
-              this.setState({ checked: !this.state.checked });
             }}
           />
-        </View>
+
+          <DatePicker
+            date={this.props.card.secondClose}
+            mode="time"
+            placeholder="Seleccione hora de cierre"
+            confirmBtnText="Confirmar"
+            cancelBtnText="Cancelar"
+            iconComponent={<Ionicons name="md-time" size={30} />}
+            customStyles={{
+              dateInput: {
+                borderColor: 'transparent'
+              },
+              placeholderText: {
+                textAlign: 'center',
+                fontSize: 10
+              }
+            }}
+            onDateChange={value => {
+              this.props.onScheduleValueChange({
+                prop: 'secondClose',
+                value: { id: this.props.card.id, value }
+              });
+              this.props.onScheduleValueChange({
+                prop: 'refresh',
+                value: !this.props.refresh
+              });
+            }}
+          />
+        </CardSection>
       );
-    } else
-      return (
-        <CheckBox
-          title="Agragar segundo turno"
-          iconType="material"
-          uncheckedIcon="add"
-          uncheckedColor={MAIN_COLOR}
-          checked={this.state.checked}
-          onPress={() => this.setState({ checked: !this.state.checked })}
-          containerStyle={{ flex: 1 }}
-          disabled={this.getDisabledCheckBox()}
-        />
-      );
+    }
   }
 
   render() {
@@ -271,7 +249,23 @@ class RegisterSchedule extends Component {
             />
           </CardSection>
 
-          <CardSection>{this.renderSecondTurn()}</CardSection>
+          {this.renderSecondTurn()}
+
+          <CardSection>
+            <CheckBox
+              containerStyle={{ flex: 1 }}
+              title="Agregar segundo turno"
+              iconType="material"
+              checkedIcon='clear'
+              uncheckedIcon='add'
+              checkedColor={MAIN_COLOR}
+              uncheckedColor={MAIN_COLOR}
+              checkedTitle="Borrar segundo turno"
+              checked={this.state.checked}
+              onPress={this.onSecondTurnPress}
+              disabled={!this.props.card.firstClose}
+            />
+          </CardSection>
 
           <CardSection>
             <ButtonGroup
