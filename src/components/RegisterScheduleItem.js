@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
+import { Card, CheckBox, ButtonGroup, Divider } from 'react-native-elements';
 import { View, StyleSheet, Text } from 'react-native';
 import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange } from '../actions';
@@ -100,6 +100,10 @@ class RegisterSchedule extends Component {
       prop: 'secondClose',
       value: { id: this.props.card.id, value: '' }
     });
+    this.props.onScheduleValueChange({
+      prop: 'refresh',
+      value: !this.props.refresh
+    });
     this.setState({ checked: !this.state.checked });
   }
 
@@ -150,7 +154,7 @@ class RegisterSchedule extends Component {
 
     return (
       <View>
-        <Card containerStyle={styles.cardStyle} title="Horarios">
+        <Card containerStyle={styles.cardStyle} title="Horarios" >
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
