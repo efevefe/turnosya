@@ -7,6 +7,7 @@ import { onScheduleValueChange } from '../actions';
 import RegisterScheduleItem from './RegisterScheduleItem';
 
 class RegisterSchedule extends Component {
+  state = { refres: false };
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon')

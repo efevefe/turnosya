@@ -3,13 +3,17 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange } from '../actions';
 import { CardSection } from './common';
 
 class RegisterSchedule extends Component {
-  state = { checked: false, prevDays: [] };
+  state = {
+    checked: false,
+    prevDays: [],
+    firstCloseError: ''
+  };
 
   async componentDidMount() {
     await this.setState({
@@ -17,6 +21,38 @@ class RegisterSchedule extends Component {
       prevDays: this.props.card.days
     });
   }
+
+  getDisablePicker = () => {
+    const { firstOpen } = this.props.card;
+
+    if (firstOpen === '') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  getDisabledCheckBox = () => {
+    if (this.props.card.firstClose === '') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  renderPickerClose = value => {
+    const { firstOpen } = this.props.card;
+
+    console.log('O: ', firstOpen);
+
+    console.log('C: ', value);
+
+    if (firstOpen < value) {
+      this.setState({ firstCloseError: '' });
+    } else {
+      this.setState({ firstCloseError: 'Error' });
+    }
+  };
 
   getDisableDays = () => {
     return this.props.selectedDays.filter(
@@ -158,12 +194,18 @@ class RegisterSchedule extends Component {
           checked={this.state.checked}
           onPress={() => this.setState({ checked: !this.state.checked })}
           containerStyle={{ flex: 1 }}
+          disabled={this.getDisabledCheckBox()}
         />
       );
   }
 
   render() {
     const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+    console.log('open', this.props.card.firstOpen);
+
+    console.log('close', this.props.card.firstClose);
+    console.log('E: ', this.state.firstCloseError);
+
     return (
       <View>
         <Card containerStyle={styles.cardStyle} title="Horarios">
@@ -195,7 +237,6 @@ class RegisterSchedule extends Component {
                 });
               }}
             />
-
             <DatePicker
               date={this.props.card.firstClose}
               mode="time"
@@ -210,6 +251,9 @@ class RegisterSchedule extends Component {
                 placeholderText: {
                   textAlign: 'center',
                   fontSize: 10
+                },
+                disabled: {
+                  backgroundColor: 'transparent'
                 }
               }}
               onDateChange={value => {
@@ -221,7 +265,9 @@ class RegisterSchedule extends Component {
                   prop: 'refresh',
                   value: !this.props.refresh
                 });
+                this.renderPickerClose(value);
               }}
+              disabled={this.getDisablePicker()}
             />
           </CardSection>
 
