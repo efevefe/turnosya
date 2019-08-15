@@ -22,7 +22,7 @@ class Picker extends Component {
     const { pickerStyle, iconContainer } = styles;
 
     return (
-      <View>
+      <View >
         <Text style={[styles.textStyle, { color }]}>{this.props.title}</Text>
         <RNPickerSelect
           {...this.props}
