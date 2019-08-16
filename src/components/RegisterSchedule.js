@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { Spinner, Button } from './common';
-import { onScheduleValueChange } from '../actions';
+import { onScheduleValueChange, onScheduleCreate, onScheduleRead } from '../actions';
 import RegisterScheduleItem from './RegisterScheduleItem';
 
 class RegisterSchedule extends Component {
@@ -15,6 +15,7 @@ class RegisterSchedule extends Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ rightIcon: this.renderAddButton() });
+    this.props.onScheduleRead();
   }
 
   renderAddButton = () => {
@@ -68,12 +69,6 @@ class RegisterSchedule extends Component {
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
         />
-        <Button
-          style={styles.cardStyle}
-          title="Guardar"
-          loading={loading}
-        //onPress={this.onButtonPressHandler.bind(this)}
-        />
       </View>
     );
   }
@@ -104,5 +99,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onScheduleValueChange }
+  { onScheduleValueChange, onScheduleCreate, onScheduleRead }
 )(RegisterSchedule);

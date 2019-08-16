@@ -3,7 +3,9 @@ import {
   ON_SCHEDULE_VALUE_CHANGE,
   SCHEDULE_FORM_SUBMIT,
   ON_SCHEDULE_CARD_VALUE_CHANGE,
-  ON_SCHEDULE_CARD_DELETE
+  ON_SCHEDULE_CARD_DELETE,
+  ON_SCHEDULE_SHIFTS_READ,
+  ON_SCHEDULE_SHIFTS_READING
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -12,14 +14,11 @@ const INITIAL_STATE = {
       id: 0,
       firstOpen: '',
       firstClose: '',
-      secondOpen: '',
-      secondClose: '',
       days: []
     }
   ],
   selectedDays: [],
-  loading: false,
-  refresh: false
+  loading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -47,6 +46,10 @@ export default (state = INITIAL_STATE, action) => {
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
+    case ON_SCHEDULE_SHIFTS_READING:
+      return { ...state, loading: true };
+    case ON_SCHEDULE_SHIFTS_READ:
+      return { ...INITIAL_STATE, ...action.payload };
     case SCHEDULE_FORM_SUBMIT:
       return { ...state, loading: true };
     default:
