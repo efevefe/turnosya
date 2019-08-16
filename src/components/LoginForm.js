@@ -13,8 +13,6 @@ import {
   onGoogleLogin
 } from '../actions';
 
-import { ImagePicker, Permissions } from 'expo';
-
 const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
 
 class LoginForm extends Component {

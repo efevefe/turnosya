@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, CheckBox, ButtonGroup, Divider } from 'react-native-elements';
-import { View, StyleSheet, Text } from 'react-native';
+import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange, onScheduleCardValueChange } from '../actions';
 import { CardSection, DatePicker } from './common';
+
+const buttonSize = Math.round(Dimensions.get('window').width) / 8.22;
 
 class RegisterSchedule extends Component {
   state = {
@@ -22,11 +24,13 @@ class RegisterSchedule extends Component {
     });
   }
 
-  getDisabledCheckBox = () =>
-    this.props.card.firstClose === '' || this.state.firstCloseError !== '';
+  getDisabledCheckBox = () => {
+    return this.props.card.firstClose === '' || this.state.firstCloseError !== '';
+  }
 
-  getDisabledSecondPickerClose = () =>
-    !this.props.card.secondOpen || this.state.secondOpenError !== '';
+  getDisabledSecondPickerClose = () => {
+    return !this.props.card.secondOpen || this.state.secondOpenError !== '';
+  }
 
   renderPickerFirstClose = value => {
     const { firstOpen } = this.props.card;
@@ -88,7 +92,6 @@ class RegisterSchedule extends Component {
       });
     } else {
       //Significa que borró un día
-
       const valueErased = this.state.prevDays.filter(
         day => !selectedIndexes.includes(day)
       );
@@ -114,6 +117,7 @@ class RegisterSchedule extends Component {
           <DatePicker
             date={this.props.card.secondOpen}
             mode="time"
+            label='Desde las:'
             placeholder="Hora de apertura"
             onDateChange={value => {
               this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: value });
@@ -124,6 +128,7 @@ class RegisterSchedule extends Component {
 
           <DatePicker
             date={this.props.card.secondClose}
+            label='Hasta las:'
             placeholder="Hora de cierre"
             onDateChange={value => {
               this.props.onScheduleCardValueChange({ id: this.props.card.id, secondClose: value });
@@ -146,6 +151,7 @@ class RegisterSchedule extends Component {
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
+              label='Desde las:'
               placeholder="Hora de apertura"
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({ id: this.props.card.id, firstOpen: value });
@@ -153,6 +159,7 @@ class RegisterSchedule extends Component {
             />
             <DatePicker
               date={this.props.card.firstClose}
+              label='Hasta las:'
               placeholder="Hora de cierre"
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({ id: this.props.card.id, firstClose: value });
@@ -181,22 +188,25 @@ class RegisterSchedule extends Component {
             />
           </CardSection>
 
-          <CardSection>
+          <CardSection style={styles.buttonGroupCard}>
             <ButtonGroup
               onPress={index => this.updateIndex(index)}
               selectedIndexes={this.props.card.days}
               disabled={this.getDisableDays()}
               buttons={buttons}
               selectMultiple
-              containerStyle={{ borderWidth: 0, height: 50 }}
+              containerStyle={{ borderWidth: 0, height: buttonSize, marginTop: 0 }}
               innerBorderStyle={{ width: 0 }}
               buttonStyle={{
                 borderWidth: 2,
                 borderColor: 'white',
-                borderRadius: 25,
-                width: 50
+                borderRadius: buttonSize / 2,
+                width: buttonSize
               }}
               selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
+              selectedTextStyle={{ color: 'white' }}
+              textStyle={{ color: MAIN_COLOR }}
+              disabledTextStyle={{ color: 'grey' }}
             />
           </CardSection>
         </Card>
@@ -208,13 +218,16 @@ class RegisterSchedule extends Component {
 const styles = StyleSheet.create({
   viewPickerDate: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center'
   },
   cardStyle: {
     padding: 5,
     paddingTop: 10,
     borderRadius: 10
+  },
+  buttonGroupCard: {
+    paddingTop: 0
   }
 });
 
