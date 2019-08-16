@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Card, CheckBox, ButtonGroup, Divider } from 'react-native-elements';
 import { View, StyleSheet, Text } from 'react-native';
 import { MAIN_COLOR } from '../constants';
-import { onScheduleValueChange } from '../actions';
+import { onScheduleValueChange, onScheduleCardValueChange } from '../actions';
 import { CardSection, DatePicker } from './common';
 
 class RegisterSchedule extends Component {
@@ -33,9 +33,8 @@ class RegisterSchedule extends Component {
   renderPickerClose = value => {
     const { firstOpen } = this.props.card;
 
-    console.log('O: ', firstOpen);
-
-    console.log('C: ', value);
+    //console.log('O: ', firstOpen);
+    //console.log('C: ', value);
 
     if (firstOpen < value) {
       this.setState({ firstCloseError: '' });
@@ -46,16 +45,13 @@ class RegisterSchedule extends Component {
 
   getDisableDays = () => {
     return this.props.selectedDays.filter(
-      obj => this.props.card.days.indexOf(obj) === -1
+      day => !this.props.card.days.includes(day)
     );
   };
 
   updateIndex = selectedIndexes => {
-    const { card, selectedDays, onScheduleValueChange } = this.props;
-    onScheduleValueChange({
-      prop: 'days',
-      value: { id: card.id, value: selectedIndexes }
-    });
+    const { card, selectedDays, onScheduleCardValueChange, onScheduleValueChange } = this.props;
+    onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
 
     const newValue = selectedIndexes
       .concat(this.state.prevDays)
@@ -74,36 +70,20 @@ class RegisterSchedule extends Component {
       //Significa que borró un día
 
       const valueErased = this.state.prevDays.filter(
-        obj => selectedIndexes.indexOf(obj) === -1
+        day => !selectedIndexes.includes(day)
       );
 
       onScheduleValueChange({
         prop: 'selectedDays',
-        value: selectedDays.filter(obj => valueErased.indexOf(obj) === -1)
+        value: selectedDays.filter(day => !valueErased.includes(day))
       });
     }
 
     this.setState({ prevDays: selectedIndexes });
-
-    this.props.onScheduleValueChange({
-      prop: 'refresh',
-      value: !this.props.refresh
-    });
   };
 
   onSecondTurnPress = () => {
-    this.props.onScheduleValueChange({
-      prop: 'secondOpen',
-      value: { id: this.props.card.id, value: '' }
-    });
-    this.props.onScheduleValueChange({
-      prop: 'secondClose',
-      value: { id: this.props.card.id, value: '' }
-    });
-    this.props.onScheduleValueChange({
-      prop: 'refresh',
-      value: !this.props.refresh
-    });
+    this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: '', secondClose: '' });
     this.setState({ checked: !this.state.checked });
   }
 
@@ -115,14 +95,7 @@ class RegisterSchedule extends Component {
             date={this.props.card.secondOpen}
             placeholder="Hora de Apertura"
             onDateChange={value => {
-              this.props.onScheduleValueChange({
-                prop: 'secondOpen',
-                value: { id: this.props.card.id, value }
-              });
-              this.props.onScheduleValueChange({
-                prop: 'refresh',
-                value: !this.props.refresh
-              });
+              this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: value });
             }}
           />
 
@@ -130,14 +103,7 @@ class RegisterSchedule extends Component {
             date={this.props.card.secondClose}
             placeholder="Hora de Cierre"
             onDateChange={value => {
-              this.props.onScheduleValueChange({
-                prop: 'secondClose',
-                value: { id: this.props.card.id, value }
-              });
-              this.props.onScheduleValueChange({
-                prop: 'refresh',
-                value: !this.props.refresh
-              });
+              this.props.onScheduleCardValueChange({ id: this.props.card.id, secondClose: value });
             }}
           />
         </CardSection>
@@ -147,10 +113,10 @@ class RegisterSchedule extends Component {
 
   render() {
     const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    console.log('open', this.props.card.firstOpen);
+    //console.log('open', this.props.card.firstOpen);
 
-    console.log('close', this.props.card.firstClose);
-    console.log('E: ', this.state.firstCloseError);
+    //console.log('close', this.props.card.firstClose);
+    //console.log('E: ', this.state.firstCloseError);
 
     return (
       <View>
@@ -160,28 +126,14 @@ class RegisterSchedule extends Component {
               date={this.props.card.firstOpen}
               placeholder="Hora de Apertura"
               onDateChange={value => {
-                this.props.onScheduleValueChange({
-                  prop: 'firstOpen',
-                  value: { id: this.props.card.id, value }
-                });
-                this.props.onScheduleValueChange({
-                  prop: 'refresh',
-                  value: !this.props.refresh
-                });
+                this.props.onScheduleCardValueChange({ id: this.props.card.id, firstOpen: value });
               }}
             />
             <DatePicker
               date={this.props.card.firstClose}
               placeholder="Hora de Cierre"
               onDateChange={value => {
-                this.props.onScheduleValueChange({
-                  prop: 'firstClose',
-                  value: { id: this.props.card.id, value }
-                });
-                this.props.onScheduleValueChange({
-                  prop: 'refresh',
-                  value: !this.props.refresh
-                });
+                this.props.onScheduleCardValueChange({ id: this.props.card.id, firstClose: value });
                 this.renderPickerClose(value);
               }}
               disabled={this.getDisablePicker()}
@@ -244,15 +196,17 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { selectedDays, refresh } = state.registerSchedule;
+  const { selectedDays } = state.registerSchedule;
 
   return {
-    selectedDays,
-    refresh
+    selectedDays
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleValueChange }
+  {
+    onScheduleValueChange,
+    onScheduleCardValueChange
+  }
 )(RegisterSchedule);

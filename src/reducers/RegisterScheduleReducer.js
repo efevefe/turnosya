@@ -1,7 +1,8 @@
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
-  SCHEDULE_FORM_SUBMIT
+  SCHEDULE_FORM_SUBMIT,
+  ON_SCHEDULE_CARD_VALUE_CHANGE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -25,18 +26,19 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_VALUE_CHANGE:
       const { prop, value } = action.payload;
 
-      if (
-        prop === 'selectedDays' ||
-        prop === 'loading' ||
-        prop === 'cards' ||
-        prop === 'refresh'
-      )
-        return { ...state, [prop]: value };
+      return { ...state, [prop]: value };
+    case ON_SCHEDULE_CARD_VALUE_CHANGE:
+      const newCard = action.payload;
+      
+      var newCards = state.cards.map((card, id) => {
+        if (id !== newCard.id) {
+          return card;
+        }
 
-      const cardChanged = { ...state.cards[value.id], [prop]: value.value };
-      state.cards[value.id] = cardChanged;
+        return { ...card, ...newCard };
+      })
 
-      return { ...state };
+      return { ...state, cards: newCards };
     case SCHEDULE_FORM_SUBMIT:
       return { ...state, loading: true };
     default:
