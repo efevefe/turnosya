@@ -23,22 +23,13 @@ class RegisterSchedule extends Component {
   }
 
   getDisabledCheckBox = () => {
-    if (
-      this.props.card.firstClose === '' ||
-      this.state.firstCloseError !== ''
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return (
+      this.props.card.firstClose === '' || this.state.firstCloseError !== ''
+    );
   };
 
   getDisabledSecondPickerClose = () => {
-    if (!this.props.card.secondOpen || this.state.secondOpenError !== '') {
-      return true;
-    } else {
-      return false;
-    }
+    return !this.props.card.secondOpen || this.state.secondOpenError !== '';
   };
 
   renderPickerFirstClose = value => {
