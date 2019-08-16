@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { Spinner, Button } from './common';
 import { onScheduleValueChange } from '../actions';
+import { MAIN_COLOR } from '../constants';
 import RegisterScheduleItem from './RegisterScheduleItem';
 
 class RegisterSchedule extends Component {
@@ -30,21 +31,21 @@ class RegisterSchedule extends Component {
   };
 
   onAddPress = () => {
-    const { cards, onScheduleValueChange } = this.props;
-    if (
-      this.props.selectedDays.length < 7 &&
-      this.props.cards[cards.length - 1].days.length > 0
-    ) {
+    const { cards, selectedDays, onScheduleValueChange } = this.props;
+    if (cards.length === 0) {
       onScheduleValueChange({
         prop: 'cards',
-        value: cards.concat([{ ...emptyCard, id: cards.length }])
+        value: cards.concat([{ ...emptyCard, id: 0 }])
+      });
+    } else if (selectedDays.length < 7 && selectedDays.length > 0) {
+      onScheduleValueChange({
+        prop: 'cards',
+        value: cards.concat([
+          { ...emptyCard, id: cards[cards.length - 1].id + 1 }
+        ])
       });
     }
   };
-
-  // onCardChange = ({ prop, value }) => {
-  //   this.props.onScheduleValueChange({ prop, value });
-  // };
 
   renderRow = ({ item }) => {
     return (
@@ -56,13 +57,11 @@ class RegisterSchedule extends Component {
     );
   };
 
-  renderList() {
-    const { cards, loading } = this.props;
-
+  render() {
     return (
       <View style={{ flex: 1 }}>
         <FlatList
-          data={cards}
+          data={this.props.cards}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
@@ -70,22 +69,17 @@ class RegisterSchedule extends Component {
         <Button
           style={styles.cardStyle}
           title="Guardar"
-          loading={loading}
+          loading={this.props.loading}
           //onPress={this.onButtonPressHandler.bind(this)}
         />
       </View>
     );
-  }
-
-  render() {
-    return this.renderList();
   }
 }
 
 const emptyCard = {
   firstOpen: '',
   firstClose: '',
-  disableDays: [],
   days: []
 };
 
