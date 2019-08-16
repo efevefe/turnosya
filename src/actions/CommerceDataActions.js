@@ -23,7 +23,7 @@ export const onCommerceValueChange = ({ prop, value }) => {
 
 export const onCommerceFormOpen = () => {
   return { type: ON_COMMERCE_CREATING };
-}
+};
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
@@ -79,7 +79,7 @@ export const onCreateCommerce = (
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
       .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  }
+  };
 };
 
 export const onCommerceRead = loadingType => {

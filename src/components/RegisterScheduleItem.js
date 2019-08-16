@@ -10,7 +10,9 @@ class RegisterSchedule extends Component {
   state = {
     checked: false,
     prevDays: [],
-    firstCloseError: ''
+    firstCloseError: '',
+    secondOpenError: '',
+    secondCloseError: ''
   };
 
   async componentDidMount() {
@@ -20,26 +22,44 @@ class RegisterSchedule extends Component {
     });
   }
 
-  getDisablePicker = () => {
+  getDisabledCheckBox = () =>
+    this.props.card.firstClose === '' || this.state.firstCloseError !== '';
+
+  getDisabledSecondPickerClose = () =>
+    !this.props.card.secondOpen || this.state.secondOpenError !== '';
+
+  renderPickerFirstClose = value => {
     const { firstOpen } = this.props.card;
-
-    if (firstOpen === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  renderPickerClose = value => {
-    const { firstOpen } = this.props.card;
-
-    //console.log('O: ', firstOpen);
-    //console.log('C: ', value);
-
     if (firstOpen < value) {
       this.setState({ firstCloseError: '' });
     } else {
-      this.setState({ firstCloseError: 'Error' });
+      this.setState({
+        firstCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
+    }
+  };
+
+  renderPickerSecondOpen = value => {
+    const { firstClose } = this.props.card;
+
+    if (value > firstClose) {
+      this.setState({ secondOpenError: '' });
+    } else {
+      this.setState({
+        secondOpenError: `Segundo turno debe \n ser mayor al primero`
+      });
+    }
+  };
+
+  renderPickerSecondClose = value => {
+    const { secondOpen } = this.props.card;
+
+    if (secondOpen < value) {
+      this.setState({ secondCloseError: '' });
+    } else {
+      this.setState({
+        secondCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
     }
   };
 
@@ -85,7 +105,7 @@ class RegisterSchedule extends Component {
   onSecondTurnPress = () => {
     this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: '', secondClose: '' });
     this.setState({ checked: !this.state.checked });
-  }
+  };
 
   renderSecondTurn() {
     if (this.state.checked) {
@@ -93,18 +113,24 @@ class RegisterSchedule extends Component {
         <CardSection style={styles.viewPickerDate}>
           <DatePicker
             date={this.props.card.secondOpen}
-            placeholder="Hora de Apertura"
+            mode="time"
+            placeholder="Hora de apertura"
             onDateChange={value => {
               this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: value });
+              this.renderPickerSecondOpen(value);
             }}
+            errorMessage={this.state.secondOpenError}
           />
 
           <DatePicker
             date={this.props.card.secondClose}
-            placeholder="Hora de Cierre"
+            placeholder="Hora de cierre"
             onDateChange={value => {
               this.props.onScheduleCardValueChange({ id: this.props.card.id, secondClose: value });
+              this.renderPickerSecondClose(value);
             }}
+            disabled={this.getDisabledSecondPickerClose()}
+            errorMessage={this.state.secondCloseError}
           />
         </CardSection>
       );
@@ -113,30 +139,27 @@ class RegisterSchedule extends Component {
 
   render() {
     const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    //console.log('open', this.props.card.firstOpen);
-
-    //console.log('close', this.props.card.firstClose);
-    //console.log('E: ', this.state.firstCloseError);
-
+    
     return (
       <View>
-        <Card containerStyle={styles.cardStyle} title="Horarios" >
+        <Card containerStyle={styles.cardStyle} title="Horarios">
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
-              placeholder="Hora de Apertura"
+              placeholder="Hora de apertura"
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({ id: this.props.card.id, firstOpen: value });
               }}
             />
             <DatePicker
               date={this.props.card.firstClose}
-              placeholder="Hora de Cierre"
+              placeholder="Hora de cierre"
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({ id: this.props.card.id, firstClose: value });
-                this.renderPickerClose(value);
+                this.renderPickerFirstClose(value);
               }}
-              disabled={this.getDisablePicker()}
+              disabled={!this.props.card.firstOpen}
+              errorMessage={this.state.firstCloseError}
             />
           </CardSection>
 
@@ -147,14 +170,14 @@ class RegisterSchedule extends Component {
               containerStyle={{ flex: 1 }}
               title="Agregar segundo turno"
               iconType="material"
-              checkedIcon='clear'
-              uncheckedIcon='add'
+              checkedIcon="clear"
+              uncheckedIcon="add"
               checkedColor={MAIN_COLOR}
               uncheckedColor={MAIN_COLOR}
               checkedTitle="Borrar segundo turno"
               checked={this.state.checked}
               onPress={this.onSecondTurnPress}
-              disabled={!this.props.card.firstClose}
+              disabled={this.getDisabledCheckBox()}
             />
           </CardSection>
 
