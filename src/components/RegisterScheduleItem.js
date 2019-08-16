@@ -115,12 +115,16 @@ class RegisterSchedule extends Component {
   };
 
   onSecondTurnPress = () => {
-    this.props.onScheduleCardValueChange({
-      id: this.props.card.id,
-      secondOpen: '',
-      secondClose: ''
-    });
-    this.setState({ checked: !this.state.checked });
+    if (this.state.firstCloseError === '') {
+      this.props.onScheduleCardValueChange({
+        id: this.props.card.id,
+        secondOpen: '',
+        secondClose: ''
+      });
+      this.setState({ checked: !this.state.checked });
+    } else {
+      this.setState({ checked: false });
+    }
   };
 
   renderSecondTurn() {
