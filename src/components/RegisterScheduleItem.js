@@ -11,7 +11,6 @@ const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 class RegisterSchedule extends Component {
   state = {
     checked: false,
-    prevDays: [], //no haria mas falta con mi mejora al updateIndex
     firstCloseError: '',
     secondOpenError: '',
     secondCloseError: ''
@@ -95,40 +94,6 @@ class RegisterSchedule extends Component {
     onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
   };
 
-  /*
-  updateIndex = selectedIndexes => {
-    const { card, selectedDays, onScheduleCardValueChange, onScheduleValueChange } = this.props;
-    onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
-
-    const newValue = selectedIndexes
-      .concat(this.state.prevDays)
-      .filter((value, index, array) => array.indexOf(value) === index);
-
-    if (newValue.length != this.state.prevDays.length) {
-      //Significa que seleccionó un nuevo día
-
-      onScheduleValueChange({
-        prop: 'selectedDays',
-        value: selectedDays
-          .concat(selectedIndexes)
-          .filter((value, index, array) => array.indexOf(value) === index)
-      });
-    } else {
-      //Significa que borró un día
-      const valueErased = this.state.prevDays.filter(
-        day => !selectedIndexes.includes(day)
-      );
-
-      onScheduleValueChange({
-        prop: 'selectedDays',
-        value: selectedDays.filter(day => !valueErased.includes(day))
-      });
-    }
-
-    this.setState({ prevDays: selectedIndexes });
-  };
-  */
-
   onSecondTurnPress = () => {
     this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: '', secondClose: '' });
     this.setState({ checked: !this.state.checked });
@@ -167,7 +132,6 @@ class RegisterSchedule extends Component {
   }
 
   render() {
-    console.log('rerender')
     return (
       <View>
         <Card containerStyle={styles.cardStyle} title="Horarios">
