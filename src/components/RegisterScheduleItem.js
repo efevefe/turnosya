@@ -6,12 +6,12 @@ import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange, onScheduleCardValueChange } from '../actions';
 import { CardSection, DatePicker } from './common';
 
-const buttonSize = Math.round(Dimensions.get('window').width) / 8.22;
+const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 
 class RegisterSchedule extends Component {
   state = {
     checked: false,
-    prevDays: [],
+    prevDays: [], //no haria mas falta con mi mejora al updateIndex
     firstCloseError: '',
     secondOpenError: '',
     secondCloseError: ''
@@ -20,7 +20,7 @@ class RegisterSchedule extends Component {
   async componentDidMount() {
     await this.setState({
       checked: !!this.props.card.secondOpen,
-      prevDays: this.props.card.days
+      prevDays: this.props.card.days,
     });
   }
 
@@ -67,12 +67,35 @@ class RegisterSchedule extends Component {
     }
   };
 
-  getDisableDays = () => {
+  getDisabledDays = () => {
     return this.props.selectedDays.filter(
       day => !this.props.card.days.includes(day)
     );
   };
 
+  updateIndex = selectedIndexes => {
+    const { card, selectedDays, onScheduleCardValueChange, onScheduleValueChange } = this.props;
+
+    if (selectedIndexes.length > card.days.length) {
+      //Significa que seleccionó un nuevo día
+      onScheduleValueChange({
+        prop: 'selectedDays',
+        value: selectedDays.concat([selectedIndexes[selectedIndexes.length - 1]])
+      });
+    } else {
+      //Significa que borró un día
+      const valueErased = card.days.filter(day => !selectedIndexes.includes(day))[0];
+
+      onScheduleValueChange({
+        prop: 'selectedDays',
+        value: selectedDays.filter(day => day !== valueErased)
+      });
+    }
+
+    onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
+  };
+
+  /*
   updateIndex = selectedIndexes => {
     const { card, selectedDays, onScheduleCardValueChange, onScheduleValueChange } = this.props;
     onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
@@ -104,6 +127,7 @@ class RegisterSchedule extends Component {
 
     this.setState({ prevDays: selectedIndexes });
   };
+  */
 
   onSecondTurnPress = () => {
     this.props.onScheduleCardValueChange({ id: this.props.card.id, secondOpen: '', secondClose: '' });
@@ -143,8 +167,7 @@ class RegisterSchedule extends Component {
   }
 
   render() {
-    const buttons = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    
+    console.log('rerender')
     return (
       <View>
         <Card containerStyle={styles.cardStyle} title="Horarios">
@@ -192,8 +215,8 @@ class RegisterSchedule extends Component {
             <ButtonGroup
               onPress={index => this.updateIndex(index)}
               selectedIndexes={this.props.card.days}
-              disabled={this.getDisableDays()}
-              buttons={buttons}
+              disabled={this.getDisabledDays()}
+              buttons={['D', 'L', 'M', 'M', 'J', 'V', 'S']}
               selectMultiple
               containerStyle={{ borderWidth: 0, height: buttonSize, marginTop: 0 }}
               innerBorderStyle={{ width: 0 }}
