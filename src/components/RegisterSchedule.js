@@ -30,28 +30,29 @@ class RegisterSchedule extends Component {
   };
 
   onAddPress = () => {
-    const { cards, onScheduleValueChange } = this.props;
-    if (
-      this.props.selectedDays.length < 7 &&
-      this.props.cards[cards.length - 1].days.length > 0
+    const { cards, selectedDays, onScheduleValueChange } = this.props;
+    if (cards.length === 0) {
+      onScheduleValueChange({
+        prop: 'cards',
+        value: cards.concat([{ ...emptyCard, id: 0 }])
+      });
+    } else if (
+      selectedDays.length < 7 &&
+      selectedDays.length > 0
     ) {
       onScheduleValueChange({
         prop: 'cards',
-        value: cards.concat([{ ...emptyCard, id: cards.length }])
+        value: cards.concat([{ ...emptyCard, id: cards[cards.length - 1].id + 1 }])
       });
     }
   };
-
-  // onCardChange = ({ prop, value }) => {
-  //   this.props.onScheduleValueChange({ prop, value });
-  // };
 
   renderRow = ({ item }) => {
     return (
       <RegisterScheduleItem
         card={item}
         navigation={this.props.navigation}
-        // onCardChange={this.onCardChange}
+      // onCardChange={this.onCardChange}
       />
     );
   };
@@ -71,7 +72,7 @@ class RegisterSchedule extends Component {
           style={styles.cardStyle}
           title="Guardar"
           loading={loading}
-          //onPress={this.onButtonPressHandler.bind(this)}
+        //onPress={this.onButtonPressHandler.bind(this)}
         />
       </View>
     );
@@ -85,7 +86,6 @@ class RegisterSchedule extends Component {
 const emptyCard = {
   firstOpen: '',
   firstClose: '',
-  disableDays: [],
   days: []
 };
 

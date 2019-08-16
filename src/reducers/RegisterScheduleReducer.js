@@ -2,7 +2,8 @@ import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
   SCHEDULE_FORM_SUBMIT,
-  ON_SCHEDULE_CARD_VALUE_CHANGE
+  ON_SCHEDULE_CARD_VALUE_CHANGE,
+  ON_SCHEDULE_CARD_DELETE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -31,9 +32,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, [prop]: value };
     case ON_SCHEDULE_CARD_VALUE_CHANGE:
       const newCard = action.payload;
-      
-      var newCards = state.cards.map((card, id) => {
-        if (id !== newCard.id) {
+      var newCards = state.cards.map(card => {
+        if (card.id !== newCard.id) {
           return card;
         }
 
@@ -41,6 +41,12 @@ export default (state = INITIAL_STATE, action) => {
       })
 
       return { ...state, cards: newCards };
+    case ON_SCHEDULE_CARD_DELETE:
+      const cardToDelete = state.cards.find(card => card.id === action.payload);
+      var newSelectedDays = state.selectedDays.filter(day => !cardToDelete.days.includes(day));
+      var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
+
+      return { ...state, cards: newCards, selectedDays: newSelectedDays };
     case SCHEDULE_FORM_SUBMIT:
       return { ...state, loading: true };
     default:

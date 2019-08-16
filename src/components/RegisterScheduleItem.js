@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, CheckBox, ButtonGroup } from 'react-native-elements';
+import { Card, CheckBox, ButtonGroup, Text, Divider } from 'react-native-elements';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
-import { onScheduleValueChange, onScheduleCardValueChange } from '../actions';
+import { onScheduleValueChange, onScheduleCardValueChange, onScheduleCardDelete } from '../actions';
 import { CardSection, DatePicker } from './common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
@@ -134,7 +135,16 @@ class RegisterSchedule extends Component {
   render() {
     return (
       <View>
-        <Card containerStyle={styles.cardStyle} title="Horarios">
+        <Card containerStyle={styles.cardStyle}>
+          <View style={styles.headerContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Horarios</Text>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Ionicons name='md-close' color='black' size={25} onPress={() => this.props.onScheduleCardDelete(this.props.card.id)} />
+            </View>
+          </View>
+          <Divider style={{ backgroundColor: '#c4c4c4', margin: 10 }} />
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
@@ -215,6 +225,19 @@ const styles = StyleSheet.create({
   },
   buttonGroupCard: {
     paddingTop: 0
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    marginLeft: 15,
+    marginRight: 15
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 15
   }
 });
 
@@ -230,6 +253,7 @@ export default connect(
   mapStateToProps,
   {
     onScheduleValueChange,
-    onScheduleCardValueChange
+    onScheduleCardValueChange,
+    onScheduleCardDelete
   }
 )(RegisterSchedule);
