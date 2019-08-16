@@ -22,15 +22,11 @@ class RegisterSchedule extends Component {
     });
   }
 
-  getDisabledCheckBox = () => {
-    return (
-      this.props.card.firstClose === '' || this.state.firstCloseError !== ''
-    );
-  };
+  getDisabledCheckBox = () =>
+    this.props.card.firstClose === '' || this.state.firstCloseError !== '';
 
-  getDisabledSecondPickerClose = () => {
-    return !this.props.card.secondOpen || this.state.secondOpenError !== '';
-  };
+  getDisabledSecondPickerClose = () =>
+    !this.props.card.secondOpen || this.state.secondOpenError !== '';
 
   renderPickerFirstClose = value => {
     const { firstOpen } = this.props.card;
@@ -137,7 +133,7 @@ class RegisterSchedule extends Component {
           <DatePicker
             date={this.props.card.secondOpen}
             mode="time"
-            placeholder="Seleccione hora de apertura"
+            placeholder="Hora de apertura"
             onDateChange={value => {
               this.props.onScheduleValueChange({
                 prop: 'secondOpen',
@@ -154,7 +150,7 @@ class RegisterSchedule extends Component {
 
           <DatePicker
             date={this.props.card.secondClose}
-            placeholder="Hora de Cierre"
+            placeholder="Hora de cierre"
             onDateChange={value => {
               this.props.onScheduleValueChange({
                 prop: 'secondClose',
@@ -182,7 +178,7 @@ class RegisterSchedule extends Component {
           <CardSection style={styles.viewPickerDate}>
             <DatePicker
               date={this.props.card.firstOpen}
-              placeholder="Hora de Apertura"
+              placeholder="Hora de apertura"
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstOpen',
@@ -196,7 +192,7 @@ class RegisterSchedule extends Component {
             />
             <DatePicker
               date={this.props.card.firstClose}
-              placeholder="Hora de Cierre"
+              placeholder="Hora de cierre"
               onDateChange={value => {
                 this.props.onScheduleValueChange({
                   prop: 'firstClose',
