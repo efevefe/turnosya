@@ -41,7 +41,7 @@ class CommercesList extends Component {
     }, 50);
   }
 
-  renderList() {
+  render() {
     if (this.props.loading) {
       return <Spinner size="large" color={MAIN_COLOR} />;
     } else {
@@ -63,10 +63,6 @@ class CommercesList extends Component {
         </View>
       );
     }
-  }
-
-  render() {
-    return this.renderList();
   }
 }
 
