@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, CheckBox, ButtonGroup, Text, Divider } from 'react-native-elements';
+import {
+  Card,
+  CheckBox,
+  ButtonGroup,
+  Text,
+  Divider
+} from 'react-native-elements';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
-import { onScheduleValueChange, onScheduleCardValueChange, onScheduleCardDelete } from '../actions';
+import {
+  onScheduleValueChange,
+  onScheduleCardValueChange,
+  onScheduleCardDelete
+} from '../actions';
 import { CardSection, DatePicker } from './common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
@@ -160,7 +170,14 @@ class RegisterSchedule extends Component {
               <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Horarios</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Ionicons name='md-close' color='black' size={25} onPress={() => this.props.onScheduleCardDelete(this.props.card.id)} />
+              <Ionicons
+                name="md-close"
+                color="black"
+                size={25}
+                onPress={() =>
+                  this.props.onScheduleCardDelete(this.props.card.id)
+                }
+              />
             </View>
           </View>
           <Divider style={{ backgroundColor: '#c4c4c4', margin: 10 }} />

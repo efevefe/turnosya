@@ -6,8 +6,12 @@ import { Spinner, Button } from './common';
 import { onScheduleValueChange } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import RegisterScheduleItem from './RegisterScheduleItem';
+import { Fab } from 'native-base';
 
 class RegisterSchedule extends Component {
+  state = {
+    active: false
+  };
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon')
@@ -21,11 +25,11 @@ class RegisterSchedule extends Component {
   renderAddButton = () => {
     return (
       <Ionicons
-        name="md-add"
+        name="md-checkmark"
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        onPress={this.onAddPress}
+        //onPress={this.onAddPress}
       />
     );
   };
@@ -65,13 +69,15 @@ class RegisterSchedule extends Component {
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
+          style={{ padingBottom: 80 }}
         />
-        <Button
-          style={styles.cardStyle}
-          title="Guardar"
-          loading={this.props.loading}
-          //onPress={this.onButtonPressHandler.bind(this)}
-        />
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
       </View>
     );
   }
