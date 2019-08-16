@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, CheckBox, ButtonGroup, Text, Divider } from 'react-native-elements';
+import {
+  Card,
+  CheckBox,
+  ButtonGroup,
+  Text,
+  Divider
+} from 'react-native-elements';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
-import { onScheduleValueChange, onScheduleCardValueChange, onScheduleCardDelete } from '../actions';
+import {
+  onScheduleValueChange,
+  onScheduleCardValueChange,
+  onScheduleCardDelete
+} from '../actions';
 import { CardSection, DatePicker } from './common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
@@ -25,37 +35,42 @@ class RegisterSchedule extends Component {
   }
 
   getDisabledCheckBox = () => {
-    this.props.card.firstClose === '' || this.state.firstCloseError !== '';
+    return (
+      this.props.card.firstClose === '' || this.state.firstCloseError !== ''
+    );
   };
 
   getDisabledSecondPickerClose = () => {
-    !this.props.card.secondOpen || this.state.secondOpenError !== '';
+    return !this.props.card.secondOpen || this.state.secondOpenError !== '';
   };
 
-  renderPickerFirstClose = value => {
-    const { firstOpen } = this.props.card;
+  renderPickerFirstClose = () => {
+    const { firstOpen, firstClose } = this.props.card;
 
-    firstOpen < value
-      ? this.setState({ firstCloseError: '' })
-      : this.setState({
-          firstCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
-        });
+    if (firstOpen < firstClose || firstClose == '') {
+      this.setState({ firstCloseError: '' });
+    } else {
+      this.setState({
+        firstCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
+      this.onSecondTurnPress();
+    }
   };
 
-  renderPickerSecondOpen = value => {
-    const { firstClose } = this.props.card;
+  renderPickerSecondOpen = () => {
+    const { firstClose, secondOpen } = this.props.card;
 
-    value > firstClose
+    secondOpen > firstClose || secondOpen === ''
       ? this.setState({ secondOpenError: '' })
       : this.setState({
           secondOpenError: `Segundo turno debe \n ser mayor al primero`
         });
   };
 
-  renderPickerSecondClose = value => {
-    const { secondOpen } = this.props.card;
+  renderPickerSecondClose = () => {
+    const { secondOpen, secondClose } = this.props.card;
 
-    secondOpen < value
+    secondOpen < secondClose
       ? this.setState({ secondCloseError: '' })
       : this.setState({
           secondCloseError: `Hora de cierre debe ser \n mayor a la de apertura`
@@ -63,7 +78,9 @@ class RegisterSchedule extends Component {
   };
 
   getDisabledDays = () => {
-    this.props.selectedDays.filter(day => !this.props.card.days.includes(day));
+    return this.props.selectedDays.filter(
+      day => !this.props.card.days.includes(day)
+    );
   };
 
   updateIndex = selectedIndexes => {
@@ -98,12 +115,16 @@ class RegisterSchedule extends Component {
   };
 
   onSecondTurnPress = () => {
-    this.props.onScheduleCardValueChange({
-      id: this.props.card.id,
-      secondOpen: '',
-      secondClose: ''
-    });
-    this.setState({ checked: !this.state.checked });
+    if (this.state.firstCloseError === '') {
+      this.props.onScheduleCardValueChange({
+        id: this.props.card.id,
+        secondOpen: '',
+        secondClose: ''
+      });
+      this.setState({ checked: !this.state.checked });
+    } else {
+      this.setState({ checked: false });
+    }
   };
 
   renderSecondTurn() {
@@ -115,12 +136,12 @@ class RegisterSchedule extends Component {
             mode="time"
             label="Desde las:"
             placeholder="Hora de apertura"
-            onDateChange={value => {
-              this.props.onScheduleCardValueChange({
+            onDateChange={async value => {
+              await this.props.onScheduleCardValueChange({
                 id: this.props.card.id,
                 secondOpen: value
               });
-              this.renderPickerSecondOpen(value);
+              this.renderPickerSecondOpen();
             }}
             errorMessage={this.state.secondOpenError}
           />
@@ -129,12 +150,12 @@ class RegisterSchedule extends Component {
             date={this.props.card.secondClose}
             label="Hasta las:"
             placeholder="Hora de cierre"
-            onDateChange={value => {
-              this.props.onScheduleCardValueChange({
+            onDateChange={async value => {
+              await this.props.onScheduleCardValueChange({
                 id: this.props.card.id,
                 secondClose: value
               });
-              this.renderPickerSecondClose(value);
+              this.renderPickerSecondClose();
             }}
             disabled={this.getDisabledSecondPickerClose()}
             errorMessage={this.state.secondCloseError}
@@ -153,7 +174,14 @@ class RegisterSchedule extends Component {
               <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Horarios</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Ionicons name='md-close' color='black' size={25} onPress={() => this.props.onScheduleCardDelete(this.props.card.id)} />
+              <Ionicons
+                name="md-close"
+                color="black"
+                size={25}
+                onPress={() =>
+                  this.props.onScheduleCardDelete(this.props.card.id)
+                }
+              />
             </View>
           </View>
           <Divider style={{ backgroundColor: '#c4c4c4', margin: 10 }} />
@@ -162,23 +190,25 @@ class RegisterSchedule extends Component {
               date={this.props.card.firstOpen}
               label="Desde las:"
               placeholder="Hora de apertura"
-              onDateChange={value => {
-                this.props.onScheduleCardValueChange({
+              onDateChange={async value => {
+                await this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstOpen: value
                 });
+                this.renderPickerFirstClose();
               }}
             />
             <DatePicker
               date={this.props.card.firstClose}
               label="Hasta las:"
               placeholder="Hora de cierre"
-              onDateChange={value => {
-                this.props.onScheduleCardValueChange({
+              onDateChange={async value => {
+                await this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstClose: value
                 });
-                this.renderPickerFirstClose(value);
+                this.renderPickerFirstClose();
+                this.renderPickerSecondOpen();
               }}
               disabled={!this.props.card.firstOpen}
               errorMessage={this.state.firstCloseError}
