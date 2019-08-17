@@ -70,8 +70,16 @@ export const ON_COMMERCE_LIST_OPEN = 'on_commerce_list_open';
 //Register Schedule
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
-export const SCHEDULE_FORM_SUBMIT = 'on_schedule_form_submit';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
 export const ON_SCHEDULE_CARD_DELETE = 'on_schedule_card_delete';
-export const ON_SCHEDULE_SHIFTS_READ = 'on_schedule_shifts_read';
-export const ON_SCHEDULE_SHIFTS_READING = 'on_schedule_shifts_reading';
+export const ON_SCHEDULE_READ = 'on_schedule_shifts_read';
+export const ON_SCHEDULE_READING = 'on_schedule_shifts_reading';
+export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
+export const ON_SCHEDULE_CREATED = 'on_schedule_create'
+export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
+export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
+
+//Register Schedule Config
+export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
+export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
+export const ON_SCHEDULE_CONFIG_VALUE_CHANGE = 'on_schedule_conf_value_change';

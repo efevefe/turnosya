@@ -3,10 +3,10 @@ export const imageToBlob = async uri => {
 
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = function() {
       resolve(xhr.response);
     };
-    xhr.onerror = function () {
+    xhr.onerror = function() {
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';
@@ -58,7 +58,7 @@ export const validateValueType = (type, value) => {
   }
 };
 
-const validarCuit = (cuit) => {
+const validarCuit = cuit => {
   //regex para cuit unicamente de negocio
   const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
 
@@ -71,7 +71,7 @@ const validarCuit = (cuit) => {
   }
 
   var acumulado = 0;
-  var digitos = cuit.split("");
+  var digitos = cuit.split('');
   var digito = digitos.pop();
 
   for (var i = 0; i < digitos.length; i++) {
@@ -84,4 +84,40 @@ const validarCuit = (cuit) => {
   }
 
   return digito == verif;
-}
+};
+
+/**
+ * Formats the input value (minutes) into a String containing the hours and
+ * minutes that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalMins The amount of minutes to format
+ * @return {String}            String with the following format: 'XX h. XX mins.'
+ */
+export const stringFormatMinutes = totalMins => {
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+
+  if (hours && mins) return hours + ' h ' + mins + ' mins.';
+  else if (hours) return hours + ' h.';
+  else return mins + ' mins.';
+};
+
+/**
+ * Formats the input value (days) into a String containing the months and
+ * days that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalDays The amount of days to format
+ * @return {String}            String with the following format: 'XX meses y XX días.'
+ */
+export const stringFormatDays = totalDays => {
+  const months = Math.floor(totalDays / 30);
+  const days = totalDays % 30;
+
+  const stringMonths =
+    months == 0 ? '' : months == 1 ? months + ' mes' : months + ' meses';
+
+  const stringDays =
+    days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+
+  if (months && days) return stringMonths + ' y ' + stringDays + '.';
+  else if (months) return stringMonths + '.';
+  else return stringDays + '.';
+};

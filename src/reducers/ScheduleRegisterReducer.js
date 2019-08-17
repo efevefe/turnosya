@@ -1,11 +1,14 @@
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
-  SCHEDULE_FORM_SUBMIT,
   ON_SCHEDULE_CARD_VALUE_CHANGE,
   ON_SCHEDULE_CARD_DELETE,
-  ON_SCHEDULE_SHIFTS_READ,
-  ON_SCHEDULE_SHIFTS_READING
+  ON_SCHEDULE_READ,
+  ON_SCHEDULE_READING,
+  ON_SCHEDULE_READ_FAIL,
+  ON_SCHEDULE_CREATING,
+  ON_SCHEDULE_CREATED,
+  ON_SCHEDULE_CREATE_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -14,11 +17,14 @@ const INITIAL_STATE = {
       id: 0,
       firstShiftStart: '',
       firstShiftEnd: '',
+      secondShiftStart: null,
+      secondShiftEnd: null,
       days: []
     }
   ],
   selectedDays: [],
-  loading: false
+  loading: false,
+  refreshing: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -48,12 +54,18 @@ export default (state = INITIAL_STATE, action) => {
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
-    case ON_SCHEDULE_SHIFTS_READING:
+    case ON_SCHEDULE_READING:
       return { ...state, loading: true };
-    case ON_SCHEDULE_SHIFTS_READ:
+    case ON_SCHEDULE_READ:
       return { ...INITIAL_STATE, ...action.payload };
-    case SCHEDULE_FORM_SUBMIT:
-      return { ...state, loading: true };
+    case ON_SCHEDULE_READ_FAIL:
+      return { ...state, loading: false };
+    case ON_SCHEDULE_CREATING:
+      return { ...state, refreshing: true };
+    case ON_SCHEDULE_CREATED:
+      return { ...state, refreshing: false };
+    case ON_SCHEDULE_CREATE_FAIL:
+      return { ...state, refreshing: false };
     default:
       return state;
   }

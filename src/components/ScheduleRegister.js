@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, RefreshControl } from 'react-native';
+import { Fab } from 'native-base';
 import { Spinner } from './common';
 import {
   onScheduleValueChange,
@@ -9,10 +10,9 @@ import {
   onScheduleRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
-import RegisterScheduleItem from './RegisterScheduleItem';
-import { Fab } from 'native-base';
+import ScheduleRegisterItem from './ScheduleRegisterItem';
 
-class RegisterSchedule extends Component {
+class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon')
@@ -31,7 +31,7 @@ class RegisterSchedule extends Component {
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        //onPress={this.onAddPress}
+        onPress={() => this.props.onScheduleCreate(this.props.cards)}
       />
     );
   };
@@ -58,7 +58,7 @@ class RegisterSchedule extends Component {
 
   renderRow = ({ item }) => {
     return (
-      <RegisterScheduleItem card={item} navigation={this.props.navigation} />
+      <ScheduleRegisterItem card={item} navigation={this.props.navigation} />
     );
   };
 
@@ -66,6 +66,7 @@ class RegisterSchedule extends Component {
     if (this.props.loading) {
       return <Spinner />;
     }
+
     return (
       <View style={{ flex: 1 }}>
         <FlatList
@@ -74,6 +75,13 @@ class RegisterSchedule extends Component {
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
           contentContainerStyle={{ paddingBottom: 95 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              colors={[MAIN_COLOR]}
+              tintColor={MAIN_COLOR}
+            />
+          }
         />
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -90,15 +98,17 @@ class RegisterSchedule extends Component {
 const emptyCard = {
   firstShiftStart: '',
   firstShiftEnd: '',
+  secondShiftStart: null,
+  secondShiftEnd: null,
   days: []
 };
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, loading } = state.registerSchedule;
-  return { cards, selectedDays, loading };
+  const { cards, selectedDays, loading, refreshing } = state.scheduleRegister;
+  return { cards, selectedDays, loading, refreshing };
 };
 
 export default connect(
   mapStateToProps,
   { onScheduleValueChange, onScheduleCreate, onScheduleRead }
-)(RegisterSchedule);
+)(ScheduleRegister);
