@@ -199,14 +199,12 @@ class CourtForm extends Component {
 
     this.setState({ groundTypeError: '' });
 
-    if (grounds !== null && key > 0) {
-      onCourtValueChange({
-        prop: 'ground',
-        value
-      });
-    } else {
-      onCourtValueChange({ prop: 'ground', value: '' });
-    }
+    grounds !== null && key > 0
+      ? onCourtValueChange({
+          prop: 'ground',
+          value
+        })
+      : onCourtValueChange({ prop: 'ground', value: '' });
   };
 
   onCheckBoxPress = () => {
@@ -268,8 +266,6 @@ class CourtForm extends Component {
   }
 
   render() {
-    if (this.props.loading) <Spinner size="large" />;
-
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
         <View>
@@ -375,7 +371,9 @@ class CourtForm extends Component {
                 onBlur={this.renderPriceError}
               />
             </CardSection>
+
             <CardSection>{this.renderInput()}</CardSection>
+
             <CardSection>
               <Button
                 title="Guardar"

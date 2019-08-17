@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { View } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { connect } from 'react-redux';
 
 class CommerceListItem extends Component {
   state = { favorite: false };
 
-  onFavoritePress() {
+  onFavoritePress = () => {
     this.setState({ favorite: !this.state.favorite });
-  }
+  };
+
   render() {
     const { name, address, profilePicture } = this.props.commerce;
     const areaName = this.props.commerce.area.name;
+
     return (
       <View>
         <ListItem
@@ -35,7 +35,7 @@ class CommerceListItem extends Component {
                 )
               }
               buttonStyle={{ padding: 0 }}
-              onPress={this.onFavoritePress.bind(this)}
+              onPress={this.onFavoritePress}
             />
           }
           bottomDivider
@@ -45,7 +45,4 @@ class CommerceListItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  {}
-)(CommerceListItem);
+export default CommerceListItem;

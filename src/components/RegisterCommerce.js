@@ -96,6 +96,7 @@ class RegisterCommerce extends Component {
               onBlur={this.renderNameError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Cuit"
@@ -112,6 +113,7 @@ class RegisterCommerce extends Component {
               onBlur={this.renderCuitError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Teléfono"
@@ -128,11 +130,12 @@ class RegisterCommerce extends Component {
               onBlur={this.renderPhoneError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="E-mail"
               placeholder="E-mail"
-              autoCapitalize='none'
+              autoCapitalize="none"
               errorMessage={this.state.emailError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
@@ -144,6 +147,7 @@ class RegisterCommerce extends Component {
               onBlur={this.renderEmailError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Descripción"
@@ -159,6 +163,7 @@ class RegisterCommerce extends Component {
               }
             />
           </CardSection>
+
           <CardSection>
             <Button
               title="Continuar"
