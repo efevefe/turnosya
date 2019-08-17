@@ -34,7 +34,7 @@ class CommerceSchedule extends Component {
 
   onScheduleShiftPress = () => {
     const navigateAction = NavigationActions.navigate({
-      routeName: 'registerSchedule'
+      routeName: 'scheduleRegister'
     });
 
     this.setState({ modal: false });

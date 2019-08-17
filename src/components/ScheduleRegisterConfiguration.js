@@ -7,7 +7,7 @@ import { MAIN_COLOR } from '../constants';
 import { stringFormatDays, stringFormatMinutes } from '../utils';
 import { onScheduleConfigSave, onScheduleConfigValueChange } from '../actions';
 
-class RegisterScheduleConfiguration extends Component {
+class ScheduleRegisterConfiguration extends Component {
   state = {
     reservationMinFrom: 15,
     reservationMinTo: 240,
@@ -116,4 +116,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   { onScheduleConfigSave, onScheduleConfigValueChange }
-)(RegisterScheduleConfiguration);
+)(ScheduleRegisterConfiguration);

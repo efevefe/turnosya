@@ -10,9 +10,9 @@ import {
   onScheduleRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
-import RegisterScheduleItem from './RegisterScheduleItem';
+import ScheduleRegisterItem from './ScheduleRegisterItem';
 
-class RegisterSchedule extends Component {
+class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon')
@@ -58,7 +58,7 @@ class RegisterSchedule extends Component {
 
   renderRow = ({ item }) => {
     return (
-      <RegisterScheduleItem card={item} navigation={this.props.navigation} />
+      <ScheduleRegisterItem card={item} navigation={this.props.navigation} />
     );
   };
 
@@ -104,11 +104,11 @@ const emptyCard = {
 };
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, loading, refreshing } = state.registerSchedule;
+  const { cards, selectedDays, loading, refreshing } = state.scheduleRegister;
   return { cards, selectedDays, loading, refreshing };
 };
 
 export default connect(
   mapStateToProps,
   { onScheduleValueChange, onScheduleCreate, onScheduleRead }
-)(RegisterSchedule);
+)(ScheduleRegister);

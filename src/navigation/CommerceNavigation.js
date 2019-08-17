@@ -9,10 +9,10 @@ import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
-import RegisterSchedule from '../components/RegisterSchedule';
+import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
-import RegisterScheduleConfiguration from '../components/RegisterScheduleConfiguration';
+import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
 import { MAIN_COLOR } from '../constants';
 
 // Stack navigation options
@@ -65,14 +65,14 @@ const calendarStack = createStackNavigator(
         headerLeft: leftIcon(navigation, 'md-menu')
       })
     },
-    registerSchedule: {
-      screen: RegisterSchedule,
+    scheduleRegister: {
+      screen: ScheduleRegister,
       navigationOptions: ({ navigation }) => ({
         title: 'Generar calendario'
       })
     },
     registerConfiguration: {
-      screen: RegisterScheduleConfiguration,
+      screen: ScheduleRegisterConfiguration,
       navigationOptions: ({ navigattion }) => ({
         title: 'Límites de turnos'
       })
