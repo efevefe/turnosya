@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 import { CardSection, Button, Spinner } from './common';
 import { MAIN_COLOR } from '../constants';
 import { stringFormatDays, stringFormatMinutes } from '../utils';
-import { onScheduleConfigSave } from '../actions';
+import { onScheduleConfigSave, onScheduleConfigValueChange } from '../actions';
 
 class RegisterScheduleConfiguration extends Component {
   state = {
@@ -19,9 +19,23 @@ class RegisterScheduleConfiguration extends Component {
 
   onSavePressHandler() {
     this.props.onScheduleConfigSave(
-      this.state.reservationMinValue,
-      this.state.reservationDayValue,
+      this.props.reservationMinLength,
+      this.props.reservationDayPeriod,
       'aca iria el commerce id' //this.props.commerceId
+    );
+  }
+
+  onMinSliderValueChange() {
+    this.props.onScheduleConfigValueChange(
+      'reservationMinLength',
+      this.state.reservationMinValue
+    );
+  }
+
+  onDaySliderValueChange() {
+    this.props.onScheduleConfigValueChange(
+      'reservationDayPeriod',
+      this.state.reservationDayValue
     );
   }
 
@@ -47,6 +61,7 @@ class RegisterScheduleConfiguration extends Component {
               step={reservationMinFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
               value={reservationMinValue}
+              onSlidingComplete={this.onMinSliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationMinValue: val })}
             />
             <Text>
@@ -66,6 +81,7 @@ class RegisterScheduleConfiguration extends Component {
               step={reservationDayFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
               value={reservationDayValue}
+              onSlidingComplete={this.onDaySliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationDayValue: val })}
             />
             <Text>
@@ -91,11 +107,13 @@ class RegisterScheduleConfiguration extends Component {
 const mapStateToProps = state => {
   return {
     commerceId: state.commerceData.commerceId,
-    loading: state.scheduleConfig.loading
+    loading: state.scheduleConfig.loading,
+    reservationMinLength: state.scheduleConfig.reservationMinLength,
+    reservationDayPeriod: state.scheduleConfig.reservationDayPeriod
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleConfigSave }
+  { onScheduleConfigSave, onScheduleConfigValueChange }
 )(RegisterScheduleConfiguration);

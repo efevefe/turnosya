@@ -12,7 +12,8 @@ import {
   ON_SCHEDULE_CREATING,
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
-  ON_SCHEDULE_CONFIG_UPDATED
+  ON_SCHEDULE_CONFIG_UPDATED,
+  ON_SCHEDULE_CONFIG_VALUE_CHANGE
 } from './types';
 
 export const onScheduleValueChange = ({ prop, value }) => {
@@ -153,4 +154,8 @@ export const onScheduleConfigSave = (
       .then(() => dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED }))
       .catch(() => console.log('error'));
   };
+};
+
+export const onScheduleConfigValueChange = (prop, value) => {
+  return { type: ON_SCHEDULE_CONFIG_VALUE_CHANGE, payload: { prop, value } };
 };
