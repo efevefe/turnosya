@@ -74,7 +74,7 @@ const calendarStack = createStackNavigator(
     registerConfiguration: {
       screen: RegisterScheduleConfiguration,
       navigationOptions: ({ navigattion }) => ({
-        title: 'Configuración calendario'
+        title: 'Límites de turnos'
       })
     }
   },

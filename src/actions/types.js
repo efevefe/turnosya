@@ -76,3 +76,7 @@ export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
 export const ON_SCHEDULE_CREATED = 'on_schedule_create'
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
+
+//Register Schedule Config
+export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
+export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';

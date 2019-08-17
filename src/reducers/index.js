@@ -8,6 +8,7 @@ import CourtListReducer from './CourtListReducer';
 import CommerceDataReducer from './CommerceDataReducer';
 import CommercesListReducer from './CommercesListReducer';
 import RegisterScheduleReducer from './RegisterScheduleReducer';
+import ScheduleConfigReducer from './ScheduleConfigReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
   courtsList: CourtListReducer,
   commerceData: CommerceDataReducer,
   commercesList: CommercesListReducer,
-  registerSchedule: RegisterScheduleReducer
+  registerSchedule: RegisterScheduleReducer,
+  scheduleConfig: ScheduleConfigReducer
 });
