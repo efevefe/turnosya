@@ -97,11 +97,11 @@ export const onCommerceRead = loadingType => {
         db.doc(`Commerces/${doc.data().commerceId}`)
           .get()
           .then(doc => {
-            //provincia
+            //province
             var { name, provinceId } = doc.data().province;
             const province = { value: provinceId, label: name };
 
-            //rubro
+            //area
             var { name, areaId } = doc.data().area;
             const area = { value: areaId, label: name };
 

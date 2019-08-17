@@ -36,26 +36,18 @@ class App extends React.Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.setState({ logged: true, screenLoading: false });
-      } else {
-        this.setState({ logged: false, screenLoading: false });
-      }
+      user
+        ? this.setState({ logged: true, screenLoading: false })
+        : this.setState({ logged: false, screenLoading: false });
     });
   }
 
   renderNavigation = () => {
     const { screenLoading, logged } = this.state;
 
-    if (screenLoading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
-    } else {
-      if (logged) {
-        return <MainNavigation />;
-      } else {
-        return <GuestNavigation />;
-      }
-    }
+    if (screenLoading) return <Spinner size="large" color={MAIN_COLOR} />;
+
+    return logged ? <MainNavigation /> : <GuestNavigation />;
   };
 
   render() {
