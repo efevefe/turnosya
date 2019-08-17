@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { Spinner } from './common';
-import { onScheduleValueChange, onScheduleCreate, onScheduleRead } from '../actions';
+import {
+  onScheduleValueChange,
+  onScheduleCreate,
+  onScheduleRead
+} from '../actions';
 import { MAIN_COLOR } from '../constants';
 import RegisterScheduleItem from './RegisterScheduleItem';
 import { Fab } from 'native-base';
@@ -62,7 +66,6 @@ class RegisterSchedule extends Component {
     if (this.props.loading) {
       return <Spinner />;
     }
-
     return (
       <View style={{ flex: 1 }}>
         <FlatList
@@ -85,8 +88,8 @@ class RegisterSchedule extends Component {
 }
 
 const emptyCard = {
-  firstOpen: '',
-  firstClose: '',
+  firstShiftStart: '',
+  firstShiftEnd: '',
   days: []
 };
 

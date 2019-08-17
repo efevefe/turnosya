@@ -16,11 +16,11 @@ export const onScheduleValueChange = ({ prop, value }) => {
 
 export const onScheduleCardValueChange = card => {
   return { type: ON_SCHEDULE_CARD_VALUE_CHANGE, payload: card };
-}
+};
 
 export const onScheduleCardDelete = cardId => {
   return { type: ON_SCHEDULE_CARD_DELETE, payload: cardId };
-}
+};
 
 export const onScheduleFormOpen = () => {
   return { type: ON_SCHEDULE_FORM_OPEN };
@@ -33,37 +33,45 @@ export const onScheduleRead = () => {
     dispatch({ type: ON_SCHEDULE_SHIFTS_READING });
 
     //ruta hardcodeada para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts').get()
-    .then(snapshot => {
-      var cards = [];
-      var selectedDays = [];
-  
-      snapshot.forEach(doc => {
-        const { id, days, firstShiftStart, firstShiftEnd } = doc.data();
+    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+      .get()
+      .then(snapshot => {
+        var cards = [];
+        var selectedDays = [];
 
-        var card = {
-          id: id,
-          days: days,
-          firstOpen: firstShiftStart,
-          firstClose: firstShiftEnd
-        };
-  
-        if (doc.data().secondShiftStart && doc.data().secondShiftEnd) {
-          card = { ...card, secondOpen: doc.data().secondShiftStart, secondClose: doc.data().secondShiftEnd };
-        }
-  
-        cards.push(card);
-        selectedDays = selectedDays.concat(card.days);
+        snapshot.forEach(doc => {
+          const { id, days, firstShiftStart, firstShiftEnd } = doc.data();
+
+          var card = {
+            id: id,
+            days: days,
+            firstShiftStart,
+            firstShiftEnd
+          };
+
+          if (doc.data().secondShiftStart && doc.data().secondShiftEnd) {
+            card = {
+              ...card,
+              secondShiftStart: doc.data().secondShiftStart,
+              secondShiftEnd: doc.data().secondShiftEnd
+            };
+          }
+
+          cards.push(card);
+          selectedDays = selectedDays.concat(card.days);
+        });
+
+        console.log(selectedDays);
+
+        dispatch({
+          type: ON_SCHEDULE_SHIFTS_READ,
+          payload: { cards, selectedDays }
+        });
       });
+  };
+};
 
-      console.log(selectedDays);
-
-      dispatch({ type: ON_SCHEDULE_SHIFTS_READ, payload: { cards, selectedDays } });
-    })
-  }
-}
-
-export const onScheduleCreate = (cards) => {
+export const onScheduleCreate = cards => {
   const db = firebase.firestore();
   var batch = db.batch();
 
@@ -71,29 +79,38 @@ export const onScheduleCreate = (cards) => {
 
   cards.forEach(card => {
     //ruta hardcodeada para probar
-    var ref = db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts').doc(`${card.id}`);
+    var ref = db
+      .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+      .doc(`${card.id}`);
     batch.set(ref, card);
-  })
+  });
 
   batch.commit().then(() => console.log('Escrito perri'));
 
-  return { type: ON_SCHEDULE_VALUE_CHANGE, payload: { prop: 'nada', value: '' } };
-}
+  return {
+    type: ON_SCHEDULE_VALUE_CHANGE,
+    payload: { prop: 'nada', value: '' }
+  };
+};
 
 formatCards = card => {
   var newCard = {
     id: card.id,
-    firstShiftStart: card.firstOpen,
-    firstShiftEnd: card.firstClose,
+    firstShiftStart: card.firstShiftStart,
+    firstShiftEnd: card.firstShiftEnd,
     days: card.days
   };
 
-  if (card.secondOpen && card.secondClose) {
-    newCard = { ...newCard, secondShiftStart: card.secondOpen, secondShiftEnd: card.secondClose };
+  if (card.secondShiftStart && card.secondShiftEnd) {
+    newCard = {
+      ...newCard,
+      secondShiftStart: card.secondShiftStart,
+      secondShiftEnd: card.secondShiftEnd
+    };
   }
 
   return newCard;
-}
+};
 
 /*
 export const onScheduleCreate = (cards) => {
@@ -118,10 +135,10 @@ export const onScheduleCreate = (cards) => {
 /*
 formatCards = card => {
   return card.days.map(day => {
-    var dayShifts = [{ shiftStart: card.firstOpen, shiftEnd: card.firstClose }];
+    var dayShifts = [{ shiftStart: card.firstShiftStart, shiftEnd: card.firstShiftEnd }];
 
-    if (card.secondOpen && card.secondClose) {
-      dayShifts.push({ shiftStart: card.secondOpen, shiftEnd: card.secondClose })
+    if (card.secondShiftStart && card.secondShiftEnd) {
+      dayShifts.push({ shiftStart: card.secondShiftStart, shiftEnd: card.secondShiftEnd })
     }
 
     return { dayId: day, shifts: dayShifts };

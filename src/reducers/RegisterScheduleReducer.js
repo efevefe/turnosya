@@ -12,8 +12,8 @@ const INITIAL_STATE = {
   cards: [
     {
       id: 0,
-      firstOpen: '',
-      firstClose: '',
+      firstShiftStart: '',
+      firstShiftEnd: '',
       days: []
     }
   ],
@@ -37,12 +37,14 @@ export default (state = INITIAL_STATE, action) => {
         }
 
         return { ...card, ...newCard };
-      })
+      });
 
       return { ...state, cards: newCards };
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
-      var newSelectedDays = state.selectedDays.filter(day => !cardToDelete.days.includes(day));
+      var newSelectedDays = state.selectedDays.filter(
+        day => !cardToDelete.days.includes(day)
+      );
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
