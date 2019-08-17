@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Spinner } from './common';
 import {
   onScheduleValueChange,
@@ -20,11 +20,11 @@ class RegisterSchedule extends Component {
   };
 
   componentWillMount() {
-    this.props.navigation.setParams({ rightIcon: this.renderAddButton() });
+    this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
     this.props.onScheduleRead();
   }
 
-  renderAddButton = () => {
+  renderSaveButton = () => {
     return (
       <Ionicons
         name="md-checkmark"

@@ -11,7 +11,8 @@ import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
 import RegisterSchedule from '../components/RegisterSchedule';
 import CommerceProfile from '../components/CommerceProfile';
-import EmptyScreen from '../components/EmptyScreen';
+import CommerceSchedule from '../components/CommerceSchedule';
+import RegisterScheduleConfiguration from '../components/RegisterScheduleConfiguration';
 import { MAIN_COLOR } from '../constants';
 
 // Stack navigation options
@@ -58,17 +59,22 @@ const leftIcon = (navigation, icon) => (
 const calendarStack = createStackNavigator(
   {
     calendar: {
-      screen: EmptyScreen,
+      screen: CommerceSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: leftIcon(navigation, 'md-menu'),
-        headerRight: rightIcon(navigation, 'md-settings', 'registerSchedule')
+        headerLeft: leftIcon(navigation, 'md-menu')
       })
     },
     registerSchedule: {
       screen: RegisterSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Generar calendario'
+      })
+    },
+    registerConfiguration: {
+      screen: RegisterScheduleConfiguration,
+      navigationOptions: ({ navigattion }) => ({
+        title: 'Configuración calendario'
       })
     }
   },

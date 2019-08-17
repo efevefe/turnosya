@@ -61,8 +61,6 @@ export const onScheduleRead = () => {
           selectedDays = selectedDays.concat(card.days);
         });
 
-        console.log(selectedDays);
-
         dispatch({
           type: ON_SCHEDULE_SHIFTS_READ,
           payload: { cards, selectedDays }
