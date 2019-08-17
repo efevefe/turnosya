@@ -69,7 +69,7 @@ class CommerceSchedule extends Component {
         </Text>
 
         <Menu
-          title="Configuración de diagramación:"
+          title="Configuración de diagramación"
           onBackdropPress={() => this.setState({ modal: false })}
           isVisible={this.state.modal}
         >
