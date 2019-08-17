@@ -5,8 +5,12 @@ import {
   ON_SCHEDULE_VALUE_CHANGE,
   ON_SCHEDULE_CARD_VALUE_CHANGE,
   ON_SCHEDULE_CARD_DELETE,
-  ON_SCHEDULE_SHIFTS_READ,
-  ON_SCHEDULE_SHIFTS_READING,
+  ON_SCHEDULE_READ,
+  ON_SCHEDULE_READING,
+  ON_SCHEDULE_READ_FAIL,
+  ON_SCHEDULE_CREATED,
+  ON_SCHEDULE_CREATING,
+  ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_CONFIG_VALUE_CHANGE
@@ -32,7 +36,7 @@ export const onScheduleRead = () => {
   const db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_SCHEDULE_SHIFTS_READING });
+    dispatch({ type: ON_SCHEDULE_READING });
 
     //ruta hardcodeada para probar
     db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
@@ -42,31 +46,18 @@ export const onScheduleRead = () => {
         var selectedDays = [];
 
         snapshot.forEach(doc => {
-          const { id, days, firstShiftStart, firstShiftEnd } = doc.data();
-
-          var card = {
-            id: id,
-            days: days,
-            firstShiftStart,
-            firstShiftEnd
-          };
-
-          if (doc.data().secondShiftStart && doc.data().secondShiftEnd) {
-            card = {
-              ...card,
-              secondShiftStart: doc.data().secondShiftStart,
-              secondShiftEnd: doc.data().secondShiftEnd
-            };
-          }
-
-          cards.push(card);
-          selectedDays = selectedDays.concat(card.days);
+          cards.push({ ...doc.data(), id: doc.id });
+          selectedDays = selectedDays.concat(doc.data().days);
         });
 
         dispatch({
-          type: ON_SCHEDULE_SHIFTS_READ,
+          type: ON_SCHEDULE_READ,
           payload: { cards, selectedDays }
         });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_SCHEDULE_READ_FAIL });
       });
   };
 };
@@ -75,41 +66,28 @@ export const onScheduleCreate = cards => {
   const db = firebase.firestore();
   var batch = db.batch();
 
-  var cards = cards.map(card => formatCards(card));
+  return dispatch => {
+    dispatch({ type: ON_SCHEDULE_CREATING });
 
-  cards.forEach(card => {
-    //ruta hardcodeada para probar
-    var ref = db
-      .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
-      .doc(`${card.id}`);
-    batch.set(ref, card);
-  });
+    cards.forEach(card => {
+      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+      //ruta hardcodeada para probar
+      var ref = db
+        .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+        .doc(`${card.id}`);
+      batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+    });
 
-  batch.commit().then(() => console.log('Escrito perri'));
+    var scheduleRef = db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0');
+    batch.update(scheduleRef, { startDate: new Date(), endDate: null });
 
-  return {
-    type: ON_SCHEDULE_VALUE_CHANGE,
-    payload: { prop: 'nada', value: '' }
-  };
-};
-
-formatCards = card => {
-  var newCard = {
-    id: card.id,
-    firstShiftStart: card.firstShiftStart,
-    firstShiftEnd: card.firstShiftEnd,
-    days: card.days
-  };
-
-  if (card.secondShiftStart && card.secondShiftEnd) {
-    newCard = {
-      ...newCard,
-      secondShiftStart: card.secondShiftStart,
-      secondShiftEnd: card.secondShiftEnd
-    };
+    batch.commit()
+      .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+      });
   }
-
-  return newCard;
 };
 
 /*

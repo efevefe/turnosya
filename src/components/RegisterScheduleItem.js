@@ -119,13 +119,16 @@ class RegisterSchedule extends Component {
   };
 
   onSecondTurnPress = () => {
+    const { checked } = this.state;
+
     if (this.state.firstShiftEndError === '') {
+      this.setState({ checked: !checked });
+
       this.props.onScheduleCardValueChange({
         id: this.props.card.id,
-        secondShiftStart: '',
-        secondShiftEnd: ''
+        secondShiftStart: null,
+        secondShiftEnd: null
       });
-      this.setState({ checked: !this.state.checked });
     } else {
       this.setState({ checked: false });
     }
