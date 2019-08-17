@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
 import { CardSection, Button, Spinner } from './common';
 import { MAIN_COLOR } from '../constants';
 import { stringFormatDays, stringFormatMinutes } from '../utils';
+import { onScheduleConfigSave } from '../actions';
 
 class RegisterScheduleConfiguration extends Component {
   state = {
@@ -15,6 +17,14 @@ class RegisterScheduleConfiguration extends Component {
     reservationDayValue: 1
   };
 
+  onSavePressHandler() {
+    this.props.onScheduleConfigSave(
+      this.state.reservationMinValue,
+      this.state.reservationDayValue,
+      'aca iria el commerce id' //this.props.commerceId
+    );
+  }
+
   render() {
     const {
       reservationMinFrom,
@@ -24,8 +34,6 @@ class RegisterScheduleConfiguration extends Component {
       reservationDayTo,
       reservationDayValue
     } = this.state;
-
-    if (this.props.loading) return <Spinner size="large" />;
 
     return (
       <View>
@@ -39,9 +47,7 @@ class RegisterScheduleConfiguration extends Component {
               step={reservationMinFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
               value={reservationMinValue}
-              onValueChange={newValue =>
-                this.setState({ reservationMinValue: newValue })
-              }
+              onValueChange={val => this.setState({ reservationMinValue: val })}
             />
             <Text>
               Duración mínima de turnos:{' '}
@@ -60,22 +66,20 @@ class RegisterScheduleConfiguration extends Component {
               step={reservationDayFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
               value={reservationDayValue}
-              onValueChange={newValue =>
-                this.setState({ reservationDayValue: newValue })
-              }
+              onValueChange={val => this.setState({ reservationDayValue: val })}
             />
             <Text>
               Límite previo a reservar: {stringFormatDays(reservationDayValue)}
             </Text>
           </CardSection>
 
-          <Divider style={{ marginVertical: 15 }} />
+          <Divider style={{ marginTop: 15 }} />
 
           <CardSection>
             <Button
               title="Guardar"
               loading={this.props.loading}
-              // onPress={}
+              onPress={this.onSavePressHandler.bind(this)}
             />
           </CardSection>
         </Card>
@@ -84,4 +88,14 @@ class RegisterScheduleConfiguration extends Component {
   }
 }
 
-export default RegisterScheduleConfiguration;
+const mapStateToProps = state => {
+  return {
+    commerceId: state.commerceData.commerceId,
+    loading: state.scheduleConfig.loading
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { onScheduleConfigSave }
+)(RegisterScheduleConfiguration);

@@ -3,11 +3,12 @@ import 'firebase/firestore';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
-  SCHEDULE_FORM_SUBMIT,
   ON_SCHEDULE_CARD_VALUE_CHANGE,
   ON_SCHEDULE_CARD_DELETE,
   ON_SCHEDULE_SHIFTS_READ,
-  ON_SCHEDULE_SHIFTS_READING
+  ON_SCHEDULE_SHIFTS_READING,
+  ON_SCHEDULE_CONFIG_UPDATING,
+  ON_SCHEDULE_CONFIG_UPDATED
 } from './types';
 
 export const onScheduleValueChange = ({ prop, value }) => {
@@ -143,3 +144,22 @@ formatCards = card => {
   });
 }
 */
+
+export const onScheduleConfigSave = (
+  reservationMinLength,
+  reservationDayPeriod,
+  commerceId
+) => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
+
+    // ruta hardcodeada pq nico tambien la hardcodeo asi probamos
+    // esto en realidad seria `Commerces/${commerceId}/Schedules/X`
+    db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0')
+      .set({ reservationMinLength, reservationDayPeriod }, { merge: true })
+      .then(() => dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED }))
+      .catch(() => console.log('error'));
+  };
+};

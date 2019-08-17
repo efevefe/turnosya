@@ -73,3 +73,7 @@ export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
 export const ON_SCHEDULE_CARD_DELETE = 'on_schedule_card_delete';
 export const ON_SCHEDULE_SHIFTS_READ = 'on_schedule_shifts_read';
 export const ON_SCHEDULE_SHIFTS_READING = 'on_schedule_shifts_reading';
+
+//Register Schedule Config
+export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
+export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
