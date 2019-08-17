@@ -38,21 +38,34 @@ export const onScheduleRead = () => {
     dispatch({ type: ON_SCHEDULE_READING });
 
     //ruta hardcodeada para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules')
+      .where('endDate', '==', null)
       .get()
       .then(snapshot => {
-        var cards = [];
-        var selectedDays = [];
-
         snapshot.forEach(doc => {
-          cards.push({ ...doc.data(), id: doc.id });
-          selectedDays = selectedDays.concat(doc.data().days);
-        });
+          var { reservationDayPeriod, reservationMinLength } = doc.data();
 
-        dispatch({
-          type: ON_SCHEDULE_READ,
-          payload: { cards, selectedDays }
-        });
+          db.collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${doc.id}/WorkShifts`)
+            .get()
+            .then(snapshot => {
+              var cards = [];
+              var selectedDays = [];
+
+              snapshot.forEach(doc => {
+                cards.push({ ...doc.data(), id: doc.id });
+                selectedDays = selectedDays.concat(doc.data().days);
+              });
+
+              dispatch({
+                type: ON_SCHEDULE_READ,
+                payload: { cards, selectedDays, reservationDayPeriod, reservationMinLength }
+              });
+            })
+            .catch(error => {
+              console.log(error);
+              dispatch({ type: ON_SCHEDULE_READ_FAIL });
+            });
+        })
       })
       .catch(error => {
         console.log(error);
