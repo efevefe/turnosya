@@ -8,7 +8,9 @@ import {
   ON_SCHEDULE_READ_FAIL,
   ON_SCHEDULE_CREATING,
   ON_SCHEDULE_CREATED,
-  ON_SCHEDULE_CREATE_FAIL
+  ON_SCHEDULE_CREATE_FAIL,
+  ON_SCHEDULE_CONFIG_UPDATING,
+  ON_SCHEDULE_CONFIG_UPDATED
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -24,6 +26,8 @@ const INITIAL_STATE = {
     }
   ],
   selectedDays: [],
+  reservationMinLength: 15,
+  reservationDayPeriod: 1,
   loading: false,
   refreshing: false
 };
@@ -69,8 +73,12 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CREATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
-      
+
       return { ...state, refreshing: false };
+    case ON_SCHEDULE_CONFIG_UPDATING:
+      return { ...state, loading: true };
+    case ON_SCHEDULE_CONFIG_UPDATED:
+      return { ...state, loading: false };
     default:
       return state;
   }

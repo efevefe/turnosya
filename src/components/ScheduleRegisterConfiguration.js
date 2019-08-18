@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 import { CardSection, Button, Spinner } from './common';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../constants';
 import { stringFormatDays, stringFormatMinutes } from '../utils';
-import { onScheduleConfigSave, onScheduleConfigValueChange } from '../actions';
+import { onScheduleConfigSave, onScheduleValueChange } from '../actions';
 
 class ScheduleRegisterConfiguration extends Component {
   state = {
@@ -17,6 +17,11 @@ class ScheduleRegisterConfiguration extends Component {
     reservationDayValue: 1
   };
 
+  componentDidMount() {
+    const { reservationMinLength, reservationDayPeriod } = this.props;
+    this.setState({ reservationMinValue: reservationMinLength, reservationDayValue: reservationDayPeriod });
+  }
+
   onSavePressHandler() {
     this.props.onScheduleConfigSave(
       this.props.reservationMinLength,
@@ -26,17 +31,17 @@ class ScheduleRegisterConfiguration extends Component {
   }
 
   onMinSliderValueChange() {
-    this.props.onScheduleConfigValueChange(
-      'reservationMinLength',
-      this.state.reservationMinValue
-    );
+    this.props.onScheduleValueChange({
+      prop: 'reservationMinLength',
+      value: this.state.reservationMinValue
+    });
   }
 
   onDaySliderValueChange() {
-    this.props.onScheduleConfigValueChange(
-      'reservationDayPeriod',
-      this.state.reservationDayValue
-    );
+    this.props.onScheduleValueChange({
+      prop: 'reservationDayPeriod',
+      value: this.state.reservationDayValue
+    });
   }
 
   render() {
@@ -51,7 +56,7 @@ class ScheduleRegisterConfiguration extends Component {
 
     return (
       <View>
-        <Card containerStyle={{ borderRadius: 10 }}>
+        <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
             <Slider
               animationType="spring"
@@ -98,6 +103,7 @@ class ScheduleRegisterConfiguration extends Component {
               title="Guardar"
               loading={this.props.loading}
               onPress={this.onSavePressHandler.bind(this)}
+              buttonStyle={{ marginLeft: 0, marginRight: 0 }}
             />
           </CardSection>
         </Card>
@@ -109,13 +115,13 @@ class ScheduleRegisterConfiguration extends Component {
 const mapStateToProps = state => {
   return {
     commerceId: state.commerceData.commerceId,
-    loading: state.scheduleConfig.loading,
-    reservationMinLength: state.scheduleConfig.reservationMinLength,
-    reservationDayPeriod: state.scheduleConfig.reservationDayPeriod
+    loading: state.scheduleRegister.loading,
+    reservationMinLength: state.scheduleRegister.reservationMinLength,
+    reservationDayPeriod: state.scheduleRegister.reservationDayPeriod
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleConfigSave, onScheduleConfigValueChange }
+  { onScheduleConfigSave, onScheduleValueChange }
 )(ScheduleRegisterConfiguration);

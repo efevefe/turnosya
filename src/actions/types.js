@@ -80,4 +80,3 @@ export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 //Register Schedule Config
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
-export const ON_SCHEDULE_CONFIG_VALUE_CHANGE = 'on_schedule_conf_value_change';
