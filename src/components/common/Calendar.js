@@ -11,7 +11,7 @@ class Calendar extends Component {
                 calendarAnimation={{ type: 'sequence', duration: 60 }}
                 daySelectionAnimation={{
                     type: 'background',
-                    duration: 200,
+                    duration: 60,
                     highlightColor: 'white'
                 }}
                 calendarColor={MAIN_COLOR}

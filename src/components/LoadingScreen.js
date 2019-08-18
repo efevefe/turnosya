@@ -11,6 +11,7 @@ const LoadingScreen = () => {
                 <Image
                     source={require('../../assets/turnosya-white.png')}
                     style={{ height: logoSize, width: logoSize }}
+                    fadeDuration={0}
                 />
                 <ActivityIndicator color='white' size='large' />
             </View>
