@@ -78,6 +78,8 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
     case ON_SCHEDULE_CONFIG_UPDATED:
+      Toast.show({ text: 'Cambios guardados' });
+      
       return { ...state, loading: false };
     default:
       return state;

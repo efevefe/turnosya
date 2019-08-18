@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   viewPickerDate: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'center'
+    justifyContent: 'space-around',
   },
   cardStyle: {
     padding: 5,
