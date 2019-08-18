@@ -154,7 +154,9 @@ export const onScheduleCreate = cards => {
         batch.update(scheduleRef, { startDate: new Date(), endDate: null });
 
         batch.commit()
-          .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+          .then(() => {
+            dispatch({ type: ON_SCHEDULE_CREATED });
+          })
           .catch(error => {
             console.log(error);
             dispatch({ type: ON_SCHEDULE_CREATE_FAIL });

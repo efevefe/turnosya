@@ -17,6 +17,7 @@ import {
 } from '../actions';
 import { CardSection, DatePicker } from './common';
 
+
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 
 class ScheduleRegister extends Component {
@@ -236,7 +237,7 @@ class ScheduleRegister extends Component {
               checkedTitle="Borrar segundo turno"
               checked={this.state.checked}
               onPress={this.onSecondTurnPress}
-              disabled={this.getDisabledCheckBox()}
+              //disabled={this.getDisabledCheckBox()}
             />
           </CardSection>
 

@@ -10,6 +10,7 @@ import {
   ON_SCHEDULE_CREATED,
   ON_SCHEDULE_CREATE_FAIL
 } from '../actions/types';
+import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
   cards: [
@@ -63,8 +64,12 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_CREATING:
       return { ...state, refreshing: true };
     case ON_SCHEDULE_CREATED:
+      Toast.show({ text: 'Cambios guardados' });
+
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CREATE_FAIL:
+      Toast.show({ text: 'Se ha producido un error' });
+      
       return { ...state, refreshing: false };
     default:
       return state;
