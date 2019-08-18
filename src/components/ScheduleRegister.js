@@ -50,7 +50,7 @@ class ScheduleRegister extends Component {
       onScheduleValueChange({
         prop: 'cards',
         value: cards.concat([
-          { ...emptyCard, id: cards[cards.length - 1].id + 1 }
+          { ...emptyCard, id: parseInt(cards[cards.length - 1].id) + 1 }
         ])
       });
     }

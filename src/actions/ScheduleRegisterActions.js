@@ -53,7 +53,7 @@ export const onScheduleRead = () => {
               var selectedDays = [];
 
               snapshot.forEach(doc => {
-                cards.push({ ...doc.data(), id: doc.id });
+                cards.push({ ...doc.data(), id: parseInt(doc.id) });
                 selectedDays = selectedDays.concat(doc.data().days);
               });
 
@@ -75,67 +75,97 @@ export const onScheduleRead = () => {
   };
 };
 
+/*
 export const onScheduleCreate = cards => {
+  //ESTA FUNCION ES PARA UPDATEAR LOS SCHEDULES SIN TENER QUE BORRAR Y VOLVER A ESCRIBIR
   const db = firebase.firestore();
   var batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
-    cards.forEach(card => {
-      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
-      //ruta hardcodeada para probar
-      var ref = db
-        .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
-        .doc(`${card.id}`);
-      batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-    });
+    //rutas hardcodeadas para probar
+    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
+      .where('endDate', '==', null)
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(oldSchedule => {
+          batch.update(oldSchedule.ref, { endDate: new Date() });
 
-    var scheduleRef = db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0');
-    batch.update(scheduleRef, { startDate: new Date(), endDate: null });
+          db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
+            .add({ startDate: new Date(), endDate: null })
+            .then(scheduleRef => {
+              cards.forEach(card => {
+                const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+                
+                var ref = db
+                  .collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${scheduleRef.id}/WorkShifts`)
+                  .doc(`${card.id}`);
+                batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+              });
 
-    batch.commit()
-      .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+              batch.commit()
+                .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+                .catch(error => {
+                  console.log(error);
+                  dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+                });
+            })
+            .catch(error => {
+              console.log(error);
+              dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+            });
+        })
+      })
       .catch(error => {
         console.log(error);
         dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
       });
   }
 };
+*/
 
-/*
-export const onScheduleCreate = (cards) => {
+export const onScheduleCreate = cards => {
+  //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
   var batch = db.batch();
 
-  var cards = cards.map(card => formatCards(card));
+  return dispatch => {
+    dispatch({ type: ON_SCHEDULE_CREATING });
 
-  cards.forEach(card => {
-    card.forEach(day => {
-      var ref = db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/Dias').doc(`${day.dayId}`);
-      batch.set(ref, day);
-    })
-  })
+    //rutas hardcodeadas para probar
+    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(shift => {
+          batch.delete(shift.ref);
+        });
 
-  batch.commit().then(() => console.log('Escrito perri'));
+        cards.forEach(card => {
+          const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
 
-  return { type: ON_SCHEDULE_VALUE_CHANGE, payload: { prop: 'nada', value: '' } };
-}
-*/
+          var ref = db
+            .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+            .doc(`${card.id}`);
+          batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+        });
 
-/*
-formatCards = card => {
-  return card.days.map(day => {
-    var dayShifts = [{ shiftStart: card.firstShiftStart, shiftEnd: card.firstShiftEnd }];
+        var scheduleRef = db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0');
+        batch.update(scheduleRef, { startDate: new Date(), endDate: null });
 
-    if (card.secondShiftStart && card.secondShiftEnd) {
-      dayShifts.push({ shiftStart: card.secondShiftStart, shiftEnd: card.secondShiftEnd })
-    }
-
-    return { dayId: day, shifts: dayShifts };
-  });
-}
-*/
+        batch.commit()
+          .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+      });
+  }
+};
 
 export const onScheduleConfigSave = (
   reservationMinLength,

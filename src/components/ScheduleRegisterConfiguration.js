@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
 import { CardSection, Button, Spinner } from './common';
-import { MAIN_COLOR } from '../constants';
+import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../constants';
 import { stringFormatDays, stringFormatMinutes } from '../utils';
 import { onScheduleConfigSave, onScheduleConfigValueChange } from '../actions';
 
@@ -51,15 +51,16 @@ class ScheduleRegisterConfiguration extends Component {
 
     return (
       <View>
-        <Card>
+        <Card containerStyle={{ borderRadius: 10 }}>
           <CardSection>
             <Slider
               animationType="spring"
-              minimumTrackTintColor={MAIN_COLOR}
+              minimumTrackTintColor={MAIN_COLOR_OPACITY}
               minimumValue={reservationMinFrom}
               maximumValue={reservationMinTo}
               step={reservationMinFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
+              thumbTintColor={MAIN_COLOR}
               value={reservationMinValue}
               onSlidingComplete={this.onMinSliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationMinValue: val })}
@@ -75,11 +76,12 @@ class ScheduleRegisterConfiguration extends Component {
           <CardSection>
             <Slider
               animationType="spring"
-              minimumTrackTintColor={MAIN_COLOR}
+              minimumTrackTintColor={MAIN_COLOR_OPACITY}
               minimumValue={reservationDayFrom}
               maximumValue={reservationDayTo}
               step={reservationDayFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
+              thumbTintColor={MAIN_COLOR}
               value={reservationDayValue}
               onSlidingComplete={this.onDaySliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationDayValue: val })}
