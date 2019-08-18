@@ -163,7 +163,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'calendar',
+  initialRouteName: 'profile',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',

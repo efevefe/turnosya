@@ -137,7 +137,6 @@ class CourtForm extends Component {
 
   renderPriceError = () => {
     const { price, onCourtValueChange } = this.props;
-
     onCourtValueChange({ prop: 'price', value: price.trim() });
     if (price.trim() === '') {
       this.setState({ priceError: 'Dato requerido' });
@@ -221,46 +220,21 @@ class CourtForm extends Component {
   renderInput() {
     if (this.props.checked) {
       return (
-        <View>
-          <Input
-            label="Precio por turno (con luz):"
-            placeholder="Precio de la cancha"
-            keyboardType="numeric"
-            value={this.props.lightPrice}
-            errorMessage={this.state.lightPriceError}
-            onChangeText={value =>
-              this.props.onCourtValueChange({
-                prop: 'lightPrice',
-                value
-              })
-            }
-            onFocus={() => this.setState({ lightPriceError: '' })}
-            onBlur={this.renderLightPriceError}
-          />
-          <CheckBox
-            containerStyle={{ marginTop: 10, marginLeft: 5, marginRight: 5 }}
-            title="Agregar precio con luz"
-            iconType="material"
-            checkedIcon="clear"
-            checkedColor={MAIN_COLOR}
-            checkedTitle="Borrar precio con luz"
-            checked={this.props.checked}
-            onPress={this.onCheckBoxPress}
-          />
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          <CheckBox
-            title="Agregar precio con luz"
-            iconType="material"
-            uncheckedIcon="add"
-            uncheckedColor={MAIN_COLOR}
-            checked={this.props.checked}
-            onPress={this.onCheckBoxPress}
-          />
-        </View>
+        <Input
+          label="Precio por turno (con luz):"
+          placeholder="Precio de la cancha"
+          keyboardType="numeric"
+          value={this.props.lightPrice}
+          errorMessage={this.state.lightPriceError}
+          onChangeText={value =>
+            this.props.onCourtValueChange({
+              prop: 'lightPrice',
+              value
+            })
+          }
+          onFocus={() => this.setState({ lightPriceError: '' })}
+          onBlur={this.renderLightPriceError}
+        />
       );
     }
   }
@@ -373,6 +347,25 @@ class CourtForm extends Component {
             </CardSection>
 
             <CardSection>{this.renderInput()}</CardSection>
+
+            <CardSection>
+              <CheckBox
+                containerStyle={{
+                  marginTop: 10,
+                  marginLeft: 5,
+                  marginRight: 5
+                }}
+                title="Agregar precio con luz"
+                iconType="material"
+                checkedIcon="clear"
+                uncheckedIcon="add"
+                uncheckedColor={MAIN_COLOR}
+                checkedColor={MAIN_COLOR}
+                checkedTitle="Borrar precio con luz"
+                checked={this.props.checked}
+                onPress={this.onCheckBoxPress}
+              />
+            </CardSection>
 
             <CardSection>
               <Button
