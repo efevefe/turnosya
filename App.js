@@ -9,6 +9,7 @@ import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
+import LoadingScreen from './src/components/LoadingScreen';
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -48,7 +49,7 @@ class App extends React.Component {
     const { screenLoading, logged } = this.state;
 
     if (screenLoading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
+      return <LoadingScreen />;
     } else {
       if (logged) {
         return <MainNavigation />;

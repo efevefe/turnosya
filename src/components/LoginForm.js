@@ -81,7 +81,7 @@ class LoginForm extends Component {
       <View style={containerStyle}>
         <View style={logoContainerStyle}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../assets/turnosya-red.png')}
             style={{ height: iconSize, width: iconSize }}
           />
         </View>
