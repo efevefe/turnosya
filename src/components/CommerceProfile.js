@@ -376,7 +376,7 @@ class commerceData extends Component {
                             rounded
                             source={{ uri: this.props.profilePicture }}
                             size='xlarge'
-                            icon={{ name: 'person' }}
+                            icon={{ name: 'store', type: 'material' }}
                             containerStyle={avatarStyle}
                         />
 
