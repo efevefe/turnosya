@@ -237,7 +237,7 @@ class ScheduleRegister extends Component {
               checkedTitle="Borrar segundo turno"
               checked={this.state.checked}
               onPress={this.onSecondTurnPress}
-              //disabled={this.getDisabledCheckBox()}
+              disabled={this.getDisabledCheckBox()}
             />
           </CardSection>
 
