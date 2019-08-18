@@ -12,7 +12,7 @@ class MenuItem extends Component {
                     <Ionicons
                         name={this.props.icon}
                         color={color}
-                        size={22}
+                        size={20}
                     />
                 </View>
             );
@@ -39,7 +39,8 @@ class MenuItem extends Component {
 const styles = StyleSheet.create({
     buttonStyle: {
         padding: 14,
-        paddingLeft: 16,
+        paddingLeft: 13,
+        paddingRight: 13,
         margin: 0,
         justifyContent: 'flex-start'
     },
@@ -48,9 +49,11 @@ const styles = StyleSheet.create({
         margin: 0
     },
     titleStyle: {
-        fontSize: 15,
-        paddingLeft: 15
+        textAlign: 'left',
+        fontSize: 13,
+        marginLeft: 13,
+        marginRight: 20
     }
 });
 
-export {MenuItem};
+export { MenuItem };

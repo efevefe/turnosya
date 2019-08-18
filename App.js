@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
+import { Root } from 'native-base';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
@@ -25,9 +26,6 @@ if (!firebase.apps.length) {
 }
 
 console.disableYellowBox = true;
-
-// firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-// firebase.auth().signOut();
 
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
@@ -53,7 +51,9 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <View style={styles.container}>{this.renderNavigation()}</View>
+        <Root>
+          <View style={styles.container}>{this.renderNavigation()}</View>
+        </Root>
       </Provider>
     );
   }

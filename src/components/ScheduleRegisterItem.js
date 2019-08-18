@@ -17,6 +17,7 @@ import {
 } from '../actions';
 import { CardSection, DatePicker } from './common';
 
+
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 
 class ScheduleRegister extends Component {
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   viewPickerDate: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'center'
+    justifyContent: 'space-around',
   },
   cardStyle: {
     padding: 5,

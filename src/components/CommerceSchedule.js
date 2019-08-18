@@ -32,7 +32,7 @@ class CommerceSchedule extends Component {
     );
   };
 
-  onScheduleShiftPress = () => {
+  onScheduleShiftsPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: 'scheduleRegister'
     });
@@ -76,7 +76,7 @@ class CommerceSchedule extends Component {
           <MenuItem
             title="Días y horarios de atención"
             icon="md-grid"
-            onPress={this.onScheduleShiftPress}
+            onPress={this.onScheduleShiftsPress}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import RNDatePicker from 'react-native-datepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
+
+const pickerWidth = Math.round(Dimensions.get('window').width) / 3;
 
 class DatePicker extends Component {
     renderErrorMessage = () => {
@@ -46,7 +48,7 @@ class DatePicker extends Component {
                             paddingRight: 5
                         }
                     }}
-                    style={{ marginLeft: 10, marginRight: 10 }}
+                    style={{ marginLeft: 10, marginRight: 10, width: pickerWidth }}
                 />
                 {this.renderErrorMessage()}
             </View>
