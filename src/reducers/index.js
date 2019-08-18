@@ -6,6 +6,7 @@ import ClientDataReducer from './ClientDataReducer';
 import CourtFormReducer from './CourtFormReducer';
 import CourtListReducer from './CourtListReducer';
 import CommerceDataReducer from './CommerceDataReducer';
+import ScheduleRegisterReducer from './ScheduleRegisterReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
   servicesList: ServicesListReducer,
   courtForm: CourtFormReducer,
   courtsList: CourtListReducer,
-  commerceData: CommerceDataReducer
+  commerceData: CommerceDataReducer,
+  scheduleRegister: ScheduleRegisterReducer
 });

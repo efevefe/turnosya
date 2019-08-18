@@ -86,7 +86,7 @@ const validarCuit = (cuit) => {
   return digito == verif;
 }
 
-export const getHourMinutes = hour => {
+export const getHourAndMinutes = hour => {
   hour = hour.split(':').map(num => parseInt(num));
   return { hour: hour[0], minutes: hour[1] };
 }

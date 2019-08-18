@@ -59,3 +59,9 @@ export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
 export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
+
+//Schedule register
+export const ON_SCHEDULE_VALUE_CHANGE = 'on_schedule_value_change';
+export const ON_SCHEDULE_READING = 'on_schedule_reading';
+export const ON_SCHEDULE_READ = 'on_schedule_read';
+export const ON_SCHEDULE_READ_FAIL = 'on_schedule_read_fail';
