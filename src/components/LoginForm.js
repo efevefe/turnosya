@@ -15,7 +15,7 @@ import {
 
 import { ImagePicker, Permissions } from 'expo';
 
-const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
+const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
 class LoginForm extends Component {
   state = { emailError: '', passwordError: '' };
@@ -81,7 +81,7 @@ class LoginForm extends Component {
       <View style={containerStyle}>
         <View style={logoContainerStyle}>
           <Image
-            source={require('../../assets/icon.png')}
+            source={require('../../assets/logo.png')}
             style={{ height: iconSize, width: iconSize }}
           />
         </View>
@@ -130,7 +130,8 @@ class LoginForm extends Component {
           <Divider
             style={{
               backgroundColor: 'grey',
-              margin: 10
+              margin: 10,
+              marginBottom: 0
             }}
           />
           <CardSection>
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10
+    paddingTop: iconSize / 3
   },
   loginContainerStyle: {
     justifyContent: 'center'
