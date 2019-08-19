@@ -20,9 +20,11 @@ class CourtListItem extends Component {
   };
 
   onConfirmDeletePress() {
-    this.props.courtDelete({ id: this.props.court.id });
+    const { court, commerceId, courtDelete } = this.props;
+    courtDelete({ id: court.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   }
+
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
     const navigateAction = NavigationActions.navigate({
