@@ -57,7 +57,7 @@ export const getCourtAndGroundTypes = () => {
 };
 
 export const courtCreate = (
-  { name, court, ground, price, lightPrice, checked, courtState, commerceId },
+  { name, court, ground, price, lightPrice, courtState, commerceId },
   navigation
 ) => {
   var db = firebase.firestore();
@@ -80,7 +80,6 @@ export const courtCreate = (
               ground,
               price,
               lightPrice,
-              checked,
               courtState,
               softDelete: null
             })
@@ -123,17 +122,7 @@ export const courtDelete = ({ id, commerceId }) => {
 };
 
 export const courtUpdate = (
-  {
-    id,
-    name,
-    court,
-    ground,
-    price,
-    lightPrice,
-    checked,
-    courtState,
-    commerceId
-  },
+  { id, name, court, ground, price, lightPrice, courtState, commerceId },
   navigation
 ) => {
   var db = firebase.firestore();
@@ -156,7 +145,6 @@ export const courtUpdate = (
               ground,
               price,
               lightPrice,
-              checked,
               courtState
             })
             .then(() => {

@@ -80,7 +80,7 @@ export const validateValueType = (type, value) => {
       const nameRe = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\-,.'"´`]+$/;
       return nameRe.test(String(value));
     case 'phone':
-      const phoneRe = /^[+]{0,1}[(]{0,1}[0-9]*[)]{0,1}[-\s0-9]+$/;
+      const phoneRe = /^[+]{0,1}[(]{0,1}[0-9]*[)]{0,1}[\s]{0,1}[0-9]+[\s-]{0,1}[0-9]+[\s-]{0,1}[0-9]+[\s-]{0,1}[0-9]+$/;
       return phoneRe.test(String(value));
     default:
       return null;
@@ -88,7 +88,11 @@ export const validateValueType = (type, value) => {
 };
 
 const validarCuit = cuit => {
+<<<<<<< HEAD
   //regex para cuit únicamente de negocio
+=======
+  //regex para cuit unicamente de negocio
+>>>>>>> develop
   const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
 
   if (!cuitRe.test(String(cuit))) {
