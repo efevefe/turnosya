@@ -5,4 +5,3 @@ export * from './CourtActions';
 export * from './CommerceDataActions';
 export * from './CommercesListActions';
 export * from './ScheduleRegisterActions';
-export * from './CommerceScheduleActions';
