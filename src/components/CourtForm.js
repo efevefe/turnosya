@@ -12,7 +12,7 @@ import {
   courtUpdate
 } from '../actions';
 import { CardSection, Input, Picker, Button, Spinner } from './common';
-import { validateValueType } from '../utils';
+import { validateValueType, trimString } from '../utils';
 import { MAIN_COLOR } from '../constants';
 
 class CourtForm extends Component {
@@ -49,11 +49,12 @@ class CourtForm extends Component {
     }
   }
 
-  componentDidMount() {
-    this.props.getCourtAndGroundTypes();
+  async componentDidMount() {
+    await this.props.getCourtAndGroundTypes();
+    this.setState({ lightPriceOpen: this.props.lightPrice !== '' });
   }
 
-  onButtonPressHandler() {
+  onButtonPressHandler = () => {
     if (this.validateMinimumData()) {
       const {
         name,
@@ -61,7 +62,6 @@ class CourtForm extends Component {
         ground,
         price,
         lightPrice,
-        checked,
         courtState,
         commerceId,
         navigation
@@ -77,7 +77,6 @@ class CourtForm extends Component {
             ground,
             price,
             lightPrice,
-            checked,
             courtState,
             id,
             commerceId
@@ -92,7 +91,6 @@ class CourtForm extends Component {
             ground,
             price,
             lightPrice,
-            checked,
             courtState,
             commerceId
           },
@@ -100,13 +98,14 @@ class CourtForm extends Component {
         );
       }
     }
-  }
+  };
 
   renderNameError = () => {
     const { name, onCourtValueChange } = this.props;
+    const value = trimString(name);
+    onCourtValueChange({ prop: 'name', value });
 
-    onCourtValueChange({ prop: 'name', value: name.trim() });
-    if (name.trim() === '') {
+    if (value === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -141,7 +140,7 @@ class CourtForm extends Component {
     if (price.trim() === '') {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', this.props.price)) {
+    } else if (!validateValueType('number', price.trim())) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -151,16 +150,21 @@ class CourtForm extends Component {
   };
 
   renderLightPriceError = () => {
-    const { lightPrice, checked, onCourtValueChange } = this.props;
+    if (this.state.lightPriceOpen) {
+      const { lightPrice, onCourtValueChange } = this.props;
+      onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
 
-    onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
-    if (lightPrice.trim() === '' && checked === true) {
-      this.setState({ lightPriceError: 'Dato requerido' });
-      return false;
-    } else {
-      this.setState({ lightPriceError: '' });
-      return true;
+      if (lightPrice.trim() === '') {
+        this.setState({ lightPriceError: 'Dato requerido' });
+        return false;
+      } else if (!validateValueType('number', lightPrice.trim())) {
+        this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
+        return false;
+      }
     }
+
+    this.setState({ lightPriceError: '' });
+    return true;
   };
 
   validateMinimumData = () => {
@@ -207,18 +211,14 @@ class CourtForm extends Component {
   };
 
   onCheckBoxPress = () => {
-    const { checked, onCourtValueChange } = this.props;
+    if (this.state.lightPriceOpen)
+      this.props.onCourtValueChange({ prop: 'lightPrice', value: '' });
 
-    if (checked) {
-      onCourtValueChange({ prop: 'checked', value: false });
-      onCourtValueChange({ prop: 'lightPrice', value: '' });
-    } else {
-      onCourtValueChange({ prop: 'checked', value: true });
-    }
+    this.setState({ lightPriceOpen: !this.state.lightPriceOpen });
   };
 
-  renderInput() {
-    if (this.props.checked) {
+  renderLightPriceInput() {
+    if (this.state.lightPriceOpen) {
       return (
         <Input
           label="Precio por turno (con luz):"
@@ -371,7 +371,7 @@ class CourtForm extends Component {
               <Button
                 title="Guardar"
                 loading={this.props.loading}
-                onPress={this.onButtonPressHandler.bind(this)}
+                onPress={this.onButtonPressHandler}
                 errorMessage={
                   this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
                 }
@@ -405,7 +405,6 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
-    checked,
     loading,
     existedError,
     courtState
@@ -421,7 +420,6 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
-    checked,
     loading,
     existedError,
     courtState,

@@ -15,7 +15,7 @@ import {
   Picker
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob, validateValueType } from '../utils';
+import { imageToBlob, validateValueType, trimString } from '../utils';
 import {
   onCommerceRead,
   onCommerceUpdateWithPicture,
@@ -328,12 +328,17 @@ class commerceData extends Component {
         prop: 'area',
         value: { areaId: value, name: label }
       });
+
+      this.renderAreaError();
     }
-    this.renderAreaError();
   };
 
   renderNameError = () => {
-    if (this.props.name === '') {
+    const { name, onCommerceValueChange } = this.props;
+    const value = trimString(name);
+    onCommerceValueChange({ prop: 'name', value });
+
+    if (value === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -382,7 +387,11 @@ class commerceData extends Component {
   };
 
   renderAddressError = () => {
-    if (this.props.address === '') {
+    const { address, onCommerceValueChange } = this.props;
+    const value = trimString(address);
+    onCommerceValueChange({ prop: 'address', value });
+
+    if (value === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -392,7 +401,11 @@ class commerceData extends Component {
   };
 
   renderCityError = () => {
-    if (this.props.city === '') {
+    const { city, onCommerceValueChange } = this.props;
+    const value = trimString(city);
+    onCommerceValueChange({ prop: 'city', value });
+
+    if (value === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -558,6 +571,12 @@ class commerceData extends Component {
                 this.props.onCommerceValueChange({ prop: 'description', value })
               }
               editable={this.state.editEnabled}
+              onBlur={() =>
+                this.props.onCommerceValueChange({
+                  prop: 'description',
+                  value: trimString(this.props.description)
+                })
+              }
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -607,7 +626,7 @@ class commerceData extends Component {
               items={this.props.areasList}
               value={this.props.area.areaId}
               onValueChange={value => this.onAreaPickerChange(value)}
-              disabled={!this.state.editEnabled}
+              disabled={true}
               errorMessage={this.state.areaError}
             />
           </CardSection>

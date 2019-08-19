@@ -45,7 +45,6 @@ class CourtListItem extends Component {
       ground,
       price,
       lightPrice,
-      checked,
       courtState,
       id
     } = this.props.court;
@@ -96,7 +95,7 @@ class CourtListItem extends Component {
                 }
           }
           rightTitle={
-            checked ? (
+            lightPrice !== '' ? (
               <View style={{ justifyContent: 'space-between' }}>
                 <Text
                   style={

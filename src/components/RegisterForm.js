@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from './common';
 import { onRegisterValueChange, onRegister } from '../actions';
-import { validateValueType } from '../utils';
+import { validateValueType, trimString } from '../utils';
 
 class RegisterForm extends Component {
   state = {
@@ -15,7 +16,7 @@ class RegisterForm extends Component {
     phoneError: ''
   };
 
-  onButtonPressHandler() {
+  onButtonPressHandler = () => {
     if (this.validateMinimumData()) {
       this.props.onRegister({
         email: this.props.email,
@@ -25,7 +26,7 @@ class RegisterForm extends Component {
         phone: this.props.phone
       });
     }
-  }
+  };
 
   renderEmailError = () => {
     if (this.props.email == '') {
@@ -70,10 +71,14 @@ class RegisterForm extends Component {
   };
 
   renderFirstNameError = () => {
-    if (this.props.firstName === '') {
+    const { firstName, onRegisterValueChange } = this.props;
+    const value = trimString(firstName);
+    onRegisterValueChange({ prop: 'firstName', value });
+
+    if (value === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('name', this.props.firstName)) {
+    } else if (!validateValueType('name', value)) {
       this.setState({ firstNameError: 'El formato del nombre es inválido' });
       return false;
     } else {
@@ -83,7 +88,11 @@ class RegisterForm extends Component {
   };
 
   renderLastNameError = () => {
-    if (this.props.lastName === '') {
+    const { lastName, onRegisterValueChange } = this.props;
+    const value = trimString(lastName);
+    onRegisterValueChange({ prop: 'lastName', value });
+
+    if (value === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('name', this.props.lastName)) {
@@ -121,115 +130,123 @@ class RegisterForm extends Component {
 
   render() {
     return (
-      <View style={{ padding: 15, alignSelf: 'stretch' }}>
-        <CardSection>
-          <Input
-            placeholder="E-Mail"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={this.props.email}
-            errorMessage={this.state.emailError || this.props.error}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'email',
-                value
-              })
-            }
-            onFocus={() => this.setState({ emailError: '' })}
-            onBlur={this.renderEmailError}
-          />
-        </CardSection>
-        <CardSection>
-          <Input
-            placeholder="Contraseña"
-            secureTextEntry
-            autoCapitalize="none"
-            value={this.props.password}
-            errorMessage={this.state.passwordError}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'password',
-                value
-              })
-            }
-            onFocus={() => this.setState({ passwordError: '' })}
-            onBlur={this.renderPasswordError}
-          />
-        </CardSection>
-        <CardSection style={{ paddingBottom: 20 }}>
-          <Input
-            placeholder="Repetir Contraseña"
-            secureTextEntry
-            autoCapitalize="none"
-            value={this.props.confirmPassword}
-            errorMessage={this.state.confirmPasswordError}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'confirmPassword',
-                value
-              })
-            }
-            onFocus={() => this.setState({ confirmPasswordError: '' })}
-            onBlur={this.renderConfirmPasswordError}
-          />
-        </CardSection>
-        <CardSection>
-          <Input
-            placeholder="Nombre"
-            autoCapitalize="words"
-            value={this.props.firstName}
-            errorMessage={this.state.firstNameError}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'firstName',
-                value
-              })
-            }
-            onFocus={() => this.setState({ firstNameError: '' })}
-            onBlur={this.renderFirstNameError}
-          />
-        </CardSection>
-        <CardSection>
-          <Input
-            placeholder="Apellido"
-            autoCapitalize="words"
-            value={this.props.lastName}
-            errorMessage={this.state.lastNameError}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'lastName',
-                value
-              })
-            }
-            onFocus={() => this.setState({ lastNameError: '' })}
-            onBlur={this.renderLastNameError}
-          />
-        </CardSection>
-        <CardSection style={{ paddingBottom: 20 }}>
-          <Input
-            placeholder="Número de Teléfono"
-            keyboardType="phone-pad"
-            textContentType="telephoneNumber"
-            value={this.props.phone}
-            errorMessage={this.state.phoneError}
-            onChangeText={value =>
-              this.props.onRegisterValueChange({
-                prop: 'phone',
-                value
-              })
-            }
-            onFocus={() => this.setState({ phoneError: '' })}
-            onBlur={this.renderPhoneError}
-          />
-        </CardSection>
-        <CardSection>
-          <Button
-            title="Confirmar"
-            loading={this.props.loading}
-            onPress={this.onButtonPressHandler.bind(this)}
-          />
-        </CardSection>
-      </View>
+      <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
+        <View style={{ padding: 15, alignSelf: 'stretch' }}>
+          <CardSection>
+            <Input
+              label="E-Mail"
+              placeholder="E-Mail"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={this.props.email}
+              errorMessage={this.state.emailError || this.props.error}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'email',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ emailError: '' })}
+              onBlur={this.renderEmailError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Contraseña"
+              placeholder="Contraseña"
+              secureTextEntry
+              autoCapitalize="none"
+              value={this.props.password}
+              errorMessage={this.state.passwordError}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'password',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ passwordError: '' })}
+              onBlur={this.renderPasswordError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Repetir Contraseña"
+              placeholder="Repetir Contraseña"
+              secureTextEntry
+              autoCapitalize="none"
+              value={this.props.confirmPassword}
+              errorMessage={this.state.confirmPasswordError}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'confirmPassword',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ confirmPasswordError: '' })}
+              onBlur={this.renderConfirmPasswordError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Nombre"
+              placeholder="Nombre"
+              autoCapitalize="words"
+              value={this.props.firstName}
+              errorMessage={this.state.firstNameError}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'firstName',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ firstNameError: '' })}
+              onBlur={this.renderFirstNameError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Nombre"
+              placeholder="Apellido"
+              autoCapitalize="words"
+              value={this.props.lastName}
+              errorMessage={this.state.lastNameError}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'lastName',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ lastNameError: '' })}
+              onBlur={this.renderLastNameError}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="Número de Teléfono"
+              placeholder="Número de Teléfono"
+              keyboardType="phone-pad"
+              textContentType="telephoneNumber"
+              value={this.props.phone}
+              errorMessage={this.state.phoneError}
+              onChangeText={value =>
+                this.props.onRegisterValueChange({
+                  prop: 'phone',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ phoneError: '' })}
+              onBlur={this.renderPhoneError}
+            />
+          </CardSection>
+          <CardSection>
+            <Button
+              title="Confirmar"
+              loading={this.props.loading}
+              onPress={this.onButtonPressHandler}
+            />
+          </CardSection>
+        </View>
+      </KeyboardAwareScrollView>
     );
   }
 }

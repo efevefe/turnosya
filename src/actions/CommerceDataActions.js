@@ -67,7 +67,8 @@ export const onCreateCommerce = (
         address,
         city,
         province,
-        area
+        area,
+        softDelete: null
       })
       .then(reference => {
         db.doc(`Profiles/${currentUser.uid}`)
