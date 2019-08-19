@@ -19,7 +19,7 @@ class CommerceSchedule extends Component {
   };
 
   componentWillMount() {
-    this.props.onScheduleRead();
+    this.props.onScheduleRead(this.props.commerceId);
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -179,7 +179,7 @@ class CommerceSchedule extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.props.loading}
-              onRefresh={this.props.onScheduleRead}
+              onRefresh={() => this.props.onScheduleRead(this.props.commerceId)}
               colors={[MAIN_COLOR]}
               tintColor={MAIN_COLOR}
             />
@@ -251,11 +251,14 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.scheduleRegister;
+  const { commerceId } = state.commerceData;
+
   return {
     cards,
     selectedDate,
     reservationDayPeriod,
     reservationMinLength,
+    commerceId,
     loading,
     refreshing
   };

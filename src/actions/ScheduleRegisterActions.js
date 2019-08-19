@@ -31,21 +31,20 @@ export const onScheduleFormOpen = () => {
   return { type: ON_SCHEDULE_FORM_OPEN };
 };
 
-export const onScheduleRead = () => {
+export const onScheduleRead = commerceId => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_READING });
 
-    //ruta hardcodeada para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules')
+    db.collection(`Commerces/${commerceId}/Schedules`)
       .where('endDate', '==', null)
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           var { reservationDayPeriod, reservationMinLength } = doc.data();
 
-          db.collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${doc.id}/WorkShifts`)
+          db.collection(`Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`)
             .get()
             .then(snapshot => {
               var cards = [];
@@ -124,7 +123,7 @@ export const onScheduleCreate = cards => {
 };
 */
 
-export const onScheduleCreate = cards => {
+export const onScheduleCreate = ({ cards, commerceId }) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
   var batch = db.batch();
@@ -133,7 +132,7 @@ export const onScheduleCreate = cards => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
     //rutas hardcodeadas para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+    db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
       .get()
       .then(snapshot => {
         snapshot.forEach(shift => {
@@ -144,12 +143,12 @@ export const onScheduleCreate = cards => {
           const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
 
           var ref = db
-            .collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0/WorkShifts')
+            .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
             .doc(`${card.id}`);
           batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
         });
 
-        var scheduleRef = db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0');
+        var scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/0`);
         batch.update(scheduleRef, { startDate: new Date(), endDate: null });
 
         batch.commit()
@@ -168,19 +167,17 @@ export const onScheduleCreate = cards => {
   }
 };
 
-export const onScheduleConfigSave = (
+export const onScheduleConfigSave = ({
   reservationMinLength,
   reservationDayPeriod,
   commerceId
-) => {
+}) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
 
-    // ruta hardcodeada pq nico tambien la hardcodeo asi probamos
-    // esto en realidad seria `Commerces/${commerceId}/Schedules/X`
-    db.doc('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/0')
+    db.doc(`Commerces/${commerceId}/Schedules/0`)
       .set({ reservationMinLength, reservationDayPeriod }, { merge: true })
       .then(() => dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED }))
       .catch(() => console.log('error'));

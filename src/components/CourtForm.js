@@ -11,7 +11,7 @@ import {
   onCourtFormOpen,
   courtUpdate
 } from '../actions';
-import { CardSection, Input, Picker, Button, Spinner } from './common';
+import { CardSection, Input, Picker, Button } from './common';
 import { validateValueType, trimString } from '../utils';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../constants';
 

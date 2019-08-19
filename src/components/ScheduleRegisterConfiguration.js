@@ -26,11 +26,9 @@ class ScheduleRegisterConfiguration extends Component {
   }
 
   onSavePressHandler() {
-    this.props.onScheduleConfigSave(
-      this.props.reservationMinLength,
-      this.props.reservationDayPeriod,
-      'aca iria el commerce id' //this.props.commerceId
-    );
+    const { reservationMinLength, reservationDayPeriod, commerceId } = this.props;
+
+    this.props.onScheduleConfigSave({ reservationMinLength, reservationDayPeriod, commerceId });
   }
 
   onMinSliderValueChange() {

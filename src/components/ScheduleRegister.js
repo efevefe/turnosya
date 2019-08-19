@@ -21,7 +21,7 @@ class ScheduleRegister extends Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
-    this.props.onScheduleRead();
+    //this.props.onScheduleRead();
   }
 
   renderSaveButton = () => {
@@ -31,7 +31,7 @@ class ScheduleRegister extends Component {
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        onPress={() => this.props.onScheduleCreate(this.props.cards)}
+        onPress={() => this.props.onScheduleCreate({ cards: this.props.cards, commerceId: this.props.commerceId })}
       />
     );
   };
@@ -105,7 +105,9 @@ const emptyCard = {
 
 const mapStateToProps = state => {
   const { cards, selectedDays, loading, refreshing } = state.scheduleRegister;
-  return { cards, selectedDays, loading, refreshing };
+  const { commerceId } = state.commerceData;
+
+  return { cards, selectedDays, commerceId, loading, refreshing };
 };
 
 export default connect(
