@@ -89,7 +89,7 @@ export const validateValueType = (type, value) => {
 
 const validarCuit = cuit => {
   //regex para cuit únicamente de negocio
-  const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
+  const cuitRe = /\b(20|23|24|27|30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
 
   if (!cuitRe.test(String(cuit))) {
     return false;
