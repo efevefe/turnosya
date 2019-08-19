@@ -26,7 +26,7 @@ const INITIAL_STATE = {
     }
   ],
   selectedDays: [],
-  reservationMinLength: 15,
+  reservationMinLength: 10,
   reservationDayPeriod: 1,
   loading: false,
   refreshing: false
@@ -79,7 +79,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ON_SCHEDULE_CONFIG_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
-      
+
       return { ...state, loading: false };
     default:
       return state;

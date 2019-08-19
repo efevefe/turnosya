@@ -9,7 +9,7 @@ import { onScheduleConfigSave, onScheduleValueChange } from '../actions';
 
 class ScheduleRegisterConfiguration extends Component {
   state = {
-    reservationMinFrom: 15,
+    reservationMinFrom: 10,
     reservationMinTo: 240,
     reservationMinValue: 15,
     reservationDayFrom: 1,
@@ -19,7 +19,10 @@ class ScheduleRegisterConfiguration extends Component {
 
   componentDidMount() {
     const { reservationMinLength, reservationDayPeriod } = this.props;
-    this.setState({ reservationMinValue: reservationMinLength, reservationDayValue: reservationDayPeriod });
+    this.setState({
+      reservationMinValue: reservationMinLength,
+      reservationDayValue: reservationDayPeriod
+    });
   }
 
   onSavePressHandler() {
@@ -58,6 +61,10 @@ class ScheduleRegisterConfiguration extends Component {
       <View>
         <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
+            <Text>
+              Duración mínima de turnos:{' '}
+              {stringFormatMinutes(reservationMinValue)}
+            </Text>
             <Slider
               animationType="spring"
               minimumTrackTintColor={MAIN_COLOR_OPACITY}
@@ -70,15 +77,14 @@ class ScheduleRegisterConfiguration extends Component {
               onSlidingComplete={this.onMinSliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationMinValue: val })}
             />
-            <Text>
-              Duración mínima de turnos:{' '}
-              {stringFormatMinutes(reservationMinValue)}
-            </Text>
           </CardSection>
 
           <Divider style={{ marginVertical: 15 }} />
 
           <CardSection>
+            <Text>
+              Límite previo a reservar: {stringFormatDays(reservationDayValue)}
+            </Text>
             <Slider
               animationType="spring"
               minimumTrackTintColor={MAIN_COLOR_OPACITY}
@@ -91,9 +97,6 @@ class ScheduleRegisterConfiguration extends Component {
               onSlidingComplete={this.onDaySliderValueChange.bind(this)}
               onValueChange={val => this.setState({ reservationDayValue: val })}
             />
-            <Text>
-              Límite previo a reservar: {stringFormatDays(reservationDayValue)}
-            </Text>
           </CardSection>
 
           <Divider style={{ marginTop: 15 }} />
