@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Input, Spinner, Menu, MenuItem, Picker } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob, validateValueType } from '../utils';
+import { imageToBlob, validateValueType, trimString } from '../utils';
 import {
     onCommerceRead,
     onCommerceUpdateWithPicture,
@@ -234,7 +234,11 @@ class commerceData extends Component {
     }
 
     renderNameError = () => {
-        if (this.props.name === '') {
+        const {name, onCommerceValueChange} = this.props;
+        const value = trimString(name);
+        onCommerceValueChange({ prop: 'name', value});
+
+        if (value === '') {
             this.setState({ nameError: 'Dato requerido' });
             return false;
         } else {
@@ -285,7 +289,11 @@ class commerceData extends Component {
     };
 
     renderAddressError = () => {
-        if (this.props.address === '') {
+        const {address, onCommerceValueChange} = this.props;
+        const value = trimString(address);
+        onCommerceValueChange({ prop: 'address', value});
+
+        if (value === '') {
             this.setState({ addressError: 'Dato requerido' });
             return false;
         } else {
@@ -295,7 +303,11 @@ class commerceData extends Component {
     }
 
     renderCityError = () => {
-        if (this.props.city === '') {
+        const {city, onCommerceValueChange} = this.props;
+        const value = trimString(city);
+        onCommerceValueChange({ prop: 'city', value});
+
+        if (value === '') {
             this.setState({ cityError: 'Dato requerido' });
             return false;
         } else {
@@ -447,6 +459,7 @@ class commerceData extends Component {
                             value={this.props.description}
                             onChangeText={value => this.props.onCommerceValueChange({ prop: 'description', value })}
                             editable={this.state.editEnabled}
+                            onBlur={() => this.props.onCommerceValueChange({ prop: 'description', value: trimString(this.props.description)})}
                             multiline={true}
                             maxLength={250}
                             maxHeight={180}
