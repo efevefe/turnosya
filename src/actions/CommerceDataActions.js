@@ -14,8 +14,15 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  ON_COMMERCE_DELETING,
+  ON_COMMERCE_DELETED,
+  ON_COMMERCE_DELETE_FAIL,
+  ON_REAUTH_FAIL,
+  ON_REAUTH_SUCCESS,
+  ON_REGISTER_VALUE_CHANGE
 } from './types';
+import { userReauthenticate } from './AuthActions';
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
@@ -261,3 +268,45 @@ export const onAreasRead = () => {
       });
   };
 };
+
+export const onCommerceDelete = (password, navigation = null) => {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_COMMERCE_DELETING });
+
+    userReauthenticate(password)
+      .then(() => {
+        dispatch({ type: ON_REAUTH_SUCCESS });
+
+        var userRef = db.doc(`Profiles/${currentUser.uid}`);
+
+        db.runTransaction(transaction => {
+          return transaction.get(userRef).then(userDoc => {
+            var commerceRef = db.doc(`Commerces/${userDoc.data().commerceId}`);
+
+            transaction.update(userRef, { commerceId: null });
+            transaction.update(commerceRef, { softDelete: new Date() });
+          })
+        })
+          .then(() => {
+            dispatch({ type: ON_COMMERCE_DELETED });
+            dispatch({ type: ON_REGISTER_VALUE_CHANGE, payload: { prop: 'commerceId', value: null } })
+
+            if (navigation) {
+              navigation.navigate('client');
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_REAUTH_FAIL });
+        dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+      });
+  }
+}

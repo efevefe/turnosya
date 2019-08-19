@@ -19,11 +19,11 @@ class CourtListItem extends Component {
     this.setState({ deleteVisible: !this.state.deleteVisible });
   };
 
-  onConfirmDeletePress() {
+  onConfirmDeletePress = () => {
     const { court, commerceId, courtDelete } = this.props;
     courtDelete({ id: court.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
-  }
+  };
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
@@ -74,9 +74,13 @@ class CourtListItem extends Component {
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem title="Sí" onPress={this.onConfirmDeletePress.bind(this)} />
+          <MenuItem
+            title="Sí"
+            icon="md-checkmark"
+            onPress={this.onConfirmDeletePress}
+          />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="No" onPress={this.onDeletePress} />
+          <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
         </Menu>
 
         <ListItem

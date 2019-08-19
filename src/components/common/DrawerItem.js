@@ -1,13 +1,30 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons';
 
 class DrawerItem extends Component {
+    renderIcon = (color) => {
+        // el icono debe ser de ionicons
+        if (this.props.icon) {
+            return (
+                <View style={{ width: 25, alignItems: 'center' }} >
+                    <Ionicons
+                        name={this.props.icon}
+                        color={color}
+                        size={22}
+                    />
+                </View>
+            );
+        }
+    }
+
     render () {
         return (
             <Button
                 { ...this.props }
                 type='clear'
+                icon={() => this.renderIcon(color)}
                 loadingProps={{ color: color }}
                 buttonStyle={[ styles.buttonStyle, this.props.buttonStyle ]}
                 containerStyle={[ styles.containerStyle, this.props.containerStyle ]}
@@ -36,7 +53,7 @@ const styles = StyleSheet.create({
     titleStyle: {
         fontSize: 15,
         color: color,
-        paddingLeft: 15
+        paddingLeft: 18
     }
 });
 

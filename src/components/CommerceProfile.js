@@ -488,9 +488,13 @@ class commerceData extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={{ uri: this.props.profilePicture }}
+              source={
+                this.props.profilePicture
+                  ? { uri: this.props.profilePicture }
+                  : null
+              }
               size="xlarge"
-              icon={{ name: 'store', type: 'material' }}
+              icon={{ name: 'store' }}
               containerStyle={avatarStyle}
             />
 

@@ -19,12 +19,17 @@ export const ON_LOGIN_FAIL = 'on_login_fail';
 export const ON_LOGOUT = 'on_logout';
 export const ON_LOGOUT_SUCCESS = 'on_logout_success';
 export const ON_LOGOUT_FAIL = 'on_logout_fail';
+export const ON_REAUTH_SUCCESS = 'on_reauth_success';
+export const ON_REAUTH_FAIL = 'on_reauth_fail';
 
 // Register types
 export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
+export const ON_USER_DELETED = 'on_user_delete';
+export const ON_USER_DELETING = 'on_user_deleting';
+export const ON_USER_DELETE_FAIL = 'on_user_delete_fail';
 
 // Court types
 export const ON_COURT_FORM_OPEN = 'on_court_form_open';
@@ -52,7 +57,9 @@ export const COMMERCE_FAIL = 'commerce_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';
 export const COMMERCE_PROFILE_CREATE = 'commerce_profile_create';
-
+export const ON_COMMERCE_DELETING = 'on_commerce_deleting';
+export const ON_COMMERCE_DELETED = 'on_commerce_deleted';
+export const ON_COMMERCE_DELETE_FAIL = 'on_commerce_delete_fail';
 export const ON_COMMERCE_READING = 'on_commerce_reading';
 export const ON_COMMERCE_READ = 'on_commerce_read';
 export const ON_COMMERCE_READ_FAIL = 'on_commerce_read_fail';
@@ -68,7 +75,7 @@ export const ON_COMMERCES_READ = 'on_commerces_read';
 export const ON_COMMERCES_SEARCHING = 'on_commerces_searching';
 export const ON_COMMERCES_SEARCHED = 'on_commerces_searched';
 
-//Register Schedule
+//Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
@@ -79,7 +86,5 @@ export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
 export const ON_SCHEDULE_CREATED = 'on_schedule_create';
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
-
-//Register Schedule Config
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';

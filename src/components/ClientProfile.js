@@ -24,7 +24,8 @@ import {
   onUserRead,
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
-  onRegisterValueChange
+  onRegisterValueChange,
+  servicesRead
 } from '../actions';
 
 class ClientProfile extends Component {
@@ -366,7 +367,7 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={{ uri: this.props.profilePicture }}
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
@@ -522,6 +523,7 @@ export default connect(
     onUserRead,
     onUserUpdateWithPicture,
     onUserUpdateNoPicture,
-    onRegisterValueChange
+    onRegisterValueChange,
+    servicesRead
   }
 )(ClientProfile);

@@ -8,7 +8,10 @@ import {
   ON_USER_UPDATING,
   ON_USER_UPDATED,
   ON_USER_UPDATE_FAIL,
-  ON_USER_READ_FAIL
+  ON_USER_READ_FAIL,
+  ON_USER_DELETING,
+  ON_USER_DELETED,
+  ON_USER_DELETE_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -20,9 +23,11 @@ const INITIAL_STATE = {
   firstName: '',
   lastName: '',
   phone: '',
+  commerceId: null,
   loading: false,
   refreshing: false,
-  error: ''
+  error: '',
+  confirmDeleteVisible: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -47,7 +52,13 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, profilePicture: action.payload, refreshing: false };
     case ON_USER_UPDATE_FAIL:
       return { ...state, refreshing: false };
-    default:
+    case ON_USER_DELETING:
+      return { ...state, loading: true };
+    case ON_USER_DELETED:
       return INITIAL_STATE;
+    case ON_USER_DELETE_FAIL:
+      return { ...state, loading: false };
+    default:
+      return state;
   }
 };

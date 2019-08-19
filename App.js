@@ -43,7 +43,7 @@ class App extends React.Component {
   renderNavigation = () => {
     const { screenLoading, logged } = this.state;
 
-    if (screenLoading) return <Spinner size="large" color={MAIN_COLOR} />;
+    if (screenLoading) return <Spinner />;
 
     return logged ? <MainNavigation /> : <GuestNavigation />;
   };
