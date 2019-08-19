@@ -1,24 +1,24 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  COMMERCE_LIST_READ,
-  COMMERCE_LIST_READING,
-  ON_COMMERCE_LIST_OPEN
+  ON_COMMERCES_READING,
+  ON_COMMERCES_READ,
+  ON_COMMERCES_SEARCHING,
+  ON_COMMERCES_SEARCHED
 } from './types';
 
 export const commercesRead = () => {
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COMMERCE_LIST_OPEN });
-    dispatch({ type: COMMERCE_LIST_READING });
+    dispatch({ type: ON_COMMERCES_READING });
     db.collection('Commerces')
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .onSnapshot(snapShot => {
         var commerces = [];
         snapShot.forEach(doc => commerces.push({ ...doc.data(), id: doc.id }));
-        dispatch({ type: COMMERCE_LIST_READ, payload: commerces });
+        dispatch({ type: ON_COMMERCES_READ, payload: commerces });
       });
   };
 };
@@ -27,15 +27,19 @@ export const searchCommerces = search => {
   var db = firebase.firestore();
 
   return dispatch => {
+    dispatch({ type: ON_COMMERCES_SEARCHING });
     db.collection('Commerces')
       .where('softDelete', '==', null)
-      .orderBy('name', 'asc')
-      .startAt(search)
-      .endAt(`${search}\uf8ff`)
       .onSnapshot(snapShot => {
         var commerces = [];
-        snapShot.forEach(doc => commerces.push({ ...doc.data(), id: doc.id }));
-        dispatch({ type: COMMERCE_LIST_READ, payload: commerces });
+        snapShot.forEach(doc => {
+          const name = doc.data().name.toLowerCase();
+          if (name.includes(search.toLowerCase())) {
+            commerces.push({ ...doc.data(), id: doc.id });
+          }
+        });
+
+        dispatch({ type: ON_COMMERCES_SEARCHED, payload: commerces });
       });
   };
 };

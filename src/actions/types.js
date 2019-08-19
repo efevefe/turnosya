@@ -63,9 +63,10 @@ export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
 
 //Commerces List
-export const COMMERCE_LIST_READ = 'commerce_list_read';
-export const COMMERCE_LIST_READING = 'commerce_list_reading';
-export const ON_COMMERCE_LIST_OPEN = 'on_commerce_list_open';
+export const ON_COMMERCES_READING = 'on_commerces_reading';
+export const ON_COMMERCES_READ = 'on_commerces_read';
+export const ON_COMMERCES_SEARCHING = 'on_commerces_searching';
+export const ON_COMMERCES_SEARCHED = 'on_commerces_searched';
 
 //Register Schedule
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -75,7 +76,7 @@ export const ON_SCHEDULE_CARD_DELETE = 'on_schedule_card_delete';
 export const ON_SCHEDULE_READ = 'on_schedule_shifts_read';
 export const ON_SCHEDULE_READING = 'on_schedule_shifts_reading';
 export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
-export const ON_SCHEDULE_CREATED = 'on_schedule_create'
+export const ON_SCHEDULE_CREATED = 'on_schedule_create';
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 

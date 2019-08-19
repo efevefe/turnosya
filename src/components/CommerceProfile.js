@@ -490,7 +490,7 @@ class commerceData extends Component {
               rounded
               source={{ uri: this.props.profilePicture }}
               size="xlarge"
-              icon={{ name: 'person' }}
+              icon={{ name: 'store', type: 'material' }}
               containerStyle={avatarStyle}
             />
 
@@ -571,12 +571,6 @@ class commerceData extends Component {
                 this.props.onCommerceValueChange({ prop: 'description', value })
               }
               editable={this.state.editEnabled}
-              onBlur={() =>
-                this.props.onCommerceValueChange({
-                  prop: 'description',
-                  value: trimString(this.props.description)
-                })
-              }
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -626,7 +620,7 @@ class commerceData extends Component {
               items={this.props.areasList}
               value={this.props.area.areaId}
               onValueChange={value => this.onAreaPickerChange(value)}
-              disabled={true}
+              disabled={!this.state.editEnabled}
               errorMessage={this.state.areaError}
             />
           </CardSection>
