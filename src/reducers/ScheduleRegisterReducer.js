@@ -13,6 +13,7 @@ import {
   ON_SCHEDULE_CONFIG_UPDATED
 } from '../actions/types';
 import { Toast } from '../components/common';
+import moment from 'moment';
 
 const INITIAL_STATE = {
   cards: [
@@ -28,6 +29,7 @@ const INITIAL_STATE = {
   selectedDays: [],
   reservationMinLength: 10,
   reservationDayPeriod: 1,
+  selectedDate: moment(),
   loading: false,
   refreshing: false
 };

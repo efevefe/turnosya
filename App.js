@@ -10,6 +10,7 @@ import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
+import LoadingScreen from './src/components/LoadingScreen';
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -43,7 +44,7 @@ class App extends React.Component {
   renderNavigation = () => {
     const { screenLoading, logged } = this.state;
 
-    if (screenLoading) return <Spinner />;
+    if (screenLoading) return <LoadingScreen />;
 
     return logged ? <MainNavigation /> : <GuestNavigation />;
   };

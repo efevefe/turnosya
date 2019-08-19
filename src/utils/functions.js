@@ -88,7 +88,7 @@ export const validateValueType = (type, value) => {
 };
 
 const validarCuit = cuit => {
-  //regex para cuit unicamente de negocio
+  //regex para cuit únicamente de negocio
   const cuitRe = /\b(30|33|34)(\D)?[0-9]{8}(\D)?[0-9]/g;
 
   if (!cuitRe.test(String(cuit))) {
@@ -149,4 +149,9 @@ export const stringFormatDays = totalDays => {
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
   else return stringDays + '.';
+};
+
+export const getHourAndMinutes = hour => {
+  hour = hour.split(':').map(num => parseInt(num));
+  return { hour: hour[0], minutes: hour[1] };
 };

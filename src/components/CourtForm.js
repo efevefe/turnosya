@@ -13,7 +13,7 @@ import {
 } from '../actions';
 import { CardSection, Input, Picker, Button, Spinner } from './common';
 import { validateValueType, trimString } from '../utils';
-import { MAIN_COLOR } from '../constants';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../constants';
 
 class CourtForm extends Component {
   state = {
@@ -260,7 +260,10 @@ class CourtForm extends Component {
                     })
                   }
                   value={this.props.courtState}
-                  trackColor={{ false: '#c4c4c4', true: '#efb5bd' }}
+                  trackColor={{
+                    false: GREY_DISABLED,
+                    true: MAIN_COLOR_DISABLED
+                  }}
                   thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
                 />
                 <Tooltip
