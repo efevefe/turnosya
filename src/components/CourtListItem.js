@@ -10,20 +10,20 @@ import { courtDelete, onCourtFormOpen } from '../actions';
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
 
-  onOptionsPress() {
+  onOptionsPress = () => {
     this.setState({ optionsVisible: !this.state.optionsVisible });
-  }
+  };
 
-  onDeletePress() {
+  onDeletePress = () => {
     this.setState({ optionsVisible: false });
     this.setState({ deleteVisible: !this.state.deleteVisible });
-  }
+  };
 
   onConfirmDeletePress() {
     this.props.courtDelete({ id: this.props.court.id });
     this.setState({ deleteVisible: !this.deleteVisible });
   }
-  onUpdatePress() {
+  onUpdatePress = () => {
     this.props.onCourtFormOpen();
     const navigateAction = NavigationActions.navigate({
       routeName: 'courtForm',
@@ -34,7 +34,7 @@ class CourtListItem extends Component {
 
     //hay que ver la forma de que esto se haga en el .then() del update()
     this.props.navigation.navigate(navigateAction);
-  }
+  };
 
   render() {
     const {
@@ -47,34 +47,35 @@ class CourtListItem extends Component {
       courtState,
       id
     } = this.props.court;
+
     return (
       <View style={{ flex: 1 }}>
         <Menu
           title={name}
-          onBackdropPress={this.onOptionsPress.bind(this)}
+          onBackdropPress={this.onOptionsPress}
           isVisible={this.state.optionsVisible}
         >
           <MenuItem
             title="Editar"
             icon="md-create"
-            onPress={this.onUpdatePress.bind(this)}
+            onPress={this.onUpdatePress}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Eliminar"
             icon="md-trash"
-            onPress={this.onDeletePress.bind(this)}
+            onPress={this.onDeletePress}
           />
         </Menu>
 
         <Menu
           title={`¿Seguro que desea eliminar "${name}"?`}
-          onBackdropPress={this.onDeletePress.bind(this)}
+          onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
           <MenuItem title="Sí" onPress={this.onConfirmDeletePress.bind(this)} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="No" onPress={this.onDeletePress.bind(this)} />
+          <MenuItem title="No" onPress={this.onDeletePress} />
         </Menu>
 
         <ListItem
@@ -134,13 +135,13 @@ class CourtListItem extends Component {
               }
             >{`${court} - ${ground}`}</Text>
           }
-          onLongPress={this.onOptionsPress.bind(this)}
+          onLongPress={this.onOptionsPress}
           rightElement={
             <Button
               type="clear"
               buttonStyle={{ padding: 0 }}
               containerStyle={{ borderRadius: 15, overflow: 'hidden' }}
-              onPress={this.onOptionsPress.bind(this)}
+              onPress={this.onOptionsPress}
               icon={<Icon name="more-vert" size={22} color="grey" />}
             />
           }

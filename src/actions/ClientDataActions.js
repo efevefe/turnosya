@@ -71,7 +71,7 @@ export const onUserUpdateNoPicture = ({
   phone,
   profilePicture
 }) => {
-  // en esta funcion, profilePicture es una URL
+  // on this function, profilePicture is an URL
 
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
@@ -95,7 +95,7 @@ export const onUserUpdateWithPicture = ({
   phone,
   profilePicture
 }) => {
-  // en esta funcion, profilePicture es un BLOB
+  // on this function, profilePicture is a BLOB
 
   const { currentUser } = firebase.auth();
   var ref = firebase

@@ -13,13 +13,13 @@ class CommercesList extends Component {
   componentWillMount() {
     this.props.commercesRead();
   }
-  renderRow({ item }) {
+  renderRow = ({ item }) => {
     return (
       <CommerceListItem commerce={item} navigation={this.props.navigation} />
     );
-  }
+  };
 
-  searchCommerces(search) {
+  searchCommerces = search => {
     this.setState({
       search: search
     });
@@ -30,44 +30,43 @@ class CommercesList extends Component {
     } else if (search.length == 0) {
       this.resetSearch();
     }
-  }
+  };
 
-  resetSearch() {
+  resetSearch = () => {
     this.setState({
       search: ''
     });
     setTimeout(() => {
       this.props.commercesRead();
     }, 50);
-  }
+  };
 
   render() {
-    if (this.props.loading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
-    } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <SearchBar
-            platform="android"
-            placeholder="Busca algun negocio"
-            onChangeText={text => this.searchCommerces(text)}
-            onClear={this.resetSearch.bind(this)}
-            value={this.state.search}
-          />
+    if (this.props.loading) return <Spinner size="large" color={MAIN_COLOR} />;
 
-          <FlatList
-            data={this.props.commerces}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={commerce => commerce.id}
-          />
-        </View>
-      );
-    }
+    return (
+      <View style={{ flex: 1 }}>
+        <SearchBar
+          platform="android"
+          placeholder="Busca algun negocio"
+          onChangeText={text => this.searchCommerces(text)}
+          onClear={this.resetSearch}
+          value={this.state.search}
+        />
+
+        <FlatList
+          data={this.props.commerces}
+          renderItem={this.renderRow}
+          keyExtractor={commerce => commerce.id}
+        />
+      </View>
+    );
   }
 }
 
 const mapStateToProps = state => {
   const { commerces, loading } = state.commercesList;
+
   return { commerces, loading };
 };
 

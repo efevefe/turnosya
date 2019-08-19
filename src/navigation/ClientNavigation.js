@@ -132,7 +132,7 @@ const tabNavigationOptions = {
       );
     }
   }),
-  initialRouteName: 'search',
+  initialRouteName: 'profile',
   tabBarOptions: {
     showLabel: false,
     activeTintColor: 'white',

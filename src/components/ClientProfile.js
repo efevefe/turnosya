@@ -335,9 +335,7 @@ class ClientProfile extends Component {
       infoContainerStyle
     } = styles;
 
-    if (this.props.loading) {
-      return <Spinner />;
-    }
+    if (this.props.loading) return <Spinner />;
 
     return (
       <KeyboardAwareScrollView

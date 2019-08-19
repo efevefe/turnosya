@@ -27,7 +27,6 @@ export const searchCommerces = search => {
   var db = firebase.firestore();
 
   return dispatch => {
-    //dispatch({ type: ON_COMMERCE_LIST_OPEN });
     db.collection('Commerces')
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')

@@ -74,6 +74,7 @@ class LoginForm extends Component {
       loginContainerStyle,
       createAccountContainerStyle
     } = styles;
+
     return (
       <View style={containerStyle}>
         <View style={logoContainerStyle}>
@@ -100,6 +101,7 @@ class LoginForm extends Component {
               onBlur={this.renderEmailError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               placeholder="Contraseña"
@@ -117,6 +119,7 @@ class LoginForm extends Component {
               onBlur={this.renderPasswordError}
             />
           </CardSection>
+
           <CardSection>
             <Button
               title="Iniciar Sesión"
@@ -124,12 +127,14 @@ class LoginForm extends Component {
               onPress={this.onButonPressHandler.bind(this)}
             />
           </CardSection>
+
           <Divider
             style={{
               backgroundColor: 'grey',
               margin: 10
             }}
           />
+
           <CardSection>
             <Button
               title="Conectar con Google"
