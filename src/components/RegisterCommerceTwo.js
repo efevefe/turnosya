@@ -9,6 +9,7 @@ import {
   onAreasRead,
   onProvincesRead
 } from '../actions';
+import { trimString } from '../utils';
 
 class RegisterCommerceTwo extends Component {
   state = {
@@ -91,7 +92,11 @@ class RegisterCommerceTwo extends Component {
   };
 
   renderAddressError = () => {
-    if (this.props.address === '') {
+    const { address, onCommerceValueChange } = this.props;
+    const value = trimString(address);
+    onCommerceValueChange({ prop: 'address', value });
+
+    if (value === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -101,7 +106,11 @@ class RegisterCommerceTwo extends Component {
   };
 
   renderCityError = () => {
-    if (this.props.city === '') {
+    const { city, onCommerceValueChange } = this.props;
+    const value = trimString(city);
+    onCommerceValueChange({ prop: 'city', value });
+
+    if (value === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -180,6 +189,7 @@ class RegisterCommerceTwo extends Component {
           <CardSection>
             <Input
               label="Dirección"
+              value={this.props.address}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
                   prop: 'address',

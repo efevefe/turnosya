@@ -12,23 +12,27 @@ class CourtList extends Component {
   }
 
   renderRow({ item }) {
-    return <CourtListItem court={item} navigation={this.props.navigation} />;
+    return (
+      <CourtListItem
+        court={item}
+        commerceId={this.props.commerceId}
+        navigation={this.props.navigation}
+      />
+    );
   }
 
   renderList() {
-    if (this.props.loading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
-    } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.courts}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={court => court.id}
-          />
-        </View>
-      );
-    }
+    if (this.props.loading) return <Spinner size="large" color={MAIN_COLOR} />;
+
+    return (
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={this.props.courts}
+          renderItem={this.renderRow.bind(this)}
+          keyExtractor={court => court.id}
+        />
+      </View>
+    );
   }
 
   render() {

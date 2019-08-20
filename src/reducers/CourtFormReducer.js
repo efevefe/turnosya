@@ -16,7 +16,6 @@ const INITIAL_STATE = {
   ground: '',
   price: '',
   lightPrice: '',
-  checked: false,
   courtState: true,
   loading: false,
   existedError: false

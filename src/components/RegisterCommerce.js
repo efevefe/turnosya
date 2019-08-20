@@ -3,8 +3,12 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { CardSection, Button, Input } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { onCommerceValueChange, onCommerceFormOpen } from '../actions';
-import { validateValueType } from '../utils';
+import {
+  onCommerceValueChange,
+  onCommerceFormOpen,
+  onCommerceRead
+} from '../actions';
+import { validateValueType, trimString } from '../utils';
 
 class RegisterCommerce extends Component {
   state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
@@ -42,7 +46,10 @@ class RegisterCommerce extends Component {
   };
 
   renderNameError = () => {
-    if (this.props.name === '') {
+    const { name, onCommerceValueChange } = this.props;
+
+    onCommerceValueChange({ prop: 'name', value: trimString(name) });
+    if (trimString(name) === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -55,7 +62,7 @@ class RegisterCommerce extends Component {
     if (this.props.phone === '') {
       this.setState({ phoneError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('int', this.props.phone)) {
+    } else if (!validateValueType('phone', this.props.phone)) {
       this.setState({ phoneError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -83,8 +90,9 @@ class RegisterCommerce extends Component {
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
             <Input
-              label="Razon Social"
-              placeholder="Razon Social"
+              label="Razón Social"
+              placeholder="Razón Social"
+              value={this.props.name}
               errorMessage={this.state.nameError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
@@ -96,6 +104,7 @@ class RegisterCommerce extends Component {
               onBlur={this.renderNameError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Cuit"
@@ -112,6 +121,7 @@ class RegisterCommerce extends Component {
               onBlur={this.renderCuitError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Teléfono"
@@ -128,27 +138,31 @@ class RegisterCommerce extends Component {
               onBlur={this.renderPhoneError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="E-mail"
               placeholder="E-mail"
+              value={this.props.email}
               autoCapitalize="none"
               keyboardType="email-address"
               errorMessage={this.state.emailError}
               onChangeText={value =>
                 this.props.onCommerceValueChange({
                   prop: 'email',
-                  value
+                  value: value.trim()
                 })
               }
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               label="Descripción"
               placeholder="Descripción"
+              value={this.props.description}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -158,8 +172,15 @@ class RegisterCommerce extends Component {
                   value
                 })
               }
+              onBlur={() =>
+                this.props.onCommerceValueChange({
+                  prop: 'description',
+                  value: trimString(this.props.description)
+                })
+              }
             />
           </CardSection>
+
           <CardSection>
             <Button
               title="Continuar"

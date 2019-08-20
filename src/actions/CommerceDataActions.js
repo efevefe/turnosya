@@ -30,7 +30,7 @@ export const onCommerceValueChange = ({ prop, value }) => {
 
 export const onCommerceFormOpen = () => {
   return { type: ON_COMMERCE_CREATING };
-}
+};
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
@@ -74,7 +74,8 @@ export const onCreateCommerce = (
         address,
         city,
         province,
-        area
+        area,
+        softDelete: null
       })
       .then(reference => {
         db.doc(`Profiles/${currentUser.uid}`)
@@ -86,7 +87,7 @@ export const onCreateCommerce = (
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
       .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  }
+  };
 };
 
 export const onCommerceRead = loadingType => {
@@ -104,11 +105,11 @@ export const onCommerceRead = loadingType => {
         db.doc(`Commerces/${doc.data().commerceId}`)
           .get()
           .then(doc => {
-            //provincia
+            //province
             var { name, provinceId } = doc.data().province;
             const province = { value: provinceId, label: name };
 
-            //rubro
+            //area
             var { name, areaId } = doc.data().area;
             const area = { value: areaId, label: name };
 
