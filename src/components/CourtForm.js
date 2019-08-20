@@ -50,9 +50,9 @@ class CourtForm extends Component {
     }
   }
 
-  async componentDidMount() {
-    await this.props.getCourtAndGroundTypes();
-    this.setState({ lightPriceOpen: this.props.lightPrice !== '' });
+  componentDidMount() {
+    this.props.getCourtAndGroundTypes();
+    this.setState({ lightPriceOpen: !!this.props.lightPrice !== '' });
   }
 
   onButtonPressHandler = () => {
@@ -205,9 +205,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-        prop: 'ground',
-        value
-      })
+          prop: 'ground',
+          value
+        })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 

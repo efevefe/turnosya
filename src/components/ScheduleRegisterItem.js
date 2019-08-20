@@ -7,7 +7,12 @@ import {
   Text,
   Divider
 } from 'react-native-elements';
-import { View, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
 import {
@@ -16,7 +21,6 @@ import {
   onScheduleCardDelete
 } from '../actions';
 import { CardSection, DatePicker } from './common';
-
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 
@@ -28,8 +32,8 @@ class ScheduleRegister extends Component {
     secondShiftEndError: ''
   };
 
-  async componentDidMount() {
-    await this.setState({
+  componentDidMount() {
+    this.setState({
       checked: !!this.props.card.secondShiftStart,
       prevDays: this.props.card.days
     });
@@ -68,8 +72,8 @@ class ScheduleRegister extends Component {
     secondShiftStart > firstShiftEnd || secondShiftStart === ''
       ? this.setState({ secondShiftStartError: '' })
       : this.setState({
-        secondShiftStartError: `Segundo turno debe \n ser mayor al primero`
-      });
+          secondShiftStartError: `Segundo turno debe \n ser mayor al primero`
+        });
   };
 
   renderPickerSecondShiftEnd = () => {
@@ -78,8 +82,8 @@ class ScheduleRegister extends Component {
     secondShiftStart < secondShiftEnd
       ? this.setState({ secondShiftEndError: '' })
       : this.setState({
-        secondShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
-      });
+          secondShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
+        });
   };
 
   getDisabledDays = () => {
@@ -277,7 +281,7 @@ const styles = StyleSheet.create({
   viewPickerDate: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around'
   },
   cardStyle: {
     padding: 5,
