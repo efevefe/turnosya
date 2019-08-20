@@ -10,7 +10,8 @@ import {
   ON_SCHEDULE_CREATED,
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
-  ON_SCHEDULE_CONFIG_UPDATED
+  ON_SCHEDULE_CONFIG_UPDATED,
+  ON_SCHEDULE_READ_EMPTY
 } from '../actions/types';
 import { Toast } from '../components/common';
 import moment from 'moment';
@@ -28,7 +29,7 @@ const INITIAL_STATE = {
   ],
   selectedDays: [],
   reservationMinLength: 10,
-  reservationDayPeriod: 1,
+  reservationDayPeriod: 14,
   selectedDate: moment(),
   loading: false,
   refreshing: false
@@ -65,6 +66,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ON_SCHEDULE_READ:
       return { ...INITIAL_STATE, ...action.payload };
+    case ON_SCHEDULE_READ_EMPTY:
+      Toast.show({ text: 'Aun no tienes horarios de atencion' });
+
+      return INITIAL_STATE;
     case ON_SCHEDULE_READ_FAIL:
       return { ...state, loading: false };
     case ON_SCHEDULE_CREATING:

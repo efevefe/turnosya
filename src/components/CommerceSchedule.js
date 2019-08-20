@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text, RefreshControl } from 'react-native';
+import { View, FlatList, Text, RefreshControl, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Menu, MenuItem, Calendar, Spinner } from './common';
 import { Divider, ListItem } from 'react-native-elements';
@@ -26,7 +26,7 @@ class CommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.cards !== this.props.cards) {
+    if (prevProps.cards !== this.props.cards || (prevProps.loading && !this.props.loading)) {
       this.onDateSelect(this.props.selectedDate);
     }
   }
@@ -169,6 +169,17 @@ class CommerceSchedule extends Component {
     );
   };
 
+  onRefresh = () => {
+    return (
+      <RefreshControl
+        refreshing={this.props.loading}
+        onRefresh={() => this.props.onScheduleRead(this.props.commerceId)}
+        colors={[MAIN_COLOR]}
+        tintColor={MAIN_COLOR}
+      />
+    );
+  }
+
   renderSlots = () => {
     if (this.state.slots.length) {
       return (
@@ -176,25 +187,19 @@ class CommerceSchedule extends Component {
           data={this.state.slots}
           renderItem={this.renderList.bind(this)}
           keyExtractor={slot => slot.id.toString()}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.props.loading}
-              onRefresh={() => this.props.onScheduleRead(this.props.commerceId)}
-              colors={[MAIN_COLOR]}
-              tintColor={MAIN_COLOR}
-            />
-          }
+          refreshControl={this.onRefresh()}
         />
       );
     } else {
       return (
-        <View
-          style={{ flex: 1, alignSelf: 'stretch', justifyContent: 'center' }}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, alignSelf: 'stretch', justifyContent: 'center' }}
+          refreshControl={this.onRefresh()}
         >
           <Text style={{ textAlign: 'center', margin: 15 }}>
             No hay turnos para este dia...
           </Text>
-        </View>
+        </ScrollView>
       );
     }
   };
@@ -217,8 +222,8 @@ class CommerceSchedule extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderSlots()
-        )}
+            this.renderSlots()
+          )}
 
         <Menu
           title="Configuración de diagramación"

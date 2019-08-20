@@ -31,7 +31,7 @@ class ScheduleRegister extends Component {
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        onPress={() => this.props.onScheduleCreate({ cards: this.props.cards, commerceId: this.props.commerceId })}
+        onPress={() => this.props.onScheduleCreate({ cards: this.props.cards, commerceId: this.props.commerceId }, this.props.navigation)}
       />
     );
   };

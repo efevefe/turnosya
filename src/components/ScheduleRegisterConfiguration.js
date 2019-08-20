@@ -28,7 +28,7 @@ class ScheduleRegisterConfiguration extends Component {
   onSavePressHandler() {
     const { reservationMinLength, reservationDayPeriod, commerceId } = this.props;
 
-    this.props.onScheduleConfigSave({ reservationMinLength, reservationDayPeriod, commerceId });
+    this.props.onScheduleConfigSave({ reservationMinLength, reservationDayPeriod, commerceId }, this.props.navigation);
   }
 
   onMinSliderValueChange() {

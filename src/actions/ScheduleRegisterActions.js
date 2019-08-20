@@ -12,7 +12,8 @@ import {
   ON_SCHEDULE_CREATING,
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
-  ON_SCHEDULE_CONFIG_UPDATED
+  ON_SCHEDULE_CONFIG_UPDATED,
+  ON_SCHEDULE_READ_EMPTY
 } from './types';
 
 export const onScheduleValueChange = ({ prop, value }) => {
@@ -41,12 +42,20 @@ export const onScheduleRead = commerceId => {
       .where('endDate', '==', null)
       .get()
       .then(snapshot => {
+        if (snapshot.empty) {
+          return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+        }
+
         snapshot.forEach(doc => {
           var { reservationDayPeriod, reservationMinLength } = doc.data();
 
           db.collection(`Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`)
             .get()
             .then(snapshot => {
+              if (snapshot.empty) {
+                return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+              }
+
               var cards = [];
               var selectedDays = [];
 
@@ -123,7 +132,7 @@ export const onScheduleCreate = cards => {
 };
 */
 
-export const onScheduleCreate = ({ cards, commerceId }) => {
+export const onScheduleCreate = ({ cards, commerceId }, navigation) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
   var batch = db.batch();
@@ -153,6 +162,7 @@ export const onScheduleCreate = ({ cards, commerceId }) => {
 
         batch.commit()
           .then(() => {
+            navigation.navigate('calendar');
             dispatch({ type: ON_SCHEDULE_CREATED });
           })
           .catch(error => {
@@ -171,7 +181,9 @@ export const onScheduleConfigSave = ({
   reservationMinLength,
   reservationDayPeriod,
   commerceId
-}) => {
+},
+  navigation
+) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -179,7 +191,10 @@ export const onScheduleConfigSave = ({
 
     db.doc(`Commerces/${commerceId}/Schedules/0`)
       .set({ reservationMinLength, reservationDayPeriod }, { merge: true })
-      .then(() => dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED }))
-      .catch(() => console.log('error'));
+      .then(() => {
+        navigation.navigate('calendar');
+        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED })
+      })
+      .catch(error => console.log(error));
   };
 };

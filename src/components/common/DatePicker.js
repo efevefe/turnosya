@@ -4,7 +4,7 @@ import RNDatePicker from 'react-native-datepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
 
-const pickerWidth = Math.round(Dimensions.get('window').width) / 3;
+const pickerWidth = Math.round(Dimensions.get('window').width) / 2.8;
 
 class DatePicker extends Component {
     renderErrorMessage = () => {
