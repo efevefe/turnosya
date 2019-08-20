@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { Input as RNEInput } from 'react-native-elements';
-import { MAIN_COLOR } from '../../constants';
+import { MAIN_COLOR, GREY_DISABLED } from '../../constants';
 
 class Input extends Component {
   isEnabled = () => {
@@ -18,7 +18,7 @@ class Input extends Component {
 
   render() {
     const enabled = this.isEnabled();
-    const inputColor = enabled ? ( this.props.color || MAIN_COLOR ) : '#c4c4c4';
+    const inputColor = enabled ? ( this.props.color || MAIN_COLOR ) : GREY_DISABLED;
 
     return (
       <RNEInput

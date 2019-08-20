@@ -10,13 +10,21 @@ import {
   ON_USER_UPDATING,
   ON_USER_UPDATED,
   ON_USER_UPDATE_FAIL,
-  ON_USER_READ_FAIL
+  ON_USER_READ_FAIL,
+  ON_USER_DELETING,
+  ON_USER_DELETED,
+  ON_USER_DELETE_FAIL,
+  ON_REAUTH_FAIL,
+  ON_REAUTH_SUCCESS
 } from './types';
+import { userReauthenticate } from './AuthActions';
 
+// este se deberia llamar onClientValueChange / onUserValueChange
 export const onRegisterValueChange = ({ prop, value }) => {
   return { type: ON_REGISTER_VALUE_CHANGE, payload: { prop, value } };
 };
 
+// este se deberia llamar onUserCreate
 export const onRegister = ({ email, password, firstName, lastName, phone }) => {
   return dispatch => {
     dispatch({ type: ON_REGISTER });
@@ -71,7 +79,7 @@ export const onUserUpdateNoPicture = ({
   phone,
   profilePicture
 }) => {
-  // en esta funcion, profilePicture es una URL
+  // on this function, profilePicture is an URL
 
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
@@ -95,7 +103,7 @@ export const onUserUpdateWithPicture = ({
   phone,
   profilePicture
 }) => {
-  // en esta funcion, profilePicture es un BLOB
+  // on this function, profilePicture is a BLOB
 
   const { currentUser } = firebase.auth();
   var ref = firebase
@@ -134,3 +142,41 @@ export const onUserUpdateWithPicture = ({
       });
   };
 };
+
+export const onUserDelete = (password) => {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_USER_DELETING });
+
+    userReauthenticate(password)
+      .then(() => {
+        dispatch({ type: ON_REAUTH_SUCCESS });
+
+        db.doc(`Profiles/${currentUser.uid}`)
+          .update({ softDelete: new Date() })
+          .then(() => {
+            currentUser
+              .delete()
+              .then(() => {
+                dispatch({ type: ON_USER_DELETED });
+              })
+              .catch(error => {
+                console.log(error);
+                dispatch({ type: ON_USER_DELETE_FAIL });
+              });
+          })
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: ON_USER_DELETE_FAIL });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_REAUTH_FAIL });
+        dispatch({ type: ON_USER_DELETE_FAIL });
+      });
+
+  }
+}

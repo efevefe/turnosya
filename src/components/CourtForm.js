@@ -11,9 +11,9 @@ import {
   onCourtFormOpen,
   courtUpdate
 } from '../actions';
-import { CardSection, Input, Picker, Button, Spinner } from './common';
-import { validateValueType } from '../utils';
-import { MAIN_COLOR } from '../constants';
+import { CardSection, Input, Picker, Button } from './common';
+import { validateValueType, trimString } from '../utils';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../constants';
 
 class CourtForm extends Component {
   state = {
@@ -22,7 +22,8 @@ class CourtForm extends Component {
     groundTypeError: '',
     priceError: '',
     lightPriceError: '',
-    selectedGrounds: []
+    selectedGrounds: [],
+    lightPriceOpen: false
   };
 
   componentWillMount() {
@@ -51,9 +52,10 @@ class CourtForm extends Component {
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
+    this.setState({ lightPriceOpen: !!this.props.lightPrice !== '' });
   }
 
-  onButtonPressHandler() {
+  onButtonPressHandler = () => {
     if (this.validateMinimumData()) {
       const {
         name,
@@ -61,7 +63,6 @@ class CourtForm extends Component {
         ground,
         price,
         lightPrice,
-        checked,
         courtState,
         commerceId,
         navigation
@@ -77,7 +78,6 @@ class CourtForm extends Component {
             ground,
             price,
             lightPrice,
-            checked,
             courtState,
             id,
             commerceId
@@ -92,7 +92,6 @@ class CourtForm extends Component {
             ground,
             price,
             lightPrice,
-            checked,
             courtState,
             commerceId
           },
@@ -100,13 +99,14 @@ class CourtForm extends Component {
         );
       }
     }
-  }
+  };
 
   renderNameError = () => {
     const { name, onCourtValueChange } = this.props;
+    const value = trimString(name);
+    onCourtValueChange({ prop: 'name', value });
 
-    onCourtValueChange({ prop: 'name', value: name.trim() });
-    if (name.trim() === '') {
+    if (value === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -137,7 +137,6 @@ class CourtForm extends Component {
 
   renderPriceError = () => {
     const { price, onCourtValueChange } = this.props;
-
     onCourtValueChange({ prop: 'price', value: price.trim() });
     if (price.trim() === '') {
       this.setState({ priceError: 'Dato requerido' });
@@ -152,19 +151,21 @@ class CourtForm extends Component {
   };
 
   renderLightPriceError = () => {
-    const { lightPrice, checked, onCourtValueChange } = this.props;
+    if (this.state.lightPriceOpen) {
+      const { lightPrice, onCourtValueChange } = this.props;
+      onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
 
-    onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
-    if (lightPrice.trim() === '' && checked === true) {
-      this.setState({ lightPriceError: 'Dato requerido' });
-      return false;
-    } else if (!validateValueType('number', lightPrice.trim())) {
-      this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
-      return false;
-    } else {
-      this.setState({ lightPriceError: '' });
-      return true;
+      if (lightPrice.trim() === '') {
+        this.setState({ lightPriceError: 'Dato requerido' });
+        return false;
+      } else if (!validateValueType('number', lightPrice.trim())) {
+        this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
+        return false;
+      }
     }
+
+    this.setState({ lightPriceError: '' });
+    return true;
   };
 
   validateMinimumData = () => {
@@ -202,31 +203,25 @@ class CourtForm extends Component {
 
     this.setState({ groundTypeError: '' });
 
-    if (grounds !== null && key > 0) {
-      onCourtValueChange({
-        prop: 'ground',
-        value
-      });
-    } else {
-      onCourtValueChange({ prop: 'ground', value: '' });
-    }
+    grounds !== null && key > 0
+      ? onCourtValueChange({
+          prop: 'ground',
+          value
+        })
+      : onCourtValueChange({ prop: 'ground', value: '' });
   };
 
   onCheckBoxPress = () => {
-    const { checked, onCourtValueChange } = this.props;
+    if (this.state.lightPriceOpen)
+      this.props.onCourtValueChange({ prop: 'lightPrice', value: '' });
 
-    if (checked) {
-      onCourtValueChange({ prop: 'checked', value: false });
-      onCourtValueChange({ prop: 'lightPrice', value: '' });
-    } else {
-      onCourtValueChange({ prop: 'checked', value: true });
-    }
+    this.setState({ lightPriceOpen: !this.state.lightPriceOpen });
   };
 
-  renderInput() {
-    if (this.props.checked) {
+  renderLightPriceInput() {
+    if (this.state.lightPriceOpen) {
       return (
-        <View>
+        <CardSection>
           <Input
             label="Precio por turno (con luz):"
             placeholder="Precio de la cancha"
@@ -242,37 +237,12 @@ class CourtForm extends Component {
             onFocus={() => this.setState({ lightPriceError: '' })}
             onBlur={this.renderLightPriceError}
           />
-          <CheckBox
-            containerStyle={{ marginTop: 10, marginLeft: 5, marginRight: 5 }}
-            title="Agregar precio con luz"
-            iconType="material"
-            checkedIcon="clear"
-            checkedColor={MAIN_COLOR}
-            checkedTitle="Borrar precio con luz"
-            checked={this.props.checked}
-            onPress={this.onCheckBoxPress}
-          />
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          <CheckBox
-            title="Agregar precio con luz"
-            iconType="material"
-            uncheckedIcon="add"
-            uncheckedColor={MAIN_COLOR}
-            checked={this.props.checked}
-            onPress={this.onCheckBoxPress}
-          />
-        </View>
+        </CardSection>
       );
     }
   }
 
   render() {
-    if (this.props.loading) <Spinner size="large" />;
-
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
         <View>
@@ -293,7 +263,10 @@ class CourtForm extends Component {
                     })
                   }
                   value={this.props.courtState}
-                  trackColor={{ false: '#c4c4c4', true: '#efb5bd' }}
+                  trackColor={{
+                    false: GREY_DISABLED,
+                    true: MAIN_COLOR_DISABLED
+                  }}
                   thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
                 />
                 <Tooltip
@@ -378,14 +351,36 @@ class CourtForm extends Component {
                 onBlur={this.renderPriceError}
               />
             </CardSection>
-            <CardSection>{this.renderInput()}</CardSection>
+
+            {this.renderLightPriceInput()}
+
+            <CardSection>
+              <CheckBox
+                containerStyle={{
+                  marginTop: 5,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginBottom: 0
+                }}
+                title="Agregar precio con luz"
+                iconType="material"
+                checkedIcon="clear"
+                uncheckedIcon="add"
+                uncheckedColor={MAIN_COLOR}
+                checkedColor={MAIN_COLOR}
+                checkedTitle="Borrar precio con luz"
+                checked={this.state.lightPriceOpen}
+                onPress={this.onCheckBoxPress}
+              />
+            </CardSection>
+
             <CardSection>
               <Button
                 title="Guardar"
                 loading={this.props.loading}
-                onPress={this.onButtonPressHandler.bind(this)}
+                onPress={this.onButtonPressHandler}
                 errorMessage={
-                  this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
+                  this.props.existedError ? 'Nombre de cancha existente' : ''
                 }
               />
             </CardSection>
@@ -417,7 +412,6 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
-    checked,
     loading,
     existedError,
     courtState
@@ -433,7 +427,6 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
-    checked,
     loading,
     existedError,
     courtState,
