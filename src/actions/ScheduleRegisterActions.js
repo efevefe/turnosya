@@ -140,30 +140,34 @@ export const onScheduleCreate = ({ cards, commerceId }, navigation) => {
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
-    //rutas hardcodeadas para probar
-    db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(shift => {
-          batch.delete(shift.ref);
-        });
+    db.doc(`Commerces/${commerceId}/Schedules/0`)
+      .set({ startDate: new Date(), endDate: null }, { merge: true })
+      .then(() => {
+        db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
+          .get()
+          .then(snapshot => {
+            snapshot.forEach(shift => {
+              batch.delete(shift.ref);
+            });
 
-        cards.forEach(card => {
-          const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+            cards.forEach(card => {
+              const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
 
-          var ref = db
-            .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
-            .doc(`${card.id}`);
-          batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-        });
+              var ref = db
+                .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
+                .doc(`${card.id}`);
+              batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+            });
 
-        var scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/0`);
-        batch.update(scheduleRef, { startDate: new Date(), endDate: null });
-
-        batch.commit()
-          .then(() => {
-            navigation.navigate('calendar');
-            dispatch({ type: ON_SCHEDULE_CREATED });
+            batch.commit()
+              .then(() => {
+                navigation.navigate('calendar');
+                dispatch({ type: ON_SCHEDULE_CREATED });
+              })
+              .catch(error => {
+                console.log(error);
+                dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+              });
           })
           .catch(error => {
             console.log(error);
