@@ -11,7 +11,8 @@ import {
   ON_USER_READ_FAIL,
   ON_USER_DELETING,
   ON_USER_DELETED,
-  ON_USER_DELETE_FAIL
+  ON_USER_DELETE_FAIL,
+  ON_REAUTH_SUCCESS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -54,6 +55,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, refreshing: false };
     case ON_USER_DELETING:
       return { ...state, loading: true };
+    case ON_REAUTH_SUCCESS:
+      return { ...state, confirmDeleteVisible: false };
     case ON_USER_DELETED:
       return INITIAL_STATE;
     case ON_USER_DELETE_FAIL:

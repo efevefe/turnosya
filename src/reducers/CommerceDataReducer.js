@@ -15,7 +15,8 @@ import {
   ON_COMMERCE_CREATING,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
-  ON_COMMERCE_DELETE_FAIL
+  ON_COMMERCE_DELETE_FAIL,
+  ON_REAUTH_SUCCESS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -70,6 +71,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, areasList: action.payload };
     case ON_COMMERCE_DELETING:
       return { ...state, loading: true };
+    case ON_REAUTH_SUCCESS:
+      return { ...state, confirmDeleteVisible: false };
     case ON_COMMERCE_DELETED:
       return INITIAL_STATE;
     case ON_COMMERCE_DELETE_FAIL:

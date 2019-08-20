@@ -26,7 +26,7 @@ class CommerceDrawerContent extends Component {
           <DrawerItem
             title="Cerrar Sesión"
             icon='md-exit'
-            loading={this.props.loading}
+            loadingWithText={this.props.loading}
             onPress={() => this.props.onLogout()}
           />
         </SafeAreaView>

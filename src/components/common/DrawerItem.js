@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -7,15 +7,27 @@ class DrawerItem extends Component {
     renderIcon = (color) => {
         // el icono debe ser de ionicons
         if (this.props.icon) {
-            return (
-                <View style={{ width: 25, alignItems: 'center' }} >
-                    <Ionicons
-                        name={this.props.icon}
-                        color={color}
-                        size={22}
-                    />
-                </View>
-            );
+            if (this.props.loadingWithText) {
+                return (
+                    <View style={{ width: 25, alignItems: 'center' }} >
+                        <ActivityIndicator
+                            style={StyleSheet.flatten({ marginVertical: 2 })}
+                            color={color}
+                            size='small'
+                        />
+                    </View>
+                );
+            } else {
+                return (
+                    <View style={{ width: 25, alignItems: 'center' }} >
+                        <Ionicons
+                            name={this.props.icon}
+                            color={color}
+                            size={22}
+                        />
+                    </View>
+                );
+            }
         }
     }
 
