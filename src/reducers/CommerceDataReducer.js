@@ -12,7 +12,13 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  CUIT_EXISTS,
+  CUIT_NOT_EXISTS,
+  ON_COMMERCE_DELETING,
+  ON_COMMERCE_DELETED,
+  ON_COMMERCE_DELETE_FAIL,
+  ON_REAUTH_SUCCESS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -31,7 +37,9 @@ const INITIAL_STATE = {
   commerceId: null,
   error: '',
   loading: false,
-  refreshing: false
+  refreshing: false,
+  cuitExists: false,
+  confirmDeleteVisible: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -64,6 +72,18 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, provincesList: action.payload };
     case ON_AREAS_READ:
       return { ...state, areasList: action.payload };
+    case CUIT_EXISTS:
+      return { ...state, cuitExists: true };
+    case CUIT_NOT_EXISTS:
+      return { ...state, cuitExists: false };
+    case ON_COMMERCE_DELETING:
+      return { ...state, loading: true };
+    case ON_REAUTH_SUCCESS:
+      return { ...state, confirmDeleteVisible: false };
+    case ON_COMMERCE_DELETED:
+      return INITIAL_STATE;
+    case ON_COMMERCE_DELETE_FAIL:
+      return { ...state, loading: false };
     default:
       return state;
   }

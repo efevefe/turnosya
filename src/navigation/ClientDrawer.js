@@ -9,12 +9,7 @@ import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
 import { MAIN_COLOR } from '../constants';
 import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
-
-const drawerNavigationOptions = {
-  drawerType: 'slide',
-  drawerWidth: 200,
-  contentComponent: ClientDrawerContent
-};
+import ClientSettings from '../components/ClientSettings';
 
 const stackNavigationOptions = {
   defaultNavigationOptions: {
@@ -33,34 +28,53 @@ const stackNavigationOptions = {
   }
 };
 
-const navigationOptions = { header: null };
-
 const CommerceRegisterStack = createStackNavigator(
   {
     welcome: {
       screen: Welcome,
-      navigationOptions
+      navigationOptions: {
+        header: null
+      }
     },
     commerceRegisterProfile: {
       screen: RegisterCommerce,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Registrarse'
-      })
+      }
     },
     commerceRegisterProfile1: {
       screen: RegisterCommerceTwo,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Registrarse'
-      })
+      }
     }
   },
   stackNavigationOptions
 );
 
+const ClientSettingsStack = createStackNavigator(
+  {
+      settings: {
+          screen: ClientSettings,
+          navigationOptions: {
+              title: 'Configuración'
+          }
+      }
+  },
+  stackNavigationOptions
+);
+
+const drawerNavigationOptions = {
+  drawerType: 'slide',
+  drawerWidth: 200,
+  contentComponent: ClientDrawerContent
+};
+
 const clientDrawer = createDrawerNavigator(
   {
     tabs: ClientNavigation,
-    commerceRegister: CommerceRegisterStack
+    commerceRegister: CommerceRegisterStack,
+    clientSettings: ClientSettingsStack
   },
   drawerNavigationOptions
 );

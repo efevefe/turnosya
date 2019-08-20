@@ -14,8 +14,17 @@ import {
   ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
-  ON_COMMERCE_CREATING
+  ON_COMMERCE_CREATING,
+  CUIT_NOT_EXISTS,
+  CUIT_EXISTS,
+  ON_COMMERCE_DELETING,
+  ON_COMMERCE_DELETED,
+  ON_COMMERCE_DELETE_FAIL,
+  ON_REAUTH_FAIL,
+  ON_REAUTH_SUCCESS,
+  ON_REGISTER_VALUE_CHANGE
 } from './types';
+import { userReauthenticate } from './AuthActions';
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
@@ -23,7 +32,7 @@ export const onCommerceValueChange = ({ prop, value }) => {
 
 export const onCommerceFormOpen = () => {
   return { type: ON_COMMERCE_CREATING };
-}
+};
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
@@ -80,7 +89,7 @@ export const onCreateCommerce = (
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
       .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  }
+  };
 };
 
 export const onCommerceRead = loadingType => {
@@ -98,11 +107,11 @@ export const onCommerceRead = loadingType => {
         db.doc(`Commerces/${doc.data().commerceId}`)
           .get()
           .then(doc => {
-            //provincia
+            //province
             var { name, provinceId } = doc.data().province;
             const province = { value: provinceId, label: name };
 
-            //rubro
+            //area
             var { name, areaId } = doc.data().area;
             const area = { value: areaId, label: name };
 
@@ -261,3 +270,63 @@ export const onAreasRead = () => {
       });
   };
 };
+
+export const validateCuit = cuit => {
+  var db = firebase.firestore();
+
+  return dispatch => {
+    db.collection(`Commerces/`)
+      .where('cuit', '==', cuit)
+      .where('softDelete', '==', null)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          dispatch({ type: CUIT_EXISTS });
+        } else {
+          dispatch({ type: CUIT_NOT_EXISTS });
+        }
+      });
+  };
+};
+
+export const onCommerceDelete = (password, navigation = null) => {
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_COMMERCE_DELETING });
+
+    userReauthenticate(password)
+      .then(() => {
+        dispatch({ type: ON_REAUTH_SUCCESS });
+
+        var userRef = db.doc(`Profiles/${currentUser.uid}`);
+
+        db.runTransaction(transaction => {
+          return transaction.get(userRef).then(userDoc => {
+            var commerceRef = db.doc(`Commerces/${userDoc.data().commerceId}`);
+
+            transaction.update(userRef, { commerceId: null });
+            transaction.update(commerceRef, { softDelete: new Date() });
+          })
+        })
+          .then(() => {
+            dispatch({ type: ON_COMMERCE_DELETED });
+            dispatch({ type: ON_REGISTER_VALUE_CHANGE, payload: { prop: 'commerceId', value: null } })
+
+            if (navigation) {
+              navigation.navigate('client');
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_REAUTH_FAIL });
+        dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+      });
+  }
+}

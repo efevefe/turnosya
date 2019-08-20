@@ -2,15 +2,10 @@ import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
 import { DrawerItem } from '../components/common';
 import { onCommerceOpen, onLogout } from '../actions';
 
 class ClientDrawerContent extends Component {
-  leftIcon = name => (
-    <Ionicons name={name} size={20} color="black" style={{ marginRight: 8 }} />
-  );
-
   render() {
     return (
       <ScrollView>
@@ -20,13 +15,18 @@ class ClientDrawerContent extends Component {
         >
           <DrawerItem
             title="Mi Negocio"
-            icon={this.leftIcon('ios-briefcase')}
+            icon='ios-briefcase'
             onPress={() => this.props.onCommerceOpen(this.props.navigation)}
           />
           <DrawerItem
+            title="Configuración"
+            icon='md-settings'
+            onPress={() => this.props.navigation.navigate('clientSettings')}
+          />
+          <DrawerItem
             title="Cerrar Sesión"
-            icon={this.leftIcon('md-exit')}
-            loading={this.props.loading}
+            icon='md-exit'
+            loadingWithText={this.props.loading}
             onPress={() => this.props.onLogout()}
           />
         </SafeAreaView>

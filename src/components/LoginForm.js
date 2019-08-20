@@ -13,9 +13,7 @@ import {
   onGoogleLogin
 } from '../actions';
 
-import { ImagePicker, Permissions } from 'expo';
-
-const iconSize = Math.round(Dimensions.get('window').height) * 0.18;
+const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
 class LoginForm extends Component {
   state = { emailError: '', passwordError: '' };
@@ -56,8 +54,7 @@ class LoginForm extends Component {
       return false;
     } else if (!validateValueType('password', this.props.password)) {
       this.setState({
-        passwordError:
-          'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
+        passwordError: 'Usuario o contraseña incorrectos'
       });
       return false;
     } else {
@@ -77,11 +74,12 @@ class LoginForm extends Component {
       loginContainerStyle,
       createAccountContainerStyle
     } = styles;
+
     return (
       <View style={containerStyle}>
         <View style={logoContainerStyle}>
           <Image
-            source={require('../../assets/icon.png')}
+            source={require('../../assets/turnosya-red.png')}
             style={{ height: iconSize, width: iconSize }}
           />
         </View>
@@ -103,6 +101,7 @@ class LoginForm extends Component {
               onBlur={this.renderEmailError}
             />
           </CardSection>
+
           <CardSection>
             <Input
               placeholder="Contraseña"
@@ -120,6 +119,7 @@ class LoginForm extends Component {
               onBlur={this.renderPasswordError}
             />
           </CardSection>
+
           <CardSection>
             <Button
               title="Iniciar Sesión"
@@ -127,12 +127,15 @@ class LoginForm extends Component {
               onPress={this.onButonPressHandler.bind(this)}
             />
           </CardSection>
+
           <Divider
             style={{
               backgroundColor: 'grey',
-              margin: 10
+              margin: 10,
+              marginBottom: 0
             }}
           />
+
           <CardSection>
             <Button
               title="Conectar con Google"
@@ -191,7 +194,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10
+    paddingTop: iconSize / 3
   },
   loginContainerStyle: {
     justifyContent: 'center'
@@ -208,11 +211,7 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle,
-    disabledLogin,
-    disabledFacebook,
-    disabledGoogle,
-    disabledCreateAccount
+    loadingGoogle
   } = state.auth;
 
   return {
@@ -221,11 +220,7 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle,
-    disabledLogin,
-    disabledFacebook,
-    disabledGoogle,
-    disabledCreateAccount
+    loadingGoogle
   };
 };
 

@@ -14,12 +14,18 @@ import {
   MenuItem
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import { imageToBlob, validateValueType } from '../utils';
+import {
+  imageToBlob,
+  validateValueType,
+  removeDoubleSpaces,
+  trimString
+} from '../utils';
 import {
   onUserRead,
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
-  onRegisterValueChange
+  onRegisterValueChange,
+  servicesRead
 } from '../actions';
 
 class ClientProfile extends Component {
@@ -278,7 +284,10 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    if (this.props.firstName === '') {
+    const { firstName, onRegisterValueChange } = this.props;
+
+    onRegisterValueChange({ prop: 'firstName', value: trimString(firstName) });
+    if (trimString(firstName) === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -288,7 +297,10 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    if (this.props.lastName === '') {
+    const { lastName, onRegisterValueChange } = this.props;
+
+    onRegisterValueChange({ prop: 'lastName', value: trimString(lastName) });
+    if (trimString(lastName) === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -335,9 +347,7 @@ class ClientProfile extends Component {
       infoContainerStyle
     } = styles;
 
-    if (this.props.loading) {
-      return <Spinner />;
-    }
+    if (this.props.loading) return <Spinner />;
 
     return (
       <KeyboardAwareScrollView
@@ -357,7 +367,7 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={{ uri: this.props.profilePicture }}
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
@@ -382,7 +392,10 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               onChangeText={value =>
-                this.props.onRegisterValueChange({ prop: 'firstName', value })
+                this.props.onRegisterValueChange({
+                  prop: 'firstName',
+                  value
+                })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}
@@ -510,6 +523,7 @@ export default connect(
     onUserRead,
     onUserUpdateWithPicture,
     onUserUpdateNoPicture,
-    onRegisterValueChange
+    onRegisterValueChange,
+    servicesRead
   }
 )(ClientProfile);

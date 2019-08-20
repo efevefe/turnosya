@@ -4,11 +4,13 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
+import { Root } from 'native-base';
 import { MAIN_COLOR } from './src/constants';
 import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
+import LoadingScreen from './src/components/LoadingScreen';
 
 var firebaseConfig = {
   apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
@@ -26,9 +28,6 @@ if (!firebase.apps.length) {
 
 console.disableYellowBox = true;
 
-// firebase.auth().signInWithEmailAndPassword('test@test.com', 'password123');
-// firebase.auth().signOut();
-
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
 class App extends React.Component {
@@ -36,32 +35,26 @@ class App extends React.Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.setState({ logged: true, screenLoading: false });
-      } else {
-        this.setState({ logged: false, screenLoading: false });
-      }
+      user
+        ? this.setState({ logged: true, screenLoading: false })
+        : this.setState({ logged: false, screenLoading: false });
     });
   }
 
   renderNavigation = () => {
     const { screenLoading, logged } = this.state;
 
-    if (screenLoading) {
-      return <Spinner size="large" color={MAIN_COLOR} />;
-    } else {
-      if (logged) {
-        return <MainNavigation />;
-      } else {
-        return <GuestNavigation />;
-      }
-    }
+    if (screenLoading) return <LoadingScreen />;
+
+    return logged ? <MainNavigation /> : <GuestNavigation />;
   };
 
   render() {
     return (
       <Provider store={store}>
-        <View style={styles.container}>{this.renderNavigation()}</View>
+        <Root>
+          <View style={styles.container}>{this.renderNavigation()}</View>
+        </Root>
       </Provider>
     );
   }

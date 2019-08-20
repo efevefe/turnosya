@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { Ionicons } from '@expo/vector-icons';
-import { MAIN_COLOR } from '../../constants';
+import { MAIN_COLOR, GREY_DISABLED } from '../../constants';
 
 class Picker extends Component {
   renderErrorMessage = () => {
@@ -15,14 +15,14 @@ class Picker extends Component {
 
   render() {
     const enabled = this.props.disabled ? false : true;
-    const color = enabled ? MAIN_COLOR : '#c4c4c4';
+    const color = enabled ? MAIN_COLOR : GREY_DISABLED;
     const textColor = enabled ? 'black' : 'grey';
     const borderBottomWidth = enabled ? 1.5 : 1;
 
     const { pickerStyle, iconContainer } = styles;
 
     return (
-      <View>
+      <View >
         <Text style={[styles.textStyle, { color }]}>{this.props.title}</Text>
         <RNPickerSelect
           {...this.props}

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from './common';
 import { onRegisterValueChange, onRegister } from '../actions';
-import { validateValueType } from '../utils';
+import { validateValueType, trimString } from '../utils';
 
 class RegisterForm extends Component {
   state = {
@@ -73,10 +73,14 @@ class RegisterForm extends Component {
     };
 
   renderFirstNameError = () => {
-    if (this.props.firstName === '') {
+    const { firstName, onRegisterValueChange } = this.props;
+    const value = trimString(firstName);
+    onRegisterValueChange({ prop: 'firstName', value });
+
+    if (value === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('name', this.props.firstName)) {
+    } else if (!validateValueType('name', value)) {
       this.setState({ firstNameError: 'El formato del nombre es inválido' });
       return false;
     } else {
@@ -86,7 +90,11 @@ class RegisterForm extends Component {
   };
 
   renderLastNameError = () => {
-    if (this.props.lastName === '') {
+    const { lastName, onRegisterValueChange } = this.props;
+    const value = trimString(lastName);
+    onRegisterValueChange({ prop: 'lastName', value });
+
+    if (value === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('name', this.props.lastName)) {
