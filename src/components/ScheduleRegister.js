@@ -31,7 +31,13 @@ class ScheduleRegister extends Component {
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        onPress={() => this.props.onScheduleCreate({ cards: this.props.cards, commerceId: this.props.commerceId }, this.props.navigation)}
+        onPress={() => this.props.onScheduleCreate({ 
+          cards: this.props.cards, 
+          commerceId: this.props.commerceId, 
+          reservationMinLength: this.props.reservationMinLength,
+          reservationDayPeriod: this.props.reservationDayPeriod
+        }, this.props.navigation
+        )}
       />
     );
   };
@@ -104,10 +110,10 @@ const emptyCard = {
 };
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, loading, refreshing } = state.scheduleRegister;
+  const { cards, selectedDays, reservationMinLength, reservationDayPeriod, loading, refreshing } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
 
-  return { cards, selectedDays, commerceId, loading, refreshing };
+  return { cards, selectedDays, commerceId, reservationMinLength, reservationDayPeriod, loading, refreshing };
 };
 
 export default connect(

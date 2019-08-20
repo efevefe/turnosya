@@ -132,7 +132,7 @@ export const onScheduleCreate = cards => {
 };
 */
 
-export const onScheduleCreate = ({ cards, commerceId }, navigation) => {
+export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, reservationDayPeriod }, navigation) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
   var batch = db.batch();
@@ -141,7 +141,7 @@ export const onScheduleCreate = ({ cards, commerceId }, navigation) => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
     db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set({ startDate: new Date(), endDate: null }, { merge: true })
+      .set({ startDate: new Date(), endDate: null, reservationMinLength, reservationDayPeriod }, { merge: true })
       .then(() => {
         db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
           .get()
