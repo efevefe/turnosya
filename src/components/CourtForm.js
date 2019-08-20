@@ -22,7 +22,8 @@ class CourtForm extends Component {
     groundTypeError: '',
     priceError: '',
     lightPriceError: '',
-    selectedGrounds: []
+    selectedGrounds: [],
+    lightPriceOpen: false
   };
 
   componentWillMount() {
@@ -204,9 +205,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-          prop: 'ground',
-          value
-        })
+        prop: 'ground',
+        value
+      })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 
@@ -220,21 +221,23 @@ class CourtForm extends Component {
   renderLightPriceInput() {
     if (this.state.lightPriceOpen) {
       return (
-        <Input
-          label="Precio por turno (con luz):"
-          placeholder="Precio de la cancha"
-          keyboardType="numeric"
-          value={this.props.lightPrice}
-          errorMessage={this.state.lightPriceError}
-          onChangeText={value =>
-            this.props.onCourtValueChange({
-              prop: 'lightPrice',
-              value
-            })
-          }
-          onFocus={() => this.setState({ lightPriceError: '' })}
-          onBlur={this.renderLightPriceError}
-        />
+        <CardSection>
+          <Input
+            label="Precio por turno (con luz):"
+            placeholder="Precio de la cancha"
+            keyboardType="numeric"
+            value={this.props.lightPrice}
+            errorMessage={this.state.lightPriceError}
+            onChangeText={value =>
+              this.props.onCourtValueChange({
+                prop: 'lightPrice',
+                value
+              })
+            }
+            onFocus={() => this.setState({ lightPriceError: '' })}
+            onBlur={this.renderLightPriceError}
+          />
+        </CardSection>
       );
     }
   }
@@ -349,14 +352,15 @@ class CourtForm extends Component {
               />
             </CardSection>
 
-            <CardSection>{this.renderInput()}</CardSection>
+            {this.renderLightPriceInput()}
 
             <CardSection>
               <CheckBox
                 containerStyle={{
-                  marginTop: 10,
-                  marginLeft: 5,
-                  marginRight: 5
+                  marginTop: 5,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginBottom: 0
                 }}
                 title="Agregar precio con luz"
                 iconType="material"
@@ -365,7 +369,7 @@ class CourtForm extends Component {
                 uncheckedColor={MAIN_COLOR}
                 checkedColor={MAIN_COLOR}
                 checkedTitle="Borrar precio con luz"
-                checked={this.props.checked}
+                checked={this.state.lightPriceOpen}
                 onPress={this.onCheckBoxPress}
               />
             </CardSection>
@@ -376,7 +380,7 @@ class CourtForm extends Component {
                 loading={this.props.loading}
                 onPress={this.onButtonPressHandler}
                 errorMessage={
-                  this.props.existedError ? 'NOMBRE DE CANCHA YA EXISTENTE' : ''
+                  this.props.existedError ? 'Nombre de cancha existente' : ''
                 }
               />
             </CardSection>
