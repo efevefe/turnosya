@@ -7,7 +7,7 @@ import {
   Text,
   Divider
 } from 'react-native-elements';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
 import {
@@ -68,8 +68,8 @@ class ScheduleRegister extends Component {
     secondShiftStart > firstShiftEnd || secondShiftStart === ''
       ? this.setState({ secondShiftStartError: '' })
       : this.setState({
-          secondShiftStartError: `Segundo turno debe \n ser mayor al primero`
-        });
+        secondShiftStartError: `Segundo turno debe \n ser mayor al primero`
+      });
   };
 
   renderPickerSecondShiftEnd = () => {
@@ -78,8 +78,8 @@ class ScheduleRegister extends Component {
     secondShiftStart < secondShiftEnd
       ? this.setState({ secondShiftEndError: '' })
       : this.setState({
-          secondShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
-        });
+        secondShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
+      });
   };
 
   getDisabledDays = () => {
@@ -243,6 +243,7 @@ class ScheduleRegister extends Component {
 
           <CardSection style={styles.buttonGroupCard}>
             <ButtonGroup
+              Component={TouchableWithoutFeedback}
               onPress={index => this.updateIndex(index)}
               selectedIndexes={this.props.card.days}
               disabled={this.getDisabledDays()}
