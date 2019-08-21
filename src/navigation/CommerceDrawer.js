@@ -35,7 +35,7 @@ const CommerceSettingsStack = createStackNavigator(
 
 const drawerNavigationOptions = {
     drawerType: 'slide',
-    drawerWidth: 200,
+    drawerWidth: 230,
     contentComponent: CommerceDrawerContent,
 };
 
