@@ -54,12 +54,12 @@ const CommerceRegisterStack = createStackNavigator(
 
 const ClientSettingsStack = createStackNavigator(
   {
-      settings: {
-          screen: ClientSettings,
-          navigationOptions: {
-              title: 'Configuración'
-          }
+    settings: {
+      screen: ClientSettings,
+      navigationOptions: {
+        title: 'Configuración'
       }
+    }
   },
   stackNavigationOptions
 );

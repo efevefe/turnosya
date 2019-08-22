@@ -5,8 +5,6 @@ import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import { Root } from 'native-base';
-import { MAIN_COLOR } from './src/constants';
-import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
