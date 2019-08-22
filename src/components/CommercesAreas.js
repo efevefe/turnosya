@@ -35,14 +35,13 @@ class CommercesAreas extends Component {
               marginRight: 5,
               textAlign: 'center',
               alignSelf: 'center',
-              // fontWeight: 'bold',
               paddingRight: 2
             }}
           >
             Ver todos
           </Text>
           <Ionicons
-            name="md-arrow-round-forward"
+            name="md-arrow-forward"
             size={24}
             color="white"
             style={{ marginRight: 15 }}

@@ -24,14 +24,13 @@ class CommercesAreaItem extends Component {
         >
           <Card
             image={(source = { uri: image })}
-            containerStyle={{ borderRadius: 10 }}
+            containerStyle={{ borderRadius: 10, overflow: 'hidden' }}
           >
             <Text
               style={{
-                fontWeight: 'bold',
                 fontSize: 16,
-                marginTop: 5,
                 textAlign: 'center'
+                // textAlignVertical: 'center'
               }}
             >
               {name}
