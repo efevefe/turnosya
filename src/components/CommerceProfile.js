@@ -51,12 +51,11 @@ class commerceData extends Component {
   };
 
   componentWillMount() {
-    this.props.onCommerceRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
   }
 
   onRefresh = () => {
-    this.props.onCommerceRead('refreshing');
+    this.props.onCommerceRead();
   };
 
   renderEditButton = () => {
