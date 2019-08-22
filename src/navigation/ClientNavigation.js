@@ -4,11 +4,14 @@ import {
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
+import { Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import { MAIN_COLOR } from '../constants';
+import CommercesAreas from '../components/CommercesAreas';
+import { View } from 'native-base';
 
 // Stack navigation options
 
@@ -53,11 +56,18 @@ const leftIcon = (navigation, icon) => (
 
 const searchStack = createStackNavigator(
   {
+    commercesAreas: {
+      screen: CommercesAreas,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Buscar Negocios',
+        // headerRight: rightIcon(navigation, 'md-arrow-forward', 'commercesList'),
+        headerLeft: leftIcon(navigation, 'md-menu')
+      })
+    },
     commercesList: {
       screen: CommercesList,
       navigationOptions: ({ navigation }) => ({
-        title: 'Buscar Negocios',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        title: 'Buscar Negocios'
       })
     }
   },

@@ -5,9 +5,13 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
-import { commercesRead, searchCommerces } from '../actions';
+import {
+  commercesRead,
+  searchCommerces,
+  commercesReadArea,
+  searchCommercesArea
+} from '../actions';
 import { MAIN_COLOR } from '../constants';
-
 const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
 
 class CommercesList extends Component {
@@ -21,7 +25,11 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
-    this.props.commercesRead();
+    if (this.props.navigation.state.params) {
+      this.props.commercesReadArea(this.props.navigation.state.params.idArea);
+    } else {
+      this.props.commercesRead();
+    }
     this.props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
       title: this.renderSearchBar()
@@ -67,7 +75,7 @@ class CommercesList extends Component {
         clearIcon={{ color: 'white' }}
         selectionColor="white"
         inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
-        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 0 }}
+        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 25 }}
         showLoading={this.props.searching}
         loadingProps={{ color: 'white' }}
       />
@@ -81,10 +89,16 @@ class CommercesList extends Component {
 
   searchCommerces = search => {
     this.onChangeText(search);
-
     if (search.length >= 1) {
       setTimeout(() => {
-        this.props.searchCommerces(search);
+        if (this.props.navigation.state.params.idArea) {
+          this.props.searchCommercesArea(
+            search,
+            this.props.navigation.state.params.idArea
+          );
+        } else {
+          this.props.searchCommerces(search);
+        }
       }, 200);
     } else if (search.length == 0) {
       this.resetSearch();
@@ -95,7 +109,11 @@ class CommercesList extends Component {
     this.onChangeText('');
 
     setTimeout(() => {
-      this.props.commercesRead();
+      if (this.props.navigation.state.params.idArea) {
+        this.props.commercesReadArea(this.props.navigation.state.params.idArea);
+      } else {
+        this.props.commercesRead();
+      }
     }, 50);
   };
 
@@ -127,5 +145,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { commercesRead, searchCommerces }
+  { commercesRead, searchCommerces, commercesReadArea, searchCommercesArea }
 )(CommercesList);
