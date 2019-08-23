@@ -13,26 +13,7 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
-import { MAIN_COLOR } from '../constants';
-
-// Stack navigation options
-
-const stackNavigationOptions = {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 18,
-      color: 'white',
-      fontWeight: 'bold'
-    }
-  }
-};
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
@@ -67,15 +48,15 @@ const calendarStack = createStackNavigator(
     },
     scheduleRegister: {
       screen: ScheduleRegister,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Generar calendario'
-      })
+      }
     },
     registerConfiguration: {
       screen: ScheduleRegisterConfiguration,
-      navigationOptions: ({ navigattion }) => ({
+      navigationOptions: {
         title: 'Límites de turnos'
-      })
+      }
     }
   },
   stackNavigationOptions
@@ -135,46 +116,6 @@ const profileStack = createStackNavigator(
   stackNavigationOptions
 );
 
-// Tab navigation options
-
-const tabNavigationOptions = {
-  defaultNavigationOptions: ({ navigation }) => ({
-    tabBarIcon: ({ focused, tintColor }) => {
-      const { routeName } = navigation.state;
-      let iconName;
-
-      if (routeName === 'courts') {
-        iconName = `md-football`;
-      } else if (routeName === 'services') {
-        iconName = `md-cut`;
-      } else if (routeName === 'calendar') {
-        iconName = `md-calendar`;
-      } else if (routeName === 'profile') {
-        iconName = `md-person`;
-      }
-
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
-    }
-  }),
-  initialRouteName: 'calendar',
-  tabBarOptions: {
-    showLabel: false,
-    activeTintColor: 'white',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    }
-  }
-};
-
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
 const commerceTabs = createBottomTabNavigator(
@@ -184,7 +125,10 @@ const commerceTabs = createBottomTabNavigator(
     calendar: calendarStack,
     profile: profileStack
   },
-  tabNavigationOptions
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'calendar'
+  }
 );
 
 const CommerceNavigation = createAppContainer(commerceTabs);

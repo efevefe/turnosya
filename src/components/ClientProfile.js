@@ -17,7 +17,6 @@ import { MAIN_COLOR } from '../constants';
 import {
   imageToBlob,
   validateValueType,
-  removeDoubleSpaces,
   trimString
 } from '../utils';
 import {
@@ -48,14 +47,12 @@ class ClientProfile extends Component {
   };
 
   componentDidMount() {
-    this.props.onUserRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
-
     this.getLocation();
   }
 
   onRefresh = () => {
-    this.props.onUserRead('refreshing');
+    this.props.onUserRead();
     this.getLocation();
   };
 

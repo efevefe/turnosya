@@ -23,7 +23,7 @@ class CommercesAreaItem extends Component {
           underlayColor="transparent"
         >
           <Card
-            image={(source = { uri: image })}
+            image={(source = image ? { uri: image } : null)}
             containerStyle={{ borderRadius: 10, overflow: 'hidden' }}
           >
             <Text

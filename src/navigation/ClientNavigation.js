@@ -9,29 +9,11 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import { MAIN_COLOR } from '../constants';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
-import { View } from 'native-base';
-
-// Stack navigation options
-
-const stackNavigationOptions = {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 18,
-      color: 'white',
-      fontWeight: 'bold'
-    }
-  }
-};
-
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
     name={icon}
@@ -114,46 +96,6 @@ const profileStack = createStackNavigator(
   stackNavigationOptions
 );
 
-// Tab navigation options
-
-const tabNavigationOptions = {
-  defaultNavigationOptions: ({ navigation }) => ({
-    tabBarIcon: ({ focused, tintColor }) => {
-      const { routeName } = navigation.state;
-      let iconName;
-
-      if (routeName === 'search') {
-        iconName = `md-search`;
-      } else if (routeName === 'calendar') {
-        iconName = `md-calendar`;
-      } else if (routeName === 'favorites') {
-        iconName = `md-heart`;
-      } else if (routeName === 'profile') {
-        iconName = `md-person`;
-      }
-
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
-    }
-  }),
-  initialRouteName: 'search',
-  tabBarOptions: {
-    showLabel: false,
-    activeTintColor: 'white',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    }
-  }
-};
-
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
 const clientTabs = createBottomTabNavigator(
@@ -163,7 +105,10 @@ const clientTabs = createBottomTabNavigator(
     favorites: favoritesStack,
     profile: profileStack
   },
-  tabNavigationOptions
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'search'
+  }
 );
 
 const ClientNavigation = createAppContainer(clientTabs);

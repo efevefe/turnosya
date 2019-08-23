@@ -15,6 +15,8 @@ import {
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
+  CUIT_NOT_EXISTS,
+  CUIT_EXISTS,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
@@ -90,12 +92,12 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = loadingType => {
+export const onCommerceRead = () => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING, payload: loadingType });
+    dispatch({ type: ON_COMMERCE_READING });
 
     //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO PRIMERO COMO CLIENTE ESTO NO HARIA
     //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
@@ -265,6 +267,24 @@ export const onAreasRead = () => {
           areasList.push({ value: doc.id, label: doc.data().name })
         );
         dispatch({ type: ON_AREAS_READ, payload: areasList });
+      });
+  };
+};
+
+export const validateCuit = cuit => {
+  var db = firebase.firestore();
+
+  return dispatch => {
+    db.collection(`Commerces/`)
+      .where('cuit', '==', cuit)
+      .where('softDelete', '==', null)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          dispatch({ type: CUIT_EXISTS });
+        } else {
+          dispatch({ type: CUIT_NOT_EXISTS });
+        }
       });
   };
 };
