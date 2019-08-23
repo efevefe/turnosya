@@ -1,45 +1,58 @@
 import React, { Component } from 'react';
-import { ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
-import { DrawerItem } from '../components/common';
-import { onCommerceOpen, onLogout } from '../actions';
+import { Drawer, DrawerItem } from '../components/common';
+import { onCommerceOpen, onLogout, onUserRead } from '../actions';
 
 class ClientDrawerContent extends Component {
+  componentWillMount() {
+    this.props.onUserRead();
+  }
+
+  returnFullName = () => {
+    const { firstName, lastName } = this.props;
+
+    if (firstName || lastName) {
+      return `${firstName} ${lastName}`;
+    }
+  };
+
   render() {
     return (
-      <ScrollView>
-        <SafeAreaView
-          style={{ flex: 1 }}
-          forceInset={{ top: 'always', horizontal: 'never' }}
-        >
-          <DrawerItem
-            title="Mi Negocio"
-            icon='ios-briefcase'
-            onPress={() => this.props.onCommerceOpen(this.props.navigation)}
-          />
-          <DrawerItem
-            title="Configuración"
-            icon='md-settings'
-            onPress={() => this.props.navigation.navigate('clientSettings')}
-          />
-          <DrawerItem
-            title="Cerrar Sesión"
-            icon='md-exit'
-            loadingWithText={this.props.loading}
-            onPress={() => this.props.onLogout()}
-          />
-        </SafeAreaView>
-      </ScrollView>
+      <Drawer
+        profilePicture={this.props.profilePicture}
+        profilePicturePlaceholder='person'
+        onProfilePicturePress={() => this.props.navigation.navigate('profile')}
+        name={this.returnFullName()}
+      >
+        <DrawerItem
+          title="Mi Negocio"
+          icon='ios-briefcase'
+          onPress={() => this.props.onCommerceOpen(this.props.navigation)}
+        />
+        <DrawerItem
+          title="Configuración"
+          icon='md-settings'
+          onPress={() => this.props.navigation.navigate('clientSettings')}
+        />
+        <DrawerItem
+          title="Cerrar Sesión"
+          icon='md-exit'
+          loadingWithText={this.props.loading}
+          onPress={() => this.props.onLogout()}
+        />
+      </Drawer>
     );
   }
 }
 
 const mapStateToProps = state => {
-  return { loading: state.auth.loading };
+  const { profilePicture, firstName, lastName } = state.clientData;
+  const { loading } = state.auth;
+
+  return { profilePicture, firstName, lastName, loading };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceOpen, onLogout }
+  { onCommerceOpen, onLogout, onUserRead }
 )(ClientDrawerContent);

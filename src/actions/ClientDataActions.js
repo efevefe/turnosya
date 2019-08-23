@@ -56,12 +56,12 @@ export const onRegister = ({ email, password, firstName, lastName, phone }) => {
   };
 };
 
-export const onUserRead = loadingType => {
+export const onUserRead = () => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_USER_READING, payload: loadingType });
+    dispatch({ type: ON_USER_READING });
 
     db.doc(`Profiles/${currentUser.uid}`)
       .get()

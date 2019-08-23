@@ -42,7 +42,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_REGISTER_FAIL:
       return { ...state, loading: false, error: 'Usuario existente' };
     case ON_USER_READING:
-      return { ...state, [action.payload]: true };
+      return { ...state, refreshing: true };
     case ON_USER_READ:
       return { ...INITIAL_STATE, ...action.payload };
     case ON_USER_READ_FAIL:

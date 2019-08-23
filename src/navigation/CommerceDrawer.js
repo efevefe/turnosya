@@ -2,24 +2,7 @@ import { createAppContainer, createDrawerNavigator, createStackNavigator } from 
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/CommerceSettings';
-import { MAIN_COLOR } from '../constants';
-
-const stackNavigationOptions = {
-    defaultNavigationOptions: {
-        headerStyle: {
-            backgroundColor: MAIN_COLOR,
-            height: 50
-        },
-        headerTintColor: 'white',
-        headerTitleStyle: {
-            textAlign: 'center',
-            alignSelf: 'center',
-            fontSize: 18,
-            color: 'white',
-            fontWeight: 'bold'
-        }
-    }
-};
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 
 const CommerceSettingsStack = createStackNavigator(
     {
@@ -33,18 +16,15 @@ const CommerceSettingsStack = createStackNavigator(
     stackNavigationOptions
 );
 
-const drawerNavigationOptions = {
-    drawerType: 'slide',
-    drawerWidth: 200,
-    contentComponent: CommerceDrawerContent,
-};
-
 const commerceDrawer = createDrawerNavigator(
     {
         tabs: CommerceNavigation,
         commerceSettings: CommerceSettingsStack
     },
-    drawerNavigationOptions
+    {
+      ...drawerNavigationOptions,
+      contentComponent: CommerceDrawerContent
+    }
 );
 
 const CommerceDrawer = createAppContainer(commerceDrawer);

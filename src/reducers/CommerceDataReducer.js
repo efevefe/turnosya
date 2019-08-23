@@ -57,7 +57,7 @@ export default (state = INITIAL_STATE, action) => {
     case COMMERCE_PROFILE_CREATE:
       return { ...state, loading: false };
     case ON_COMMERCE_READING:
-      return { ...state, [action.payload]: true };
+      return { ...state, refreshing: true };
     case ON_COMMERCE_READ:
       return { ...INITIAL_STATE, ...action.payload };
     case ON_COMMERCE_READ_FAIL:
