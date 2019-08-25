@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
+import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 
 const rightIcon = (navigation, icon, nextScreen) => (
@@ -39,6 +40,12 @@ const searchStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
         headerLeft: leftIcon(navigation, 'md-menu')
+      })
+    },
+    commerceCourtTypes: {
+      screen: CommerceCourtTypes,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Tipos de Cancha'
       })
     }
   },

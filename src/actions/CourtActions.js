@@ -9,7 +9,10 @@ import {
   COURT_READING,
   COURT_READ,
   COURT_DELETE,
-  COURT_UPDATE
+  COURT_UPDATE,
+  COMMERCE_COURT_TYPES_READ,
+  COMMERCE_COURT_TYPES_READING,
+  COMMERCE_COURT_TYPES_READ_FAIL
 } from './types';
 
 export const onCourtValueChange = ({ prop, value }) => {
@@ -68,7 +71,7 @@ export const courtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           //Means that court's name already exists
           dispatch({ type: COURT_EXISTED });
@@ -134,7 +137,7 @@ export const courtUpdate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty && querySnapshot.docs[0].id !== id) {
           dispatch({ type: COURT_EXISTED });
         } else {
@@ -156,3 +159,37 @@ export const courtUpdate = (
       });
   };
 };
+
+export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
+  /* 
+    ESTA ACTION ES PARA CONSULTAR LOS TIPOS DE CANCHA CUANDO EL CLIENTE QUIERE VER LOS TURNOS, LA PONGO
+    ACA PORQUE ESTA RELACIONADO CON ESTO Y TAMBIEN SE PODRIA USAR PARA QUE EL NEGOCIO LISTE SUS TIPOS DE
+    CANCHA, DE ULTIMA LA CAMBIAMOS DE LUGAR
+  */
+
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: COMMERCE_COURT_TYPES_READING, payload: loadingType });
+
+    db.collection(`Commerces/${commerceId}/Courts`)
+      .where('softDelete', '==', null)
+      .get()
+      .then(snapshot => {
+        var courtTypesList = [];
+
+        snapshot.forEach(doc => {
+          if (!courtTypesList.includes(doc.data().court)) {
+            courtTypesList.push(doc.data().court);
+          }
+        });
+
+        dispatch({ type: COMMERCE_COURT_TYPES_READ, payload: courtTypesList });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL })
+      });
+  }
+
+}

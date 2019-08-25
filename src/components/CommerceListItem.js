@@ -11,7 +11,7 @@ class CommerceListItem extends Component {
   };
 
   render() {
-    const { name, address, profilePicture } = this.props.commerce;
+    const { name, address, profilePicture, id } = this.props.commerce;
     const areaName = this.props.commerce.area.name;
 
     return (
@@ -38,6 +38,7 @@ class CommerceListItem extends Component {
             onPress={this.onFavoritePress}
           />
         }
+        onPress={() => this.props.navigation.navigate('commerceCourtTypes', { commerceId: id })}
         bottomDivider
       />
     );

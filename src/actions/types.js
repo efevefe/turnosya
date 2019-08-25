@@ -91,3 +91,8 @@ export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
+
+// Commerce Court Types
+export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
+export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
+export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
