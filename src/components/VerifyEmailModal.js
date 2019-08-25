@@ -1,5 +1,6 @@
 import React from 'react';
-import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { sendEmailVefification } from '../actions';
 import { Menu, MenuItem } from '../components/common';
 
 class VerifyEmailModal extends React.Component {
@@ -9,23 +10,23 @@ class VerifyEmailModal extends React.Component {
 
   onBackdropPress = () => {
     this.setState({ isVisible: false });
-    this.props.onModalCloseCallBack();
+    this.props.onModalCloseCallback();
   };
 
   onSendEmailPress = () => {
-    firebase.auth().currentUser.sendEmailVerification();
-    this.props.onModalCloseCallBack();
+    this.props.sendEmailVefification();
+    this.props.onModalCloseCallback();
   };
 
   render() {
     return (
       <Menu
-        title="Lo siento. Deberás validar tu Email Primero"
+        title="Lo siento. Para reservar y creación de negocio, deberá verificar su email:"
         onBackdropPress={() => this.onBackdropPress()}
         isVisible={this.state.isVisible}
       >
         <MenuItem
-          title="Reenviar"
+          title="Quiero que me reenvíen el mail"
           icon="md-mail-unread"
           onPress={() => this.onSendEmailPress()}
         />
@@ -34,4 +35,7 @@ class VerifyEmailModal extends React.Component {
   }
 }
 
-export default VerifyEmailModal;
+export default connect(
+  null,
+  { sendEmailVefification }
+)(VerifyEmailModal);

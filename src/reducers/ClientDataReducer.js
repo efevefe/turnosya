@@ -1,6 +1,7 @@
 import {
   ON_REGISTER_VALUE_CHANGE,
   ON_REGISTER,
+  ON_REGISTER_FORM_OPEN,
   ON_REGISTER_SUCCESS,
   ON_REGISTER_FAIL,
   ON_USER_READING,
@@ -37,6 +38,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_REGISTER:
       return { ...state, loading: true, error: '' };
+    case ON_REGISTER_FORM_OPEN:
+      return { ...INITIAL_STATE };
     case ON_REGISTER_SUCCESS:
       return INITIAL_STATE;
     case ON_REGISTER_FAIL:

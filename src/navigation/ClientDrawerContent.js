@@ -1,12 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Drawer, DrawerItem } from '../components/common';
+import { View } from 'react-native';
 import { onCommerceOpen, onLogout, onUserRead } from '../actions';
+import { Drawer, DrawerItem } from '../components/common';
+import { isEmailVerified } from '../utils';
+import VerifyEmailModal from '../components/VerifyEmailModal';
 
 class ClientDrawerContent extends Component {
+  state = { modal: false };
+
   componentWillMount() {
     this.props.onUserRead();
   }
+
+  onMyCommercePress = async () => {
+    (await isEmailVerified())
+      ? this.props.onCommerceOpen(this.props.navigation)
+      : this.setState({ modal: true });
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderModal = () => {
+    if (this.state.modal)
+      return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
+  };
 
   returnFullName = () => {
     const { firstName, lastName } = this.props;
@@ -18,29 +38,34 @@ class ClientDrawerContent extends Component {
 
   render() {
     return (
-      <Drawer
-        profilePicture={this.props.profilePicture}
-        profilePicturePlaceholder="person"
-        onProfilePicturePress={() => this.props.navigation.navigate('profile')}
-        name={this.returnFullName()}
-      >
-        <DrawerItem
-          title="Mi Negocio"
-          icon="ios-briefcase"
-          onPress={() => this.props.onCommerceOpen(this.props.navigation)}
-        />
-        <DrawerItem
-          title="Configuración"
-          icon="md-settings"
-          onPress={() => this.props.navigation.navigate('clientSettings')}
-        />
-        <DrawerItem
-          title="Cerrar Sesión"
-          icon="md-exit"
-          loadingWithText={this.props.loading}
-          onPress={() => this.props.onLogout()}
-        />
-      </Drawer>
+      <View>
+        <Drawer
+          profilePicture={this.props.profilePicture}
+          profilePicturePlaceholder="person"
+          onProfilePicturePress={() =>
+            this.props.navigation.navigate('profile')
+          }
+          name={this.returnFullName()}
+        >
+          <DrawerItem
+            title="Mi Negocio"
+            icon="ios-briefcase"
+            onPress={() => this.onMyCommercePress()}
+          />
+          <DrawerItem
+            title="Configuración"
+            icon="md-settings"
+            onPress={() => this.props.navigation.navigate('clientSettings')}
+          />
+          <DrawerItem
+            title="Cerrar Sesión"
+            icon="md-exit"
+            loadingWithText={this.props.loading}
+            onPress={() => this.props.onLogout()}
+          />
+        </Drawer>
+        {this.renderModal()}
+      </View>
     );
   }
 }
