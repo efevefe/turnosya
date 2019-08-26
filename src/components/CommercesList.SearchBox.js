@@ -32,7 +32,7 @@ class SearchBox extends Component {
         selectionColor="white"
         inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
         leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 0 }}
-        showLoading={this.props.searching}
+        //showLoading={this.props.searching}
         loadingProps={{ color: 'white' }}
       />
     );
@@ -47,8 +47,8 @@ SearchBox.propTypes = {
 const ConnectedSearchBox = connectSearchBox(SearchBox);
 
 const mapStateToProps = state => {
-  const { searching, refinement } = state.commercesList;
-  return { searching, refinement };
+  const { refinement } = state.commercesList;
+  return { refinement };
 };
 
 export default connect(
