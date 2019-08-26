@@ -22,7 +22,6 @@ class CommercesAreaItem extends Component {
               style={{
                 fontSize: 16,
                 textAlign: 'center'
-                // textAlignVertical: 'center'
               }}
             >
               {name}
