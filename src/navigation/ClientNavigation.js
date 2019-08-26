@@ -12,6 +12,7 @@ import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
+import CommercesAreas from '../components/CommercesAreas';
 
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
@@ -37,11 +38,17 @@ const leftIcon = (navigation, icon) => (
 
 const searchStack = createStackNavigator(
   {
-    commercesList: {
-      screen: CommercesList,
+    commercesAreas: {
+      screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
         headerLeft: leftIcon(navigation, 'md-menu')
+      })
+    },
+    commercesList: {
+      screen: CommercesList,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Buscar Negocios'
       })
     }
   },
