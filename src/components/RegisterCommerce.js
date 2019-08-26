@@ -6,8 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   onCommerceValueChange,
   onCommerceFormOpen,
-  validateCuit,
-  onCommerceRead
+  validateCuit
 } from '../actions';
 import { validateValueType, trimString } from '../utils';
 

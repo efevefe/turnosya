@@ -21,10 +21,13 @@ export const ON_LOGOUT_SUCCESS = 'on_logout_success';
 export const ON_LOGOUT_FAIL = 'on_logout_fail';
 export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
+export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
+export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
 
 // Register types
 export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
+export const ON_REGISTER_FORM_OPEN = 'on_register_form_open';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
 export const ON_USER_DELETED = 'on_user_delete';
