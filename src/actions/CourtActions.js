@@ -160,47 +160,7 @@ export const courtUpdate = (
   };
 };
 
-/*
 export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
-  
-  //  ESTA ACTION ES PARA CONSULTAR LOS TIPOS DE CANCHA CUANDO EL CLIENTE QUIERE VER LOS TURNOS, LA PONGO
-  //  ACA PORQUE ESTA RELACIONADO CON ESTO Y TAMBIEN SE PODRIA USAR PARA QUE EL NEGOCIO LISTE SUS TIPOS DE
-  //  CANCHA, DE ULTIMA LA CAMBIAMOS DE LUGAR
-
-  const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: COMMERCE_COURT_TYPES_READING, payload: loadingType });
-
-    db.collection(`Commerces/${commerceId}/Courts`)
-      .where('softDelete', '==', null)
-      .get()
-      .then(snapshot => {
-        var courtTypesList = [];
-
-        snapshot.forEach(doc => {
-          if (!courtTypesList.includes(doc.data().court)) {
-            courtTypesList.push(doc.data().court);
-          }
-        });
-
-        dispatch({ type: COMMERCE_COURT_TYPES_READ, payload: courtTypesList });
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL })
-      });
-  }
-
-}
-*/
-
-export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
-  /* 
-    ESTA ACTION ES IGUAL QUE LA QUE ESTA COMENTADA PERO HACE UNA CONSULTA MAS
-    PARA MOSTRAR EL LISTADO CON IMAGENES PARA QUE QUEDE MAS LINDO
-  */
-
   const db = firebase.firestore();
 
   return dispatch => {

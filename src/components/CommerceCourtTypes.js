@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, ScrollView, Text, StyleSheet, RefreshControl } from 'react-native';
-import { ListItem, Card } from 'react-native-elements';
+import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner } from '../components/common';
 import { onCommerceCourtTypesRead } from '../actions'
@@ -37,14 +37,6 @@ class CommerceCourtTypes extends Component {
     }
 
     renderItem = ({ item }) => {
-        /*
-        // muestra un listado simple solo con el nombre del deporte
-        
-        return (
-            <ListItem title={item} bottomDivider/>
-        );
-        */
-
         return (
             <Card
                 image={ item.image ? { uri: item.image } : null }
