@@ -12,7 +12,6 @@ import {
 
 export const commercesRead = () => {
   var db = firebase.firestore();
-
   return dispatch => {
     dispatch({ type: ON_COMMERCES_LIST_READING });
     db.collection('Commerces')
@@ -76,7 +75,7 @@ export const readFavoriteCommerce = () => {
     db.collection(`Profiles/${currentUser.uid}/FavoritesCommerces`).onSnapshot(
       snapShot => {
         var favorites = [];
-        snapShot.forEach(doc => favorites.push({ id: doc.id }));
+        snapShot.forEach(doc => favorites.push(doc.id));
         dispatch({ type: READ_FAVORITE_COMMERCE, payload: favorites });
       }
     );

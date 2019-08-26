@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -12,15 +11,11 @@ class CommerceListItem extends Component {
   state = { favorite: false };
 
   componentWillMount() {
-    this.props.favoritesArray.forEach(element => {
-      if (element === this.props.commerce.id) {
-        this.setState({ favorite: !this.state.favorite });
-      }
-    });
+    this.setState({ favorite: this.props.favoritesCommerce.includes(this.props.commerce.id) });
   }
 
   onFavoritePress = commerceId => {
-    if (this.props.favoritesArray.includes(commerceId)) {
+    if (this.props.favoritesCommerce.includes(commerceId)) {
       this.props.deleteFavoritesCommerces(commerceId);
     } else {
       this.props.registerFavoriteCommerce(commerceId);
@@ -64,11 +59,8 @@ class CommerceListItem extends Component {
 
 const mapStateToProps = state => {
   const { favoritesCommerce } = state.commercesList;
-  var favoritesArray = _.map(favoritesCommerce, element => {
-    return element.id;
-  });
   return {
-    favoritesArray
+    favoritesCommerce
   };
 };
 

@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
+import FavoriteCommercesList from '../components/FavouriteCommercesList'
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 
 const rightIcon = (navigation, icon, nextScreen) => (
@@ -61,7 +62,7 @@ const calendarStack = createStackNavigator(
 const favoritesStack = createStackNavigator(
   {
     favoritesList: {
-      screen: EmptyScreen,
+      screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
         headerLeft: leftIcon(navigation, 'md-menu')
@@ -96,7 +97,7 @@ const clientTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'search'
+    initialRouteName: 'favorites'
   }
 );
 
