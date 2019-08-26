@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import { FlatList, View, Dimensions } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { Spinner } from './common';
-import CommerceListItem from './CommerceListItem';
-import { commercesRead, searchCommerces } from '../actions';
-import { MAIN_COLOR } from '../constants';
-
-const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
+import { InstantSearch } from 'react-instantsearch/native';
+import { refinementUpdate } from '../actions';
+import ConnectedSearch from './CommercesList.SearchConnection';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedHits from './CommercesList.SearchHits';
 
 class CommercesList extends Component {
-  state = { search: '' };
-
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title'),
@@ -21,17 +17,10 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
-    this.props.commercesRead();
     this.props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
-      title: this.renderSearchBar()
+      title: this.renderAlgoliaSearchBar()
     });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.searching !== this.props.searching) {
-      this.props.navigation.setParams({ title: this.renderSearchBar() });
-    }
   }
 
   renderFiltersButton = () => {
@@ -46,86 +35,42 @@ class CommercesList extends Component {
     );
   };
 
-  renderSearchBar = () => {
+  renderAlgoliaSearchBar = () => {
     return (
-      <SearchBar
-        platform="android"
-        placeholder="Buscar negocios..."
-        placeholderTextColor="white"
-        onChangeText={text => this.searchCommerces(text)}
-        onClear={this.resetSearch}
-        value={this.state.search}
-        containerStyle={{
-          alignSelf: 'stretch',
-          height: 50,
-          width: searchBarWidth,
-          backgroundColor: MAIN_COLOR,
-          paddingTop: 4
-        }}
-        searchIcon={{ color: 'white', size: 28 }}
-        cancelIcon={{ color: 'white' }}
-        clearIcon={{ color: 'white' }}
-        selectionColor="white"
-        inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
-        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 0 }}
-        showLoading={this.props.searching}
-        loadingProps={{ color: 'white' }}
-      />
+      <InstantSearch
+        appId="A3VWXVHSOG"
+        apiKey="e12c3e69403b5f10ca72f83fcdc4841c"
+        indexName="CommercesIndexTurnosYa"
+      >
+        <View style={{ flex: 1 }}>
+          <ConnectedSearchBox />
+        </View>
+      </InstantSearch>
     );
   };
-
-  onChangeText = async search => {
-    await this.setState({ search });
-    this.props.navigation.setParams({ title: this.renderSearchBar() });
-  };
-
-  searchCommerces = search => {
-    this.onChangeText(search);
-
-    if (search.length >= 1) {
-      setTimeout(() => {
-        this.props.searchCommerces(search);
-      }, 200);
-    } else if (search.length == 0) {
-      this.resetSearch();
-    }
-  };
-
-  resetSearch = () => {
-    this.onChangeText('');
-
-    setTimeout(() => {
-      this.props.commercesRead();
-    }, 50);
-  };
-
-  renderRow({ item }) {
-    return (
-      <CommerceListItem commerce={item} navigation={this.props.navigation} />
-    );
-  }
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.props.commerces}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={commerce => commerce.id}
-        />
+        <InstantSearch
+          appId="A3VWXVHSOG"
+          apiKey="41931f3be2b789082bf5a2ba26a9cc33"
+          indexName="CommercesIndexTurnosYa"
+        >
+          <ConnectedSearch />
+          <ConnectedHits />
+        </InstantSearch>
       </View>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { commerces, loading, searching } = state.commercesList;
-  return { commerces, loading, searching };
+  const { refinement } = state.commercesList;
+  return { refinement };
 };
 
 export default connect(
   mapStateToProps,
-  { commercesRead, searchCommerces }
+  { refinementUpdate }
 )(CommercesList);
