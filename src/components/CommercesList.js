@@ -25,12 +25,12 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
-    if (this.props.navigation.state.params) {
-      this.props.commercesReadArea(this.props.navigation.state.params.idArea);
-    } else {
-      this.props.commercesRead();
-    }
-    this.props.navigation.setParams({
+    const { state, setParams } = this.props.navigation;
+    state.params
+      ? this.props.commercesReadArea(state.params.idArea)
+      : this.props.commercesRead();
+
+    setParams({
       rightIcon: this.renderFiltersButton(),
       title: this.renderSearchBar()
     });
@@ -88,17 +88,12 @@ class CommercesList extends Component {
   };
 
   searchCommerces = search => {
+    const { idArea } = this.props.navigation.state.params;
+    const { searchCommerces, searchCommercesArea } = this.props;
     this.onChangeText(search);
     if (search.length >= 1) {
       setTimeout(() => {
-        if (this.props.navigation.state.params.idArea) {
-          this.props.searchCommercesArea(
-            search,
-            this.props.navigation.state.params.idArea
-          );
-        } else {
-          this.props.searchCommerces(search);
-        }
+        idArea ? searchCommercesArea(search, idArea) : searchCommerces(search);
       }, 200);
     } else if (search.length == 0) {
       this.resetSearch();
@@ -108,29 +103,29 @@ class CommercesList extends Component {
   resetSearch = () => {
     this.onChangeText('');
 
+    const { idArea } = this.props.navigation.state.params;
+    const { commercesRead, commercesReadArea } = this.props;
+
     setTimeout(() => {
-      if (this.props.navigation.state.params.idArea) {
-        this.props.commercesReadArea(this.props.navigation.state.params.idArea);
-      } else {
-        this.props.commercesRead();
-      }
+      idArea ? commercesReadArea(idArea) : commercesRead();
     }, 50);
   };
 
-  renderRow({ item }) {
+  renderRow = ({ item }) => {
     return (
       <CommerceListItem commerce={item} navigation={this.props.navigation} />
     );
-  }
+  };
 
   render() {
-    if (this.props.loading) return <Spinner />;
+    const { loading, commerces } = this.props;
+    if (loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
         <FlatList
-          data={this.props.commerces}
-          renderItem={this.renderRow.bind(this)}
+          data={commerces}
+          renderItem={this.renderRow}
           keyExtractor={commerce => commerce.id}
         />
       </View>

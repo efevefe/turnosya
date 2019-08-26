@@ -4,7 +4,6 @@ import {
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
-import { Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
@@ -14,6 +13,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
+
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
     name={icon}
@@ -42,7 +42,6 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        // headerRight: rightIcon(navigation, 'md-arrow-forward', 'commercesList'),
         headerLeft: leftIcon(navigation, 'md-menu')
       })
     },

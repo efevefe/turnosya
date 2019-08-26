@@ -1,18 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableHighlight } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { Card } from 'react-native-elements';
-import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
 
 class CommercesAreaItem extends Component {
   onButtonPressHandler(id) {
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'commercesList',
-      params: { idArea: id }
-    });
-
-    this.props.navigation.navigate(navigateAction);
+    this.props.navigation.navigate('commercesList', { idArea: id });
   }
   render() {
     const { id, name, image } = this.props.area;
@@ -42,7 +34,4 @@ class CommercesAreaItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  {}
-)(CommercesAreaItem);
+export default CommercesAreaItem;

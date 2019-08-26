@@ -23,7 +23,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_AREAS_READING:
       return { ...state, loading: true };
     case ON_AREAS_SEARCH_READ:
-      return { areas: action.payload, loading: false };
+      return { ...state, areas: action.payload, loading: false };
     case ON_COMMERCES_LIST_SEARCHING:
       return { ...state, searching: true };
     case ON_COMMERCES_LIST_SEARCHED:

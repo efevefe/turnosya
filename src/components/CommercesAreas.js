@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { Card } from 'react-native-elements';
 import { FlatList, View, Text, TouchableHighlight } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from './common';
-import { commercesRead, areasRead } from '../actions';
-import { MAIN_COLOR } from '../constants';
+import { areasRead } from '../actions';
 import CommercesAreaItem from './CommercesAreaItem';
 
 class CommercesAreas extends Component {
