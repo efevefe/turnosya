@@ -21,10 +21,13 @@ export const ON_LOGOUT_SUCCESS = 'on_logout_success';
 export const ON_LOGOUT_FAIL = 'on_logout_fail';
 export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
+export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
+export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
 
 // Register types
 export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
 export const ON_REGISTER = 'on_register';
+export const ON_REGISTER_FORM_OPEN = 'on_register_form_open';
 export const ON_REGISTER_SUCCESS = 'on_register_success';
 export const ON_REGISTER_FAIL = 'on_register_fail';
 export const ON_USER_DELETED = 'on_user_delete';
@@ -76,6 +79,8 @@ export const ON_COMMERCES_LIST_READING = 'on_commerces_list_reading';
 export const ON_COMMERCES_LIST_READ = 'on_commerces_list_read';
 export const ON_COMMERCES_LIST_SEARCHING = 'on_commerces_list_searching';
 export const ON_COMMERCES_LIST_SEARCHED = 'on_commerces_list_searched';
+export const ON_AREAS_READING = 'on_areas_reading';
+export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -91,3 +96,8 @@ export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
+
+// Commerce Court Types
+export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
+export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
+export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';

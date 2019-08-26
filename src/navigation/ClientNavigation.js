@@ -8,7 +8,12 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
+import CommercesAreas from '../components/CommercesAreas';
 
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
@@ -34,12 +39,24 @@ const leftIcon = (navigation, icon) => (
 
 const searchStack = createStackNavigator(
   {
-    commercesList: {
-      screen: CommercesList,
+    commercesAreas: {
+      screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
         headerLeft: leftIcon(navigation, 'md-menu')
       })
+    },
+    commercesList: {
+      screen: CommercesList,
+      navigationOptions: {
+        title: 'Buscar Negocios'
+      }
+    },
+    commerceCourtTypes: {
+      screen: CommerceCourtTypes,
+      navigationOptions: {
+        title: 'Tipos de Cancha'
+      }
     }
   },
   stackNavigationOptions
