@@ -5,8 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { InstantSearch } from 'react-instantsearch/native';
 import { refinementUpdate } from '../actions';
 import ConnectedSearch from './CommercesList.SearchConnection';
-import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedHits from './CommercesList.SearchHits';
+import SearchBox from './CommercesList.SearchBox';
 
 class CommercesList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -17,6 +17,7 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
+    // cambiar
     this.props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
       title: this.renderAlgoliaSearchBar()
@@ -35,26 +36,14 @@ class CommercesList extends Component {
     );
   };
 
-  renderAlgoliaSearchBar = () => {
-    return (
-      <InstantSearch
-        appId="A3VWXVHSOG"
-        apiKey="e12c3e69403b5f10ca72f83fcdc4841c"
-        indexName="CommercesIndexTurnosYa"
-      >
-        <View style={{ flex: 1 }}>
-          <ConnectedSearchBox />
-        </View>
-      </InstantSearch>
-    );
-  };
+  renderAlgoliaSearchBar = () => <SearchBox />;
 
   render() {
     return (
       <View style={{ flex: 1 }}>
         <InstantSearch
           appId="A3VWXVHSOG"
-          apiKey="41931f3be2b789082bf5a2ba26a9cc33"
+          apiKey="e12c3e69403b5f10ca72f83fcdc4841c"
           indexName="CommercesIndexTurnosYa"
         >
           <ConnectedSearch />

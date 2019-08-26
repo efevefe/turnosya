@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { connectSearchBox } from 'react-instantsearch/connectors';
-import PropTypes from 'prop-types';
 import { refinementUpdate } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
@@ -39,12 +37,12 @@ class SearchBox extends Component {
   }
 }
 
-SearchBox.propTypes = {
-  refine: PropTypes.func.isRequired,
-  currentRefinement: PropTypes.string
-};
+// SearchBox.propTypes = {
+//   refine: PropTypes.func.isRequired,
+//   currentRefinement: PropTypes.string
+// };
 
-const ConnectedSearchBox = connectSearchBox(SearchBox);
+// const ConnectedSearchBox = connectSearchBox(SearchBox);
 
 const mapStateToProps = state => {
   const { refinement } = state.commercesList;
@@ -54,4 +52,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   { refinementUpdate }
-)(ConnectedSearchBox);
+)(SearchBox);
