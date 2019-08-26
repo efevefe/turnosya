@@ -54,6 +54,7 @@ export const onRegister = ({ email, password, firstName, lastName, phone }) => {
           .then(() => {
             dispatch({ type: ON_REGISTER_SUCCESS, payload: user });
             dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+            user.user.sendEmailVerification();
           })
           .catch(error =>
             dispatch({ type: ON_REGISTER_FAIL, payload: error.message })
