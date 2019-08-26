@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import _ from 'lodash';
 import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {
+  registerFavoriteCommerce,
+  deleteFavoritesCommerces,
+  readFavoriteCommerce
+} from '../actions/CommercesListActions';
+import { connect } from 'react-redux';
 class CommerceListItem extends Component {
   state = { favorite: false };
 
-  onFavoritePress = () => {
+  componentWillMount() {
+    this.props.favoritesArray.forEach(element => {
+      if (element === this.props.commerce.id) {
+        this.setState({ favorite: !this.state.favorite });
+      }
+    });
+  }
+
+  onFavoritePress = commerceId => {
+    if (this.props.favoritesArray.includes(commerceId)) {
+      this.props.deleteFavoritesCommerces(commerceId);
+    } else {
+      this.props.registerFavoriteCommerce(commerceId);
+    }
     this.setState({ favorite: !this.state.favorite });
   };
 
@@ -35,7 +53,7 @@ class CommerceListItem extends Component {
               />
             }
             buttonStyle={{ padding: 0 }}
-            onPress={this.onFavoritePress}
+            onPress={() => this.onFavoritePress(this.props.commerce.id)}
           />
         }
         bottomDivider
@@ -44,4 +62,17 @@ class CommerceListItem extends Component {
   }
 }
 
-export default CommerceListItem;
+const mapStateToProps = state => {
+  const { favoritesCommerce } = state.commercesList;
+  var favoritesArray = _.map(favoritesCommerce, element => {
+    return element.id;
+  });
+  return {
+    favoritesArray
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { registerFavoriteCommerce, deleteFavoritesCommerces, readFavoriteCommerce }
+)(CommerceListItem);

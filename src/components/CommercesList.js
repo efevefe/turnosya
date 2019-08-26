@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
-import { commercesRead, searchCommerces } from '../actions';
+import {
+  commercesRead,
+  searchCommerces,
+  readFavoriteCommerce
+} from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
@@ -21,6 +25,7 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
+    this.props.readFavoriteCommerce();
     this.props.commercesRead();
     this.props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
@@ -127,5 +132,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { commercesRead, searchCommerces }
+  { commercesRead, searchCommerces, readFavoriteCommerce }
 )(CommercesList);

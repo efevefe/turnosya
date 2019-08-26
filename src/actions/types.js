@@ -91,3 +91,7 @@ export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
+
+export const FAVORITE_COMMERCE_DELETED = 'favorite_commerce_deleted';
+export const FAVORITE_COMMERCE_ADDED = 'favorite_commerce_added';
+export const READ_FAVORITE_COMMERCE = 'read_favorite_commerce';
