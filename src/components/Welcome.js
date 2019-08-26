@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
-import { CardSection, Button, Input } from './common';
+import { CardSection, Button } from './common';
 
 class Welcome extends Component {
   onButtonPressHandler() {
     this.props.navigation.navigate('commerceRegisterProfile');
   }
+
   onButtonPressHandlerBack() {
     this.props.navigation.navigate('tabs');
   }
+
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

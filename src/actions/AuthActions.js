@@ -8,11 +8,20 @@ import {
   ON_LOGOUT,
   ON_LOGOUT_SUCCESS,
   ON_LOGIN_FACEBOOK,
-  ON_LOGIN_GOOGLE
+  ON_LOGIN_GOOGLE,
+  ON_EMAIL_VERIFY_ASKED,
+  ON_EMAIL_VERIFY_REMINDED
 } from './types';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
+};
+
+export const sendEmailVefification = () => {
+  const { currentUser } = firebase.auth();
+  currentUser.sendEmailVerification();
+
+  return { type: ON_EMAIL_VERIFY_ASKED, payload: currentUser.email };
 };
 
 export const onLogin = ({ email, password }) => {
@@ -22,7 +31,13 @@ export const onLogin = ({ email, password }) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(user => dispatch({ type: ON_LOGIN_SUCCESS, payload: user }))
+      .then(user => {
+        dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        if (!user.user.emailVerified)
+          dispatch({
+            type: ON_EMAIL_VERIFY_REMINDED
+          });
+      })
       .catch(error =>
         dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
       );
@@ -157,26 +172,34 @@ export const userReauthenticate = async (password = null) => {
   var credential;
 
   if (provider == 'password') {
-    credential = await firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
+    credential = await firebase.auth.EmailAuthProvider.credential(
+      currentUser.email,
+      password
+    );
   } else if (provider == 'facebook.com') {
-    await Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', { permissions: ['public_profile', 'email'] })
-      .then(({ type, token }) => {
-        if (type === 'success') {
-          credential = firebase.auth.FacebookAuthProvider.credential(token);
-        }
-      });
+    await Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
+      permissions: ['public_profile', 'email']
+    }).then(({ type, token }) => {
+      if (type === 'success') {
+        credential = firebase.auth.FacebookAuthProvider.credential(token);
+      }
+    });
   } else if (provider == 'google.com') {
     await Expo.Google.logInAsync({
-      iosClientId: '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
-      androidClientId: '425889819253-sb80h20d5etvpisi036ugvb6g7o6jkkl.apps.googleusercontent.com',
+      iosClientId:
+        '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
+      androidClientId:
+        '425889819253-sb80h20d5etvpisi036ugvb6g7o6jkkl.apps.googleusercontent.com',
       scopes: ['profile', 'email']
-    })
-      .then(({ type, idToken, accessToken }) => {
-        if (type === 'success') {
-          credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
-        }
-      });
+    }).then(({ type, idToken, accessToken }) => {
+      if (type === 'success') {
+        credential = firebase.auth.GoogleAuthProvider.credential(
+          idToken,
+          accessToken
+        );
+      }
+    });
   }
 
   return currentUser.reauthenticateWithCredential(credential);
-}
+};

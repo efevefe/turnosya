@@ -214,6 +214,12 @@ class ClientSettings extends Component {
           loadingWithText={this.props.loadingUserDelete}
           onPress={this.onUserDeletePress}
         />
+        {/* Opción en configuraciones para explicar y permitir mandar mail de configuracion*/}
+        {/* <MenuItem
+          title="Verificar mi Cuenta"
+          icon="md-mail-open"
+          onPress={}
+        /> */}
 
         {this.renderConfirmUserDelete()}
         {this.renderCantDeleteUser()}
