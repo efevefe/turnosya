@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, View, Dimensions } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
+import { Constants } from 'expo';
 import { Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
 import {
@@ -11,16 +12,16 @@ import {
   commercesReadArea,
   searchCommercesArea
 } from '../actions';
-import { MAIN_COLOR } from '../constants';
-const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
+import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
 
 class CommercesList extends Component {
-  state = { search: '' };
+  state = { search: '', searchVisible: false };
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: navigation.getParam('title'),
-      headerRight: navigation.getParam('rightIcon')
+      headerTitle: 'Buscar negocios',
+      headerRight: navigation.getParam('rightIcons'),
+      header: navigation.getParam('header')
     };
   };
 
@@ -31,66 +32,96 @@ class CommercesList extends Component {
       : this.props.commercesRead();
 
     setParams({
-      rightIcon: this.renderFiltersButton(),
-      title: this.renderSearchBar()
+      rightIcons: this.renderRightButtons(),
+      header: undefined
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.searching !== this.props.searching) {
-      this.props.navigation.setParams({ title: this.renderSearchBar() });
-    }
+  renderRightButtons = () => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <Ionicons
+          name="md-search"
+          size={28}
+          color="white"
+          style={{ marginRight: 20 }}
+          onPress={this.onSearchPress}
+        />
+        <Ionicons
+          name="ios-funnel"
+          size={28}
+          color="white"
+          style={{ marginRight: 15 }}
+          onPress={() => console.log('filtros de busqueda')}
+        />
+      </View>
+    );
+  };
+
+  onSearchPress = async () => {
+    this.props.navigation.setParams({ header: null });
+    await this.setState({ searchVisible: true });
+    this.searchbar.focus();
   }
 
-  renderFiltersButton = () => {
-    return (
-      <Ionicons
-        name="ios-funnel"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={() => console.log('filtros de busqueda')}
-      />
-    );
-  };
+  onCancelPress = () => {
+    this.props.navigation.setParams({ header: undefined });
+    this.setState({ searchVisible: false });
+  }
 
   renderSearchBar = () => {
-    return (
-      <SearchBar
-        platform="android"
-        placeholder="Buscar negocios..."
-        placeholderTextColor="white"
-        onChangeText={text => this.searchCommerces(text)}
-        onClear={this.resetSearch}
-        value={this.state.search}
-        containerStyle={{
+    if (this.state.searchVisible) {
+      return (
+        <View style={{
+          height: NAVIGATION_HEIGHT + Constants.statusBarHeight,
           alignSelf: 'stretch',
-          height: 50,
-          width: searchBarWidth,
+          justifyContent: 'flex-end',
           backgroundColor: MAIN_COLOR,
-          paddingTop: 4
-        }}
-        searchIcon={{ color: 'white', size: 28 }}
-        cancelIcon={{ color: 'white' }}
-        clearIcon={{ color: 'white' }}
-        selectionColor="white"
-        inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
-        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 25 }}
-        showLoading={this.props.searching}
-        loadingProps={{ color: 'white' }}
-      />
-    );
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowOpacity: 0.20,
+          shadowRadius: 1.41,
+          elevation: 2
+        }}>
+          <SearchBar
+            ref={search => this.searchbar = search}
+            platform="android"
+            placeholder="Buscar negocios..."
+            onChangeText={text => this.searchCommerces(text)}
+            onClear={this.resetSearch}
+            onCancel={this.onCancelPress}
+            value={this.state.search}
+            containerStyle={{
+              alignSelf: 'stretch',
+              height: NAVIGATION_HEIGHT,
+              paddingTop: 4,
+              marginTop: Constants.statusBarHeight
+            }}
+            searchIcon={{ color: MAIN_COLOR, size: 28, marginLeft: 15 }}
+            cancelIcon={{ color: MAIN_COLOR, marginLeft: 15 }}
+            clearIcon={{ color: MAIN_COLOR, marginRight: 15 }}
+            selectionColor={MAIN_COLOR}
+            showLoading={this.props.searching}
+            loadingProps={{ color: MAIN_COLOR }}
+          />
+        </View>
+      );
+    }
   };
 
-  onChangeText = async search => {
-    await this.setState({ search });
-    this.props.navigation.setParams({ title: this.renderSearchBar() });
+  onChangeText = search => {
+    this.setState({ search });
   };
 
   searchCommerces = search => {
     const { idArea } = this.props.navigation.state.params;
     const { searchCommerces, searchCommercesArea } = this.props;
+
     this.onChangeText(search);
+
     if (search.length >= 1) {
       setTimeout(() => {
         idArea ? searchCommercesArea(search, idArea) : searchCommerces(search);
@@ -119,15 +150,18 @@ class CommercesList extends Component {
 
   render() {
     const { loading, commerces } = this.props;
-    if (loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
-        <FlatList
-          data={commerces}
-          renderItem={this.renderRow}
-          keyExtractor={commerce => commerce.id}
-        />
+        {this.renderSearchBar()}
+
+        {loading
+          ? <Spinner />
+          : <FlatList
+            data={commerces}
+            renderItem={this.renderRow}
+            keyExtractor={commerce => commerce.id}
+          />}
       </View>
     );
   }
