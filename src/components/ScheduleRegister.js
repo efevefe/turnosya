@@ -25,25 +25,39 @@ class ScheduleRegister extends Component {
   }
 
   renderSaveButton = () => {
+    const {
+      onScheduleCreate,
+      cards,
+      commerceId,
+      reservationMinLength,
+      reservationDayPeriod,
+      navigation
+    } = this.props;
+
     return (
       <Ionicons
         name="md-checkmark"
         size={28}
         color="white"
         style={{ marginRight: 15 }}
-        onPress={() => this.props.onScheduleCreate({ 
-          cards: this.props.cards, 
-          commerceId: this.props.commerceId, 
-          reservationMinLength: this.props.reservationMinLength,
-          reservationDayPeriod: this.props.reservationDayPeriod
-        }, this.props.navigation
-        )}
+        onPress={() =>
+          onScheduleCreate(
+            {
+              cards,
+              commerceId,
+              reservationMinLength,
+              reservationDayPeriod
+            },
+            navigation
+          )
+        }
       />
     );
   };
 
   onAddPress = () => {
     const { cards, selectedDays, onScheduleValueChange } = this.props;
+
     if (cards.length === 0) {
       onScheduleValueChange({
         prop: 'cards',
@@ -69,21 +83,20 @@ class ScheduleRegister extends Component {
   };
 
   render() {
-    if (this.props.loading) {
-      return <Spinner />;
-    }
+    const { loading, cards, refreshing } = this.props;
+    if (loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
         <FlatList
-          data={this.props.cards}
+          data={cards}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
           contentContainerStyle={{ paddingBottom: 95 }}
           refreshControl={
             <RefreshControl
-              refreshing={this.props.refreshing}
+              refreshing={refreshing}
               colors={[MAIN_COLOR]}
               tintColor={MAIN_COLOR}
             />
@@ -110,10 +123,25 @@ const emptyCard = {
 };
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, reservationMinLength, reservationDayPeriod, loading, refreshing } = state.scheduleRegister;
+  const {
+    cards,
+    selectedDays,
+    reservationMinLength,
+    reservationDayPeriod,
+    loading,
+    refreshing
+  } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
 
-  return { cards, selectedDays, commerceId, reservationMinLength, reservationDayPeriod, loading, refreshing };
+  return {
+    cards,
+    selectedDays,
+    commerceId,
+    reservationMinLength,
+    reservationDayPeriod,
+    loading,
+    refreshing
+  };
 };
 
 export default connect(

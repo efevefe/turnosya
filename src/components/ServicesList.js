@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+import { FlatList, View } from 'react-native';
+import { Fab } from 'native-base';
 import { Spinner } from './common';
 import ServicesListItem from './ServicesListItem';
 import { servicesRead } from '../actions';
@@ -17,6 +19,10 @@ class ServicesList extends Component {
     );
   }
 
+  onAddPress = () => {
+    this.props.navigation.navigate('serviceForm');
+  };
+
   renderList() {
     if (this.props.loading) {
       return <Spinner size="large" color={MAIN_COLOR} />;
@@ -27,7 +33,15 @@ class ServicesList extends Component {
             data={this.props.services}
             renderItem={this.renderRow.bind(this)}
             keyExtractor={service => service.id}
+            contentContainerStyle={{ paddingBottom: 95 }}
           />
+          <Fab
+            style={{ backgroundColor: MAIN_COLOR }}
+            position="bottomRight"
+            onPress={() => this.onAddPress()}
+          >
+            <Ionicons name="md-add" />
+          </Fab>
         </View>
       );
     }
