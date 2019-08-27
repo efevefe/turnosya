@@ -9,20 +9,20 @@ import ConnectedHits from './CommercesList.SearchHits';
 import SearchBox from './CommercesList.SearchBox';
 
 class CommercesList extends Component {
+  constructor(props) {
+    super(props);
+    props.navigation.setParams({
+      rightIcon: this.renderFiltersButton(),
+      title: this.renderAlgoliaSearchBar()
+    });
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title'),
       headerRight: navigation.getParam('rightIcon')
     };
   };
-
-  componentWillMount() {
-    // cambiar
-    this.props.navigation.setParams({
-      rightIcon: this.renderFiltersButton(),
-      title: this.renderAlgoliaSearchBar()
-    });
-  }
 
   renderFiltersButton = () => {
     return (
