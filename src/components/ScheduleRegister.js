@@ -25,8 +25,19 @@ class ScheduleRegister extends Component {
   }
 
   renderSaveButton = () => {
+    return (
+      <Ionicons
+        name="md-checkmark"
+        size={28}
+        color="white"
+        style={{ marginRight: 15 }}
+        onPress={this.onSavePress}
+      />
+    );
+  };
+
+  onSavePress = () => { 
     const {
-      onScheduleCreate,
       cards,
       commerceId,
       reservationMinLength,
@@ -34,26 +45,16 @@ class ScheduleRegister extends Component {
       navigation
     } = this.props;
 
-    return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={() =>
-          onScheduleCreate(
-            {
-              cards,
-              commerceId,
-              reservationMinLength,
-              reservationDayPeriod
-            },
-            navigation
-          )
-        }
-      />
-    );
-  };
+    this.props.onScheduleCreate(
+      {
+        cards,
+        commerceId,
+        reservationMinLength,
+        reservationDayPeriod
+      },
+      navigation
+    )
+  }
 
   onAddPress = () => {
     const { cards, selectedDays, onScheduleValueChange } = this.props;
