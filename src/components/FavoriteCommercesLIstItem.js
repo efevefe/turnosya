@@ -1,30 +1,29 @@
 import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
-import {View} from 'react-native'
+import { View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
     registerFavoriteCommerce,
-    deleteFavoritesCommerces,
-    readFavoriteCommerce
+    deleteFavoriteCommerce,
 } from '../actions/CommercesListActions';
 import { connect } from 'react-redux';
 
 class FavoriteCommercesListItem extends Component {
-    state = { favorite: false };
+    state = { favorite: true };
 
-    componentWillMount() {
-        this.setState({ favorite: this.props.favoritesCommerce.includes(this.props.commerce.id) });
-    }
+/*     componentWillMount() {
+        this.setState({ favorite: this.props.favoriteCommerces.includes(this.props.commerce.id) });
+    } */
 
-    onFavoritePress = commerceId => {
-        if (this.props.favoritesCommerce.includes(commerceId)) {
-            this.props.deleteFavoritesCommerces(commerceId);
+    onFavoritePress = (commerceId) => {
+        if (this.state.favorite) {
+            this.props.deleteFavoriteCommerce(commerceId);
         } else {
             this.props.registerFavoriteCommerce(commerceId);
         }
         this.setState({ favorite: !this.state.favorite });
     };
-    renderFavorites = () =>{
+    renderFavorites = () => {
         const { name, address, profilePicture } = this.props.commerce;
         const areaName = this.props.commerce.area.name;
         if (this.state.favorite) {
@@ -55,27 +54,25 @@ class FavoriteCommercesListItem extends Component {
                     bottomDivider
                 />)
         }
-        else {
-            return <View></View>
-        }
     }
 
     render() {
-        return(
-            this.renderFavorites()
+        return (
+            <View>{this.renderFavorites()}</View>
         )
     }
 }
 
 
 const mapStateToProps = state => {
-    const { favoritesCommerce } = state.commercesList;
+    const { favoriteCommerces } = state.commercesList;
     return {
-        favoritesCommerce
+        favoriteCommerces
     };
 };
 
 export default connect(
-    mapStateToProps,
-    { registerFavoriteCommerce, deleteFavoritesCommerces, readFavoriteCommerce }
+    null,
+    
+    { registerFavoriteCommerce, deleteFavoriteCommerce}
 )(FavoriteCommercesListItem);

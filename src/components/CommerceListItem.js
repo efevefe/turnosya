@@ -3,20 +3,20 @@ import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   registerFavoriteCommerce,
-  deleteFavoritesCommerces,
-  readFavoriteCommerce
+  deleteFavoriteCommerce,
+  readFavoriteCommerces
 } from '../actions/CommercesListActions';
 import { connect } from 'react-redux';
 class CommerceListItem extends Component {
   state = { favorite: false };
 
   componentWillMount() {
-    this.setState({ favorite: this.props.favoritesCommerce.includes(this.props.commerce.id) });
+    this.setState({ favorite: this.props.favoriteCommerces.includes(this.props.commerce.id) });
   }
 
-  onFavoritePress = commerceId => {
-    if (this.props.favoritesCommerce.includes(commerceId)) {
-      this.props.deleteFavoritesCommerces(commerceId);
+  onFavoritePress = (commerceId) => {
+    if (this.state.favorite) {
+      this.props.deleteFavoriteCommerce(commerceId);
     } else {
       this.props.registerFavoriteCommerce(commerceId);
     }
@@ -58,13 +58,13 @@ class CommerceListItem extends Component {
 }
 
 const mapStateToProps = state => {
-  const { favoritesCommerce } = state.commercesList;
+  const { favoriteCommerces } = state.commercesList;
   return {
-    favoritesCommerce
+    favoriteCommerces
   };
 };
 
 export default connect(
   mapStateToProps,
-  { registerFavoriteCommerce, deleteFavoritesCommerces, readFavoriteCommerce }
+  { registerFavoriteCommerce, deleteFavoriteCommerce, readFavoriteCommerces }
 )(CommerceListItem);

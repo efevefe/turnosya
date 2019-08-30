@@ -5,12 +5,13 @@ import {
   ON_COMMERCES_LIST_SEARCHED,
   FAVORITE_COMMERCE_DELETED,
   FAVORITE_COMMERCE_ADDED,
-  READ_FAVORITE_COMMERCE,
-  ORDER_FAVORITE_COMMERCE
+  FAVORITE_COMMERCES_READ,
+  ONLY_FAVORITE_COMMERCES_READ
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  favoritesCommerce: [],
+  onlyFavoriteCommerces: [],
+  favoriteCommerces: [],
   commerces: [],
   loading: false,
   searching: false
@@ -27,17 +28,19 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCES_LIST_SEARCHED:
       return { ...state, commerces: action.payload, searching: false };
     case FAVORITE_COMMERCE_DELETED:
-      var favoritesUpdate = state.favoritesCommerce.filter(element => {
+      var favoritesUpdate = state.favoriteCommerces.filter(element => {
         if (element !== action.payload) {
           return element;
         }
       });
-      return { ...state, favoritesCommerce: favoritesUpdate };
+      return { ...state, favoriteCommerces: favoritesUpdate };
     case FAVORITE_COMMERCE_ADDED:
-      var favorites = state.favoritesCommerce.concat(action.payload);
-      return { ...state, favoritesCommerce: favorites };
-    case READ_FAVORITE_COMMERCE:
-      return { ...state, favoritesCommerce: action.payload };
+      var favorites = state.favoriteCommerces.concat(action.payload);
+      return { ...state, favoriteCommerces: favorites };
+    case FAVORITE_COMMERCES_READ:
+      return { ...state, favoriteCommerces: action.payload };
+    case ONLY_FAVORITE_COMMERCES_READ:
+      return { ...state, onlyFavoriteCommerces: action.payload, searching: false };
     default:
       return state;
   }

@@ -7,7 +7,8 @@ import {
   ON_COMMERCES_LIST_SEARCHED,
   FAVORITE_COMMERCE_ADDED,
   FAVORITE_COMMERCE_DELETED,
-  READ_FAVORITE_COMMERCE
+  FAVORITE_COMMERCES_READ,
+  ONLY_FAVORITE_COMMERCES_READ
 } from './types';
 
 export const commercesRead = () => {
@@ -45,11 +46,11 @@ export const searchCommerces = search => {
       });
   };
 };
-export const deleteFavoritesCommerces = commerceId => {
+export const deleteFavoriteCommerce = commerceId => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    db.doc(`Profiles/${currentUser.uid}/FavoritesCommerces/${commerceId}`)
+    db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .delete()
       .then(dispatch({ type: FAVORITE_COMMERCE_DELETED, payload: commerceId }))
       .catch(err => console.log(err));
@@ -60,23 +61,42 @@ export const registerFavoriteCommerce = commerceId => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    db.doc(`Profiles/${currentUser.uid}/FavoritesCommerces/${commerceId}`)
+    db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .set({})
       .then(dispatch({ type: FAVORITE_COMMERCE_ADDED, payload: commerceId }))
       .catch(err => console.log(err));
   };
 };
 
-export const readFavoriteCommerce = () => {
+export const readFavoriteCommerces = () => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    console.log('entro action');
-    db.collection(`Profiles/${currentUser.uid}/FavoritesCommerces`).onSnapshot(
+    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).onSnapshot(
       snapShot => {
         var favorites = [];
         snapShot.forEach(doc => favorites.push(doc.id));
-        dispatch({ type: READ_FAVORITE_COMMERCE, payload: favorites });
+        dispatch({ type: FAVORITE_COMMERCES_READ, payload: favorites });
+      }
+    );
+  };
+};
+
+
+export const readOnlyFavoriteCommerces = () => {
+  var db = firebase.firestore();
+  const { currentUser } = firebase.auth();
+  return dispatch => {
+    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).onSnapshot(
+      snapShot => {
+        var favoritesCommerce = [];
+        snapShot.forEach(doc => {
+        db.doc(`Commerces/${doc.id}`)
+        .get()
+        .then(commerce => console.log(commerce))
+        })
+        console.log(favoritesCommerce)
+        dispatch({ type: ONLY_FAVORITE_COMMERCES_READ, payload: favoritesCommerce });
       }
     );
   };

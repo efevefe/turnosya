@@ -8,7 +8,7 @@ import CommerceListItem from './CommerceListItem';
 import {
   commercesRead,
   searchCommerces,
-  readFavoriteCommerce
+  readFavoriteCommerces
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
@@ -25,7 +25,7 @@ class CommercesList extends Component {
   };
 
   componentWillMount() {
-    this.props.readFavoriteCommerce();
+    this.props.readFavoriteCommerces();
     this.props.commercesRead();
     this.props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
@@ -132,5 +132,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { commercesRead, searchCommerces, readFavoriteCommerce }
+  { commercesRead, searchCommerces, readFavoriteCommerces }
 )(CommercesList);

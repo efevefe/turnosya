@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import FavoriteCommercesList from '../components/FavouriteCommercesList'
+import FavoriteCommercesList from '../components/FavoriteCommercesList'
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 
 const rightIcon = (navigation, icon, nextScreen) => (
