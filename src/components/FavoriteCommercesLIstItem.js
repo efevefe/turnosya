@@ -1,97 +1,34 @@
 import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
-<<<<<<< HEAD
-import { View } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {
-    registerFavoriteCommerce,
-    deleteFavoriteCommerce,
-=======
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   registerFavoriteCommerce,
-  deleteFavoritesCommerces,
-  readFavoriteCommerce
->>>>>>> 8720d42bc1fb1e8fa7de5bde67f59b0b3556ec28
+  deleteFavoriteCommerce
 } from '../actions/CommercesListActions';
 import { connect } from 'react-redux';
 
 class FavoriteCommercesListItem extends Component {
-<<<<<<< HEAD
-    state = { favorite: true };
-
-/*     componentWillMount() {
-        this.setState({ favorite: this.props.favoriteCommerces.includes(this.props.commerce.id) });
-    } */
-
-    onFavoritePress = (commerceId) => {
-        if (this.state.favorite) {
-            this.props.deleteFavoriteCommerce(commerceId);
-        } else {
-            this.props.registerFavoriteCommerce(commerceId);
-        }
-        this.setState({ favorite: !this.state.favorite });
-    };
-    renderFavorites = () => {
-        const { name, address, profilePicture } = this.props.commerce;
-        const areaName = this.props.commerce.area.name;
-        if (this.state.favorite) {
-            return (
-                <ListItem
-                    leftAvatar={{
-                        source: profilePicture ? { uri: profilePicture } : null,
-                        icon: { name: 'store', type: 'material' },
-                        size: 'medium'
-                    }}
-                    title={name}
-                    subtitle={`${areaName}\n${address}`}
-                    rightIcon={
-                        <Button
-                            type="clear"
-                            containerStyle={{ borderRadius: 15, overflow: 'hidden' }}
-                            icon={
-                                <Icon
-                                    name="favorite"
-                                    color={this.state.favorite ? 'red' : '#c4c4c4'}
-                                    size={25}
-                                />
-                            }
-                            buttonStyle={{ padding: 0 }}
-                            onPress={() => this.onFavoritePress(this.props.commerce.id)}
-                        />
-                    }
-                    bottomDivider
-                />)
-        }
-=======
-  state = { favorite: false };
-
-  componentWillMount() {
-    console.log(this.props.favoritesCommerce);
-    this.setState({
-      favorite: this.props.favoritesCommerce.includes(this.props.commerce.id)
-    });
-  }
+  state = { favorite: true };
 
   onFavoritePress = commerceId => {
-    if (this.props.favoritesCommerce.includes(commerceId)) {
-      this.props.deleteFavoritesCommerces(commerceId);
+    console.log(1, this.props.favoriteCommerces);
+
+    if (this.state.favorite) {
+      this.props.deleteFavoriteCommerce(commerceId);
+      var array = this.props.favoriteCommerces.filter(doc => {
+        if (doc != commerceId) return doc;
+      });
     } else {
       this.props.registerFavoriteCommerce(commerceId);
->>>>>>> 8720d42bc1fb1e8fa7de5bde67f59b0b3556ec28
     }
+    this.props.favoriteCommerces = array;
+    console.log(2, this.props.favoriteCommerces);
     this.setState({ favorite: !this.state.favorite });
   };
 
-<<<<<<< HEAD
-    render() {
-        return (
-            <View>{this.renderFavorites()}</View>
-        )
-=======
   renderFavorites = () => {
-    const { name, address, profilePicture, id } = this.props.commerce;
+    const { name, address, profilePicture } = this.props.commerce;
     const areaName = this.props.commerce.area.name;
     if (this.state.favorite) {
       return (
@@ -115,44 +52,29 @@ class FavoriteCommercesListItem extends Component {
                 />
               }
               buttonStyle={{ padding: 0 }}
-              onPress={() => this.onFavoritePress(id)}
+              onPress={() => this.onFavoritePress(this.props.commerce.id)}
             />
           }
           bottomDivider
         />
       );
-    } else {
-      return <View></View>;
->>>>>>> 8720d42bc1fb1e8fa7de5bde67f59b0b3556ec28
     }
   };
 
   render() {
-    return this.renderFavorites();
+    return <View>{this.renderFavorites()}</View>;
   }
 }
 
 const mapStateToProps = state => {
-<<<<<<< HEAD
-    const { favoriteCommerces } = state.commercesList;
-    return {
-        favoriteCommerces
-    };
-};
-
-export default connect(
-    null,
-    
-    { registerFavoriteCommerce, deleteFavoriteCommerce}
-=======
-  const { favoritesCommerce } = state.commercesList;
+  const { favoriteCommerces } = state.commercesList;
   return {
-    favoritesCommerce
+    favoriteCommerces
   };
 };
 
 export default connect(
   mapStateToProps,
-  { registerFavoriteCommerce, deleteFavoritesCommerces, readFavoriteCommerce }
->>>>>>> 8720d42bc1fb1e8fa7de5bde67f59b0b3556ec28
+
+  { registerFavoriteCommerce, deleteFavoriteCommerce }
 )(FavoriteCommercesListItem);

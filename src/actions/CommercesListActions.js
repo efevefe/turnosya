@@ -82,21 +82,25 @@ export const readFavoriteCommerces = () => {
   };
 };
 
-
 export const readOnlyFavoriteCommerces = () => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
+    dispatch({ type: ON_COMMERCES_LIST_READING });
     db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).onSnapshot(
       snapShot => {
         var favoritesCommerce = [];
         snapShot.forEach(doc => {
-        db.doc(`Commerces/${doc.id}`)
-        .get()
-        .then(commerce => console.log(commerce))
-        })
-        console.log(favoritesCommerce)
-        dispatch({ type: ONLY_FAVORITE_COMMERCES_READ, payload: favoritesCommerce });
+          db.doc(`Commerces/${doc.id}`)
+            .get()
+            .then(comm => {
+              favoritesCommerce.push({ ...comm.data(), id: comm.id });
+              dispatch({
+                type: ONLY_FAVORITE_COMMERCES_READ,
+                payload: favoritesCommerce
+              });
+            });
+        });
       }
     );
   };

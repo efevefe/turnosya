@@ -40,7 +40,11 @@ export default (state = INITIAL_STATE, action) => {
     case FAVORITE_COMMERCES_READ:
       return { ...state, favoriteCommerces: action.payload };
     case ONLY_FAVORITE_COMMERCES_READ:
-      return { ...state, onlyFavoriteCommerces: action.payload, searching: false };
+      return {
+        ...state,
+        onlyFavoriteCommerces: action.payload,
+        loading: false
+      };
     default:
       return state;
   }
