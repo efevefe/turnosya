@@ -100,7 +100,7 @@ const clientTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'favorites'
+    initialRouteName: 'search'
   }
 );
 

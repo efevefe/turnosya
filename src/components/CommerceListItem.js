@@ -11,10 +11,12 @@ class CommerceListItem extends Component {
   state = { favorite: false };
 
   componentWillMount() {
-    this.setState({ favorite: this.props.favoriteCommerces.includes(this.props.commerce.id) });
+    this.setState({
+      favorite: this.props.favoriteCommerces.includes(this.props.commerce.id)
+    });
   }
 
-  onFavoritePress = (commerceId) => {
+  onFavoritePress = commerceId => {
     if (this.state.favorite) {
       this.props.deleteFavoriteCommerce(commerceId);
     } else {

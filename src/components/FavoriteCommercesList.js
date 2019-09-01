@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { FlatList, View, Dimensions, RefreshControl } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from './common';
-import FavoriteCommercesListItem from './FavoriteCommercesListItem';
 import CommerceListItem from './CommerceListItem';
 import { readOnlyFavoriteCommerces } from '../actions';
 
@@ -13,10 +12,7 @@ class FavoriteCommercesList extends Component {
 
   renderRow({ item }) {
     return (
-      <FavoriteCommercesListItem
-        commerce={item}
-        navigation={this.props.navigation}
-      />
+      <CommerceListItem commerce={item} navigation={this.props.navigation} />
     );
   }
 
@@ -29,6 +25,7 @@ class FavoriteCommercesList extends Component {
           data={this.props.onlyFavoriteCommerces}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={commerce => commerce.id}
+          extraData={this.props}
         />
       </View>
     );
@@ -36,8 +33,8 @@ class FavoriteCommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { onlyFavoriteCommerces, loading, searching } = state.commercesList;
-  return { onlyFavoriteCommerces, loading, searching };
+  const { onlyFavoriteCommerces, loading } = state.commercesList;
+  return { onlyFavoriteCommerces, loading };
 };
 
 export default connect(

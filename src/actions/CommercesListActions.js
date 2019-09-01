@@ -93,8 +93,8 @@ export const readOnlyFavoriteCommerces = () => {
         snapShot.forEach(doc => {
           db.doc(`Commerces/${doc.id}`)
             .get()
-            .then(comm => {
-              favoritesCommerce.push({ ...comm.data(), id: comm.id });
+            .then(commerce => {
+              favoritesCommerce.push({ ...commerce.data(), id: commerce.id });
               dispatch({
                 type: ONLY_FAVORITE_COMMERCES_READ,
                 payload: favoritesCommerce

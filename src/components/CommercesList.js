@@ -119,6 +119,7 @@ class CommercesList extends Component {
           data={this.props.commerces}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={commerce => commerce.id}
+          extraData={this.props.commerces}
         />
       </View>
     );
