@@ -13,7 +13,6 @@ import {
   ON_EMAIL_VERIFY_REMINDED
 } from './types';
 
-// Import getEnvVars() from environment.js
 import getEnvVars from '../../environment';
 const {
   facebookApiKey,

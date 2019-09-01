@@ -13,7 +13,17 @@ const keys = {
     '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
   androidClientId:
     '425889819253-sb80h20d5etvpisi036ugvb6g7o6jkkl.apps.googleusercontent.com',
-  googleScopes: ['profile', 'email']
+  googleScopes: ['profile', 'email'],
+  //Firebase
+  firebaseConfig: {
+    apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
+    authDomain: 'proyecto-turnosya.firebaseapp.com',
+    databaseURL: 'https://proyecto-turnosya.firebaseio.com',
+    projectId: 'proyecto-turnosya',
+    storageBucket: 'proyecto-turnosya.appspot.com',
+    messagingSenderId: '425889819253',
+    appId: '1:425889819253:web:22821710c1e913a5'
+  }
 };
 
 const ENV = {
