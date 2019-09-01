@@ -8,4 +8,4 @@ npm-debug.*
 yarn.lock
 yarn-error.log
 
-enviroment.js
+environment.js

@@ -14,7 +14,7 @@ import {
 } from './types';
 
 // Import getEnvVars() from environment.js
-import getEnvVars from '../../enviroment';
+import getEnvVars from '../../environment';
 const {
   facebookApiKey,
   facebookPermissions,
