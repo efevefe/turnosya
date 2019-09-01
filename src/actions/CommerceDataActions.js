@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import algoliasearch from 'algoliasearch';
 import {
   ON_REGISTER_COMMERCE,
   COMMERCE_PROFILE_CREATE,
@@ -25,6 +26,9 @@ import {
   ON_REGISTER_VALUE_CHANGE
 } from './types';
 import { userReauthenticate } from './AuthActions';
+
+const client = algoliasearch('A3VWXVHSOG', 'f9ca7d66347ff0a794a0349020cc1dad');
+const index = client.initIndex('CommercesIndexTurnosYa');
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
@@ -66,6 +70,8 @@ export const onCreateCommerce = (
   return dispatch => {
     dispatch({ type: ON_REGISTER_COMMERCE });
 
+    var docId;
+
     db.collection(`Commerces`)
       .add({
         name,
@@ -80,9 +86,20 @@ export const onCreateCommerce = (
         softDelete: null
       })
       .then(reference => {
+        docId = reference.id;
         db.doc(`Profiles/${currentUser.uid}`)
-          .update({ commerceId: reference.id })
+          .update({ commerceId: docId })
           .then(() => {
+            index.addObject({
+              address: address,
+              areaName: area.name,
+              objectID: docId,
+              description: description,
+              name: name,
+              city: city,
+              provinceName: province.name
+            });
+
             dispatch({ type: COMMERCE_PROFILE_CREATE });
             navigation.navigate('commerce');
           })
@@ -168,7 +185,18 @@ export const onCommerceUpdateNoPicture = ({
         area,
         profilePicture
       })
-      .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture }))
+      .then(() => {
+        index.saveObject({
+          address: address,
+          areaName: area.name,
+          objectID: commerceId,
+          description: description,
+          name: name,
+          city: city,
+          provinceName: province.name
+        });
+        dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
+      })
       .catch(error => {
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
         console.log(error);
@@ -218,7 +246,19 @@ export const onCommerceUpdateWithPicture = ({
                 area,
                 profilePicture: url
               })
-              .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: url }))
+              .then(() => {
+                index.saveObject({
+                  address: address,
+                  areaName: area.name,
+                  profilePicture: profilePicture,
+                  objectID: commerceId,
+                  description: description,
+                  name: name,
+                  city: city,
+                  provinceName: province.name
+                });
+                dispatch({ type: ON_COMMERCE_UPDATED, payload: url });
+              })
               .catch(error => {
                 dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
                 console.log(error);
@@ -292,6 +332,7 @@ export const validateCuit = cuit => {
 export const onCommerceDelete = (password, navigation = null) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
+  var docId;
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_DELETING });
@@ -304,15 +345,22 @@ export const onCommerceDelete = (password, navigation = null) => {
 
         db.runTransaction(transaction => {
           return transaction.get(userRef).then(userDoc => {
-            var commerceRef = db.doc(`Commerces/${userDoc.data().commerceId}`);
+            docId = userDoc.data().commerceId;
+
+            var commerceRef = db.doc(`Commerces/${docId}`);
 
             transaction.update(userRef, { commerceId: null });
             transaction.update(commerceRef, { softDelete: new Date() });
-          })
+          });
         })
           .then(() => {
+            index.deleteObject(docId);
+
             dispatch({ type: ON_COMMERCE_DELETED });
-            dispatch({ type: ON_REGISTER_VALUE_CHANGE, payload: { prop: 'commerceId', value: null } })
+            dispatch({
+              type: ON_REGISTER_VALUE_CHANGE,
+              payload: { prop: 'commerceId', value: null }
+            });
 
             if (navigation) {
               navigation.navigate('client');
@@ -328,5 +376,5 @@ export const onCommerceDelete = (password, navigation = null) => {
         dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_COMMERCE_DELETE_FAIL });
       });
-  }
-}
+  };
+};

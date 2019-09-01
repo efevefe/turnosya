@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -11,8 +10,7 @@ class CommerceListItem extends Component {
   };
 
   render() {
-    const { name, address, profilePicture } = this.props.commerce;
-    const areaName = this.props.commerce.area.name;
+    const { name, address, profilePicture, areaName } = this.props.commerce;
 
     return (
       <ListItem
