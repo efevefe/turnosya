@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text, RefreshControl, ScrollView } from 'react-native';
+import { View, FlatList, RefreshControl } from 'react-native';
 import { Calendar } from './Calendar';
 import { Spinner } from './Spinner';
+import { EmptyList } from './EmptyList';
 import { ListItem } from 'react-native-elements';
 import moment from 'moment';
 import { getHourAndMinutes } from '../../utils';
@@ -161,14 +162,10 @@ class Schedule extends Component {
             );
         } else {
             return (
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1, alignSelf: 'stretch', justifyContent: 'center' }}
+                <EmptyList
+                    title='No se encontraron turnos para este día.'
                     refreshControl={this.onRefresh()}
-                >
-                    <Text style={{ textAlign: 'center', margin: 15 }}>
-                        No hay turnos para este dia...
-                    </Text>
-                </ScrollView>
+                />
             );
         }
     };

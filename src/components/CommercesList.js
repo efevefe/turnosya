@@ -4,7 +4,7 @@ import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Constants } from 'expo';
-import { Spinner } from './common';
+import { Spinner, EmptyList } from './common';
 import CommerceListItem from './CommerceListItem';
 import {
   commercesRead,
@@ -150,20 +150,31 @@ class CommercesList extends Component {
     );
   };
 
-  render() {
-    const { loading, commerces } = this.props;
+  renderList = () => {
+    const { commerces } = this.props;
 
+    if (commerces.length > 0) {
+      return (<FlatList
+        data={commerces}
+        renderItem={this.renderRow}
+        keyExtractor={commerce => commerce.id}
+      />
+      );
+    }
+
+    return (
+      <EmptyList title='No se encontraron negocios.' />
+    );
+  }
+
+  render() {
     return (
       <View style={{ flex: 1 }}>
         {this.renderSearchBar()}
 
-        {loading
-          ? <Spinner />
-          : <FlatList
-            data={commerces}
-            renderItem={this.renderRow}
-            keyExtractor={commerce => commerce.id}
-          />}
+        {this.props.loading
+          ? <Spinner style={{ position: 'relative' }} />
+          : this.renderList()}
       </View>
     );
   }

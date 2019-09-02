@@ -80,12 +80,10 @@ class CommerceCourtTypes extends Component {
     }
 
     return (
-      <ScrollView
-        contentContainerStyle={styles.containerStyle}
-        refreshControl={this.onRefresh()}
-      >
-        <Text style={styles.textStyle}>Parece que no hay canchas...</Text>
-      </ScrollView>
+      <EmptyList
+          title='Parece que no hay canchas.'
+          refreshControl={this.onRefresh()}
+      />
     );
   }
 }
