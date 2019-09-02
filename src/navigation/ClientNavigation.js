@@ -14,6 +14,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
+import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
@@ -56,6 +57,12 @@ const searchStack = createStackNavigator(
       screen: CommerceCourtTypes,
       navigationOptions: {
         title: 'Tipos de Cancha'
+      }
+    },
+    commerceSchedule: {
+      screen: ClientCommerceSchedule,
+      navigationOptions: {
+        title: 'Turnos Disponibles'
       }
     }
   },

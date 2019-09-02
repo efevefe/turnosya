@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import {
-  FlatList,
-  ScrollView,
-  Text,
-  StyleSheet,
-  RefreshControl
-} from 'react-native';
+import { FlatList, ScrollView, Text, StyleSheet, RefreshControl, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner } from '../components/common';
@@ -45,18 +39,28 @@ class CommerceCourtTypes extends Component {
   };
 
   renderItem = ({ item }) => {
-    return (
-      <Card
-        image={item.image ? { uri: item.image } : null}
-        imageStyle={{ height: 80 }}
-        containerStyle={{
-          overflow: 'hidden',
-          borderRadius: 10
-        }}
-      >
-        <Text>{item.name}</Text>
-      </Card>
-    );
+        return (
+            <TouchableHighlight
+                onPress={() => this.props.navigation.navigate(
+                    'commerceSchedule',
+                    {
+                        commerceId: this.state.commerceId,
+                        courtTypeId: item.name
+                    })}
+                underlayColor='transparent'
+            >
+                <Card
+                    image={item.image ? { uri: item.image } : null}
+                    imageStyle={{ height: 80 }}
+                    containerStyle={{
+                        overflow: 'hidden',
+                        borderRadius: 10
+                    }}
+                >
+                    <Text>{item.name}</Text>
+                </Card>
+            </TouchableHighlight>
+        );
   };
 
   render() {
