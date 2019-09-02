@@ -8,13 +8,13 @@ import { Ionicons } from '@expo/vector-icons';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
+import CommerceCourtTypes from '../components/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
-
+import GeoLocation from '../components/Location';
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
     name={icon}
@@ -65,7 +65,7 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: EmptyScreen,
+      screen: GeoLocation,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: leftIcon(navigation, 'md-menu')
