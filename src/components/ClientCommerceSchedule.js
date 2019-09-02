@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { Schedule } from './common';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { Schedule } from './common';
 import { onScheduleRead, onScheduleValueChange } from '../actions';
 
 class ClientCommerceSchedule extends Component {
     async componentDidMount() {
         await this.setState({ commerceId: this.props.navigation.getParam('commerceId') });
-
+        this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
         this.props.onScheduleRead(this.state.commerceId);
     }
 
