@@ -98,11 +98,13 @@ class CommercesList extends Component {
               alignSelf: 'stretch',
               height: NAVIGATION_HEIGHT,
               paddingTop: 4,
+              paddingRight: 5,
+              paddingLeft: 5,
               marginTop: Constants.statusBarHeight
             }}
             searchIcon={{ color: MAIN_COLOR, size: 28, marginLeft: 15 }}
-            cancelIcon={{ color: MAIN_COLOR, marginLeft: 15 }}
-            clearIcon={{ color: MAIN_COLOR, marginRight: 15 }}
+            cancelIcon={{ color: MAIN_COLOR }}
+            clearIcon={{ color: MAIN_COLOR }}
             selectionColor={MAIN_COLOR}
             showLoading={this.props.searching}
             loadingProps={{ color: MAIN_COLOR }}

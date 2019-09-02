@@ -7,3 +7,5 @@ npm-debug.*
 *.mobileprovision
 yarn.lock
 yarn-error.log
+
+environment.js
