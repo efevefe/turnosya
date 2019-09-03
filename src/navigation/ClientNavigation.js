@@ -14,12 +14,9 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
-<<<<<<< HEAD
 import GeoLocation from '../components/Location';
-=======
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
->>>>>>> develop
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
     name={icon}
