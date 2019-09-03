@@ -36,6 +36,11 @@ class CommerceListItem extends Component {
             onPress={this.onFavoritePress}
           />
         }
+        onPress={() =>
+          this.props.navigation.navigate('commerceCourtTypes', {
+            commerceId: id
+          })
+        }
         bottomDivider
       />
     );

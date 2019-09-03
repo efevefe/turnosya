@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from './common';
-import { onRegisterValueChange, onRegister } from '../actions';
+import {
+  onRegisterValueChange,
+  onRegister,
+  onRegisterFormOpen
+} from '../actions';
 import { validateValueType, trimString } from '../utils';
 
 class RegisterForm extends Component {
@@ -15,6 +19,10 @@ class RegisterForm extends Component {
     lastNameError: '',
     phoneError: ''
   };
+
+  componentWillMount() {
+    this.props.onRegisterFormOpen();
+  }
 
   onButtonPressHandler = () => {
     if (this.validateMinimumData()) {
@@ -205,7 +213,7 @@ class RegisterForm extends Component {
           </CardSection>
           <CardSection>
             <Input
-              label="Nombre"
+              label="Apellido"
               placeholder="Apellido"
               autoCapitalize="words"
               value={this.props.lastName}
@@ -277,5 +285,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onRegisterValueChange, onRegister }
+  { onRegisterValueChange, onRegister, onRegisterFormOpen }
 )(RegisterForm);

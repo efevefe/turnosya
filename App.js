@@ -5,22 +5,13 @@ import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
 import { Root } from 'native-base';
-import { MAIN_COLOR } from './src/constants';
-import { Spinner } from './src/components/common';
 import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 import LoadingScreen from './src/components/LoadingScreen';
 
-var firebaseConfig = {
-  apiKey: 'AIzaSyDBtphHkP2FAebuiBNkmGxLhxlPbHe10VI',
-  authDomain: 'proyecto-turnosya.firebaseapp.com',
-  databaseURL: 'https://proyecto-turnosya.firebaseio.com',
-  projectId: 'proyecto-turnosya',
-  storageBucket: 'proyecto-turnosya.appspot.com',
-  messagingSenderId: '425889819253',
-  appId: '1:425889819253:web:22821710c1e913a5'
-};
+import getEnvVars from './environment';
+const { firebaseConfig } = getEnvVars();
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);

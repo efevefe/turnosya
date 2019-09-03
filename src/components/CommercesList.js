@@ -19,20 +19,30 @@ class CommercesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: navigation.getParam('title'),
-      headerRight: navigation.getParam('rightIcon')
+      headerTitle: 'Buscar negocios',
+      headerRight: navigation.getParam('rightIcons'),
+      header: navigation.getParam('header')
     };
   };
 
   renderFiltersButton = () => {
     return (
-      <Ionicons
-        name="ios-funnel"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={() => console.log('filtros de busqueda')}
-      />
+      <View style={{ flexDirection: 'row' }}>
+        <Ionicons
+          name="md-search"
+          size={28}
+          color="white"
+          style={{ marginRight: 20 }}
+          onPress={this.onSearchPress}
+        />
+        <Ionicons
+          name="ios-funnel"
+          size={28}
+          color="white"
+          style={{ marginRight: 15 }}
+          onPress={() => console.log('filtros de busqueda')}
+        />
+      </View>
     );
   };
 

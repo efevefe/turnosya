@@ -13,7 +13,10 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 
 const rightIcon = (navigation, icon, nextScreen) => (
   <Ionicons
@@ -68,7 +71,6 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerRight: rightIcon(navigation, 'md-add', 'serviceForm'),
         headerLeft: leftIcon(navigation, 'md-menu')
       })
     },
@@ -88,7 +90,6 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerRight: rightIcon(navigation, 'md-add', 'courtForm'),
         headerLeft: leftIcon(navigation, 'md-menu')
       })
     },

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
+import { FlatList, View } from 'react-native';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from './common';
 import CourtListItem from './CourtListItem';
 import { courtsRead } from '../actions';
@@ -21,6 +23,10 @@ class CourtList extends Component {
     );
   }
 
+  onAddPress = () => {
+    this.props.navigation.navigate('courtForm');
+  };
+
   renderList() {
     if (this.props.loading) return <Spinner size="large" color={MAIN_COLOR} />;
 
@@ -30,7 +36,15 @@ class CourtList extends Component {
           data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
+          contentContainerStyle={{ paddingBottom: 95 }}
         />
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
       </View>
     );
   }
