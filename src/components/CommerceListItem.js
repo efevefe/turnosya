@@ -10,8 +10,7 @@ class CommerceListItem extends Component {
   };
 
   render() {
-    const { name, address, profilePicture, id } = this.props.commerce;
-    const areaName = this.props.commerce.area.name;
+    const { name, address, profilePicture, areaName } = this.props.commerce;
 
     return (
       <ListItem
@@ -37,7 +36,11 @@ class CommerceListItem extends Component {
             onPress={this.onFavoritePress}
           />
         }
-        onPress={() => this.props.navigation.navigate('commerceCourtTypes', { commerceId: id })}
+        onPress={() =>
+          this.props.navigation.navigate('commerceCourtTypes', {
+            commerceId: id
+          })
+        }
         bottomDivider
       />
     );

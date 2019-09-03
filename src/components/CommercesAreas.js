@@ -22,7 +22,9 @@ class CommercesAreas extends Component {
   renderRightIcon = () => {
     return (
       <TouchableHighlight
-        onPress={() => this.props.navigation.navigate('commercesList')}
+        onPress={() =>
+          this.props.navigation.navigate('commercesList', { areaName: '' })
+        }
         underlayColor="transparent"
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

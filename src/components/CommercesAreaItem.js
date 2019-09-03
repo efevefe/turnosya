@@ -3,15 +3,15 @@ import { View, Text, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 
 class CommercesAreaItem extends Component {
-  onButtonPressHandler(id) {
-    this.props.navigation.navigate('commercesList', { idArea: id });
+  onButtonPressHandler(name) {
+    this.props.navigation.navigate('commercesList', { areaName: name });
   }
   render() {
-    const { id, name, image } = this.props.area;
+    const { name, image } = this.props.area;
     return (
       <View>
         <TouchableHighlight
-          onPress={() => this.onButtonPressHandler(id)}
+          onPress={() => this.onButtonPressHandler(name)}
           underlayColor="transparent"
         >
           <Card
