@@ -6,16 +6,14 @@ import CommerceListItem from './CommerceListItem';
 
 class Hits extends Component {
   render() {
-    const hits =
-      this.props.hits.length > 0 ? (
-        <FlatList
-          data={this.props.hits}
-          renderItem={this.renderItem}
-          keyExtractor={item => item.objectID}
-          initialNumToRender={20}
-        />
-      ) : null;
-    return hits;
+    return this.props.hits.length > 0 ? (
+      <FlatList
+        data={this.props.hits}
+        renderItem={this.renderItem}
+        keyExtractor={item => item.objectID}
+        initialNumToRender={20}
+      />
+    ) : null;
   }
 
   renderItem({ item }) {

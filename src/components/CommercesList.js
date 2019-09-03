@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { InstantSearch } from 'react-instantsearch/native';
+import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { refinementUpdate } from '../actions';
 import ConnectedSearch from './CommercesList.SearchConnection';
 import ConnectedHits from './CommercesList.SearchHits';
@@ -11,9 +11,12 @@ import SearchBox from './CommercesList.SearchBox';
 class CommercesList extends Component {
   constructor(props) {
     super(props);
+    debugger;
+    this.state = { areaName: props.navigation.state.params.areaName };
+
     props.navigation.setParams({
       rightIcon: this.renderFiltersButton(),
-      title: this.renderAlgoliaSearchBar()
+      header: this.renderAlgoliaSearchBar()
     });
   }
 
@@ -48,6 +51,13 @@ class CommercesList extends Component {
 
   renderAlgoliaSearchBar = () => <SearchBox />;
 
+  // No me gusta como quedó esto... Ya veré bien como lo cambio mi prioridad era mergear de una vez
+  enableConfiguration = () => {
+    return this.state.areaName ? (
+      <Configure filters={`areaName:\'${this.state.areaName}\'`} />
+    ) : null;
+  };
+
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -56,6 +66,7 @@ class CommercesList extends Component {
           apiKey="e12c3e69403b5f10ca72f83fcdc4841c"
           indexName="CommercesIndexTurnosYa"
         >
+          {this.enableConfiguration()}
           <ConnectedSearch />
           <ConnectedHits />
         </InstantSearch>

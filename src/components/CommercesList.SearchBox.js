@@ -1,36 +1,54 @@
 import React, { Component } from 'react';
-import { Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { Constants } from 'expo';
 import { refinementUpdate } from '../actions';
-import { MAIN_COLOR } from '../constants';
-
-const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
+import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
 
 class SearchBox extends Component {
   render() {
     return (
-      <SearchBar
-        platform="android"
-        placeholder="Buscar negocios..."
-        placeholderTextColor="white"
-        onChangeText={text => this.props.refinementUpdate(text)}
-        onClear={this.resetSearch}
-        value={this.props.refinement}
-        containerStyle={{
+      <View
+        style={{
+          height: NAVIGATION_HEIGHT + Constants.statusBarHeight,
           alignSelf: 'stretch',
-          height: 50,
-          width: searchBarWidth,
+          justifyContent: 'flex-end',
           backgroundColor: MAIN_COLOR,
-          paddingTop: 4
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 1
+          },
+          shadowOpacity: 0.2,
+          shadowRadius: 1.41,
+          elevation: 2
         }}
-        searchIcon={{ color: 'white', size: 28 }}
-        cancelIcon={{ color: 'white' }}
-        clearIcon={{ color: 'white' }}
-        selectionColor="white"
-        inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
-        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 0 }}
-      />
+      >
+        <SearchBar
+          //ref={search => (this.searchbar = search)}
+          platform="android"
+          placeholder="Buscar negocios..."
+          onChangeText={text => this.props.refinementUpdate(text)}
+          //onClear={this.resetSearch}
+          //onCancel={this.onCancelPress}
+          value={this.props.refinement}
+          containerStyle={{
+            alignSelf: 'stretch',
+            height: NAVIGATION_HEIGHT,
+            paddingTop: 4,
+            paddingRight: 5,
+            paddingLeft: 5,
+            marginTop: Constants.statusBarHeight
+          }}
+          searchIcon={{ color: MAIN_COLOR, size: 28, marginLeft: 15 }}
+          cancelIcon={{ color: MAIN_COLOR }}
+          clearIcon={{ color: MAIN_COLOR }}
+          selectionColor={MAIN_COLOR}
+          //showLoading={this.props.searching}
+          loadingProps={{ color: MAIN_COLOR }}
+        />
+      </View>
     );
   }
 }
