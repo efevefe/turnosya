@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { Permissions, Location, Constants } from 'expo';
+import { Permissions, Location, Constants, IntentLauncherAndroid } from 'expo';
 
 export default class App extends Component {
   state = {
@@ -9,19 +9,59 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    this._getLocationAsync();
+    this.getLocation();
   }
 
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  getLocation = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
       this.setState({
         errorMessage: 'Permission to access location was denied'
       });
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+    const GPSStatus = await Expo.Location.getProviderStatusAsync();
+    if (GPSStatus.gpsAvailable && GPSStatus.locationServicesEnabled) {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High
+      });
+
+      // location = Es un objeto. Tiene datos como:
+      //     coords {
+      //        accuracy --> ,
+      //        altitude --> ,
+      //        heading --> ,
+      //        latitude --> ,
+      //        longitude --> ,
+      //        sped -->
+      //      }
+      //    mocked -->
+      //    timestamp -->
+
+      // let moreData = await Location.reverseGeocodeAsync({
+      //   latitude: location.coords.latitude,
+      //   longitude: location.coords.longitude
+      // });
+      // moreData = Es un array. Agrega datos como:
+      //     city --> Córdoba,
+      //     street --> null,
+      //     region --> Córdoba,
+      //     postalCode --> null,
+      //     country --> Argentina,
+      //     isoCountryCode --> AR,
+      //     name --> C1662
+      this.setState({ location });
+    } else {
+      IntentLauncherAndroid.startActivityAsync(
+        IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
+      ).then(async () => {
+        const GPSStatus = await Expo.Location.getProviderStatusAsync();
+        if (GPSStatus.gpsAvailable) {
+          const location = await Location.getCurrentPositionAsync({});
+          this.setState({ location });
+        }
+      });
+    }
   };
 
   render() {
