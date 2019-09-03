@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ScrollView, Image, StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet } from 'react-native';
 import { Avatar, Divider } from 'react-native-elements';
 import { Constants } from 'expo';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
@@ -20,7 +20,7 @@ const Drawer = props => {
   };
 
   return (
-    <ScrollView>
+    <View>
       <View style={styles.drawerHeader}>
         <Image
           source={require('../../../assets/header-logo.png')}
@@ -40,7 +40,7 @@ const Drawer = props => {
       </View>
       <Divider style={styles.dividerStyle} />
       {children}
-    </ScrollView>
+    </View>
   );
 };
 

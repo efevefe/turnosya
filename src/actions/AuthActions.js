@@ -13,6 +13,15 @@ import {
   ON_EMAIL_VERIFY_REMINDED
 } from './types';
 
+import getEnvVars from '../../environment';
+const {
+  facebookApiKey,
+  facebookPermissions,
+  iosClientId,
+  androidClientId,
+  googleScopes
+} = getEnvVars();
+
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
 };
@@ -48,8 +57,8 @@ export const onFacebookLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_FACEBOOK });
 
-    Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
-      permissions: ['public_profile', 'email']
+    Expo.Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+      permissions: facebookPermissions
     })
       .then(({ type, token }) => {
         if (type === 'success') {
@@ -101,11 +110,9 @@ export const onGoogleLogin = () => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
     Expo.Google.logInAsync({
-      iosClientId:
-        '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
-      androidClientId:
-        '425889819253-sb80h20d5etvpisi036ugvb6g7o6jkkl.apps.googleusercontent.com',
-      scopes: ['profile', 'email']
+      iosClientId,
+      androidClientId,
+      scopes: googleScopes
     })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
@@ -177,8 +184,8 @@ export const userReauthenticate = async (password = null) => {
       password
     );
   } else if (provider == 'facebook.com') {
-    await Expo.Facebook.logInWithReadPermissionsAsync('308666633372616', {
-      permissions: ['public_profile', 'email']
+    await Expo.Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+      permissions: facebookPermissions
     }).then(({ type, token }) => {
       if (type === 'success') {
         credential = firebase.auth.FacebookAuthProvider.credential(token);
@@ -186,11 +193,9 @@ export const userReauthenticate = async (password = null) => {
     });
   } else if (provider == 'google.com') {
     await Expo.Google.logInAsync({
-      iosClientId:
-        '425889819253-ojktt4qkb3809old6sfverggu8g0ofh2.apps.googleusercontent.com',
-      androidClientId:
-        '425889819253-sb80h20d5etvpisi036ugvb6g7o6jkkl.apps.googleusercontent.com',
-      scopes: ['profile', 'email']
+      iosClientId,
+      androidClientId,
+      scopes: googleScopes
     }).then(({ type, idToken, accessToken }) => {
       if (type === 'success') {
         credential = firebase.auth.GoogleAuthProvider.credential(

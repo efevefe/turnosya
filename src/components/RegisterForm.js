@@ -213,7 +213,7 @@ class RegisterForm extends Component {
           </CardSection>
           <CardSection>
             <Input
-              label="Nombre"
+              label="Apellido"
               placeholder="Apellido"
               autoCapitalize="words"
               value={this.props.lastName}
