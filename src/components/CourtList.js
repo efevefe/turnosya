@@ -27,6 +27,16 @@ class CourtList extends Component {
     this.props.navigation.navigate('courtForm');
   };
 
+  renderAddButton = () => {
+    <Fab
+      style={{ backgroundColor: MAIN_COLOR }}
+      position="bottomRight"
+      onPress={() => this.onAddPress()}
+    >
+      <Ionicons name="md-add" />
+    </Fab>
+  }
+
   renderList = () => {
     if (this.props.courts.length > 0) {
       return (
@@ -37,19 +47,15 @@ class CourtList extends Component {
             keyExtractor={court => court.id}
             contentContainerStyle={{ paddingBottom: 95 }}
           />
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={() => this.onAddPress()}
-          >
-            <Ionicons name="md-add" />
-          </Fab>
+          {this.renderAddButton()}
         </View>
       );
     }
 
     return (
-      <EmptyList title='No hay ninguna cancha.' />
+      <EmptyList title='No hay ninguna cancha.'>
+        {this.renderAddButton()}
+      </EmptyList>
     );
   }
 

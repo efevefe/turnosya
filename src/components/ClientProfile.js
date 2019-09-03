@@ -11,7 +11,7 @@ import {
   Spinner,
   Menu,
   MenuItem,
-  HeaderButton
+  IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import {
@@ -58,7 +58,7 @@ class ClientProfile extends Component {
 
   renderEditButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-create"
         onPress={this.onEditPress}
       />
@@ -67,7 +67,7 @@ class ClientProfile extends Component {
 
   renderSaveButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-checkmark"
         onPress={this.onSavePress}
       />
@@ -76,7 +76,7 @@ class ClientProfile extends Component {
 
   renderCancelButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-close"
         onPress={this.onCancelPress}
       />

@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const HeaderButton = ({ icon, color, onPress, iconStyle, containerStyle }) => {
+const IconButton = ({ icon, iconSize, color, onPress, iconStyle, containerStyle }) => {
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -12,7 +12,7 @@ const HeaderButton = ({ icon, color, onPress, iconStyle, containerStyle }) => {
             <View style={[styles.containerStyle, containerStyle]}>
                 <Ionicons
                     name={icon}
-                    size={28}
+                    size={iconSize ? iconSize : 28}
                     color={color ? color : 'white'}
                     style={[styles.iconStyle, iconStyle]}
                 />
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export { HeaderButton };
+export { IconButton };

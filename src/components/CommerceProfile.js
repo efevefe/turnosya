@@ -13,7 +13,7 @@ import {
   Menu,
   MenuItem,
   Picker,
-  HeaderButton
+  IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType, trimString } from '../utils';
@@ -61,7 +61,7 @@ class commerceData extends Component {
 
   renderEditButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-create"
         onPress={this.onEditPress}
       />
@@ -70,7 +70,7 @@ class commerceData extends Component {
 
   renderSaveButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-checkmark"
         onPress={this.onSavePress}
       />
@@ -79,7 +79,7 @@ class commerceData extends Component {
 
   renderCancelButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-close"
         onPress={this.onCancelPress}
       />

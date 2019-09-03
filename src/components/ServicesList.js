@@ -10,18 +10,34 @@ import { MAIN_COLOR } from '../constants';
 
 class ServicesList extends Component {
   componentWillMount() {
-    this.props.servicesRead();
+    this.props.servicesRead(this.props.commerceId);
   }
 
   renderRow({ item }) {
     return (
-      <ServicesListItem service={item} navigation={this.props.navigation} />
+      <ServicesListItem
+        service={item}
+        commerceId={this.props.commerceId}
+        navigation={this.props.navigation}
+      />
     );
   }
 
   onAddPress = () => {
     this.props.navigation.navigate('serviceForm');
   };
+
+  renderAddButton = () => {
+    return (
+      <Fab
+        style={{ backgroundColor: MAIN_COLOR }}
+        position="bottomRight"
+        onPress={() => this.onAddPress()}
+      >
+        <Ionicons name="md-add" />
+      </Fab>
+    );
+  }
 
   renderList = () => {
     if (this.props.services.length > 0) {
@@ -33,19 +49,15 @@ class ServicesList extends Component {
             keyExtractor={service => service.id}
             contentContainerStyle={{ paddingBottom: 95 }}
           />
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={() => this.onAddPress()}
-          >
-            <Ionicons name="md-add" />
-          </Fab>
+          {this.renderAddButton()}
         </View>
       );
     }
 
     return (
-      <EmptyList title="No hay ningun servicio." />
+      <EmptyList title="No hay ningun servicio." >
+        {this.renderAddButton()}
+      </EmptyList>
     );
   }
 
@@ -59,7 +71,9 @@ class ServicesList extends Component {
 }
 const mapStateToProps = state => {
   const { services, loading } = state.servicesList;
-  return { services, loading };
+  const { commerceId } = state.commerceData;
+
+  return { services, loading, commerceId };
 };
 
 export default connect(

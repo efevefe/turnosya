@@ -3,7 +3,7 @@ import { FlatList, View } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
-import { Spinner, EmptyList, HeaderButton } from './common';
+import { Spinner, EmptyList, IconButton } from './common';
 import CommerceListItem from './CommerceListItem';
 import {
   commercesRead,
@@ -39,11 +39,11 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <HeaderButton
+        <IconButton
           icon="md-search"
           onPress={this.onSearchPress}
         />
-        <HeaderButton
+        <IconButton
           icon="ios-funnel"
           onPress={() => console.log('filtros de busqueda')}
         />

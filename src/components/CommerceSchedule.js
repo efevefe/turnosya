@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Menu, MenuItem, Schedule, HeaderButton } from './common';
+import { Menu, MenuItem, Schedule, IconButton } from './common';
 import { onScheduleRead, onScheduleValueChange } from '../actions';
 
 class CommerceSchedule extends Component {
@@ -26,7 +26,7 @@ class CommerceSchedule extends Component {
 
   renderConfigurationButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-options"
         onPress={() => this.setState({ modal: true })}
       />

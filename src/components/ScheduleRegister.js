@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
-import { Spinner, HeaderButton } from './common';
+import { Spinner, IconButton, EmptyList } from './common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
@@ -26,14 +26,14 @@ class ScheduleRegister extends Component {
 
   renderSaveButton = () => {
     return (
-      <HeaderButton
+      <IconButton
         icon="md-checkmark"
         onPress={this.onSavePress}
       />
     );
   };
 
-  onSavePress = () => { 
+  onSavePress = () => {
     const {
       cards,
       commerceId,
@@ -74,41 +74,60 @@ class ScheduleRegister extends Component {
     }
   };
 
+  renderAddButton = () => {
+    return (
+      <Fab
+        style={{ backgroundColor: MAIN_COLOR }}
+        position="bottomRight"
+        onPress={() => this.onAddPress()}
+      >
+        <Ionicons name="md-add" />
+      </Fab>
+    );
+  }
+
   renderRow = ({ item }) => {
     return (
       <ScheduleRegisterItem card={item} navigation={this.props.navigation} />
     );
   };
 
-  render() {
-    const { loading, cards, refreshing } = this.props;
-    if (loading) return <Spinner />;
+  renderList = () => {
+    const { cards, refreshing } = this.props;
+
+    if (this.props.cards.length > 0) {
+      return (
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={cards}
+            renderItem={this.renderRow}
+            keyExtractor={card => card.id.toString()}
+            extraData={this.props}
+            contentContainerStyle={{ paddingBottom: 95 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                colors={[MAIN_COLOR]}
+                tintColor={MAIN_COLOR}
+              />
+            }
+          />
+          {this.renderAddButton()}
+        </View>
+      );
+    }
 
     return (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={cards}
-          renderItem={this.renderRow}
-          keyExtractor={card => card.id.toString()}
-          extraData={this.props}
-          contentContainerStyle={{ paddingBottom: 95 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              colors={[MAIN_COLOR]}
-              tintColor={MAIN_COLOR}
-            />
-          }
-        />
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.onAddPress()}
-        >
-          <Ionicons name="md-add" />
-        </Fab>
-      </View>
+      <EmptyList title='No hay horarios de atencion.'>
+        {this.renderAddButton()}
+      </EmptyList>
     );
+  }
+
+  render() {
+    if (this.props.loading) return <Spinner />;
+
+    return this.renderList();
   }
 }
 

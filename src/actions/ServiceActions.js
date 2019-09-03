@@ -19,14 +19,13 @@ export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
 };
 
-export const serviceCreate = ({ name, duration, price, description }, navigation) => {
-  const { currentUser } = firebase.auth();
+export const serviceCreate = ({ name, duration, price, description, commerceId }, navigation) => {
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
-    db.collection(`Commerces/${currentUser.uid}/Services`)
+    db.collection(`Commerces/${commerceId}/Services`)
       .add({ name, duration, price, description, softDelete: null })
       .then(() => {
         dispatch({ type: SERVICE_CREATE });
@@ -36,14 +35,13 @@ export const serviceCreate = ({ name, duration, price, description }, navigation
   };
 };
 
-export const servicesRead = () => {
-  const { currentUser } = firebase.auth();
+export const servicesRead = commerceId => {
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICES_READING });
 
-    db.collection(`Commerces/${currentUser.uid}/Services`)
+    db.collection(`Commerces/${commerceId}/Services`)
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
@@ -54,26 +52,24 @@ export const servicesRead = () => {
   };
 };
 
-export const serviceDelete = ({ id }) => {
-  const { currentUser } = firebase.auth();
+export const serviceDelete = ({ id, commerceId }) => {
   var db = firebase.firestore();
 
   return dispatch => {
-    db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
+    db.doc(`Commerces/${commerceId}/Services/${id}`)
       .update({ softDelete: new Date() })
       .then(() => dispatch({ type: SERVICE_DELETE }))
       .catch(error => console.log(error));
   };
 };
 
-export const serviceUpdate = ({ id, name, duration, price, description }, navigation) => {
-  const { currentUser } = firebase.auth();
+export const serviceUpdate = ({ id, name, duration, price, description, commerceId }, navigation) => {
   var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
-    db.doc(`Commerces/${currentUser.uid}/Services/${id}`)
+    db.doc(`Commerces/${commerceId}/Services/${id}`)
       .update({ name, duration, price, description })
       .then(() => {
         dispatch({ type: SERVICE_UPDATE });

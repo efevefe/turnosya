@@ -13,4 +13,4 @@ export * from './Calendar';
 export * from './Drawer';
 export * from './Schedule';
 export * from './EmptyList';
-export * from './HeaderButton';
+export * from './IconButton';

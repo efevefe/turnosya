@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, Text, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const EmptyList = ({ title, icon }) => {
+const EmptyList = ({ title, icon, children, refreshControl }) => {
     renderIcon = icon => {
         if (icon) {
             return (
@@ -22,11 +22,13 @@ const EmptyList = ({ title, icon }) => {
         <ScrollView
             {...this.props}
             contentContainerStyle={styles.containerStyle}
+            refreshControl={refreshControl}
         >
             {this.renderIcon(icon)}
             <Text style={styles.textStyle}>
                 {title}
             </Text>
+            {children}
         </ScrollView>
     );
 }

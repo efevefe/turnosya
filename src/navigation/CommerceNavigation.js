@@ -4,6 +4,7 @@ import {
   createAppContainer,
   createBottomTabNavigator
 } from 'react-navigation';
+import { IconButton } from '../components/common';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
@@ -25,7 +26,7 @@ const calendarStack = createStackNavigator(
       screen: CommerceSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     scheduleRegister: {
@@ -50,7 +51,7 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     serviceForm: {
@@ -69,7 +70,7 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     courtForm: {
@@ -89,7 +90,7 @@ const profileStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft:
-          navigation.getParam('leftIcon') || <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },

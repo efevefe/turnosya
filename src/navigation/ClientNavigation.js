@@ -4,7 +4,7 @@ import {
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
-import { HeaderButton } from '../components/common';
+import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
@@ -24,7 +24,7 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     commercesList: {
@@ -55,7 +55,7 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -68,7 +68,7 @@ const favoritesStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -82,7 +82,7 @@ const profileStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft:
-          navigation.getParam('leftIcon') || <HeaderButton icon='md-menu' onPress={navigation.openDrawer} />
+          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
