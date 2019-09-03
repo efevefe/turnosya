@@ -12,7 +12,8 @@ import {
   Spinner,
   Menu,
   MenuItem,
-  Picker
+  Picker,
+  HeaderButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType, trimString } from '../utils';
@@ -60,11 +61,8 @@ class commerceData extends Component {
 
   renderEditButton = () => {
     return (
-      <Ionicons
-        name="md-create"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <HeaderButton
+        icon="md-create"
         onPress={this.onEditPress}
       />
     );
@@ -72,11 +70,8 @@ class commerceData extends Component {
 
   renderSaveButton = () => {
     return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <HeaderButton
+        icon="md-checkmark"
         onPress={this.onSavePress}
       />
     );
@@ -84,11 +79,8 @@ class commerceData extends Component {
 
   renderCancelButton = () => {
     return (
-      <Ionicons
-        name="md-close"
-        size={28}
-        color="white"
-        style={{ marginLeft: 15 }}
+      <HeaderButton
+        icon="md-close"
         onPress={this.onCancelPress}
       />
     );

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
-import { Spinner } from './common';
+import { Spinner, HeaderButton } from './common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
@@ -26,11 +26,8 @@ class ScheduleRegister extends Component {
 
   renderSaveButton = () => {
     return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <HeaderButton
+        icon="md-checkmark"
         onPress={this.onSavePress}
       />
     );

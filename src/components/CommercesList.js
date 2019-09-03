@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { FlatList, View } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
 import { Constants } from 'expo';
-import { Spinner, EmptyList } from './common';
+import { Spinner, EmptyList, HeaderButton } from './common';
 import CommerceListItem from './CommerceListItem';
 import {
   commercesRead,
@@ -39,19 +38,13 @@ class CommercesList extends Component {
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: 'row' }}>
-        <Ionicons
-          name="md-search"
-          size={28}
-          color="white"
-          style={{ marginRight: 20 }}
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+        <HeaderButton
+          icon="md-search"
           onPress={this.onSearchPress}
         />
-        <Ionicons
-          name="ios-funnel"
-          size={28}
-          color="white"
-          style={{ marginRight: 15 }}
+        <HeaderButton
+          icon="ios-funnel"
           onPress={() => console.log('filtros de busqueda')}
         />
       </View>

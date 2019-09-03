@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, Text, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const EmptyList = ({ title, icon, refreshControl }) => {
+const EmptyList = ({ title, icon }) => {
     renderIcon = icon => {
         if (icon) {
             return (
