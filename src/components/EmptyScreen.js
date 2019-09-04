@@ -10,10 +10,14 @@ import { View, Text } from 'react-native';
 // import firebase from 'firebase/app';
 // import 'firebase/firestore';
 // import algoliasearch from 'algoliasearch';
+// import getEnvVars from '../../environment';
 
-// const client = algoliasearch('A3VWXVHSOG', 'f9ca7d66347ff0a794a0349020cc1dad');
+// const { algoliaConfig } = getEnvVars();
+// const { appId, searchdApiKey, adminApiKey, commercesIndex } = algoliaConfig;
 
-// const index = client.initIndex('CommercesIndexTurnosYa');
+// const client = algoliasearch(appId, adminApiKey);
+
+// const index = client.initIndex(commercesIndex);
 
 // const buttonPressed = () => {
 //   console.log('pressed');
