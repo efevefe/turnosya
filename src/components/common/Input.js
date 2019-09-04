@@ -5,7 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR, GREY_DISABLED } from '../../constants';
 
 class Input extends Component {
-  state = { revealPassword: false };
+  state = { revealPassword: true };
+
+  componentDidMount() {
+    if (this.props.password) {
+      this.setState({ revealPassword: false });
+    }
+  }
 
   isEnabled = () => {
     const { editable } = this.props;
