@@ -105,7 +105,7 @@ class LoginForm extends Component {
           <CardSection>
             <Input
               placeholder="Contraseña"
-              secureTextEntry
+              password
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}

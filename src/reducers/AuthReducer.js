@@ -29,7 +29,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOGIN_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_EMAIL_VERIFY_ASKED:
-      Toast.show({ text: `El email se ha enviado a: ${action.payload} !` });
+      Toast.show({ text: `El email se ha enviado a ${action.payload}` });
       return { ...state };
     case ON_EMAIL_VERIFY_REMINDED:
       Toast.show({
