@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
+import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class CommerceListItem extends Component {
@@ -10,7 +11,7 @@ class CommerceListItem extends Component {
   };
 
   render() {
-    const { name, address, profilePicture, areaName } = this.props.commerce;
+    const { name, address, profilePicture, areaName, objectID } = this.props.commerce;
 
     return (
       <ListItem
@@ -38,7 +39,7 @@ class CommerceListItem extends Component {
         }
         onPress={() =>
           this.props.navigation.navigate('commerceCourtTypes', {
-            commerceId: id
+            commerceId: objectID
           })
         }
         bottomDivider
@@ -47,4 +48,4 @@ class CommerceListItem extends Component {
   }
 }
 
-export default CommerceListItem;
+export default withNavigation(CommerceListItem);
