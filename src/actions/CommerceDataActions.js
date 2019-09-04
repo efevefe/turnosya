@@ -25,10 +25,14 @@ import {
   ON_REAUTH_SUCCESS,
   ON_REGISTER_VALUE_CHANGE
 } from './types';
+import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
 
-const client = algoliasearch('A3VWXVHSOG', 'f9ca7d66347ff0a794a0349020cc1dad');
-const index = client.initIndex('CommercesIndexTurnosYa');
+const { algoliaConfig } = getEnvVars();
+const { appId, adminApiKey, commercesIndex } = algoliaConfig;
+
+const client = algoliasearch(appId, adminApiKey);
+const index = client.initIndex(commercesIndex);
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
