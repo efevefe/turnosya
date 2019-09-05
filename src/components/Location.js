@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  Linking,
+  AlertIOS
+} from 'react-native';
 import { Permissions, Location, Constants, IntentLauncherAndroid } from 'expo';
 
 export default class App extends Component {
@@ -19,53 +26,86 @@ export default class App extends Component {
       this.setState({
         errorMessage: 'Permission to access location was denied'
       });
+      if (Platform.OS === 'ios') {
+        const GPSStatus = await Location.getProviderStatusAsync();
+        if (GPSStatus.locationServicesEnabled) {
+          this.setState({
+            errorMessage: 'Permisos APP'
+          });
+        } else {
+          this.setState({
+            errorMessage: 'GPSSS'
+          });
+          AlertIOS.alert(
+            'Activa la localizacion para tener una mejor experiencia',
+            'Dirigete a Ajustes > Privacidad > Localizacion',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel'
+              },
+              {
+                text: 'Configuracion',
+                onPress: () => Linking.openURL('App-Prefs:root=Privacy')
+                // onPress: () => Linking.openURL('app-settings:')
+              }
+            ]
+          );
+        }
+      }
     } else {
-      const GPSStatus = await Location.getProviderStatusAsync();
-      if (GPSStatus.gpsAvailable && GPSStatus.locationServicesEnabled) {
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High
-        });
+      if (Platform.OS === 'android') {
+        const GPSStatus = await Location.getProviderStatusAsync();
+        if (GPSStatus.gpsAvailable && GPSStatus.locationServicesEnabled) {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.High
+          });
 
-        // location = Es un objeto. Tiene datos como:
-        //     coords {
-        //        accuracy --> ,
-        //        altitude --> ,
-        //        heading --> ,
-        //        latitude --> ,
-        //        longitude --> ,
-        //        sped -->
-        //      }
-        //    mocked -->
-        //    timestamp -->
+          // location = Es un objeto. Tiene datos como:
+          //     coords  {
+          //        accuracy --> ,
+          //        altitude --> ,
+          //        heading --> ,
+          //        latitude --> ,
+          //        longitude --> ,
+          //        sped -->
+          //      }
+          //    mocked -->
+          //    timestamp -->
 
-        // let moreData = await Location.reverseGeocodeAsync({
-        //   latitude: location.coords.latitude,
-        //   longitude: location.coords.longitude
-        // });
-        // moreData = Es un array. Agrega datos como:
-        //     city --> Córdoba,
-        //     street --> null,
-        //     region --> Córdoba,
-        //     postalCode --> null,
-        //     country --> Argentina,
-        //     isoCountryCode --> AR,
-        //     name --> C1662
-        this.setState({ location });
+          // let moreData = await Location.reverseGeocodeAsync({
+          //   latitude: location.coords.latitude,
+          //   longitude: location.coords.longitude
+          // });
+          // moreData = Es un array. Agrega datos como:
+          //     city --> Córdoba,
+          //     street --> null,
+          //     region --> Córdoba,
+          //     postalCode --> null,
+          //     country --> Argentina,
+          //     isoCountryCode --> AR,
+          //     name --> C1662
+          this.setState({ location });
+        } else {
+          // no te lo deberia abrir de una. Hay que ver como reacciona este metodo en ios
+          IntentLauncherAndroid.startActivityAsync(
+            IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
+          ).then(async () => {
+            const GPSStatus = await Location.getProviderStatusAsync();
+            if (GPSStatus.gpsAvailable) {
+              const location = await Location.getCurrentPositionAsync({});
+              this.setState({ location });
+            } else {
+              this.setState({
+                errorMessage: 'Permission to access location was denied'
+              });
+            }
+          });
+        }
       } else {
-        // no te lo deberia abrir de una. Hay que ver como reacciona este metodo en ios
-        IntentLauncherAndroid.startActivityAsync(
-          IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
-        ).then(async () => {
-          const GPSStatus = await Location.getProviderStatusAsync();
-          if (GPSStatus.gpsAvailable) {
-            const location = await Location.getCurrentPositionAsync({});
-            this.setState({ location });
-          } else {
-            this.setState({
-              errorMessage: 'Permission to access location was denied'
-            });
-          }
-        });
+        let location = await Location.getCurrentPositionAsync({});
+        this.setState({ location });
       }
     }
   };
