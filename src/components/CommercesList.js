@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
+import { IconButton } from './common';
 import getEnvVars from '../../environment';
 import { refinementUpdate } from '../actions';
 import ConnectedSearch from './CommercesList.SearchConnection';
@@ -15,6 +15,7 @@ const { appId, searchApiKey, commercesIndex } = algoliaConfig;
 class CommercesList extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       areaName: props.navigation.state.params.areaName,
       searchVisible: false

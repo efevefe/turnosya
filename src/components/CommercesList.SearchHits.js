@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
+import { EmptyList } from './common';
 import CommerceListItem from './CommerceListItem';
 
 class Hits extends Component {
+  renderItem({ item }) {
+    return <CommerceListItem commerce={item} />;
+  }
+
   render() {
     return this.props.hits.length > 0 ? (
       <FlatList
@@ -13,11 +18,11 @@ class Hits extends Component {
         keyExtractor={item => item.objectID}
         initialNumToRender={20}
       />
-    ) : null;
-  }
-
-  renderItem({ item }) {
-    return <CommerceListItem commerce={item} />;
+    ) : (
+      <View style={{ alignSelf: 'center' }}>
+        <EmptyList title='No se encontraron negocios' />
+      </View>
+    );
   }
 }
 

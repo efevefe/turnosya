@@ -42,23 +42,16 @@ class ServicesList extends Component {
   renderList = () => {
     if (this.props.services.length > 0) {
       return (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.services}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={service => service.id}
-            contentContainerStyle={{ paddingBottom: 95 }}
-          />
-          {this.renderAddButton()}
-        </View>
+        <FlatList
+          data={this.props.services}
+          renderItem={this.renderRow.bind(this)}
+          keyExtractor={service => service.id}
+          contentContainerStyle={{ paddingBottom: 95 }}
+        />
       );
     }
 
-    return (
-      <EmptyList title="No hay ningun servicio." >
-        {this.renderAddButton()}
-      </EmptyList>
-    );
+    return <EmptyList title="No hay ningun servicio" />;
   }
 
   render() {
@@ -66,9 +59,22 @@ class ServicesList extends Component {
       return <Spinner />;
     }
 
-    return this.renderList();
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
+      </View>
+    );
   }
 }
+
 const mapStateToProps = state => {
   const { services, loading } = state.servicesList;
   const { commerceId } = state.commerceData;

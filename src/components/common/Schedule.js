@@ -163,7 +163,7 @@ class Schedule extends Component {
         } else {
             return (
                 <EmptyList
-                    title='No se encontraron turnos para este día.'
+                    title='No se encontraron turnos para este día'
                     refreshControl={this.onRefresh()}
                 />
             );

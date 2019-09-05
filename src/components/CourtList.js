@@ -27,42 +27,37 @@ class CourtList extends Component {
     this.props.navigation.navigate('courtForm');
   };
 
-  renderAddButton = () => {
-    <Fab
-      style={{ backgroundColor: MAIN_COLOR }}
-      position="bottomRight"
-      onPress={() => this.onAddPress()}
-    >
-      <Ionicons name="md-add" />
-    </Fab>
-  }
-
   renderList = () => {
     if (this.props.courts.length > 0) {
       return (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.props.courts}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={court => court.id}
-            contentContainerStyle={{ paddingBottom: 95 }}
-          />
-          {this.renderAddButton()}
-        </View>
+        <FlatList
+          data={this.props.courts}
+          renderItem={this.renderRow.bind(this)}
+          keyExtractor={court => court.id}
+          contentContainerStyle={{ paddingBottom: 95 }}
+        />
       );
     }
 
-    return (
-      <EmptyList title='No hay ninguna cancha.'>
-        {this.renderAddButton()}
-      </EmptyList>
-    );
+    return <EmptyList title='No hay ninguna cancha' />;
   }
 
   render() {
     if (this.props.loading) return <Spinner />;
 
-    return this.renderList();
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
+      </View>
+    );
   }
 }
 

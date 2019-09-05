@@ -6,8 +6,10 @@ class CommercesAreaItem extends Component {
   onButtonPressHandler(name) {
     this.props.navigation.navigate('commercesList', { areaName: name });
   }
+
   render() {
     const { name, image } = this.props.area;
+    
     return (
       <View>
         <TouchableHighlight

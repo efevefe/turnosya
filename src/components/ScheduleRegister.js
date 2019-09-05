@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
+import { HeaderBackButton } from 'react-navigation';
 import { Spinner, IconButton, EmptyList } from './common';
 import {
   onScheduleValueChange,
@@ -15,13 +16,16 @@ import ScheduleRegisterItem from './ScheduleRegisterItem';
 class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: navigation.getParam('rightIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
-  componentWillMount() {
-    this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
-    //this.props.onScheduleRead();
+  componentDidMount() {
+    this.props.navigation.setParams({ 
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton() 
+    });
   }
 
   renderSaveButton = () => {
@@ -53,6 +57,15 @@ class ScheduleRegister extends Component {
     )
   }
 
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
+  }
+
+  onBackPress = () => {
+    this.props.navigation.goBack();
+    this.props.onScheduleRead(this.props.commerceId);
+  }
+
   onAddPress = () => {
     const { cards, selectedDays, onScheduleValueChange } = this.props;
 
@@ -74,18 +87,6 @@ class ScheduleRegister extends Component {
     }
   };
 
-  renderAddButton = () => {
-    return (
-      <Fab
-        style={{ backgroundColor: MAIN_COLOR }}
-        position="bottomRight"
-        onPress={() => this.onAddPress()}
-      >
-        <Ionicons name="md-add" />
-      </Fab>
-    );
-  }
-
   renderRow = ({ item }) => {
     return (
       <ScheduleRegisterItem card={item} navigation={this.props.navigation} />
@@ -95,39 +96,44 @@ class ScheduleRegister extends Component {
   renderList = () => {
     const { cards, refreshing } = this.props;
 
-    if (this.props.cards.length > 0) {
+    if (cards.length > 0) {
       return (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={cards}
-            renderItem={this.renderRow}
-            keyExtractor={card => card.id.toString()}
-            extraData={this.props}
-            contentContainerStyle={{ paddingBottom: 95 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                colors={[MAIN_COLOR]}
-                tintColor={MAIN_COLOR}
-              />
-            }
-          />
-          {this.renderAddButton()}
-        </View>
+        <FlatList
+          data={cards}
+          renderItem={this.renderRow}
+          keyExtractor={card => card.id.toString()}
+          extraData={this.props}
+          contentContainerStyle={{ paddingBottom: 95 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              colors={[MAIN_COLOR]}
+              tintColor={MAIN_COLOR}
+            />
+          }
+        />
       );
     }
 
-    return (
-      <EmptyList title='No hay horarios de atencion.'>
-        {this.renderAddButton()}
-      </EmptyList>
-    );
+    return <EmptyList title='No hay horarios de atencion' />;
   }
 
   render() {
     if (this.props.loading) return <Spinner />;
 
-    return this.renderList();
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
+      </View>
+    );
   }
 }
 

@@ -21,7 +21,6 @@ class SearchBox extends Component {
           value={this.props.refinement}
           containerStyle={styles.searchBarContainer}
           inputStyle={{ marginTop: 1 }}
-          showLoading={this.props.loading}
           searchIcon={{ color: MAIN_COLOR }}
           cancelIcon={{ color: MAIN_COLOR }}
           clearIcon={{ color: MAIN_COLOR }}
@@ -59,8 +58,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { refinement, loading } = state.commercesList;
-  return { refinement, loading };
+  const { refinement } = state.commercesList;
+  return { refinement };
 };
 
 export default connect(

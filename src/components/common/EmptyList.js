@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         flexGrow: 1, 
         alignSelf: 'stretch', 
         alignItems: 'center',
-        justifyContent: 'center' 
+        justifyContent: 'center'
     },
     textStyle: {
         padding: 0,
