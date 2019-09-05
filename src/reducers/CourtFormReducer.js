@@ -7,6 +7,7 @@ import {
   COURT_UPDATE,
   COURT_DELETE
 } from '../actions/types';
+import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
   name: '',
@@ -34,10 +35,13 @@ export default (state = INITIAL_STATE, action) => {
     case COURT_FORM_SUBMIT:
       return { ...state, loading: true, existedError: false };
     case COURT_CREATE:
+        Toast.show({ text: 'Cancha guardada' });
       return INITIAL_STATE;
     case COURT_UPDATE:
+        Toast.show({ text: 'Cambios guardados' });
       return INITIAL_STATE;
     case COURT_DELETE:
+        Toast.show({ text: 'La cancha se ha eliminado' });
       return INITIAL_STATE;
     case COURT_EXISTED:
       return { ...state, loading: false, existedError: true };

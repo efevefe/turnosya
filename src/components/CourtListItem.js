@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Button, Overlay, Divider } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem } from '../components/common';
+import { Menu, MenuItem, IconButton } from '../components/common';
 import { courtDelete, onCourtFormOpen } from '../actions';
 
 class CourtListItem extends Component {
@@ -15,12 +14,12 @@ class CourtListItem extends Component {
   };
 
   onDeletePress = () => {
-    this.setState({ optionsVisible: false });
-    this.setState({ deleteVisible: !this.state.deleteVisible });
+    this.setState({ optionsVisible: false, deleteVisible: !this.state.deleteVisible });
   };
 
   onConfirmDeletePress = () => {
     const { court, commerceId, courtDelete } = this.props;
+
     courtDelete({ id: court.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   };
@@ -92,11 +91,11 @@ class CourtListItem extends Component {
             courtState
               ? { textAlign: 'left', display: 'flex' }
               : {
-                  textAlign: 'left',
-                  display: 'flex',
-                  color: 'grey',
-                  fontStyle: 'italic'
-                }
+                textAlign: 'left',
+                display: 'flex',
+                color: 'grey',
+                fontStyle: 'italic'
+              }
           }
           rightTitle={
             lightPrice !== '' ? (
@@ -106,10 +105,10 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
                   }
                 >{`Sin luz: $${price}`}</Text>
                 <Text
@@ -117,18 +116,18 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
                   }
                 >{`Con luz: $${lightPrice}`}</Text>
               </View>
             ) : (
-              <Text
-                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
-              >{`Sin luz: $${price}`}</Text>
-            )
+                <Text
+                  style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+                >{`Sin luz: $${price}`}</Text>
+              )
           }
           key={id}
           subtitle={
@@ -142,12 +141,12 @@ class CourtListItem extends Component {
           }
           onLongPress={this.onOptionsPress}
           rightElement={
-            <Button
-              type="clear"
-              buttonStyle={{ padding: 0 }}
-              containerStyle={{ borderRadius: 15, overflow: 'hidden' }}
+            <IconButton
+              icon='md-more'
+              color='grey'
+              iconSize={22}
+              iconStyle={{ marginLeft: 5, marginRight: 8 }}
               onPress={this.onOptionsPress}
-              icon={<Icon name="more-vert" size={22} color="grey" />}
             />
           }
           bottomDivider

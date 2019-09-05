@@ -36,19 +36,13 @@ class CommercesList extends Component {
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: 'row' }}>
-        <Ionicons
-          name="md-search"
-          size={28}
-          color="white"
-          style={{ marginRight: 20 }}
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+        <IconButton
+          icon="md-search"
           onPress={this.onSearchPress}
         />
-        <Ionicons
-          name="ios-funnel"
-          size={28}
-          color="white"
-          style={{ marginRight: 15 }}
+        <IconButton
+          icon="ios-funnel"
           onPress={() => console.log('filtros de busqueda')}
         />
       </View>

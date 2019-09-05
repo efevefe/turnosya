@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Menu, MenuItem, Schedule } from './common';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { Menu, MenuItem, Schedule, IconButton } from './common';
 import { onScheduleRead, onScheduleValueChange } from '../actions';
 
 class CommerceSchedule extends Component {
@@ -17,6 +18,7 @@ class CommerceSchedule extends Component {
 
   componentDidMount() {
     this.props.onScheduleRead(this.props.commerceId);
+    this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -24,11 +26,8 @@ class CommerceSchedule extends Component {
 
   renderConfigurationButton = () => {
     return (
-      <Ionicons
-        name="md-options"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <IconButton
+        icon="md-options"
         onPress={() => this.setState({ modal: true })}
       />
     );

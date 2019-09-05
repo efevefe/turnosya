@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, Text, TouchableHighlight } from 'react-native';
+import { FlatList, View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from './common';
@@ -21,11 +21,10 @@ class CommercesAreas extends Component {
   }
   renderRightIcon = () => {
     return (
-      <TouchableHighlight
-        onPress={() =>
-          this.props.navigation.navigate('commercesList', { areaName: '' })
-        }
-        underlayColor="transparent"
+      <TouchableOpacity
+        onPress={() => this.props.navigation.navigate('commercesList')}
+        activeOpacity={0.5}
+        style={{ backgorundColor: "transparent" }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
@@ -46,7 +45,7 @@ class CommercesAreas extends Component {
             style={{ marginRight: 15 }}
           />
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
 
