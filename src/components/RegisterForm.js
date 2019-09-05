@@ -162,7 +162,7 @@ class RegisterForm extends Component {
             <Input
               label="Contraseña"
               placeholder="Contraseña"
-              secureTextEntry
+              password
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError}
@@ -180,7 +180,7 @@ class RegisterForm extends Component {
             <Input
               label="Repetir Contraseña"
               placeholder="Repetir Contraseña"
-              secureTextEntry
+              password
               autoCapitalize="none"
               value={this.props.confirmPassword}
               errorMessage={this.state.confirmPasswordError}

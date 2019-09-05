@@ -11,7 +11,7 @@ class CommerceCourtTypes extends Component {
     commerceId: null
   };
 
-  async componentWillMount() {
+  async componentDidMount() {
     await this.setState({
       commerceId: this.props.navigation.getParam('commerceId')
     });
@@ -39,28 +39,28 @@ class CommerceCourtTypes extends Component {
   };
 
   renderItem = ({ item }) => {
-        return (
-            <TouchableHighlight
-                onPress={() => this.props.navigation.navigate(
-                    'commerceSchedule',
-                    {
-                        commerceId: this.state.commerceId,
-                        courtTypeId: item.name
-                    })}
-                underlayColor='transparent'
-            >
-                <Card
-                    image={item.image ? { uri: item.image } : null}
-                    imageStyle={{ height: 80 }}
-                    containerStyle={{
-                        overflow: 'hidden',
-                        borderRadius: 10
-                    }}
-                >
-                    <Text>{item.name}</Text>
-                </Card>
-            </TouchableHighlight>
-        );
+    return (
+      <TouchableHighlight
+        onPress={() => this.props.navigation.navigate(
+          'commerceSchedule',
+          {
+            commerceId: this.state.commerceId,
+            courtTypeId: item.name
+          })}
+        underlayColor='transparent'
+      >
+        <Card
+          image={item.image ? { uri: item.image } : null}
+          imageStyle={{ height: 80 }}
+          containerStyle={{
+            overflow: 'hidden',
+            borderRadius: 10
+          }}
+        >
+          <Text>{item.name}</Text>
+        </Card>
+      </TouchableHighlight>
+    );
   };
 
   render() {

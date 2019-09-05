@@ -21,7 +21,7 @@ class VerifyEmailModal extends React.Component {
   render() {
     return (
       <Menu
-        title="Lo sentimos, para reservar y crear un negocio, deberá verificar su email primero:"
+        title="Lo sentimos, para reservar y crear un negocio primero deberá validar su email"
         onBackdropPress={() => this.onBackdropPress()}
         isVisible={this.state.isVisible}
       >

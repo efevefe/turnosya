@@ -43,7 +43,7 @@ class ClientSettings extends Component {
           >
             <Input
               label="Contraseña:"
-              secureTextEntry
+              password
               value={this.props.password}
               color="black"
               onChangeText={value =>
