@@ -1,8 +1,6 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -177,9 +175,11 @@ class commerceData extends Component {
   };
 
   onCancelPress = () => {
-    _.each(this.state.stateBeforeChanges, (value, prop) => {
-      this.props.onCommerceValueChange({ prop, value });
-    });
+    const { stateBeforeChanges } = this.state;
+
+    for (prop in stateBeforeChanges) {
+      this.props.onCommerceValueChange({ prop, value: stateBeforeChanges[prop] });
+    }
 
     this.cleanErrors();
     this.disableEdit();

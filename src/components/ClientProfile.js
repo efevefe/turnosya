@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
@@ -123,9 +122,11 @@ class ClientProfile extends Component {
   };
 
   onCancelPress = () => {
-    _.each(this.state.stateBeforeChanges, (value, prop) => {
-      this.props.onRegisterValueChange({ prop, value });
-    });
+    const { stateBeforeChanges } = this.state;
+
+    for (prop in stateBeforeChanges) {
+      this.props.onRegisterValueChange({ prop, value: stateBeforeChanges[prop] });
+    }
 
     this.cleanErrors();
     this.disableEdit();
