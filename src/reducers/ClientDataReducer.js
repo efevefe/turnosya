@@ -1,6 +1,7 @@
 import {
   ON_REGISTER_VALUE_CHANGE,
   ON_REGISTER,
+  ON_REGISTER_FORM_OPEN,
   ON_REGISTER_SUCCESS,
   ON_REGISTER_FAIL,
   ON_USER_READING,
@@ -14,6 +15,7 @@ import {
   ON_USER_DELETE_FAIL,
   ON_REAUTH_SUCCESS
 } from '../actions/types';
+import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
   email: '',
@@ -37,6 +39,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_REGISTER:
       return { ...state, loading: true, error: '' };
+    case ON_REGISTER_FORM_OPEN:
+      return { ...INITIAL_STATE };
     case ON_REGISTER_SUCCESS:
       return INITIAL_STATE;
     case ON_REGISTER_FAIL:
@@ -50,14 +54,17 @@ export default (state = INITIAL_STATE, action) => {
     case ON_USER_UPDATING:
       return { ...state, refreshing: true };
     case ON_USER_UPDATED:
+      Toast.show({ text: 'Cambios guardados' });
       return { ...state, profilePicture: action.payload, refreshing: false };
     case ON_USER_UPDATE_FAIL:
+      Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
     case ON_USER_DELETING:
       return { ...state, loading: true };
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
     case ON_USER_DELETED:
+      Toast.show({ text: 'Su cuenta se ha eliminado' });
       return INITIAL_STATE;
     case ON_USER_DELETE_FAIL:
       return { ...state, loading: false };

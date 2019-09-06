@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
-import { Spinner } from './common';
+import { HeaderBackButton } from 'react-navigation';
+import { Spinner, IconButton, EmptyList } from './common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
@@ -15,35 +16,59 @@ import ScheduleRegisterItem from './ScheduleRegisterItem';
 class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: navigation.getParam('rightIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
-  componentWillMount() {
-    this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
-    //this.props.onScheduleRead();
+  componentDidMount() {
+    this.props.navigation.setParams({ 
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton() 
+    });
   }
 
   renderSaveButton = () => {
     return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={() => this.props.onScheduleCreate({ 
-          cards: this.props.cards, 
-          commerceId: this.props.commerceId, 
-          reservationMinLength: this.props.reservationMinLength,
-          reservationDayPeriod: this.props.reservationDayPeriod
-        }, this.props.navigation
-        )}
+      <IconButton
+        icon="md-checkmark"
+        onPress={this.onSavePress}
       />
     );
   };
 
+  onSavePress = () => {
+    const {
+      cards,
+      commerceId,
+      reservationMinLength,
+      reservationDayPeriod,
+      navigation
+    } = this.props;
+
+    this.props.onScheduleCreate(
+      {
+        cards,
+        commerceId,
+        reservationMinLength,
+        reservationDayPeriod
+      },
+      navigation
+    )
+  }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
+  }
+
+  onBackPress = () => {
+    this.props.navigation.goBack();
+    this.props.onScheduleRead(this.props.commerceId);
+  }
+
   onAddPress = () => {
     const { cards, selectedDays, onScheduleValueChange } = this.props;
+
     if (cards.length === 0) {
       onScheduleValueChange({
         prop: 'cards',
@@ -68,27 +93,38 @@ class ScheduleRegister extends Component {
     );
   };
 
-  render() {
-    if (this.props.loading) {
-      return <Spinner />;
-    }
+  renderList = () => {
+    const { cards, refreshing } = this.props;
 
-    return (
-      <View style={{ flex: 1 }}>
+    if (cards.length > 0) {
+      return (
         <FlatList
-          data={this.props.cards}
+          data={cards}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
           contentContainerStyle={{ paddingBottom: 95 }}
           refreshControl={
             <RefreshControl
-              refreshing={this.props.refreshing}
+              refreshing={refreshing}
               colors={[MAIN_COLOR]}
               tintColor={MAIN_COLOR}
             />
           }
         />
+      );
+    }
+
+    return <EmptyList title='No hay horarios de atencion' />;
+  }
+
+  render() {
+    if (this.props.loading) return <Spinner />;
+
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
@@ -110,10 +146,25 @@ const emptyCard = {
 };
 
 const mapStateToProps = state => {
-  const { cards, selectedDays, reservationMinLength, reservationDayPeriod, loading, refreshing } = state.scheduleRegister;
+  const {
+    cards,
+    selectedDays,
+    reservationMinLength,
+    reservationDayPeriod,
+    loading,
+    refreshing
+  } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
 
-  return { cards, selectedDays, commerceId, reservationMinLength, reservationDayPeriod, loading, refreshing };
+  return {
+    cards,
+    selectedDays,
+    commerceId,
+    reservationMinLength,
+    reservationDayPeriod,
+    loading,
+    refreshing
+  };
 };
 
 export default connect(

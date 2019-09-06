@@ -4,7 +4,7 @@ import {
   createAppContainer,
   createBottomTabNavigator
 } from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
+import { IconButton } from '../components/common';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
@@ -13,27 +13,10 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
-
-const rightIcon = (navigation, icon, nextScreen) => (
-  <Ionicons
-    name={icon}
-    size={30}
-    color="white"
-    style={{ marginRight: 15 }}
-    onPress={() => navigation.navigate(nextScreen)}
-  />
-);
-
-const leftIcon = (navigation, icon) => (
-  <Ionicons
-    name={icon}
-    size={30}
-    color="white"
-    style={{ marginLeft: 15 }}
-    onPress={() => navigation.openDrawer()}
-  />
-);
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -43,7 +26,7 @@ const calendarStack = createStackNavigator(
       screen: CommerceSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     scheduleRegister: {
@@ -68,8 +51,7 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerRight: rightIcon(navigation, 'md-add', 'serviceForm'),
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     serviceForm: {
@@ -88,8 +70,7 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerRight: rightIcon(navigation, 'md-add', 'courtForm'),
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     courtForm: {
@@ -109,7 +90,7 @@ const profileStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft:
-          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
+          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },

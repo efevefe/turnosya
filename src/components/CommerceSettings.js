@@ -28,7 +28,7 @@ class CommerceSettings extends Component {
                     <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
                         <Input
                             label='Contraseña:'
-                            secureTextEntry
+                            password
                             value={this.props.password}
                             color='black'
                             onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}

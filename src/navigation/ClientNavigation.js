@@ -4,46 +4,47 @@ import {
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
+import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
+import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
-
-const rightIcon = (navigation, icon, nextScreen) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginRight: 15 }}
-    onPress={() => navigation.navigate(nextScreen)}
-  />
-);
-
-const leftIcon = (navigation, icon) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginLeft: 15 }}
-    onPress={() => navigation.openDrawer()}
-  />
-);
+import CommercesAreas from '../components/CommercesAreas';
+import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const searchStack = createStackNavigator(
   {
-    commercesList: {
-      screen: CommercesList,
+    commercesAreas: {
+      screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
+    },
+    commercesList: {
+      screen: CommercesList,
+      navigationOptions: {
+        title: 'Buscar Negocios'
+      }
+    },
+    commerceCourtTypes: {
+      screen: CommerceCourtTypes,
+      navigationOptions: {
+        title: 'Tipos de Cancha'
+      }
+    },
+    commerceSchedule: {
+      screen: ClientCommerceSchedule,
+      navigationOptions: {
+        title: 'Turnos Disponibles'
+      }
     }
   },
   stackNavigationOptions
@@ -55,7 +56,7 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -68,7 +69,7 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -82,7 +83,7 @@ const profileStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft:
-          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
+          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },

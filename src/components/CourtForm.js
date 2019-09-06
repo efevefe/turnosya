@@ -40,7 +40,7 @@ class CourtForm extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.grounds !== prevProps.grounds) {
       const firstIndex = this.props.courts.findIndex(
         item => item.value === this.props.court
@@ -52,7 +52,7 @@ class CourtForm extends Component {
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
-    this.setState({ lightPriceOpen: !!this.props.lightPrice !== '' });
+    this.setState({ lightPriceOpen: this.props.lightPrice !== '' });
   }
 
   onButtonPressHandler = () => {

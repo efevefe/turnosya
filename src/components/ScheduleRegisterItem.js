@@ -60,7 +60,7 @@ class ScheduleRegister extends Component {
       this.setState({ firstShiftEndError: '' });
     } else {
       this.setState({
-        firstShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
+        firstShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
       });
       this.onSecondTurnPress();
     }
@@ -68,21 +68,25 @@ class ScheduleRegister extends Component {
 
   renderPickerSecondShiftStart = () => {
     const { firstShiftEnd, secondShiftStart } = this.props.card;
-
-    secondShiftStart > firstShiftEnd || secondShiftStart === ''
+    console.log(secondShiftStart);
+    secondShiftStart > firstShiftEnd ||
+    secondShiftStart === null ||
+    secondShiftStart === ''
       ? this.setState({ secondShiftStartError: '' })
       : this.setState({
-          secondShiftStartError: `Segundo turno debe \n ser mayor al primero`
+          secondShiftStartError: `Segundo turno debe \nser mayor al primero`
         });
   };
 
   renderPickerSecondShiftEnd = () => {
     const { secondShiftStart, secondShiftEnd } = this.props.card;
 
-    secondShiftStart < secondShiftEnd
+    secondShiftStart < secondShiftEnd ||
+    secondShiftEnd === null ||
+    secondShiftEnd === ''
       ? this.setState({ secondShiftEndError: '' })
       : this.setState({
-          secondShiftEndError: `Hora de cierre debe ser \n mayor a la de apertura`
+          secondShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
         });
   };
 
@@ -154,6 +158,7 @@ class ScheduleRegister extends Component {
                 secondShiftStart: value
               });
               this.renderPickerSecondShiftStart();
+              this.renderPickerSecondShiftEnd();
             }}
             errorMessage={this.state.secondShiftStartError}
           />

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
-import { Spinner } from './common';
+import { FlatList, View } from 'react-native';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { Spinner, EmptyList } from './common';
 import CourtListItem from './CourtListItem';
 import { courtsRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -21,22 +23,41 @@ class CourtList extends Component {
     );
   }
 
-  renderList() {
-    if (this.props.loading) return <Spinner size="large" color={MAIN_COLOR} />;
+  onAddPress = () => {
+    this.props.navigation.navigate('courtForm');
+  };
 
-    return (
-      <View style={{ flex: 1 }}>
+  renderList = () => {
+    if (this.props.courts.length > 0) {
+      return (
         <FlatList
           data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
+          contentContainerStyle={{ paddingBottom: 95 }}
         />
-      </View>
-    );
+      );
+    }
+
+    return <EmptyList title='No hay ninguna cancha' />;
   }
 
   render() {
-    return this.renderList();
+    if (this.props.loading) return <Spinner />;
+
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.onAddPress()}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
+      </View>
+    );
   }
 }
 
