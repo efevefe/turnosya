@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
+import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class CommerceListItem extends Component {
@@ -10,8 +11,7 @@ class CommerceListItem extends Component {
   };
 
   render() {
-    const { name, address, profilePicture, id } = this.props.commerce;
-    const areaName = this.props.commerce.area.name;
+    const { name, address, profilePicture, areaName, objectID } = this.props.commerce;
 
     return (
       <ListItem
@@ -37,11 +37,15 @@ class CommerceListItem extends Component {
             onPress={this.onFavoritePress}
           />
         }
-        onPress={() => this.props.navigation.navigate('commerceCourtTypes', { commerceId: id })}
+        onPress={() =>
+          this.props.navigation.navigate('commerceCourtTypes', {
+            commerceId: objectID
+          })
+        }
         bottomDivider
       />
     );
   }
 }
 
-export default CommerceListItem;
+export default withNavigation(CommerceListItem);

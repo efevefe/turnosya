@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
-import { Spinner } from './common';
+import { HeaderBackButton } from 'react-navigation';
+import { Spinner, IconButton, EmptyList } from './common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
@@ -15,28 +16,28 @@ import ScheduleRegisterItem from './ScheduleRegisterItem';
 class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: navigation.getParam('rightIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
-  componentWillMount() {
-    this.props.navigation.setParams({ rightIcon: this.renderSaveButton() });
-    //this.props.onScheduleRead();
+  componentDidMount() {
+    this.props.navigation.setParams({ 
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton() 
+    });
   }
 
   renderSaveButton = () => {
     return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <IconButton
+        icon="md-checkmark"
         onPress={this.onSavePress}
       />
     );
   };
 
-  onSavePress = () => { 
+  onSavePress = () => {
     const {
       cards,
       commerceId,
@@ -54,6 +55,15 @@ class ScheduleRegister extends Component {
       },
       navigation
     )
+  }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
+  }
+
+  onBackPress = () => {
+    this.props.navigation.goBack();
+    this.props.onScheduleRead(this.props.commerceId);
   }
 
   onAddPress = () => {
@@ -83,12 +93,11 @@ class ScheduleRegister extends Component {
     );
   };
 
-  render() {
-    const { loading, cards, refreshing } = this.props;
-    if (loading) return <Spinner />;
+  renderList = () => {
+    const { cards, refreshing } = this.props;
 
-    return (
-      <View style={{ flex: 1 }}>
+    if (cards.length > 0) {
+      return (
         <FlatList
           data={cards}
           renderItem={this.renderRow}
@@ -103,6 +112,19 @@ class ScheduleRegister extends Component {
             />
           }
         />
+      );
+    }
+
+    return <EmptyList title='No hay horarios de atencion' />;
+  }
+
+  render() {
+    if (this.props.loading) return <Spinner />;
+
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"

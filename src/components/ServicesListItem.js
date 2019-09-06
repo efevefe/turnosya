@@ -1,25 +1,30 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Button, Overlay, Divider } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { Menu, MenuItem, IconButton } from '../components/common';
 import { serviceDelete } from '../actions';
 
 class ServicesListItem extends Component {
-  state = { optionsVisible: false };
+  state = { optionsVisible: false, deleteVisible: false  };
 
-  onOptionsPress() {
+  onOptionsPress = () => {
     this.setState({ optionsVisible: !this.state.optionsVisible });
   }
 
-  onDeletePress() {
-    this.props.serviceDelete({ id: this.props.service.id });
-
-    this.setState({ optionsVisible: !this.state.optionsVisible });
+  onDeletePress = () => {
+    this.setState({ optionsVisible: false, deleteVisible: !this.state.deleteVisible });
   }
 
-  onUpdatePress() {
+  onConfirmDeletePress = () => {
+    const { service, commerceId } = this.props;
+
+    this.props.serviceDelete({ id: service.id, commerceId });
+    this.setState({ deleteVisible: !this.deleteVisible });
+  };
+
+  onUpdatePress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: 'serviceForm',
       params: { service: this.props.service, title: 'Editar Servicio' }
@@ -35,49 +40,37 @@ class ServicesListItem extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <Overlay
-          height="auto"
-          overlayStyle={{ padding: 0 }}
-          onBackdropPress={this.onOptionsPress.bind(this)}
+        <Menu
+          title={name}
+          onBackdropPress={this.onOptionsPress}
           isVisible={this.state.optionsVisible}
-          animationType="fade"
         >
-          <View>
-            <View style={{ alignSelf: 'stretch', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: 'grey',
-                  fontSize: 16,
-                  margin: 15
-                }}
-              >
-                {name}
-              </Text>
-            </View>
-            <Divider style={{ backgroundColor: 'grey' }} />
-            <Button
-              type="clear"
-              title="Editar"
-              buttonStyle={{ padding: 15 }}
-              onPress={this.onUpdatePress.bind(this)}
-            />
-            <Divider
-              style={{
-                backgroundColor: 'grey',
-                marginLeft: 10,
-                marginRight: 10
-              }}
-            />
-            <Button
-              type="clear"
-              title="Eliminar"
-              buttonStyle={{ padding: 15 }}
-              titleStyle={{ color: 'red' }}
-              onPress={this.onDeletePress.bind(this)}
-            />
-          </View>
-        </Overlay>
+          <MenuItem
+            title="Editar"
+            icon="md-create"
+            onPress={this.onUpdatePress}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Eliminar"
+            icon="md-trash"
+            onPress={this.onDeletePress}
+          />
+        </Menu>
+
+        <Menu
+          title={`¿Seguro que desea eliminar "${name}"?`}
+          onBackdropPress={this.onDeletePress}
+          isVisible={this.state.deleteVisible}
+        >
+          <MenuItem
+            title="Sí"
+            icon="md-checkmark"
+            onPress={this.onConfirmDeletePress}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
+        </Menu>
 
         <ListItem
           title={name}
@@ -86,12 +79,12 @@ class ServicesListItem extends Component {
           key={id}
           onLongPress={this.onOptionsPress.bind(this)}
           rightElement={
-            <Button
-              type="clear"
-              buttonStyle={{ padding: 0 }}
-              containerStyle={{ borderRadius: 15, overflow: 'hidden' }}
-              onPress={this.onOptionsPress.bind(this)}
-              icon={<Icon name="more-vert" size={22} color="grey" />}
+            <IconButton
+              icon='md-more'
+              color='grey'
+              iconSize={22}
+              iconStyle={{ marginLeft: 5, marginRight: 8 }}
+              onPress={this.onOptionsPress}
             />
           }
           bottomDivider

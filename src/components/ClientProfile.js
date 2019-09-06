@@ -1,8 +1,6 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
 import { ImagePicker, Permissions, Constants, Location } from 'expo';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,7 +9,8 @@ import {
   Input,
   Spinner,
   Menu,
-  MenuItem
+  MenuItem,
+  IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import {
@@ -58,11 +57,8 @@ class ClientProfile extends Component {
 
   renderEditButton = () => {
     return (
-      <Ionicons
-        name="md-create"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <IconButton
+        icon="md-create"
         onPress={this.onEditPress}
       />
     );
@@ -70,11 +66,8 @@ class ClientProfile extends Component {
 
   renderSaveButton = () => {
     return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
+      <IconButton
+        icon="md-checkmark"
         onPress={this.onSavePress}
       />
     );
@@ -82,11 +75,8 @@ class ClientProfile extends Component {
 
   renderCancelButton = () => {
     return (
-      <Ionicons
-        name="md-close"
-        size={28}
-        color="white"
-        style={{ marginLeft: 15 }}
+      <IconButton
+        icon="md-close"
         onPress={this.onCancelPress}
       />
     );
@@ -132,9 +122,11 @@ class ClientProfile extends Component {
   };
 
   onCancelPress = () => {
-    _.each(this.state.stateBeforeChanges, (value, prop) => {
-      this.props.onRegisterValueChange({ prop, value });
-    });
+    const { stateBeforeChanges } = this.state;
+
+    for (prop in stateBeforeChanges) {
+      this.props.onRegisterValueChange({ prop, value: stateBeforeChanges[prop] });
+    }
 
     this.cleanErrors();
     this.disableEdit();

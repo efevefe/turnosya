@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { FlatList, ScrollView, Text, StyleSheet, RefreshControl, TouchableHighlight } from 'react-native';
+import { FlatList, Text, RefreshControl, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Spinner } from '../components/common';
+import { Spinner, EmptyList } from '../components/common';
 import { onCommerceCourtTypesRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
@@ -11,7 +11,7 @@ class CommerceCourtTypes extends Component {
     commerceId: null
   };
 
-  async componentWillMount() {
+  async componentDidMount() {
     await this.setState({
       commerceId: this.props.navigation.getParam('commerceId')
     });
@@ -39,39 +39,37 @@ class CommerceCourtTypes extends Component {
   };
 
   renderItem = ({ item }) => {
-        return (
-            <TouchableHighlight
-                onPress={() => this.props.navigation.navigate(
-                    'commerceSchedule',
-                    {
-                        commerceId: this.state.commerceId,
-                        courtTypeId: item.name
-                    })}
-                underlayColor='transparent'
-            >
-                <Card
-                    image={item.image ? { uri: item.image } : null}
-                    imageStyle={{ height: 80 }}
-                    containerStyle={{
-                        overflow: 'hidden',
-                        borderRadius: 10
-                    }}
-                >
-                    <Text>{item.name}</Text>
-                </Card>
-            </TouchableHighlight>
-        );
+    return (
+      <TouchableHighlight
+        onPress={() => this.props.navigation.navigate(
+          'commerceSchedule',
+          {
+            commerceId: this.state.commerceId,
+            courtTypeId: item.name
+          })}
+        underlayColor='transparent'
+      >
+        <Card
+          image={item.image ? { uri: item.image } : null}
+          imageStyle={{ height: 80 }}
+          containerStyle={{
+            overflow: 'hidden',
+            borderRadius: 10
+          }}
+        >
+          <Text>{item.name}</Text>
+        </Card>
+      </TouchableHighlight>
+    );
   };
 
-  render() {
-    if (this.props.loading) {
-      return <Spinner />;
-    }
+  renderList = () => {
+    const { courtTypesList } = this.props;
 
-    if (this.props.courtTypesList.length > 0) {
+    if (courtTypesList.length > 0) {
       return (
         <FlatList
-          data={this.props.courtTypesList}
+          data={courtTypesList}
           renderItem={this.renderItem}
           keyExtractor={courtType => courtType.name}
           refreshControl={this.onRefresh()}
@@ -80,26 +78,21 @@ class CommerceCourtTypes extends Component {
     }
 
     return (
-      <ScrollView
-        contentContainerStyle={styles.containerStyle}
+      <EmptyList
+        title='Parece que no hay canchas'
         refreshControl={this.onRefresh()}
-      >
-        <Text style={styles.textStyle}>Parece que no hay canchas...</Text>
-      </ScrollView>
+      />
     );
   }
-}
 
-const styles = StyleSheet.create({
-  containerStyle: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignSelf: 'stretch'
-  },
-  textStyle: {
-    textAlign: 'center'
+  render() {
+    const { loading } = this.props;
+
+    if (loading) return <Spinner />;
+
+    return this.renderList();
   }
-});
+}
 
 const mapStateToProps = state => {
   const { courtTypesList, loading, refreshing } = state.commerceCourtTypes;

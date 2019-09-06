@@ -4,7 +4,7 @@ import {
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
+import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
@@ -17,26 +17,6 @@ import CommercesAreas from '../components/CommercesAreas';
 import GeoLocation from '../components/Location';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
-const rightIcon = (navigation, icon, nextScreen) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginRight: 15 }}
-    onPress={() => navigation.navigate(nextScreen)}
-  />
-);
-
-const leftIcon = (navigation, icon) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginLeft: 15 }}
-    onPress={() => navigation.openDrawer()}
-  />
-);
-
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const searchStack = createStackNavigator(
@@ -45,7 +25,7 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     },
     commercesList: {
@@ -76,7 +56,7 @@ const calendarStack = createStackNavigator(
       screen: GeoLocation,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -89,7 +69,7 @@ const favoritesStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
@@ -103,7 +83,7 @@ const profileStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft:
-          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
+          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
       })
     }
   },
