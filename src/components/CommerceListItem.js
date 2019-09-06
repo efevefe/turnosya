@@ -12,8 +12,9 @@ class CommerceListItem extends Component {
   state = { favorite: false };
 
   componentWillMount() {
+    console.log(this.props.commerce.objectID)
     this.setState({
-      favorite: this.props.favoriteCommerces.includes(this.props.commerce.id)
+      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
     });
   }
 
@@ -50,7 +51,7 @@ class CommerceListItem extends Component {
               />
             }
             buttonStyle={{ padding: 0 }}
-            onPress={() => this.onFavoritePress(this.props.commerce.id)}
+            onPress={() => this.onFavoritePress(this.props.commerce.objectID)}
           />
         }
         onPress={() =>
@@ -66,6 +67,7 @@ class CommerceListItem extends Component {
 
 const mapStateToProps = state => {
   const { favoriteCommerces } = state.commercesList;
+  
   return {
     favoriteCommerces
   };

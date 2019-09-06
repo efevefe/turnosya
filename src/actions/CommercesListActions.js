@@ -7,7 +7,8 @@ import {
   ONLY_FAVORITE_COMMERCES_READ,
   ON_REFINEMENT_UPDATE,
   ON_AREAS_READING,
-  ON_AREAS_SEARCH_READ
+  ON_AREAS_SEARCH_READ,
+  ONLY_FAVORITE_COMMERCES_READING
 } from './types';
 
 export const refinementUpdate = refinement => {
@@ -70,15 +71,16 @@ export const readOnlyFavoriteCommerces = () => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    dispatch({ type: ON_COMMERCES_LIST_READING });
-    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).get().then(
+    dispatch({type:ONLY_FAVORITE_COMMERCES_READING});
+    
+      db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).get().then(
       snapShot => {
         var favoritesCommerce = [];
         snapShot.forEach(doc => {
           db.doc(`Commerces/${doc.id}`)
             .get()
             .then(commerce => {
-              favoritesCommerce.push({ ...commerce.data(), id: commerce.id });
+              favoritesCommerce.push({ ...commerce.data(), objectID: commerce.id });
               dispatch({
                 type: ONLY_FAVORITE_COMMERCES_READ,
                 payload: favoritesCommerce

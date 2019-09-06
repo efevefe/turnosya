@@ -99,6 +99,8 @@ export const FAVORITE_COMMERCE_DELETED = 'favorite_commerce_deleted';
 export const FAVORITE_COMMERCE_ADDED = 'favorite_commerce_added';
 export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
 export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
+export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
+
 
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';

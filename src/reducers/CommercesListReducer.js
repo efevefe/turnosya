@@ -3,6 +3,7 @@ import {
   FAVORITE_COMMERCE_ADDED,
   FAVORITE_COMMERCES_READ,
   ONLY_FAVORITE_COMMERCES_READ,
+  ONLY_FAVORITE_COMMERCES_READING,
   ON_REFINEMENT_UPDATE,
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ
@@ -32,7 +33,10 @@ export default (state = INITIAL_STATE, action) => {
     case FAVORITE_COMMERCE_ADDED:
       var favorites = state.favoriteCommerces.concat(action.payload);
       return { ...state, favoriteCommerces: favorites };
+    case ONLY_FAVORITE_COMMERCES_READING:
+      return {...state , loading:true}
     case FAVORITE_COMMERCES_READ:
+      console.log(action.payload)
       return { ...state, favoriteCommerces: action.payload };
     case ONLY_FAVORITE_COMMERCES_READ:
       return {
