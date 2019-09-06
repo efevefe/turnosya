@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton } from './common';
 import getEnvVars from '../../environment';
-import { refinementUpdate } from '../actions';
+import { refinementUpdate, readFavoriteCommerces } from '../actions';
 import ConnectedSearch from './CommercesList.SearchConnection';
 import ConnectedHits from './CommercesList.SearchHits';
 import SearchBox from './CommercesList.SearchBox';
@@ -20,7 +20,9 @@ class CommercesList extends Component {
       areaName: props.navigation.state.params.areaName,
       searchVisible: false
     };
-
+    
+    props.readFavoriteCommerces();
+    
     props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
@@ -98,11 +100,11 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { refinement } = state.commercesList;
-  return { refinement };
+  const { refinement ,favoriteCommerces} = state.commercesList;
+  return { refinement,favoriteCommerces };
 };
 
 export default connect(
   mapStateToProps,
-  { refinementUpdate }
+  { refinementUpdate,readFavoriteCommerces }
 )(CommercesList);
