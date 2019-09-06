@@ -11,7 +11,7 @@ export const refinementUpdate = refinement => {
 };
 
 export const areasRead = () => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_AREAS_READING });
@@ -19,7 +19,7 @@ export const areasRead = () => {
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .onSnapshot(snapShot => {
-        var areas = [];
+        const areas = [];
         snapShot.forEach(doc => areas.push({ ...doc.data(), id: doc.id }));
         dispatch({ type: ON_AREAS_SEARCH_READ, payload: areas });
       });

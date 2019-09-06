@@ -1,16 +1,30 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { IconButton } from './common';
+import { IconButton, Spinner, EmptyList } from './common';
 import getEnvVars from '../../environment';
 import { refinementUpdate } from '../actions';
 import ConnectedSearch from './CommercesList.SearchConnection';
 import ConnectedHits from './CommercesList.SearchHits';
 import SearchBox from './CommercesList.SearchBox';
 
+import { connectStateResults } from 'react-instantsearch/connectors';
+
 const { algoliaConfig } = getEnvVars();
 const { appId, searchApiKey, commercesIndex } = algoliaConfig;
+
+class StateResults extends Component {
+  render() {
+    return this.props.isSearchStalled ? (
+      <View style={{ alignSelf: 'center' }}>
+        <Spinner />
+      </View>
+    ) : null;
+  }
+}
+
+const ConnectedStateResults = connectStateResults(StateResults);
 
 class CommercesList extends Component {
   constructor(props) {
@@ -38,10 +52,7 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton
-          icon="md-search"
-          onPress={this.onSearchPress}
-        />
+        <IconButton icon="md-search" onPress={this.onSearchPress} />
         <IconButton
           icon="ios-funnel"
           onPress={() => console.log('filtros de busqueda')}
@@ -52,8 +63,8 @@ class CommercesList extends Component {
 
   onSearchPress = async () => {
     this.props.navigation.setParams({ header: null });
-    await this.setState({ searchVisible: true });
-    this.search.focus();
+    this.setState({ searchVisible: true });
+    //this.search.focus();
   };
 
   onCancelPress = () => {
@@ -65,14 +76,15 @@ class CommercesList extends Component {
     if (this.state.searchVisible) {
       return (
         <SearchBox
-          ref={search => (this.search = search)}
+          autoFocus={true}
+          showLoadingIndicator
+          //ref={search => (this.search = search)}
           onCancel={this.onCancelPress}
         />
       );
     }
   };
 
-  // No me gusta como quedó esto... Ya veré bien como lo cambio mi prioridad era mergear de una vez
   enableConfiguration = () => {
     return this.state.areaName ? (
       <Configure filters={`areaName:\'${this.state.areaName}\'`} />
@@ -82,15 +94,16 @@ class CommercesList extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        {this.renderAlgoliaSearchBar()}
         <InstantSearch
           appId={appId}
           apiKey={searchApiKey}
           indexName={commercesIndex}
+          stalledSearchDelay={0}
         >
+          {this.renderAlgoliaSearchBar()}
           {this.enableConfiguration()}
-          <ConnectedSearch />
           <ConnectedHits />
+          <ConnectedStateResults />
         </InstantSearch>
       </View>
     );

@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { connect } from 'react-redux';
+import { connectSearchBox } from 'react-instantsearch/connectors';
 import { Constants } from 'expo';
-import { refinementUpdate } from '../actions';
+import PropTypes from 'prop-types';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
 
 class SearchBox extends Component {
   render() {
     return (
-      <View
-        style={styles.mainContainer}
-      >
+      <View style={styles.mainContainer}>
         <SearchBar
           {...this.props}
           platform="android"
           placeholder="Buscar negocios..."
-          onChangeText={text => this.props.refinementUpdate(text)}
+          onChangeText={text => this.props.refine(text)}
           onCancel={this.props.onCancel}
-          value={this.props.refinement}
+          value={this.props.currentRefinement}
           containerStyle={styles.searchBarContainer}
           inputStyle={{ marginTop: 1 }}
           searchIcon={{ color: MAIN_COLOR }}
@@ -31,6 +29,11 @@ class SearchBox extends Component {
     );
   }
 }
+
+SearchBar.propTypes = {
+  refine: PropTypes.func.isRequired,
+  currentRefinement: PropTypes.string
+};
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -57,12 +60,6 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  const { refinement } = state.commercesList;
-  return { refinement };
-};
+const ConnectedSearchBox = connectSearchBox(SearchBox);
 
-export default connect(
-  mapStateToProps,
-  { refinementUpdate }
-)(SearchBox);
+export default ConnectedSearchBox;

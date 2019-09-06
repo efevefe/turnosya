@@ -20,7 +20,7 @@ class Hits extends Component {
       />
     ) : (
       <View style={{ alignSelf: 'center' }}>
-        <EmptyList title='No se encontraron negocios' />
+        <EmptyList title="No se encontraron negocios" />
       </View>
     );
   }
