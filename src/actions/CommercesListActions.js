@@ -57,13 +57,14 @@ export const readFavoriteCommerces = () => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).onSnapshot(
-      snapShot => {
+    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
+      .get()
+      .then(snapshot => {
         var favorites = [];
-        snapShot.forEach(doc => favorites.push(doc.id));
+        snapshot.forEach(doc => favorites.push(doc.id));
         dispatch({ type: FAVORITE_COMMERCES_READ, payload: favorites });
       }
-    );
+      );
   };
 };
 
@@ -71,23 +72,29 @@ export const readOnlyFavoriteCommerces = () => {
   var db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
-    dispatch({type:ONLY_FAVORITE_COMMERCES_READING});
-    
-      db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).get().then(
-      snapShot => {
-        var favoritesCommerce = [];
-        snapShot.forEach(doc => {
+    dispatch({ type: ONLY_FAVORITE_COMMERCES_READING });
+
+    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
+      .get()
+      .then(snapshot => {
+        var favoriteCommerces = [];
+        var onlyFavoriteCommerces = [];
+
+        snapshot.forEach(doc => {
+          favoriteCommerces.push(doc.id);
+
           db.doc(`Commerces/${doc.id}`)
             .get()
             .then(commerce => {
-              favoritesCommerce.push({ ...commerce.data(), objectID: commerce.id });
-              dispatch({
-                type: ONLY_FAVORITE_COMMERCES_READ,
-                payload: favoritesCommerce
-              });
+              const { profilePicture, name, area, address } = commerce.data();
+              onlyFavoriteCommerces.push({ profilePicture, name, address, areaName: area.name, objectID: commerce.id });
             });
         });
-      }
-    );
+
+        dispatch({
+          type: ONLY_FAVORITE_COMMERCES_READ,
+          payload: { favoriteCommerces, onlyFavoriteCommerces }
+        });
+      });
   };
 };

@@ -11,11 +11,18 @@ import { connect } from 'react-redux';
 class CommerceListItem extends Component {
   state = { favorite: false };
 
-  componentWillMount() {
-    console.log(this.props.commerce.objectID)
+  componentDidMount() {
     this.setState({
       favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.favoriteCommerces !== this.props.favoriteCommerces) {
+      this.setState({
+        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+      });
+    }
   }
 
   onFavoritePress = commerceId => {
@@ -67,7 +74,7 @@ class CommerceListItem extends Component {
 
 const mapStateToProps = state => {
   const { favoriteCommerces } = state.commercesList;
-  
+
   return {
     favoriteCommerces
   };

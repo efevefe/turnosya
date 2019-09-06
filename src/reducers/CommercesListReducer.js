@@ -34,14 +34,13 @@ export default (state = INITIAL_STATE, action) => {
       var favorites = state.favoriteCommerces.concat(action.payload);
       return { ...state, favoriteCommerces: favorites };
     case ONLY_FAVORITE_COMMERCES_READING:
-      return {...state , loading:true}
+      return {...state , loading: true };
     case FAVORITE_COMMERCES_READ:
-      console.log(action.payload)
       return { ...state, favoriteCommerces: action.payload };
     case ONLY_FAVORITE_COMMERCES_READ:
       return {
         ...state,
-        onlyFavoriteCommerces: action.payload,
+        ...action.payload,
         loading: false
       };
     case ON_AREAS_SEARCH_READ:

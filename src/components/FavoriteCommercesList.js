@@ -3,12 +3,11 @@ import { FlatList, View , RefreshControl} from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
-import { readOnlyFavoriteCommerces,readFavoriteCommerces } from '../actions';
+import { readOnlyFavoriteCommerces } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class FavoriteCommercesList extends Component {
   componentWillMount() {
-    this.props.readFavoriteCommerces();
     this.props.readOnlyFavoriteCommerces();
   }
 
@@ -30,8 +29,7 @@ class FavoriteCommercesList extends Component {
         <FlatList
           data={this.props.onlyFavoriteCommerces}
           renderItem={this.renderRow.bind(this)}
-          keyExtractor={commerce => commerce.id}
-          extraData={this.props}
+          keyExtractor={commerce => commerce.objectID}
           refreshControl={
             <RefreshControl
               refreshing={this.props.refreshing}
@@ -47,13 +45,13 @@ class FavoriteCommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { onlyFavoriteCommerces, loading , favoriteCommerces} = state.commercesList;
-  return { onlyFavoriteCommerces, loading ,favoriteCommerces};
+  const { onlyFavoriteCommerces, loading, favoriteCommerces} = state.commercesList;
+  return { onlyFavoriteCommerces, loading, favoriteCommerces};
 };
 
 export default connect(
   mapStateToProps,
   {
-    readOnlyFavoriteCommerces,readFavoriteCommerces
+    readOnlyFavoriteCommerces
   }
 )(FavoriteCommercesList);
