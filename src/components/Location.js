@@ -37,7 +37,7 @@ export default class App extends Component {
             errorMessage: 'GPSSS'
           });
           AlertIOS.alert(
-            'Activa la localizacion para tener una mejor experiencia',
+            'Activa la localización para tener una mejor experiencia',
             'Dirigete a Ajustes > Privacidad > Localizacion',
             [
               {
