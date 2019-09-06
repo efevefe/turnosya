@@ -52,7 +52,7 @@ export const deleteFavoriteCommerce = commerceId => {
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .delete()
-      .then(dispatch({ type: FAVORITE_COMMERCE_DELETED, payload: commerceId }))
+      .then(() => dispatch({ type: FAVORITE_COMMERCE_DELETED, payload: commerceId }))
       .catch(err => console.log(err));
   };
 };
@@ -63,7 +63,7 @@ export const registerFavoriteCommerce = commerceId => {
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .set({})
-      .then(dispatch({ type: FAVORITE_COMMERCE_ADDED, payload: commerceId }))
+      .then(() => dispatch({ type: FAVORITE_COMMERCE_ADDED, payload: commerceId }))
       .catch(err => console.log(err));
   };
 };
@@ -87,7 +87,7 @@ export const readOnlyFavoriteCommerces = () => {
   const { currentUser } = firebase.auth();
   return dispatch => {
     dispatch({ type: ON_COMMERCES_LIST_READING });
-    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).onSnapshot(
+    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`).get().then(
       snapShot => {
         var favoritesCommerce = [];
         snapShot.forEach(doc => {

@@ -37,6 +37,10 @@ class CommercesList extends Component {
     if (prevProps.searching !== this.props.searching) {
       this.props.navigation.setParams({ title: this.renderSearchBar() });
     }
+    if(prevProps.favoriteCommerces !== this.props.favoriteCommerces)
+    {
+      this.forceUpdate()
+    }
   }
 
   renderFiltersButton = () => {
@@ -119,7 +123,7 @@ class CommercesList extends Component {
           data={this.props.commerces}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={commerce => commerce.id}
-          extraData={this.props.commerces}
+          extraData={this.props}
         />
       </View>
     );
@@ -127,8 +131,8 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { commerces, loading, searching } = state.commercesList;
-  return { commerces, loading, searching };
+  const { commerces, loading, searching ,favoriteCommerces} = state.commercesList;
+  return { commerces, loading, searching ,favoriteCommerces};
 };
 
 export default connect(
