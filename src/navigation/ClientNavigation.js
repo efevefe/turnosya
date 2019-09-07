@@ -14,7 +14,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
-import GeoLocation from '../components/Location';
+import { LocationMessages } from '../components/common';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
@@ -25,7 +25,9 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     commercesList: {
@@ -53,10 +55,12 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: GeoLocation,
+      screen: LocationMessages,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -69,7 +73,9 @@ const favoritesStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -82,8 +88,9 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },

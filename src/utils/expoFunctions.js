@@ -1,6 +1,5 @@
-import { Platform, Linking, AlertIOS } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import { Permissions, Location, IntentLauncherAndroid } from 'expo';
-import { stringFormatDays } from './functions';
 
 const LocationStatus = {
   permissionsAllowed: '1',
