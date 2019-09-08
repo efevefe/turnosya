@@ -4,27 +4,13 @@ import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton, Spinner, EmptyList } from './common';
 import getEnvVars from '../../environment';
-import { refinementUpdate } from '../actions';
-import ConnectedSearch from './CommercesList.SearchConnection';
+import { refinementUpdate, commerceSearching } from '../actions';
 import ConnectedHits from './CommercesList.SearchHits';
-import SearchBox from './CommercesList.SearchBox';
-
-import { connectStateResults } from 'react-instantsearch/connectors';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedStateResults from './CommercesList.StateResults';
 
 const { algoliaConfig } = getEnvVars();
 const { appId, searchApiKey, commercesIndex } = algoliaConfig;
-
-class StateResults extends Component {
-  render() {
-    return this.props.isSearchStalled ? (
-      <View style={{ alignSelf: 'center' }}>
-        <Spinner />
-      </View>
-    ) : null;
-  }
-}
-
-const ConnectedStateResults = connectStateResults(StateResults);
 
 class CommercesList extends Component {
   constructor(props) {
@@ -75,7 +61,7 @@ class CommercesList extends Component {
   renderAlgoliaSearchBar = () => {
     if (this.state.searchVisible) {
       return (
-        <SearchBox
+        <ConnectedSearchBox
           autoFocus={true}
           showLoadingIndicator
           //ref={search => (this.search = search)}
@@ -102,8 +88,8 @@ class CommercesList extends Component {
         >
           {this.renderAlgoliaSearchBar()}
           {this.enableConfiguration()}
-          <ConnectedHits />
           <ConnectedStateResults />
+          <ConnectedHits />
         </InstantSearch>
       </View>
     );

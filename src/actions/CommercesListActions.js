@@ -3,11 +3,16 @@ import 'firebase/firestore';
 import {
   ON_REFINEMENT_UPDATE,
   ON_AREAS_READING,
-  ON_AREAS_SEARCH_READ
+  ON_AREAS_SEARCH_READ,
+  ON_COMMERCE_SEARCHING
 } from './types';
 
 export const refinementUpdate = refinement => {
   return { type: ON_REFINEMENT_UPDATE, payload: refinement };
+};
+
+export const commerceSearching = isSearching => {
+  return { type: ON_COMMERCE_SEARCHING, payload: isSearching };
 };
 
 export const areasRead = () => {
