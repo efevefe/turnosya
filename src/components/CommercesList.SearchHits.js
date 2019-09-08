@@ -21,14 +21,10 @@ class Hits extends Component {
         initialNumToRender={20}
       />
     ) : this.props.searching ? (
-      <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-        <Spinner />
-      </View>
+      <Spinner style={{ position: 'relative' }} />
     ) : (
-      <View style={{ alignSelf: 'center' }}>
-        <EmptyList title="No se encontraron negocios" />
-      </View>
-    );
+          <EmptyList title="No se encontraron negocios" />
+        );
   }
 }
 

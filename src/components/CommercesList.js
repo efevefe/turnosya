@@ -79,19 +79,21 @@ class CommercesList extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <InstantSearch
-          appId={appId}
-          apiKey={searchApiKey}
-          indexName={commercesIndex}
-          stalledSearchDelay={0}
-        >
-          {this.renderAlgoliaSearchBar()}
-          {this.enableConfiguration()}
-          <ConnectedStateResults />
-          <ConnectedHits />
-        </InstantSearch>
-      </View>
+      <InstantSearch
+        appId={appId}
+        apiKey={searchApiKey}
+        indexName={commercesIndex}
+        stalledSearchDelay={0}
+        root={{
+          Root: View, // component to render as the root of InstantSearch  
+          props: { style: { flex: 1 } } // props that will be applied on the root component aka View
+        }}
+      >
+        {this.renderAlgoliaSearchBar()}
+        {this.enableConfiguration()}
+        <ConnectedStateResults />
+        <ConnectedHits />
+      </InstantSearch>
     );
   }
 }
