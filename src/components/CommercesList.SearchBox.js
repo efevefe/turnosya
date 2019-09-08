@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connectSearchBox } from 'react-instantsearch/connectors';
+import { connect } from 'react-redux';
 import { Constants } from 'expo';
 import PropTypes from 'prop-types';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
@@ -24,6 +25,7 @@ class SearchBox extends Component {
           clearIcon={{ color: MAIN_COLOR }}
           loadingProps={{ color: MAIN_COLOR }}
           selectionColor={MAIN_COLOR}
+          showLoading={this.props.searching}
         />
       </View>
     );
@@ -60,6 +62,14 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = state => {
+  const { searching } = state.commercesList;
+  return { searching };
+};
+
 const ConnectedSearchBox = connectSearchBox(SearchBox);
 
-export default ConnectedSearchBox;
+export default connect(
+  mapStateToProps,
+  {}
+)(ConnectedSearchBox);
