@@ -14,7 +14,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
-import { LocationMessages } from '../components/common';
+import App from '../components/Location';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
@@ -55,7 +55,7 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: LocationMessages,
+      screen: App,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (

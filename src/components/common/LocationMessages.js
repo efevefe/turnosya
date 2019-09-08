@@ -1,87 +1,133 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Platform } from 'react-native';
-import { Constants } from 'expo';
+import { Platform, View, Text } from 'react-native';
 import {
-  getCurrentPosition,
-  getPermissionLocationStatus,
   openGPSAndroid,
-  openSettingIos
+  openSettingIos,
+  askPermissionLocation
 } from '../../utils';
+import { Divider } from 'react-native-elements';
+import { Menu, MenuItem, Button } from '../common';
 
 class LocationMessages extends Component {
   state = {
-    permisionStatus: null,
-    location: null
+    location: null,
+    modal: true,
+    title: null
   };
 
-  async componentDidMount() {
-    this.setState({ permisionStatus: await getPermissionLocationStatus() });
-  }
+  renderTitle = () => {
+    switch (this.props.permissionStatus) {
+      case '1':
+        return this.setState({ modal: false, title: 'algo' });
+      case '2':
+        return this.setState({ title: 'Aceptate los permisos perri.' });
+      case '3':
+        return this.setState({
+          title: 'Prenda el GPS para una mejor búsqueda?'
+        });
+    }
+  };
 
-  renderLocation = () => {
-    let text;
+  renderItems = () => {
     const plat = Platform.OS;
     if (plat === 'ios') {
-      switch (this.state.permisionStatus) {
-        case '1':
-          // this.setState({ location: await getCurrentPosition() });
-          text = 'La localizacion es: jjj';
-          break;
+      switch (this.props.permissionStatus) {
         case '2':
-          openSettingIos();
-          text = 'los permisos no estas aceptados';
-          break;
+          return (
+            <View>
+              <MenuItem
+                title="Ir a Configuraciones"
+                // icon=""
+                onPress={() => {
+                  openSettingIos();
+                  this.setState({ modal: false });
+                }}
+              />
+              <Divider />
+              <MenuItem
+                title="Cancelar"
+                // icon=""
+                onPress={() => this.setState({ modal: false })}
+              />
+            </View>
+          );
         case '3':
-          text = 'prende el gps';
-          break;
-        default:
-          text = 'Waiting..';
-          break;
+          return (
+            <View>
+              <MenuItem
+                title="Ir a Configuraciones"
+                // icon=""
+                onPress={() => {
+                  //hay que ver como abrimos el GPS o poner los distintos menuItem
+                  this.setState({ modal: false });
+                }}
+              />
+              <Divider />
+              <MenuItem
+                title="Cancelar"
+                // icon=""
+                onPress={() => this.setState({ modal: false })}
+              />
+            </View>
+          );
       }
     } else {
-      switch (this.state.permisionStatus) {
-        case '1':
-          // this.setState({ location: await getCurrentPosition() });
-          text = 'La localizacion es: jjj';
-          break;
+      switch (this.props.permissionStatus) {
         case '2':
-          text = 'los permisos no estas aceptados';
-          break;
+          return (
+            <View>
+              <MenuItem
+                title="Apreta para aceptar los permisos perri"
+                // icon=""
+                onPress={() => {
+                  askPermissionLocation();
+                  this.setState({ modal: false });
+                }}
+              />
+              <Divider />
+              <MenuItem
+                title="Cancelar"
+                // icon=""
+                onPress={() => this.setState({ modal: false })}
+              />
+            </View>
+          );
         case '3':
-          // openGPSAndroid();
-          text = 'prende el gps';
-          break;
-        default:
-          text = 'Waiting..';
-          break;
+          return (
+            <View>
+              <MenuItem
+                title="Ir a setings"
+                // icon=""
+                onPress={() => {
+                  openGPSAndroid();
+                  this.setState({ modal: false });
+                }}
+              />
+              <Divider />
+              <MenuItem
+                title="Cancelar"
+                // icon=""
+                onPress={() => this.setState({ modal: false })}
+              />
+            </View>
+          );
       }
     }
-
-    return text;
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>{this.renderLocation()}</Text>
+      <View>
+        <Menu
+          title={this.state.title || this.renderTitle()}
+          onBackdropPress={() => this.setState({ modal: false })}
+          isVisible={this.state.modal}
+        >
+          {this.renderItems()}
+        </Menu>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1'
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    textAlign: 'center'
-  }
-});
 
 export { LocationMessages };
