@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { FlatList, View , RefreshControl} from 'react-native';
+import { FlatList, View, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
-import { Spinner } from './common';
+import { Spinner, EmptyList } from './common';
 import CommerceListItem from './CommerceListItem';
 import { readOnlyFavoriteCommerces } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class FavoriteCommercesList extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.props.readOnlyFavoriteCommerces();
   }
 
@@ -18,35 +18,44 @@ class FavoriteCommercesList extends Component {
   }
 
   onRefresh = () => {
-    this.props.readOnlyFavoriteCommerces();
+    return (
+      <RefreshControl
+        refreshing={this.props.refreshing}
+        onRefresh={() => this.props.readOnlyFavoriteCommerces()}
+        colors={[MAIN_COLOR]}
+        tintColor={MAIN_COLOR}
+      />
+    );
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
+    const { onlyFavoriteCommerces, loading } = this.props;
 
-    return (
-      <View style={{ flex: 1 }}>
+    if (loading) return <Spinner />;
+
+    if (onlyFavoriteCommerces.length > 0) {
+      return (
         <FlatList
-          data={this.props.onlyFavoriteCommerces}
+          data={onlyFavoriteCommerces}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={commerce => commerce.objectID}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.props.refreshing}
-              onRefresh ={this.onRefresh}
-              colors={[MAIN_COLOR]}
-              tintColor={MAIN_COLOR}
-            />
-          }
+          refreshControl={this.onRefresh()}
         />
-      </View>
+      );
+    }
+
+    return (
+      <EmptyList
+        title='No tenes favoritos'
+        onRefresh={this.onRefresh()}
+      />
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { onlyFavoriteCommerces, loading, favoriteCommerces} = state.commercesList;
-  return { onlyFavoriteCommerces, loading, favoriteCommerces};
+  const { onlyFavoriteCommerces, loading, favoriteCommerces } = state.commercesList;
+  return { onlyFavoriteCommerces, loading, favoriteCommerces };
 };
 
 export default connect(
