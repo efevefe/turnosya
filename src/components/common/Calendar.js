@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { Dimensions } from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
-
-//const height = Math.round((Dimensions.get('window').width / Dimensions.get('window').height) * 230);
 
 class Calendar extends Component {
   render() {
