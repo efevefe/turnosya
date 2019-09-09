@@ -19,9 +19,9 @@ class LocationMessages extends Component {
     switch (this.props.permissionStatus) {
       case '1':
         return this.setState({ modal: false, title: 'algo' });
-      case '2':
+      case 'permissionsDenied':
         return this.setState({ title: 'Aceptate los permisos perri.' });
-      case '3':
+      case 'permissionsAllowedWithGPSOff':
         return this.setState({
           title: 'Prenda el GPS para una mejor búsqueda?'
         });
@@ -32,7 +32,7 @@ class LocationMessages extends Component {
     const plat = Platform.OS;
     if (plat === 'ios') {
       switch (this.props.permissionStatus) {
-        case '2':
+        case 'permissionsDenied':
           return (
             <View>
               <MenuItem
@@ -51,29 +51,44 @@ class LocationMessages extends Component {
               />
             </View>
           );
-        case '3':
+        case 'permissionsAllowedWithGPSOff':
           return (
             <View>
+              <Divider />
               <MenuItem
-                title="Ir a Configuraciones"
-                // icon=""
-                onPress={() => {
-                  //hay que ver como abrimos el GPS o poner los distintos menuItem
-                  this.setState({ modal: false });
-                }}
+                title="1. Abre la aplicación Ajustes"
+                disabled
+                disabledTitleStyle={{ color: 'black' }}
+              />
+              <MenuItem
+                title="2. Selecciona Privacidad"
+                disabled
+                disabledTitleStyle={{ color: 'black' }}
+              />
+              <MenuItem
+                title="3. Selecciona Localización"
+                disabled
+                disabledTitleStyle={{ color: 'black' }}
+              />
+              <MenuItem
+                title="4. Activa Localización"
+                disabled
+                disabledTitleStyle={{ color: 'black' }}
               />
               <Divider />
               <MenuItem
-                title="Cancelar"
-                // icon=""
-                onPress={() => this.setState({ modal: false })}
+                title="Aceptar"
+                onPress={() => {
+                  this.setState({ modal: false });
+                }}
+                color={'#0339B1'}
               />
             </View>
           );
       }
     } else {
       switch (this.props.permissionStatus) {
-        case '2':
+        case 'permissionsDenied':
           return (
             <View>
               <MenuItem
@@ -92,7 +107,7 @@ class LocationMessages extends Component {
               />
             </View>
           );
-        case '3':
+        case 'permissionsAllowedWithGPSOff':
           return (
             <View>
               <MenuItem

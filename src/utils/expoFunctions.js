@@ -2,13 +2,16 @@ import { Platform, Linking } from 'react-native';
 import { Permissions, Location, IntentLauncherAndroid } from 'expo';
 
 const LocationStatus = {
-  permissionsAllowed: '1',
-  permissionsDenied: '2',
-  permissionsAllowedWithGPSOff: '3'
+  permissionsAllowed: 'permissionsAllowed',
+  permissionsDenied: 'permissionsDenied',
+  permissionsAllowedWithGPSOff: 'permissionsAllowedWithGPSOff'
 };
 
 export const getPermissionLocationStatus = async () => {
   const { status } = await getPermissionLocation();
+  // const { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+  console.log(status);
 
   return Platform.OS === 'ios'
     ? getLocationIos(status)
@@ -40,9 +43,7 @@ const getLocationIos = async status => {
 };
 
 export const getCurrentPosition = async () => {
-  return await Location.getCurrentPositionAsync({
-    accuracy: Location.Accuracy.High
-  });
+  return await Location.getCurrentPositionAsync({});
 };
 
 export const openGPSAndroid = () => {
