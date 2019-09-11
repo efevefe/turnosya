@@ -11,8 +11,6 @@ export const getPermissionLocationStatus = async () => {
   const { status } = await getPermissionLocation();
   // const { status } = await Permissions.askAsync(Permissions.LOCATION);
 
-  console.log(status);
-
   return Platform.OS === 'ios'
     ? getLocationIos(status)
     : getLocationAndroid(status);

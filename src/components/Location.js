@@ -25,27 +25,20 @@ class App extends React.Component {
   };
 
   render() {
-    if (this.state.permissionStatus !== 'permissionsAllowed') {
+    if (this.state.permissionStatus) {
       return (
         <View>
           <LocationMessages permissionStatus={this.state.permissionStatus} />
-          <Button
-            title="Hacer algun cambio en el state"
-            onPress={() =>
-              this.setState({ location: this.state.location + ' gfdsa' })
-            }
-          />
-          <Text>{this.state.location}</Text>
         </View>
       );
     } else {
       return (
         <View>
-          <Button
+          {/* <Button
             title="Hacer algun cambio en el state"
             onPress={() => this.getLocation()}
           />
-          <Text>{JSON.stringify(this.state.location)}</Text>
+          <Text>{JSON.stringify(this.state.location)}</Text> */}
         </View>
       );
     }

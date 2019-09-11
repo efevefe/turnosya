@@ -3,7 +3,8 @@ import { Platform, View, Text } from 'react-native';
 import {
   openGPSAndroid,
   openSettingIos,
-  askPermissionLocation
+  askPermissionLocation,
+  getCurrentPosition
 } from '../../utils';
 import { Divider } from 'react-native-elements';
 import { Menu, MenuItem, Button } from '../common';
@@ -17,7 +18,7 @@ class LocationMessages extends Component {
 
   renderTitle = () => {
     switch (this.props.permissionStatus) {
-      case '1':
+      case 'permissionsAllowed':
         return this.setState({ modal: false, title: 'algo' });
       case 'permissionsDenied':
         return this.setState({ title: 'Aceptate los permisos perri.' });
@@ -26,6 +27,11 @@ class LocationMessages extends Component {
           title: 'Prenda el GPS para una mejor búsqueda?'
         });
     }
+  };
+
+  getLocation = async () => {
+    let location = await getCurrentPosition();
+    this.setState({ location });
   };
 
   renderItems = () => {
@@ -75,12 +81,13 @@ class LocationMessages extends Component {
                 disabled
                 disabledTitleStyle={{ color: 'black' }}
               />
-              <Divider />
               <MenuItem
                 title="Aceptar"
                 onPress={() => {
                   this.setState({ modal: false });
                 }}
+                titleStyle={{ textAlign: 'right', fontSize: 15 }}
+                buttonStyle={{ justifyContent: 'flex-end', paddingRight: 0 }}
                 color={'#0339B1'}
               />
             </View>
@@ -131,17 +138,30 @@ class LocationMessages extends Component {
   };
 
   render() {
-    return (
-      <View>
-        <Menu
-          title={this.state.title || this.renderTitle()}
-          onBackdropPress={() => this.setState({ modal: false })}
-          isVisible={this.state.modal}
-        >
-          {this.renderItems()}
-        </Menu>
-      </View>
-    );
+    if (this.props.permissionStatus === 'permissionsAllowed') {
+      this.getLocation();
+      return (
+        <View>
+          {/* <Button
+            title="Hacer algun cambio en el state"
+            onPress={() => this.getLocation()}
+          /> */}
+          <Text>{JSON.stringify(this.state.location)}</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <Menu
+            title={this.state.title || this.renderTitle()}
+            onBackdropPress={() => this.setState({ modal: false })}
+            isVisible={this.state.modal}
+          >
+            {this.renderItems()}
+          </Menu>
+        </View>
+      );
+    }
   }
 }
 
