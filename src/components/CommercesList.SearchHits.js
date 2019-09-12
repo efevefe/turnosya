@@ -23,8 +23,8 @@ class Hits extends Component {
     ) : this.props.searching ? (
       <Spinner style={{ position: 'relative' }} />
     ) : (
-          <EmptyList title="No se encontraron negocios" />
-        );
+      <EmptyList title="No se encontraron negocios" />
+    );
   }
 }
 

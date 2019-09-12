@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { IconButton, Spinner, EmptyList } from './common';
+import { IconButton } from './common';
 import getEnvVars from '../../environment';
-import { refinementUpdate, commerceSearching } from '../actions';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
@@ -50,7 +49,6 @@ class CommercesList extends Component {
   onSearchPress = async () => {
     this.props.navigation.setParams({ header: null });
     this.setState({ searchVisible: true });
-    //this.search.focus();
   };
 
   onCancelPress = () => {
@@ -64,7 +62,6 @@ class CommercesList extends Component {
         <ConnectedSearchBox
           autoFocus={true}
           showLoadingIndicator
-          //ref={search => (this.search = search)}
           onCancel={this.onCancelPress}
         />
       );
@@ -85,7 +82,7 @@ class CommercesList extends Component {
         indexName={commercesIndex}
         stalledSearchDelay={0}
         root={{
-          Root: View, // component to render as the root of InstantSearch  
+          Root: View, // component to render as the root of InstantSearch
           props: { style: { flex: 1 } } // props that will be applied on the root component aka View
         }}
       >
@@ -105,5 +102,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { refinementUpdate }
+  {}
 )(CommercesList);
