@@ -24,7 +24,6 @@ class RegisterCommerce extends Component {
   }
 
   onButtonPressHandler() {
-    this.renderCuitErrorAsync();
     if (this.validateMinimumData()) {
       this.props.navigation.navigate('commerceRegisterProfile1');
     }

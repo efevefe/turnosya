@@ -8,6 +8,7 @@ import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
+import FavoriteCommercesList from '../components/FavoriteCommercesList';
 import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
 import {
   stackNavigationOptions,
@@ -65,7 +66,7 @@ const calendarStack = createStackNavigator(
 const favoritesStack = createStackNavigator(
   {
     favoritesList: {
-      screen: EmptyScreen,
+      screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
         headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />

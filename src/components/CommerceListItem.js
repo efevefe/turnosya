@@ -2,11 +2,35 @@ import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce,
+  readFavoriteCommerces
+} from '../actions/CommercesListActions';
+import { connect } from 'react-redux';
 class CommerceListItem extends Component {
   state = { favorite: false };
 
-  onFavoritePress = () => {
+  componentDidMount() {
+    this.setState({
+      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.favoriteCommerces !== this.props.favoriteCommerces) {
+      this.setState({
+        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+      });
+    }
+  }
+
+  onFavoritePress = commerceId => {
+    if (this.state.favorite) {
+      this.props.deleteFavoriteCommerce(commerceId);
+    } else {
+      this.props.registerFavoriteCommerce(commerceId);
+    }
     this.setState({ favorite: !this.state.favorite });
   };
 
@@ -34,7 +58,7 @@ class CommerceListItem extends Component {
               />
             }
             buttonStyle={{ padding: 0 }}
-            onPress={this.onFavoritePress}
+            onPress={() => this.onFavoritePress(this.props.commerce.objectID)}
           />
         }
         onPress={() =>
@@ -48,4 +72,16 @@ class CommerceListItem extends Component {
   }
 }
 
-export default withNavigation(CommerceListItem);
+const mapStateToProps = state => {
+  const { favoriteCommerces } = state.commercesList;
+
+  return {
+    favoriteCommerces
+  };
+};
+
+export default withNavigation(connect(
+  mapStateToProps,
+  { registerFavoriteCommerce, deleteFavoriteCommerce, readFavoriteCommerces }
+)(CommerceListItem));
+

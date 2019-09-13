@@ -94,6 +94,14 @@ export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
 
+// Favorites
+export const FAVORITE_COMMERCE_DELETED = 'favorite_commerce_deleted';
+export const FAVORITE_COMMERCE_ADDED = 'favorite_commerce_added';
+export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
+export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
+export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
+
+
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';

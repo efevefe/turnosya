@@ -19,7 +19,9 @@ class CommercesList extends Component {
       areaName: props.navigation.state.params.areaName,
       searchVisible: false
     };
-
+    
+    props.readFavoriteCommerces();
+    
     props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
@@ -96,8 +98,8 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { refinement } = state.commercesList;
-  return { refinement };
+  const { refinement ,favoriteCommerces} = state.commercesList;
+  return { refinement,favoriteCommerces };
 };
 
 export default connect(
