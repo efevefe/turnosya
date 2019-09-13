@@ -6,3 +6,29 @@ export const GREY_DISABLED = '#c4c4c4';
 
 // SIZES
 export const NAVIGATION_HEIGHT = 50;
+
+// VALUES
+export const MONTHS = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre'
+];
+
+export const DAYS = [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miercoles',
+    'Jueves',
+    'Viernes',
+    'Sabado'
+];

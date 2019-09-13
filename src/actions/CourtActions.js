@@ -12,7 +12,8 @@ import {
   COURT_UPDATE,
   COMMERCE_COURT_TYPES_READ,
   COMMERCE_COURT_TYPES_READING,
-  COMMERCE_COURT_TYPES_READ_FAIL
+  COMMERCE_COURT_TYPES_READ_FAIL,
+  COURT_READ_FAIL
 } from './types';
 
 export const onCourtValueChange = ({ prop, value }) => {
@@ -201,5 +202,28 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
         dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL })
       });
   }
+}
 
+export const onCommerceCourtsRead = ({ commerceId, courtTypeId }) => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: COURT_READING, payload: 'loading' });
+
+    db.collection(`Commerces/${commerceId}/Courts`)
+      .where('court', '==', courtTypeId)
+      .where('softDelete', '==', null)
+      .where('courtState', '==', true)
+      .orderBy('name', 'asc')
+      .get()
+      .then(snapshot => {
+        var courts = [];
+        snapshot.forEach(doc => courts.push({ id: doc.id, ...doc.data() }));
+        dispatch({ type: COURT_READ, payload: courts });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: COURT_READ_FAIL });
+      })
+  }
 }

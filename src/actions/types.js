@@ -42,6 +42,7 @@ export const COURT_FORM_SUBMIT = 'court_form_submit';
 export const COURT_EXISTED = 'court_existed';
 export const COURT_READING = 'court_reading';
 export const COURT_READ = 'court_read';
+export const COURT_READ_FAIL = 'court_read_fail';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
 
