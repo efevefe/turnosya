@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton } from './common';
 import getEnvVars from '../../environment';
-import { refinementUpdate, readFavoriteCommerces } from '../actions';
-import ConnectedSearch from './CommercesList.SearchConnection';
 import ConnectedHits from './CommercesList.SearchHits';
-import SearchBox from './CommercesList.SearchBox';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedStateResults from './CommercesList.StateResults';
 
 const { algoliaConfig } = getEnvVars();
 const { appId, searchApiKey, commercesIndex } = algoliaConfig;
@@ -40,10 +39,7 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton
-          icon="md-search"
-          onPress={this.onSearchPress}
-        />
+        <IconButton icon="md-search" onPress={this.onSearchPress} />
         <IconButton
           icon="ios-funnel"
           onPress={() => console.log('filtros de busqueda')}
@@ -54,8 +50,7 @@ class CommercesList extends Component {
 
   onSearchPress = async () => {
     this.props.navigation.setParams({ header: null });
-    await this.setState({ searchVisible: true });
-    this.search.focus();
+    this.setState({ searchVisible: true });
   };
 
   onCancelPress = () => {
@@ -66,15 +61,15 @@ class CommercesList extends Component {
   renderAlgoliaSearchBar = () => {
     if (this.state.searchVisible) {
       return (
-        <SearchBox
-          ref={search => (this.search = search)}
+        <ConnectedSearchBox
+          autoFocus={true}
+          showLoadingIndicator
           onCancel={this.onCancelPress}
         />
       );
     }
   };
 
-  // No me gusta como quedó esto... Ya veré bien como lo cambio mi prioridad era mergear de una vez
   enableConfiguration = () => {
     return this.state.areaName ? (
       <Configure filters={`areaName:\'${this.state.areaName}\'`} />
@@ -83,18 +78,21 @@ class CommercesList extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <InstantSearch
+        appId={appId}
+        apiKey={searchApiKey}
+        indexName={commercesIndex}
+        stalledSearchDelay={0}
+        root={{
+          Root: View, // component to render as the root of InstantSearch
+          props: { style: { flex: 1 } } // props that will be applied on the root component aka View
+        }}
+      >
         {this.renderAlgoliaSearchBar()}
-        <InstantSearch
-          appId={appId}
-          apiKey={searchApiKey}
-          indexName={commercesIndex}
-        >
-          {this.enableConfiguration()}
-          <ConnectedSearch />
-          <ConnectedHits />
-        </InstantSearch>
-      </View>
+        {this.enableConfiguration()}
+        <ConnectedStateResults />
+        <ConnectedHits />
+      </InstantSearch>
     );
   }
 }
@@ -106,5 +104,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { refinementUpdate,readFavoriteCommerces }
+  {}
 )(CommercesList);
