@@ -8,8 +8,7 @@ import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
 
-const { algoliaConfig } = getEnvVars();
-const { appId, searchApiKey, commercesIndex } = algoliaConfig;
+const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
   constructor(props) {
@@ -19,9 +18,9 @@ class CommercesList extends Component {
       areaName: props.navigation.state.params.areaName,
       searchVisible: false
     };
-    
+
     props.readFavoriteCommerces();
-    
+
     props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
@@ -98,8 +97,8 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { refinement ,favoriteCommerces} = state.commercesList;
-  return { refinement,favoriteCommerces };
+  const { refinement, favoriteCommerces } = state.commercesList;
+  return { refinement, favoriteCommerces };
 };
 
 export default connect(
