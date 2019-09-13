@@ -8,7 +8,7 @@ import CourtListReducer from './CourtListReducer';
 import CommerceDataReducer from './CommerceDataReducer';
 import CommercesListReducer from './CommercesListReducer';
 import ScheduleRegisterReducer from './ScheduleRegisterReducer';
-import CommerceCourtTypesReducer from './CommerceCourtTypesReducer'
+import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 
 export default combineReducers({
   auth: AuthReducer,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, Text } from 'react-native';
+import { Platform, View, Text, AppState } from 'react-native';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -12,16 +12,17 @@ import { Menu, MenuItem, Button } from '../common';
 class LocationMessages extends Component {
   state = {
     location: null,
-    modal: true,
     title: null
   };
 
   renderTitle = () => {
     switch (this.props.permissionStatus) {
       case 'permissionsAllowed':
-        return this.setState({ modal: false, title: 'algo' });
+        return this.setState({ title: 'algo' });
       case 'permissionsDenied':
-        return this.setState({ title: 'Aceptate los permisos perri.' });
+        return this.setState({
+          title: 'Aceptate los permisos perri.'
+        });
       case 'permissionsAllowedWithGPSOff':
         return this.setState({
           title: 'Prenda el GPS para una mejor búsqueda?'
@@ -46,14 +47,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   openSettingIos();
-                  this.setState({ modal: false });
+                  this.props.callback();
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.props.callback()}
               />
             </View>
           );
@@ -84,7 +85,7 @@ class LocationMessages extends Component {
               <MenuItem
                 title="Aceptar"
                 onPress={() => {
-                  this.setState({ modal: false });
+                  this.props.callback();
                 }}
                 titleStyle={{ textAlign: 'right', fontSize: 15 }}
                 buttonStyle={{ justifyContent: 'flex-end', paddingRight: 0 }}
@@ -103,14 +104,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   askPermissionLocation();
-                  this.setState({ modal: false });
+                  this.props.callback();
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.props.callback()}
               />
             </View>
           );
@@ -122,14 +123,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   openGPSAndroid();
-                  this.setState({ modal: false });
+                  this.props.callback();
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.props.callback()}
               />
             </View>
           );
@@ -139,14 +140,14 @@ class LocationMessages extends Component {
 
   render() {
     if (this.props.permissionStatus === 'permissionsAllowed') {
-      this.getLocation();
       return (
         <View>
           {/* <Button
             title="Hacer algun cambio en el state"
             onPress={() => this.getLocation()}
-          /> */}
-          <Text>{JSON.stringify(this.state.location)}</Text>
+          />
+          <Text>{JSON.stringify(this.state.location)}</Text> */}
+          {console.log(this.state.location)}
         </View>
       );
     } else {
@@ -154,8 +155,8 @@ class LocationMessages extends Component {
         <View>
           <Menu
             title={this.state.title || this.renderTitle()}
-            onBackdropPress={() => this.setState({ modal: false })}
-            isVisible={this.state.modal}
+            onBackdropPress={() => this.props.callback()}
+            isVisible={this.props.modal}
           >
             {this.renderItems()}
           </Menu>
