@@ -1,22 +1,51 @@
 import React, { Component } from 'react';
-import { Platform, View, Text, AppState } from 'react-native';
+import { Platform, View, AppState, Text } from 'react-native';
 import {
   openGPSAndroid,
   openSettingIos,
   askPermissionLocation,
-  getCurrentPosition
+  getCurrentPosition,
+  getPermissionLocationStatus
 } from '../../utils';
 import { Divider } from 'react-native-elements';
 import { Menu, MenuItem, Button } from '../common';
 
 class LocationMessages extends Component {
   state = {
-    location: null,
-    title: null
+    location: 'location sin setear',
+    title: null,
+    appState: AppState.currentState,
+    permissionStatus: null,
+    modal: false
+  };
+
+  async componentDidMount() {
+    this.setState({ permissionStatus: await getPermissionLocationStatus() });
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.appState !== this.state.appState &&
+      this.state.appState === 'active'
+    ) {
+      this.setState({
+        permissionStatus: await getPermissionLocationStatus(),
+        modal: true
+      });
+    }
+  }
+
+  _handleAppStateChange = nextAppState => {
+    this.setState({ appState: nextAppState });
   };
 
   renderTitle = () => {
-    switch (this.props.permissionStatus) {
+    switch (this.state.permissionStatus) {
       case 'permissionsAllowed':
         return this.setState({ title: 'algo' });
       case 'permissionsDenied':
@@ -31,14 +60,13 @@ class LocationMessages extends Component {
   };
 
   getLocation = async () => {
-    let location = await getCurrentPosition();
-    this.setState({ location });
+    this.setState({ location: await getCurrentPosition() });
   };
 
   renderItems = () => {
     const plat = Platform.OS;
     if (plat === 'ios') {
-      switch (this.props.permissionStatus) {
+      switch (this.state.permissionStatus) {
         case 'permissionsDenied':
           return (
             <View>
@@ -47,14 +75,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   openSettingIos();
-                  this.props.callback();
+                  this.setState({ modal: false });
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.props.callback()}
+                onPress={() => this.setState({ modal: false })}
               />
             </View>
           );
@@ -84,9 +112,7 @@ class LocationMessages extends Component {
               />
               <MenuItem
                 title="Aceptar"
-                onPress={() => {
-                  this.props.callback();
-                }}
+                onPress={() => this.setState({ modal: false })}
                 titleStyle={{ textAlign: 'right', fontSize: 15 }}
                 buttonStyle={{ justifyContent: 'flex-end', paddingRight: 0 }}
                 color={'#0339B1'}
@@ -95,7 +121,7 @@ class LocationMessages extends Component {
           );
       }
     } else {
-      switch (this.props.permissionStatus) {
+      switch (this.state.permissionStatus) {
         case 'permissionsDenied':
           return (
             <View>
@@ -104,14 +130,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   askPermissionLocation();
-                  this.props.callback();
+                  this.setState({ modal: false });
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.props.callback()}
+                onPress={() => this.setState({ modal: false })}
               />
             </View>
           );
@@ -123,14 +149,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   openGPSAndroid();
-                  this.props.callback();
+                  this.setState({ modal: false });
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.props.callback()}
+                onPress={() => this.setState({ modal: false })}
               />
             </View>
           );
@@ -139,15 +165,14 @@ class LocationMessages extends Component {
   };
 
   render() {
-    if (this.props.permissionStatus === 'permissionsAllowed') {
+    if (this.state.permissionStatus === 'permissionsAllowed') {
       return (
         <View>
-          {/* <Button
+          <Button
             title="Hacer algun cambio en el state"
             onPress={() => this.getLocation()}
           />
-          <Text>{JSON.stringify(this.state.location)}</Text> */}
-          {console.log(this.state.location)}
+          <Text>{JSON.stringify(this.state.location)}</Text>
         </View>
       );
     } else {
@@ -155,8 +180,8 @@ class LocationMessages extends Component {
         <View>
           <Menu
             title={this.state.title || this.renderTitle()}
-            onBackdropPress={() => this.props.callback()}
-            isVisible={this.props.modal}
+            onBackdropPress={() => this.setState({ modal: false })}
+            isVisible={this.state.modal}
           >
             {this.renderItems()}
           </Menu>
