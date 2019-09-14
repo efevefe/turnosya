@@ -13,14 +13,16 @@ import { Menu, MenuItem, Button } from '../common';
 class LocationMessages extends Component {
   state = {
     location: 'location sin setear',
-    title: null,
     appState: AppState.currentState,
     permissionStatus: null,
     modal: false
   };
 
   async componentDidMount() {
-    this.setState({ permissionStatus: await getPermissionLocationStatus() });
+    const permissionStatus = await getPermissionLocationStatus();
+    permissionStatus === 'permissionsAllowed'
+      ? this.setState({ permissionStatus })
+      : this.setState({ permissionStatus, modal: true });
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
@@ -40,23 +42,14 @@ class LocationMessages extends Component {
     }
   }
 
-  _handleAppStateChange = nextAppState => {
-    this.setState({ appState: nextAppState });
+  _handleAppStateChange = appState => {
+    this.setState({ appState });
   };
 
   renderTitle = () => {
-    switch (this.state.permissionStatus) {
-      case 'permissionsAllowed':
-        return this.setState({ title: 'algo' });
-      case 'permissionsDenied':
-        return this.setState({
-          title: 'Aceptate los permisos perri.'
-        });
-      case 'permissionsAllowedWithGPSOff':
-        return this.setState({
-          title: 'Prenda el GPS para una mejor búsqueda?'
-        });
-    }
+    return this.state.permissionStatus === 'permissionsDenied'
+      ? 'Aceptate los permisos perri.'
+      : 'Prenda el GPS para una mejor búsqueda?';
   };
 
   getLocation = async () => {
@@ -69,20 +62,19 @@ class LocationMessages extends Component {
       switch (this.state.permissionStatus) {
         case 'permissionsDenied':
           return (
-            <View>
+            <View style={{ flexDirection: 'row' }}>
+              <MenuItem
+                title="Cancelar"
+                // icon=""
+                onPress={() => this.closeModal()}
+              />
               <MenuItem
                 title="Ir a Configuraciones"
                 // icon=""
                 onPress={() => {
                   openSettingIos();
-                  this.setState({ modal: false });
+                  this.closeModal();
                 }}
-              />
-              <Divider />
-              <MenuItem
-                title="Cancelar"
-                // icon=""
-                onPress={() => this.setState({ modal: false })}
               />
             </View>
           );
@@ -112,7 +104,7 @@ class LocationMessages extends Component {
               />
               <MenuItem
                 title="Aceptar"
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.closeModal()}
                 titleStyle={{ textAlign: 'right', fontSize: 15 }}
                 buttonStyle={{ justifyContent: 'flex-end', paddingRight: 0 }}
                 color={'#0339B1'}
@@ -130,14 +122,14 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   askPermissionLocation();
-                  this.setState({ modal: false });
+                  this.closeModal();
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.closeModal()}
               />
             </View>
           );
@@ -149,19 +141,23 @@ class LocationMessages extends Component {
                 // icon=""
                 onPress={() => {
                   openGPSAndroid();
-                  this.setState({ modal: false });
+                  this.closeModal();
                 }}
               />
               <Divider />
               <MenuItem
                 title="Cancelar"
                 // icon=""
-                onPress={() => this.setState({ modal: false })}
+                onPress={() => this.closeModal()}
               />
             </View>
           );
       }
     }
+  };
+
+  closeModal = () => {
+    this.setState({ modal: false });
   };
 
   render() {
@@ -178,11 +174,7 @@ class LocationMessages extends Component {
     } else {
       return (
         <View>
-          <Menu
-            title={this.state.title || this.renderTitle()}
-            onBackdropPress={() => this.setState({ modal: false })}
-            isVisible={this.state.modal}
-          >
+          <Menu title={this.renderTitle()} isVisible={this.state.modal}>
             {this.renderItems()}
           </Menu>
         </View>
