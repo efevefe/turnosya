@@ -3,39 +3,30 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList } from './common';
 import CommerceCourtsListItem from './CommerceCourtsListItem';
-import { onCommerceCourtsRead } from '../actions';
+import { onCommerceCourtsRead, onCourtReservationValueChange } from '../actions';
 
 class CommerceCourtsList extends Component {
-    state = { commerceId: null, courtTypeId: null, slot: null };
-
-    async componentDidMount() {
-        await this.setState({
-            commerceId: this.props.navigation.getParam('commerceId'),
-            courtTypeId: this.props.navigation.getParam('courtTypeId'),
-            slot: this.props.navigation.getParam('slot')
-        });
-
+    componentDidMount() {
         this.props.onCommerceCourtsRead({
-            commerceId: this.state.commerceId,
-            courtTypeId: this.state.courtTypeId
+            commerceId: this.props.commerceId,
+            courtType: this.props.courtType
         });
+    }
+
+    onCourtpress = court => {
+        this.props.onCourtReservationValueChange({
+            prop: 'court',
+            value: court
+        });
+        
+        this.props.navigation.navigate('confirmCourtReservation');
     }
 
     renderRow({ item }) {
         return (
             <CommerceCourtsListItem
                 court={item}
-                // esto hay que ver si hacerlo con un reducer en vez de ir pasando los datos por la navegacion
-                onPress={() => {
-                    this.props.navigation.navigate(
-                        'confirmCourtReservation',
-                        {
-                            commerceId: this.state.commerceId,
-                            court: item,
-                            slot: this.state.slot
-                        }
-                    )
-                }}
+                onPress={() => this.onCourtpress(item)}
             />
         );
     }
@@ -68,8 +59,10 @@ class CommerceCourtsList extends Component {
 
 const mapStateToProps = state => {
     const { courts, loading } = state.courtsList;
+    const { courtType } = state.courtReservation;
+    const commerceId = state.courtReservation.commerce.objectID;
 
-    return { courts, loading };
+    return { commerceId, courtType, courts, loading };
 };
 
-export default connect(mapStateToProps, { onCommerceCourtsRead })(CommerceCourtsList);
+export default connect(mapStateToProps, { onCommerceCourtsRead, onCourtReservationValueChange })(CommerceCourtsList);

@@ -2,18 +2,25 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Schedule } from './common';
-import { onScheduleRead, onScheduleValueChange } from '../actions';
+import {
+    onScheduleRead,
+    onScheduleValueChange,
+    onCourtReservationValueChange
+} from '../actions';
 
 class ClientCommerceSchedule extends Component {
-    state = { commerceId: null, courtTypeId: null };
-
-    async componentDidMount() {
-        await this.setState({
-            commerceId: this.props.navigation.getParam('commerceId'),
-            courtTypeId: this.props.navigation.getParam('courtTypeId')
-        });
+    componentDidMount() {
         this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
-        this.props.onScheduleRead(this.state.commerceId);
+        this.props.onScheduleRead(this.props.commerceId);
+    }
+
+    onSlotPress = slot => {
+        this.props.onCourtReservationValueChange({
+            prop: 'slot',
+            value: slot
+        });
+
+        this.props.navigation.navigate('commerceCourtsList');
     }
 
     render() {
@@ -35,16 +42,8 @@ class ClientCommerceSchedule extends Component {
                 reservationMinLength={reservationMinLength}
                 loading={loading}
                 onDateChanged={date => onScheduleValueChange({ prop: 'selectedDate', value: date })}
-                onRefresh={() => onScheduleRead(this.state.commerceId)}
-                // esto hay que ver si hacerlo con un reducer en vez de ir pasando los datos por la navegacion
-                onSlotPress={slot => this.props.navigation.navigate(
-                    'commerceCourtsList',
-                    {
-                        commerceId: this.state.commerceId,
-                        courtTypeId: this.state.courtTypeId,
-                        slot
-                    }
-                )}
+                onRefresh={() => onScheduleRead(this.props.commerceId)}
+                onSlotPress={slot => this.onSlotPress(slot)}
             />
         );
     }
@@ -59,8 +58,10 @@ const mapStateToProps = state => {
         loading,
         refreshing
     } = state.scheduleRegister;
+    const commerceId = state.courtReservation.commerce.objectID;
 
     return {
+        commerceId,
         cards,
         selectedDate,
         reservationDayPeriod,
@@ -70,4 +71,11 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps, { onScheduleValueChange, onScheduleRead })(ClientCommerceSchedule);
+export default connect(
+    mapStateToProps,
+    {
+        onScheduleValueChange,
+        onScheduleRead,
+        onCourtReservationValueChange
+    }
+)(ClientCommerceSchedule);

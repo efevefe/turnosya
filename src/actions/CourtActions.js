@@ -204,14 +204,14 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   }
 }
 
-export const onCommerceCourtsRead = ({ commerceId, courtTypeId }) => {
+export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: COURT_READING, payload: 'loading' });
 
     db.collection(`Commerces/${commerceId}/Courts`)
-      .where('court', '==', courtTypeId)
+      .where('court', '==', courtType)
       .where('softDelete', '==', null)
       .where('courtState', '==', true)
       .orderBy('name', 'asc')

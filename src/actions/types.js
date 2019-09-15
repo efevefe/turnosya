@@ -107,3 +107,6 @@ export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
+
+// Reservation types
+export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
