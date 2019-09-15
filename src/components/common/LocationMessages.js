@@ -48,8 +48,8 @@ class LocationMessages extends Component {
 
   renderTitle = () => {
     return this.state.permissionStatus === 'permissionsDenied'
-      ? 'Aceptate los permisos perri.'
-      : 'Prenda el GPS para una mejor búsqueda?';
+      ? 'TurnosYa requiere permisos de localización'
+      : 'Activa GPS para recibir una mejor búsqueda cerca de ti';
   };
 
   getLocation = async () => {
@@ -62,9 +62,9 @@ class LocationMessages extends Component {
       switch (this.state.permissionStatus) {
         case 'permissionsDenied':
           return (
-            <View style={{ flexDirection: 'row' }}>
+            <View style={styles.modalItemsContainer}>
               <MenuItem
-                title="Cancelar"
+                title="Más tarde"
                 // icon=""
                 onPress={() => this.closeModal()}
               />
@@ -113,46 +113,26 @@ class LocationMessages extends Component {
           );
       }
     } else {
-      switch (this.state.permissionStatus) {
-        case 'permissionsDenied':
-          return (
-            <View>
-              <MenuItem
-                title="Apreta para aceptar los permisos perri"
-                // icon=""
-                onPress={() => {
-                  askPermissionLocation();
-                  this.closeModal();
-                }}
-              />
-              <Divider />
-              <MenuItem
-                title="Cancelar"
-                // icon=""
-                onPress={() => this.closeModal()}
-              />
-            </View>
-          );
-        case 'permissionsAllowedWithGPSOff':
-          return (
-            <View>
-              <MenuItem
-                title="Ir a setings"
-                // icon=""
-                onPress={() => {
-                  openGPSAndroid();
-                  this.closeModal();
-                }}
-              />
-              <Divider />
-              <MenuItem
-                title="Cancelar"
-                // icon=""
-                onPress={() => this.closeModal()}
-              />
-            </View>
-          );
-      }
+      return (
+        <View style={styles.modalItemsContainer}>
+          <MenuItem
+            title="Ir a Configuraciones"
+            // icon=""
+            onPress={() => {
+              this.state.permissionStatus === 'permissionsDenied'
+                ? askPermissionLocation()
+                : openGPSAndroid();
+              this.closeModal();
+            }}
+          />
+          <Divider />
+          <MenuItem
+            title="Más tarde"
+            // icon=""
+            onPress={() => this.closeModal()}
+          />
+        </View>
+      );
     }
   };
 
@@ -174,7 +154,12 @@ class LocationMessages extends Component {
     } else {
       return (
         <View>
-          <Menu title={this.renderTitle()} isVisible={this.state.modal}>
+          <Menu
+            title={this.renderTitle()}
+            titleContainerStyle={{ alignSelf: 'center' }}
+            titleStyle={{ textAlign: 'center' }}
+            isVisible={this.state.modal}
+          >
             {this.renderItems()}
           </Menu>
         </View>
@@ -182,5 +167,11 @@ class LocationMessages extends Component {
     }
   }
 }
+
+styles = {
+  modalItemsContainer: {
+    flexDirection: 'row'
+  }
+};
 
 export { LocationMessages };

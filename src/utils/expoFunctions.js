@@ -28,7 +28,6 @@ const getLocationAndroid = async status => {
 
 const getLocationIos = async status => {
   if (status === 'denied') {
-    console.log('service: ', await Location.hasServicesEnabledAsync());
     return (await Location.hasServicesEnabledAsync())
       ? LocationStatus.permissionsDenied
       : LocationStatus.permissionsAllowedWithGPSOff;
