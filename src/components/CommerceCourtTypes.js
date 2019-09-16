@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, RefreshControl, TouchableHighlight } from 'react-native';
+import { FlatList, Text, RefreshControl, TouchableHighlight, View } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../components/common';
@@ -72,6 +72,7 @@ class CommerceCourtTypes extends Component {
           renderItem={this.renderItem}
           keyExtractor={courtType => courtType.name}
           refreshControl={this.onRefresh()}
+          contentContainerStyle={{ paddingBottom: 15 }}
         />
       );
     }

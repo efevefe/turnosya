@@ -478,7 +478,8 @@ const styles = StyleSheet.create({
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
-    padding: 10
+    padding: 10,
+    paddingBottom: 22
   }
 });
 
