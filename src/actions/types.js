@@ -42,6 +42,7 @@ export const COURT_FORM_SUBMIT = 'court_form_submit';
 export const COURT_EXISTED = 'court_existed';
 export const COURT_READING = 'court_reading';
 export const COURT_READ = 'court_read';
+export const COURT_READ_FAIL = 'court_read_fail';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
 
@@ -106,3 +107,6 @@ export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
+
+// Reservation types
+export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
