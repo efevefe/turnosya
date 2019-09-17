@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from './common';
