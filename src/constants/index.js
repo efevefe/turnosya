@@ -27,8 +27,8 @@ export const DAYS = [
     'Domingo',
     'Lunes',
     'Martes',
-    'Miercoles',
+    'Miércoles',
     'Jueves',
     'Viernes',
-    'Sabado'
+    'Sábado'
 ];

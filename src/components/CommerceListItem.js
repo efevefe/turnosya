@@ -46,7 +46,7 @@ class CommerceListItem extends Component {
   }
 
   render() {
-    const { name, address, profilePicture, areaName } = this.props.commerce;
+    const { name, address, profilePicture, areaName, objectID } = this.props.commerce;
 
     return (
       <ListItem
@@ -69,7 +69,7 @@ class CommerceListItem extends Component {
               />
             }
             buttonStyle={{ padding: 0 }}
-            onPress={() => this.onFavoritePress(this.props.commerce.objectID)}
+            onPress={() => this.onFavoritePress(objectID)}
           />
         }
         onPress={this.onCommercePress}
