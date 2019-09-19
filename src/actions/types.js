@@ -110,3 +110,7 @@ export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
 export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_CLIENT_COURT_RESERVATION_CREATING = 'on_client_court_reservation_creating';
+export const ON_CLIENT_COURT_RESERVATION_CREATE = 'on_client_court_reservation_create';
+export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservation_create_fail';
+export const ON_COURT_RESERVATION_STATE_CLEAR = 'on_court_reservation_state_clear';

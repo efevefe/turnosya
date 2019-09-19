@@ -14,7 +14,7 @@ class CommerceCourtsList extends Component {
         });
     }
 
-    onCourtpress = court => {
+    onCourtPress = court => {
         this.props.onCourtReservationValueChange({
             prop: 'court',
             value: court
@@ -66,14 +66,8 @@ class CommerceCourtsList extends Component {
                         {`${court} - ${ground}`}
                     </Text>
                 }
-                rightElement={
-                    <Ionicons
-                        icon='md-arrow-forward'
-                        color='black'
-                        iconSize={22}
-                    />
-                }
-                onPress={() => this.onCourtpress(item)}
+                rightIcon={{ name: 'ios-arrow-forward', type: 'ionicon', color: 'black' }}
+                onPress={() => this.onCourtPress(item)}
                 bottomDivider
             />
         );
