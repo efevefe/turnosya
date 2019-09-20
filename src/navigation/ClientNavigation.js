@@ -9,12 +9,13 @@ import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
+import CommerceCourtTypes from '../components/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
+import App from '../components/Location';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
@@ -27,7 +28,9 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     commercesList: {
@@ -67,10 +70,12 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: EmptyScreen,
+      screen: App,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -83,7 +88,9 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -96,8 +103,9 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
