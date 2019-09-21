@@ -3,7 +3,7 @@ import {
     ON_CLIENT_COURT_RESERVATION_CREATING,
     ON_CLIENT_COURT_RESERVATION_CREATE,
     ON_CLIENT_COURT_RESERVATION_CREATE_FAIL,
-    ON_COURT_RESERVATION_STATE_CLEAR
+    ON_COURT_RESERVATION_CLEAR
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -27,7 +27,7 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, loading: false, saved: true };
         case ON_CLIENT_COURT_RESERVATION_CREATE_FAIL:
             return { ...state, loading: false };
-        case ON_COURT_RESERVATION_STATE_CLEAR:
+        case ON_COURT_RESERVATION_CLEAR:
             return INITIAL_STATE;
         default:
             return state;

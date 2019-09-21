@@ -113,4 +113,4 @@ export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_cha
 export const ON_CLIENT_COURT_RESERVATION_CREATING = 'on_client_court_reservation_creating';
 export const ON_CLIENT_COURT_RESERVATION_CREATE = 'on_client_court_reservation_create';
 export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservation_create_fail';
-export const ON_COURT_RESERVATION_STATE_CLEAR = 'on_court_reservation_state_clear';
+export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';

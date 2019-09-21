@@ -5,15 +5,15 @@ import {
   ON_CLIENT_COURT_RESERVATION_CREATING,
   ON_CLIENT_COURT_RESERVATION_CREATE,
   ON_CLIENT_COURT_RESERVATION_CREATE_FAIL,
-  ON_COURT_RESERVATION_STATE_CLEAR
+  ON_COURT_RESERVATION_CLEAR
 } from "./types";
 
 export const onCourtReservationValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
 }
 
-export const onCourtReservationStateClear = () => {
-  return { type: ON_COURT_RESERVATION_STATE_CLEAR };
+export const onCourtReservationClear = () => {
+  return { type: ON_COURT_RESERVATION_CLEAR };
 }
 
 /*

@@ -9,7 +9,7 @@ import { onCommerceCourtsRead, onCourtReservationValueChange } from '../actions'
 class CommerceCourtsList extends Component {
     componentDidMount() {
         this.props.onCommerceCourtsRead({
-            commerceId: this.props.commerceId,
+            commerceId: this.props.commerce.objectID,
             courtType: this.props.courtType
         });
     }
@@ -85,7 +85,7 @@ class CommerceCourtsList extends Component {
             );
         }
 
-        return <EmptyList title='No hay ninguna cancha' />;
+        return <EmptyList title='No hay canchas disponibles' />;
     }
 
     render() {
@@ -102,9 +102,9 @@ class CommerceCourtsList extends Component {
 const mapStateToProps = state => {
     const { courts, loading } = state.courtsList;
     const { courtType } = state.courtReservation;
-    const commerceId = state.courtReservation.commerce.objectID;
+    const { commerce } = state.courtReservation;
 
-    return { commerceId, courtType, courts, loading };
+    return { commerce, courtType, courts, loading };
 };
 
 export default connect(mapStateToProps, { onCommerceCourtsRead, onCourtReservationValueChange })(CommerceCourtsList);
