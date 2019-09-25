@@ -16,7 +16,6 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
-import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -59,12 +58,6 @@ const searchStack = createStackNavigator(
       screen: ConfirmCourtReservation,
       navigationOptions: {
         title: 'Turno'
-      }
-    },
-    commercesFiltersScreen: {
-      screen: CommercesFiltersScreen,
-      navigationOptions: {
-        header: null
       }
     }
   },
