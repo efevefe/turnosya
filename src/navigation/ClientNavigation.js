@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-  createAppContainer
-} from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
+import CommerceCourtTypes from '../components/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -18,6 +16,7 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
+import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -27,7 +26,9 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     commercesList: {
@@ -59,6 +60,12 @@ const searchStack = createStackNavigator(
       navigationOptions: {
         title: 'Turno'
       }
+    },
+    commercesFiltersScreen: {
+      screen: CommercesFiltersScreen,
+      navigationOptions: {
+        header: null
+      }
     }
   },
   stackNavigationOptions
@@ -70,7 +77,9 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -83,7 +92,9 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -96,8 +107,9 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },

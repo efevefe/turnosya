@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { ImagePicker, Permissions, Constants, Location } from 'expo';
+import { ImagePicker, Permissions, Location } from 'expo';
+import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -13,11 +14,7 @@ import {
   IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import {
-  imageToBlob,
-  validateValueType,
-  trimString
-} from '../utils';
+import { imageToBlob, validateValueType, trimString } from '../utils';
 import {
   onUserRead,
   onUserUpdateWithPicture,
@@ -56,30 +53,15 @@ class ClientProfile extends Component {
   };
 
   renderEditButton = () => {
-    return (
-      <IconButton
-        icon="md-create"
-        onPress={this.onEditPress}
-      />
-    );
+    return <IconButton icon="md-create" onPress={this.onEditPress} />;
   };
 
   renderSaveButton = () => {
-    return (
-      <IconButton
-        icon="md-checkmark"
-        onPress={this.onSavePress}
-      />
-    );
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
   renderCancelButton = () => {
-    return (
-      <IconButton
-        icon="md-close"
-        onPress={this.onCancelPress}
-      />
-    );
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onEditPress = () => {
@@ -125,7 +107,10 @@ class ClientProfile extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
-      this.props.onRegisterValueChange({ prop, value: stateBeforeChanges[prop] });
+      this.props.onRegisterValueChange({
+        prop,
+        value: stateBeforeChanges[prop]
+      });
     }
 
     this.cleanErrors();
@@ -356,7 +341,11 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
+              source={
+                this.props.profilePicture
+                  ? { uri: this.props.profilePicture }
+                  : null
+              }
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
