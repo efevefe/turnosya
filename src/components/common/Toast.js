@@ -1,5 +1,5 @@
 import { Toast as NBToast } from 'native-base';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 
 export const Toast = {
   show: params => {

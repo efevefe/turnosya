@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { connectSearchBox } from 'react-instantsearch/connectors';
 import { connect } from 'react-redux';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 import PropTypes from 'prop-types';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
 
