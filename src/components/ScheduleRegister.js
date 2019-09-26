@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Fab } from 'native-base';
-import { HeaderBackButton } from 'react-navigation';
+import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, IconButton, EmptyList } from './common';
 import {
   onScheduleValueChange,
@@ -22,19 +22,14 @@ class ScheduleRegister extends Component {
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ 
+    this.props.navigation.setParams({
       rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton() 
+      leftIcon: this.renderBackButton()
     });
   }
 
   renderSaveButton = () => {
-    return (
-      <IconButton
-        icon="md-checkmark"
-        onPress={this.onSavePress}
-      />
-    );
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
   onSavePress = () => {
@@ -54,17 +49,17 @@ class ScheduleRegister extends Component {
         reservationDayPeriod
       },
       navigation
-    )
-  }
+    );
+  };
 
   renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
-  }
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+  };
 
   onBackPress = () => {
     this.props.navigation.goBack();
     this.props.onScheduleRead(this.props.commerceId);
-  }
+  };
 
   onAddPress = () => {
     const { cards, selectedDays, onScheduleValueChange } = this.props;
@@ -115,8 +110,8 @@ class ScheduleRegister extends Component {
       );
     }
 
-    return <EmptyList title='No hay horarios de atencion' />;
-  }
+    return <EmptyList title="No hay horarios de atencion" />;
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;

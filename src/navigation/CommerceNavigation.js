@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  createStackNavigator,
-  createAppContainer,
-  createBottomTabNavigator
-} from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import ServicesList from '../components/ServicesList';
 import ServiceForm from '../components/ServiceForm';
@@ -26,7 +24,9 @@ const calendarStack = createStackNavigator(
       screen: CommerceSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     scheduleRegister: {
@@ -51,7 +51,9 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     serviceForm: {
@@ -70,7 +72,9 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     courtForm: {
@@ -89,8 +93,9 @@ const profileStack = createStackNavigator(
       screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },

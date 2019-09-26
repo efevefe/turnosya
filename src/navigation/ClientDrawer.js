@@ -1,15 +1,16 @@
-import {
-  createAppContainer,
-  createDrawerNavigator,
-  createStackNavigator
-} from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 import ClientNavigation from './ClientNavigation';
 import ClientDrawerContent from './ClientDrawerContent';
 import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
 import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
 import ClientSettings from '../components/ClientSettings';
-import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
+import {
+  stackNavigationOptions,
+  drawerNavigationOptions
+} from './NavigationOptions';
 
 const CommerceRegisterStack = createStackNavigator(
   {

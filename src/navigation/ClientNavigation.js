@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-  createAppContainer
-} from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes'; 
+import CommerceCourtTypes from '../components/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -27,7 +25,9 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     },
     commercesList: {
@@ -70,7 +70,9 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -83,7 +85,9 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -96,8 +100,9 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || <IconButton icon='md-menu' onPress={navigation.openDrawer} />
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
