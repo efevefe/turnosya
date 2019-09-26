@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import * as Google from 'expo-google-app-auth';
+import * as Facebook from 'expo-facebook';
 import {
   ON_LOGIN_VALUE_CHANGE,
   ON_LOGIN,
@@ -57,7 +59,7 @@ export const onFacebookLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_FACEBOOK });
 
-    Expo.Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+    Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
       permissions: facebookPermissions
     })
       .then(({ type, token }) => {
@@ -109,7 +111,7 @@ export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
-    Expo.Google.logInAsync({
+    Google.logInAsync({
       iosClientId,
       androidClientId,
       scopes: googleScopes
@@ -184,7 +186,7 @@ export const userReauthenticate = async (password = null) => {
       password
     );
   } else if (provider == 'facebook.com') {
-    await Expo.Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+    await Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
       permissions: facebookPermissions
     }).then(({ type, token }) => {
       if (type === 'success') {
@@ -192,7 +194,7 @@ export const userReauthenticate = async (password = null) => {
       }
     });
   } else if (provider == 'google.com') {
-    await Expo.Google.logInAsync({
+    await Google.logInAsync({
       iosClientId,
       androidClientId,
       scopes: googleScopes
