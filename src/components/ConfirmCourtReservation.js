@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { ButtonGroup, Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBackButton } from 'react-navigation';
+import { HeaderBackButton } from 'react-navigation-stack';
 import { CardSection, Button } from './common';
 import { MAIN_COLOR } from '../constants';
 import {
@@ -101,11 +101,12 @@ class ConfirmCourtReservation extends Component {
     }
 
     onConfirmReservation = () => {
-        const { commerce, court, slot, price, light } = this.props;
+        const { commerce, court, courtType, slot, price, light } = this.props;
 
         this.props.onClientCourtReservationCreate({
             commerceId: commerce.objectID,
             courtId: court.id,
+            courtType,
             slot,
             price,
             light

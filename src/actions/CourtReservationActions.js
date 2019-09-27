@@ -17,7 +17,7 @@ export const onCourtReservationClear = () => {
 }
 
 /*
-export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, price, light }) => {
+export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType, slot, price, light }) => {
   // easy way
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
@@ -31,6 +31,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, pric
       .add({
           clientId: currentUser.uid,
           courtId,
+          courtType,
           startDate: slot.startHour.toDate(),
           endDate: slot.endHour.toDate(),
           reservationDate,
@@ -43,6 +44,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, pric
           .set({
           commerceId,
           courtId,
+          courtType,
           startDate: slot.startHour.toDate(),
           endDate: slot.endHour.toDate(),
           reservationDate,
@@ -64,7 +66,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, pric
 }
 */
 
-export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, price, light }) => {
+export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType, slot, price, light }) => {
   // using batched writes
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
@@ -85,6 +87,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, pric
         batch.set(commerceReservationRef, {
           clientId: currentUser.uid,
           courtId,
+          courtType,
           startDate: slot.startHour.toDate(),
           endDate: slot.endHour.toDate(),
           reservationDate,
@@ -97,6 +100,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, slot, pric
         batch.set(clientReservationRef, {
           commerceId,
           courtId,
+          courtType,
           startDate: slot.startHour.toDate(),
           endDate: slot.endHour.toDate(),
           reservationDate,
