@@ -4,49 +4,13 @@ import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
-import { getPermissionLocationStatus, getCurrentPosition } from '../utils';
-import { LocationMessages, Button } from './common';
 
 import { connect } from 'react-redux';
 
 class Hits extends Component {
   state = {
     permissionStatus: null,
-    location: null,
-    appState: AppState.currentState,
     modal: true
-  };
-
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-
-  async componentDidMount() {
-    const newPermissionLocationStatus = await getPermissionLocationStatus();
-    this.setState({ permissionStatus: newPermissionLocationStatus });
-    AppState.addEventListener('change', this._handleAppStateChange);
-  }
-
-  async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.appState !== this.state.appState &&
-      this.state.appState === 'active'
-    ) {
-      const newPermissionLocationStatus = await getPermissionLocationStatus();
-      this.setState({
-        permissionStatus: newPermissionLocationStatus,
-        modal: true
-      });
-    }
-  }
-
-  _handleAppStateChange = nextAppState => {
-    this.setState({ appState: nextAppState });
-  };
-
-  getLocation = async () => {
-    let location = await getCurrentPosition();
-    this.setState({ location });
   };
 
   callback = () => {
