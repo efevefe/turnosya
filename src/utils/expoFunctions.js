@@ -1,5 +1,7 @@
 import { Platform, Linking } from 'react-native';
-import { Permissions, Location, IntentLauncherAndroid } from 'expo';
+import { IntentLauncherAndroid } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 const LocationStatus = {
   permissionsAllowed: 'permissionsAllowed',
