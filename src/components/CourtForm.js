@@ -35,6 +35,8 @@ class CourtForm extends Component {
       for (prop in params.court) {
         this.props.onCourtValueChange({ prop, value: court[prop] });
       }
+
+      this.setState({ lightPriceOpen: (params.lightPrice !== '') });
     } else {
       this.props.onCourtFormOpen();
     }
@@ -52,7 +54,6 @@ class CourtForm extends Component {
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
-    this.setState({ lightPriceOpen: this.props.lightPrice !== '' });
   }
 
   onButtonPressHandler = () => {
@@ -205,9 +206,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-          prop: 'ground',
-          value
-        })
+        prop: 'ground',
+        value
+      })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 

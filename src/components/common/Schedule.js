@@ -104,7 +104,7 @@ class Schedule extends Component {
             slots.push({
                 id: slotId,
                 startHour: moment.utc(slotStartDate),
-                endHour: moment(shiftStartDate),
+                endHour: moment.utc(shiftStartDate),
                 available: true
             });
             slotStartDate.add(reservationMinLength, 'minutes');
@@ -134,6 +134,7 @@ class Schedule extends Component {
                 titleStyle={{ color: item.available ? 'black' : 'grey' }}
                 rightSubtitleStyle={{ color: 'grey' }}
                 rightSubtitle={item.available ? null : 'Ocupado'}
+                onPress={() => this.props.onSlotPress(item)}
                 bottomDivider
             />
         );

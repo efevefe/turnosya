@@ -67,7 +67,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_READ:
       return { ...state, ...action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
-      Toast.show({ text: 'Aun no tienes horarios de atencion' });
+      Toast.show({ text: 'Aun no hay horarios de atencion' });
 
       return INITIAL_STATE;
     case ON_SCHEDULE_READ_FAIL:

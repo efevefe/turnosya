@@ -2,13 +2,48 @@ import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { connect } from 'react-redux';
+import {
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce,
+  readFavoriteCommerces,
+  onCourtReservationValueChange
+} from '../actions';
 
 class CommerceListItem extends Component {
   state = { favorite: false };
 
-  onFavoritePress = () => {
+  componentDidMount() {
+    this.setState({
+      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.favoriteCommerces !== this.props.favoriteCommerces) {
+      this.setState({
+        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+      });
+    }
+  }
+
+  onFavoritePress = commerceId => {
+    if (this.state.favorite) {
+      this.props.deleteFavoriteCommerce(commerceId);
+    } else {
+      this.props.registerFavoriteCommerce(commerceId);
+    }
     this.setState({ favorite: !this.state.favorite });
   };
+
+  onCommercePress = () => {
+    this.props.onCourtReservationValueChange({
+      prop: 'commerce',
+      value: this.props.commerce
+    })
+
+    this.props.navigation.navigate('commerceCourtTypes');
+  }
 
   render() {
     const { name, address, profilePicture, areaName, objectID } = this.props.commerce;
@@ -34,18 +69,31 @@ class CommerceListItem extends Component {
               />
             }
             buttonStyle={{ padding: 0 }}
-            onPress={this.onFavoritePress}
+            onPress={() => this.onFavoritePress(objectID)}
           />
         }
-        onPress={() =>
-          this.props.navigation.navigate('commerceCourtTypes', {
-            commerceId: objectID
-          })
-        }
+        onPress={this.onCommercePress}
         bottomDivider
       />
     );
   }
 }
 
-export default withNavigation(CommerceListItem);
+const mapStateToProps = state => {
+  const { favoriteCommerces } = state.commercesList;
+
+  return {
+    favoriteCommerces
+  };
+};
+
+export default withNavigation(connect(
+  mapStateToProps,
+  { 
+    registerFavoriteCommerce, 
+    deleteFavoriteCommerce, 
+    readFavoriteCommerces,
+    onCourtReservationValueChange 
+  }
+)(CommerceListItem));
+

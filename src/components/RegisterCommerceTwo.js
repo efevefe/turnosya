@@ -120,7 +120,7 @@ class RegisterCommerceTwo extends Component {
   };
 
   renderProvinceError = () => {
-    if (this.props.province.provinceId === null) {
+    if (this.props.province.provinceId === '') {
       this.setState({ provinceError: 'Dato requerido' });
       return false;
     } else {
@@ -130,7 +130,7 @@ class RegisterCommerceTwo extends Component {
   };
 
   renderAreaError = () => {
-    if (this.props.area.areaId === null) {
+    if (this.props.area.areaId === '') {
       this.setState({ areaError: 'Dato requerido' });
       return false;
     } else {

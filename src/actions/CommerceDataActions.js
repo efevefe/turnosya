@@ -120,8 +120,10 @@ export const onCommerceRead = () => {
   return dispatch => {
     dispatch({ type: ON_COMMERCE_READING });
 
-    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO PRIMERO COMO CLIENTE ESTO NO HARIA
-    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
+    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO
+    //PRIMERO COMO CLIENTE ESTO NO HARIA
+    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL
+    //CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
       .then(doc => {
@@ -252,13 +254,13 @@ export const onCommerceUpdateWithPicture = ({
               })
               .then(() => {
                 index.saveObject({
-                  address: address,
+                  address,
                   areaName: area.name,
-                  profilePicture: profilePicture,
+                  profilePicture: url,
                   objectID: commerceId,
-                  description: description,
-                  name: name,
-                  city: city,
+                  description,
+                  name,
+                  city,
                   provinceName: province.name
                 });
                 dispatch({ type: ON_COMMERCE_UPDATED, payload: url });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Image, StyleSheet } from 'react-native';
 import { Avatar, Divider } from 'react-native-elements';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 
 const Drawer = props => {

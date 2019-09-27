@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { ImagePicker, Permissions, Constants } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -58,30 +60,15 @@ class commerceData extends Component {
   };
 
   renderEditButton = () => {
-    return (
-      <IconButton
-        icon="md-create"
-        onPress={this.onEditPress}
-      />
-    );
+    return <IconButton icon="md-create" onPress={this.onEditPress} />;
   };
 
   renderSaveButton = () => {
-    return (
-      <IconButton
-        icon="md-checkmark"
-        onPress={this.onSavePress}
-      />
-    );
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
   renderCancelButton = () => {
-    return (
-      <IconButton
-        icon="md-close"
-        onPress={this.onCancelPress}
-      />
-    );
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onEditPress = () => {
@@ -178,7 +165,10 @@ class commerceData extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
-      this.props.onCommerceValueChange({ prop, value: stateBeforeChanges[prop] });
+      this.props.onCommerceValueChange({
+        prop,
+        value: stateBeforeChanges[prop]
+      });
     }
 
     this.cleanErrors();
@@ -675,7 +665,8 @@ const styles = StyleSheet.create({
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
-    padding: 10
+    padding: 10,
+    paddingBottom: 22
   }
 });
 

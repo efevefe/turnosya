@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
-import { FlatList, Text, RefreshControl, TouchableHighlight } from 'react-native';
+import { FlatList, Text, RefreshControl, TouchableHighlight, View } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../components/common';
-import { onCommerceCourtTypesRead } from '../actions';
+import { 
+  onCommerceCourtTypesRead, 
+  onCourtReservationValueChange 
+} from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class CommerceCourtTypes extends Component {
-  state = {
-    commerceId: null
-  };
-
-  async componentDidMount() {
-    await this.setState({
-      commerceId: this.props.navigation.getParam('commerceId')
-    });
-
+  componentDidMount() {
     this.props.onCommerceCourtTypesRead({
-      commerceId: this.state.commerceId,
+      commerceId: this.props.commerceId,
       loadingType: 'loading'
     });
   }
@@ -28,7 +23,7 @@ class CommerceCourtTypes extends Component {
         refreshing={this.props.refreshing}
         onRefresh={() => {
           this.props.onCommerceCourtTypesRead({
-            commerceId: this.state.commerceId,
+            commerceId: this.props.commerceId,
             loadingType: 'refreshing'
           });
         }}
@@ -38,15 +33,19 @@ class CommerceCourtTypes extends Component {
     );
   };
 
+  onCourtTypePress = courtType => {
+    this.props.onCourtReservationValueChange({
+      prop: 'courtType',
+      value: courtType
+    });
+
+    this.props.navigation.navigate('commerceSchedule');
+  }
+
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
-        onPress={() => this.props.navigation.navigate(
-          'commerceSchedule',
-          {
-            commerceId: this.state.commerceId,
-            courtTypeId: item.name
-          })}
+        onPress={() => this.onCourtTypePress(item.name)}
         underlayColor='transparent'
       >
         <Card
@@ -73,6 +72,7 @@ class CommerceCourtTypes extends Component {
           renderItem={this.renderItem}
           keyExtractor={courtType => courtType.name}
           refreshControl={this.onRefresh()}
+          contentContainerStyle={{ paddingBottom: 15 }}
         />
       );
     }
@@ -96,11 +96,15 @@ class CommerceCourtTypes extends Component {
 
 const mapStateToProps = state => {
   const { courtTypesList, loading, refreshing } = state.commerceCourtTypes;
+  const commerceId = state.courtReservation.commerce.objectID;
 
-  return { courtTypesList, loading, refreshing };
+  return { commerceId, courtTypesList, loading, refreshing };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceCourtTypesRead }
+  { 
+    onCommerceCourtTypesRead,
+    onCourtReservationValueChange
+   }
 )(CommerceCourtTypes);

@@ -42,6 +42,7 @@ export const COURT_FORM_SUBMIT = 'court_form_submit';
 export const COURT_EXISTED = 'court_existed';
 export const COURT_READING = 'court_reading';
 export const COURT_READ = 'court_read';
+export const COURT_READ_FAIL = 'court_read_fail';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
 
@@ -75,9 +76,9 @@ export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 
 //Commerces List
-export const ON_REFINEMENT_UPDATE = 'on_refinement_update';
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
+export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -94,7 +95,18 @@ export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
 
+// Favorites
+export const FAVORITE_COMMERCE_DELETED = 'favorite_commerce_deleted';
+export const FAVORITE_COMMERCE_ADDED = 'favorite_commerce_added';
+export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
+export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
+export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
+
+
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
+
+// Reservation types
+export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
