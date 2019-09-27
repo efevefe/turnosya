@@ -30,13 +30,21 @@ class Schedule extends Component {
     }
 
     onDateSelected = async selectedDate => {
+        selectedDate = moment([
+            selectedDate.year(),
+            selectedDate.month(),
+            selectedDate.date(),
+            0,
+            0
+        ]);
+
         await this.props.onDateChanged(selectedDate);
 
         // dia de la semana (0-6)
         var dayId = selectedDate.day();
 
         //slots & shifts
-        var slots = [];
+        var slots = {};
         const { cards } = this.props;
         var dayShifts = cards.find(card => card.days.includes(dayId)); // horario de atencion ese dia de la semana
 
@@ -75,7 +83,6 @@ class Schedule extends Component {
         var month = selectedDate.month();
         var date = selectedDate.date(); // dia del mes
 
-        var slotId = slots.length;
         shiftStart = getHourAndMinutes(shiftStart);
         shiftEnd = getHourAndMinutes(shiftEnd);
         const { reservationMinLength } = this.props;
@@ -101,18 +108,29 @@ class Schedule extends Component {
             shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate;
             j++
         ) {
-            slots.push({
-                id: slotId,
+            slots[moment(slotStartDate).format('HH:mm')] = {
                 startHour: moment(slotStartDate),
                 endHour: moment(shiftStartDate),
                 available: true
-            });
+            };
+
             slotStartDate.add(reservationMinLength, 'minutes');
-            slotId++;
+        }
+
+        slots = { ...slots, ...this.props.reservations };
+
+        return this.slotsToArray(slots);
+    };
+
+    slotsToArray = slotsObject => {
+        var slots = [];
+
+        for (prop in slotsObject) {
+            slots.push({ id: prop, ...slotsObject[prop] });
         }
 
         return slots;
-    };
+    }
 
     renderList = ({ item }) => {
         return (
@@ -157,7 +175,7 @@ class Schedule extends Component {
                 <FlatList
                     data={this.state.slots}
                     renderItem={this.renderList.bind(this)}
-                    keyExtractor={slot => slot.id.toString()}
+                    keyExtractor={slot => slot.id}
                     refreshControl={this.onRefresh()}
                 />
             );

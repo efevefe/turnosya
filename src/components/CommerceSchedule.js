@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, Schedule, IconButton } from './common';
-import { onScheduleRead, onScheduleValueChange } from '../actions';
+import { onScheduleRead, onScheduleValueChange, onCommerceCourtReservationsRead } from '../actions';
 
 class CommerceSchedule extends Component {
   state = { modal: false };
@@ -17,8 +16,10 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
+    var today = moment([moment().year(), moment().month(), moment().date(), 0, 0]);
+    this.props.onScheduleValueChange({ prop: 'selectedDate', value: today });
     this.props.onScheduleRead(this.props.commerceId);
-    this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
+
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -47,15 +48,23 @@ class CommerceSchedule extends Component {
     this.props.navigation.navigate('registerConfiguration');
   };
 
+  onDateChanged = date => {
+    this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
+    this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: date
+    });
+  }
+
   render() {
     const {
-        cards,
-        selectedDate,
-        reservationDayPeriod,
-        reservationMinLength,
-        loading,
-        onScheduleRead,
-        onScheduleValueChange
+      cards,
+      selectedDate,
+      reservationDayPeriod,
+      reservationMinLength,
+      loading,
+      onScheduleRead,
+      reservations
     } = this.props;
 
     return (
@@ -63,10 +72,11 @@ class CommerceSchedule extends Component {
         <Schedule
           cards={cards}
           selectedDate={selectedDate}
+          reservations={reservations}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
           loading={loading}
-          onDateChanged={date => onScheduleValueChange({ prop: 'selectedDate', value: date })}
+          onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
         />
 
@@ -102,6 +112,7 @@ const mapStateToProps = state => {
     refreshing
   } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
+  const { reservations } = state.courtReservationsList;
 
   return {
     cards,
@@ -109,6 +120,7 @@ const mapStateToProps = state => {
     reservationDayPeriod,
     reservationMinLength,
     commerceId,
+    reservations,
     loading,
     refreshing
   };
@@ -116,5 +128,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onScheduleRead, onScheduleValueChange }
+  { onScheduleRead, onScheduleValueChange, onCommerceCourtReservationsRead }
 )(CommerceSchedule);
