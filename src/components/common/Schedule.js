@@ -80,21 +80,21 @@ class Schedule extends Component {
         shiftEnd = getHourAndMinutes(shiftEnd);
         const { reservationMinLength } = this.props;
 
-        var shiftStartDate = moment.utc([
+        var shiftStartDate = moment([
             year,
             month,
             date,
             shiftStart.hour,
             shiftStart.minutes
         ]);
-        var shiftEndDate = moment.utc([
+        var shiftEndDate = moment([
             year,
             month,
             date,
             shiftEnd.hour,
             shiftEnd.minutes
         ]);
-        var slotStartDate = moment.utc(shiftStart);
+        var slotStartDate = moment(shiftStartDate);
 
         for (
             var j = 0;
@@ -103,8 +103,8 @@ class Schedule extends Component {
         ) {
             slots.push({
                 id: slotId,
-                startHour: moment.utc(slotStartDate),
-                endHour: moment.utc(shiftStartDate),
+                startHour: moment(slotStartDate),
+                endHour: moment(shiftStartDate),
                 available: true
             });
             slotStartDate.add(reservationMinLength, 'minutes');
