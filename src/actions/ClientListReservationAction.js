@@ -2,7 +2,6 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { CLIENT_RERSERVATION_READ, CLIENT_RERSERVATION_READING, CLIENT_RERSERVATION_FAIL } from './types';
 import moment from 'moment'
-var commercesName
 
 export const onClientReservationListRead = () => {
   const { currentUser } = firebase.auth();
@@ -29,7 +28,7 @@ export const onClientReservationListRead = () => {
           }
           )
         })
-          .catch(errror => dispatch({ type: CLIENT_RERSERVATION_FAIL, payload: errror }));
+          .catch(error => dispatch({ type: CLIENT_RERSERVATION_FAIL, payload: error }));
       })
   }
 }

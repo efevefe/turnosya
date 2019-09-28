@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { Spinner, EmptyList } from './common';
 import ClientReservationListItem from './ClientReservationListItem';
 import { onClientReservationListRead } from '../actions';
+import { MAIN_COLOR } from '../constants';
+
 
 class ClientReservationList extends Component {
-    renderRow({ item }) {
-        console.log(item)
-        return (
-            <ClientReservationListItem reservation={item} navigation={this.props.navigation} />
-        );
-    }
 
     constructor(props) {
         super(props);
@@ -19,28 +15,50 @@ class ClientReservationList extends Component {
         props.onClientReservationListRead();
 
     }
-    render() {
-        if (this.props.loading) return <Spinner />;
 
+    renderRow({ item }) {
+        console.log(item)
         return (
-            <FlatList
-                data={this.props.reservations}
-                renderItem={this.renderRow.bind(this)}
-                keyExtractor={reservations => reservations.id}
-            //refreshControl={this.onRefresh()}
+            <ClientReservationListItem reservation={item} navigation={this.props.navigation} />
+        );
+    }
+
+    onRefresh = () => {
+        return (
+            <RefreshControl
+                refreshing={this.props.refreshing}
+                onRefresh={() => this.props.onClientReservationListRead()}
+                colors={[MAIN_COLOR]}
+                tintColor={MAIN_COLOR}
             />
         );
-        /* 
+    };
+
+    render() {
+        const { reservations, loading } = this.props;
+
+        if (loading) return <Spinner />;
+        if (reservations.length > 0)
             return (
-                <EmptyList
-                    title='No tenes favoritos'
-                    onRefresh={this.onRefresh()}
-                /> 
-            );*/
+                <FlatList
+                    data={reservations}
+                    renderItem={this.renderRow.bind(this)}
+                    keyExtractor={reservation => reservation.id}
+                    refreshControl={this.onRefresh()}
+                />
+            );
+
+        return (
+            <EmptyList
+                title='No tenes reservas'
+                onRefresh={this.onRefresh()}
+            />
+        );
 
 
     }
 }
+
 const mapStateToProps = state => {
     const { reservations, loading } = state.clientReservationList;
     return { reservations, loading };
