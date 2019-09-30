@@ -11,7 +11,7 @@ import {
 class ClientCommerceSchedule extends Component {
     componentDidMount() {
         this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
-        this.props.onScheduleRead(this.props.commerceId);
+        this.props.onScheduleRead(this.props.commerce.objectID);
     }
 
     onSlotPress = slot => {
@@ -42,7 +42,7 @@ class ClientCommerceSchedule extends Component {
                 reservationMinLength={reservationMinLength}
                 loading={loading}
                 onDateChanged={date => onScheduleValueChange({ prop: 'selectedDate', value: date })}
-                onRefresh={() => onScheduleRead(this.props.commerceId)}
+                onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
                 onSlotPress={slot => this.onSlotPress(slot)}
             />
         );
@@ -58,10 +58,10 @@ const mapStateToProps = state => {
         loading,
         refreshing
     } = state.scheduleRegister;
-    const commerceId = state.courtReservation.commerce.objectID;
+    const { commerce } = state.courtReservation;
 
     return {
-        commerceId,
+        commerce,
         cards,
         selectedDate,
         reservationDayPeriod,

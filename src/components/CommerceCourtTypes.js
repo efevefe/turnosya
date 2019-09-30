@@ -12,7 +12,7 @@ import { MAIN_COLOR } from '../constants';
 class CommerceCourtTypes extends Component {
   componentDidMount() {
     this.props.onCommerceCourtTypesRead({
-      commerceId: this.props.commerceId,
+      commerceId: this.props.commerce.objectID,
       loadingType: 'loading'
     });
   }
@@ -23,7 +23,7 @@ class CommerceCourtTypes extends Component {
         refreshing={this.props.refreshing}
         onRefresh={() => {
           this.props.onCommerceCourtTypesRead({
-            commerceId: this.props.commerceId,
+            commerceId: this.props.commerce.objectID,
             loadingType: 'refreshing'
           });
         }}
@@ -96,9 +96,9 @@ class CommerceCourtTypes extends Component {
 
 const mapStateToProps = state => {
   const { courtTypesList, loading, refreshing } = state.commerceCourtTypes;
-  const commerceId = state.courtReservation.commerce.objectID;
+  const { commerce } = state.courtReservation;
 
-  return { commerceId, courtTypesList, loading, refreshing };
+  return { commerce, courtTypesList, loading, refreshing };
 };
 
 export default connect(

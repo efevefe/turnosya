@@ -9,12 +9,12 @@ import { onCommerceCourtsRead, onCourtReservationValueChange } from '../actions'
 class CommerceCourtsList extends Component {
     componentDidMount() {
         this.props.onCommerceCourtsRead({
-            commerceId: this.props.commerceId,
+            commerceId: this.props.commerce.objectID,
             courtType: this.props.courtType
         });
     }
 
-    onCourtpress = court => {
+    onCourtPress = court => {
         this.props.onCourtReservationValueChange({
             prop: 'court',
             value: court
@@ -66,14 +66,8 @@ class CommerceCourtsList extends Component {
                         {`${court} - ${ground}`}
                     </Text>
                 }
-                rightElement={
-                    <Ionicons
-                        icon='md-arrow-forward'
-                        color='black'
-                        iconSize={22}
-                    />
-                }
-                onPress={() => this.onCourtpress(item)}
+                rightIcon={{ name: 'ios-arrow-forward', type: 'ionicon', color: 'black' }}
+                onPress={() => this.onCourtPress(item)}
                 bottomDivider
             />
         );
@@ -91,7 +85,7 @@ class CommerceCourtsList extends Component {
             );
         }
 
-        return <EmptyList title='No hay ninguna cancha' />;
+        return <EmptyList title='No hay canchas disponibles' />;
     }
 
     render() {
@@ -108,9 +102,9 @@ class CommerceCourtsList extends Component {
 const mapStateToProps = state => {
     const { courts, loading } = state.courtsList;
     const { courtType } = state.courtReservation;
-    const commerceId = state.courtReservation.commerce.objectID;
+    const { commerce } = state.courtReservation;
 
-    return { commerceId, courtType, courts, loading };
+    return { commerce, courtType, courts, loading };
 };
 
 export default connect(mapStateToProps, { onCommerceCourtsRead, onCourtReservationValueChange })(CommerceCourtsList);
