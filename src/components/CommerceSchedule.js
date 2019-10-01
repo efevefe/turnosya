@@ -4,7 +4,13 @@ import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, Schedule, IconButton } from './common';
-import { onScheduleRead, onScheduleValueChange, onCommerceCourtReservationsRead } from '../actions';
+import {
+  onScheduleRead,
+  onScheduleValueChange,
+  onCommerceCourtReservationsRead,
+  onCourtReservationValueChange,
+  onCommerceCourtReservationsReadOnSlot
+} from '../actions';
 
 class CommerceSchedule extends Component {
   state = { modal: false };
@@ -16,7 +22,13 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    var today = moment([moment().year(), moment().month(), moment().date(), 0, 0]);
+    var today = moment([
+      moment().year(),
+      moment().month(),
+      moment().date(),
+      0,
+      0
+    ]);
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: today });
     this.props.onScheduleRead(this.props.commerceId);
 
@@ -24,6 +36,14 @@ class CommerceSchedule extends Component {
       rightIcon: this.renderConfigurationButton()
     });
   }
+
+  onSlotPress = async slot => {
+    this.props.onCourtReservationValueChange({
+      prop: 'slot',
+      value: slot
+    });
+    this.props.navigation.navigate('commerceCourtsList');
+  };
 
   renderConfigurationButton = () => {
     return (
@@ -50,11 +70,11 @@ class CommerceSchedule extends Component {
 
   onDateChanged = date => {
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
-    this.props.onCommerceCourtReservationsRead({
-      commerceId: this.props.commerceId,
-      selectedDate: date
-    });
-  }
+    // this.props.onCommerceCourtReservationsRead({
+    //   commerceId: this.props.commerceId,
+    //   selectedDate: date
+    // });
+  };
 
   render() {
     const {
@@ -78,6 +98,7 @@ class CommerceSchedule extends Component {
           loading={loading}
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
+          onSlotPress={slot => this.onSlotPress(slot)}
         />
 
         <Menu
@@ -113,6 +134,7 @@ const mapStateToProps = state => {
   } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
   const { reservations } = state.courtReservationsList;
+  const { slot } = state.courtReservation;
 
   return {
     cards,
@@ -122,11 +144,18 @@ const mapStateToProps = state => {
     commerceId,
     reservations,
     loading,
-    refreshing
+    refreshing,
+    slot
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleRead, onScheduleValueChange, onCommerceCourtReservationsRead }
+  {
+    onScheduleRead,
+    onScheduleValueChange,
+    onCommerceCourtReservationsRead,
+    onCourtReservationValueChange,
+    onCommerceCourtReservationsReadOnSlot
+  }
 )(CommerceSchedule);

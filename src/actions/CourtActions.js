@@ -72,7 +72,7 @@ export const courtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function (querySnapshot) {
+      .then(function(querySnapshot) {
         if (!querySnapshot.empty) {
           //Means that court's name already exists
           dispatch({ type: COURT_EXISTED });
@@ -114,6 +114,23 @@ export const courtsRead = commerceId => {
   };
 };
 
+export const courtsReadOnlyAvailable = commerceId => {
+  var db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: COURT_READING });
+    db.collection(`Commerces/${commerceId}/Courts`)
+      .where('softDelete', '==', null)
+      .where('courtState', '==', true)
+      .orderBy('name', 'asc')
+      .onSnapshot(snapshot => {
+        var courts = [];
+        snapshot.forEach(doc => courts.push({ ...doc.data(), id: doc.id }));
+        dispatch({ type: COURT_READ, payload: courts });
+      });
+  };
+};
+
 export const courtDelete = ({ id, commerceId }) => {
   var db = firebase.firestore();
 
@@ -138,7 +155,7 @@ export const courtUpdate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function (querySnapshot) {
+      .then(function(querySnapshot) {
         if (!querySnapshot.empty && querySnapshot.docs[0].id !== id) {
           dispatch({ type: COURT_EXISTED });
         } else {
@@ -190,19 +207,22 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
               }
             });
 
-            dispatch({ type: COMMERCE_COURT_TYPES_READ, payload: courtTypesList });
+            dispatch({
+              type: COMMERCE_COURT_TYPES_READ,
+              payload: courtTypesList
+            });
           })
           .catch(error => {
             console.log(error);
-            dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL })
+            dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL });
           });
       })
       .catch(error => {
         console.log(error);
-        dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL })
+        dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL });
       });
-  }
-}
+  };
+};
 
 export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
   const db = firebase.firestore();
@@ -224,6 +244,6 @@ export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
       .catch(error => {
         console.log(error);
         dispatch({ type: COURT_READ_FAIL });
-      })
-  }
-}
+      });
+  };
+};

@@ -11,6 +11,8 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
+import EmptyScreen from '../components/EmptyScreen';
+import CommerceCourtsOnSlot from '../components/CommerceCourtsStateOnSlot';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -39,6 +41,12 @@ const calendarStack = createStackNavigator(
       screen: ScheduleRegisterConfiguration,
       navigationOptions: {
         title: 'Límites de turnos'
+      }
+    },
+    commerceCourtsList: {
+      screen: CommerceCourtsOnSlot,
+      navigationOptions: {
+        title: 'Canchas Disponibles'
       }
     }
   },
