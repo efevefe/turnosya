@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
-import { Fab } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
 import { Spinner, EmptyList } from './common';
-import CourtListItem from './CourtListItem';
 import {
   courtsReadOnlyAvailable,
   onCommerceCourtReservationsReadOnSlot
 } from '../actions';
-import { MAIN_COLOR } from '../constants';
 import CommerceCourtStateListItem from './CommerceCourtStateListItem';
 
 class CourtListOnSlot extends Component {
@@ -56,9 +52,9 @@ const mapStateToProps = state => {
   const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  const { reservations, loading } = state.courtReservationsList;
+  const { loading } = state.courtReservationsList;
 
-  return { courts, loading, commerceId, slot, reservations };
+  return { courts, loading, commerceId, slot };
 };
 
 export default connect(

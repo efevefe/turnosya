@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_COURT_RESERVATIONS_READING:
       return { ...state, loading: true };
     case ON_COMMERCE_COURT_RESERVATIONS_READ:
-      return { reservations: action.payload, loading: false };
+      return { ...state, reservations: action.payload, loading: false };
     case ON_CLIENT_COURT_RESERVATION_CREATE_FAIL:
       return { ...state, loading: false };
     default:

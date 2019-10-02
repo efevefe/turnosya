@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Divider } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem, IconButton } from '../components/common';
-import {
-  courtDelete,
-  onCourtFormOpen,
-  onCommerceCourtReservationsReadOnSlot,
-  onCourtReservationsListValueChange
-} from '../actions';
+import { onCommerceCourtReservationsReadOnSlot } from '../actions';
 
 class CourtListItem extends Component {
   state = {
@@ -22,37 +16,6 @@ class CourtListItem extends Component {
     this.courtsAvailable();
   }
 
-  // onOptionsPress = () => {
-  //   this.setState({ optionsVisible: !this.state.optionsVisible });
-  // };
-
-  // onDeletePress = () => {
-  //   this.setState({
-  //     optionsVisible: false,
-  //     deleteVisible: !this.state.deleteVisible
-  //   });
-  // };
-
-  // onConfirmDeletePress = () => {
-  //   const { court, commerceId, courtDelete } = this.props;
-
-  //   courtDelete({ id: court.id, commerceId });
-  //   this.setState({ deleteVisible: !this.deleteVisible });
-  // };
-
-  // onUpdatePress = () => {
-  //   this.props.onCourtFormOpen();
-  //   const navigateAction = NavigationActions.navigate({
-  //     routeName: 'courtForm',
-  //     params: { court: this.props.court, title: 'Editar Cancha' }
-  //   });
-
-  //   this.setState({ optionsVisible: !this.state.optionsVisible });
-
-  //   //hay que ver la forma de que esto se haga en el .then() del update()
-  //   this.props.navigation.navigate(navigateAction);
-  // };
-
   courtsAvailable = () => {
     for (i in this.props.reservations) {
       this.props.reservations[i].courtId === this.props.court.id
@@ -62,50 +25,10 @@ class CourtListItem extends Component {
   };
 
   render() {
-    const {
-      name,
-      court,
-      ground,
-      price,
-      lightPrice,
-      courtState,
-      id
-    } = this.props.court;
+    const { name, court, ground, price, lightPrice, id } = this.props.court;
 
     return (
       <View style={{ flex: 1 }}>
-        {/* <Menu
-          title={name}
-          onBackdropPress={this.onOptionsPress}
-          isVisible={this.state.optionsVisible}
-        >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onUpdatePress}
-          />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePress}
-          />
-        </Menu>
-
-        <Menu
-          title={`¿Seguro que desea eliminar "${name}"?`}
-          onBackdropPress={this.onDeletePress}
-          isVisible={this.state.deleteVisible}
-        >
-          <MenuItem
-            title="Sí"
-            icon="md-checkmark"
-            onPress={this.onConfirmDeletePress}
-          />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
-        </Menu> */}
-
         <ListItem
           containerStyle={
             this.state.courtReservationState === 'Disponible'
@@ -114,11 +37,11 @@ class CourtListItem extends Component {
           }
           title={
             this.state.courtReservationState === 'Disponible'
-              ? name + ' Disponible'
-              : name + ' Ocupado'
+              ? name // + ' - Disponible'
+              : name + ' - Ocupado'
           }
           titleStyle={
-            courtState
+            this.state.courtReservationState === 'Disponible'
               ? { textAlign: 'left', display: 'flex' }
               : {
                   textAlign: 'left',
@@ -132,7 +55,7 @@ class CourtListItem extends Component {
               <View style={{ justifyContent: 'space-between' }}>
                 <Text
                   style={
-                    courtState
+                    this.state.courtReservationState === 'Disponible'
                       ? { textAlign: 'right', color: 'black' }
                       : {
                           textAlign: 'right',
@@ -143,7 +66,7 @@ class CourtListItem extends Component {
                 >{`Sin luz: $${price}`}</Text>
                 <Text
                   style={
-                    courtState
+                    this.state.courtReservationState === 'Disponible'
                       ? { textAlign: 'right', color: 'black' }
                       : {
                           textAlign: 'right',
@@ -155,7 +78,11 @@ class CourtListItem extends Component {
               </View>
             ) : (
               <Text
-                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+                style={
+                  this.state.courtReservationState === 'Disponible'
+                    ? {}
+                    : { color: 'grey', fontStyle: 'italic' }
+                }
               >{`Sin luz: $${price}`}</Text>
             )
           }
@@ -163,7 +90,7 @@ class CourtListItem extends Component {
           subtitle={
             <Text
               style={
-                courtState
+                this.state.courtReservationState === 'Disponible'
                   ? { color: 'grey' }
                   : { color: 'grey', fontStyle: 'italic' }
               }
@@ -178,18 +105,13 @@ class CourtListItem extends Component {
 
 const mapStateToProps = state => {
   const { reservations } = state.courtReservationsList;
-  const { slot } = state.courtReservation;
-  const { commerceId } = state.commerceData;
 
-  return { reservations, slot, commerceId };
+  return { reservations };
 };
 
 export default connect(
   mapStateToProps,
   {
-    courtDelete,
-    onCourtFormOpen,
-    onCommerceCourtReservationsReadOnSlot,
-    onCourtReservationsListValueChange
+    onCommerceCourtReservationsReadOnSlot
   }
 )(CourtListItem);

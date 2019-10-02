@@ -105,6 +105,7 @@ export const courtsRead = commerceId => {
     db.collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
       .orderBy('courtState', 'desc')
+      .orderBy('court', 'asc')
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var courts = [];
@@ -122,6 +123,7 @@ export const courtsReadOnlyAvailable = commerceId => {
     db.collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
       .where('courtState', '==', true)
+      .orderBy('court', 'asc')
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         var courts = [];
