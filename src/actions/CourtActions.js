@@ -13,7 +13,9 @@ import {
   COMMERCE_COURT_TYPES_READ,
   COMMERCE_COURT_TYPES_READING,
   COMMERCE_COURT_TYPES_READ_FAIL,
-  COURT_READ_FAIL
+  COURT_READ_FAIL,
+  COURT_READING_ONLY_AVAILABLE,
+  COURT_READ_ONLY_AVAILABLE
 } from './types';
 
 export const onCourtValueChange = ({ prop, value }) => {
@@ -119,7 +121,7 @@ export const courtsReadOnlyAvailable = commerceId => {
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: COURT_READING });
+    dispatch({ type: COURT_READING_ONLY_AVAILABLE });
     db.collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
       .where('courtState', '==', true)
@@ -128,7 +130,7 @@ export const courtsReadOnlyAvailable = commerceId => {
       .onSnapshot(snapshot => {
         var courts = [];
         snapshot.forEach(doc => courts.push({ ...doc.data(), id: doc.id }));
-        dispatch({ type: COURT_READ, payload: courts });
+        dispatch({ type: COURT_READ_ONLY_AVAILABLE, payload: courts });
       });
   };
 };

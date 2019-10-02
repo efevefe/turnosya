@@ -5,7 +5,7 @@ import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { onCommerceCourtReservationsReadOnSlot } from '../actions';
 
-class CourtListItem extends Component {
+class CourtListItemOnSlot extends Component {
   state = {
     optionsVisible: false,
     deleteVisible: false,
@@ -114,4 +114,4 @@ export default connect(
   {
     onCommerceCourtReservationsReadOnSlot
   }
-)(CourtListItem);
+)(CourtListItemOnSlot);

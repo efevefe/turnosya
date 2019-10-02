@@ -28,10 +28,10 @@ class CourtListOnSlot extends Component {
   }
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courtsAvailable.length > 0) {
       return (
         <FlatList
-          data={this.props.courts}
+          data={this.props.courtsAvailable}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           contentContainerStyle={{ paddingBottom: 95 }}
@@ -49,12 +49,12 @@ class CourtListOnSlot extends Component {
 }
 
 const mapStateToProps = state => {
-  const { courts } = state.courtsList;
+  const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
   const { loading } = state.courtReservationsList;
 
-  return { courts, loading, commerceId, slot };
+  return { courtsAvailable, loading, commerceId, slot };
 };
 
 export default connect(
