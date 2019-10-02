@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, RefreshControl } from 'react-native';
 import { Spinner, EmptyList } from './common';
 import {
   courtsReadOnlyAvailable,
   onCommerceCourtReservationsReadOnSlot
 } from '../actions';
 import CommerceCourtStateListItem from './CommerceCourtStateListItem';
+import { MAIN_COLOR } from '../constants';
 
 class CourtListOnSlot extends Component {
   componentWillMount() {
@@ -27,6 +28,22 @@ class CourtListOnSlot extends Component {
     );
   }
 
+  onRefresh = () => {
+    return (
+      <RefreshControl
+        // refreshing={this.props.refreshing}
+        onRefresh={() =>
+          this.props.onCommerceCourtReservationsReadOnSlot({
+            commerceId: this.props.commerceId,
+            slot: this.props.slot.startHour
+          })
+        }
+        colors={[MAIN_COLOR]}
+        tintColor={MAIN_COLOR}
+      />
+    );
+  };
+
   renderList = () => {
     if (this.props.courtsAvailable.length > 0) {
       return (
@@ -35,6 +52,7 @@ class CourtListOnSlot extends Component {
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           contentContainerStyle={{ paddingBottom: 95 }}
+          refreshControl={this.onRefresh()}
         />
       );
     }
