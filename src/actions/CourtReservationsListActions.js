@@ -5,7 +5,9 @@ import {
   ON_COMMERCE_COURT_RESERVATIONS_READ,
   ON_COMMERCE_COURT_RESERVATIONS_READING,
   ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE
+  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING,
+  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
@@ -20,7 +22,6 @@ export const onCommerceCourtReservationsRead = ({
   selectedDate
 }) => {
   const db = firebase.firestore();
-
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
@@ -29,19 +30,16 @@ export const onCommerceCourtReservationsRead = ({
       .where('startDate', '<', selectedDate.add(1, 'days').toDate())
       .get()
       .then(snapshot => {
-        var reservations = {};
+        var reservations = [];
         snapshot.forEach(doc => {
-          reservations[
-            moment(doc.data().startDate.toDate()).format('HH:mm')
-          ] = {
+          reservations.push({
             id: doc.id,
             startHour: moment(doc.data().startDate.toDate()),
             endHour: moment(doc.data().endDate.toDate()),
-            available: false,
+            // available: false,
             ...doc.data()
-          };
+          });
         });
-
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: reservations
@@ -50,6 +48,7 @@ export const onCommerceCourtReservationsRead = ({
       .catch(error =>
         dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL })
       );
+    selectedDate.add(-1, 'days').toDate();
   };
 };
 
@@ -57,9 +56,7 @@ export const onCommerceCourtReservationsReadOnSlot = ({ commerceId, slot }) => {
   const db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
-
-    // console.log('SLOT', slot.toDate());
+    dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
       .where('startDate', '==', slot.toDate())
@@ -77,7 +74,7 @@ export const onCommerceCourtReservationsReadOnSlot = ({ commerceId, slot }) => {
         });
 
         dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          type: ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ,
           payload: reservations
         });
       })

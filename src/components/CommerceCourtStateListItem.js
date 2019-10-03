@@ -17,8 +17,8 @@ class CourtListItemOnSlot extends Component {
   }
 
   courtsAvailable = () => {
-    for (i in this.props.reservations) {
-      this.props.reservations[i].courtId === this.props.court.id
+    for (i in this.props.reservationsOnSlot) {
+      this.props.reservationsOnSlot[i].courtId === this.props.court.id
         ? this.setState({ courtReservationState: 'Ocupado' })
         : {};
     }
@@ -104,9 +104,9 @@ class CourtListItemOnSlot extends Component {
 }
 
 const mapStateToProps = state => {
-  const { reservations } = state.courtReservationsList;
+  const { reservations, reservationsOnSlot } = state.courtReservationsList;
 
-  return { reservations };
+  return { reservations, reservationsOnSlot };
 };
 
 export default connect(

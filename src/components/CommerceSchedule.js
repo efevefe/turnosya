@@ -9,7 +9,8 @@ import {
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  onCommerceCourtReservationsReadOnSlot
+  onCommerceCourtReservationsReadOnSlot,
+  courtsReadOnlyAvailable
 } from '../actions';
 
 class CommerceSchedule extends Component {
@@ -22,16 +23,13 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    var today = moment([
-      moment().year(),
-      moment().month(),
-      moment().date(),
-      0,
-      0
-    ]);
-    this.props.onScheduleValueChange({ prop: 'selectedDate', value: today });
+    this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
     this.props.onScheduleRead(this.props.commerceId);
-
+    this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.props.selectedDate
+    });
+    this.reservationsOnDay();
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -68,12 +66,34 @@ class CommerceSchedule extends Component {
     this.props.navigation.navigate('registerConfiguration');
   };
 
-  onDateChanged = date => {
+  onDateChanged = async date => {
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
-    // this.props.onCommerceCourtReservationsRead({
-    //   commerceId: this.props.commerceId,
-    //   selectedDate: date
-    // });
+    await this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: date
+    });
+
+    this.reservationsOnDay();
+  };
+
+  reservationsOnDay = async slots => {
+    await this.props.courtsReadOnlyAvailable(this.props.commerceId);
+
+    for (j in slots) {
+      var ocupate = [];
+
+      for (i in this.props.reservations) {
+        slots[j].startHour.toString() ===
+        this.props.reservations[i].startHour.toString()
+          ? // moment(slots[j].startHour).format('HH:mm') ===
+            // moment(this.props.reservations[i].startHour).format('HH:mm')
+            ocupate.push({ value: this.props.reservations[i] })
+          : {};
+      }
+      ocupate.length === this.props.courtsAvailable.length
+        ? (slots[j].available = false)
+        : {};
+    }
   };
 
   render() {
@@ -83,8 +103,7 @@ class CommerceSchedule extends Component {
       reservationDayPeriod,
       reservationMinLength,
       loading,
-      onScheduleRead,
-      reservations
+      onScheduleRead
     } = this.props;
 
     return (
@@ -92,13 +111,13 @@ class CommerceSchedule extends Component {
         <Schedule
           cards={cards}
           selectedDate={selectedDate}
-          reservations={reservations}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
           loading={loading}
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
           onSlotPress={slot => this.onSlotPress(slot)}
+          reservationsOnDay={slots => this.reservationsOnDay(slots)}
         />
 
         <Menu
@@ -129,12 +148,13 @@ const mapStateToProps = state => {
     selectedDate,
     reservationDayPeriod,
     reservationMinLength,
-    loading,
-    refreshing
+    refreshing,
+    loading
   } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
   const { reservations } = state.courtReservationsList;
   const { slot } = state.courtReservation;
+  const { courtsAvailable } = state.courtsList;
 
   return {
     cards,
@@ -145,7 +165,8 @@ const mapStateToProps = state => {
     reservations,
     loading,
     refreshing,
-    slot
+    slot,
+    courtsAvailable
   };
 };
 
@@ -156,6 +177,7 @@ export default connect(
     onScheduleValueChange,
     onCommerceCourtReservationsRead,
     onCourtReservationValueChange,
-    onCommerceCourtReservationsReadOnSlot
+    onCommerceCourtReservationsReadOnSlot,
+    courtsReadOnlyAvailable
   }
 )(CommerceSchedule);

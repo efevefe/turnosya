@@ -47,7 +47,7 @@ class Schedule extends Component {
     var dayId = selectedDate.day();
 
     //slots & shifts
-    var slots = {};
+    var slots = [];
     const { cards } = this.props;
     var dayShifts = cards.find(card => card.days.includes(dayId)); // horario de atencion ese dia de la semana
 
@@ -78,6 +78,11 @@ class Schedule extends Component {
     }
 
     this.setState({ slots });
+    this.reservationsOnDay();
+  };
+
+  reservationsOnDay = async () => {
+    await this.props.reservationsOnDay(this.state.slots);
   };
 
   generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
@@ -86,6 +91,7 @@ class Schedule extends Component {
     var month = selectedDate.month();
     var date = selectedDate.date(); // dia del mes
 
+    var slotId = slots.length;
     shiftStart = getHourAndMinutes(shiftStart);
     shiftEnd = getHourAndMinutes(shiftEnd);
     const { reservationMinLength } = this.props;
@@ -111,32 +117,16 @@ class Schedule extends Component {
       shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate;
       j++
     ) {
-      slots[moment(slotStartDate).format('HH:mm')] = {
+      slots.push({
+        id: slotId,
         startHour: moment(slotStartDate),
         endHour: moment(shiftStartDate),
         available: true
-      };
-
+      });
       slotStartDate.add(reservationMinLength, 'minutes');
+      slotId++;
     }
 
-    slots = { ...slots }; //...this.props.reservations ;
-
-    return this.slotsToArray(slots);
-  };
-
-  slotsToArray = slotsObject => {
-    var slots = [];
-
-    for (prop in slotsObject) {
-      slots.push({ id: prop, ...slotsObject[prop] });
-    }
-
-    slots.sort(function(a, b) {
-      return a.startHour - b.startHour;
-    });
-
-    // console.log('SLOTSSS', slots);
     return slots;
   };
 
@@ -183,7 +173,7 @@ class Schedule extends Component {
         <FlatList
           data={this.state.slots}
           renderItem={this.renderList.bind(this)}
-          keyExtractor={slot => slot.id}
+          keyExtractor={slot => slot.id.toString()}
           refreshControl={this.onRefresh()}
         />
       );

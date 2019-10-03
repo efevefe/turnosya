@@ -190,6 +190,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
 
     db.collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
+      .where('courtState', '==', true)
       .get()
       .then(snapshot => {
         var courtTypes = [];
