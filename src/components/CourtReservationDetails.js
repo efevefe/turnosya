@@ -45,6 +45,11 @@ const CourtReservationDetails = props => {
                             {commerce.name}
                         </Text>
                     </CardSection>
+                    <CardSection style={[styles.cardSections, { paddingBottom: 3 }]}>
+                        <Text style={styles.mediumText}>
+                            {commerce.address}
+                        </Text>
+                    </CardSection>
                     <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
                         <Text style={styles.mediumText}>
                             {court.name}

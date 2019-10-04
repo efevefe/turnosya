@@ -5,22 +5,20 @@ import { Spinner, EmptyList } from './common';
 import ClientReservationListItem from './ClientReservationListItem';
 import { onClientReservationListRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
-
+import moment from 'moment'
 
 class ClientReservationList extends Component {
 
     constructor(props) {
         super(props);
-
         props.onClientReservationListRead();
-
     }
 
     renderRow({ item }) {
-        console.log(item)
-        return (
-            <ClientReservationListItem reservation={item} navigation={this.props.navigation} />
-        );
+        if (item.startDate.diff(moment().format(), 'days') >= 0)
+            return (
+                <ClientReservationListItem reservation={item} navigation={this.props.navigation} />
+            );
     }
 
     onRefresh = () => {
@@ -50,12 +48,10 @@ class ClientReservationList extends Component {
 
         return (
             <EmptyList
-                title='No tenes reservas'
+                title='No tiene reservas'
                 onRefresh={this.onRefresh()}
             />
         );
-
-
     }
 }
 

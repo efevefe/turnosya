@@ -1,4 +1,5 @@
-import { CLIENT_RERSERVATION_READ, CLIENT_RERSERVATION_READING,CLIENT_RERSERVATION_FAIL } from "../actions/types";
+import { CLIENT_RERSERVATION_READ, CLIENT_RERSERVATION_READING, CLIENT_RERSERVATION_FAIL } from "../actions/types";
+import { Toast } from '../components/common';
 
 
 const INITIAL_STATE = {
@@ -13,6 +14,7 @@ export default (state = INITIAL_STATE, action) => {
         case CLIENT_RERSERVATION_READING:
             return { ...state, loading: true }
         case CLIENT_RERSERVATION_FAIL:
+            Toast.show(action.payload)
             return { INITIAL_STATE, loading: false }
         default:
             return state;

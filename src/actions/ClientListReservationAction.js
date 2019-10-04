@@ -9,20 +9,20 @@ export const onClientReservationListRead = () => {
 
   return dispatch => {
     dispatch({ type: CLIENT_RERSERVATION_READING });
-    db.collection(`Profiles/${currentUser.uid}/Reservations`)
+    db.collection(`Profiles/${currentUser.uid}/Reservations`).orderBy('startDate','asc')
       .get()
       .then(snapshot => {
         var reservations = [];
         snapshot.forEach(doc => {
-          db.doc(`Commerces/${doc.data().commerceId}`).get().then(doc1 => {
-            db.doc(`Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`).get().then(doc2 => {
+          db.doc(`Commerces/${doc.data().commerceId}`).get().then(commerceData => {
+            db.doc(`Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`).get().then(courtData => {
               reservations.push({
                 ...doc.data(),
-                courtName: doc2.data().name,
-                commerceName: doc1.data().name,
+                court: courtData.data(),
+                commerce: commerceData.data(),
                 id: doc.id,
-                startDate: moment(doc.data().startDate.toDate()).toString(),
-                endDate: moment(doc.data().endDate.toDate()).toString(),
+                startDate: moment(doc.data().startDate.toDate()),
+                endDate: moment(doc.data().endDate.toDate()),
               }); dispatch({ type: CLIENT_RERSERVATION_READ, payload: reservations });
             });
           }
