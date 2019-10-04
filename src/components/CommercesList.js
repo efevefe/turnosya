@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { IconButton } from './common';
+import { IconButton, Menu, MenuItem, Picker } from './common';
 import getEnvVars from '../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
@@ -40,10 +40,7 @@ class CommercesList extends Component {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
         <IconButton icon="md-search" onPress={this.onSearchPress} />
-        <IconButton
-          icon="ios-funnel"
-          onPress={() => console.log('filtros de busqueda')}
-        />
+        <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
   };
@@ -51,6 +48,10 @@ class CommercesList extends Component {
   onSearchPress = async () => {
     this.props.navigation.setParams({ header: null });
     this.setState({ searchVisible: true });
+  };
+
+  onFiltersPress = () => {
+    this.props.navigation.navigate('commercesFiltersScreen');
   };
 
   onCancelPress = () => {
@@ -96,6 +97,15 @@ class CommercesList extends Component {
     );
   }
 }
+
+const { containerStyle, textStyle } = StyleSheet.create({
+  containerStyle: {
+    padding: 15
+  },
+  textStyle: {
+    textAlign: 'center'
+  }
+});
 
 const mapStateToProps = state => {
   const { refinement, favoriteCommerces } = state.commercesList;
