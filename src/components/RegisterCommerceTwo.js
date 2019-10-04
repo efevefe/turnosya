@@ -58,11 +58,10 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = async index => {
-    if (index > 0) {
-      var { value, label } = this.props.provincesList[index - 1];
-    } else {
-      var { value, label } = this.state.pickerPlaceholder;
-    }
+    var { value, label } =
+      index > 0
+        ? this.props.provincesList[index - 1]
+        : this.state.pickerPlaceholder;
 
     await this.props.onCommerceValueChange({
       prop: 'province',
@@ -75,11 +74,10 @@ class RegisterCommerceTwo extends Component {
   };
 
   onAreaPickerChange = async index => {
-    if (index > 0) {
-      var { value, label } = this.props.areasList[index - 1];
-    } else {
-      var { value, label } = this.state.pickerPlaceholder;
-    }
+    var { value, label } =
+      index > 0
+        ? this.props.areasList[index - 1]
+        : this.state.pickerPlaceholder;
 
     await this.props.onCommerceValueChange({
       prop: 'area',

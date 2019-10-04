@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input } from './common';
+import { CardSection, Button, Input, IconButton } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onCommerceValueChange,
@@ -9,9 +9,20 @@ import {
   validateCuit
 } from '../actions';
 import { validateValueType, trimString } from '../utils';
+import { Ionicons } from '@expo/vector-icons';
+import { NavigationActions } from 'react-navigation';
 
 class RegisterCommerce extends Component {
-  state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
+  state = {
+    phoneError: '',
+    nameError: '',
+    emailError: '',
+    cuitError: '',
+    calle: '',
+    numero: '',
+    barrio: '',
+    ciudad: ''
+  };
 
   componentDidMount() {
     this.props.onCommerceFormOpen();
@@ -95,11 +106,24 @@ class RegisterCommerce extends Component {
     }
   };
 
+  onMapPress = () => {
+    const { calle, numero, barrio, ciudad } = this.state;
+    const navigateAction = NavigationActions.navigate({
+      routeName: 'commerceRegisterMap',
+      params: {
+        address: { calle, numero, barrio, ciudad },
+        title: 'Localizar mi Negocio'
+      }
+    });
+
+    this.props.navigation.navigate(navigateAction);
+  };
+
   render() {
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
-          <CardSection>
+          {/* <CardSection>
             <Input
               label="Razón Social"
               placeholder="Razón Social"
@@ -167,7 +191,7 @@ class RegisterCommerce extends Component {
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
-          </CardSection>
+          </CardSection> 
 
           <CardSection>
             <Input
@@ -190,8 +214,46 @@ class RegisterCommerce extends Component {
                 })
               }
             />
-          </CardSection>
+          </CardSection> */}
 
+          <CardSection>
+            <Input
+              label="calle"
+              placeholder="calle"
+              value={this.state.calle}
+              onChangeText={calle => this.setState({ calle })}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="numero"
+              placeholder="numero"
+              value={this.state.numero}
+              onChangeText={numero => this.setState({ numero })}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="barrio"
+              placeholder="barrio"
+              value={this.state.barrio}
+              onChangeText={barrio => this.setState({ barrio })}
+            />
+          </CardSection>
+          <CardSection>
+            <Input
+              label="ciudad"
+              placeholder="ciudad"
+              value={this.state.ciudad}
+              onChangeText={ciudad => this.setState({ ciudad })}
+            />
+          </CardSection>
+          <Ionicons
+            name={'md-locate'}
+            size={28}
+            color={'black'}
+            onPress={() => this.onMapPress()}
+          />
           <CardSection>
             <Button
               title="Continuar"
