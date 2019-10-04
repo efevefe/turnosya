@@ -114,3 +114,9 @@ export const ON_CLIENT_COURT_RESERVATION_CREATING = 'on_client_court_reservation
 export const ON_CLIENT_COURT_RESERVATION_CREATE = 'on_client_court_reservation_create';
 export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservation_create_fail';
 export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
+
+
+// Court reservations list types
+export const ON_COMMERCE_COURT_RESERVATIONS_READ = 'on_commerce_court_reservations_read';
+export const ON_COMMERCE_COURT_RESERVATIONS_READING = 'on_commerce_court_reservations_reading';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL ='on_commerce_court_reservations_read_fail';

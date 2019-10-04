@@ -42,6 +42,8 @@ export const tabNavigationOptions = {
         iconName = `md-search`;
       } else if (routeName === 'favorites') {
         iconName = `md-heart`;
+      } else if (routeName === 'reservations') {
+        iconName = `md-time`;
       }
 
       return (

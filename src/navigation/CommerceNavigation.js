@@ -11,6 +11,7 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
+import CommerceCourtReservations from '../components/CommerceCourtReservations';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -45,6 +46,7 @@ const calendarStack = createStackNavigator(
   stackNavigationOptions
 );
 
+/*
 const servicesStack = createStackNavigator(
   {
     servicesList: {
@@ -62,6 +64,22 @@ const servicesStack = createStackNavigator(
         title: navigation.getParam('title', 'Nuevo Servicio')
       })
     }
+  },
+  stackNavigationOptions
+);
+*/
+
+const reservationsStack = createStackNavigator(
+  {
+    reservationsList: {
+      screen: CommerceCourtReservations,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Turnos',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
   },
   stackNavigationOptions
 );
@@ -107,7 +125,7 @@ const profileStack = createStackNavigator(
 const commerceTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
-    services: servicesStack,
+    reservations: reservationsStack,
     calendar: calendarStack,
     profile: profileStack
   },
