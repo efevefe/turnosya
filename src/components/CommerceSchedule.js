@@ -14,7 +14,7 @@ import {
 } from '../actions';
 
 class CommerceSchedule extends Component {
-  state = { modal: false };
+  state = { modal: false, a: false };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -27,9 +27,9 @@ class CommerceSchedule extends Component {
     this.props.onScheduleRead(this.props.commerceId);
     this.props.onCommerceCourtReservationsRead({
       commerceId: this.props.commerceId,
-      selectedDate: this.props.selectedDate
+      selectedDate: moment()
     });
-    this.reservationsOnDay();
+    this.props.courtsReadOnlyAvailable(this.props.commerceId);
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -67,33 +67,19 @@ class CommerceSchedule extends Component {
   };
 
   onDateChanged = async date => {
-    this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
-    await this.props.onCommerceCourtReservationsRead({
-      commerceId: this.props.commerceId,
-      selectedDate: date
+    await this.props.onScheduleValueChange({
+      prop: 'selectedDate',
+      value: date
     });
-
-    this.reservationsOnDay();
   };
 
   reservationsOnDay = async slots => {
-    await this.props.courtsReadOnlyAvailable(this.props.commerceId);
-
-    for (j in slots) {
-      var ocupate = [];
-
-      for (i in this.props.reservations) {
-        slots[j].startHour.toString() ===
-        this.props.reservations[i].startHour.toString()
-          ? // moment(slots[j].startHour).format('HH:mm') ===
-            // moment(this.props.reservations[i].startHour).format('HH:mm')
-            ocupate.push({ value: this.props.reservations[i] })
-          : {};
-      }
-      ocupate.length === this.props.courtsAvailable.length
-        ? (slots[j].available = false)
-        : {};
-    }
+    this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.props.selectedDate,
+      slots: slots,
+      courts: this.props.courtsAvailable
+    });
   };
 
   render() {
@@ -105,7 +91,6 @@ class CommerceSchedule extends Component {
       loading,
       onScheduleRead
     } = this.props;
-
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
         <Schedule

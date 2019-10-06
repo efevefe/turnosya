@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { onCommerceCourtReservationsReadOnSlot } from '../actions';
 
 class CourtListItemOnSlot extends Component {
   state = {
@@ -111,7 +110,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  {
-    onCommerceCourtReservationsReadOnSlot
-  }
+  {}
 )(CourtListItemOnSlot);

@@ -78,12 +78,14 @@ class Schedule extends Component {
     }
 
     this.setState({ slots });
-    this.reservationsOnDay();
+    await this.props.reservationsOnDay(slots);
+
+    // this.props.reservationsOnDay(slots);
   };
 
-  reservationsOnDay = async () => {
-    await this.props.reservationsOnDay(this.state.slots);
-  };
+  // reservationsOnDay = async slots => {
+  //   await this.props.reservationsOnDay(slots);
+  // };
 
   generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
     //selected date params

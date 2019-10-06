@@ -19,36 +19,61 @@ export const onCourtReservationsListValueChange = ({ prop, value }) => {
 
 export const onCommerceCourtReservationsRead = ({
   commerceId,
-  selectedDate
+  selectedDate,
+  slots,
+  courts
 }) => {
   const db = firebase.firestore();
+  const reservations = [];
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
+
       .where('startDate', '>=', selectedDate.toDate())
-      .where('startDate', '<', selectedDate.add(1, 'days').toDate())
+      .where(
+        'startDate',
+        '<',
+        moment(selectedDate)
+          .add(1, 'days')
+          .toDate()
+      )
       .get()
       .then(snapshot => {
-        var reservations = [];
         snapshot.forEach(doc => {
           reservations.push({
             id: doc.id,
             startHour: moment(doc.data().startDate.toDate()),
             endHour: moment(doc.data().endDate.toDate()),
-            // available: false,
             ...doc.data()
           });
         });
+      })
+      .then(() => {
+        if (reservations.length !== 0) {
+          for (j in slots) {
+            var ocupate = [];
+
+            for (i in reservations) {
+              slots[j].startHour.toString() ===
+              reservations[i].startHour.toString()
+                ? ocupate.push({ value: reservations[i] })
+                : {};
+            }
+            ocupate.length >= courts.length
+              ? (slots[j].available = false)
+              : (slots[j].available = true);
+          }
+        }
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: reservations
         });
       })
+
       .catch(error =>
         dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL })
       );
-    selectedDate.add(-1, 'days').toDate();
   };
 };
 
