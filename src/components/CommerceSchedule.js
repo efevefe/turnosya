@@ -14,7 +14,7 @@ import {
 } from '../actions';
 
 class CommerceSchedule extends Component {
-  state = { modal: false, a: false };
+  state = { modal: false };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -25,10 +25,6 @@ class CommerceSchedule extends Component {
   componentDidMount() {
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
     this.props.onScheduleRead(this.props.commerceId);
-    this.props.onCommerceCourtReservationsRead({
-      commerceId: this.props.commerceId,
-      selectedDate: moment()
-    });
     this.props.courtsReadOnlyAvailable(this.props.commerceId);
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
