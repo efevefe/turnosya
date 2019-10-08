@@ -98,7 +98,7 @@ class CommerceSchedule extends Component {
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
           onSlotPress={slot => this.onSlotPress(slot)}
-          reservationsOnDay={slots => this.reservationsOnDay(slots)}
+          getSlots={slots => this.reservationsOnDay(slots)}
         />
 
         <Menu

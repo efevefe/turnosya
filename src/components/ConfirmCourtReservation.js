@@ -186,8 +186,8 @@ class ConfirmCourtReservation extends Component {
                 <CourtReservationDetails
                     commerce={commerce}
                     court={court}
-                    startDate={slot.startHour}
-                    endDate={slot.endHour}
+                    startDate={slot.startDate}
+                    endDate={slot.endDate}
                     price={price}
                     light={light}
                     showPrice={saved}

@@ -13,7 +13,7 @@ class CourtListOnSlot extends Component {
   componentWillMount() {
     this.props.onCommerceCourtReservationsReadOnSlot({
       commerceId: this.props.commerceId,
-      slot: this.props.slot.startHour
+      slot: this.props.slot.startDate
     });
     this.props.courtsReadOnlyAvailable(this.props.commerceId);
   }
@@ -31,11 +31,11 @@ class CourtListOnSlot extends Component {
   onRefresh = () => {
     return (
       <RefreshControl
-        // refreshing={this.props.refreshing}
+        refreshing={this.props.refreshing}
         onRefresh={() =>
           this.props.onCommerceCourtReservationsReadOnSlot({
             commerceId: this.props.commerceId,
-            slot: this.props.slot.startHour
+            slot: this.props.slot.startDate
           })
         }
         colors={[MAIN_COLOR]}

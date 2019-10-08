@@ -5,10 +5,7 @@ import {
   ON_CLIENT_COURT_RESERVATION_CREATING,
   ON_CLIENT_COURT_RESERVATION_CREATE,
   ON_CLIENT_COURT_RESERVATION_CREATE_FAIL,
-  ON_COURT_RESERVATION_CLEAR,
-  ON_COMMERCE_COURT_RESERVATIONS_READ,
-  ON_COMMERCE_COURT_RESERVATIONS_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL
+  ON_COURT_RESERVATION_CLEAR
 } from "./types";
 
 export const onCourtReservationValueChange = ({ prop, value }) => {
@@ -35,8 +32,8 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           clientId: currentUser.uid,
           courtId,
           courtType,
-          startDate: slot.startHour.toDate(),
-          endDate: slot.endHour.toDate(),
+          startDate: slot.startDate.toDate(),
+          endDate: slot.endDate.toDate(),
           reservationDate,
           price,
           light,
@@ -48,8 +45,8 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           commerceId,
           courtId,
           courtType,
-          startDate: slot.startHour.toDate(),
-          endDate: slot.endHour.toDate(),
+          startDate: slot.startDate.toDate(),
+          endDate: slot.endDate.toDate(),
           reservationDate,
           price,
           light,
@@ -84,15 +81,13 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
         var clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
         var batch = db.batch();
 
-        console.log(slot.startHour.toDate(), slot.startHour)
-
         // reserva que se guarda en el negocio
         batch.set(commerceReservationRef, {
           clientId: currentUser.uid,
           courtId,
           courtType,
-          startDate: slot.startHour.toDate(),
-          endDate: slot.endHour.toDate(),
+          startDate: slot.startDate.toDate(),
+          endDate: slot.endDate.toDate(),
           reservationDate,
           price,
           light,
@@ -104,8 +99,8 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           commerceId,
           courtId,
           courtType,
-          startDate: slot.startHour.toDate(),
-          endDate: slot.endHour.toDate(),
+          startDate: slot.startDate.toDate(),
+          endDate: slot.endDate.toDate(),
           reservationDate,
           price,
           light,

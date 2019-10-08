@@ -17,6 +17,8 @@ import { MAIN_COLOR } from '../../constants';
         reservationDayPeriod: int,'
         loading: bool,
         onRefresh: function
+        onSlotPress: return slot pressed,
+        getSlots: return slots list
     }
 */
 
@@ -78,7 +80,7 @@ class Schedule extends Component {
     }
 
     this.setState({ slots });
-    await this.props.reservationsOnDay(slots);
+    this.props.getSlots(slots);
   };
 
   generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
@@ -115,8 +117,8 @@ class Schedule extends Component {
     ) {
       slots.push({
         id: slotId,
-        startHour: moment(slotStartDate),
-        endHour: moment(shiftStartDate),
+        startDate: moment(slotStartDate),
+        endDate: moment(shiftStartDate),
         available: true
       });
       slotStartDate.add(reservationMinLength, 'minutes');
@@ -139,7 +141,7 @@ class Schedule extends Component {
             ? { name: 'ios-arrow-forward', type: 'ionicon', color: 'black' }
             : null
         }
-        title={`${item.startHour.format('HH:mm')}`}
+        title={`${item.startDate.format('HH:mm')}`}
         containerStyle={{
           backgroundColor: item.available ? 'white' : '#E7E7E7'
         }}
