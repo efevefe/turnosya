@@ -11,7 +11,7 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
-import CommerceCourtsOnSlot from '../components/CommerceCourtsStateOnSlot';
+import CommerceCourtsStateOnSlot from '../components/CommerceCourtsStateOnSlot';
 import CommerceCourtReservations from '../components/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
 import {
@@ -45,7 +45,7 @@ const calendarStack = createStackNavigator(
       }
     },
     commerceCourtsList: {
-      screen: CommerceCourtsOnSlot,
+      screen: CommerceCourtsStateOnSlot,
       navigationOptions: {
         title: 'Canchas Disponibles'
       }

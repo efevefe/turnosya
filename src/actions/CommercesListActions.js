@@ -77,8 +77,6 @@ export const readOnlyFavoriteCommerces = () => {
     dispatch({ type: ONLY_FAVORITE_COMMERCES_READING });
 
     db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
-      //.get()
-      //.then(
       .onSnapshot(snapshot => {
         var favoriteCommerces = [];
         var onlyFavoriteCommerces = [];

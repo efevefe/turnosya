@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 
-class CourtListItemOnSlot extends Component {
+class CommerceCourtStateListItem extends Component {
   state = {
     optionsVisible: false,
     deleteVisible: false,
@@ -111,4 +111,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {}
-)(CourtListItemOnSlot);
+)(CommerceCourtStateListItem);

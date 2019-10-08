@@ -58,8 +58,9 @@ export const onCommerceCourtReservationsRead = ({
               slots[j].startDate.toString() ===
                 reservations[i].startDate.toString()
                 ? ocupate.push({ value: reservations[i] })
-                : {};
+                : null;
             }
+
             ocupate.length >= courts.length
               ? (slots[j].available = false)
               : (slots[j].available = true);
@@ -77,14 +78,14 @@ export const onCommerceCourtReservationsRead = ({
   };
 };
 
-export const onCommerceCourtReservationsReadOnSlot = ({ commerceId, slot }) => {
+export const onCommerceCourtReservationsReadOnSlot = ({ commerceId, startDate }) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
-      .where('startDate', '==', slot.toDate())
+      .where('startDate', '==', startDate.toDate())
       .get()
       .then(snapshot => {
         var reservations = [];
@@ -122,7 +123,7 @@ export const onCommerceCourtReservationsListRead = ({ commerceId, selectedDate }
         var processedItems = 0;
 
         if (snapshot.empty) {
-          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
+          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: [] });
           return;
         }
 
