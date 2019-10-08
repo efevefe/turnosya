@@ -80,17 +80,14 @@ export const onCommerceCourtTypeReservationsRead = ({
 
 export const onCommerceCourtReservationsRead = ({
   commerceId,
-  selectedDate,
-  slots,
-  courts
+  selectedDate
 }) => {
   const db = firebase.firestore();
-  const reservations = [];
+
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
-
       .where('startDate', '>=', selectedDate.toDate())
       .where(
         'startDate',
@@ -101,6 +98,8 @@ export const onCommerceCourtReservationsRead = ({
       )
       .get()
       .then(snapshot => {
+        var reservations = [];
+
         snapshot.forEach(doc => {
           reservations.push({
             id: doc.id,
@@ -109,33 +108,15 @@ export const onCommerceCourtReservationsRead = ({
             endDate: moment(doc.data().endDate.toDate())
           });
         });
-      })
-      .then(() => {
-        if (reservations.length !== 0) {
-          for (j in slots) {
-            var ocupate = [];
-
-            for (i in reservations) {
-              slots[j].startDate.toString() ===
-              reservations[i].startDate.toString()
-                ? ocupate.push({})
-                : null;
-            }
-
-            ocupate.length >= courts.length
-              ? (slots[j].available = false)
-              : (slots[j].available = true);
-          }
-        }
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: reservations
         });
       })
-
-      .catch(error =>
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL })
-      );
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
+      });
   };
 };
 
@@ -153,6 +134,7 @@ export const onCommerceCourtReservationsReadOnSlot = ({
       .get()
       .then(snapshot => {
         var reservations = [];
+
         snapshot.forEach(doc => {
           reservations.push({
             id: doc.id,
