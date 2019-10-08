@@ -66,9 +66,7 @@ class ClientCommerceSchedule extends Component {
       value: slot
     });
 
-    this.props.navigation.navigate('commerceCourtsList');
-
-    //if (slot.available) this.props.navigation.navigate('commerceCourtsList');
+    if (slot.available) this.props.navigation.navigate('commerceCourtsList');
   };
 
   reservationsOnSlots = slots => {
