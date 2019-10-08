@@ -5,7 +5,6 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import GeocodingScreen from '../components/GeocodingScreen';
-import Cacona from '../components/cacona';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
@@ -69,7 +68,7 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: Cacona,
+      screen: GeocodingScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (

@@ -11,8 +11,8 @@ export default class GeocodingScreen extends React.Component {
     barrio: 'Centro',
     ciudad: 'Cordoba',
     pais: 'Argentina',
-    latitude: -31.417378,
-    longitude: -64.18384
+    latitude: 0,
+    longitude: 0
   };
 
   async componentDidMount() {
@@ -23,58 +23,58 @@ export default class GeocodingScreen extends React.Component {
       ciudad
     } = this.props.navigation.state.params.address;
 
+    //validar cuando vienen vacios o no completos
     this.setState({ calle, numero, barrio, ciudad });
     const address = `${calle} ${numero}, ${barrio}, ${ciudad}, Argentina`;
-    console.log('address geocode: ', address);
     const result = await Location.geocodeAsync(address);
-    console.log('result geocode: ', result);
+    //ver bien este tema de cuando no encuentra nada
+    if (result.length > 0) {
+      const latitude = result[0].latitude;
+      const longitude = result[0].longitude;
 
-    // this.setState({ latitude, longitude });
+      this.setState({ latitude, longitude });
+    }
   }
 
   render() {
-    const { latitude, longitude } = this.state;
+    const { latitude, longitude, calle, numero } = this.state;
     return (
       <MapView
         style={{ flex: 1 }}
-        initialRegion={{
-          latitude,
-          longitude,
+        ref={ref => (this.map = ref)}
+        initialRegion={this.region}
+        region={{
+          latitude: latitude ? latitude : -31.417378,
+          longitude: longitude ? longitude : -64.18384,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01
         }}
-        onPress={e => alert(e.nativeEvent.coordinate.latitude)}
-        onLongPress={e =>
+        onRegionChangeComplete={region => (this.region = region)}
+        animateToRegion={{ region: this.region, duration: 3000 }}
+        onLongPress={async e => {
+          let latitude = e.nativeEvent.coordinate.latitude;
+          let longitude = e.nativeEvent.coordinate.longitude;
+          let second = await Location.reverseGeocodeAsync({
+            latitude,
+            longitude
+          });
+          const number = second[0].name.replace(second[0].street, '');
           this.setState({
-            latitude: e.nativeEvent.coordinate.latitude,
-            longitude: e.nativeEvent.coordinate.longitude
-          })
-        }
+            latitude,
+            longitude,
+            calle: second[0].street,
+            barrio: second[0].region,
+            ciudad: second[0].city,
+            numero: number
+          });
+        }}
       >
         <MapView.Marker
           coordinate={{ latitude, longitude }}
-          title={'title'}
-          description={'description'}
+          title={`${calle} ${numero}`}
+          // description={'description'}
         />
       </MapView>
     );
   }
 }
-
-styles = StyleSheet.create({
-  map: { ...StyleSheet.absoluteFillObject },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  bottomView: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#EE5407',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute', //Here is the trick
-    bottom: 0 //Here is the trick
-  }
-});
