@@ -31,6 +31,7 @@ const INITIAL_STATE = {
   reservationMinLength: 10,
   reservationDayPeriod: 14,
   selectedDate: moment(),
+  slots: [],
   loading: false,
   refreshing: false
 };

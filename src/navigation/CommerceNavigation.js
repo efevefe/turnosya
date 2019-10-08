@@ -145,7 +145,7 @@ const commerceTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'reservations'
+    initialRouteName: 'calendar'
   }
 );
 

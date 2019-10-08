@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
-import { Calendar } from './Calendar';
-import { Spinner } from './Spinner';
-import { EmptyList } from './EmptyList';
-import { ListItem } from 'react-native-elements';
+import { connect } from 'react-redux';
 import moment from 'moment';
-import { getHourAndMinutes } from '../../utils';
-import { MAIN_COLOR } from '../../constants';
+import { Calendar } from './common/Calendar';
+import { Spinner } from './common/Spinner';
+import { EmptyList } from './common/EmptyList';
+import { ListItem } from 'react-native-elements';
+import { getHourAndMinutes } from '../utils';
+import { MAIN_COLOR } from '../constants';
+import { onScheduleValueChange } from '../actions';
 
 /*
     props: {
@@ -23,8 +25,6 @@ import { MAIN_COLOR } from '../../constants';
 */
 
 class Schedule extends Component {
-  state = { slots: [] };
-
   componentDidUpdate(prevProps) {
     if (
       prevProps.cards !== this.props.cards ||
@@ -34,7 +34,7 @@ class Schedule extends Component {
     }
   }
 
-  onDateSelected = async selectedDate => {
+  onDateSelected = selectedDate => {
     selectedDate = moment([
       selectedDate.year(),
       selectedDate.month(),
@@ -42,8 +42,6 @@ class Schedule extends Component {
       0,
       0
     ]);
-
-    await this.props.onDateChanged(selectedDate);
 
     // dia de la semana (0-6)
     var dayId = selectedDate.day();
@@ -79,8 +77,8 @@ class Schedule extends Component {
       }
     }
 
-    this.setState({ slots });
-    this.props.getSlots(slots);
+    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onDateChanged(selectedDate);
   };
 
   generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
@@ -166,10 +164,10 @@ class Schedule extends Component {
   };
 
   renderSlots = () => {
-    if (this.state.slots.length) {
+    if (this.props.slots.length) {
       return (
         <FlatList
-          data={this.state.slots}
+          data={this.props.slots}
           renderItem={this.renderList.bind(this)}
           keyExtractor={slot => slot.id.toString()}
           refreshControl={this.onRefresh()}
@@ -192,22 +190,23 @@ class Schedule extends Component {
           onDateSelected={date => this.onDateSelected(date)}
           startingDate={this.props.selectedDate}
           maxDate={moment().add(this.props.reservationDayPeriod, 'days')}
-          datesWhitelist={[
-            {
-              start: moment(),
-              end: moment().add(this.props.reservationDayPeriod, 'days')
-            }
-          ]}
+          datesWhitelist={this.props.datesWhitelist}
         />
 
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderSlots()
-        )}
+            this.renderSlots()
+          )}
       </View>
     );
   }
 }
 
-export { Schedule };
+const mapStateToProps = state => {
+  const { slots } = state.scheduleRegister;
+
+  return { slots }
+}
+
+export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);

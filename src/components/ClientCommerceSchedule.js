@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Schedule } from './common';
+import Schedule from './Schedule';
 import {
   onScheduleRead,
   onScheduleValueChange,
@@ -38,8 +38,12 @@ class ClientCommerceSchedule extends Component {
       <Schedule
         cards={cards}
         selectedDate={selectedDate}
-        reservationDayPeriod={reservationDayPeriod}
         reservationMinLength={reservationMinLength}
+        reservationDayPeriod={reservationDayPeriod}
+        datesWhitelist={[{
+          start: moment(),
+          end: moment().add(reservationDayPeriod, 'days')
+        }]}
         loading={loading}
         onDateChanged={date =>
           onScheduleValueChange({ prop: 'selectedDate', value: date })
