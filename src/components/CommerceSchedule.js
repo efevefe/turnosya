@@ -4,7 +4,14 @@ import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, Schedule, IconButton } from './common';
-import { onScheduleRead, onScheduleValueChange } from '../actions';
+import {
+  onScheduleRead,
+  onScheduleValueChange,
+  onCommerceCourtReservationsRead,
+  onCourtReservationValueChange,
+  onCommerceCourtReservationsReadOnSlot,
+  courtsReadOnlyAvailable
+} from '../actions';
 
 class CommerceSchedule extends Component {
   state = { modal: false };
@@ -16,12 +23,21 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    this.props.onScheduleRead(this.props.commerceId);
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
+    this.props.onScheduleRead(this.props.commerceId);
+    this.props.courtsReadOnlyAvailable(this.props.commerceId);
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
   }
+
+  onSlotPress = async slot => {
+    this.props.onCourtReservationValueChange({
+      prop: 'slot',
+      value: slot
+    });
+    this.props.navigation.navigate('commerceCourtsList');
+  };
 
   renderConfigurationButton = () => {
     return (
@@ -46,17 +62,31 @@ class CommerceSchedule extends Component {
     this.props.navigation.navigate('registerConfiguration');
   };
 
+  onDateChanged = async date => {
+    await this.props.onScheduleValueChange({
+      prop: 'selectedDate',
+      value: date
+    });
+  };
+
+  reservationsOnDay = async slots => {
+    this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.props.selectedDate,
+      slots: slots,
+      courts: this.props.courtsAvailable
+    });
+  };
+
   render() {
     const {
-        cards,
-        selectedDate,
-        reservationDayPeriod,
-        reservationMinLength,
-        loading,
-        onScheduleRead,
-        onScheduleValueChange
+      cards,
+      selectedDate,
+      reservationDayPeriod,
+      reservationMinLength,
+      loading,
+      onScheduleRead
     } = this.props;
-
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
         <Schedule
@@ -65,8 +95,10 @@ class CommerceSchedule extends Component {
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
           loading={loading}
-          onDateChanged={date => onScheduleValueChange({ prop: 'selectedDate', value: date })}
+          onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
+          onSlotPress={slot => this.onSlotPress(slot)}
+          reservationsOnDay={slots => this.reservationsOnDay(slots)}
         />
 
         <Menu
@@ -97,10 +129,13 @@ const mapStateToProps = state => {
     selectedDate,
     reservationDayPeriod,
     reservationMinLength,
-    loading,
-    refreshing
+    refreshing,
+    loading
   } = state.scheduleRegister;
   const { commerceId } = state.commerceData;
+  const { reservations } = state.courtReservationsList;
+  const { slot } = state.courtReservation;
+  const { courtsAvailable } = state.courtsList;
 
   return {
     cards,
@@ -108,12 +143,22 @@ const mapStateToProps = state => {
     reservationDayPeriod,
     reservationMinLength,
     commerceId,
+    reservations,
     loading,
-    refreshing
+    refreshing,
+    slot,
+    courtsAvailable
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleRead, onScheduleValueChange }
+  {
+    onScheduleRead,
+    onScheduleValueChange,
+    onCommerceCourtReservationsRead,
+    onCourtReservationValueChange,
+    onCommerceCourtReservationsReadOnSlot,
+    courtsReadOnlyAvailable
+  }
 )(CommerceSchedule);

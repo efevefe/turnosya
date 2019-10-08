@@ -31,12 +31,10 @@ class CourtForm extends Component {
 
     if (params) {
       const { court } = params;
-
       for (prop in params.court) {
         this.props.onCourtValueChange({ prop, value: court[prop] });
       }
-
-      this.setState({ lightPriceOpen: (params.lightPrice !== '') });
+      court.lightPrice === '' ? {} : this.setState({ lightPriceOpen: true });
     } else {
       this.props.onCourtFormOpen();
     }
@@ -206,9 +204,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-        prop: 'ground',
-        value
-      })
+          prop: 'ground',
+          value
+        })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 

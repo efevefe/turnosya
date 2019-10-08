@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { FlatList, Text, RefreshControl, TouchableHighlight, View } from 'react-native';
+import {
+  FlatList,
+  Text,
+  RefreshControl,
+  TouchableHighlight,
+  View
+} from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../components/common';
-import { 
-  onCommerceCourtTypesRead, 
-  onCourtReservationValueChange 
+import {
+  onCommerceCourtTypesRead,
+  onCourtReservationValueChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
@@ -40,13 +46,13 @@ class CommerceCourtTypes extends Component {
     });
 
     this.props.navigation.navigate('commerceSchedule');
-  }
+  };
 
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
         onPress={() => this.onCourtTypePress(item.name)}
-        underlayColor='transparent'
+        underlayColor="transparent"
       >
         <Card
           image={item.image ? { uri: item.image } : null}
@@ -79,11 +85,11 @@ class CommerceCourtTypes extends Component {
 
     return (
       <EmptyList
-        title='Parece que no hay canchas'
+        title="Parece que no hay canchas"
         refreshControl={this.onRefresh()}
       />
     );
-  }
+  };
 
   render() {
     const { loading } = this.props;
@@ -103,8 +109,8 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { 
+  {
     onCommerceCourtTypesRead,
     onCourtReservationValueChange
-   }
+  }
 )(CommerceCourtTypes);
