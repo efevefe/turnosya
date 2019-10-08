@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './common';
 import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
 
-const CourtReservationDetails = props => {
-    const {
-        commerce,
-        court,
-        startDate,
-        endDate,
-        price,
-        light,
-        showPrice,
-        children
-    } = props;
+class CourtReservationDetails extends Component {
+    state = { name: '', profilePicture: '' };
+
+    componentDidMount() {
+        const { commerce, client } = this.props;
+
+        if (commerce) {
+            this.setState({ name: commerce.name, profilePicture: commerce.profilePicture });
+        } else {
+            this.setState({ name: `${client.firstName} ${client.lastName}`, profilePicture: client.profilePicture });
+        }
+    }
 
     renderPrice = () => {
+        const { price, showPrice } = this.props;
+
         if (showPrice) {
             return (
                 <CardSection style={[styles.cardSections, { marginTop: 15 }]}>
@@ -29,12 +32,21 @@ const CourtReservationDetails = props => {
         }
     }
 
-    return (
-        <View style={{ flex: 1 }}>
+    render() {
+        const {
+            court,
+            startDate,
+            endDate,
+            light
+        } = this.props;
+
+        const { name, profilePicture } = this.state;
+
+        return (
             <View style={styles.mainContainer}>
                 <Avatar
                     rounded
-                    source={commerce.profilePicture ? { uri: commerce.profilePicture } : null}
+                    source={profilePicture ? { uri: profilePicture } : null}
                     size={90}
                     icon={{ name: 'store' }}
                     containerStyle={styles.avatarStyle}
@@ -42,7 +54,7 @@ const CourtReservationDetails = props => {
                 <View style={styles.contentContainer}>
                     <CardSection style={[styles.cardSections, { paddingBottom: 8 }]}>
                         <Text style={styles.bigText}>
-                            {commerce.name}
+                            {name}
                         </Text>
                     </CardSection>
                     <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
@@ -72,16 +84,14 @@ const CourtReservationDetails = props => {
                         </Text>
                     </CardSection>
                     {this.renderPrice()}
-                    {children}
                 </View>
             </View>
-        </View>
-    );
+        );
+    }
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1,
         padding: 5,
         paddingTop: 15,
         alignItems: 'center',
@@ -94,7 +104,6 @@ const styles = StyleSheet.create({
         marginBottom: 8
     },
     contentContainer: {
-        flex: 1,
         alignSelf: 'stretch',
         justifyContent: 'flex-start'
     },
