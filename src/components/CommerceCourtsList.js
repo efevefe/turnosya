@@ -1,18 +1,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, Text } from 'react-native';
-import { ListItem } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import { FlatList, View } from 'react-native';
+import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from './common';
 import {
   onCommerceCourtsRead,
-  onCourtReservationValueChange
+  onCourtReservationValueChange,
+  onCommerceCourtReservationsReadOnSlot,
+  onCommerceCourtTypeReservationsRead,
+  onScheduleRead
 } from '../actions';
+import CommerceCourtStateListItem from './CommerceCourtStateListItem';
 
 class CommerceCourtsList extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerLeft: navigation.getParam('leftButton')
+    };
+  };
+
   componentDidMount() {
+    this.props.navigation.setParams({
+      leftButton: this.renderBackButton()
+    });
+
+    this.props.onCommerceCourtReservationsReadOnSlot({
+      commerceId: this.props.commerce.objectID,
+      startDate: this.props.slot.startDate
+    });
+
     this.props.onCommerceCourtsRead({
       commerceId: this.props.commerce.objectID,
+      courtType: this.props.courtType
+    });
+  }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
+  }
+
+  onBackPress = () => {
+    // hace lo mismo que haria si se volviera a montar la pantalla anterior
+    this.props.navigation.goBack(null);
+
+    this.props.onScheduleRead(this.props.commerce.objectID);
+
+    this.props.onCommerceCourtsRead({
+      commerceId: this.props.commerce.objectID,
+      courtType: this.props.courtType
+    });
+
+    this.props.onCommerceCourtTypeReservationsRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: this.props.selectedDate,
       courtType: this.props.courtType
     });
   }
@@ -26,50 +66,17 @@ class CommerceCourtsList extends Component {
     this.props.navigation.navigate('confirmCourtReservation');
   };
 
-  renderRow({ item }) {
-    const { name, court, ground, price, lightPrice, id } = item;
-
+  renderRow = ({ item }) => {
     return (
-      <ListItem
-        title={name}
-        titleStyle={{
-          textAlign: 'left',
-          display: 'flex'
-        }}
-        rightTitle={
-          lightPrice !== '' ? (
-            <View style={{ justifyContent: 'space-between' }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color: 'black'
-                }}
-              >{`Sin luz: $${price}`}</Text>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color: 'black'
-                }}
-              >{`Con luz: $${lightPrice}`}</Text>
-            </View>
-          ) : (
-            <Text>{`Sin luz: $${price}`}</Text>
-          )
-        }
-        key={id}
-        subtitle={
-          <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
-        }
-        rightIcon={{
-          name: 'ios-arrow-forward',
-          type: 'ionicon',
-          color: 'black'
-        }}
+      <CommerceCourtStateListItem
+        court={item}
+        commerceId={this.props.commerce.objectID}
+        navigation={this.props.navigation}
+        disabled={true} // solo se deshabilita si esta ocupada
         onPress={() => this.onCourtPress(item)}
-        bottomDivider
       />
     );
-  }
+  };
 
   renderList = () => {
     if (this.props.courts.length > 0) {
@@ -95,13 +102,19 @@ class CommerceCourtsList extends Component {
 
 const mapStateToProps = state => {
   const { courts, loading } = state.courtsList;
-  const { courtType } = state.courtReservation;
-  const { commerce } = state.courtReservation;
+  const { commerce, courtType, slot } = state.courtReservation;
+  const { selectedDate } = state.scheduleRegister;
 
-  return { commerce, courtType, courts, loading };
+  return { commerce, courtType, courts, loading, slot, selectedDate };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceCourtsRead, onCourtReservationValueChange }
+  {
+    onCommerceCourtsRead,
+    onCourtReservationValueChange,
+    onCommerceCourtReservationsReadOnSlot,
+    onCommerceCourtTypeReservationsRead,
+    onScheduleRead
+  }
 )(CommerceCourtsList);

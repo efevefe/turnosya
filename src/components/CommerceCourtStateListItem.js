@@ -1,101 +1,101 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 
-class CourtListItemOnSlot extends Component {
+class CommerceCourtStateListItem extends Component {
   state = {
-    optionsVisible: false,
-    deleteVisible: false,
-    courtReservationState: 'Disponible'
+    courtAvailable: true
   };
 
   componentWillMount() {
-    this.courtsAvailable();
+    this.courtIsAvailable();
   }
 
-  courtsAvailable = () => {
-    for (i in this.props.reservationsOnSlot) {
-      this.props.reservationsOnSlot[i].courtId === this.props.court.id
-        ? this.setState({ courtReservationState: 'Ocupado' })
-        : {};
-    }
+  courtIsAvailable = () => {
+    this.setState({
+      courtAvailable: !this.props.reservationsOnSlot.find(reservation => reservation.courtId === this.props.court.id)
+    })
   };
 
   render() {
-    const { name, court, ground, price, lightPrice, id } = this.props.court;
+    const {
+      name,
+      court,
+      ground,
+      price,
+      lightPrice,
+      id
+    } = this.props.court;
+    const { disabled, onPress } = this.props;
+    const { courtAvailable } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
         <ListItem
           containerStyle={
-            this.state.courtReservationState === 'Disponible'
-              ? {}
-              : { backgroundColor: '#E7E7E7' }
+            courtAvailable ? null : { backgroundColor: '#E7E7E7' }
           }
-          title={
-            this.state.courtReservationState === 'Disponible'
-              ? name // + ' - Disponible'
-              : name + ' - Ocupado'
-          }
+          title={courtAvailable ? name : name + ' - Ocupado'}
           titleStyle={
-            this.state.courtReservationState === 'Disponible'
+            courtAvailable
               ? { textAlign: 'left', display: 'flex' }
               : {
-                  textAlign: 'left',
-                  display: 'flex',
-                  color: 'grey',
-                  fontStyle: 'italic'
-                }
+                textAlign: 'left',
+                display: 'flex',
+                color: 'grey',
+                fontStyle: 'italic'
+              }
           }
           rightTitle={
             lightPrice !== '' ? (
               <View style={{ justifyContent: 'space-between' }}>
                 <Text
                   style={
-                    this.state.courtReservationState === 'Disponible'
+                    courtAvailable
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
                   }
                 >{`Sin luz: $${price}`}</Text>
                 <Text
                   style={
-                    this.state.courtReservationState === 'Disponible'
+                    courtAvailable
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
+                        textAlign: 'right',
+                        color: 'grey',
+                        fontStyle: 'italic'
+                      }
                   }
                 >{`Con luz: $${lightPrice}`}</Text>
               </View>
             ) : (
-              <Text
-                style={
-                  this.state.courtReservationState === 'Disponible'
-                    ? {}
-                    : { color: 'grey', fontStyle: 'italic' }
-                }
-              >{`Sin luz: $${price}`}</Text>
-            )
+                <Text
+                  style={
+                    courtAvailable
+                      ? null
+                      : { color: 'grey', fontStyle: 'italic' }
+                  }
+                >{`Sin luz: $${price}`}</Text>
+              )
           }
           key={id}
           subtitle={
             <Text
               style={
-                this.state.courtReservationState === 'Disponible'
+                courtAvailable
                   ? { color: 'grey' }
                   : { color: 'grey', fontStyle: 'italic' }
               }
             >{`${court} - ${ground}`}</Text>
           }
           bottomDivider
+          onPress={onPress}
+          disabled={(disabled && !courtAvailable)}
         />
       </View>
     );
@@ -103,12 +103,12 @@ class CourtListItemOnSlot extends Component {
 }
 
 const mapStateToProps = state => {
-  const { reservations, reservationsOnSlot } = state.courtReservationsList;
+  const { reservationsOnSlot } = state.courtReservationsList;
 
-  return { reservations, reservationsOnSlot };
+  return { reservationsOnSlot };
 };
 
 export default connect(
   mapStateToProps,
-  {}
-)(CourtListItemOnSlot);
+  null
+)(CommerceCourtStateListItem);

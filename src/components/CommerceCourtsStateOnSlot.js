@@ -9,11 +9,11 @@ import {
 import CommerceCourtStateListItem from './CommerceCourtStateListItem';
 import { MAIN_COLOR } from '../constants';
 
-class CourtListOnSlot extends Component {
-  componentWillMount() {
+class CommerceCourtsStateOnSlot extends Component {
+  componentDidMount() {
     this.props.onCommerceCourtReservationsReadOnSlot({
       commerceId: this.props.commerceId,
-      slot: this.props.slot.startHour
+      startDate: this.props.slot.startDate
     });
     this.props.courtsReadOnlyAvailable(this.props.commerceId);
   }
@@ -31,11 +31,11 @@ class CourtListOnSlot extends Component {
   onRefresh = () => {
     return (
       <RefreshControl
-        // refreshing={this.props.refreshing}
+        refreshing={this.props.refreshing}
         onRefresh={() =>
           this.props.onCommerceCourtReservationsReadOnSlot({
             commerceId: this.props.commerceId,
-            slot: this.props.slot.startHour
+            startDate: this.props.slot.startDate
           })
         }
         colors={[MAIN_COLOR]}
@@ -78,4 +78,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   { courtsReadOnlyAvailable, onCommerceCourtReservationsReadOnSlot }
-)(CourtListOnSlot);
+)(CommerceCourtsStateOnSlot);

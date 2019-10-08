@@ -10,7 +10,8 @@ import {
     onCourtReservationValueChange,
     onClientCourtReservationCreate,
     onCourtReservationClear,
-    onCommerceCourtsRead
+    onCommerceCourtsRead,
+    onCommerceCourtReservationsReadOnSlot
 } from '../actions';
 import CourtReservationDetails from './CourtReservationDetails';
 
@@ -37,8 +38,14 @@ class ConfirmCourtReservation extends Component {
     }
 
     onBackPress = () => {
+        // hace lo mismo que haria si se volviera a montar la pantalla anterior
         this.onNewReservation();
         this.props.navigation.goBack(null);
+
+        this.props.onCommerceCourtReservationsReadOnSlot({
+            commerceId: this.props.commerce.objectID,
+            startDate: this.props.slot.startDate
+        });
 
         this.props.onCommerceCourtsRead({
             commerceId: this.props.commerce.objectID,
@@ -186,8 +193,8 @@ class ConfirmCourtReservation extends Component {
                 <CourtReservationDetails
                     commerce={commerce}
                     court={court}
-                    startDate={slot.startHour}
-                    endDate={slot.endHour}
+                    startDate={slot.startDate}
+                    endDate={slot.endDate}
                     price={price}
                     light={light}
                     showPrice={saved}
@@ -230,6 +237,7 @@ export default connect(
         onCourtReservationValueChange,
         onClientCourtReservationCreate,
         onCourtReservationClear,
-        onCommerceCourtsRead
+        onCommerceCourtsRead,
+        onCommerceCourtReservationsReadOnSlot
     }
 )(ConfirmCourtReservation);
