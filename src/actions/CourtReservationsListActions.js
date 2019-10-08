@@ -17,29 +17,45 @@ export const onCommerceCourtReservationsRead = ({ commerceId, selectedDate }) =>
             .where('startDate', '>=', selectedDate.toDate())
             .where('startDate', '<', moment(selectedDate).add(1, 'days').toDate())
             .orderBy('startDate')
-            .get()
-            .then(snapshot => {
+            //.get()
+            .onSnapshot(snapshot => {
                 var reservations = [];
-                snapshot.forEach(doc => {
-                    reservations.push({
-                        id: doc.id,
-                        ...doc.data(),
-                        startDate: moment(doc.data().startDate.toDate()),
-                        endDate: moment(doc.data().endDate.toDate()),
-                        reservationDate: moment(doc.data().reservationDate.toDate())
-                    })
-                });
+                var processedItems = 0;
 
-                dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: reservations });
+                snapshot.forEach(doc => {
+                    db.doc(`Commerces/${commerceId}/Courts/${doc.data().courtId}`)
+                        .get()
+                        .then(court => {
+                            db.doc(`Profiles/${doc.data().clientId}`)
+                                .get()
+                                .then(client => {
+                                    reservations.push({
+                                        id: doc.id,
+                                        ...doc.data(),
+                                        startDate: moment(doc.data().startDate.toDate()),
+                                        endDate: moment(doc.data().endDate.toDate()),
+                                        reservationDate: moment(doc.data().reservationDate.toDate()),
+                                        client: { id: client.id, ...client.data() },
+                                        court: { id: court.id, ...court.data() }
+                                    });
+
+                                    processedItems++;
+
+                                    if (processedItems === snapshot.size) {
+                                        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: reservations });
+                                    }
+                                });
+                        });
+                });
             })
+            /*
             .catch(error => {
                 console.log(error);
                 dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
             });
+            */
     }
 }
-
-
 
 
 

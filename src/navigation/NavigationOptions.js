@@ -21,7 +21,8 @@ export const stackNavigationOptions = {
 
 export const drawerNavigationOptions = {
   drawerType: 'slide',
-  drawerWidth: 230
+  drawerWidth: 230,
+  overlayColor: 0.6
 };
 
 export const tabNavigationOptions = {

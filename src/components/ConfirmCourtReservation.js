@@ -191,12 +191,11 @@ class ConfirmCourtReservation extends Component {
                     price={price}
                     light={light}
                     showPrice={saved}
-                >
-                    {this.renderPriceButtons()}
-                    <View style={styles.confirmButtonContainer}>
-                        {this.renderButtons()}
-                    </View>
-                </CourtReservationDetails>
+                />
+                {this.renderPriceButtons()}
+                <View style={styles.confirmButtonContainer}>
+                    {this.renderButtons()}
+                </View>
             </View>
         );
     }

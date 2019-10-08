@@ -12,6 +12,7 @@ import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
 import CommerceCourtReservations from '../components/CommerceCourtReservations';
+import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -80,6 +81,12 @@ const reservationsStack = createStackNavigator(
         )
       })
     },
+    reservationDetails: { // la pantalla de detalles del turno que es alternativa al modal
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
+      }
+    },
   },
   stackNavigationOptions
 );
@@ -131,7 +138,7 @@ const commerceTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'calendar'
+    initialRouteName: 'reservations'
   }
 );
 
