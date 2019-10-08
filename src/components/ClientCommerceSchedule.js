@@ -5,13 +5,19 @@ import { Schedule } from './common';
 import {
   onScheduleRead,
   onScheduleValueChange,
-  onCourtReservationValueChange
+  onCourtReservationValueChange,
+  onCommerceCourtTypeReservationsRead,
+  onCommerceCourtsRead
 } from '../actions';
 
 class ClientCommerceSchedule extends Component {
   componentDidMount() {
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: moment() });
     this.props.onScheduleRead(this.props.commerce.objectID);
+    this.props.onCommerceCourtsRead({
+      commerceId: this.props.commerce.objectID,
+      courtType: this.props.courtType
+    });
   }
 
   onSlotPress = slot => {
@@ -19,8 +25,17 @@ class ClientCommerceSchedule extends Component {
       prop: 'slot',
       value: slot
     });
+    if (slot.available) this.props.navigation.navigate('commerceCourtsList');
+  };
 
-    this.props.navigation.navigate('commerceCourtsList');
+  reservationsOnDay = slots => {
+    this.props.onCommerceCourtTypeReservationsRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: this.props.selectedDate,
+      slots: slots,
+      courts: this.props.courts,
+      courtType: this.props.courtType
+    });
   };
 
   render() {
@@ -46,6 +61,7 @@ class ClientCommerceSchedule extends Component {
         }
         onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
         onSlotPress={slot => this.onSlotPress(slot)}
+        getSlots={slots => this.reservationsOnDay(slots)}
       />
     );
   }
@@ -60,7 +76,10 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.scheduleRegister;
-  const { commerce } = state.courtReservation;
+  const { commerce, courtType } = state.courtReservation;
+  const { reservations } = state.courtReservationsList;
+  const { slot } = state.courtReservation;
+  const { courts } = state.courtsList;
 
   return {
     commerce,
@@ -69,7 +88,11 @@ const mapStateToProps = state => {
     reservationDayPeriod,
     reservationMinLength,
     loading,
-    refreshing
+    refreshing,
+    reservations,
+    slot,
+    courts,
+    courtType
   };
 };
 
@@ -78,6 +101,8 @@ export default connect(
   {
     onScheduleValueChange,
     onScheduleRead,
-    onCourtReservationValueChange
+    onCourtReservationValueChange,
+    onCommerceCourtTypeReservationsRead,
+    onCommerceCourtsRead
   }
 )(ClientCommerceSchedule);

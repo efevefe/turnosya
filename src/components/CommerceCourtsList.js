@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, Text } from 'react-native';
-import { ListItem } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList } from './common';
 import {
   onCommerceCourtsRead,
-  onCourtReservationValueChange
+  onCourtReservationValueChange,
+  onCommerceCourtReservationsReadOnSlot
 } from '../actions';
+import CommerceCourtStateListItem from './CommerceCourtStateListItem';
 
 class CommerceCourtsList extends Component {
   componentDidMount() {
+    this.props.onCommerceCourtReservationsReadOnSlot({
+      commerceId: this.props.commerce.objectID,
+      startDate: this.props.slot.startDate
+    });
     this.props.onCommerceCourtsRead({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
@@ -26,50 +30,16 @@ class CommerceCourtsList extends Component {
     this.props.navigation.navigate('confirmCourtReservation');
   };
 
-  renderRow({ item }) {
-    const { name, court, ground, price, lightPrice, id } = item;
-
+  renderRow = ({ item }) => {
     return (
-      <ListItem
-        title={name}
-        titleStyle={{
-          textAlign: 'left',
-          display: 'flex'
-        }}
-        rightTitle={
-          lightPrice !== '' ? (
-            <View style={{ justifyContent: 'space-between' }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color: 'black'
-                }}
-              >{`Sin luz: $${price}`}</Text>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  color: 'black'
-                }}
-              >{`Con luz: $${lightPrice}`}</Text>
-            </View>
-          ) : (
-            <Text>{`Sin luz: $${price}`}</Text>
-          )
-        }
-        key={id}
-        subtitle={
-          <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
-        }
-        rightIcon={{
-          name: 'ios-arrow-forward',
-          type: 'ionicon',
-          color: 'black'
-        }}
+      <CommerceCourtStateListItem
+        court={item}
+        commerceId={this.props.commerce.objectID}
+        navigation={this.props.navigation}
         onPress={() => this.onCourtPress(item)}
-        bottomDivider
       />
     );
-  }
+  };
 
   renderList = () => {
     if (this.props.courts.length > 0) {
@@ -95,13 +65,17 @@ class CommerceCourtsList extends Component {
 
 const mapStateToProps = state => {
   const { courts, loading } = state.courtsList;
-  const { courtType } = state.courtReservation;
+  const { courtType, slot } = state.courtReservation;
   const { commerce } = state.courtReservation;
 
-  return { commerce, courtType, courts, loading };
+  return { commerce, courtType, courts, loading, slot };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceCourtsRead, onCourtReservationValueChange }
+  {
+    onCommerceCourtsRead,
+    onCourtReservationValueChange,
+    onCommerceCourtReservationsReadOnSlot
+  }
 )(CommerceCourtsList);

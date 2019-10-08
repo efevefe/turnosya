@@ -6,9 +6,7 @@ import { connect } from 'react-redux';
 
 class CommerceCourtStateListItem extends Component {
   state = {
-    optionsVisible: false,
-    deleteVisible: false,
-    courtReservationState: 'Disponible'
+    courtAvailable: true
   };
 
   componentWillMount() {
@@ -18,8 +16,8 @@ class CommerceCourtStateListItem extends Component {
   courtsAvailable = () => {
     for (i in this.props.reservationsOnSlot) {
       this.props.reservationsOnSlot[i].courtId === this.props.court.id
-        ? this.setState({ courtReservationState: 'Ocupado' })
-        : {};
+        ? this.setState({ courtAvailable: false })
+        : null;
     }
   };
 
@@ -30,17 +28,11 @@ class CommerceCourtStateListItem extends Component {
       <View style={{ flex: 1 }}>
         <ListItem
           containerStyle={
-            this.state.courtReservationState === 'Disponible'
-              ? {}
-              : { backgroundColor: '#E7E7E7' }
+            this.state.courtAvailable ? null : { backgroundColor: '#E7E7E7' }
           }
-          title={
-            this.state.courtReservationState === 'Disponible'
-              ? name // + ' - Disponible'
-              : name + ' - Ocupado'
-          }
+          title={this.state.courtAvailable ? name : name + ' - Ocupado'}
           titleStyle={
-            this.state.courtReservationState === 'Disponible'
+            this.state.courtAvailable
               ? { textAlign: 'left', display: 'flex' }
               : {
                   textAlign: 'left',
@@ -54,7 +46,7 @@ class CommerceCourtStateListItem extends Component {
               <View style={{ justifyContent: 'space-between' }}>
                 <Text
                   style={
-                    this.state.courtReservationState === 'Disponible'
+                    this.state.courtAvailable
                       ? { textAlign: 'right', color: 'black' }
                       : {
                           textAlign: 'right',
@@ -65,7 +57,7 @@ class CommerceCourtStateListItem extends Component {
                 >{`Sin luz: $${price}`}</Text>
                 <Text
                   style={
-                    this.state.courtReservationState === 'Disponible'
+                    this.state.courtAvailable
                       ? { textAlign: 'right', color: 'black' }
                       : {
                           textAlign: 'right',
@@ -78,8 +70,8 @@ class CommerceCourtStateListItem extends Component {
             ) : (
               <Text
                 style={
-                  this.state.courtReservationState === 'Disponible'
-                    ? {}
+                  this.state.courtAvailable
+                    ? null
                     : { color: 'grey', fontStyle: 'italic' }
                 }
               >{`Sin luz: $${price}`}</Text>
@@ -89,13 +81,15 @@ class CommerceCourtStateListItem extends Component {
           subtitle={
             <Text
               style={
-                this.state.courtReservationState === 'Disponible'
+                this.state.courtAvailable
                   ? { color: 'grey' }
                   : { color: 'grey', fontStyle: 'italic' }
               }
             >{`${court} - ${ground}`}</Text>
           }
           bottomDivider
+          onPress={this.props.onPress}
+          disabled={!this.state.courtAvailable}
         />
       </View>
     );
@@ -103,9 +97,9 @@ class CommerceCourtStateListItem extends Component {
 }
 
 const mapStateToProps = state => {
-  const { reservations, reservationsOnSlot } = state.courtReservationsList;
+  const { reservationsOnSlot } = state.courtReservationsList;
 
-  return { reservations, reservationsOnSlot };
+  return { reservationsOnSlot };
 };
 
 export default connect(
