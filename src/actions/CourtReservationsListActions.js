@@ -20,17 +20,14 @@ export const onCourtReservationsListValueChange = ({ prop, value }) => {
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
   selectedDate,
-  slots,
-  courts,
   courtType
 }) => {
   const db = firebase.firestore();
-  const reservations = [];
+
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
-
       .where('courtType', '==', courtType)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
@@ -42,6 +39,8 @@ export const onCommerceCourtTypeReservationsRead = ({
       )
       .get()
       .then(snapshot => {
+        var reservations = [];
+
         snapshot.forEach(doc => {
           reservations.push({
             id: doc.id,
@@ -50,30 +49,12 @@ export const onCommerceCourtTypeReservationsRead = ({
             endDate: moment(doc.data().endDate.toDate())
           });
         });
-      })
-      .then(() => {
-        if (reservations.length !== 0) {
-          for (j in slots) {
-            var ocupate = [];
 
-            for (i in reservations) {
-              slots[j].startDate.toString() ===
-              reservations[i].startDate.toString()
-                ? ocupate.push({})
-                : null;
-            }
-
-            ocupate.length >= courts.length
-              ? (slots[j].available = false)
-              : (slots[j].available = true);
-          }
-        }
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: reservations
         });
       })
-
       .catch(dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL }));
   };
 };
