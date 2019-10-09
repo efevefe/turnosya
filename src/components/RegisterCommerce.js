@@ -18,10 +18,10 @@ class RegisterCommerce extends Component {
     nameError: '',
     emailError: '',
     cuitError: '',
-    calle: '',
-    numero: '',
-    barrio: '',
-    ciudad: ''
+    street: '',
+    streetNumber: '',
+    region: '',
+    city: ''
   };
 
   componentDidMount() {
@@ -107,11 +107,11 @@ class RegisterCommerce extends Component {
   };
 
   onMapPress = () => {
-    const { calle, numero, barrio, ciudad } = this.state;
+    const { street, streetNumber, region, city } = this.state;
     const navigateAction = NavigationActions.navigate({
       routeName: 'commerceRegisterMap',
       params: {
-        address: { calle, numero, barrio, ciudad },
+        address: { street, streetNumber, region, city },
         title: 'Localizar mi Negocio'
       }
     });
@@ -220,38 +220,38 @@ class RegisterCommerce extends Component {
             <Input
               label="calle"
               placeholder="calle"
-              value={this.state.calle}
-              onChangeText={calle => this.setState({ calle })}
+              value={this.state.street}
+              onChangeText={street => this.setState({ street })}
             />
           </CardSection>
           <CardSection>
             <Input
               label="numero"
               placeholder="numero"
-              value={this.state.numero}
-              onChangeText={numero => this.setState({ numero })}
+              value={this.state.streetNumber}
+              onChangeText={streetNumber => this.setState({ streetNumber })}
             />
           </CardSection>
           <CardSection>
             <Input
               label="barrio"
               placeholder="barrio"
-              value={this.state.barrio}
-              onChangeText={barrio => this.setState({ barrio })}
+              value={this.state.region}
+              onChangeText={region => this.setState({ region })}
             />
           </CardSection>
           <CardSection>
             <Input
               label="ciudad"
               placeholder="ciudad"
-              value={this.state.ciudad}
-              onChangeText={ciudad => this.setState({ ciudad })}
+              value={this.state.city}
+              onChangeText={city => this.setState({ city })}
             />
           </CardSection>
           <Ionicons
-            name={'md-locate'}
+            name="md-locate"
             size={28}
-            color={'black'}
+            color="black"
             onPress={() => this.onMapPress()}
           />
           <CardSection>
