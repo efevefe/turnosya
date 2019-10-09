@@ -26,7 +26,7 @@ import {
   onAreasRead
 } from '../actions';
 
-class commerceData extends Component {
+class CommerceProfile extends Component {
   state = {
     editEnabled: false,
     pictureOptionsVisible: false,
@@ -680,7 +680,6 @@ const mapStateToProps = state => {
     address,
     city,
     province,
-    provincesList,
     area,
     areasList,
     profilePicture,
@@ -688,6 +687,7 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.commerceData;
+  const { provincesList } = state.provinceData;
 
   return {
     name,
@@ -718,4 +718,4 @@ export default connect(
     onProvincesRead,
     onAreasRead
   }
-)(commerceData);
+)(CommerceProfile);

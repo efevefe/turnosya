@@ -50,8 +50,14 @@ class CommercesList extends Component {
     this.setState({ searchVisible: true });
   };
 
+  returnData = provinceName => {
+    this.setState({ provinceName });
+  };
+
   onFiltersPress = () => {
-    this.props.navigation.navigate('commercesFiltersScreen');
+    this.props.navigation.navigate('commercesFiltersScreen', {
+      returnData: this.returnData
+    });
   };
 
   onCancelPress = () => {
