@@ -131,4 +131,7 @@ export const ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING =
   'on_commerce_reservations_on_slot_reading';
 export const ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ =
   'on_commerce_reservations_on_slot_read';
+export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
+export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
+export const ON_RESERVATION_CLIENT_READ_FAIL = 'on_reservation_client_read_fail';
 

@@ -7,7 +7,10 @@ import {
   ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ
+  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ,
+  ON_RESERVATION_CLIENT_READING,
+  ON_RESERVATION_CLIENT_READ,
+  ON_RESERVATION_CLIENT_READ_FAIL
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
@@ -196,3 +199,21 @@ export const onCommerceCourtReservationsListRead = ({
       });
   };
 };
+
+export const onReservationClientRead = clientId => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_RESERVATION_CLIENT_READING });
+
+    db.doc(`Profiles/${clientId}`)
+      .get()
+      .then(doc => {
+        dispatch({ type: ON_RESERVATION_CLIENT_READ, payload: { id: doc.id, ...doc.data() } });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL })
+      });
+  }
+}
