@@ -61,12 +61,14 @@ class ClientCommerceSchedule extends Component {
   }
 
   onSlotPress = slot => {
-    this.props.onCourtReservationValueChange({
-      prop: 'slot',
-      value: slot
-    });
+    if (slot.available) {
+      this.props.onCourtReservationValueChange({
+        prop: 'slot',
+        value: slot
+      });
 
-    if (slot.available) this.props.navigation.navigate('commerceCourtsList');
+      this.props.navigation.navigate('commerceCourtsList');
+    }
   };
 
   reservationsOnSlots = slots => {
@@ -100,8 +102,10 @@ class ClientCommerceSchedule extends Component {
       selectedDate,
       reservationDayPeriod,
       reservationMinLength,
-      loading,
-      onScheduleRead
+      onScheduleRead,
+      loadingSchedule,
+      loadingReservations,
+      loadingCourts
     } = this.props;
 
     return (
@@ -114,7 +118,7 @@ class ClientCommerceSchedule extends Component {
           start: moment(),
           end: moment().add(reservationDayPeriod, 'days')
         }]}
-        loading={loading}
+        loading={(loadingSchedule || loadingReservations || loadingCourts)}
         onDateChanged={date => this.onDateChanged(date)}
         onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
         onSlotPress={slot => this.onSlotPress(slot)}
@@ -130,13 +134,15 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
-    loading,
     refreshing
   } = state.scheduleRegister;
+  const loadingSchedule = state.scheduleRegister.loading;
   const { commerce, courtType } = state.courtReservation;
   const { reservations } = state.courtReservationsList;
+  const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
   const { courts } = state.courtsList;
+  const loadingCourts = state.courtsList.loading;
 
   return {
     commerce,
@@ -145,12 +151,14 @@ const mapStateToProps = state => {
     selectedDate,
     reservationDayPeriod,
     reservationMinLength,
-    loading,
     refreshing,
     reservations,
     slot,
     courts,
-    courtType
+    courtType,
+    loadingSchedule,
+    loadingReservations,
+    loadingCourts
   };
 };
 

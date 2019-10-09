@@ -110,8 +110,10 @@ class CommerceSchedule extends Component {
       selectedDate,
       reservationDayPeriod,
       reservationMinLength,
-      loading,
-      onScheduleRead
+      onScheduleRead,
+      loadingSchedule,
+      loadingReservations,
+      loadingCourts
     } = this.props;
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
@@ -120,7 +122,7 @@ class CommerceSchedule extends Component {
           selectedDate={selectedDate}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
-          loading={loading}
+          loading={(loadingSchedule || loadingReservations || loadingCourts)}
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
           onSlotPress={slot => this.onSlotPress(slot)}
@@ -155,13 +157,14 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
-    refreshing,
-    loading
   } = state.scheduleRegister;
+  const loadingSchedule = state.scheduleRegister.loading;
   const { commerceId } = state.commerceData;
   const { reservations } = state.courtReservationsList;
+  const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
   const { courtsAvailable } = state.courtsList;
+  const loadingCourts = state.courtsList.loading;
 
   return {
     cards,
@@ -171,10 +174,11 @@ const mapStateToProps = state => {
     reservationMinLength,
     commerceId,
     reservations,
-    loading,
-    refreshing,
     slot,
-    courtsAvailable
+    courtsAvailable,
+    loadingSchedule,
+    loadingReservations,
+    loadingCourts
   };
 };
 

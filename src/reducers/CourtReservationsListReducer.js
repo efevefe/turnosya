@@ -9,6 +9,7 @@ import {
 
 INITIAL_STATE = {
     reservations: [],
+    reservationsDetailed: [],
     reservationsOnSlot: [],
     loading: false
 };
@@ -20,7 +21,7 @@ export default (state = INITIAL_STATE, action) => {
         case ON_COMMERCE_COURT_RESERVATIONS_READING:
             return { ...state, loading: true };
         case ON_COMMERCE_COURT_RESERVATIONS_READ:
-            return { ...state, reservations: action.payload, loading: false };
+            return { ...state, ...action.payload, loading: false };
         case ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL:
             return { ...state, loading: false };
         case ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING:

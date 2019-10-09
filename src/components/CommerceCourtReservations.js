@@ -179,9 +179,9 @@ class CommerceCourtReservations extends Component {
 
 const mapStateToProps = state => {
     const { commerceId } = state.commerceData;
-    const { reservations, loading } = state.courtReservationsList;
+    const { reservationsDetailed, loading } = state.courtReservationsList;
 
-    return { commerceId, reservations, loading };
+    return { commerceId, reservations: reservationsDetailed, loading };
 }
 
 export default connect(mapStateToProps, { onCommerceCourtReservationsListRead })(CommerceCourtReservations);

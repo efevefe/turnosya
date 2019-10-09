@@ -20,7 +20,6 @@ import { onScheduleValueChange } from '../actions';
         loading: bool,
         onRefresh: function
         onSlotPress: return slot pressed,
-        getSlots: return slots list
     }
 */
 
@@ -28,7 +27,7 @@ class Schedule extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.cards !== this.props.cards ||
-      (prevProps.loading && !this.props.loading)
+      (prevProps.loadingSchedule && !this.props.loadingSchedule)
     ) {
       this.onDateSelected(this.props.selectedDate);
     }
@@ -204,9 +203,9 @@ class Schedule extends Component {
 }
 
 const mapStateToProps = state => {
-  const { slots } = state.scheduleRegister;
+  const { slots, loading } = state.scheduleRegister;
 
-  return { slots }
+  return { slots, loadingSchedule: loading };
 }
 
 export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
