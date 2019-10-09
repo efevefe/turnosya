@@ -82,30 +82,28 @@ class CommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courtsAvailable } = this.props;
 
-    if (reservations.length !== 0) {
-      var slots = slots.map(slot => {
-        var ocupate = 0;
-        var available = true;
+    var slots = slots.map(slot => {
+      var ocupate = 0;
+      var available = true;
 
-        reservations.forEach(reservation => {
-          slot.startDate.toString() ===
-            reservation.startDate.toString()
-            ? ocupate++
-            : null;
-        });
+      reservations.forEach(reservation => {
+        slot.startDate.toString() ===
+          reservation.startDate.toString()
+          ? ocupate++
+          : null;
+      });
 
-        if (ocupate >= courtsAvailable.length) {
-          available = false;
-        }
+      if (ocupate >= courtsAvailable.length) {
+        available = false;
+      }
 
-        return {
-          ...slot,
-          free: (courtsAvailable.length - ocupate),
-          total: courtsAvailable.length,
-          available
-        };
-      })
-    }
+      return {
+        ...slot,
+        free: (courtsAvailable.length - ocupate),
+        total: courtsAvailable.length,
+        available
+      };
+    })
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };

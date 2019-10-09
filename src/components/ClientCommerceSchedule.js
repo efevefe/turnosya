@@ -72,31 +72,29 @@ class ClientCommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courts } = this.props;
 
-    if (reservations.length !== 0) {
-      var slots = slots.map(slot => {
-        var ocupate = 0;
-        var available = true;
+    var slots = slots.map(slot => {
+      var ocupate = 0;
+      var available = true;
 
-        reservations.forEach(reservation => {
-          slot.startDate.toString() ===
-            reservation.startDate.toString()
-            ? ocupate++
-            : null;
-        });
+      reservations.forEach(reservation => {
+        slot.startDate.toString() ===
+          reservation.startDate.toString()
+          ? ocupate++
+          : null;
+      });
 
-        if (ocupate >= courts.length) {
-          available = false;
-        }
+      if (ocupate >= courts.length) {
+        available = false;
+      }
 
-        return {
-          ...slot,
-          free: (courts.length - ocupate),
-          total: courts.length,
-          available,
-          disabled: !available
-        };
-      })
-    }
+      return {
+        ...slot,
+        free: (courts.length - ocupate),
+        total: courts.length,
+        available,
+        disabled: !available
+      };
+    })
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
