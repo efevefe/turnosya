@@ -61,14 +61,12 @@ class ClientCommerceSchedule extends Component {
   }
 
   onSlotPress = slot => {
-    if (slot.available) {
-      this.props.onCourtReservationValueChange({
-        prop: 'slot',
-        value: slot
-      });
+    this.props.onCourtReservationValueChange({
+      prop: 'slot',
+      value: slot
+    });
 
-      this.props.navigation.navigate('commerceCourtsList');
-    }
+    this.props.navigation.navigate('commerceCourtsList');
   };
 
   reservationsOnSlots = slots => {
@@ -77,6 +75,7 @@ class ClientCommerceSchedule extends Component {
     if (reservations.length !== 0) {
       var slots = slots.map(slot => {
         var ocupate = 0;
+        var available = true;
 
         reservations.forEach(reservation => {
           slot.startDate.toString() ===
@@ -86,10 +85,16 @@ class ClientCommerceSchedule extends Component {
         });
 
         if (ocupate >= courts.length) {
-          return { ...slot, available: false };
-        } else {
-          return { ...slot, available: true };
+          available = false;
         }
+
+        return {
+          ...slot,
+          free: (courts.length - ocupate),
+          total: courts.length,
+          available,
+          disabled: !available
+        };
       })
     }
 
