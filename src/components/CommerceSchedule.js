@@ -72,7 +72,7 @@ class CommerceSchedule extends Component {
       prop: 'selectedDate',
       value: date
     });
-    
+
     this.props.onCommerceCourtReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date
@@ -82,24 +82,28 @@ class CommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courtsAvailable } = this.props;
 
-    if (reservations.length !== 0) {
-      var slots = slots.map(slot => {
-        var ocupate = 0;
+    var slots = slots.map(slot => {
+      var ocupate = 0;
+      var available = true;
 
-        reservations.forEach(reservation => {
-          slot.startDate.toString() ===
-            reservation.startDate.toString()
-            ? ocupate++
-            : null;
-        });
+      reservations.forEach(reservation => {
+        slot.startDate.toString() ===
+          reservation.startDate.toString()
+          ? ocupate++
+          : null;
+      });
 
-        if (ocupate >= courtsAvailable.length) {
-          return { ...slot, available: false };
-        } else {
-          return { ...slot, available: true };
-        }
-      })
-    }
+      if (ocupate >= courtsAvailable.length) {
+        available = false;
+      }
+
+      return {
+        ...slot,
+        free: (courtsAvailable.length - ocupate),
+        total: courtsAvailable.length,
+        available
+      };
+    })
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
@@ -110,8 +114,10 @@ class CommerceSchedule extends Component {
       selectedDate,
       reservationDayPeriod,
       reservationMinLength,
-      loading,
-      onScheduleRead
+      onScheduleRead,
+      loadingSchedule,
+      loadingReservations,
+      loadingCourts
     } = this.props;
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
@@ -120,7 +126,7 @@ class CommerceSchedule extends Component {
           selectedDate={selectedDate}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
-          loading={loading}
+          loading={(loadingSchedule || loadingReservations || loadingCourts)}
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
           onSlotPress={slot => this.onSlotPress(slot)}
@@ -155,13 +161,14 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
-    refreshing,
-    loading
   } = state.scheduleRegister;
+  const loadingSchedule = state.scheduleRegister.loading;
   const { commerceId } = state.commerceData;
   const { reservations } = state.courtReservationsList;
+  const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
   const { courtsAvailable } = state.courtsList;
+  const loadingCourts = state.courtsList.loading;
 
   return {
     cards,
@@ -171,10 +178,11 @@ const mapStateToProps = state => {
     reservationMinLength,
     commerceId,
     reservations,
-    loading,
-    refreshing,
     slot,
-    courtsAvailable
+    courtsAvailable,
+    loadingSchedule,
+    loadingReservations,
+    loadingCourts
   };
 };
 

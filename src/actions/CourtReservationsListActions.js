@@ -52,10 +52,13 @@ export const onCommerceCourtTypeReservationsRead = ({
 
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-          payload: reservations
+          payload: { reservations }
         });
       })
-      .catch(dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL }));
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
+      });
   };
 };
 
@@ -91,7 +94,7 @@ export const onCommerceCourtReservationsRead = ({
         });
         dispatch({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-          payload: reservations
+          payload: { reservations }
         });
       })
       .catch(error => {
@@ -155,8 +158,7 @@ export const onCommerceCourtReservationsListRead = ({
       )
       .orderBy('startDate')
       .onSnapshot(snapshot => {
-        var reservations = [];
-        var processedItems = 0;
+        var reservationsDetailed = [];
 
         if (snapshot.empty) {
           dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: [] });
@@ -170,7 +172,7 @@ export const onCommerceCourtReservationsListRead = ({
               db.doc(`Profiles/${doc.data().clientId}`)
                 .get()
                 .then(client => {
-                  reservations.push({
+                  reservationsDetailed.push({
                     id: doc.id,
                     ...doc.data(),
                     startDate: moment(doc.data().startDate.toDate()),
@@ -182,12 +184,10 @@ export const onCommerceCourtReservationsListRead = ({
                     court: { id: court.id, ...court.data() }
                   });
 
-                  processedItems++;
-
-                  if (processedItems === snapshot.size) {
+                  if (reservationsDetailed.length === snapshot.size) {
                     dispatch({
                       type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                      payload: reservations
+                      payload: { reservationsDetailed }
                     });
                   }
                 });

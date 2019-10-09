@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
+import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
-import { ListItem } from 'react-native-elements';
 import { getHourAndMinutes } from '../utils';
 import { MAIN_COLOR } from '../constants';
 import { onScheduleValueChange } from '../actions';
@@ -20,7 +20,16 @@ import { onScheduleValueChange } from '../actions';
         loading: bool,
         onRefresh: function
         onSlotPress: return slot pressed,
-        getSlots: return slots list
+    }
+
+    slot: {
+      id: identificador unico,
+      startDate: fecha y hora de inicio del turno,
+      endDate: fecha y hora de fin del turno,
+      available: indica si tiene turnos libres o no,
+      disabled: indica si esta deshabilitado o no el slot,
+      free: cantidad de turnos libres en el slot,
+      total: total de turnos disponibles para reservar
     }
 */
 
@@ -28,7 +37,7 @@ class Schedule extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.cards !== this.props.cards ||
-      (prevProps.loading && !this.props.loading)
+      (prevProps.loadingSchedule && !this.props.loadingSchedule)
     ) {
       this.onDateSelected(this.props.selectedDate);
     }
@@ -117,7 +126,10 @@ class Schedule extends Component {
         id: slotId,
         startDate: moment(slotStartDate),
         endDate: moment(shiftStartDate),
-        available: true
+        available: true,
+        disabled: false,
+        free: 0,
+        total: 0
       });
       slotStartDate.add(reservationMinLength, 'minutes');
       slotId++;
@@ -132,21 +144,22 @@ class Schedule extends Component {
         leftIcon={{
           name: 'md-time',
           type: 'ionicon',
-          color: item.available ? 'black' : 'grey'
+          color: 'black'
         }}
-        rightIcon={
-          item.available
-            ? { name: 'ios-arrow-forward', type: 'ionicon', color: 'black' }
-            : null
+        rightElement={
+          <Badge
+            value={`Disponibles: ${item.free.toString()}/${item.total.toString()}`}
+            status={item.available ? 'success' : 'error'}
+            badgeStyle={{ height: 25, width: 'auto', borderRadius: 12.5, paddingLeft: 5, paddingRight: 5 }}
+          />
         }
         title={`${item.startDate.format('HH:mm')}`}
         containerStyle={{
-          backgroundColor: item.available ? 'white' : '#E7E7E7'
+          backgroundColor: 'white'
         }}
-        titleStyle={{ color: item.available ? 'black' : 'grey' }}
         rightSubtitleStyle={{ color: 'grey' }}
-        rightSubtitle={item.available ? null : 'Ocupado'}
         onPress={() => this.props.onSlotPress(item)}
+        disabled={item.disabled}
         bottomDivider
       />
     );
@@ -204,9 +217,9 @@ class Schedule extends Component {
 }
 
 const mapStateToProps = state => {
-  const { slots } = state.scheduleRegister;
+  const { slots, loading } = state.scheduleRegister;
 
-  return { slots }
+  return { slots, loadingSchedule: loading };
 }
 
 export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
