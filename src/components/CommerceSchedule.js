@@ -12,6 +12,7 @@ import {
   onCommerceCourtReservationsReadOnSlot,
   courtsReadOnlyAvailable
 } from '../actions';
+import moment from 'moment';
 
 class CommerceSchedule extends Component {
   state = { modal: false };
@@ -23,6 +24,11 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
+    this.props.onScheduleValueChange({
+      prop: 'selectedDate',
+      value: moment()
+    });
+
     this.props.onScheduleRead(this.props.commerceId);
     this.props.courtsReadOnlyAvailable(this.props.commerceId);
     this.props.navigation.setParams({
@@ -87,8 +93,7 @@ class CommerceSchedule extends Component {
       var available = true;
 
       reservations.forEach(reservation => {
-        slot.startDate.toString() ===
-          reservation.startDate.toString()
+        slot.startDate.toString() === reservation.startDate.toString()
           ? ocupate++
           : null;
       });
@@ -99,11 +104,11 @@ class CommerceSchedule extends Component {
 
       return {
         ...slot,
-        free: (courtsAvailable.length - ocupate),
+        free: courtsAvailable.length - ocupate,
         total: courtsAvailable.length,
         available
       };
-    })
+    });
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
@@ -126,7 +131,7 @@ class CommerceSchedule extends Component {
           selectedDate={selectedDate}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
-          loading={(loadingSchedule || loadingReservations || loadingCourts)}
+          loading={loadingSchedule || loadingReservations || loadingCourts}
           onDateChanged={date => this.onDateChanged(date)}
           onRefresh={() => onScheduleRead(this.props.commerceId)}
           onSlotPress={slot => this.onSlotPress(slot)}
@@ -160,7 +165,7 @@ const mapStateToProps = state => {
     selectedDate,
     slots,
     reservationDayPeriod,
-    reservationMinLength,
+    reservationMinLength
   } = state.scheduleRegister;
   const loadingSchedule = state.scheduleRegister.loading;
   const { commerceId } = state.commerceData;

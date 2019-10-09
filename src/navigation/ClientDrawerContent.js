@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { onCommerceOpen, onLogout, onUserRead } from '../actions';
+import {
+  onCommerceOpen,
+  onLogout,
+  onUserRead,
+  onScheduleValueChange
+} from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/VerifyEmailModal';
@@ -17,6 +22,11 @@ class ClientDrawerContent extends Component {
     (await isEmailVerified())
       ? this.props.onCommerceOpen(this.props.navigation)
       : this.setState({ modal: true });
+
+    this.props.onScheduleValueChange({
+      prop: 'slots',
+      value: []
+    });
   };
 
   onModalClose = () => {
@@ -73,11 +83,12 @@ class ClientDrawerContent extends Component {
 const mapStateToProps = state => {
   const { profilePicture, firstName, lastName } = state.clientData;
   const { loading } = state.auth;
+  const { slots } = state.scheduleRegister;
 
-  return { profilePicture, firstName, lastName, loading };
+  return { profilePicture, firstName, lastName, loading, slots };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceOpen, onLogout, onUserRead }
+  { onCommerceOpen, onLogout, onUserRead, onScheduleValueChange }
 )(ClientDrawerContent);

@@ -20,6 +20,10 @@ class ClientCommerceSchedule extends Component {
   };
 
   componentDidMount() {
+    this.props.onScheduleValueChange({
+      prop: 'selectedDate',
+      value: moment()
+    });
     this.props.navigation.setParams({
       leftButton: this.renderBackButton()
     });
@@ -37,8 +41,8 @@ class ClientCommerceSchedule extends Component {
     }
   }
   renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
-  }
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+  };
 
   onBackPress = () => {
     // hace lo mismo que haria si se volviera a montar la pantalla anterior
@@ -48,7 +52,7 @@ class ClientCommerceSchedule extends Component {
       commerceId: this.props.commerce.objectID,
       loadingType: 'loading'
     });
-  }
+  };
 
   onDateChanged = date => {
     this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
@@ -58,7 +62,7 @@ class ClientCommerceSchedule extends Component {
       selectedDate: date,
       courtType: this.props.courtType
     });
-  }
+  };
 
   onSlotPress = slot => {
     this.props.onCourtReservationValueChange({
@@ -77,8 +81,7 @@ class ClientCommerceSchedule extends Component {
       var available = true;
 
       reservations.forEach(reservation => {
-        slot.startDate.toString() ===
-          reservation.startDate.toString()
+        slot.startDate.toString() === reservation.startDate.toString()
           ? ocupate++
           : null;
       });
@@ -89,12 +92,12 @@ class ClientCommerceSchedule extends Component {
 
       return {
         ...slot,
-        free: (courts.length - ocupate),
+        free: courts.length - ocupate,
         total: courts.length,
         available,
         disabled: !available
       };
-    })
+    });
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
@@ -117,11 +120,13 @@ class ClientCommerceSchedule extends Component {
         selectedDate={selectedDate}
         reservationMinLength={reservationMinLength}
         reservationDayPeriod={reservationDayPeriod}
-        datesWhitelist={[{
-          start: moment(),
-          end: moment().add(reservationDayPeriod, 'days')
-        }]}
-        loading={(loadingSchedule || loadingReservations || loadingCourts)}
+        datesWhitelist={[
+          {
+            start: moment(),
+            end: moment().add(reservationDayPeriod, 'days')
+          }
+        ]}
+        loading={loadingSchedule || loadingReservations || loadingCourts}
         onDateChanged={date => this.onDateChanged(date)}
         onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
         onSlotPress={slot => this.onSlotPress(slot)}

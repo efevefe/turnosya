@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { onLogout } from '../actions/AuthActions';
 import { Drawer, DrawerItem } from '../components/common';
-import { onCommerceRead } from '../actions';
+import { onCommerceRead, onScheduleValueChange } from '../actions';
 
 class CommerceDrawerContent extends Component {
   componentWillMount() {
@@ -13,23 +13,30 @@ class CommerceDrawerContent extends Component {
     return (
       <Drawer
         profilePicture={this.props.profilePicture}
-        profilePicturePlaceholder='store'
+        profilePicturePlaceholder="store"
         onProfilePicturePress={() => this.props.navigation.navigate('profile')}
         name={this.props.name}
       >
         <DrawerItem
           title="Ser Cliente"
-          icon='md-person'
-          onPress={() => this.props.navigation.navigate('client')}
+          icon="md-person"
+          onPress={() => {
+            this.props.onScheduleValueChange({
+              prop: 'slots',
+              value: []
+            });
+
+            this.props.navigation.navigate('client');
+          }}
         />
         <DrawerItem
           title="Configuración"
-          icon='md-settings'
+          icon="md-settings"
           onPress={() => this.props.navigation.navigate('commerceSettings')}
         />
         <DrawerItem
           title="Cerrar Sesión"
-          icon='md-exit'
+          icon="md-exit"
           loadingWithText={this.props.loading}
           onPress={() => this.props.onLogout()}
         />
@@ -41,11 +48,12 @@ class CommerceDrawerContent extends Component {
 const mapStateToProps = state => {
   const { name, profilePicture } = state.commerceData;
   const { loading } = state.auth;
+  const { slots } = state.scheduleRegister;
 
-  return { name, profilePicture, loading };
+  return { name, profilePicture, loading, slots };
 };
 
 export default connect(
   mapStateToProps,
-  { onLogout, onCommerceRead }
+  { onLogout, onCommerceRead, onScheduleValueChange }
 )(CommerceDrawerContent);
