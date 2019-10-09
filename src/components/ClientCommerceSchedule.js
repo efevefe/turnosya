@@ -8,7 +8,7 @@ import {
   onScheduleValueChange,
   onCourtReservationValueChange,
   onCommerceCourtTypeReservationsRead,
-  onCommerceCourtsRead,
+  onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
 } from '../actions';
 
@@ -25,7 +25,7 @@ class ClientCommerceSchedule extends Component {
     });
 
     this.props.onScheduleRead(this.props.commerce.objectID);
-    this.props.onCommerceCourtsRead({
+    this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
     });
@@ -172,7 +172,7 @@ export default connect(
     onScheduleRead,
     onCourtReservationValueChange,
     onCommerceCourtTypeReservationsRead,
-    onCommerceCourtsRead,
+    onCommerceCourtsReadByType,
     onCommerceCourtTypesRead
   }
 )(ClientCommerceSchedule);

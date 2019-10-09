@@ -4,7 +4,7 @@ import { FlatList, View } from 'react-native';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from './common';
 import {
-  onCommerceCourtsRead,
+  onCommerceCourtsReadByType,
   onCourtReservationValueChange,
   onCommerceCourtReservationsReadOnSlot,
   onCommerceCourtTypeReservationsRead,
@@ -29,7 +29,7 @@ class CommerceCourtsList extends Component {
       startDate: this.props.slot.startDate
     });
 
-    this.props.onCommerceCourtsRead({
+    this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
     });
@@ -43,9 +43,14 @@ class CommerceCourtsList extends Component {
     // hace lo mismo que haria si se volviera a montar la pantalla anterior
     this.props.navigation.goBack(null);
 
+    /* 
+    esta consulta y la de canchas unicamente son necesarias por si el negocio llegara a
+    cambiar sus horarios o una cancha mientras un cliente que esta en proceso de reserva
+    vuelve desde esta pantalla hacia la anterior
+    */
     this.props.onScheduleRead(this.props.commerce.objectID);
 
-    this.props.onCommerceCourtsRead({
+    this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
     });
@@ -111,7 +116,7 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    onCommerceCourtsRead,
+    onCommerceCourtsReadByType,
     onCourtReservationValueChange,
     onCommerceCourtReservationsReadOnSlot,
     onCommerceCourtTypeReservationsRead,

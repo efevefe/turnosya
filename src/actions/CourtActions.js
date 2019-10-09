@@ -229,7 +229,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
+export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => {
   const db = firebase.firestore();
 
   return dispatch => {

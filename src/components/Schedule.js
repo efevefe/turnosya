@@ -7,7 +7,7 @@ import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
 import { getHourAndMinutes } from '../utils';
-import { MAIN_COLOR } from '../constants';
+import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR } from '../constants';
 import { onScheduleValueChange } from '../actions';
 
 /*
@@ -138,6 +138,16 @@ class Schedule extends Component {
     return slots;
   };
 
+  badgeColor = (free, total) => {
+    if (free == 0) {
+      return MAIN_COLOR;
+    } else if (free <= (total / 2)) {
+      return WARNING_COLOR;
+    } else {
+      return SUCCESS_COLOR;
+    }
+  }
+
   renderList = ({ item }) => {
     return (
       <ListItem
@@ -148,9 +158,15 @@ class Schedule extends Component {
         }}
         rightElement={
           <Badge
-            value={`Disponibles: ${item.free.toString()}/${item.total.toString()}`}
-            status={item.available ? 'success' : 'error'}
-            badgeStyle={{ height: 25, width: 'auto', borderRadius: 12.5, paddingLeft: 5, paddingRight: 5 }}
+            value={`Disponibles: ${item.free.toString()} / ${item.total.toString()}`}
+            badgeStyle={{
+              height: 25,
+              width: 'auto',
+              borderRadius: 12.5,
+              paddingLeft: 5,
+              paddingRight: 5,
+              backgroundColor: this.badgeColor(item.free, item.total)
+            }}
           />
         }
         title={`${item.startDate.format('HH:mm')}`}

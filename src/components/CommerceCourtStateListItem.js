@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { MAIN_COLOR, SUCCESS_COLOR } from '../constants';
 
 class CommerceCourtStateListItem extends Component {
   state = {
@@ -33,65 +34,45 @@ class CommerceCourtStateListItem extends Component {
     return (
       <View style={{ flex: 1 }}>
         <ListItem
-          containerStyle={
-            courtAvailable ? null : { backgroundColor: '#E7E7E7' }
-          }
-          title={courtAvailable ? name : name + ' - Ocupado'}
-          titleStyle={
-            courtAvailable
-              ? { textAlign: 'left', display: 'flex' }
-              : {
-                textAlign: 'left',
-                display: 'flex',
-                color: 'grey',
-                fontStyle: 'italic'
-              }
-          }
+          title={name}
+          titleStyle={{ textAlign: 'left', display: 'flex' }}
           rightTitle={
-            lightPrice !== '' ? (
-              <View style={{ justifyContent: 'space-between' }}>
-                <Text
-                  style={
-                    courtAvailable
-                      ? { textAlign: 'right', color: 'black' }
-                      : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
-                  }
-                >{`Sin luz: $${price}`}</Text>
-                <Text
-                  style={
-                    courtAvailable
-                      ? { textAlign: 'right', color: 'black' }
-                      : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
-                  }
-                >{`Con luz: $${lightPrice}`}</Text>
-              </View>
-            ) : (
-                <Text
-                  style={
-                    courtAvailable
-                      ? null
-                      : { color: 'grey', fontStyle: 'italic' }
-                  }
-                >{`Sin luz: $${price}`}</Text>
-              )
+            <View style={{ justifyContent: 'flex-start', flex: 1, paddingTop: 2 }}>
+              <Text
+                style={{ 
+                  textAlign: 'right', 
+                  lineHeight: 20
+                }}
+              >
+                {
+                  lightPrice
+                    ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
+                    : `Sin Luz: $${price}`
+                }
+              </Text>
+            </View>
           }
           key={id}
           subtitle={
-            <Text
-              style={
-                courtAvailable
-                  ? { color: 'grey' }
-                  : { color: 'grey', fontStyle: 'italic' }
-              }
-            >{`${court} - ${ground}`}</Text>
+            <View style={{ alignItems: 'flex-start' }}>
+              <Text
+                style={{ color: 'grey' }}
+              >
+                {`${court} - ${ground}`}
+              </Text>
+              <Badge
+                value={courtAvailable ? 'Disponible' : 'Ocupada'}
+                badgeStyle={{
+                  height: 25,
+                  width: 'auto',
+                  borderRadius: 12.5,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  backgroundColor: courtAvailable ? SUCCESS_COLOR : MAIN_COLOR
+                }}
+                containerStyle={{ paddingTop: 3 }}
+              />
+            </View>
           }
           bottomDivider
           onPress={onPress}
