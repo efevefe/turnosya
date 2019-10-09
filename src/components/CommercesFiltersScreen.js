@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TextInputContentSizeChangeEventData } from 'react-native';
 import { Divider, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR } from '../constants';
-import { onProvincesRead } from '../actions';
-import { Ionicons } from '@expo/vector-icons';
+import { onProvincesNameRead } from '../actions';
 
 class CommerceFiltersScreen extends Component {
   constructor(props) {
     super(props);
 
-    props.onProvincesRead();
+    props.onProvincesNameRead();
 
-    this.state = { province: '' };
+    this.state = {
+      provinceName: props.navigation.getParam('provinceName', '')
+    };
   }
 
   onApplyFiltersPress = () => {
-    console.log(this.state.province);
-    this.props.navigation.state.params.returnData(this.state.province);
+    this.props.navigation.state.params.returnData(this.state.provinceName);
     this.props.navigation.goBack();
   };
 
@@ -76,9 +76,9 @@ class CommerceFiltersScreen extends Component {
           >
             <Picker
               placeholder={{ value: null, label: 'Todas' }}
-              value={this.state.province}
+              value={this.state.provinceName}
               items={this.props.provincesList}
-              onValueChange={value => this.setState({ province: value })}
+              onValueChange={value => this.setState({ provinceName: value })}
               color="white"
               textColor="white"
             />
@@ -97,5 +97,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onProvincesRead }
+  { onProvincesNameRead }
 )(CommerceFiltersScreen);

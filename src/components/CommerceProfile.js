@@ -22,7 +22,7 @@ import {
   onCommerceUpdateWithPicture,
   onCommerceUpdateNoPicture,
   onCommerceValueChange,
-  onProvincesRead,
+  onProvincesIdRead,
   onAreasRead
 } from '../actions';
 
@@ -72,7 +72,7 @@ class CommerceProfile extends Component {
   };
 
   onEditPress = () => {
-    this.props.onProvincesRead();
+    this.props.onProvincesIdRead();
     this.props.onAreasRead();
 
     const {
@@ -715,7 +715,7 @@ export default connect(
     onCommerceUpdateWithPicture,
     onCommerceUpdateNoPicture,
     onCommerceValueChange,
-    onProvincesRead,
+    onProvincesIdRead,
     onAreasRead
   }
 )(CommerceProfile);

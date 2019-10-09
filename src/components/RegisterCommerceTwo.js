@@ -7,7 +7,7 @@ import {
   onCreateCommerce,
   onCommerceValueChange,
   onAreasRead,
-  onProvincesRead
+  onProvincesIdRead
 } from '../actions';
 import { trimString } from '../utils';
 
@@ -23,7 +23,7 @@ class RegisterCommerceTwo extends Component {
   };
 
   componentWillMount() {
-    this.props.onProvincesRead();
+    this.props.onProvincesIdRead();
     this.props.onAreasRead();
   }
 
@@ -249,5 +249,5 @@ const mapStateToProps = state => {
 };
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange, onCreateCommerce, onAreasRead, onProvincesRead }
+  { onCommerceValueChange, onCreateCommerce, onAreasRead, onProvincesIdRead }
 )(RegisterCommerceTwo);

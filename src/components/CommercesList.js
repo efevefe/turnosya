@@ -17,7 +17,8 @@ class CommercesList extends Component {
 
     this.state = {
       areaName: props.navigation.state.params.areaName,
-      searchVisible: false
+      searchVisible: false,
+      provinceName: ''
     };
 
     props.readFavoriteCommerces();
@@ -56,7 +57,8 @@ class CommercesList extends Component {
 
   onFiltersPress = () => {
     this.props.navigation.navigate('commercesFiltersScreen', {
-      returnData: this.returnData
+      returnData: this.returnData,
+      provinceName: this.state.provinceName
     });
   };
 
@@ -77,9 +79,15 @@ class CommercesList extends Component {
     }
   };
 
-  enableConfiguration = () => {
+  enableAreaFilter = () => {
     return this.state.areaName ? (
       <Configure filters={`areaName:\'${this.state.areaName}\'`} />
+    ) : null;
+  };
+
+  enableProvinceFilter = () => {
+    return this.state.provinceName ? (
+      <Configure filters={`provinceName:\'${this.state.provinceName}\'`} />
     ) : null;
   };
 
@@ -96,7 +104,8 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        {this.enableConfiguration()}
+        {this.enableAreaFilter()}
+        {this.enableProvinceFilter()}
         <ConnectedStateResults />
         <ConnectedHits />
       </InstantSearch>
