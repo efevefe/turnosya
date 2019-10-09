@@ -20,7 +20,7 @@ import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const searchMainStack = createStackNavigator(
+const mainSearchStack = createStackNavigator(
   {
     commercesAreas: {
       screen: CommercesAreas,
@@ -68,7 +68,7 @@ const searchMainStack = createStackNavigator(
 const searchStack = createStackNavigator(
   {
     main: {
-      screen: searchMainStack
+      screen: mainSearchStack
     },
     commercesFiltersScreen: {
       screen: CommercesFiltersScreen
