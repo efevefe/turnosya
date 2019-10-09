@@ -4,11 +4,13 @@ import { Overlay, Divider } from 'react-native-elements';
 
 class Menu extends Component {
   renderTitle = () => {
-    if (this.props.title) {
+    const { title, titleContainerStyle, titleStyle } = this.props;
+
+    if (title) {
       return (
         <View>
-          <View style={styles.titleContainerStyle}>
-            <Text style={styles.titleStyle}>{this.props.title}</Text>
+          <View style={[styles.titleContainerStyle, titleContainerStyle]}>
+            <Text style={[styles.titleStyle, titleStyle]}>{title}</Text>
           </View>
           <Divider style={styles.dividerStyle} />
         </View>

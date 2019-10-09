@@ -14,6 +14,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/CommercesAreas';
+import App from '../components/Location';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
