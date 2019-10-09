@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInputContentSizeChangeEventData } from 'react-native';
+import { View, Text } from 'react-native';
 import { Divider, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
@@ -18,7 +18,9 @@ class CommerceFiltersScreen extends Component {
   }
 
   onApplyFiltersPress = () => {
-    this.props.navigation.state.params.returnData(this.state.provinceName);
+    this.props.navigation.state.params.obtainProvinceName(
+      this.state.provinceName
+    );
     this.props.navigation.goBack();
   };
 

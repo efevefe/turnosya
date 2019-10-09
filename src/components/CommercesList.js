@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { IconButton, Menu, MenuItem, Picker } from './common';
+import { IconButton } from './common';
 import getEnvVars from '../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
@@ -51,13 +51,13 @@ class CommercesList extends Component {
     this.setState({ searchVisible: true });
   };
 
-  returnData = provinceName => {
+  obtainProvinceName = provinceName => {
     this.setState({ provinceName });
   };
 
   onFiltersPress = () => {
     this.props.navigation.navigate('commercesFiltersScreen', {
-      returnData: this.returnData,
+      obtainProvinceName: this.obtainProvinceName,
       provinceName: this.state.provinceName
     });
   };
