@@ -20,7 +20,6 @@ class RegisterCommerce extends Component {
     cuitError: '',
     street: '',
     streetNumber: '',
-    region: '',
     city: ''
   };
 
@@ -107,11 +106,11 @@ class RegisterCommerce extends Component {
   };
 
   onMapPress = () => {
-    const { street, streetNumber, region, city } = this.state;
+    const { street, streetNumber, city } = this.state;
     const navigateAction = NavigationActions.navigate({
       routeName: 'commerceRegisterMap',
       params: {
-        address: { street, streetNumber, region, city },
+        address: { street, streetNumber, city },
         title: 'Localizar mi Negocio'
       }
     });
@@ -230,14 +229,6 @@ class RegisterCommerce extends Component {
               placeholder="numero"
               value={this.state.streetNumber}
               onChangeText={streetNumber => this.setState({ streetNumber })}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="barrio"
-              placeholder="barrio"
-              value={this.state.region}
-              onChangeText={region => this.setState({ region })}
             />
           </CardSection>
           <CardSection>

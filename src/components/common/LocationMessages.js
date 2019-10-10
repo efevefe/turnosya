@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, AppState, Text } from 'react-native';
+import { Platform, View, AppState } from 'react-native';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -8,7 +8,8 @@ import {
   getPermissionLocationStatus
 } from '../../utils';
 import { Divider } from 'react-native-elements';
-import { Menu, MenuItem, Button } from '../common';
+import { Menu } from './Menu';
+import { MenuItem } from './MenuItem';
 
 class LocationMessages extends Component {
   state = {
@@ -19,6 +20,7 @@ class LocationMessages extends Component {
   };
 
   async componentDidMount() {
+    console.log('didumount');
     const permissionStatus = await getPermissionLocationStatus();
     permissionStatus === 'permissionsAllowed'
       ? this.setState({ permissionStatus })
@@ -53,7 +55,8 @@ class LocationMessages extends Component {
   };
 
   getLocation = async () => {
-    this.setState({ location: await getCurrentPosition() });
+    const location = await getCurrentPosition();
+    this.props.location(location.coords);
   };
 
   renderItems = () => {
@@ -142,15 +145,8 @@ class LocationMessages extends Component {
 
   render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
-      return (
-        <View>
-          <Button
-            title="Hacer algun cambio en el state"
-            onPress={() => this.getLocation()}
-          />
-          <Text>{JSON.stringify(this.state.location)}</Text>
-        </View>
-      );
+      this.getLocation();
+      return <View />;
     } else {
       return (
         <View>

@@ -43,6 +43,7 @@ const getLocationIos = async status => {
 };
 
 export const getCurrentPosition = async () => {
+  // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
   return await Location.getCurrentPositionAsync({});
 };
 
@@ -69,28 +70,3 @@ const getPermissionLocation = async () => {
 export const askPermissionLocation = async () => {
   return await Permissions.askAsync(Permissions.LOCATION);
 };
-
-// location = Es un objeto. Tiene datos como:
-//     coords  {
-//        accuracy --> ,
-//        altitude --> ,
-//        heading --> ,
-//        latitude --> ,
-//        longitude --> ,
-//        sped -->
-//      }
-//    mocked -->
-//    timestamp -->
-
-// let moreData = await Location.reverseGeocodeAsync({
-//   latitude: location.coords.latitude,
-//   longitude: location.coords.longitude
-// });
-// moreData = Es un array. Agrega datos como:
-//     city --> Córdoba,
-//     street --> null,
-//     region --> Córdoba,
-//     postalCode --> null,
-//     country --> Argentina,
-//     isoCountryCode --> AR,
-//     name --> C1662

@@ -5,6 +5,7 @@ import { Fab } from 'native-base';
 import { MAIN_COLOR } from '../constants';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
+import { LocationMessages } from './common';
 
 export default class GeocodingScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -14,14 +15,15 @@ export default class GeocodingScreen extends React.Component {
   };
 
   state = {
-    address: '',
     street: 'San Jerónimo',
     streetNumber: 50,
-    region: 'Centro',
     city: 'Cordoba',
     country: 'Argentina',
     latitude: 0,
-    longitude: 0
+    longitude: 0,
+    userLatitude: null,
+    userLongitude: null,
+    locationAsked: false
   };
 
   componentDidMount() {
@@ -33,16 +35,11 @@ export default class GeocodingScreen extends React.Component {
     const {
       street,
       streetNumber,
-      region,
       city
     } = this.props.navigation.state.params.address;
 
     let address = `${street !== '' ? street : ''}${
       streetNumber !== '' ? ' ' + streetNumber : ''
-    }`;
-
-    address = `${address !== '' ? address + ', ' : ''}${
-      region !== '' ? region : ''
     }`;
 
     address = `${address !== '' ? address + ', ' : ''}${
@@ -53,7 +50,7 @@ export default class GeocodingScreen extends React.Component {
       address = 'Córdoba, Argentina';
     }
 
-    this.setState({ address, street, streetNumber, region, city });
+    this.setState({ street, streetNumber, city });
 
     return address;
   };
@@ -68,8 +65,6 @@ export default class GeocodingScreen extends React.Component {
       // cuando la dirección que se dió no se encontró ....
       // probar agregando 'calle' o 'boulevard'
       // calle, ciudad
-      // calle, barrio, ciudad,
-      // barrio, ciudad
       // ciudad
     }
   };
@@ -79,17 +74,40 @@ export default class GeocodingScreen extends React.Component {
       latitude,
       longitude
     });
-    const { street, region, city, country } = addresResult;
+    const { street, city, country } = addresResult;
 
     this.setState({
       latitude,
       longitude,
       street,
       streetNumber: addresResult.name.replace(street, ''),
-      region,
       city,
       country
     });
+  };
+
+  getLocation = ({ latitude, longitude }) => {
+    this.setState({ userLatitude: latitude, userLongitude: longitude });
+  };
+
+  onLocationPress = () => {
+    if (this.state.userLatitude && this.state.userLongitude) {
+      this.setState({
+        latitude: this.state.userLatitude,
+        longitude: this.state.userLongitude
+      });
+    } else {
+      this.setState({ locationAsked: true });
+    }
+  };
+
+  renderLocationMessage = () => {
+    if (
+      (!this.state.userLatitude || !this.state.userLongitude) &&
+      this.state.locationAsked
+    ) {
+      return <LocationMessages location={this.getLocation} />;
+    }
   };
 
   render() {
@@ -109,7 +127,7 @@ export default class GeocodingScreen extends React.Component {
           }}
           onRegionChangeComplete={region => (this.region = region)}
           animateToRegion={{ region: this.region, duration: 3000 }}
-          onLongPress={async e =>
+          onLongPress={e =>
             this.getAddressFromLatAndLong({
               latitude: e.nativeEvent.coordinate.latitude,
               longitude: e.nativeEvent.coordinate.longitude
@@ -120,13 +138,19 @@ export default class GeocodingScreen extends React.Component {
             coordinate={{ latitude, longitude }}
             title={`${street} ${streetNumber}`}
             draggable
+            onDragEnd={e =>
+              this.getAddressFromLatAndLong({
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude
+              })
+            }
           />
         </MapView>
-
+        {this.renderLocationMessage()}
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
-          onPress={() => console.log('perrrriii')}
+          onPress={() => this.onLocationPress()}
         >
           <Ionicons name="md-locate" />
         </Fab>
