@@ -4,7 +4,7 @@ import { ListItem, ButtonGroup, Overlay } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from './common';
-import { onCommerceCourtReservationsListRead } from '../actions';
+import { onCommerceCourtReservationsDetailedRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CourtReservationDetails from './CourtReservationDetails';
 
@@ -19,7 +19,7 @@ class CommerceCourtReservations extends Component {
         const { commerceId } = this.props;
         var selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
 
-        this.props.onCommerceCourtReservationsListRead({ commerceId, selectedDate });
+        this.props.onCommerceCourtReservationsDetailedRead({ commerceId, selectedDate });
         this.setState({ selectedDate });
     }
 
@@ -105,7 +105,7 @@ class CommerceCourtReservations extends Component {
             <RefreshControl
                 refreshing={this.props.refreshing}
                 onRefresh={() => {
-                    this.props.onCommerceCourtReservationsListRead({
+                    this.props.onCommerceCourtReservationsDetailedRead({
                         commerceId: this.props.commerceId,
                         selectedDate: this.state.selectedDate
                     });
@@ -184,4 +184,4 @@ const mapStateToProps = state => {
     return { commerceId, reservations: reservationsDetailed, loading };
 }
 
-export default connect(mapStateToProps, { onCommerceCourtReservationsListRead })(CommerceCourtReservations);
+export default connect(mapStateToProps, { onCommerceCourtReservationsDetailedRead })(CommerceCourtReservations);

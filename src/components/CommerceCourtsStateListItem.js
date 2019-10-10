@@ -4,7 +4,7 @@ import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { MAIN_COLOR, SUCCESS_COLOR } from '../constants';
 
-class CommerceCourtStateListItem extends Component {
+class CommerceCourtsStateListItem extends Component {
   state = {
     courtAvailable: true
   };
@@ -92,4 +92,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   null
-)(CommerceCourtStateListItem);
+)(CommerceCourtsStateListItem);

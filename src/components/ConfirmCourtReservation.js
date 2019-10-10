@@ -11,7 +11,7 @@ import {
     onClientCourtReservationCreate,
     onCourtReservationClear,
     onCommerceCourtsReadByType,
-    onCommerceCourtReservationsReadOnSlot
+    onCommerceCourtReservationsOnSlotRead
 } from '../actions';
 import CourtReservationDetails from './CourtReservationDetails';
 
@@ -42,7 +42,7 @@ class ConfirmCourtReservation extends Component {
         this.onNewReservation();
         this.props.navigation.goBack(null);
 
-        this.props.onCommerceCourtReservationsReadOnSlot({
+        this.props.onCommerceCourtReservationsOnSlotRead({
             commerceId: this.props.commerce.objectID,
             startDate: this.props.slot.startDate
         });
@@ -238,6 +238,6 @@ export default connect(
         onClientCourtReservationCreate,
         onCourtReservationClear,
         onCommerceCourtsReadByType,
-        onCommerceCourtReservationsReadOnSlot
+        onCommerceCourtReservationsOnSlotRead
     }
 )(ConfirmCourtReservation);

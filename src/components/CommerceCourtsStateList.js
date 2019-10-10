@@ -5,21 +5,22 @@ import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from './common';
 import {
   courtsReadOnlyAvailable,
-  onCommerceCourtReservationsReadOnSlot,
+  onCommerceCourtReservationsOnSlotRead,
   onReservationClientRead
 } from '../actions';
-import CommerceCourtStateListItem from './CommerceCourtStateListItem';
+import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 import CourtReservationDetails from './CourtReservationDetails';
 import { MAIN_COLOR } from '../constants';
 
-class CommerceCourtsStateOnSlot extends Component {
+class CommerceCourtsStateList extends Component {
   state = { selectedReservation: {}, selectedCourt: {}, detailsVisible: false };
 
   componentDidMount() {
-    this.props.onCommerceCourtReservationsReadOnSlot({
+    this.props.onCommerceCourtReservationsOnSlotRead({
       commerceId: this.props.commerceId,
       startDate: this.props.slot.startDate
     });
+    
     this.props.courtsReadOnlyAvailable(this.props.commerceId);
   }
 
@@ -75,7 +76,7 @@ class CommerceCourtsStateOnSlot extends Component {
 
   renderRow({ item }) {
     return (
-      <CommerceCourtStateListItem
+      <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
@@ -89,7 +90,7 @@ class CommerceCourtsStateOnSlot extends Component {
       <RefreshControl
         refreshing={this.props.refreshing}
         onRefresh={() =>
-          this.props.onCommerceCourtReservationsReadOnSlot({
+          this.props.onCommerceCourtReservationsOnSlotRead({
             commerceId: this.props.commerceId,
             startDate: this.props.slot.startDate
           })
@@ -138,5 +139,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { courtsReadOnlyAvailable, onCommerceCourtReservationsReadOnSlot, onReservationClientRead }
-)(CommerceCourtsStateOnSlot);
+  { courtsReadOnlyAvailable, onCommerceCourtReservationsOnSlotRead, onReservationClientRead }
+)(CommerceCourtsStateList);

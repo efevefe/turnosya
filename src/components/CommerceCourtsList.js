@@ -6,11 +6,11 @@ import { Spinner, EmptyList } from './common';
 import {
   onCommerceCourtsReadByType,
   onCourtReservationValueChange,
-  onCommerceCourtReservationsReadOnSlot,
+  onCommerceCourtReservationsOnSlotRead,
   onCommerceCourtTypeReservationsRead,
   onScheduleRead
 } from '../actions';
-import CommerceCourtStateListItem from './CommerceCourtStateListItem';
+import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -24,7 +24,7 @@ class CommerceCourtsList extends Component {
       leftButton: this.renderBackButton()
     });
 
-    this.props.onCommerceCourtReservationsReadOnSlot({
+    this.props.onCommerceCourtReservationsOnSlotRead({
       commerceId: this.props.commerce.objectID,
       startDate: this.props.slot.startDate
     });
@@ -73,7 +73,7 @@ class CommerceCourtsList extends Component {
 
   renderRow = ({ item }) => {
     return (
-      <CommerceCourtStateListItem
+      <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
@@ -118,7 +118,7 @@ export default connect(
   {
     onCommerceCourtsReadByType,
     onCourtReservationValueChange,
-    onCommerceCourtReservationsReadOnSlot,
+    onCommerceCourtReservationsOnSlotRead,
     onCommerceCourtTypeReservationsRead,
     onScheduleRead
   }

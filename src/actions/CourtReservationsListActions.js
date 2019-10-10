@@ -107,7 +107,7 @@ export const onCommerceCourtReservationsRead = ({
   };
 };
 
-export const onCommerceCourtReservationsReadOnSlot = ({
+export const onCommerceCourtReservationsOnSlotRead = ({
   commerceId,
   startDate
 }) => {
@@ -142,7 +142,7 @@ export const onCommerceCourtReservationsReadOnSlot = ({
   };
 };
 
-export const onCommerceCourtReservationsListRead = ({
+export const onCommerceCourtReservationsDetailedRead = ({
   commerceId,
   selectedDate
 }) => {

@@ -9,7 +9,7 @@ import {
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  onCommerceCourtReservationsReadOnSlot,
+  onCommerceCourtReservationsOnSlotRead,
   courtsReadOnlyAvailable
 } from '../actions';
 
@@ -193,7 +193,7 @@ export default connect(
     onScheduleValueChange,
     onCommerceCourtReservationsRead,
     onCourtReservationValueChange,
-    onCommerceCourtReservationsReadOnSlot,
+    onCommerceCourtReservationsOnSlotRead,
     courtsReadOnlyAvailable
   }
 )(CommerceSchedule);
