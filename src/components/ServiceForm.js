@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
@@ -18,10 +17,13 @@ class ServiceForm extends Component {
 
   componentWillMount() {
     const { params } = this.props.navigation.state;
+
     if (params) {
-      _.each(params.service, (value, prop) => {
-        this.props.onServiceValueChange({ prop, value });
-      });
+      const { service } = params;
+
+      for (prop in service) {
+        this.props.onServiceValueChange({ prop, value: service[prop] });
+      }
     } else {
       this.props.onFormOpen();
     }
@@ -29,7 +31,7 @@ class ServiceForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, duration, price, description, navigation } = this.props;
+      const { name, duration, price, description, navigation, commerceId } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {
@@ -41,7 +43,8 @@ class ServiceForm extends Component {
             duration,
             price,
             description,
-            id
+            id,
+            commerceId
           },
           navigation
         );
@@ -51,7 +54,8 @@ class ServiceForm extends Component {
             name,
             duration,
             price,
-            description
+            description,
+            commerceId
           },
           navigation
         );
@@ -207,8 +211,9 @@ const mapStateToProps = state => {
     error,
     loading
   } = state.serviceForm;
+  const { commerceId } = state.commerceData;
 
-  return { name, duration, price, description, error, loading };
+  return { name, duration, price, description, error, loading, commerceId };
 };
 
 export default connect(

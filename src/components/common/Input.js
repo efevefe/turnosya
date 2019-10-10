@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Input as RNEInput } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR, GREY_DISABLED } from '../../constants';
 
 class Input extends Component {
+  state = { revealPassword: true };
+
+  componentDidMount() {
+    if (this.props.password) {
+      this.setState({ revealPassword: false });
+    }
+  }
+
   isEnabled = () => {
     const { editable } = this.props;
 
@@ -16,9 +25,29 @@ class Input extends Component {
     }
   }
 
+  revealPasswordButton = color => {
+    if (this.props.password) {
+      const { revealPassword } = this.state;
+
+      return (
+        <TouchableWithoutFeedback
+          onPressIn={() => this.setState({ revealPassword: !revealPassword })}
+          onPressOut={() => this.setState({ revealPassword: !revealPassword })}
+        >
+          <Ionicons
+            name={`md-eye${revealPassword ? '-off' : ''}`}
+            color={color}
+            size={22}
+            style={{ marginRight: 5 }}
+          />
+        </TouchableWithoutFeedback>
+      );
+    }
+  }
+
   render() {
     const enabled = this.isEnabled();
-    const inputColor = enabled ? ( this.props.color || MAIN_COLOR ) : GREY_DISABLED;
+    const inputColor = enabled ? (this.props.color || MAIN_COLOR) : GREY_DISABLED;
 
     return (
       <RNEInput
@@ -38,6 +67,8 @@ class Input extends Component {
           this.props.labelStyle
         ]}
         errorStyle={[styles.errorStyle, this.props.errorStyle]}
+        secureTextEntry={!this.state.revealPassword}
+        rightIcon={this.props.password ? this.revealPasswordButton(inputColor) : this.props.rightIcon}
         selectionColor={inputColor}
       />
     );

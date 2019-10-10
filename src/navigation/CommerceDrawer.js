@@ -1,50 +1,35 @@
-import { createAppContainer, createDrawerNavigator, createStackNavigator } from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/CommerceSettings';
-import { MAIN_COLOR } from '../constants';
-
-const stackNavigationOptions = {
-    defaultNavigationOptions: {
-        headerStyle: {
-            backgroundColor: MAIN_COLOR,
-            height: 50
-        },
-        headerTintColor: 'white',
-        headerTitleStyle: {
-            textAlign: 'center',
-            alignSelf: 'center',
-            fontSize: 18,
-            color: 'white',
-            fontWeight: 'bold'
-        }
-    }
-};
+import {
+  stackNavigationOptions,
+  drawerNavigationOptions
+} from './NavigationOptions';
 
 const CommerceSettingsStack = createStackNavigator(
-    {
-        settings: {
-            screen: CommerceSettings,
-            navigationOptions: {
-                title: 'Configuración'
-            }
-        }
-    },
-    stackNavigationOptions
+  {
+    settings: {
+      screen: CommerceSettings,
+      navigationOptions: {
+        title: 'Configuración'
+      }
+    }
+  },
+  stackNavigationOptions
 );
 
-const drawerNavigationOptions = {
-    drawerType: 'slide',
-    drawerWidth: 200,
-    contentComponent: CommerceDrawerContent,
-};
-
 const commerceDrawer = createDrawerNavigator(
-    {
-        tabs: CommerceNavigation,
-        commerceSettings: CommerceSettingsStack
-    },
-    drawerNavigationOptions
+  {
+    tabs: CommerceNavigation,
+    commerceSettings: CommerceSettingsStack
+  },
+  {
+    ...drawerNavigationOptions,
+    contentComponent: CommerceDrawerContent
+  }
 );
 
 const CommerceDrawer = createAppContainer(commerceDrawer);

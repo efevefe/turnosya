@@ -1,131 +1,108 @@
 import React, { Component } from 'react';
-import { FlatList, View, Dimensions } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import { Spinner } from './common';
-import CommerceListItem from './CommerceListItem';
-import { commercesRead, searchCommerces } from '../actions';
-import { MAIN_COLOR } from '../constants';
+import { InstantSearch, Configure } from 'react-instantsearch/native';
+import { IconButton } from './common';
+import getEnvVars from '../../environment';
+import ConnectedHits from './CommercesList.SearchHits';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedStateResults from './CommercesList.StateResults';
+import { readFavoriteCommerces } from '../actions/CommercesListActions';
 
-const searchBarWidth = Math.round(Dimensions.get('window').width) - 105;
+const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
-  state = { search: '' };
+  constructor(props) {
+    super(props);
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerTitle: navigation.getParam('title'),
-      headerRight: navigation.getParam('rightIcon')
+    this.state = {
+      areaName: props.navigation.state.params.areaName,
+      searchVisible: false
     };
-  };
 
-  componentWillMount() {
-    this.props.commercesRead();
-    this.props.navigation.setParams({
-      rightIcon: this.renderFiltersButton(),
-      title: this.renderSearchBar()
+    props.readFavoriteCommerces();
+
+    props.navigation.setParams({
+      rightIcons: this.renderRightButtons(),
+      header: undefined
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.searching !== this.props.searching) {
-      this.props.navigation.setParams({ title: this.renderSearchBar() });
-    }
-  }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: 'Buscar negocios',
+      headerRight: navigation.getParam('rightIcons'),
+      header: navigation.getParam('header')
+    };
+  };
 
-  renderFiltersButton = () => {
+  renderRightButtons = () => {
     return (
-      <Ionicons
-        name="ios-funnel"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={() => console.log('filtros de busqueda')}
-      />
-    );
-  };
-
-  renderSearchBar = () => {
-    return (
-      <SearchBar
-        platform="android"
-        placeholder="Buscar negocios..."
-        placeholderTextColor="white"
-        onChangeText={text => this.searchCommerces(text)}
-        onClear={this.resetSearch}
-        value={this.state.search}
-        containerStyle={{
-          alignSelf: 'stretch',
-          height: 50,
-          width: searchBarWidth,
-          backgroundColor: MAIN_COLOR,
-          paddingTop: 4
-        }}
-        searchIcon={{ color: 'white', size: 28 }}
-        cancelIcon={{ color: 'white' }}
-        clearIcon={{ color: 'white' }}
-        selectionColor="white"
-        inputStyle={{ marginLeft: 10, fontSize: 18, color: 'white' }}
-        leftIconContainerStyle={{ paddingLeft: 0, marginLeft: 0 }}
-        showLoading={this.props.searching}
-        loadingProps={{ color: 'white' }}
-      />
-    );
-  };
-
-  onChangeText = async search => {
-    await this.setState({ search });
-    this.props.navigation.setParams({ title: this.renderSearchBar() });
-  };
-
-  searchCommerces = search => {
-    this.onChangeText(search);
-
-    if (search.length >= 1) {
-      setTimeout(() => {
-        this.props.searchCommerces(search);
-      }, 200);
-    } else if (search.length == 0) {
-      this.resetSearch();
-    }
-  };
-
-  resetSearch = () => {
-    this.onChangeText('');
-
-    setTimeout(() => {
-      this.props.commercesRead();
-    }, 50);
-  };
-
-  renderRow({ item }) {
-    return (
-      <CommerceListItem commerce={item} navigation={this.props.navigation} />
-    );
-  }
-
-  render() {
-    if (this.props.loading) return <Spinner />;
-
-    return (
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.props.commerces}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={commerce => commerce.id}
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+        <IconButton icon="md-search" onPress={this.onSearchPress} />
+        <IconButton
+          icon="ios-funnel"
+          onPress={() => console.log('filtros de busqueda')}
         />
       </View>
+    );
+  };
+
+  onSearchPress = async () => {
+    this.props.navigation.setParams({ header: null });
+    this.setState({ searchVisible: true });
+  };
+
+  onCancelPress = () => {
+    this.props.navigation.setParams({ header: undefined });
+    this.setState({ searchVisible: false });
+  };
+
+  renderAlgoliaSearchBar = () => {
+    if (this.state.searchVisible) {
+      return (
+        <ConnectedSearchBox
+          autoFocus={true}
+          showLoadingIndicator
+          onCancel={this.onCancelPress}
+        />
+      );
+    }
+  };
+
+  enableConfiguration = () => {
+    return this.state.areaName ? (
+      <Configure filters={`areaName:\'${this.state.areaName}\'`} />
+    ) : null;
+  };
+
+  render() {
+    return (
+      <InstantSearch
+        appId={appId}
+        apiKey={searchApiKey}
+        indexName={commercesIndex}
+        stalledSearchDelay={0}
+        root={{
+          Root: View, // component to render as the root of InstantSearch
+          props: { style: { flex: 1 } } // props that will be applied on the root component aka View
+        }}
+      >
+        {this.renderAlgoliaSearchBar()}
+        {this.enableConfiguration()}
+        <ConnectedStateResults />
+        <ConnectedHits />
+      </InstantSearch>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { commerces, loading, searching } = state.commercesList;
-  return { commerces, loading, searching };
+  const { refinement, favoriteCommerces } = state.commercesList;
+  return { refinement, favoriteCommerces };
 };
 
 export default connect(
   mapStateToProps,
-  { commercesRead, searchCommerces }
+  { readFavoriteCommerces }
 )(CommercesList);

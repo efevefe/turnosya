@@ -1,32 +1,16 @@
-import {
-  createAppContainer,
-  createDrawerNavigator,
-  createStackNavigator
-} from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 import ClientNavigation from './ClientNavigation';
 import ClientDrawerContent from './ClientDrawerContent';
 import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
-import { MAIN_COLOR } from '../constants';
 import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
 import ClientSettings from '../components/ClientSettings';
-
-const stackNavigationOptions = {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 18,
-      color: 'white',
-      fontWeight: 'bold'
-    }
-  }
-};
+import {
+  stackNavigationOptions,
+  drawerNavigationOptions
+} from './NavigationOptions';
 
 const CommerceRegisterStack = createStackNavigator(
   {
@@ -54,21 +38,15 @@ const CommerceRegisterStack = createStackNavigator(
 
 const ClientSettingsStack = createStackNavigator(
   {
-      settings: {
-          screen: ClientSettings,
-          navigationOptions: {
-              title: 'Configuración'
-          }
+    settings: {
+      screen: ClientSettings,
+      navigationOptions: {
+        title: 'Configuración'
       }
+    }
   },
   stackNavigationOptions
 );
-
-const drawerNavigationOptions = {
-  drawerType: 'slide',
-  drawerWidth: 200,
-  contentComponent: ClientDrawerContent
-};
 
 const clientDrawer = createDrawerNavigator(
   {
@@ -76,7 +54,10 @@ const clientDrawer = createDrawerNavigator(
     commerceRegister: CommerceRegisterStack,
     clientSettings: ClientSettingsStack
   },
-  drawerNavigationOptions
+  {
+    ...drawerNavigationOptions,
+    contentComponent: ClientDrawerContent
+  }
 );
 
 const ClientDrawer = createAppContainer(clientDrawer);

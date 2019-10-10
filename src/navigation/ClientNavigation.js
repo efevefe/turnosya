@@ -1,64 +1,64 @@
 import React from 'react';
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-  createAppContainer
-} from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
+import { createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
+import { IconButton } from '../components/common';
 import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
-import { MAIN_COLOR } from '../constants';
-
-// Stack navigation options
-
-const stackNavigationOptions = {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      textAlign: 'center',
-      alignSelf: 'center',
-      fontSize: 18,
-      color: 'white',
-      fontWeight: 'bold'
-    }
-  }
-};
-
-const rightIcon = (navigation, icon, nextScreen) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginRight: 15 }}
-    onPress={() => navigation.navigate(nextScreen)}
-  />
-);
-
-const leftIcon = (navigation, icon) => (
-  <Ionicons
-    name={icon}
-    size={28}
-    color="white"
-    style={{ marginLeft: 15 }}
-    onPress={() => navigation.openDrawer()}
-  />
-);
+import FavoriteCommercesList from '../components/FavoriteCommercesList';
+import CommerceCourtTypes from '../components/CommerceCourtTypes';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
+import CommercesAreas from '../components/CommercesAreas';
+import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
+import CommerceCourtsList from '../components/CommerceCourtsList';
+import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const searchStack = createStackNavigator(
   {
-    commercesList: {
-      screen: CommercesList,
+    commercesAreas: {
+      screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
+    },
+    commercesList: {
+      screen: CommercesList,
+      navigationOptions: {
+        title: 'Buscar Negocios'
+      }
+    },
+    commerceCourtTypes: {
+      screen: CommerceCourtTypes,
+      navigationOptions: {
+        title: 'Tipos de Cancha'
+      }
+    },
+    commerceSchedule: {
+      screen: ClientCommerceSchedule,
+      navigationOptions: {
+        title: 'Turnos Disponibles'
+      }
+    },
+    commerceCourtsList: {
+      screen: CommerceCourtsList,
+      navigationOptions: {
+        title: 'Canchas Disponibles'
+      }
+    },
+    confirmCourtReservation: {
+      screen: ConfirmCourtReservation,
+      navigationOptions: {
+        title: 'Turno'
+      }
     }
   },
   stackNavigationOptions
@@ -70,7 +70,9 @@ const calendarStack = createStackNavigator(
       screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -80,10 +82,12 @@ const calendarStack = createStackNavigator(
 const favoritesStack = createStackNavigator(
   {
     favoritesList: {
-      screen: EmptyScreen,
+      screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: leftIcon(navigation, 'md-menu')
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
@@ -96,53 +100,14 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft:
-          navigation.getParam('leftIcon') || leftIcon(navigation, 'md-menu')
+        headerLeft: navigation.getParam('leftIcon') || (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
       })
     }
   },
   stackNavigationOptions
 );
-
-// Tab navigation options
-
-const tabNavigationOptions = {
-  defaultNavigationOptions: ({ navigation }) => ({
-    tabBarIcon: ({ focused, tintColor }) => {
-      const { routeName } = navigation.state;
-      let iconName;
-
-      if (routeName === 'search') {
-        iconName = `md-search`;
-      } else if (routeName === 'calendar') {
-        iconName = `md-calendar`;
-      } else if (routeName === 'favorites') {
-        iconName = `md-heart`;
-      } else if (routeName === 'profile') {
-        iconName = `md-person`;
-      }
-
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
-    }
-  }),
-  initialRouteName: 'search',
-  tabBarOptions: {
-    showLabel: false,
-    activeTintColor: 'white',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: MAIN_COLOR,
-      height: 50
-    }
-  }
-};
 
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
@@ -153,7 +118,10 @@ const clientTabs = createBottomTabNavigator(
     favorites: favoritesStack,
     profile: profileStack
   },
-  tabNavigationOptions
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'search'
+  }
 );
 
 const ClientNavigation = createAppContainer(clientTabs);

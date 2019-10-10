@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import algoliasearch from 'algoliasearch';
 import {
   ON_REGISTER_COMMERCE,
   COMMERCE_PROFILE_CREATE,
@@ -24,7 +25,14 @@ import {
   ON_REAUTH_SUCCESS,
   ON_REGISTER_VALUE_CHANGE
 } from './types';
+import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
+
+const { algoliaConfig } = getEnvVars();
+const { appId, adminApiKey, commercesIndex } = algoliaConfig;
+
+const client = algoliasearch(appId, adminApiKey);
+const index = client.initIndex(commercesIndex);
 
 export const onCommerceValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
@@ -66,6 +74,8 @@ export const onCreateCommerce = (
   return dispatch => {
     dispatch({ type: ON_REGISTER_COMMERCE });
 
+    var docId;
+
     db.collection(`Commerces`)
       .add({
         name,
@@ -80,9 +90,20 @@ export const onCreateCommerce = (
         softDelete: null
       })
       .then(reference => {
+        docId = reference.id;
         db.doc(`Profiles/${currentUser.uid}`)
-          .update({ commerceId: reference.id })
+          .update({ commerceId: docId })
           .then(() => {
+            index.addObject({
+              address: address,
+              areaName: area.name,
+              objectID: docId,
+              description: description,
+              name: name,
+              city: city,
+              provinceName: province.name
+            });
+
             dispatch({ type: COMMERCE_PROFILE_CREATE });
             navigation.navigate('commerce');
           })
@@ -92,15 +113,17 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = loadingType => {
+export const onCommerceRead = () => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING, payload: loadingType });
+    dispatch({ type: ON_COMMERCE_READING });
 
-    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO PRIMERO COMO CLIENTE ESTO NO HARIA
-    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
+    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO
+    //PRIMERO COMO CLIENTE ESTO NO HARIA
+    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL
+    //CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
       .then(doc => {
@@ -168,7 +191,18 @@ export const onCommerceUpdateNoPicture = ({
         area,
         profilePicture
       })
-      .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture }))
+      .then(() => {
+        index.saveObject({
+          address: address,
+          areaName: area.name,
+          objectID: commerceId,
+          description: description,
+          name: name,
+          city: city,
+          provinceName: province.name
+        });
+        dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
+      })
       .catch(error => {
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
         console.log(error);
@@ -218,7 +252,19 @@ export const onCommerceUpdateWithPicture = ({
                 area,
                 profilePicture: url
               })
-              .then(dispatch({ type: ON_COMMERCE_UPDATED, payload: url }))
+              .then(() => {
+                index.saveObject({
+                  address,
+                  areaName: area.name,
+                  profilePicture: url,
+                  objectID: commerceId,
+                  description,
+                  name,
+                  city,
+                  provinceName: province.name
+                });
+                dispatch({ type: ON_COMMERCE_UPDATED, payload: url });
+              })
               .catch(error => {
                 dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
                 console.log(error);
@@ -292,6 +338,7 @@ export const validateCuit = cuit => {
 export const onCommerceDelete = (password, navigation = null) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
+  var docId;
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_DELETING });
@@ -304,15 +351,22 @@ export const onCommerceDelete = (password, navigation = null) => {
 
         db.runTransaction(transaction => {
           return transaction.get(userRef).then(userDoc => {
-            var commerceRef = db.doc(`Commerces/${userDoc.data().commerceId}`);
+            docId = userDoc.data().commerceId;
+
+            var commerceRef = db.doc(`Commerces/${docId}`);
 
             transaction.update(userRef, { commerceId: null });
             transaction.update(commerceRef, { softDelete: new Date() });
-          })
+          });
         })
           .then(() => {
+            index.deleteObject(docId);
+
             dispatch({ type: ON_COMMERCE_DELETED });
-            dispatch({ type: ON_REGISTER_VALUE_CHANGE, payload: { prop: 'commerceId', value: null } })
+            dispatch({
+              type: ON_REGISTER_VALUE_CHANGE,
+              payload: { prop: 'commerceId', value: null }
+            });
 
             if (navigation) {
               navigation.navigate('client');
@@ -328,5 +382,5 @@ export const onCommerceDelete = (password, navigation = null) => {
         dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_COMMERCE_DELETE_FAIL });
       });
-  }
-}
+  };
+};

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation';
+import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
 import { MenuItem, Menu, Input, CardSection } from '../components/common';
 import {
@@ -43,7 +43,7 @@ class ClientSettings extends Component {
           >
             <Input
               label="Contraseña:"
-              secureTextEntry
+              password
               value={this.props.password}
               color="black"
               onChangeText={value =>
@@ -214,6 +214,12 @@ class ClientSettings extends Component {
           loadingWithText={this.props.loadingUserDelete}
           onPress={this.onUserDeletePress}
         />
+        {/* Opción en configuraciones para explicar y permitir mandar mail de configuracion*/}
+        {/* <MenuItem
+          title="Verificar mi Cuenta"
+          icon="md-mail-open"
+          onPress={}
+        /> */}
 
         {this.renderConfirmUserDelete()}
         {this.renderCantDeleteUser()}

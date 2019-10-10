@@ -1,9 +1,9 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
-import { ImagePicker, Permissions, Constants } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -12,7 +12,8 @@ import {
   Spinner,
   Menu,
   MenuItem,
-  Picker
+  Picker,
+  IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType, trimString } from '../utils';
@@ -51,48 +52,23 @@ class commerceData extends Component {
   };
 
   componentWillMount() {
-    this.props.onCommerceRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
   }
 
   onRefresh = () => {
-    this.props.onCommerceRead('refreshing');
+    this.props.onCommerceRead();
   };
 
   renderEditButton = () => {
-    return (
-      <Ionicons
-        name="md-create"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={this.onEditPress}
-      />
-    );
+    return <IconButton icon="md-create" onPress={this.onEditPress} />;
   };
 
   renderSaveButton = () => {
-    return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={this.onSavePress}
-      />
-    );
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
   renderCancelButton = () => {
-    return (
-      <Ionicons
-        name="md-close"
-        size={28}
-        color="white"
-        style={{ marginLeft: 15 }}
-        onPress={this.onCancelPress}
-      />
-    );
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onEditPress = () => {
@@ -186,9 +162,14 @@ class commerceData extends Component {
   };
 
   onCancelPress = () => {
-    _.each(this.state.stateBeforeChanges, (value, prop) => {
-      this.props.onCommerceValueChange({ prop, value });
-    });
+    const { stateBeforeChanges } = this.state;
+
+    for (prop in stateBeforeChanges) {
+      this.props.onCommerceValueChange({
+        prop,
+        value: stateBeforeChanges[prop]
+      });
+    }
 
     this.cleanErrors();
     this.disableEdit();
@@ -684,7 +665,8 @@ const styles = StyleSheet.create({
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
-    padding: 10
+    padding: 10,
+    paddingBottom: 22
   }
 });
 

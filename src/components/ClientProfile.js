@@ -1,9 +1,10 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
-import { ImagePicker, Permissions, Constants, Location } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -11,15 +12,11 @@ import {
   Input,
   Spinner,
   Menu,
-  MenuItem
+  MenuItem,
+  IconButton
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
-import {
-  imageToBlob,
-  validateValueType,
-  removeDoubleSpaces,
-  trimString
-} from '../utils';
+import { imageToBlob, validateValueType, trimString } from '../utils';
 import {
   onUserRead,
   onUserUpdateWithPicture,
@@ -48,51 +45,25 @@ class ClientProfile extends Component {
   };
 
   componentDidMount() {
-    this.props.onUserRead('loading');
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
-
     this.getLocation();
   }
 
   onRefresh = () => {
-    this.props.onUserRead('refreshing');
+    this.props.onUserRead();
     this.getLocation();
   };
 
   renderEditButton = () => {
-    return (
-      <Ionicons
-        name="md-create"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={this.onEditPress}
-      />
-    );
+    return <IconButton icon="md-create" onPress={this.onEditPress} />;
   };
 
   renderSaveButton = () => {
-    return (
-      <Ionicons
-        name="md-checkmark"
-        size={28}
-        color="white"
-        style={{ marginRight: 15 }}
-        onPress={this.onSavePress}
-      />
-    );
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
   renderCancelButton = () => {
-    return (
-      <Ionicons
-        name="md-close"
-        size={28}
-        color="white"
-        style={{ marginLeft: 15 }}
-        onPress={this.onCancelPress}
-      />
-    );
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onEditPress = () => {
@@ -135,9 +106,14 @@ class ClientProfile extends Component {
   };
 
   onCancelPress = () => {
-    _.each(this.state.stateBeforeChanges, (value, prop) => {
-      this.props.onRegisterValueChange({ prop, value });
-    });
+    const { stateBeforeChanges } = this.state;
+
+    for (prop in stateBeforeChanges) {
+      this.props.onRegisterValueChange({
+        prop,
+        value: stateBeforeChanges[prop]
+      });
+    }
 
     this.cleanErrors();
     this.disableEdit();
@@ -367,7 +343,11 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
+              source={
+                this.props.profilePicture
+                  ? { uri: this.props.profilePicture }
+                  : null
+              }
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
@@ -489,7 +469,8 @@ const styles = StyleSheet.create({
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
-    padding: 10
+    padding: 10,
+    paddingBottom: 22
   }
 });
 

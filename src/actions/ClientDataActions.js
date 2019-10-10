@@ -15,13 +15,19 @@ import {
   ON_USER_DELETED,
   ON_USER_DELETE_FAIL,
   ON_REAUTH_FAIL,
-  ON_REAUTH_SUCCESS
+  ON_REAUTH_SUCCESS,
+  ON_EMAIL_VERIFY_REMINDED,
+  ON_REGISTER_FORM_OPEN
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
 // este se deberia llamar onClientValueChange / onUserValueChange
 export const onRegisterValueChange = ({ prop, value }) => {
   return { type: ON_REGISTER_VALUE_CHANGE, payload: { prop, value } };
+};
+
+export const onRegisterFormOpen = () => {
+  return { type: ON_REGISTER_FORM_OPEN };
 };
 
 // este se deberia llamar onUserCreate
@@ -45,7 +51,11 @@ export const onRegister = ({ email, password, firstName, lastName, phone }) => {
             commerceId: null,
             softDelete: null
           })
-          .then(() => dispatch({ type: ON_REGISTER_SUCCESS, payload: user }))
+          .then(() => {
+            dispatch({ type: ON_REGISTER_SUCCESS, payload: user });
+            dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+            user.user.sendEmailVerification();
+          })
           .catch(error =>
             dispatch({ type: ON_REGISTER_FAIL, payload: error.message })
           );
@@ -56,12 +66,12 @@ export const onRegister = ({ email, password, firstName, lastName, phone }) => {
   };
 };
 
-export const onUserRead = loadingType => {
+export const onUserRead = () => {
   const { currentUser } = firebase.auth();
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_USER_READING, payload: loadingType });
+    dispatch({ type: ON_USER_READING });
 
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
@@ -143,7 +153,7 @@ export const onUserUpdateWithPicture = ({
   };
 };
 
-export const onUserDelete = (password) => {
+export const onUserDelete = password => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
@@ -177,6 +187,5 @@ export const onUserDelete = (password) => {
         dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_USER_DELETE_FAIL });
       });
-
-  }
-}
+  };
+};

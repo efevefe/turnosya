@@ -6,8 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   onCommerceValueChange,
   onCommerceFormOpen,
-  validateCuit,
-  onCommerceRead
+  validateCuit
 } from '../actions';
 import { validateValueType, trimString } from '../utils';
 
@@ -18,8 +17,13 @@ class RegisterCommerce extends Component {
     this.props.onCommerceFormOpen();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.cuitExists !== this.props.cuitExists) {
+      this.renderCuitError();
+    }
+  }
+
   onButtonPressHandler() {
-    this.renderCuitErrorAsync();
     if (this.validateMinimumData()) {
       this.props.navigation.navigate('commerceRegisterProfile1');
     }
@@ -72,11 +76,10 @@ class RegisterCommerce extends Component {
       return true;
     }
   };
-  renderCuitErrorAsync = async () => {
-    await this.props.validateCuit(this.props.cuit);
-    this.renderCuitError();
-  };
+
   renderCuitError = () => {
+    this.props.validateCuit(this.props.cuit);
+
     if (this.props.cuit === '') {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
@@ -126,7 +129,7 @@ class RegisterCommerce extends Component {
                 })
               }
               onFocus={() => this.setState({ cuitError: '' })}
-              onBlur={this.renderCuitErrorAsync}
+              onBlur={this.renderCuitError}
             />
           </CardSection>
 

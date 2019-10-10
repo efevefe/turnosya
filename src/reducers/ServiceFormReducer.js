@@ -1,10 +1,12 @@
-import { 
-    ON_SERVICE_VALUE_CHANGE, 
+import {
+    ON_SERVICE_VALUE_CHANGE,
     ON_FORM_OPEN,
     SERVICE_FORM_SUBMIT,
-    SERVICE_CREATE, 
-    SERVICE_UPDATE
+    SERVICE_CREATE,
+    SERVICE_UPDATE,
+    SERVICE_DELETE
 } from '../actions/types';
+import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
     name: '',
@@ -23,8 +25,13 @@ export default (state = INITIAL_STATE, action) => {
         case SERVICE_FORM_SUBMIT:
             return { ...state, loading: true };
         case SERVICE_CREATE:
+            Toast.show({ text: 'Servicio guardado' });
             return INITIAL_STATE;
         case SERVICE_UPDATE:
+            Toast.show({ text: 'Cambios guardados' });
+            return INITIAL_STATE;
+        case SERVICE_DELETE:
+            Toast.show({ text: 'El servicio se ha eliminado' });
             return INITIAL_STATE;
         default:
             return state;
