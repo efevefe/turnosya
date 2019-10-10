@@ -14,4 +14,3 @@ export * from './Drawer';
 export * from './Schedule';
 export * from './EmptyList';
 export * from './IconButton';
-export * from './LocationMessages';

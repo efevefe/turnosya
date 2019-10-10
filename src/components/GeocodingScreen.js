@@ -5,26 +5,18 @@ import { Fab } from 'native-base';
 import { MAIN_COLOR } from '../constants';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
-import { LocationMessages } from './common';
+import LocationMessages from './common/LocationMessages';
+import { connect } from 'react-redux';
+import { onLocationChange } from '../actions';
 
-export default class GeocodingScreen extends React.Component {
+class GeocodingScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title')
     };
   };
 
-  state = {
-    street: 'San Jerónimo',
-    streetNumber: 50,
-    city: 'Cordoba',
-    country: 'Argentina',
-    latitude: 0,
-    longitude: 0,
-    userLatitude: null,
-    userLongitude: null,
-    locationAsked: false
-  };
+  state = { locationAsked: false };
 
   componentDidMount() {
     const address = this.setStreetString(); //se puede definir en el constructor y lo de abajo una funcion aparte
@@ -32,11 +24,7 @@ export default class GeocodingScreen extends React.Component {
   }
 
   setStreetString = () => {
-    const {
-      street,
-      streetNumber,
-      city
-    } = this.props.navigation.state.params.address;
+    const { street, streetNumber, city } = this.props;
 
     let address = `${street !== '' ? street : ''}${
       streetNumber !== '' ? ' ' + streetNumber : ''
@@ -49,8 +37,6 @@ export default class GeocodingScreen extends React.Component {
     if (address === '') {
       address = 'Córdoba, Argentina';
     }
-
-    this.setState({ street, streetNumber, city });
 
     return address;
   };
@@ -76,43 +62,27 @@ export default class GeocodingScreen extends React.Component {
     });
     const { street, city, country } = addresResult;
 
-    this.setState({
+    const location = {
       latitude,
       longitude,
       street,
       streetNumber: addresResult.name.replace(street, ''),
       city,
       country
-    });
-  };
+    };
 
-  getLocation = ({ latitude, longitude }) => {
-    this.setState({ userLatitude: latitude, userLongitude: longitude });
-  };
-
-  onLocationPress = () => {
-    if (this.state.userLatitude && this.state.userLongitude) {
-      this.setState({
-        latitude: this.state.userLatitude,
-        longitude: this.state.userLongitude
-      });
-    } else {
-      this.setState({ locationAsked: true });
-    }
+    this.props.onLocationChange({ location });
   };
 
   renderLocationMessage = () => {
-    if (
-      (!this.state.userLatitude || !this.state.userLongitude) &&
-      this.state.locationAsked
-    ) {
-      return <LocationMessages location={this.getLocation} />;
+    if (this.state.locationAsked) {
+      // this.setState({ locationAsked: false }); //ver la forma de poner este asked en false
+      return <LocationMessages />;
     }
   };
 
   render() {
-    const { latitude, longitude, street, streetNumber } = this.state;
-
+    const { latitude, longitude, street, streetNumber } = this.props;
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         <MapView
@@ -120,8 +90,8 @@ export default class GeocodingScreen extends React.Component {
           ref={ref => (this.map = ref)}
           initialRegion={this.region}
           region={{
-            latitude: latitude ? latitude : -31.417378,
-            longitude: longitude ? longitude : -64.18384,
+            latitude,
+            longitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01
           }}
@@ -150,7 +120,7 @@ export default class GeocodingScreen extends React.Component {
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
-          onPress={() => this.onLocationPress()}
+          onPress={() => this.setState({ locationAsked: true })}
         >
           <Ionicons name="md-locate" />
         </Fab>
@@ -158,3 +128,21 @@ export default class GeocodingScreen extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {
+    street,
+    streetNumber,
+    city,
+    country,
+    latitude,
+    longitude
+  } = state.locationData;
+
+  return { street, streetNumber, city, country, latitude, longitude };
+};
+
+export default connect(
+  mapStateToProps,
+  { onLocationChange }
+)(GeocodingScreen);

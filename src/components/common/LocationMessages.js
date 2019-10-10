@@ -5,11 +5,14 @@ import {
   openSettingIos,
   askPermissionLocation,
   getCurrentPosition,
-  getPermissionLocationStatus
+  getPermissionLocationStatus,
+  getAddressFromLatAndLong
 } from '../../utils';
 import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
+import { connect } from 'react-redux';
+import { onLocationChange } from '../../actions';
 
 class LocationMessages extends Component {
   state = {
@@ -20,7 +23,6 @@ class LocationMessages extends Component {
   };
 
   async componentDidMount() {
-    console.log('didumount');
     const permissionStatus = await getPermissionLocationStatus();
     permissionStatus === 'permissionsAllowed'
       ? this.setState({ permissionStatus })
@@ -54,9 +56,25 @@ class LocationMessages extends Component {
       : 'Activa GPS para recibir una mejor búsqueda cerca de ti';
   };
 
-  getLocation = async () => {
-    const location = await getCurrentPosition();
-    this.props.location(location.coords);
+  getAndSaveLocation = async () => {
+    const currentLatLong = await getCurrentPosition();
+    const { latitude, longitude } = currentLatLong.coords;
+    const [addresResult] = await getAddressFromLatAndLong({
+      latitude,
+      longitude
+    });
+    const { street, city, country } = addresResult;
+
+    const location = {
+      street,
+      streetNumber: addresResult.name.replace(street, ''),
+      city,
+      country,
+      latitude,
+      longitude
+    };
+
+    this.props.onLocationChange({ location });
   };
 
   renderItems = () => {
@@ -142,10 +160,9 @@ class LocationMessages extends Component {
   closeModal = () => {
     this.setState({ modal: false });
   };
-
   render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
-      this.getLocation();
+      this.getAndSaveLocation();
       return <View />;
     } else {
       return (
@@ -170,4 +187,7 @@ styles = {
   }
 };
 
-export { LocationMessages };
+export default connect(
+  null,
+  { onLocationChange }
+)(LocationMessages);
