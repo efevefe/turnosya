@@ -36,6 +36,7 @@ class ClientCommerceSchedule extends Component {
       this.reservationsOnSlots(this.props.slots);
     }
   }
+
   renderBackButton = () => {
     return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
   }
@@ -77,15 +78,10 @@ class ClientCommerceSchedule extends Component {
       var available = true;
 
       reservations.forEach(reservation => {
-        slot.startDate.toString() ===
-          reservation.startDate.toString()
-          ? ocupate++
-          : null;
+        if (slot.startDate.toString() === reservation.startDate.toString()) ocupate++;
       });
 
-      if (ocupate >= courts.length) {
-        available = false;
-      }
+      if (ocupate >= courts.length) available = false;
 
       return {
         ...slot,
@@ -105,7 +101,6 @@ class ClientCommerceSchedule extends Component {
       selectedDate,
       reservationDayPeriod,
       reservationMinLength,
-      onScheduleRead,
       loadingSchedule,
       loadingReservations,
       loadingCourts
@@ -123,7 +118,13 @@ class ClientCommerceSchedule extends Component {
         }]}
         loading={(loadingSchedule || loadingReservations || loadingCourts)}
         onDateChanged={date => this.onDateChanged(date)}
-        onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
+        onRefresh={() => {
+          this.props.onScheduleRead(this.props.commerce.objectID);
+          this.props.onCommerceCourtsReadByType({
+            commerceId: this.props.commerce.objectID,
+            courtType: this.props.courtType
+          });
+        }}
         onSlotPress={slot => this.onSlotPress(slot)}
       />
     );

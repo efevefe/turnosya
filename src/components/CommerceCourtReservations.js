@@ -37,7 +37,7 @@ class CommerceCourtReservations extends Component {
 
         if (selectedIndex == 0) {
             // turnos pasados
-            filteredList = reservations.filter(res => res.endDate < moment());
+            filteredList = reservations.filter(res => res.endDate < moment()).sort((a,b) => a.startDate < b.startDate);
         } else if (selectedIndex == 1) {
             // turnos en curso
             filteredList = reservations.filter(res => (res.startDate <= moment() && res.endDate >= moment()));
@@ -160,9 +160,10 @@ class CommerceCourtReservations extends Component {
                         marginLeft: 0,
                         marginRight: 0
                     }}
-                    selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                    selectedTextStyle={{ color: 'white' }}
-                    textStyle={{ color: MAIN_COLOR }}
+                    selectedButtonStyle={{ backgroundColor: 'white' }}
+                    buttonStyle={{ backgroundColor: MAIN_COLOR }}
+                    textStyle={{ color: 'white' }}
+                    selectedTextStyle={{ color: MAIN_COLOR }}
                     innerBorderStyle={{ width: 0 }}
                 />
                 {

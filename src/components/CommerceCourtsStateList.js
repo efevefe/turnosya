@@ -4,8 +4,7 @@ import { FlatList, View, RefreshControl } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from './common';
 import {
-  courtsReadOnlyAvailable,
-  onCommerceCourtReservationsOnSlotRead,
+  onCommerceCourtReservationsRead,
   onReservationClientRead
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
@@ -15,29 +14,23 @@ import { MAIN_COLOR } from '../constants';
 class CommerceCourtsStateList extends Component {
   state = { selectedReservation: {}, selectedCourt: {}, detailsVisible: false };
 
-  componentDidMount() {
-    this.props.onCommerceCourtReservationsOnSlotRead({
-      commerceId: this.props.commerceId,
-      startDate: this.props.slot.startDate
+  courtReservation = court => {
+    const { reservations, slot } = this.props;
+
+    return reservations.find(reservation => {
+      return (
+        reservation.startDate.toString() === slot.startDate.toString()
+        && reservation.courtId === court.id
+      );
     });
-    
-    this.props.courtsReadOnlyAvailable(this.props.commerceId);
   }
 
-  onReservationPress = async reservation => {
-    await this.setState({ selectedReservation: reservation });
+  onReservedCourtPress = async court => {
+    var reservation = this.courtReservation(court);
+
+    await this.setState({ selectedReservation: reservation, selectedCourt: court });
     this.setState({ detailsVisible: true });
-  }
-
-  onCourtPress = async court => {
-    const { reservationsOnSlot } = this.props;
-    var reservation = reservationsOnSlot.find(reservation => reservation.courtId === court.id);
-
-    if (reservation) {
-      await this.setState({ selectedReservation: reservation, selectedCourt: court });
-      this.setState({ detailsVisible: true });
-      this.props.onReservationClientRead(reservation.clientId);
-    }
+    this.props.onReservationClientRead(reservation.clientId);
   }
 
   renderDetails = () => {
@@ -75,12 +68,15 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderRow({ item }) {
+    var courtAvailable = !this.courtReservation(item);
+
     return (
       <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
-        onPress={() => this.onCourtPress(item)}
+        courtAvailable={courtAvailable}
+        onPress={courtAvailable ? null : () => this.onReservedCourtPress(item)}
       />
     );
   }
@@ -89,12 +85,12 @@ class CommerceCourtsStateList extends Component {
     return (
       <RefreshControl
         refreshing={this.props.refreshing}
-        onRefresh={() =>
-          this.props.onCommerceCourtReservationsOnSlotRead({
+        onRefresh={() => {
+          this.props.onCommerceCourtReservationsRead({
             commerceId: this.props.commerceId,
-            startDate: this.props.slot.startDate
-          })
-        }
+            selectedDate: this.props.selectedDate
+          });
+        }}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />
@@ -108,7 +104,6 @@ class CommerceCourtsStateList extends Component {
           data={this.props.courtsAvailable}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
-          contentContainerStyle={{ paddingBottom: 95 }}
           refreshControl={this.onRefresh()}
         />
       );
@@ -116,6 +111,7 @@ class CommerceCourtsStateList extends Component {
 
     return <EmptyList title="No hay ninguna cancha" />;
   };
+
   render() {
     if (this.props.loading) return <Spinner />;
 
@@ -132,12 +128,13 @@ const mapStateToProps = state => {
   const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  const { loading, reservationsOnSlot, loadingClientData, reservationClient } = state.courtReservationsList;
+  const { selectedDate } = state.scheduleRegister;
+  const { loading, reservations, loadingClientData, reservationClient } = state.courtReservationsList;
 
-  return { courtsAvailable, loading, commerceId, slot, reservationsOnSlot, loadingClientData, reservationClient };
+  return { courtsAvailable, loading, commerceId, slot, selectedDate, reservations, loadingClientData, reservationClient };
 };
 
 export default connect(
   mapStateToProps,
-  { courtsReadOnlyAvailable, onCommerceCourtReservationsOnSlotRead, onReservationClientRead }
+  { onCommerceCourtReservationsRead, onReservationClientRead }
 )(CommerceCourtsStateList);

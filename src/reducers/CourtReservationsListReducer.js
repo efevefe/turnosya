@@ -2,8 +2,6 @@ import {
     ON_COMMERCE_COURT_RESERVATIONS_READING,
     ON_COMMERCE_COURT_RESERVATIONS_READ,
     ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING,
-    ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ,
     ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
     ON_RESERVATION_CLIENT_READ_FAIL,
     ON_RESERVATION_CLIENT_READING,
@@ -29,10 +27,6 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, ...action.payload, loading: false };
         case ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL:
             return { ...state, loading: false };
-        case ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING:
-            return { ...state, loading: true };
-        case ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ:
-            return { ...state, reservationsOnSlot: action.payload, loading: false };
         case ON_RESERVATION_CLIENT_READING:
             return { ...state, loadingClientData: true };
         case ON_RESERVATION_CLIENT_READ:

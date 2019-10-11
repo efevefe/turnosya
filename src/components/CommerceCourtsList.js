@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, RefreshControl } from 'react-native';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from './common';
 import {
-  onCommerceCourtsReadByType,
   onCourtReservationValueChange,
-  onCommerceCourtReservationsOnSlotRead,
   onCommerceCourtTypeReservationsRead,
   onScheduleRead
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
+import { MAIN_COLOR } from '../constants';
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -23,16 +22,6 @@ class CommerceCourtsList extends Component {
     this.props.navigation.setParams({
       leftButton: this.renderBackButton()
     });
-
-    this.props.onCommerceCourtReservationsOnSlotRead({
-      commerceId: this.props.commerce.objectID,
-      startDate: this.props.slot.startDate
-    });
-
-    this.props.onCommerceCourtsReadByType({
-      commerceId: this.props.commerce.objectID,
-      courtType: this.props.courtType
-    });
   }
 
   renderBackButton = () => {
@@ -40,25 +29,18 @@ class CommerceCourtsList extends Component {
   }
 
   onBackPress = () => {
-    // hace lo mismo que haria si se volviera a montar la pantalla anterior
     this.props.navigation.goBack(null);
-
-    /* 
-    esta consulta y la de canchas unicamente son necesarias por si el negocio llegara a
-    cambiar sus horarios o una cancha mientras un cliente que esta en proceso de reserva
-    vuelve desde esta pantalla hacia la anterior
-    */
     this.props.onScheduleRead(this.props.commerce.objectID);
+  }
 
-    this.props.onCommerceCourtsReadByType({
-      commerceId: this.props.commerce.objectID,
-      courtType: this.props.courtType
-    });
+  courtReservation = court => {
+    const { reservations, slot } = this.props;
 
-    this.props.onCommerceCourtTypeReservationsRead({
-      commerceId: this.props.commerce.objectID,
-      selectedDate: this.props.selectedDate,
-      courtType: this.props.courtType
+    return reservations.find(reservation => {
+      return (
+        reservation.startDate.toString() === slot.startDate.toString()
+        && reservation.courtId === court.id
+      );
     });
   }
 
@@ -72,13 +54,33 @@ class CommerceCourtsList extends Component {
   };
 
   renderRow = ({ item }) => {
+    var courtAvailable = !this.courtReservation(item);
+
     return (
       <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
-        disabled={true} // solo se deshabilita si esta ocupada
+        courtAvailable={courtAvailable}
+        disabled={!courtAvailable}
         onPress={() => this.onCourtPress(item)}
+      />
+    );
+  };
+
+  onRefresh = () => {
+    return (
+      <RefreshControl
+        refreshing={this.props.refreshing}
+        onRefresh={() => {
+          this.props.onCommerceCourtTypeReservationsRead({
+            commerceId: this.props.commerce.objectID,
+            selectedDate: this.props.selectedDate,
+            courtType: this.props.courtType
+          });
+        }}
+        colors={[MAIN_COLOR]}
+        tintColor={MAIN_COLOR}
       />
     );
   };
@@ -90,7 +92,7 @@ class CommerceCourtsList extends Component {
           data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
-          contentContainerStyle={{ paddingBottom: 95 }}
+          refreshControl={this.onRefresh()}
         />
       );
     }
@@ -106,19 +108,18 @@ class CommerceCourtsList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { courts, loading } = state.courtsList;
+  const { courts } = state.courtsList;
   const { commerce, courtType, slot } = state.courtReservation;
   const { selectedDate } = state.scheduleRegister;
+  const { reservations, loading } = state.courtReservationsList;
 
-  return { commerce, courtType, courts, loading, slot, selectedDate };
+  return { commerce, courtType, reservations, courts, loading, slot, selectedDate };
 };
 
 export default connect(
   mapStateToProps,
   {
-    onCommerceCourtsReadByType,
     onCourtReservationValueChange,
-    onCommerceCourtReservationsOnSlotRead,
     onCommerceCourtTypeReservationsRead,
     onScheduleRead
   }
