@@ -23,15 +23,29 @@ class GeocodingScreen extends React.Component {
     this.getLocationAndLongitudeFromString(address);
   }
 
-  setStreetString = () => {
-    const { street, streetNumber, city } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.latitude !== this.props.latitude &&
+      prevProps.longitude !== this.props.longitude &&
+      this.state.locationAsked
+    ) {
+      this.setState({ locationAsked: false });
+      if (this.props.navigation.state.params.callback) {
+        this.props.navigation.state.params.callback(this.props.provinceName);
+      }
+    }
+  }
 
-    let address = `${street !== '' ? street : ''}${
-      streetNumber !== '' ? ' ' + streetNumber : ''
-    }`;
+  setStreetString = () => {
+    const { street, city, provinceName } = this.props;
+    let address = `${street !== '' ? street : ''}`;
 
     address = `${address !== '' ? address + ', ' : ''}${
       city !== '' ? city : ''
+    }`;
+
+    address = `${address !== '' ? address + ', ' : ''}${
+      provinceName !== '' ? provinceName : ''
     }`;
 
     if (address === '') {
@@ -60,29 +74,32 @@ class GeocodingScreen extends React.Component {
       latitude,
       longitude
     });
-    const { street, city, country } = addresResult;
+    const { name, city, region, country } = addresResult;
 
     const location = {
       latitude,
       longitude,
-      street,
-      streetNumber: addresResult.name.replace(street, ''),
+      street: name,
+      provinceName: region,
       city,
       country
     };
 
     this.props.onLocationChange({ location });
+    if (this.props.navigation.state.params.callback) {
+      this.props.navigation.state.params.callback(region);
+    }
   };
 
   renderLocationMessage = () => {
     if (this.state.locationAsked) {
-      // this.setState({ locationAsked: false }); //ver la forma de poner este asked en false
       return <LocationMessages />;
     }
   };
 
   render() {
-    const { latitude, longitude, street, streetNumber } = this.props;
+    const { latitude, longitude, street } = this.props;
+
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         <MapView
@@ -106,7 +123,7 @@ class GeocodingScreen extends React.Component {
         >
           <MapView.Marker
             coordinate={{ latitude, longitude }}
-            title={`${street} ${streetNumber}`}
+            title={street}
             draggable
             onDragEnd={e =>
               this.getAddressFromLatAndLong({
@@ -132,14 +149,14 @@ class GeocodingScreen extends React.Component {
 const mapStateToProps = state => {
   const {
     street,
-    streetNumber,
     city,
+    provinceName,
     country,
     latitude,
     longitude
   } = state.locationData;
 
-  return { street, streetNumber, city, country, latitude, longitude };
+  return { street, city, provinceName, country, latitude, longitude };
 };
 
 export default connect(

@@ -2,8 +2,8 @@ import { ON_LOCATION_VALUE_CHANGE, ON_LOCATION_CHANGE } from '../actions/types';
 
 const INITIAL_STATE = {
   street: '',
-  streetNumber: '',
   city: '',
+  provinceName: '',
   country: '',
   latitude: -31.417378,
   longitude: -64.18384

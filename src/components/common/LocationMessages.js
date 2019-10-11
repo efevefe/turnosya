@@ -63,12 +63,12 @@ class LocationMessages extends Component {
       latitude,
       longitude
     });
-    const { street, city, country } = addresResult;
+    const { name, city, region, country } = addresResult;
 
     const location = {
-      street,
-      streetNumber: addresResult.name.replace(street, ''),
+      street: name,
       city,
+      provinceName: region,
       country,
       latitude,
       longitude

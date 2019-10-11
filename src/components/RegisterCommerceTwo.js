@@ -17,8 +17,6 @@ import { trimString } from '../utils';
 
 class RegisterCommerceTwo extends Component {
   state = {
-    areaLoaded: false,
-    provincesLoaded: false,
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
@@ -42,8 +40,7 @@ class RegisterCommerceTwo extends Component {
         city,
         province,
         area,
-        street,
-        streetNumber
+        street
       } = this.props;
       this.props.onCreateCommerce(
         {
@@ -52,7 +49,7 @@ class RegisterCommerceTwo extends Component {
           email,
           phone,
           description,
-          address: `${street} ${streetNumber}`,
+          address: street,
           city,
           province,
           area
@@ -72,9 +69,12 @@ class RegisterCommerceTwo extends Component {
       prop: 'province',
       value: { provinceId: value, name: label }
     });
-    if (!provincesLoaded) {
-      return this.setState({ provincesLoaded: true });
-    }
+
+    this.props.onLocationValueChange({
+      prop: 'provinceName',
+      value: index > 0 ? label : ''
+    });
+
     this.renderProvinceError();
   };
 
@@ -88,9 +88,7 @@ class RegisterCommerceTwo extends Component {
       prop: 'area',
       value: { areaId: value, name: label }
     });
-    if (!areaLoaded) {
-      return this.setState({ areaLoaded: true });
-    }
+
     this.renderAreaError();
   };
 
@@ -143,18 +141,46 @@ class RegisterCommerceTwo extends Component {
   };
 
   validateMinimumData = () => {
+    // return (
+    //   this.renderAreaError() &&
+    //   this.renderProvinceError() &&
+    //   this.renderCityError() &&
+    //   this.renderAddressError()
+    // );
     return (
       this.renderAreaError() &&
       this.renderProvinceError() &&
-      this.renderCityError() &&
-      this.renderAddressError()
+      this.renderCityError()
     );
+  };
+
+  onProvinceNameChangeOnMap = newProvinceName => {
+    this.matchProvinceByValue(newProvinceName);
+  };
+
+  matchProvinceByValue = name => {
+    const province = this.props.provincesList.find(
+      province => province.label === name
+    );
+
+    if (province) {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: province.value, name }
+      });
+    } else {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: '', name: '' }
+      });
+    }
   };
 
   onMapPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: 'commerceRegisterMap',
       params: {
+        callback: this.onProvinceNameChangeOnMap,
         title: 'Localizar mi Negocio'
       }
     });
@@ -193,21 +219,6 @@ class RegisterCommerceTwo extends Component {
               // onBlur={this.renderAddressError}
             />
           </CardSection>
-          <CardSection>
-            <Input
-              label="Número"
-              value={this.props.streetNumber}
-              onChangeText={value =>
-                this.props.onLocationValueChange({
-                  prop: 'streetNumber',
-                  value
-                })
-              }
-              // errorMessage={this.state.addressError}
-              // onFocus={() => this.setState({ addressError: '' })}
-              // onBlur={this.renderAddressError}
-            />
-          </CardSection>
 
           <CardSection>
             <Input
@@ -216,9 +227,9 @@ class RegisterCommerceTwo extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'city', value })
               }
-              // errorMessage={this.state.cityError}
-              // onFocus={() => this.setState({ cityError: '' })}
-              // onBlur={this.renderCityError}
+              errorMessage={this.state.cityError}
+              onFocus={() => this.setState({ cityError: '' })}
+              onBlur={this.renderCityError}
             />
           </CardSection>
           <CardSection>
@@ -259,7 +270,6 @@ const mapStateToProps = state => {
     email,
     phone,
     description,
-    address,
     province,
     provincesList,
     area,
@@ -268,7 +278,7 @@ const mapStateToProps = state => {
     error
   } = state.commerceData;
 
-  const { street, streetNumber, city } = state.locationData;
+  const { street, provinceName, city } = state.locationData;
 
   return {
     name,
@@ -278,14 +288,13 @@ const mapStateToProps = state => {
     cuit,
     email,
     phone,
-    address,
-    city,
     province,
     area,
     areasList,
     provincesList,
     street,
-    streetNumber
+    city,
+    provinceName
   };
 };
 export default connect(
