@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import CourtReservationDetails from './CourtReservationDetails';
 import { connect } from 'react-redux';
-import {CardSection ,Button} from './common/'
-import { MAIN_COLOR } from '../constants';
-
+import { CardSection, Button } from './common/'
+import moment from 'moment'
 
 class ClientReservationDetails extends Component {
 
@@ -12,22 +11,17 @@ class ClientReservationDetails extends Component {
         super(props)
         const { params } = this.props.navigation.state;
         this.state = {
-            reservation: params
+            reservations: params
         }
     }
 
-    renderButtonPress = () => {
+    renderButtonPress = (startDate) => {
+        if(startDate > moment())
         return (
             <CardSection style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'flex-start', flex: 1 }}>
+                <View style={{ alignItems: 'center', padding: 3, flex: 1 }}>
                     <Button
                         title="Cancelar Reserva"
-                        type='solid'
-                    />
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <Button
-                        title="Comfirmar Reserva"
                         type='solid'
                     />
                 </View>
@@ -37,7 +31,7 @@ class ClientReservationDetails extends Component {
 
     render() {
 
-        const { commerce, court, endDate, startDate, light, price } = this.state.reservation;
+        const { commerce, court, endDate, startDate, light, price } = this.state.reservations;
 
         return (
             <View style={{ flex: 1 }}>
@@ -50,7 +44,7 @@ class ClientReservationDetails extends Component {
                     light={light}
                     showPrice={true}
                 >
-                    <View>{this.renderButtonPress()}</View>
+                    <View>{this.renderButtonPress(startDate)}</View>
                 </CourtReservationDetails>
             </View>
         );

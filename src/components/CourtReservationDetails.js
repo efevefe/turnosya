@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './common';
@@ -30,57 +30,59 @@ const CourtReservationDetails = props => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <View style={styles.mainContainer}>
-                <Avatar
-                    rounded
-                    source={commerce.profilePicture ? { uri: commerce.profilePicture } : null}
-                    size={90}
-                    icon={{ name: 'store' }}
-                    containerStyle={styles.avatarStyle}
-                />
-                <View style={styles.contentContainer}>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 8 }]}>
-                        <Text style={styles.bigText}>
-                            {commerce.name}
-                        </Text>
-                    </CardSection>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 3 }]}>
-                        <Text style={styles.mediumText}>
-                            {commerce.address}
-                        </Text>
-                    </CardSection>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                        <Text style={styles.mediumText}>
-                            {court.name}
-                        </Text>
-                    </CardSection>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                        <Text style={styles.regularText}>
-                            {`${court.court} - ${court.ground}`}
-                        </Text>
-                    </CardSection>
-                    <CardSection style={styles.cardSections}>
-                        <Text style={styles.regularText}>
-                            {light ? 'Con Luz' : 'Sin Luz'}
-                        </Text>
-                    </CardSection>
-                    <Divider style={styles.divider} />
-                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                        <Text style={styles.regularText}>
-                            {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${MONTHS[moment(startDate).month()]}`}
-                        </Text>
-                    </CardSection>
-                    <CardSection style={styles.cardSections}>
-                        <Text style={styles.regularText}>
-                            {`De ${moment(startDate).format('HH:mm')} hs. a ${moment(endDate).format('HH:mm')} hs.`}
-                        </Text>
-                    </CardSection>
-                    {this.renderPrice()}
-                    {children}
+        <ScrollView>
+            <View style={{ flex: 1 }}>
+                <View style={styles.mainContainer}>
+                    <Avatar
+                        rounded
+                        source={commerce.profilePicture ? { uri: commerce.profilePicture } : null}
+                        size={90}
+                        icon={{ name: 'store' }}
+                        containerStyle={styles.avatarStyle}
+                    />
+                    <View style={styles.contentContainer}>
+                        <CardSection style={[styles.cardSections, { paddingBottom: 8 }]}>
+                            <Text style={styles.bigText}>
+                                {commerce.name}
+                            </Text>
+                        </CardSection>
+                        <CardSection style={[styles.cardSections, { paddingBottom: 3 }]}>
+                            <Text style={styles.mediumText}>
+                                {commerce.address}
+                            </Text>
+                        </CardSection>
+                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                            <Text style={styles.mediumText}>
+                                {court.name}
+                            </Text>
+                        </CardSection>
+                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                            <Text style={styles.regularText}>
+                                {`${court.court} - ${court.ground}`}
+                            </Text>
+                        </CardSection>
+                        <CardSection style={styles.cardSections}>
+                            <Text style={styles.regularText}>
+                                {light ? 'Con Luz' : 'Sin Luz'}
+                            </Text>
+                        </CardSection>
+                        <Divider style={styles.divider} />
+                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                            <Text style={styles.regularText}>
+                                {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${MONTHS[moment(startDate).month()]}`}
+                            </Text>
+                        </CardSection>
+                        <CardSection style={styles.cardSections}>
+                            <Text style={styles.regularText}>
+                                {`De ${moment(startDate).format('HH:mm')} hs. a ${moment(endDate).format('HH:mm')} hs.`}
+                            </Text>
+                        </CardSection>
+                        {this.renderPrice()}
+                        {children}
+                    </View>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 

@@ -115,7 +115,7 @@ export const ON_CLIENT_COURT_RESERVATION_CREATE = 'on_client_court_reservation_c
 export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservation_create_fail';
 export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
 
-export const CLIENT_RERSERVATION_READ = 'client_reservation_read';
-export const CLIENT_RERSERVATION_READING = 'client_reservation_reading';
-export const CLIENT_RERSERVATION_FAIL = 'client_reservation_fail';
+export const CLIENT_RERSERVATIONS_READ = 'client_reservations_read';
+export const CLIENT_RERSERVATIONS_READING = 'client_reservations_reading';
+export const CLIENT_RERSERVATIONS_FAIL = 'client_reservations_fail';
 

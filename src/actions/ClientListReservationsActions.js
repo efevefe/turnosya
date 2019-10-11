@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { CLIENT_RERSERVATION_READ, CLIENT_RERSERVATION_READING, CLIENT_RERSERVATION_FAIL } from './types';
+import { CLIENT_RERSERVATIONS_READ, CLIENT_RERSERVATIONS_READING, CLIENT_RERSERVATIONS_FAIL } from './types';
 import moment from 'moment'
 
 export const onClientReservationListRead = () => {
@@ -8,8 +8,8 @@ export const onClientReservationListRead = () => {
   var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: CLIENT_RERSERVATION_READING });
-    db.collection(`Profiles/${currentUser.uid}/Reservations`).orderBy('startDate','asc')
+    dispatch({ type: CLIENT_RERSERVATIONS_READING });
+    db.collection(`Profiles/${currentUser.uid}/Reservations`).orderBy('startDate', 'asc')
       .get()
       .then(snapshot => {
         var reservations = [];
@@ -23,12 +23,13 @@ export const onClientReservationListRead = () => {
                 id: doc.id,
                 startDate: moment(doc.data().startDate.toDate()),
                 endDate: moment(doc.data().endDate.toDate()),
-              }); dispatch({ type: CLIENT_RERSERVATION_READ, payload: reservations });
+              });
+              if (snapshot.size == reservations.length) dispatch({ type: CLIENT_RERSERVATIONS_READ, payload: reservations });
             });
           }
           )
         })
-          .catch(error => dispatch({ type: CLIENT_RERSERVATION_FAIL, payload: error }));
+          .catch(error => dispatch({ type: CLIENT_RERSERVATIONS_FAIL, payload: error }));
       })
   }
 }

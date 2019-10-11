@@ -10,7 +10,7 @@ import moment from 'moment'
 
 class ClientReservationListItem extends Component {
 
-    constructor  (props)  {
+    constructor(props) {
         super(props)
         props.onClientReservationListRead();
 
@@ -40,7 +40,7 @@ class ClientReservationListItem extends Component {
         var filteredList = [];
         if (selectedIndex == 0) {
             // turnos pasados
-            filteredList = reservations.filter(res => res.endDate < moment());
+            filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
         } else {
             // turnos proximos
             filteredList = reservations.filter(res => res.startDate > moment());
@@ -88,49 +88,6 @@ class ClientReservationListItem extends Component {
             />)
     }
 
-
-
-    render() {
-        return (
-            <View>
-                 <ButtonGroup
-                onPress={this.updateIndex}
-                selectedIndex={this.state.selectedIndex}
-                buttons={['PASADOS', 'PROXIMOS']}
-                containerBorderRadius={0}
-                containerStyle={{
-                    height: 40,
-                    borderRadius: 0,
-                    borderWidth: 0,
-                    borderBottomWidth: 0.5,
-                    marginBottom: 0,
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                }}
-                selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                selectedTextStyle={{ color: 'white' }}
-                textStyle={{ color: MAIN_COLOR }}
-                innerBorderStyle={{ width: 0 }}
-                
-            />
-                {this.renderList()}
-            </View>
-        )
-    }
-
-
-    onRefresh = () => {
-        return (
-            <RefreshControl
-                refreshing={this.props.refreshing}
-                onRefresh={() => this.props.onClientReservationListRead()}
-                colors={[MAIN_COLOR]}
-                tintColor={MAIN_COLOR}
-            />
-        );
-    };
-
     renderList() {
         const { loading } = this.props;
         const { filteredList } = this.state
@@ -147,12 +104,33 @@ class ClientReservationListItem extends Component {
             );
 
         return (
-            <EmptyList 
+            <EmptyList
                 title='No tiene reservas'
                 onRefresh={this.onRefresh()}
             />
         );
     }
+
+    onRefresh = () => {
+        return (
+            <RefreshControl
+                refreshing={this.props.refreshing}
+                onRefresh={() => this.props.onClientReservationListRead()}
+                colors={[MAIN_COLOR]}
+                tintColor={MAIN_COLOR}
+            />
+        );
+    };
+
+    render() {
+        return (
+            <View>
+                {this.renderButtonGroup()}
+                {this.renderList()}
+            </View>
+        )
+    }
+
 }
 
 const mapStateToProps = state => {
