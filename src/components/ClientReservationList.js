@@ -15,7 +15,6 @@ class ClientReservationList extends Component {
     }
 
     renderRow({ item }) {
-        if (item.startDate.diff(moment().format(), 'days') >= 0)
             return (
                 <ClientReservationListItem reservation={item} navigation={this.props.navigation} />
             );
