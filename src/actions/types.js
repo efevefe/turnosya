@@ -78,6 +78,7 @@ export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
+export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';

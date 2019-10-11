@@ -4,25 +4,29 @@ import { Divider, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR } from '../constants';
-import { onProvincesNameRead } from '../actions';
+import { onProvincesNameRead, updateProvinceFilter } from '../actions';
 
 class CommerceFiltersScreen extends Component {
   constructor(props) {
     super(props);
 
-    props.onProvincesNameRead();
-
     this.state = {
-      provinceName: props.navigation.getParam('provinceName', '')
+      provinceName: props.provinceNameFilter
     };
   }
 
-  onApplyFiltersPress = () => {
-    this.props.navigation.state.params.obtainProvinceName(
-      this.state.provinceName
-    );
+  componentDidMount = () => {
+    this.props.onProvincesNameRead();
+  };
+
+  onClosePress = () => {
     this.props.navigation.goBack();
   };
+
+  onApplyFiltersPress() {
+    this.props.updateProvinceFilter(this.state.provinceName);
+    this.props.navigation.goBack();
+  }
 
   render() {
     return (
@@ -36,15 +40,12 @@ class CommerceFiltersScreen extends Component {
             flexDirection: 'row'
           }}
         >
-          <IconButton
-            icon="md-close"
-            onPress={() => this.props.navigation.goBack()}
-          />
+          <IconButton icon="md-close" onPress={this.onClosePress} />
           <Button
             title="Aplicar Filtros"
             type="clear"
             titleStyle={{ color: 'white' }}
-            onPress={this.onApplyFiltersPress}
+            onPress={this.onApplyFiltersPress.bind(this)}
             style={{ marginRight: 10, padding: 5 }}
           />
         </View>
@@ -77,7 +78,7 @@ class CommerceFiltersScreen extends Component {
             }}
           >
             <Picker
-              placeholder={{ value: null, label: 'Todas' }}
+              placeholder={{ value: '', label: 'Todas' }}
               value={this.state.provinceName}
               items={this.props.provincesList}
               onValueChange={value => this.setState({ provinceName: value })}
@@ -93,11 +94,12 @@ class CommerceFiltersScreen extends Component {
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
+  const { provinceNameFilter } = state.commercesList;
 
-  return { provincesList };
+  return { provincesList, provinceNameFilter };
 };
 
 export default connect(
   mapStateToProps,
-  { onProvincesNameRead }
+  { onProvincesNameRead, updateProvinceFilter }
 )(CommerceFiltersScreen);

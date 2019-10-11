@@ -17,13 +17,14 @@ class CommercesList extends Component {
 
     this.state = {
       areaName: props.navigation.state.params.areaName,
-      searchVisible: false,
-      provinceName: ''
+      searchVisible: false
     };
+  }
 
-    props.readFavoriteCommerces();
+  componentDidMount() {
+    this.props.readFavoriteCommerces();
 
-    props.navigation.setParams({
+    this.props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
@@ -56,10 +57,7 @@ class CommercesList extends Component {
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate('commercesFiltersScreen', {
-      obtainProvinceName: this.obtainProvinceName,
-      provinceName: this.state.provinceName
-    });
+    this.props.navigation.navigate('commercesFiltersScreen');
   };
 
   onCancelPress = () => {
@@ -87,7 +85,9 @@ class CommercesList extends Component {
 
   enableProvinceFilter = () => {
     return this.state.provinceName ? (
-      <Configure filters={`provinceName:\'${this.state.provinceName}\'`} />
+      <Configure
+        filters={`provinceName:\'${this.props.provinceNameFilter}\'`}
+      />
     ) : null;
   };
 
@@ -123,8 +123,12 @@ const { containerStyle, textStyle } = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { refinement, favoriteCommerces } = state.commercesList;
-  return { refinement, favoriteCommerces };
+  const {
+    refinement,
+    favoriteCommerces,
+    provinceNameFilter
+  } = state.commercesList;
+  return { refinement, favoriteCommerces, provinceNameFilter };
 };
 
 export default connect(
