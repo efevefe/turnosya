@@ -80,19 +80,18 @@ class ClientReservationListItem extends Component {
                     marginLeft: 0,
                     marginRight: 0
                 }}
-                selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                selectedTextStyle={{ color: 'white' }}
-                textStyle={{ color: MAIN_COLOR }}
+                selectedButtonStyle={{ backgroundColor: 'white' }}
+                buttonStyle={{ backgroundColor: MAIN_COLOR }}
+                selectedTextStyle={{ color: MAIN_COLOR }}
+                textStyle={{ color: 'white' }}
                 innerBorderStyle={{ width: 0 }}
 
             />)
     }
 
     renderList() {
-        const { loading } = this.props;
         const { filteredList } = this.state
 
-        if (loading) return <Spinner />;
         if (filteredList.length)
             return (
                 <FlatList
@@ -123,7 +122,9 @@ class ClientReservationListItem extends Component {
     };
 
     render() {
+        if (this.props.loading) return <Spinner />;
         return (
+
             <View>
                 {this.renderButtonGroup()}
                 {this.renderList()}
