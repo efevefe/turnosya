@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
@@ -9,6 +9,7 @@ import MainNavigation from './src/navigation/MainNavigation';
 import GuestNavigation from './src/navigation/GuestNavigation';
 import reducers from './src/reducers';
 import LoadingScreen from './src/components/LoadingScreen';
+import { MAIN_COLOR } from './src/constants';
 
 import getEnvVars from './environment';
 const { firebaseConfig } = getEnvVars();
@@ -44,6 +45,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <Root>
+          <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" />
           <View style={styles.container}>{this.renderNavigation()}</View>
         </Root>
       </Provider>

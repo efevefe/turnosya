@@ -70,7 +70,6 @@ export const ON_COMMERCE_READ_FAIL = 'on_commerce_read_fail';
 export const ON_COMMERCE_UPDATING = 'on_commerce_updating';
 export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
-export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
@@ -79,6 +78,7 @@ export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
+export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -102,11 +102,14 @@ export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
 export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
 export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
 
-
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_COURT_RESERVATION_VALUE_CHANGE =
+  'on_court_reservation_value_change';
+
+// Province types
+export const ON_PROVINCES_READ = 'on_provinces_read';
