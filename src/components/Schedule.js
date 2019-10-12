@@ -233,7 +233,7 @@ class Schedule extends Component {
 }
 
 const mapStateToProps = state => {
-  const { slots, loading } = state.scheduleRegister;
+  const { slots, loading } = state.commerceSchedule;
 
   return { slots, loadingSchedule: loading };
 }

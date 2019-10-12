@@ -126,7 +126,6 @@ const mapStateToProps = state => {
   const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  //const { selectedDate } = state.scheduleRegister;
   const { loading, reservations, loadingClientData, reservationClient, selectedDate } = state.courtReservationsList;
 
   return { courtsAvailable, loading, commerceId, slot, selectedDate, reservations, loadingClientData, reservationClient };

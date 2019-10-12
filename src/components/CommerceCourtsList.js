@@ -110,7 +110,6 @@ class CommerceCourtsList extends Component {
 const mapStateToProps = state => {
   const { courts } = state.courtsList;
   const { commerce, courtType, slot } = state.courtReservation;
-  //const { selectedDate } = state.scheduleRegister;
   const { reservations, loading, selectedDate } = state.courtReservationsList;
 
   return { commerce, courtType, reservations, courts, loading, slot, selectedDate };

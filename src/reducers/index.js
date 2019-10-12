@@ -7,7 +7,7 @@ import CourtFormReducer from './CourtFormReducer';
 import CourtListReducer from './CourtListReducer';
 import CommerceDataReducer from './CommerceDataReducer';
 import CommercesListReducer from './CommercesListReducer';
-import ScheduleRegisterReducer from './ScheduleRegisterReducer';
+import CommerceScheduleReducer from './CommerceScheduleReducer';
 import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 import CourtReservationReducer from './CourtReservationReducer';
 import CourtReservationsListReducer from './CourtReservationsListReducer';
@@ -21,7 +21,7 @@ export default combineReducers({
   courtsList: CourtListReducer,
   commerceData: CommerceDataReducer,
   commercesList: CommercesListReducer,
-  scheduleRegister: ScheduleRegisterReducer,
+  commerceSchedule: CommerceScheduleReducer,
   commerceCourtTypes: CommerceCourtTypesReducer,
   courtReservation: CourtReservationReducer,
   courtReservationsList: CourtReservationsListReducer

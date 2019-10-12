@@ -155,12 +155,11 @@ class CommerceSchedule extends Component {
 const mapStateToProps = state => {
   const {
     cards,
-    //selectedDate,
     slots,
     reservationDayPeriod,
     reservationMinLength,
-  } = state.scheduleRegister;
-  const loadingSchedule = state.scheduleRegister.loading;
+  } = state.commerceSchedule;
+  const loadingSchedule = state.commerceSchedule.loading;
   const { commerceId } = state.commerceData;
   const { reservations, selectedDate } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
