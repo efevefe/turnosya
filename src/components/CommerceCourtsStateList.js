@@ -5,7 +5,8 @@ import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from './common';
 import {
   onCommerceCourtReservationsRead,
-  onReservationClientRead
+  onReservationClientRead,
+  onCourtReservationsListValueChange
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 import CourtReservationDetails from './CourtReservationDetails';
@@ -27,6 +28,11 @@ class CommerceCourtsStateList extends Component {
   onReservedCourtPress = async court => {
     await this.setState({ selectedReservation: this.courtReservation(court), selectedCourt: court });
     this.setState({ detailsVisible: true });
+
+    // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
+    const res = this.props.reservationsDetailed.find(res => res.id === this.state.selectedReservation.id);
+    if (res) return this.props.onCourtReservationsListValueChange({ prop: 'reservationClient', value: res.client });
+
     this.props.onReservationClientRead(this.state.selectedReservation.clientId);
   }
 
@@ -108,12 +114,27 @@ const mapStateToProps = state => {
   const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  const { loading, reservations, loadingClientData, reservationClient } = state.courtReservationsList;
+  const {
+    loading,
+    reservations,
+    loadingClientData,
+    reservationsDetailed,
+    reservationClient
+  } = state.courtReservationsList;
 
-  return { courtsAvailable, loading, commerceId, slot, reservations, loadingClientData, reservationClient };
+  return {
+    courtsAvailable,
+    loading,
+    commerceId,
+    slot,
+    reservations,
+    reservationsDetailed,
+    loadingClientData,
+    reservationClient
+  };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceCourtReservationsRead, onReservationClientRead }
+  { onCommerceCourtReservationsRead, onReservationClientRead, onCourtReservationsListValueChange }
 )(CommerceCourtsStateList);

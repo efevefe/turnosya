@@ -5,7 +5,8 @@ import {
     ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
     ON_RESERVATION_CLIENT_READ_FAIL,
     ON_RESERVATION_CLIENT_READING,
-    ON_RESERVATION_CLIENT_READ
+    ON_RESERVATION_CLIENT_READ,
+    ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE
 } from '../actions/types';
 
 INITIAL_STATE = {
@@ -18,6 +19,8 @@ INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
+        case ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE:
+            return { ...state, [action.payload.prop]: action.payload.value }
         case ON_COMMERCE_COURT_RESERVATIONS_READING:
             return { ...state, loading: true };
         case ON_COMMERCE_COURT_RESERVATIONS_READ:
