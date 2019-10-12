@@ -26,11 +26,9 @@ class CommerceCourtsStateList extends Component {
   }
 
   onReservedCourtPress = async court => {
-    var reservation = this.courtReservation(court);
-
-    await this.setState({ selectedReservation: reservation, selectedCourt: court });
+    await this.setState({ selectedReservation: this.courtReservation(court), selectedCourt: court });
     this.setState({ detailsVisible: true });
-    this.props.onReservationClientRead(reservation.clientId);
+    this.props.onReservationClientRead(this.state.selectedReservation.clientId);
   }
 
   renderDetails = () => {
@@ -128,8 +126,8 @@ const mapStateToProps = state => {
   const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  const { selectedDate } = state.scheduleRegister;
-  const { loading, reservations, loadingClientData, reservationClient } = state.courtReservationsList;
+  //const { selectedDate } = state.scheduleRegister;
+  const { loading, reservations, loadingClientData, reservationClient, selectedDate } = state.courtReservationsList;
 
   return { courtsAvailable, loading, commerceId, slot, selectedDate, reservations, loadingClientData, reservationClient };
 };

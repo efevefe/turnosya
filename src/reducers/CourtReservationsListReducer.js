@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
     ON_COMMERCE_COURT_RESERVATIONS_READING,
     ON_COMMERCE_COURT_RESERVATIONS_READ,
@@ -11,8 +12,8 @@ import {
 INITIAL_STATE = {
     reservations: [],
     reservationsDetailed: [],
-    reservationsOnSlot: [],
     reservationClient: {},
+    selectedDate: moment(),
     loading: false,
     loadingClientData: false
 };

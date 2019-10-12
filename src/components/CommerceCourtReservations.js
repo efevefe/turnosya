@@ -9,7 +9,13 @@ import { MAIN_COLOR } from '../constants';
 import CourtReservationDetails from './CourtReservationDetails';
 
 class CommerceCourtReservations extends Component {
-    state = { selectedDate: moment(), selectedIndex: 1, filteredList: [], selectedReservation: {}, detailsVisible: false };
+    state = {
+        selectedDate: moment(),
+        selectedIndex: 1,
+        filteredList: [],
+        selectedReservation: {},
+        detailsVisible: false
+    };
 
     componentDidMount() {
         this.onDateSelected(moment());
@@ -37,7 +43,7 @@ class CommerceCourtReservations extends Component {
 
         if (selectedIndex == 0) {
             // turnos pasados
-            filteredList = reservations.filter(res => res.endDate < moment()).sort((a,b) => a.startDate < b.startDate);
+            filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
         } else if (selectedIndex == 1) {
             // turnos en curso
             filteredList = reservations.filter(res => (res.startDate <= moment() && res.endDate >= moment()));
@@ -60,15 +66,15 @@ class CommerceCourtReservations extends Component {
                 height='auto'
                 animationType="fade"
             >
-                    <CourtReservationDetails
-                        client={client}
-                        court={court}
-                        startDate={startDate}
-                        endDate={endDate}
-                        price={price}
-                        light={light}
-                        showPrice={true}
-                    />
+                <CourtReservationDetails
+                    client={client}
+                    court={court}
+                    startDate={startDate}
+                    endDate={endDate}
+                    price={price}
+                    light={light}
+                    showPrice={true}
+                />
             </Overlay>
         );
     }
@@ -87,7 +93,6 @@ class CommerceCourtReservations extends Component {
                     color: 'black'
                 }}
                 title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
-                //subtitle={`${item.client.firstName} ${item.client.lastName}\n${item.court.name} - ${item.courtType} - ${item.court.ground}`}
                 subtitle={`${item.client.firstName} ${item.client.lastName}\n${item.court.name}`}
                 rightTitle={`$${item.price}`}
                 rightTitleStyle={{ fontWeight: 'bold', color: 'black' }}

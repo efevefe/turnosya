@@ -7,6 +7,7 @@ import {
   onScheduleRead,
   onScheduleValueChange,
   onCourtReservationValueChange,
+  onCourtReservationsListValueChange,
   onCommerceCourtTypeReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
@@ -52,7 +53,7 @@ class ClientCommerceSchedule extends Component {
   }
 
   onDateChanged = date => {
-    this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
+    this.props.onCourtReservationsListValueChange({ prop: 'selectedDate', value: date });
 
     this.props.onCommerceCourtTypeReservationsRead({
       commerceId: this.props.commerce.objectID,
@@ -134,7 +135,7 @@ class ClientCommerceSchedule extends Component {
 const mapStateToProps = state => {
   const {
     cards,
-    selectedDate,
+    //selectedDate,
     slots,
     reservationDayPeriod,
     reservationMinLength,
@@ -142,7 +143,7 @@ const mapStateToProps = state => {
   } = state.scheduleRegister;
   const loadingSchedule = state.scheduleRegister.loading;
   const { commerce, courtType } = state.courtReservation;
-  const { reservations } = state.courtReservationsList;
+  const { reservations, selectedDate } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
   const { courts } = state.courtsList;
@@ -172,6 +173,7 @@ export default connect(
     onScheduleValueChange,
     onScheduleRead,
     onCourtReservationValueChange,
+    onCourtReservationsListValueChange,
     onCommerceCourtTypeReservationsRead,
     onCommerceCourtsReadByType,
     onCommerceCourtTypesRead

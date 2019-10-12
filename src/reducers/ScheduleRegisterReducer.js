@@ -14,7 +14,7 @@ import {
   ON_SCHEDULE_READ_EMPTY
 } from '../actions/types';
 import { Toast } from '../components/common';
-import moment from 'moment';
+//import moment from 'moment';
 
 const INITIAL_STATE = {
   cards: [
@@ -30,7 +30,7 @@ const INITIAL_STATE = {
   selectedDays: [],
   reservationMinLength: 10,
   reservationDayPeriod: 14,
-  selectedDate: moment(),
+  //selectedDate: moment(),
   slots: [],
   loading: false,
   refreshing: false
