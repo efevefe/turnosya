@@ -1,37 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from './common';
 import {
   onCourtReservationValueChange,
   onCommerceCourtTypeReservationsRead,
-  onScheduleRead
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
 class CommerceCourtsList extends Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: navigation.getParam('leftButton')
-    };
-  };
-
-  componentDidMount() {
-    this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
-    });
-  }
-
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor='white' />
-  }
-
-  onBackPress = () => {
-    this.props.navigation.goBack(null);
-    this.props.onScheduleRead(this.props.commerce.objectID);
-  }
-
   courtReservation = court => {
     const { reservations, slot } = this.props;
 
@@ -101,6 +78,5 @@ export default connect(
   {
     onCourtReservationValueChange,
     onCommerceCourtTypeReservationsRead,
-    onScheduleRead
   }
 )(CommerceCourtsList);
