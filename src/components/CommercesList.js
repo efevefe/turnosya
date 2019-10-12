@@ -84,7 +84,7 @@ class CommercesList extends Component {
   };
 
   enableProvinceFilter = () => {
-    return this.state.provinceName ? (
+    return this.props.provinceNameFilter ? (
       <Configure
         filters={`provinceName:\'${this.props.provinceNameFilter}\'`}
       />
@@ -112,15 +112,6 @@ class CommercesList extends Component {
     );
   }
 }
-
-const { containerStyle, textStyle } = StyleSheet.create({
-  containerStyle: {
-    padding: 15
-  },
-  textStyle: {
-    textAlign: 'center'
-  }
-});
 
 const mapStateToProps = state => {
   const {
