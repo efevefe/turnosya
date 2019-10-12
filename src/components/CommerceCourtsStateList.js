@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, RefreshControl } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from './common';
 import {
@@ -9,7 +9,6 @@ import {
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 import CourtReservationDetails from './CourtReservationDetails';
-import { MAIN_COLOR } from '../constants';
 
 class CommerceCourtsStateList extends Component {
   state = { selectedReservation: {}, selectedCourt: {}, detailsVisible: false };
@@ -79,22 +78,6 @@ class CommerceCourtsStateList extends Component {
     );
   }
 
-  onRefresh = () => {
-    return (
-      <RefreshControl
-        refreshing={this.props.refreshing}
-        onRefresh={() => {
-          this.props.onCommerceCourtReservationsRead({
-            commerceId: this.props.commerceId,
-            selectedDate: this.props.selectedDate
-          });
-        }}
-        colors={[MAIN_COLOR]}
-        tintColor={MAIN_COLOR}
-      />
-    );
-  };
-
   renderList = () => {
     if (this.props.courtsAvailable.length > 0) {
       return (
@@ -102,7 +85,6 @@ class CommerceCourtsStateList extends Component {
           data={this.props.courtsAvailable}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
-          refreshControl={this.onRefresh()}
         />
       );
     }
@@ -126,9 +108,9 @@ const mapStateToProps = state => {
   const { courtsAvailable } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
-  const { loading, reservations, loadingClientData, reservationClient, selectedDate } = state.courtReservationsList;
+  const { loading, reservations, loadingClientData, reservationClient } = state.courtReservationsList;
 
-  return { courtsAvailable, loading, commerceId, slot, selectedDate, reservations, loadingClientData, reservationClient };
+  return { courtsAvailable, loading, commerceId, slot, reservations, loadingClientData, reservationClient };
 };
 
 export default connect(

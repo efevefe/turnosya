@@ -21,21 +21,21 @@ class CommerceCourtReservations extends Component {
         this.onDateSelected(moment());
     }
 
-    onDateSelected = date => {
-        const { commerceId } = this.props;
-        var selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
-
-        this.props.onCommerceCourtReservationsDetailedRead({ commerceId, selectedDate });
-        this.setState({ selectedDate });
-    }
-
     componentDidUpdate(prevProps) {
         if (prevProps.reservations !== this.props.reservations) {
             this.updateIndex(this.state.selectedIndex);
         }
     }
 
-    updateIndex = (selectedIndex) => {
+    onDateSelected = date => {
+        const { commerceId } = this.props;
+        const selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
+
+        this.props.onCommerceCourtReservationsDetailedRead({ commerceId, selectedDate });
+        this.setState({ selectedDate });
+    }
+
+    updateIndex = selectedIndex => {
         this.setState({ selectedIndex });
 
         const { reservations } = this.props;
@@ -53,6 +53,11 @@ class CommerceCourtReservations extends Component {
         }
 
         this.setState({ filteredList });
+    }
+    
+    onReservationPress = async reservation => {
+        await this.setState({ selectedReservation: reservation });
+        this.setState({ detailsVisible: true });
     }
 
     renderDetails = () => {
@@ -77,11 +82,6 @@ class CommerceCourtReservations extends Component {
                 />
             </Overlay>
         );
-    }
-
-    onReservationPress = async reservation => {
-        await this.setState({ selectedReservation: reservation });
-        this.setState({ detailsVisible: true });
     }
 
     renderList = ({ item }) => {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, RefreshControl } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from './common';
 import {
@@ -9,7 +9,6 @@ import {
   onScheduleRead
 } from '../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
-import { MAIN_COLOR } from '../constants';
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -68,23 +67,6 @@ class CommerceCourtsList extends Component {
     );
   };
 
-  onRefresh = () => {
-    return (
-      <RefreshControl
-        refreshing={this.props.refreshing}
-        onRefresh={() => {
-          this.props.onCommerceCourtTypeReservationsRead({
-            commerceId: this.props.commerce.objectID,
-            selectedDate: this.props.selectedDate,
-            courtType: this.props.courtType
-          });
-        }}
-        colors={[MAIN_COLOR]}
-        tintColor={MAIN_COLOR}
-      />
-    );
-  };
-
   renderList = () => {
     if (this.props.courts.length > 0) {
       return (
@@ -92,7 +74,6 @@ class CommerceCourtsList extends Component {
           data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
-          refreshControl={this.onRefresh()}
         />
       );
     }
@@ -110,9 +91,9 @@ class CommerceCourtsList extends Component {
 const mapStateToProps = state => {
   const { courts } = state.courtsList;
   const { commerce, courtType, slot } = state.courtReservation;
-  const { reservations, loading, selectedDate } = state.courtReservationsList;
+  const { reservations, loading } = state.courtReservationsList;
 
-  return { commerce, courtType, reservations, courts, loading, slot, selectedDate };
+  return { commerce, courtType, reservations, courts, loading, slot };
 };
 
 export default connect(

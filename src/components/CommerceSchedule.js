@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import { Menu, MenuItem, IconButton } from './common';
 import Schedule from './Schedule';
 import {
   onScheduleRead,
   onScheduleValueChange,
-  onCourtReservationsListValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
   courtsReadOnlyAvailable
 } from '../actions';
 
 class CommerceSchedule extends Component {
-  state = { modal: false };
+  state = { selectedDate: moment(), modal: false };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -37,39 +37,12 @@ class CommerceSchedule extends Component {
   }
 
   onDateChanged = date => {
-    this.props.onCourtReservationsListValueChange({
-      prop: 'selectedDate',
-      value: date
-    });
+    this.setState({ selectedDate: date });
 
     this.props.onCommerceCourtReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date
     });
-  };
-
-  reservationsOnSlots = slots => {
-    const { reservations, courtsAvailable } = this.props;
-
-    var slots = slots.map(slot => {
-      var ocupate = 0;
-      var available = true;
-
-      reservations.forEach(reservation => {
-        if (slot.startDate.toString() === reservation.startDate.toString()) ocupate++;
-      });
-
-      if (ocupate >= courtsAvailable.length) available = false;
-
-      return {
-        ...slot,
-        free: (courtsAvailable.length - ocupate),
-        total: courtsAvailable.length,
-        available
-      };
-    })
-
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
 
   onSlotPress = slot => {
@@ -79,6 +52,30 @@ class CommerceSchedule extends Component {
     });
 
     this.props.navigation.navigate('commerceCourtsList');
+  };
+
+  reservationsOnSlots = slots => {
+    const { reservations, courtsAvailable } = this.props;
+
+    var slots = slots.map(slot => {
+      var reserved = 0;
+      var available = true;
+
+      reservations.forEach(reservation => {
+        if (slot.startDate.toString() === reservation.startDate.toString()) reserved++;
+      });
+
+      if (reserved >= courtsAvailable.length) available = false;
+
+      return {
+        ...slot,
+        free: (courtsAvailable.length - reserved),
+        total: courtsAvailable.length,
+        available
+      };
+    })
+
+    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
   };
 
   renderConfigurationButton = () => {
@@ -107,13 +104,15 @@ class CommerceSchedule extends Component {
   render() {
     const {
       cards,
-      selectedDate,
       reservationDayPeriod,
       reservationMinLength,
       loadingSchedule,
       loadingReservations,
       loadingCourts
     } = this.props;
+
+    const { selectedDate } = this.state;
+
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
         <Schedule
@@ -161,7 +160,7 @@ const mapStateToProps = state => {
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
   const { commerceId } = state.commerceData;
-  const { reservations, selectedDate } = state.courtReservationsList;
+  const { reservations } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
   const { courtsAvailable } = state.courtsList;
@@ -169,7 +168,6 @@ const mapStateToProps = state => {
 
   return {
     cards,
-    selectedDate,
     slots,
     reservationDayPeriod,
     reservationMinLength,
@@ -188,7 +186,6 @@ export default connect(
   {
     onScheduleRead,
     onScheduleValueChange,
-    onCourtReservationsListValueChange,
     onCommerceCourtReservationsRead,
     onCourtReservationValueChange,
     courtsReadOnlyAvailable

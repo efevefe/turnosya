@@ -4,19 +4,10 @@ import moment from 'moment';
 import {
   ON_COMMERCE_COURT_RESERVATIONS_READ,
   ON_COMMERCE_COURT_RESERVATIONS_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_RESERVATION_CLIENT_READING,
   ON_RESERVATION_CLIENT_READ,
   ON_RESERVATION_CLIENT_READ_FAIL
 } from './types';
-
-export const onCourtReservationsListValueChange = ({ prop, value }) => {
-  return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload: { prop, value }
-  };
-};
 
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
