@@ -39,9 +39,7 @@ class ClientReservationListItem extends Component {
     if (selectedIndex == 0) {
       // turnos pasados
       filteredList = reservations
-        .filter(
-          res => res.endDate < moment() && res.state !== "Cancelado"
-        )
+        .filter(res => res.endDate < moment() && res.state !== "Cancelado")
         .sort((a, b) => a.startDate < b.startDate);
     } else {
       // turnos proximos
@@ -73,27 +71,27 @@ class ClientReservationListItem extends Component {
   renderButtonGroup = () => {
     return (
       <View>
-      <ButtonGroup
-        onPress={this.updateIndex}
-        selectedIndex={this.state.selectedIndex}
-        buttons={["PASADOS", "PROXIMOS"]}
-        containerBorderRadius={0}
-        containerStyle={{
-          height: 40,
-          borderRadius: 0,
-          borderWidth: 0,
-          borderBottomWidth: 0.5,
-          marginBottom: 0,
-          marginTop: 0,
-          marginLeft: 0,
-          marginRight: 0
-        }}
-        selectedButtonStyle={{ backgroundColor: "white" }}
-        buttonStyle={{ backgroundColor: MAIN_COLOR }}
-        selectedTextStyle={{ color: MAIN_COLOR }}
-        textStyle={{ color: "white" }}
-        innerBorderStyle={{ width: 0 }}
-      />
+        <ButtonGroup
+          onPress={this.updateIndex}
+          selectedIndex={this.state.selectedIndex}
+          buttons={["PASADOS", "PROXIMOS"]}
+          containerBorderRadius={0}
+          containerStyle={{
+            height: 40,
+            borderRadius: 0,
+            borderWidth: 0,
+            borderBottomWidth: 0.5,
+            marginBottom: 0,
+            marginTop: 0,
+            marginLeft: 0,
+            marginRight: 0
+          }}
+          selectedButtonStyle={{ backgroundColor: "white" }}
+          buttonStyle={{ backgroundColor: MAIN_COLOR }}
+          selectedTextStyle={{ color: MAIN_COLOR }}
+          textStyle={{ color: "white" }}
+          innerBorderStyle={{ width: 0 }}
+        />
       </View>
     );
   };
@@ -104,16 +102,20 @@ class ClientReservationListItem extends Component {
     if (filteredList.length)
       return (
         <View>
-        <FlatList
-          data={filteredList}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={reservation => reservation.id}
-          refreshControl={this.onRefresh()}
-        />
+          <FlatList
+            data={filteredList}
+            renderItem={this.renderRow.bind(this)}
+            keyExtractor={reservation => reservation.id}
+            refreshControl={this.onRefresh()}
+          />
         </View>
       );
 
-    return <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />;
+    return <EmptyList  title="
+    
+    
+    
+    No tiene reservas" onRefresh={this.onRefresh()} />;
   }
 
   onRefresh = () => {
