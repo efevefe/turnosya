@@ -11,7 +11,12 @@ import {
 import { validateValueType, trimString } from '../utils';
 
 class RegisterCommerce extends Component {
-  state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
+  state = {
+    phoneError: '',
+    nameError: '',
+    emailError: '',
+    cuitError: ''
+  };
 
   componentDidMount() {
     this.props.onCommerceFormOpen();
@@ -24,9 +29,9 @@ class RegisterCommerce extends Component {
   }
 
   onButtonPressHandler() {
-    if (this.validateMinimumData()) {
-      this.props.navigation.navigate('commerceRegisterProfile1');
-    }
+    // if (this.validateMinimumData()) {
+    this.props.navigation.navigate('commerceRegisterProfile1');
+    // }
   }
 
   validateMinimumData = () => {
