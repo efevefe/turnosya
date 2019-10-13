@@ -9,7 +9,8 @@ import {
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
   ON_COMMERCE_SEARCHING,
-  ON_PROVINCE_FILTER_UPDATE
+  ON_PROVINCE_FILTER_UPDATE,
+  ON_UPDATE_ALL_FILTERS
 } from './types';
 
 export const commerceSearching = isSearching => ({
@@ -131,4 +132,9 @@ export const readOnlyFavoriteCommerces = () => {
 export const updateProvinceFilter = provinceName => ({
   type: ON_PROVINCE_FILTER_UPDATE,
   payload: provinceName
+});
+
+export const updateAllFilters = filters => ({
+  type: ON_UPDATE_ALL_FILTERS,
+  payload: filters
 });

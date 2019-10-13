@@ -92,10 +92,10 @@ class CommercesList extends Component {
   };
 
   enableCurrentLocationFilter = () => {
-    return this.props.latitude || this.props.longitude ? (
+    return this.props.locationEnabled ? (
       <Configure
         aroundLatLng={`${this.props.latitude}, ${this.props.longitude}`}
-        aroundRadius={1000}
+        aroundRadius={Math.round(1000 * this.props.locationRadiusKms)}
       />
     ) : null;
   };
@@ -115,6 +115,7 @@ class CommercesList extends Component {
         {this.renderAlgoliaSearchBar()}
         {this.enableAreaFilter()}
         {this.enableProvinceFilter()}
+        {this.enableCurrentLocationFilter()}
         <ConnectedStateResults />
         <ConnectedHits />
       </InstantSearch>
@@ -126,7 +127,9 @@ const mapStateToProps = state => {
   const {
     refinement,
     favoriteCommerces,
-    provinceNameFilter
+    provinceNameFilter,
+    locationEnabled,
+    locationRadiusKms
   } = state.commercesList;
   const { latitude, longitude } = state.locationData;
 
@@ -134,6 +137,8 @@ const mapStateToProps = state => {
     refinement,
     favoriteCommerces,
     provinceNameFilter,
+    locationEnabled,
+    locationRadiusKms,
     latitude,
     longitude
   };

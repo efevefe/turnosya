@@ -4,7 +4,11 @@ import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../constants';
-import { onProvincesNameRead, updateProvinceFilter } from '../actions';
+import {
+  onProvincesNameRead,
+  updateProvinceFilter,
+  updateAllFilters
+} from '../actions';
 import LocationMessages from './common/LocationMessages'; // Poner a LocationMessages en index.js
 
 class CommerceFiltersScreen extends Component {
@@ -13,8 +17,9 @@ class CommerceFiltersScreen extends Component {
 
     this.state = {
       provinceName: props.provinceNameFilter,
-      locationButtonIndex: 0,
-      locationRadius: 20 // Kilometers (Algolia accepts meters)
+      locationButtonIndex: props.locationButtonIndex,
+      locationRadiusKms: props.locationRadiusKms, // Kilometers (Algolia accepts meters)
+      locationEnabled: props.locationEnabled
     };
   }
 
@@ -27,13 +32,22 @@ class CommerceFiltersScreen extends Component {
   };
 
   onApplyFiltersPress() {
-    this.props.updateProvinceFilter(this.state.provinceName);
+    this.props.updateAllFilters({
+      provinceNameFilter: this.state.provinceName,
+      locationEnabled: this.state.locationEnabled,
+      locationButtonIndex: this.state.locationButtonIndex,
+      locationRadiusKms: this.state.locationRadiusKms
+    });
+
     this.props.navigation.goBack();
   }
 
   onLocationOptionPress(buttonIndex) {
     this.setState({ locationButtonIndex: buttonIndex });
 
+    buttonIndex === 0
+      ? this.setState({ locationEnabled: false })
+      : this.setState({ locationEnabled: true });
     // o puedo simplemente aca hacer la logica en el switch - ver
   }
 
@@ -88,7 +102,7 @@ class CommerceFiltersScreen extends Component {
               selectedIndex={this.state.locationButtonIndex}
               buttons={[
                 'Deshabilitada',
-                'Localización actual',
+                'Ubicación actual',
                 'Ubicación en mapa'
               ]}
               selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
@@ -98,7 +112,7 @@ class CommerceFiltersScreen extends Component {
               innerBorderStyle={{ color: MAIN_COLOR }}
             />
             <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
-              this.state.locationRadius
+              this.state.locationRadiusKms
             )} km.`}</Text>
             <Slider
               style={locationSliderStyle}
@@ -107,12 +121,13 @@ class CommerceFiltersScreen extends Component {
               minimumValue={1}
               maximumTrackTintColor={MAIN_COLOR_DISABLED}
               maximumValue={100}
-              // step={reservationMinFrom}
+              // step={}
               thumbTouchSize={{ width: 60, height: 60 }}
               thumbTintColor="white"
-              value={this.state.locationRadius}
-              // onSlidingComplete={this.onMinSliderValueChange.bind(this)}
-              onValueChange={value => this.setState({ locationRadius: value })}
+              value={this.state.locationRadiusKms}
+              onValueChange={value =>
+                this.setState({ locationRadiusKms: value })
+              }
             />
           </View>
         </View>
@@ -167,7 +182,7 @@ const {
   },
   locationBGContainerStyle: {
     borderColor: 'white',
-    height: 45,
+    height: 35,
     marginTop: 15,
     borderRadius: 8
   },
@@ -184,12 +199,23 @@ const {
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
-  const { provinceNameFilter } = state.commercesList;
+  const {
+    provinceNameFilter,
+    locationEnabled,
+    locationButtonIndex,
+    locationRadiusKms
+  } = state.commercesList;
 
-  return { provincesList, provinceNameFilter };
+  return {
+    provincesList,
+    provinceNameFilter,
+    locationEnabled,
+    locationButtonIndex,
+    locationRadiusKms
+  };
 };
 
 export default connect(
   mapStateToProps,
-  { onProvincesNameRead, updateProvinceFilter }
+  { onProvincesNameRead, updateProvinceFilter, updateAllFilters }
 )(CommerceFiltersScreen);
