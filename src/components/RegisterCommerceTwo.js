@@ -151,10 +151,7 @@ class RegisterCommerceTwo extends Component {
   onMapPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: 'commerceRegisterMap',
-      params: {
-        callback: this.onProvinceNameChangeOnMap,
-        title: 'Localizar mi Negocio'
-      }
+      params: { callback: this.onProvinceNameChangeOnMap }
     });
 
     this.props.navigation.navigate(navigateAction);

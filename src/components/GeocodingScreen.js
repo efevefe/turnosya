@@ -7,6 +7,7 @@ import { View, StyleSheet } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
+import { HeaderBackButton } from 'react-navigation-stack';
 import LocationMessages from './common/LocationMessages';
 import { Toast, IconButton } from '../components/common';
 import { onLocationChange, onLocationValueChange } from '../actions';
@@ -18,19 +19,29 @@ class GeocodingScreen extends React.Component {
     this.state = {
       defaultAddress: 'Córdoba, Argentina',
       completeAddress: '',
-      locationAsked: false
+      locationAsked: false,
+      stateBeforeChanges: null
     };
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: navigation.getParam('title')
+      headerRight: navigation.getParam('rightIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
   async componentDidMount() {
-    await this.setAddressString(); //definir en el contructor y no hace falta usar asyn await
+    const { address, city, provinceName } = this.props;
+    this.setState({ stateBeforeChanges: { address, city, provinceName } });
+
+    await this.setAddressString();
     this.getLocationAndLongitudeFromString();
+
+    this.props.navigation.setParams({
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton()
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -45,6 +56,20 @@ class GeocodingScreen extends React.Component {
       }
     }
   }
+
+  renderSaveButton = () => {
+    return (
+      <IconButton
+        icon="md-checkmark"
+        onPress={() => this.props.navigation.goBack()}
+      />
+    );
+  };
+  renderBackButton = () => {
+    return (
+      <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" />
+    );
+  };
 
   setAddressString = () => {
     const { address, city, provinceName } = this.props;
@@ -110,12 +135,61 @@ class GeocodingScreen extends React.Component {
     }
   };
 
+  renderMarkers = () => {
+    if (!this.props.markers || !this.props.navigation.state.params.markers) {
+      const { latitude, longitude, address } = this.props;
+      return (
+        <MapView.Marker
+          coordinate={{
+            latitude: latitude ? latitude : -31.417378,
+            longitude: longitude ? longitude : -64.18384
+          }}
+          title={address}
+          draggable
+          onDragEnd={e =>
+            this.getAddressFromLatAndLong({
+              latitude: e.nativeEvent.coordinate.latitude,
+              longitude: e.nativeEvent.coordinate.longitude
+            })
+          }
+        />
+      );
+    } else {
+      const markers = this.props.markers
+        ? this.props.markers
+        : this.props.navigation.state.params.markers;
+
+      return markers.map((marker, index) => (
+        <MapView.Marker
+          key={index}
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude
+          }}
+          title={marker.address}
+        />
+      ));
+    }
+  };
+
   renderLocationMessage = () => {
     if (this.state.locationAsked) return <LocationMessages />;
   };
 
+  onBackPress = () => {
+    this.props.onLocationChange({ location: this.state.stateBeforeChanges });
+
+    if (this.props.navigation.state.params.callback) {
+      this.props.navigation.state.params.callback(
+        this.state.stateBeforeChanges.provinceName
+      );
+    }
+
+    this.props.navigation.goBack();
+  };
+
   render() {
-    const { latitude, longitude, address } = this.props;
+    const { latitude, longitude } = this.props;
     const validAddress =
       this.state.completeAddress !== 'Córdoba, Argentina'
         ? this.state.completeAddress
@@ -147,8 +221,8 @@ class GeocodingScreen extends React.Component {
           ref={ref => (this.map = ref)}
           initialRegion={this.region}
           region={{
-            latitude,
-            longitude,
+            latitude: latitude ? latitude : -31.417378,
+            longitude: longitude ? longitude : -64.18384,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01
           }}
@@ -161,40 +235,16 @@ class GeocodingScreen extends React.Component {
             })
           }
         >
-          <MapView.Marker
-            coordinate={{ latitude, longitude }}
-            title={address}
-            draggable
-            onDragEnd={e =>
-              this.getAddressFromLatAndLong({
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude
-              })
-            }
-          />
+          {this.renderMarkers()}
         </MapView>
         {this.renderLocationMessage()}
 
         <Fab
-          style={{ backgroundColor: MAIN_COLOR, top: '80%' }}
-          position="topRight"
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
           onPress={() => this.setState({ locationAsked: true })}
         >
           <Ionicons name="md-locate" />
-        </Fab>
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomLeft"
-          onPress={() => console.log('cancelar tuti')}
-        >
-          <Ionicons name="md-close" />
-        </Fab>
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => console.log('guardar location recien aca')}
-        >
-          <Ionicons name="md-checkmark" />
         </Fab>
       </View>
     );
