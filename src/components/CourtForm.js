@@ -34,7 +34,7 @@ class CourtForm extends Component {
       for (prop in params.court) {
         this.props.onCourtValueChange({ prop, value: court[prop] });
       }
-      court.lightPrice === '' ? {} : this.setState({ lightPriceOpen: true });
+      if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
     } else {
       this.props.onCourtFormOpen();
     }

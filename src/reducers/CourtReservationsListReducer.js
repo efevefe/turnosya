@@ -11,7 +11,7 @@ import {
 
 INITIAL_STATE = {
     reservations: [],
-    reservationsDetailed: [],
+    detailedReservations: [],
     reservationClient: {},
     loading: false,
     loadingClientData: false

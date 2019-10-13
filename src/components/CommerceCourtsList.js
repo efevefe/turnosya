@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
-import { Spinner, EmptyList } from './common';
+import { Spinner, EmptyList, Toast } from './common';
 import {
   onCourtReservationValueChange,
   onCommerceCourtTypeReservationsRead,
@@ -30,7 +30,7 @@ class CommerceCourtsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    var courtAvailable = !this.courtReservation(item);
+    const courtAvailable = !this.courtReservation(item);
 
     return (
       <CommerceCourtsStateListItem
@@ -38,8 +38,7 @@ class CommerceCourtsList extends Component {
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
         courtAvailable={courtAvailable}
-        disabled={!courtAvailable}
-        onPress={() => this.onCourtPress(item)}
+        onPress={() => courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya esta reservada' })}
       />
     );
   };
@@ -51,6 +50,7 @@ class CommerceCourtsList extends Component {
           data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
+          extraData={this.props.reservations}
         />
       );
     }

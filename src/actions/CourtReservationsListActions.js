@@ -35,7 +35,7 @@ export const onCommerceCourtTypeReservationsRead = ({
           .toDate()
       )
       .onSnapshot(snapshot => {
-        var reservations = [];
+        const reservations = [];
 
         snapshot.forEach(doc => {
           reservations.push({
@@ -73,7 +73,7 @@ export const onCommerceCourtReservationsRead = ({
           .toDate()
       )
       .onSnapshot(snapshot => {
-        var reservations = [];
+        const reservations = [];
 
         snapshot.forEach(doc => {
           reservations.push({
@@ -91,7 +91,7 @@ export const onCommerceCourtReservationsRead = ({
   };
 };
 
-export const onCommerceCourtReservationsDetailedRead = ({
+export const onCommerceDetailedCourtReservationsRead = ({
   commerceId,
   selectedDate
 }) => {
@@ -110,10 +110,10 @@ export const onCommerceCourtReservationsDetailedRead = ({
       )
       .orderBy('startDate')
       .onSnapshot(snapshot => {
-        var reservationsDetailed = [];
+        const detailedReservations = [];
 
         if (snapshot.empty) {
-          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { reservationsDetailed } });
+          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { detailedReservations } });
           return;
         }
 
@@ -124,7 +124,7 @@ export const onCommerceCourtReservationsDetailedRead = ({
               db.doc(`Profiles/${doc.data().clientId}`)
                 .get()
                 .then(client => {
-                  reservationsDetailed.push({
+                  detailedReservations.push({
                     id: doc.id,
                     ...doc.data(),
                     startDate: moment(doc.data().startDate.toDate()),
@@ -136,10 +136,10 @@ export const onCommerceCourtReservationsDetailedRead = ({
                     court: { id: court.id, ...court.data() }
                   });
 
-                  if (reservationsDetailed.length === snapshot.size) {
+                  if (detailedReservations.length === snapshot.size) {
                     dispatch({
                       type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                      payload: { reservationsDetailed }
+                      payload: { detailedReservations }
                     });
                   }
                 });
@@ -160,9 +160,6 @@ export const onReservationClientRead = clientId => {
       .then(doc => {
         dispatch({ type: ON_RESERVATION_CLIENT_READ, payload: { id: doc.id, ...doc.data() } });
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL })
-      });
+      .catch(error => dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL }));
   }
 }

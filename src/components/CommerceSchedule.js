@@ -57,9 +57,9 @@ class CommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courtsAvailable } = this.props;
 
-    var slots = slots.map(slot => {
-      var reserved = 0;
-      var available = true;
+    const newSlots = slots.map(slot => {
+      let reserved = 0;
+      let available = true;
 
       reservations.forEach(reservation => {
         if (slot.startDate.toString() === reservation.startDate.toString()) reserved++;
@@ -75,7 +75,7 @@ class CommerceSchedule extends Component {
       };
     })
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
   };
 
   renderConfigurationButton = () => {

@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "APp would like to access your current location to determine",
+        "NSLocationWhenInUseUsageDescription": "App would like to access your current location to determine",
         "NSLocationAlwaysUsageDescription": "App would like to access your current location",
         "NSCameraUsageDescription": "App would like to access your Camera",
         "LSApplicationQueriesSchemes": "App-Prefs:root=Privacy"

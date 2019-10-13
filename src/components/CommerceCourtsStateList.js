@@ -25,15 +25,14 @@ class CommerceCourtsStateList extends Component {
     });
   }
 
-  onReservedCourtPress = async court => {
-    await this.setState({ selectedReservation: this.courtReservation(court), selectedCourt: court });
-    this.setState({ detailsVisible: true });
+  onReservedCourtPress = (court, reservation) => {
+    this.setState({ selectedReservation: reservation, selectedCourt: court, detailsVisible: true });
 
     // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
-    const res = this.props.reservationsDetailed.find(res => res.id === this.state.selectedReservation.id);
+    const res = this.props.detailedReservations.find(res => res.id === reservation.id);
     if (res) return this.props.onCourtReservationsListValueChange({ prop: 'reservationClient', value: res.client });
 
-    this.props.onReservationClientRead(this.state.selectedReservation.clientId);
+    this.props.onReservationClientRead(reservation.clientId);
   }
 
   renderDetails = () => {
@@ -71,15 +70,15 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderRow({ item }) {
-    var courtAvailable = !this.courtReservation(item);
+    const courtReservation = this.courtReservation(item);
 
     return (
       <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
-        courtAvailable={courtAvailable}
-        onPress={courtAvailable ? null : () => this.onReservedCourtPress(item)}
+        courtAvailable={!courtReservation}
+        onPress={() => !courtReservation ? null : this.onReservedCourtPress(item, courtReservation)}
       />
     );
   }
@@ -91,6 +90,7 @@ class CommerceCourtsStateList extends Component {
           data={this.props.courtsAvailable}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
+          extraData={this.props.reservations}
         />
       );
     }
@@ -118,7 +118,7 @@ const mapStateToProps = state => {
     loading,
     reservations,
     loadingClientData,
-    reservationsDetailed,
+    detailedReservations,
     reservationClient
   } = state.courtReservationsList;
 
@@ -128,7 +128,7 @@ const mapStateToProps = state => {
     commerceId,
     slot,
     reservations,
-    reservationsDetailed,
+    detailedReservations,
     loadingClientData,
     reservationClient
   };

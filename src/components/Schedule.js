@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -52,17 +52,14 @@ class Schedule extends Component {
       0
     ]);
 
-    // dia de la semana (0-6)
-    var dayId = selectedDate.day();
-
     //slots & shifts
-    var slots = [];
+    let slots = [];
     const { cards } = this.props;
-    var dayShifts = cards.find(card => card.days.includes(dayId)); // horario de atencion ese dia de la semana
+    const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atencion ese dia de la semana
 
     //si hay horario de atencion ese dia, genera los slots
     if (dayShifts) {
-      var {
+      const {
         firstShiftStart,
         firstShiftEnd,
         secondShiftStart,
@@ -91,39 +88,39 @@ class Schedule extends Component {
   };
 
   generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
-    //selected date params
-    var year = selectedDate.year();
-    var month = selectedDate.month();
-    var date = selectedDate.date(); // dia del mes
+    // selected date params
+    const year = selectedDate.year();
+    const month = selectedDate.month();
+    const date = selectedDate.date(); // dia del mes
 
-    var slotId = slots.length;
+    let slotId = slots.length;
     shiftStart = getHourAndMinutes(shiftStart);
     shiftEnd = getHourAndMinutes(shiftEnd);
     const { reservationMinLength } = this.props;
 
-    var shiftStartDate = moment([
+    const shiftStartDate = moment([
       year,
       month,
       date,
       shiftStart.hour,
       shiftStart.minutes
     ]);
-    var shiftEndDate = moment([
+    const shiftEndDate = moment([
       year,
       month,
       date,
       shiftEnd.hour,
       shiftEnd.minutes
     ]);
-    var slotStartDate = moment(shiftStartDate);
+    const slotStartDate = moment(shiftStartDate);
 
     for (
-      var j = 0;
+      let j = 0;
       shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate;
       j++
     ) {
       slots.push({
-        id: slotId,
+        id: slotId++,
         startDate: moment(slotStartDate),
         endDate: moment(shiftStartDate),
         available: true,
@@ -132,7 +129,6 @@ class Schedule extends Component {
         total: 0
       });
       slotStartDate.add(reservationMinLength, 'minutes');
-      slotId++;
     }
 
     return slots;
@@ -159,21 +155,12 @@ class Schedule extends Component {
         rightElement={
           <Badge
             value={`Disponibles: ${item.free.toString()} / ${item.total.toString()}`}
-            badgeStyle={{
-              height: 25,
-              width: 'auto',
-              borderRadius: 12.5,
-              paddingLeft: 5,
-              paddingRight: 5,
-              backgroundColor: this.badgeColor(item.free, item.total)
-            }}
+            badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
           />
         }
         title={`${item.startDate.format('HH:mm')}`}
-        containerStyle={{
-          backgroundColor: 'white'
-        }}
-        rightSubtitleStyle={{ color: 'grey' }}
+        containerStyle={styles.slotContainerStyle}
+        rightSubtitleStyle={styles.slotRightSubtitleStyle}
         onPress={() => this.props.onSlotPress(item)}
         disabled={item.disabled}
         bottomDivider
@@ -231,6 +218,22 @@ class Schedule extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  slotBadgeStyle: {
+    height: 25,
+    width: 'auto',
+    borderRadius: 12.5,
+    paddingLeft: 5,
+    paddingRight: 5
+  },
+  slotContainerStyle: {
+    backgroundColor: 'white'
+  },
+  slotRightSubtitleStyle: { 
+    color: 'grey' 
+  }
+});
 
 const mapStateToProps = state => {
   const { slots, loading } = state.commerceSchedule;

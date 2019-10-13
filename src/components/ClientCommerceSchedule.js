@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { HeaderBackButton } from 'react-navigation-stack';
 import Schedule from './Schedule';
+import { Toast } from './common';
 import {
   onScheduleRead,
   onScheduleValueChange,
@@ -64,6 +65,8 @@ class ClientCommerceSchedule extends Component {
   }
 
   onSlotPress = slot => {
+    if (!slot.available) return Toast.show({ text: 'No hay mas canchas disponibles en este horario' });
+
     this.props.onCourtReservationValueChange({
       prop: 'slot',
       value: slot
@@ -75,9 +78,9 @@ class ClientCommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courts } = this.props;
 
-    var slots = slots.map(slot => {
-      var reserved = 0;
-      var available = true;
+    const newSlots = slots.map(slot => {
+      let reserved = 0;
+      let available = true;
 
       reservations.forEach(reservation => {
         if (slot.startDate.toString() === reservation.startDate.toString()) reserved++;
@@ -89,12 +92,11 @@ class ClientCommerceSchedule extends Component {
         ...slot,
         free: (courts.length - reserved),
         total: courts.length,
-        available,
-        disabled: !available
+        available
       };
     })
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
   };
 
   render() {
