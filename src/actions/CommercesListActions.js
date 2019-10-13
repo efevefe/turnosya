@@ -12,9 +12,10 @@ import {
   ON_PROVINCE_FILTER_UPDATE
 } from './types';
 
-export const commerceSearching = isSearching => {
-  return { type: ON_COMMERCE_SEARCHING, payload: isSearching };
-};
+export const commerceSearching = isSearching => ({
+  type: ON_COMMERCE_SEARCHING,
+  payload: isSearching
+});
 
 export const areasRead = () => {
   const db = firebase.firestore();

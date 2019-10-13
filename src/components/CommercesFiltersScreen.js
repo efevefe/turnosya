@@ -3,15 +3,18 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
-import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../constants';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../constants';
 import { onProvincesNameRead, updateProvinceFilter } from '../actions';
+import LocationMessages from './common/LocationMessages'; // Poner a LocationMessages en index.js
 
 class CommerceFiltersScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      provinceName: props.provinceNameFilter
+      provinceName: props.provinceNameFilter,
+      locationButtonIndex: 0,
+      locationRadius: 20 // Kilometers (Algolia accepts meters)
     };
   }
 
@@ -28,9 +31,19 @@ class CommerceFiltersScreen extends Component {
     this.props.navigation.goBack();
   }
 
+  onLocationOptionPress(buttonIndex) {
+    this.setState({ locationButtonIndex: buttonIndex });
+
+    // o puedo simplemente aca hacer la logica en el switch - ver
+  }
+
+  renderLocationMessage = () =>
+    this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+
   render() {
     return (
       <View style={windowContainerStyle}>
+        {this.renderLocationMessage()}
         <View style={windowTopContainerStyle}>
           <IconButton icon="md-close" onPress={this.onClosePress} />
           <Button
@@ -71,8 +84,8 @@ class CommerceFiltersScreen extends Component {
 
           <View style={locationContainerStyle}>
             <ButtonGroup
-              // onPress={this.onPriceSelect}
-              selectedIndex={0}
+              onPress={this.onLocationOptionPress.bind(this)}
+              selectedIndex={this.state.locationButtonIndex}
               buttons={[
                 'Deshabilitada',
                 'Localización actual',
@@ -80,28 +93,26 @@ class CommerceFiltersScreen extends Component {
               ]}
               selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
               selectedTextStyle={{ color: 'white' }}
-              textStyle={{ color: MAIN_COLOR, textAlign: 'center' }}
-              containerStyle={{
-                borderColor: 'white',
-                height: 45,
-                marginTop: 15,
-                borderRadius: 8
-              }}
+              textStyle={locationBGTextStyle}
+              containerStyle={locationBGContainerStyle}
               innerBorderStyle={{ color: MAIN_COLOR }}
             />
-            <Text style={locationTextStyle}>Radio de búsqueda: 100 km</Text>
+            <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
+              this.state.locationRadius
+            )} km.`}</Text>
             <Slider
-              style={locationSlideStyle}
+              style={locationSliderStyle}
               animationType="spring"
-              minimumTrackTintColor={MAIN_COLOR_OPACITY}
-              // minimumValue={reservationMinFrom}
-              // maximumValue={reservationMinTo}
+              minimumTrackTintColor="white"
+              minimumValue={1}
+              maximumTrackTintColor={MAIN_COLOR_DISABLED}
+              maximumValue={100}
               // step={reservationMinFrom}
               thumbTouchSize={{ width: 60, height: 60 }}
               thumbTintColor="white"
-              // value={reservationMinValue}
+              value={this.state.locationRadius}
               // onSlidingComplete={this.onMinSliderValueChange.bind(this)}
-              // onValueChange={val => this.setState({ reservationMinValue: val })}
+              onValueChange={value => this.setState({ locationRadius: value })}
             />
           </View>
         </View>
@@ -110,6 +121,7 @@ class CommerceFiltersScreen extends Component {
   }
 }
 
+//#region Styles
 const {
   dividerStyle,
   dividerTextStyle,
@@ -119,9 +131,11 @@ const {
   windowContentContainerStyle,
   applyFilterButtonStyle,
   provinceContainerStyle,
+  locationBGTextStyle,
+  locationBGContainerStyle,
   locationContainerStyle,
   locationTextStyle,
-  locationSlideStyle
+  locationSliderStyle
 } = StyleSheet.create({
   dividerStyle: {
     backgroundColor: 'white',
@@ -146,6 +160,17 @@ const {
     paddingBottom: 20,
     paddingHorizontal: 10
   },
+  locationBGTextStyle: {
+    color: MAIN_COLOR,
+    textAlign: 'center',
+    fontSize: 12
+  },
+  locationBGContainerStyle: {
+    borderColor: 'white',
+    height: 45,
+    marginTop: 15,
+    borderRadius: 8
+  },
   locationContainerStyle: { padding: 5, alignSelf: 'stretch', flex: 1 },
   locationTextStyle: {
     color: 'white',
@@ -153,8 +178,9 @@ const {
     marginLeft: 15,
     marginBottom: 5
   },
-  locationSlideStyle: { marginHorizontal: 15 }
+  locationSliderStyle: { marginHorizontal: 15 }
 });
+//#endregion
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;

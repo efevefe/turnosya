@@ -16,7 +16,8 @@ const INITIAL_STATE = {
   loading: false,
   searching: true,
   areas: [],
-  provinceNameFilter: ''
+  provinceNameFilter: '',
+  locationRadiusFilter: 0
 };
 
 export default (state = INITIAL_STATE, action) => {

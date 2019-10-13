@@ -5,8 +5,8 @@ const INITIAL_STATE = {
   streetNumber: '',
   city: '',
   country: '',
-  latitude: -31.417378,
-  longitude: -64.18384
+  latitude: -31.346672,
+  longitude: -64.282729
 };
 
 export default (state = INITIAL_STATE, action) => {

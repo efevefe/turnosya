@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton } from './common';
@@ -91,6 +91,15 @@ class CommercesList extends Component {
     ) : null;
   };
 
+  enableCurrentLocationFilter = () => {
+    return this.props.latitude || this.props.longitude ? (
+      <Configure
+        aroundLatLng={`${this.props.latitude}, ${this.props.longitude}`}
+        aroundRadius={1000}
+      />
+    ) : null;
+  };
+
   render() {
     return (
       <InstantSearch
@@ -119,7 +128,15 @@ const mapStateToProps = state => {
     favoriteCommerces,
     provinceNameFilter
   } = state.commercesList;
-  return { refinement, favoriteCommerces, provinceNameFilter };
+  const { latitude, longitude } = state.locationData;
+
+  return {
+    refinement,
+    favoriteCommerces,
+    provinceNameFilter,
+    latitude,
+    longitude
+  };
 };
 
 export default connect(
