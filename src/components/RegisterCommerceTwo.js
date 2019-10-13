@@ -1,32 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input, Picker } from './common';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { trimString } from '../utils';
+import { CardSection, Button, Input, Picker } from './common';
 import {
   onCreateCommerce,
   onCommerceValueChange,
-  onAreasRead,
   onProvincesRead,
   onLocationValueChange
 } from '../actions';
-import { Divider } from 'react-native-elements';
-import { trimString } from '../utils';
 
 class RegisterCommerceTwo extends Component {
   state = {
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
-    provinceError: '',
-    areaError: ''
+    provinceError: ''
   };
 
   componentWillMount() {
     this.props.onProvincesRead();
-    this.props.onAreasRead();
   }
 
   onButtonPressHandler() {
@@ -40,7 +36,7 @@ class RegisterCommerceTwo extends Component {
         city,
         province,
         area,
-        street
+        address
       } = this.props;
       this.props.onCreateCommerce(
         {
@@ -49,7 +45,7 @@ class RegisterCommerceTwo extends Component {
           email,
           phone,
           description,
-          address: street,
+          address,
           city,
           province,
           area
@@ -78,23 +74,10 @@ class RegisterCommerceTwo extends Component {
     this.renderProvinceError();
   };
 
-  onAreaPickerChange = async index => {
-    var { value, label } =
-      index > 0
-        ? this.props.areasList[index - 1]
-        : this.state.pickerPlaceholder;
-
-    await this.props.onCommerceValueChange({
-      prop: 'area',
-      value: { areaId: value, name: label }
-    });
-
-    this.renderAreaError();
-  };
-
   renderAddressError = () => {
     const { address, onCommerceValueChange } = this.props;
     const value = trimString(address);
+
     onCommerceValueChange({ prop: 'address', value });
 
     if (value === '') {
@@ -130,27 +113,16 @@ class RegisterCommerceTwo extends Component {
     }
   };
 
-  renderAreaError = () => {
-    if (this.props.area.areaId === '') {
-      this.setState({ areaError: 'Dato requerido' });
-      return false;
-    } else {
-      this.setState({ areaError: '' });
-      return true;
-    }
-  };
-
   validateMinimumData = () => {
     // return (
-    //   this.renderAreaError() &&
     //   this.renderProvinceError() &&
     //   this.renderCityError() &&
     //   this.renderAddressError()
     // );
     return (
-      this.renderAreaError() &&
-      this.renderProvinceError() &&
-      this.renderCityError()
+      this.renderAddressError() &&
+      this.renderCityError() &&
+      this.renderProvinceError()
     );
   };
 
@@ -193,30 +165,18 @@ class RegisterCommerceTwo extends Component {
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
-            <Picker
-              title="Rubro:"
-              placeholder={this.state.pickerPlaceholder}
-              items={this.props.areasList}
-              value={this.props.area.areaId}
-              onValueChange={(value, index) => this.onAreaPickerChange(index)}
-              errorMessage={this.state.areaError}
-            />
-          </CardSection>
-          <Divider style={{ backgroundColor: 'grey', margin: 30 }} />
-
-          <CardSection>
             <Input
               label="Calle"
-              value={this.props.street}
+              value={this.props.address}
               onChangeText={value =>
                 this.props.onLocationValueChange({
-                  prop: 'street',
+                  prop: 'address',
                   value
                 })
               }
-              // errorMessage={this.state.addressError}
-              // onFocus={() => this.setState({ addressError: '' })}
-              // onBlur={this.renderAddressError}
+              errorMessage={this.state.addressError}
+              onFocus={() => this.setState({ addressError: '' })}
+              onBlur={this.renderAddressError}
             />
           </CardSection>
 
@@ -278,7 +238,7 @@ const mapStateToProps = state => {
     error
   } = state.commerceData;
 
-  const { street, provinceName, city } = state.locationData;
+  const { address, provinceName, city } = state.locationData;
 
   return {
     name,
@@ -292,7 +252,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     provincesList,
-    street,
+    address,
     city,
     provinceName
   };
@@ -302,7 +262,6 @@ export default connect(
   {
     onCommerceValueChange,
     onCreateCommerce,
-    onAreasRead,
     onProvincesRead,
     onLocationValueChange
   }

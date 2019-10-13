@@ -1,7 +1,7 @@
 import { ON_LOCATION_VALUE_CHANGE, ON_LOCATION_CHANGE } from '../actions/types';
 
 const INITIAL_STATE = {
-  street: '',
+  address: '',
   city: '',
   provinceName: '',
   country: '',

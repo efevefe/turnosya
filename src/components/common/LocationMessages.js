@@ -66,7 +66,7 @@ class LocationMessages extends Component {
     const { name, city, region, country } = addresResult;
 
     const location = {
-      street: name,
+      address: name,
       city,
       provinceName: region,
       country,
