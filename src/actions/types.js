@@ -116,9 +116,9 @@ export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservat
 export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
 
 // Client Reservation List
-export const CLIENT_RERSERVATIONS_READ = 'client_reservations_read';
-export const CLIENT_RERSERVATIONS_READING = 'client_reservations_reading';
-export const CLIENT_RERSERVATIONS_FAIL = 'client_reservations_fail';
+export const ON_CLIENT_RERSERVATION_READ = 'on_client_reservation_read';
+export const ON_CLIENT_RERSERVATION_READING = 'on_client_reservation_reading';
+export const ON_CLIENT_RESERVATION_CANCELING = 'on_client_reservation_canceling';
 export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
 export const ON_CLIENT_RESERVATION_CANCEL_FAIL = 'on_client_reservation_cancel_fail';
 

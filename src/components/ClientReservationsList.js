@@ -1,17 +1,16 @@
 import React, { Component } from "react";
-import { View, FlatList, RefreshControl } from "react-native";
+import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
 import { ListItem, ButtonGroup } from "react-native-elements";
 import { connect } from "react-redux";
-import { NavigationActions } from "react-navigation";
 import { MONTHS, DAYS, MAIN_COLOR } from "../constants";
 import { Spinner, EmptyList } from "./common";
-import { onClientReservationListRead } from "../actions";
+import { onClientReservationsListRead } from "../actions";
 import moment from "moment";
 
-class ClientReservationListItem extends Component {
+class ClientReservationsList extends Component {
   constructor(props) {
     super(props);
-    props.onClientReservationListRead();
+    props.onClientReservationsListRead();
     this.state = {
       selectedIndex: 1,
       filteredList: []
@@ -24,16 +23,11 @@ class ClientReservationListItem extends Component {
     }
   }
 
-  OnPressItem = reservation => {
-    const navigateAction = NavigationActions.navigate({
-      routeName: "reservationsDetail",
-      params: reservation
-    });
-    this.props.navigation.navigate(navigateAction);
+  onItemPress = reservation => {
+    this.props.navigation.navigate("reservationDetails", { reservation });
   };
 
   updateIndex = selectedIndex => {
-    this.setState({ selectedIndex });
     const { reservations } = this.props;
     var filteredList = [];
     if (selectedIndex == 0) {
@@ -47,7 +41,7 @@ class ClientReservationListItem extends Component {
         res => res.startDate > moment() && res.state !== "Cancelado"
       );
     }
-    this.setState({ filteredList });
+    this.setState({ filteredList, selectedIndex });
   };
 
   renderRow = ({ item }) => {
@@ -63,36 +57,8 @@ class ClientReservationListItem extends Component {
           "HH:mm"
         )} hs.`}
         bottomDivider
-        onPress={() => this.OnPressItem(item)}
+        onPress={() => this.onItemPress(item)}
       ></ListItem>
-    );
-  };
-
-  renderButtonGroup = () => {
-    return (
-      <View>
-        <ButtonGroup
-          onPress={this.updateIndex}
-          selectedIndex={this.state.selectedIndex}
-          buttons={["PASADOS", "PROXIMOS"]}
-          containerBorderRadius={0}
-          containerStyle={{
-            height: 40,
-            borderRadius: 0,
-            borderWidth: 0,
-            borderBottomWidth: 0.5,
-            marginBottom: 0,
-            marginTop: 0,
-            marginLeft: 0,
-            marginRight: 0
-          }}
-          selectedButtonStyle={{ backgroundColor: "white" }}
-          buttonStyle={{ backgroundColor: MAIN_COLOR }}
-          selectedTextStyle={{ color: MAIN_COLOR }}
-          textStyle={{ color: "white" }}
-          innerBorderStyle={{ width: 0 }}
-        />
-      </View>
     );
   };
 
@@ -111,18 +77,14 @@ class ClientReservationListItem extends Component {
         </View>
       );
 
-    return <EmptyList  title="
-    
-    
-    
-    No tiene reservas" onRefresh={this.onRefresh()} />;
+    return <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />;
   }
 
   onRefresh = () => {
     return (
       <RefreshControl
         refreshing={this.props.refreshing}
-        onRefresh={() => this.props.onClientReservationListRead()}
+        onRefresh={() => this.props.onClientReservationsListRead()}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />
@@ -133,13 +95,36 @@ class ClientReservationListItem extends Component {
     if (this.props.loading) return <Spinner />;
     return (
       <View>
-        {this.renderButtonGroup()}
-
+        <ButtonGroup
+          onPress={this.updateIndex}
+          selectedIndex={this.state.selectedIndex}
+          buttons={["PASADOS", "PROXIMOS"]}
+          containerBorderRadius={0}
+          containerStyle={styles.buttonGroupStyle}
+          selectedButtonStyle={{ backgroundColor: "white" }}
+          buttonStyle={{ backgroundColor: MAIN_COLOR }}
+          selectedTextStyle={{ color: MAIN_COLOR }}
+          textStyle={{ color: "white" }}
+          innerBorderStyle={{ width: 0 }}
+        />
         {this.renderList()}
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  buttonGroupStyle: {
+    height: 40,
+    borderRadius: 0,
+    borderWidth: 0,
+    borderBottomWidth: 0.5,
+    marginBottom: 0,
+    marginTop: 0,
+    marginLeft: 0,
+    marginRight: 0
+  }
+});
 
 const mapStateToProps = state => {
   const { reservations, loading } = state.clientReservationList;
@@ -148,5 +133,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onClientReservationListRead }
-)(ClientReservationListItem);
+  { onClientReservationsListRead }
+)(ClientReservationsList);

@@ -5,36 +5,29 @@ import { connect } from "react-redux";
 import { Divider } from "react-native-elements";
 import { CardSection, Button, Menu, MenuItem } from "./common/";
 import moment from "moment";
-import { onPressCancelReservation } from "../actions";
+import { onClientCancelReservation } from "../actions";
 
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { params } = this.props.navigation.state;
+    const { reservation } = this.props.navigation.state.params;
     this.state = {
-      reservations: params,
+      reservation: reservation,
       visible: false
     };
   }
 
-  onButtonPress = () => {
-    this.setState({ visible: true });
-  };
-
-  onModalCancel = () => {
-    this.setState({ visible: false });
-  };
-
-  renderButtonPress = reservations => {
-    const { startDate } = reservations;
+  renderCancelButton = reservation => {
+    const { startDate } = reservation;
     if (startDate > moment())
       return (
         <CardSection style={{ flexDirection: "row" }}>
           <View style={{ alignItems: "center", padding: 3, flex: 1 }}>
             <Button
+              loading={this.props.loading}
               title="Cancelar Reserva"
               type="solid"
-              onPress={this.onButtonPress}
+              onPress={() => this.setState({ visible: true })}
             />
           </View>
         </CardSection>
@@ -51,12 +44,12 @@ class ClientReservationDetails extends Component {
       price,
       id,
       commerceId
-    } = this.state.reservations;
+    } = this.state.reservation;
 
     return (
       <View style={{ flex: 1 }}>
         <Menu
-          title="¿Esta seguro que desea cancelar el turno?"
+          title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={this.onOptionsPress}
           isVisible={this.state.visible}
         >
@@ -64,7 +57,7 @@ class ClientReservationDetails extends Component {
             title="Aceptar"
             icon="md-trash"
             onPress={() =>
-              this.props.onPressCancelReservation(
+              this.props.onClientCancelReservation(
                 id,
                 commerceId,
                 this.props.navigation
@@ -75,7 +68,7 @@ class ClientReservationDetails extends Component {
           <MenuItem
             title="Cancelar"
             icon="md-close"
-            onPress={this.onModalCancel}
+            onPress={() => this.setState({ visible: false })}
           />
         </Menu>
         <CourtReservationDetails
@@ -87,14 +80,18 @@ class ClientReservationDetails extends Component {
           light={light}
           showPrice={true}
         >
-          <View>{this.renderButtonPress(this.state.reservations)}</View>
+          <View>{this.renderCancelButton(this.state.reservation)}</View>
         </CourtReservationDetails>
       </View>
     );
   }
 }
+const mapStateToProps = state => {
+  const { loading } = state.clientReservationList;
+  return { loading };
+};
 
 export default connect(
-  null,
-  { onPressCancelReservation }
+  mapStateToProps,
+  { onClientCancelReservation }
 )(ClientReservationDetails);

@@ -15,7 +15,7 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
-import ClientReservationListItem from '../components/ClientReservationListItem'
+import ClientReservationsList from '../components/ClientReservationsList'
 import ClientReservationDetails from '../components/ClientReservationDetails'
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -67,7 +67,7 @@ const searchStack = createStackNavigator(
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: ClientReservationListItem,
+      screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (
@@ -75,7 +75,7 @@ const calendarStack = createStackNavigator(
         )
       })
     },
-    reservationsDetail: {
+    reservationDetails: {
       screen: ClientReservationDetails,
       navigationOptions: {
         title: 'Detalle Turno'

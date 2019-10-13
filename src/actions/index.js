@@ -6,4 +6,4 @@ export * from './CommerceDataActions';
 export * from './CommercesListActions';
 export * from './ScheduleRegisterActions';
 export * from './CourtReservationActions';
-export * from './ClientListReservationsActions';
+export * from './ClientReservationsListActions';
