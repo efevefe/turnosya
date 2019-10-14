@@ -131,7 +131,7 @@ class RegisterCommerceTwo extends Component {
 
   matchProvinceByValue = name => {
     const province = this.props.provincesList.find(
-      province => province.label === name
+      province => province.label.toLowerCase() === name.toLowerCase()
     );
 
     if (province) {
