@@ -6,7 +6,7 @@ import ClientDrawerContent from './ClientDrawerContent';
 import Welcome from '../components/Welcome';
 import RegisterCommerce from '../components/RegisterCommerce';
 import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
-import GeocodingScreen from '../components/GeocodingScreen';
+import LocationMap from '../components/LocationMap';
 import ClientSettings from '../components/ClientSettings';
 import {
   stackNavigationOptions,
@@ -34,7 +34,7 @@ const CommerceRegisterStack = createStackNavigator(
       }
     },
     commerceRegisterMap: {
-      screen: GeocodingScreen,
+      screen: LocationMap,
       navigationOptions: {
         title: 'Localizar mi negocio'
       }

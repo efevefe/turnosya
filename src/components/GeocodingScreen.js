@@ -12,7 +12,7 @@ import LocationMessages from './common/LocationMessages';
 import { Toast, IconButton } from '../components/common';
 import { onLocationChange, onLocationValueChange } from '../actions';
 
-class GeocodingScreen extends React.Component {
+class LocationMap extends React.Component {
   constructor(props) {
     super(props);
 
@@ -314,4 +314,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   { onLocationChange, onLocationValueChange }
-)(GeocodingScreen);
+)(LocationMap);
