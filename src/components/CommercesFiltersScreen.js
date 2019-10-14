@@ -4,12 +4,8 @@ import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../constants';
-import {
-  onProvincesNameRead,
-  updateProvinceFilter,
-  updateAllFilters
-} from '../actions';
-import LocationMessages from './common/LocationMessages'; // Poner a LocationMessages en index.js
+import { onProvincesNameRead, updateAllFilters } from '../actions';
+import LocationMessages from './common/LocationMessages';
 
 class CommerceFiltersScreen extends Component {
   constructor(props) {
@@ -48,11 +44,34 @@ class CommerceFiltersScreen extends Component {
     buttonIndex === 0
       ? this.setState({ locationEnabled: false })
       : this.setState({ locationEnabled: true });
-    // o puedo simplemente aca hacer la logica en el switch - ver
+
+    if (buttonIndex === 2)
+      this.props.navigation.navigate('commercesFiltersMap');
   }
 
   renderLocationMessage = () =>
     this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+
+  renderRadiusSlider = () =>
+    this.state.locationEnabled ? (
+      <View style={{ flex: 1 }}>
+        <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
+          this.state.locationRadiusKms
+        )} km.`}</Text>
+        <Slider
+          style={locationSliderStyle}
+          animationType="spring"
+          minimumTrackTintColor="white"
+          minimumValue={1}
+          maximumTrackTintColor={MAIN_COLOR_DISABLED}
+          maximumValue={50}
+          thumbTouchSize={{ width: 60, height: 60 }}
+          thumbTintColor="white"
+          value={this.state.locationRadiusKms}
+          onValueChange={value => this.setState({ locationRadiusKms: value })}
+        />
+      </View>
+    ) : null;
 
   render() {
     return (
@@ -111,7 +130,8 @@ class CommerceFiltersScreen extends Component {
               containerStyle={locationBGContainerStyle}
               innerBorderStyle={{ color: MAIN_COLOR }}
             />
-            <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
+            {this.renderRadiusSlider()}
+            {/* <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
               this.state.locationRadiusKms
             )} km.`}</Text>
             <Slider
@@ -128,7 +148,7 @@ class CommerceFiltersScreen extends Component {
               onValueChange={value =>
                 this.setState({ locationRadiusKms: value })
               }
-            />
+            /> */}
           </View>
         </View>
       </View>
@@ -217,5 +237,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onProvincesNameRead, updateProvinceFilter, updateAllFilters }
+  { onProvincesNameRead, updateAllFilters }
 )(CommerceFiltersScreen);
