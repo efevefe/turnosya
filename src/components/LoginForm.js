@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, Dimensions, StatusBar } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -77,6 +77,7 @@ class LoginForm extends Component {
 
     return (
       <View style={containerStyle}>
+        <StatusBar barStyle="dark-content" />
         <View style={logoContainerStyle}>
           <Image
             source={require('../../assets/turnosya-red.png')}

@@ -72,7 +72,6 @@ export const ON_COMMERCE_READ_FAIL = 'on_commerce_read_fail';
 export const ON_COMMERCE_UPDATING = 'on_commerce_updating';
 export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
-export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
@@ -81,6 +80,7 @@ export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
+export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -130,3 +130,5 @@ export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
 export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
 export const ON_RESERVATION_CLIENT_READ_FAIL = 'on_reservation_client_read_fail';
 
+// Province types
+export const ON_PROVINCES_READ = 'on_provinces_read';

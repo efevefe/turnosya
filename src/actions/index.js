@@ -7,4 +7,4 @@ export * from './CommercesListActions';
 export * from './CommerceScheduleActions';
 export * from './CourtReservationActions';
 export * from './CourtReservationsListActions';
-
+export * from './ProvinceDataActions';

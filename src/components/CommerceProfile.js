@@ -22,11 +22,11 @@ import {
   onCommerceUpdateWithPicture,
   onCommerceUpdateNoPicture,
   onCommerceValueChange,
-  onProvincesRead,
+  onProvincesIdRead,
   onAreasRead
 } from '../actions';
 
-class commerceData extends Component {
+class CommerceProfile extends Component {
   state = {
     editEnabled: false,
     pictureOptionsVisible: false,
@@ -72,7 +72,7 @@ class commerceData extends Component {
   };
 
   onEditPress = () => {
-    this.props.onProvincesRead();
+    this.props.onProvincesIdRead();
     this.props.onAreasRead();
 
     const {
@@ -680,7 +680,6 @@ const mapStateToProps = state => {
     address,
     city,
     province,
-    provincesList,
     area,
     areasList,
     profilePicture,
@@ -688,6 +687,7 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.commerceData;
+  const { provincesList } = state.provinceData;
 
   return {
     name,
@@ -715,7 +715,7 @@ export default connect(
     onCommerceUpdateWithPicture,
     onCommerceUpdateNoPicture,
     onCommerceValueChange,
-    onProvincesRead,
+    onProvincesIdRead,
     onAreasRead
   }
-)(commerceData);
+)(CommerceProfile);

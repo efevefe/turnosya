@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton } from './common';
@@ -19,10 +19,12 @@ class CommercesList extends Component {
       areaName: props.navigation.state.params.areaName,
       searchVisible: false
     };
+  }
 
-    props.readFavoriteCommerces();
+  componentDidMount() {
+    this.props.readFavoriteCommerces();
 
-    props.navigation.setParams({
+    this.props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
@@ -40,10 +42,7 @@ class CommercesList extends Component {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
         <IconButton icon="md-search" onPress={this.onSearchPress} />
-        <IconButton
-          icon="ios-funnel"
-          onPress={() => console.log('filtros de busqueda')}
-        />
+        <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
   };
@@ -51,6 +50,14 @@ class CommercesList extends Component {
   onSearchPress = async () => {
     this.props.navigation.setParams({ header: null });
     this.setState({ searchVisible: true });
+  };
+
+  obtainProvinceName = provinceName => {
+    this.setState({ provinceName });
+  };
+
+  onFiltersPress = () => {
+    this.props.navigation.navigate('commercesFiltersScreen');
   };
 
   onCancelPress = () => {
@@ -70,9 +77,17 @@ class CommercesList extends Component {
     }
   };
 
-  enableConfiguration = () => {
+  enableAreaFilter = () => {
     return this.state.areaName ? (
       <Configure filters={`areaName:\'${this.state.areaName}\'`} />
+    ) : null;
+  };
+
+  enableProvinceFilter = () => {
+    return this.props.provinceNameFilter ? (
+      <Configure
+        filters={`provinceName:\'${this.props.provinceNameFilter}\'`}
+      />
     ) : null;
   };
 
@@ -89,7 +104,8 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        {this.enableConfiguration()}
+        {this.enableAreaFilter()}
+        {this.enableProvinceFilter()}
         <ConnectedStateResults />
         <ConnectedHits />
       </InstantSearch>
@@ -98,8 +114,12 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { refinement, favoriteCommerces } = state.commercesList;
-  return { refinement, favoriteCommerces };
+  const {
+    refinement,
+    favoriteCommerces,
+    provinceNameFilter
+  } = state.commercesList;
+  return { refinement, favoriteCommerces, provinceNameFilter };
 };
 
 export default connect(
