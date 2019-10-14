@@ -65,7 +65,7 @@ class ClientCommerceSchedule extends Component {
   }
 
   onSlotPress = slot => {
-    if (!slot.available) return Toast.show({ text: 'No hay mas canchas disponibles en este horario' });
+    if (!slot.available) return Toast.show({ text: 'No hay más canchas disponibles en este horario' });
 
     this.props.onCourtReservationValueChange({
       prop: 'slot',
@@ -123,13 +123,6 @@ class ClientCommerceSchedule extends Component {
         }]}
         loading={(loadingSchedule || loadingReservations || loadingCourts)}
         onDateChanged={date => this.onDateChanged(date)}
-        onRefresh={() => {
-          this.props.onScheduleRead(this.props.commerce.objectID);
-          this.props.onCommerceCourtsReadByType({
-            commerceId: this.props.commerce.objectID,
-            courtType: this.props.courtType
-          });
-        }}
         onSlotPress={slot => this.onSlotPress(slot)}
       />
     );

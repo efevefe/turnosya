@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList, Toast } from './common';
+import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 import {
   onCourtReservationValueChange,
   onCommerceCourtTypeReservationsRead,
 } from '../actions';
-import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
 class CommerceCourtsList extends Component {
   courtReservation = court => {
@@ -38,7 +38,7 @@ class CommerceCourtsList extends Component {
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
         courtAvailable={courtAvailable}
-        onPress={() => courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya esta reservada' })}
+        onPress={() => courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya está reservada' })}
       />
     );
   };

@@ -122,10 +122,6 @@ class CommerceSchedule extends Component {
           reservationMinLength={reservationMinLength}
           loading={(loadingSchedule || loadingReservations || loadingCourts)}
           onDateChanged={date => this.onDateChanged(date)}
-          onRefresh={() => {
-            this.props.onScheduleRead(this.props.commerceId);
-            this.props.courtsReadOnlyAvailable(this.props.commerceId);
-          }}
           onSlotPress={slot => this.onSlotPress(slot)}
         />
 
