@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input, Picker } from './common';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { trimString } from '../utils';
+import { CardSection, Button, Input, Picker } from './common';
 import {
   onCreateCommerce,
   onCommerceValueChange,
@@ -12,18 +13,13 @@ import {
   onProvincesIdRead,
   onLocationValueChange
 } from '../actions';
-import { Divider } from 'react-native-elements';
-import { trimString } from '../utils';
 
 class RegisterCommerceTwo extends Component {
   state = {
-    areaLoaded: false,
-    provincesLoaded: false,
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
-    provinceError: '',
-    areaError: ''
+    provinceError: ''
   };
 
   componentWillMount() {
@@ -42,8 +38,7 @@ class RegisterCommerceTwo extends Component {
         city,
         province,
         area,
-        street,
-        streetNumber
+        address
       } = this.props;
       this.props.onCreateCommerce(
         {
@@ -52,7 +47,7 @@ class RegisterCommerceTwo extends Component {
           email,
           phone,
           description,
-          address: `${street} ${streetNumber}`,
+          address,
           city,
           province,
           area
@@ -72,31 +67,19 @@ class RegisterCommerceTwo extends Component {
       prop: 'province',
       value: { provinceId: value, name: label }
     });
-    if (!provincesLoaded) {
-      return this.setState({ provincesLoaded: true });
-    }
-    this.renderProvinceError();
-  };
 
-  onAreaPickerChange = async index => {
-    var { value, label } =
-      index > 0
-        ? this.props.areasList[index - 1]
-        : this.state.pickerPlaceholder;
-
-    await this.props.onCommerceValueChange({
-      prop: 'area',
-      value: { areaId: value, name: label }
+    this.props.onLocationValueChange({
+      prop: 'provinceName',
+      value: index > 0 ? label : ''
     });
-    if (!areaLoaded) {
-      return this.setState({ areaLoaded: true });
-    }
-    this.renderAreaError();
+
+    this.renderProvinceError();
   };
 
   renderAddressError = () => {
     const { address, onCommerceValueChange } = this.props;
     const value = trimString(address);
+
     onCommerceValueChange({ prop: 'address', value });
 
     if (value === '') {
@@ -132,31 +115,45 @@ class RegisterCommerceTwo extends Component {
     }
   };
 
-  renderAreaError = () => {
-    if (this.props.area.areaId === '') {
-      this.setState({ areaError: 'Dato requerido' });
-      return false;
-    } else {
-      this.setState({ areaError: '' });
-      return true;
-    }
+  validateMinimumData = () => {
+    // return (
+    //   this.renderProvinceError() &&
+    //   this.renderCityError() &&
+    //   this.renderAddressError()
+    // );
+    return (
+      this.renderAddressError() &&
+      this.renderCityError() &&
+      this.renderProvinceError()
+    );
   };
 
-  validateMinimumData = () => {
-    return (
-      this.renderAreaError() &&
-      this.renderProvinceError() &&
-      this.renderCityError() &&
-      this.renderAddressError()
+  onProvinceNameChangeOnMap = newProvinceName => {
+    this.matchProvinceByValue(newProvinceName);
+  };
+
+  matchProvinceByValue = name => {
+    const province = this.props.provincesList.find(
+      province => province.label === name
     );
+
+    if (province) {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: province.value, name }
+      });
+    } else {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: '', name: '' }
+      });
+    }
   };
 
   onMapPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: 'commerceRegisterMap',
-      params: {
-        title: 'Localizar mi Negocio'
-      }
+      params: { callback: this.onProvinceNameChangeOnMap }
     });
 
     this.props.navigation.navigate(navigateAction);
@@ -167,45 +164,18 @@ class RegisterCommerceTwo extends Component {
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60}>
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
-            <Picker
-              title="Rubro:"
-              placeholder={this.state.pickerPlaceholder}
-              items={this.props.areasList}
-              value={this.props.area.areaId}
-              onValueChange={(value, index) => this.onAreaPickerChange(index)}
-              errorMessage={this.state.areaError}
-            />
-          </CardSection>
-          <Divider style={{ backgroundColor: 'grey', margin: 30 }} />
-
-          <CardSection>
             <Input
               label="Calle"
-              value={this.props.street}
+              value={this.props.address}
               onChangeText={value =>
                 this.props.onLocationValueChange({
-                  prop: 'street',
+                  prop: 'address',
                   value
                 })
               }
-              // errorMessage={this.state.addressError}
-              // onFocus={() => this.setState({ addressError: '' })}
-              // onBlur={this.renderAddressError}
-            />
-          </CardSection>
-          <CardSection>
-            <Input
-              label="Número"
-              value={this.props.streetNumber}
-              onChangeText={value =>
-                this.props.onLocationValueChange({
-                  prop: 'streetNumber',
-                  value
-                })
-              }
-              // errorMessage={this.state.addressError}
-              // onFocus={() => this.setState({ addressError: '' })}
-              // onBlur={this.renderAddressError}
+              errorMessage={this.state.addressError}
+              onFocus={() => this.setState({ addressError: '' })}
+              onBlur={this.renderAddressError}
             />
           </CardSection>
 
@@ -216,9 +186,9 @@ class RegisterCommerceTwo extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'city', value })
               }
-              // errorMessage={this.state.cityError}
-              // onFocus={() => this.setState({ cityError: '' })}
-              // onBlur={this.renderCityError}
+              errorMessage={this.state.cityError}
+              onFocus={() => this.setState({ cityError: '' })}
+              onBlur={this.renderCityError}
             />
           </CardSection>
           <CardSection>
@@ -259,7 +229,6 @@ const mapStateToProps = state => {
     email,
     phone,
     description,
-    address,
     province,
     provincesList,
     area,
@@ -268,7 +237,7 @@ const mapStateToProps = state => {
     error
   } = state.commerceData;
 
-  const { street, streetNumber, city } = state.locationData;
+  const { address, provinceName, city } = state.locationData;
 
   return {
     name,
@@ -278,14 +247,13 @@ const mapStateToProps = state => {
     cuit,
     email,
     phone,
-    address,
-    city,
     province,
     area,
     areasList,
     provincesList,
-    street,
-    streetNumber
+    address,
+    city,
+    provinceName
   };
 };
 export default connect(

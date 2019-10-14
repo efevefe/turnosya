@@ -1,12 +1,12 @@
 import { ON_LOCATION_VALUE_CHANGE, ON_LOCATION_CHANGE } from '../actions/types';
 
 const INITIAL_STATE = {
-  street: '',
-  streetNumber: '',
+  address: '',
   city: '',
+  provinceName: '',
   country: '',
-  latitude: -31.346672,
-  longitude: -64.282729
+  latitude: null,
+  longitude: null
 };
 
 export default (state = INITIAL_STATE, action) => {

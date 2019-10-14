@@ -1,57 +1,111 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Fab } from 'native-base';
-import { MAIN_COLOR } from '../constants';
-import MapView from 'react-native-maps';
-import * as Location from 'expo-location';
-import LocationMessages from './common/LocationMessages';
 import { connect } from 'react-redux';
-import { onLocationChange } from '../actions';
+import * as Location from 'expo-location';
+import { Ionicons } from '@expo/vector-icons';
+import MapView from 'react-native-maps';
+import { View, StyleSheet } from 'react-native';
+import { Fab } from 'native-base';
+import { SearchBar } from 'react-native-elements';
+import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
+import { HeaderBackButton } from 'react-navigation-stack';
+import LocationMessages from './common/LocationMessages';
+import { Toast, IconButton } from '../components/common';
+import { onLocationChange, onLocationValueChange } from '../actions';
 
 class GeocodingScreen extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      defaultAddress: 'Córdoba, Argentina',
+      completeAddress: '',
+      locationAsked: false,
+      stateBeforeChanges: null
+    };
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: navigation.getParam('title')
+      headerRight: navigation.getParam('rightIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
-  state = { locationAsked: false };
+  async componentDidMount() {
+    const { address, city, provinceName } = this.props;
+    this.setState({ stateBeforeChanges: { address, city, provinceName } });
 
-  componentDidMount() {
-    const address = this.setStreetString(); //se puede definir en el constructor y lo de abajo una funcion aparte
-    this.getLocationAndLongitudeFromString(address);
+    await this.setAddressString();
+    this.getLocationAndLongitudeFromString();
+
+    this.props.navigation.setParams({
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton()
+    });
   }
 
-  setStreetString = () => {
-    const { street, streetNumber, city } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.latitude !== this.props.latitude &&
+      prevProps.longitude !== this.props.longitude &&
+      this.state.locationAsked
+    ) {
+      this.setState({ locationAsked: false });
+      if (this.props.navigation.state.params.callback) {
+        this.props.navigation.state.params.callback(this.props.provinceName);
+      }
+    }
+  }
 
-    let address = `${street !== '' ? street : ''}${
-      streetNumber !== '' ? ' ' + streetNumber : ''
-    }`;
+  renderSaveButton = () => {
+    return (
+      <IconButton
+        icon="md-checkmark"
+        onPress={() => this.props.navigation.goBack()}
+      />
+    );
+  };
+  renderBackButton = () => {
+    return (
+      <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" />
+    );
+  };
 
-    address = `${address !== '' ? address + ', ' : ''}${
-      city !== '' ? city : ''
-    }`;
+  setAddressString = () => {
+    const { address, city, provinceName } = this.props;
 
-    if (address === '') {
-      address = 'Córdoba, Argentina';
+    /* 
+    Se le agrega 'Calle' antes para que el mapa lo busque mejor. Sirve por mas que ya se le haya puesto 'Calle' 
+    en la prop, y por mas que la calle sea una Avenida, Boulevard ..porque después el mapa busca la dirección,
+    y lo cambia con el nombre correcto
+    */
+    let newAddress = `${address !== '' ? `Calle ${address}, ` : ''}`;
+
+    newAddress += `${city !== '' ? city + ', ' : ''}`;
+
+    newAddress += `${provinceName !== '' ? provinceName + ', ' : ''}`;
+
+    newAddress += 'Argentina'; //Por ahora será solo buscado en Argentina ....
+
+    if (newAddress === 'Argentina') {
+      newAddress = this.state.defaultAddress;
     }
 
-    return address;
+    this.setState({ completeAddress: newAddress });
   };
 
   getLocationAndLongitudeFromString = async string => {
-    const [latLongResult] = await Location.geocodeAsync(string);
+    const [latLongResult] = await Location.geocodeAsync(
+      string ? string : this.state.completeAddress
+    );
 
     if (latLongResult !== undefined) {
       const { latitude, longitude } = latLongResult;
       this.getAddressFromLatAndLong({ latitude, longitude });
     } else {
-      // cuando la dirección que se dió no se encontró ....
-      // probar agregando 'calle' o 'boulevard'
-      // calle, ciudad
-      // ciudad
+      Toast.show({
+        text: 'No se han encontrado resultado. Intente modificar dirección.'
+      });
     }
   };
 
@@ -60,38 +114,115 @@ class GeocodingScreen extends React.Component {
       latitude,
       longitude
     });
-    const { street, city, country } = addresResult;
+    const { name, city, region, country } = addresResult;
 
     const location = {
       latitude,
       longitude,
-      street,
-      streetNumber: addresResult.name.replace(street, ''),
+      address: name,
+      provinceName: region,
       city,
       country
     };
 
-    this.props.onLocationChange({ location });
-  };
+    this.setState({
+      completeAddress: `${name}, ${region}, ${city}, ${country}`
+    });
 
-  renderLocationMessage = () => {
-    if (this.state.locationAsked) {
-      // this.setState({ locationAsked: false }); //ver la forma de poner este asked en false
-      return <LocationMessages />;
+    this.props.onLocationChange({ location });
+    if (this.props.navigation.state.params.callback) {
+      this.props.navigation.state.params.callback(region);
     }
   };
 
+  renderMarkers = () => {
+    if (!this.props.markers || !this.props.navigation.state.params.markers) {
+      const { latitude, longitude, address } = this.props;
+      return (
+        <MapView.Marker
+          coordinate={{
+            latitude: latitude ? latitude : -31.417378,
+            longitude: longitude ? longitude : -64.18384
+          }}
+          title={address}
+          draggable
+          onDragEnd={e =>
+            this.getAddressFromLatAndLong({
+              latitude: e.nativeEvent.coordinate.latitude,
+              longitude: e.nativeEvent.coordinate.longitude
+            })
+          }
+        />
+      );
+    } else {
+      const markers = this.props.markers
+        ? this.props.markers
+        : this.props.navigation.state.params.markers;
+
+      return markers.map((marker, index) => (
+        <MapView.Marker
+          key={index}
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude
+          }}
+          title={marker.address}
+        />
+      ));
+    }
+  };
+
+  renderLocationMessage = () => {
+    if (this.state.locationAsked) return <LocationMessages />;
+  };
+
+  onBackPress = () => {
+    this.props.onLocationChange({ location: this.state.stateBeforeChanges });
+
+    if (this.props.navigation.state.params.callback) {
+      this.props.navigation.state.params.callback(
+        this.state.stateBeforeChanges.provinceName
+      );
+    }
+
+    this.props.navigation.goBack();
+  };
+
   render() {
-    const { latitude, longitude, street, streetNumber } = this.props;
+    const { latitude, longitude } = this.props;
+    const validAddress =
+      this.state.completeAddress !== 'Córdoba, Argentina'
+        ? this.state.completeAddress
+        : '';
+
     return (
       <View style={{ flex: 1, position: 'relative' }}>
+        <View style={styles.mainContainer}>
+          <SearchBar
+            {...this.props}
+            platform="android"
+            placeholder="San Martín 30, Córdoba, Argentina"
+            onChangeText={text => this.setState({ completeAddress: text })}
+            onCancel={() => this.setState({ completeAddress: '' })}
+            value={validAddress}
+            containerStyle={styles.searchBarContainer}
+            inputStyle={{ marginTop: 1, fontSize: 16 }}
+            searchIcon={{ color: MAIN_COLOR }}
+            cancelIcon={{ color: MAIN_COLOR }}
+            clearIcon={{ color: MAIN_COLOR }}
+            onEndEditing={e =>
+              this.getLocationAndLongitudeFromString(e.nativeEvent.text)
+            }
+          />
+        </View>
+
         <MapView
           style={{ flex: 1 }}
           ref={ref => (this.map = ref)}
           initialRegion={this.region}
           region={{
-            latitude,
-            longitude,
+            latitude: latitude ? latitude : -31.417378,
+            longitude: longitude ? longitude : -64.18384,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01
           }}
@@ -104,19 +235,10 @@ class GeocodingScreen extends React.Component {
             })
           }
         >
-          <MapView.Marker
-            coordinate={{ latitude, longitude }}
-            title={`${street} ${streetNumber}`}
-            draggable
-            onDragEnd={e =>
-              this.getAddressFromLatAndLong({
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude
-              })
-            }
-          />
+          {this.renderMarkers()}
         </MapView>
         {this.renderLocationMessage()}
+
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
@@ -129,20 +251,44 @@ class GeocodingScreen extends React.Component {
   }
 }
 
+const styles = StyleSheet.create({
+  mainContainer: {
+    height: NAVIGATION_HEIGHT,
+    alignSelf: 'stretch',
+    justifyContent: 'flex-end',
+    backgroundColor: MAIN_COLOR,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2
+  },
+  searchBarContainer: {
+    alignSelf: 'stretch',
+    height: NAVIGATION_HEIGHT,
+    paddingTop: 4,
+    paddingRight: 5,
+    paddingLeft: 5
+  }
+});
+
 const mapStateToProps = state => {
   const {
-    street,
-    streetNumber,
+    address,
     city,
+    provinceName,
     country,
     latitude,
     longitude
   } = state.locationData;
 
-  return { street, streetNumber, city, country, latitude, longitude };
+  return { address, city, provinceName, country, latitude, longitude };
 };
 
 export default connect(
   mapStateToProps,
-  { onLocationChange }
+  { onLocationChange, onLocationValueChange }
 )(GeocodingScreen);

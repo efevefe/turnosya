@@ -34,7 +34,10 @@ const CommerceRegisterStack = createStackNavigator(
       }
     },
     commerceRegisterMap: {
-      screen: GeocodingScreen
+      screen: GeocodingScreen,
+      navigationOptions: {
+        title: 'Localizar mi negocio'
+      }
     }
   },
   stackNavigationOptions
