@@ -11,6 +11,7 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
+import GeocodingScreen from '../components/GeocodingScreen';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -96,6 +97,12 @@ const profileStack = createStackNavigator(
         headerLeft: navigation.getParam('leftIcon') || (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
+      })
+    },
+    changeAddressMap: {
+      screen: GeocodingScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Modificar mi Dirección'
       })
     }
   },

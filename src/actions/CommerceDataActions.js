@@ -16,6 +16,7 @@ import {
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
+  ON_LOCATION_VALUES_RESET,
   CUIT_NOT_EXISTS,
   CUIT_EXISTS,
   ON_COMMERCE_DELETING,
@@ -39,7 +40,10 @@ export const onCommerceValueChange = ({ prop, value }) => {
 };
 
 export const onCommerceFormOpen = () => {
-  return { type: ON_COMMERCE_CREATING };
+  return dispatch => {
+    dispatch({ type: ON_COMMERCE_CREATING });
+    dispatch({ type: ON_LOCATION_VALUES_RESET });
+  };
 };
 
 export const onCommerceOpen = navigation => {
@@ -65,7 +69,19 @@ export const onCommerceOpen = navigation => {
 };
 
 export const onCreateCommerce = (
-  { name, cuit, email, phone, description, address, city, province, area },
+  {
+    name,
+    cuit,
+    email,
+    phone,
+    description,
+    area,
+    address,
+    city,
+    province,
+    latitude,
+    longitude
+  },
   navigation
 ) => {
   const { currentUser } = firebase.auth();
@@ -83,10 +99,12 @@ export const onCreateCommerce = (
         email,
         phone,
         description,
+        area,
         address,
         city,
         province,
-        area,
+        latitude,
+        longitude,
         softDelete: null
       })
       .then(reference => {
@@ -95,13 +113,15 @@ export const onCreateCommerce = (
           .update({ commerceId: docId })
           .then(() => {
             index.addObject({
-              address: address,
-              areaName: area.name,
               objectID: docId,
-              description: description,
-              name: name,
-              city: city,
-              provinceName: province.name
+              name,
+              description,
+              areaName: area.name,
+              address,
+              city,
+              provinceName: province.name,
+              latitude,
+              longitude
             });
 
             dispatch({ type: COMMERCE_PROFILE_CREATE });
@@ -171,7 +191,9 @@ export const onCommerceUpdateNoPicture = ({
   province,
   area,
   profilePicture,
-  commerceId
+  commerceId,
+  latitude,
+  longitude
 }) => {
   const db = firebase.firestore();
 
@@ -189,7 +211,9 @@ export const onCommerceUpdateNoPicture = ({
         city,
         province,
         area,
-        profilePicture
+        profilePicture,
+        latitude,
+        longitude
       })
       .then(() => {
         index.saveObject({
@@ -221,7 +245,9 @@ export const onCommerceUpdateWithPicture = ({
   province,
   area,
   profilePicture,
-  commerceId
+  commerceId,
+  latitude,
+  longitude
 }) => {
   var ref = firebase
     .storage()
@@ -250,7 +276,9 @@ export const onCommerceUpdateWithPicture = ({
                 city,
                 province,
                 area,
-                profilePicture: url
+                profilePicture: url,
+                latitude,
+                longitude
               })
               .then(() => {
                 index.saveObject({

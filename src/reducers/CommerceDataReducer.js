@@ -40,7 +40,9 @@ const INITIAL_STATE = {
   loading: false,
   refreshing: false,
   cuitExists: false,
-  confirmDeleteVisible: false
+  confirmDeleteVisible: false,
+  latitude: null,
+  longitude: null
 };
 
 export default (state = INITIAL_STATE, action) => {

@@ -1,4 +1,8 @@
-import { ON_LOCATION_VALUE_CHANGE, ON_LOCATION_CHANGE } from '../actions/types';
+import {
+  ON_LOCATION_VALUE_CHANGE,
+  ON_LOCATION_CHANGE,
+  ON_LOCATION_VALUES_RESET
+} from '../actions/types';
 
 const INITIAL_STATE = {
   address: '',
@@ -6,7 +10,8 @@ const INITIAL_STATE = {
   provinceName: '',
   country: '',
   latitude: null,
-  longitude: null
+  longitude: null,
+  markers: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -14,7 +19,12 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOCATION_CHANGE:
-      return { ...state, ...action.payload.location };
+      return {
+        ...state,
+        ...action.payload.location
+      };
+    case ON_LOCATION_VALUES_RESET:
+      return { ...INITIAL_STATE };
     default:
       return state;
   }
