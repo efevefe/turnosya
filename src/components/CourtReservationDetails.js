@@ -62,7 +62,8 @@ class CourtReservationDetails extends Component {
             court,
             startDate,
             endDate,
-            light
+            light,
+            commerce
         } = this.props;
 
         const { name, profilePicture } = this.state;
@@ -73,7 +74,7 @@ class CourtReservationDetails extends Component {
                     rounded
                     source={profilePicture ? { uri: profilePicture } : null}
                     size={90}
-                    icon={{ name: 'store' }}
+                    icon={{ name: commerce ? 'store' : 'person' }}
                     containerStyle={styles.avatarStyle}
                 />
                 <View style={styles.contentContainer}>

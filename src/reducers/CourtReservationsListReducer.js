@@ -24,7 +24,6 @@ export default (state = INITIAL_STATE, action) => {
         case ON_COMMERCE_COURT_RESERVATIONS_READING:
             return { ...state, loading: true };
         case ON_COMMERCE_COURT_RESERVATIONS_READ:
-            console.log('update');
             return { ...state, ...action.payload, loading: false };
         case ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL:
             return { ...state, loading: false };
