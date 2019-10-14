@@ -5,7 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Ionicons } from '@expo/vector-icons';
 import {
   CardSection,
   Input,
@@ -13,7 +15,8 @@ import {
   Menu,
   MenuItem,
   Picker,
-  IconButton
+  IconButton,
+  Button
 } from '../components/common';
 import { MAIN_COLOR } from '../constants';
 import { imageToBlob, validateValueType, trimString } from '../utils';
@@ -23,25 +26,35 @@ import {
   onCommerceUpdateNoPicture,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead
+  onAreasRead,
+  onLocationValueChange,
+  onLocationChange
 } from '../actions';
 
-class CommerceProfile extends Component {
-  state = {
-    editEnabled: false,
-    pictureOptionsVisible: false,
-    newProfilePicture: false,
-    stateBeforeChanges: null,
-    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-    nameError: '',
-    cuitError: '',
-    emailError: '',
-    phoneError: '',
-    addressError: '',
-    cityError: '',
-    provinceError: '',
-    areaError: ''
-  };
+class commerceData extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editEnabled: false,
+      pictureOptionsVisible: false,
+      newProfilePicture: false,
+      stateBeforeChanges: null,
+      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+      nameError: '',
+      cuitError: '',
+      emailError: '',
+      phoneError: '',
+      addressError: '',
+      cityError: '',
+      provinceError: '',
+      areaError: '',
+      showMapOptions: false,
+      flag: false
+    };
+
+    props.navigation.setParams({ rightIcon: this.renderEditButton() });
+  }
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -51,8 +64,25 @@ class CommerceProfile extends Component {
     };
   };
 
-  componentWillMount() {
-    this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+  componentDidMount() {
+    const {
+      address,
+      city,
+      provinceName,
+      latitude,
+      longitude,
+      country
+    } = this.props.locationData;
+    const location = {
+      address,
+      city,
+      provinceName,
+      latitude,
+      longitude,
+      country
+    };
+
+    this.props.onLocationChange({ location });
   }
 
   onRefresh = () => {
@@ -81,12 +111,12 @@ class CommerceProfile extends Component {
       email,
       phone,
       description,
-      address,
       city,
       province,
       area,
       profilePicture
     } = this.props;
+    const { address } = this.props.locationData;
     this.setState({
       editEnabled: true,
       stateBeforeChanges: {
@@ -100,7 +130,8 @@ class CommerceProfile extends Component {
         province,
         area,
         profilePicture
-      }
+      },
+      showMapOptions: true
     });
     this.props.navigation.setParams({
       title: 'Modificar Datos',
@@ -117,13 +148,12 @@ class CommerceProfile extends Component {
         email,
         phone,
         description,
-        address,
-        city,
         province,
         area,
         profilePicture,
         commerceId
       } = this.props;
+      const { address, city, latitude, longitude } = this.props.locationData;
       const { newProfilePicture } = this.state;
 
       if (newProfilePicture) {
@@ -139,7 +169,9 @@ class CommerceProfile extends Component {
           province,
           area,
           profilePicture,
-          commerceId
+          commerceId,
+          latitude,
+          longitude
         });
       } else {
         this.props.onCommerceUpdateNoPicture({
@@ -153,7 +185,9 @@ class CommerceProfile extends Component {
           province,
           area,
           profilePicture,
-          commerceId
+          commerceId,
+          latitude,
+          longitude
         });
       }
 
@@ -179,7 +213,8 @@ class CommerceProfile extends Component {
     this.setState({
       editEnabled: false,
       newProfilePicture: false,
-      stateBeforeChanges: null
+      stateBeforeChanges: null,
+      showMapOptions: false
     });
     this.props.navigation.setParams({
       title: 'Perfil',
@@ -267,7 +302,7 @@ class CommerceProfile extends Component {
   };
 
   renderLocation = () => {
-    const { address, city } = this.props;
+    const { address, city } = this.props.locationData;
     const { provinceId, name } = this.props.province;
 
     if (address || city || provinceId) {
@@ -296,7 +331,13 @@ class CommerceProfile extends Component {
         prop: 'province',
         value: { provinceId: value, name: label }
       });
+
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: label
+      });
     }
+
     this.renderProvinceError();
   };
 
@@ -368,9 +409,10 @@ class CommerceProfile extends Component {
   };
 
   renderAddressError = () => {
-    const { address, onCommerceValueChange } = this.props;
+    const { onLocationValueChange } = this.props;
+    const { address } = this.props.locationData;
     const value = trimString(address);
-    onCommerceValueChange({ prop: 'address', value });
+    onLocationValueChange({ prop: 'address', value });
 
     if (value === '') {
       this.setState({ addressError: 'Dato requerido' });
@@ -382,9 +424,10 @@ class CommerceProfile extends Component {
   };
 
   renderCityError = () => {
-    const { city, onCommerceValueChange } = this.props;
+    const { onLocationValueChange } = this.props;
+    const { city } = this.props.locationData;
     const value = trimString(city);
-    onCommerceValueChange({ prop: 'city', value });
+    onLocationValueChange({ prop: 'city', value });
 
     if (value === '') {
       this.setState({ cityError: 'Dato requerido' });
@@ -412,6 +455,85 @@ class CommerceProfile extends Component {
     } else {
       this.setState({ areaError: '' });
       return true;
+    }
+  };
+
+  onProvinceNameChangeOnMap = newProvinceName => {
+    this.matchProvinceByValue(newProvinceName);
+  };
+
+  matchProvinceByValue = name => {
+    const province = this.props.provincesList.find(
+      province => province.label === name
+    );
+
+    if (province) {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: province.value, name }
+      });
+    } else {
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: '', name: '' }
+      });
+    }
+  };
+
+  onMapPress = () => {
+    const {
+      address,
+      provinceName,
+      city,
+      latitude,
+      longitude
+    } = this.props.locationData;
+
+    const navigateAction = NavigationActions.navigate({
+      routeName: 'changeAddressMap',
+      params: {
+        callback: this.onProvinceNameChangeOnMap,
+        markers: [
+          {
+            address,
+            provinceName,
+            city,
+            latitude,
+            longitude
+          }
+        ]
+      }
+    });
+
+    this.props.navigation.navigate(navigateAction);
+  };
+
+  renderMapOption = () => {
+    if (this.state.showMapOptions) {
+      return (
+        <CardSection>
+          <Button
+            title="Buscar en el mapa"
+            titleStyle={{ color: MAIN_COLOR }}
+            buttonStyle={{
+              borderRadius: 30,
+              borderColor: MAIN_COLOR
+            }}
+            color="white"
+            type="outline"
+            iconRight={true}
+            onPress={() => this.onMapPress()}
+            icon={
+              <Ionicons
+                style={{ marginLeft: 10 }}
+                name="md-pin"
+                size={28}
+                color={MAIN_COLOR}
+              />
+            }
+          />
+        </CardSection>
+      );
     }
   };
 
@@ -564,9 +686,9 @@ class CommerceProfile extends Component {
           <CardSection>
             <Input
               label="Dirección:"
-              value={this.props.address}
+              value={this.props.locationData.address}
               onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'address', value })
+                this.props.onLocationValueChange({ prop: 'address', value })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.addressError}
@@ -577,9 +699,9 @@ class CommerceProfile extends Component {
           <CardSection>
             <Input
               label="Ciudad:"
-              value={this.props.city}
+              value={this.props.locationData.city}
               onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'city', value })
+                this.props.onLocationValueChange({ prop: 'city', value })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.cityError}
@@ -598,6 +720,7 @@ class CommerceProfile extends Component {
               errorMessage={this.state.provinceError}
             />
           </CardSection>
+          {this.renderMapOption()}
           <CardSection>
             <Picker
               title="Rubro:"
@@ -685,9 +808,25 @@ const mapStateToProps = state => {
     profilePicture,
     commerceId,
     loading,
-    refreshing
+    refreshing,
+    latitude,
+    longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
+
+  let locationData = { ...state.locationData };
+
+  if (!locationData.country) {
+    locationData = {
+      ...state.locationData,
+      address,
+      city,
+      provinceName: province.name,
+      latitude,
+      longitude,
+      country: 'Argentina'
+    };
+  }
 
   return {
     name,
@@ -695,8 +834,6 @@ const mapStateToProps = state => {
     email,
     phone,
     description,
-    address,
-    city,
     province,
     provincesList,
     area,
@@ -704,7 +841,8 @@ const mapStateToProps = state => {
     profilePicture,
     commerceId,
     loading,
-    refreshing
+    refreshing,
+    locationData
   };
 };
 
@@ -716,6 +854,8 @@ export default connect(
     onCommerceUpdateNoPicture,
     onCommerceValueChange,
     onProvincesIdRead,
-    onAreasRead
+    onAreasRead,
+    onLocationValueChange,
+    onLocationChange
   }
 )(CommerceProfile);

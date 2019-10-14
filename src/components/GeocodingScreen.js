@@ -12,7 +12,7 @@ import LocationMessages from './common/LocationMessages';
 import { Toast, IconButton } from '../components/common';
 import { onLocationChange, onLocationValueChange } from '../actions';
 
-class GeocodingScreen extends React.Component {
+class LocationMap extends React.Component {
   constructor(props) {
     super(props);
 
@@ -22,6 +22,23 @@ class GeocodingScreen extends React.Component {
       locationAsked: false,
       stateBeforeChanges: null
     };
+
+    const { markers } = this.props.navigation.state.params;
+
+    if (markers) {
+      if (markers.length > 1) {
+        this.props.onLocationValueChange({ prop: 'markers', value: markers });
+      } else {
+        for (prop in markers[0]) {
+          this.props.onLocationValueChange({ prop, value: markers[0][prop] });
+        }
+      }
+    }
+
+    props.navigation.setParams({
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton()
+    });
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -32,16 +49,23 @@ class GeocodingScreen extends React.Component {
   };
 
   async componentDidMount() {
-    const { address, city, provinceName } = this.props;
-    this.setState({ stateBeforeChanges: { address, city, provinceName } });
+    const { markers } = this.props.navigation.state.params;
+
+    if (!markers) {
+      const { address, city, provinceName } = this.props;
+      this.setState({
+        stateBeforeChanges: { address, city, provinceName }
+      });
+    } else if (markers.length === 1) {
+      const { address, provinceName, city, longitude, latitude } = markers[0];
+
+      this.setState({
+        stateBeforeChanges: { address, provinceName, city, latitude, longitude }
+      });
+    }
 
     await this.setAddressString();
     this.getLocationAndLongitudeFromString();
-
-    this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton()
-    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -65,6 +89,7 @@ class GeocodingScreen extends React.Component {
       />
     );
   };
+
   renderBackButton = () => {
     return (
       <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" />
@@ -72,11 +97,12 @@ class GeocodingScreen extends React.Component {
   };
 
   setAddressString = () => {
+    //solo se ejecuta cuando se registra un nuevo comercio y no se agregan datos previos de domicilio
     const { address, city, provinceName } = this.props;
 
     /* 
     Se le agrega 'Calle' antes para que el mapa lo busque mejor. Sirve por mas que ya se le haya puesto 'Calle' 
-    en la prop, y por mas que la calle sea una Avenida, Boulevard ..porque después el mapa busca la dirección,
+    en la prop, y por mas que la calle sea una Avenida, Boulevard, pje ..porque después el mapa busca la dirección,
     y lo cambia con el nombre correcto
     */
     let newAddress = `${address !== '' ? `Calle ${address}, ` : ''}`;
@@ -136,8 +162,9 @@ class GeocodingScreen extends React.Component {
   };
 
   renderMarkers = () => {
-    if (!this.props.markers || !this.props.navigation.state.params.markers) {
+    if (this.props.markers !== []) {
       const { latitude, longitude, address } = this.props;
+
       return (
         <MapView.Marker
           coordinate={{
@@ -155,11 +182,7 @@ class GeocodingScreen extends React.Component {
         />
       );
     } else {
-      const markers = this.props.markers
-        ? this.props.markers
-        : this.props.navigation.state.params.markers;
-
-      return markers.map((marker, index) => (
+      return this.props.markers.map((marker, index) => (
         <MapView.Marker
           key={index}
           coordinate={{
@@ -215,7 +238,6 @@ class GeocodingScreen extends React.Component {
             }
           />
         </View>
-
         <MapView
           style={{ flex: 1 }}
           ref={ref => (this.map = ref)}
@@ -282,13 +304,14 @@ const mapStateToProps = state => {
     provinceName,
     country,
     latitude,
-    longitude
+    longitude,
+    markers
   } = state.locationData;
 
-  return { address, city, provinceName, country, latitude, longitude };
+  return { address, city, provinceName, country, latitude, longitude, markers };
 };
 
 export default connect(
   mapStateToProps,
   { onLocationChange, onLocationValueChange }
-)(GeocodingScreen);
+)(LocationMap);

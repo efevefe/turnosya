@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { trimString } from '../utils';
+import { MAIN_COLOR } from '../constants';
 import { CardSection, Button, Input, Picker } from './common';
 import {
   onCreateCommerce,
@@ -35,10 +36,12 @@ class RegisterCommerceTwo extends Component {
         email,
         phone,
         description,
+        area,
+        address,
         city,
         province,
-        area,
-        address
+        latitude,
+        longitude
       } = this.props;
       this.props.onCreateCommerce(
         {
@@ -47,10 +50,12 @@ class RegisterCommerceTwo extends Component {
           email,
           phone,
           description,
+          area,
           address,
           city,
           province,
-          area
+          latitude,
+          longitude
         },
         this.props.navigation
       );
@@ -80,12 +85,11 @@ class RegisterCommerceTwo extends Component {
     const { address, onCommerceValueChange } = this.props;
     const value = trimString(address);
 
-    onCommerceValueChange({ prop: 'address', value });
-
     if (value === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
+      onCommerceValueChange({ prop: 'address', value });
       this.setState({ addressError: '' });
       return true;
     }
@@ -94,12 +98,12 @@ class RegisterCommerceTwo extends Component {
   renderCityError = () => {
     const { city, onCommerceValueChange } = this.props;
     const value = trimString(city);
-    onCommerceValueChange({ prop: 'city', value });
 
     if (value === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
+      onCommerceValueChange({ prop: 'city', value });
       this.setState({ cityError: '' });
       return true;
     }
@@ -116,11 +120,6 @@ class RegisterCommerceTwo extends Component {
   };
 
   validateMinimumData = () => {
-    // return (
-    //   this.renderProvinceError() &&
-    //   this.renderCityError() &&
-    //   this.renderAddressError()
-    // );
     return (
       this.renderAddressError() &&
       this.renderCityError() &&
@@ -166,6 +165,7 @@ class RegisterCommerceTwo extends Component {
           <CardSection>
             <Input
               label="Calle"
+              placeholder="San Martín 30"
               value={this.props.address}
               onChangeText={value =>
                 this.props.onLocationValueChange({
@@ -182,6 +182,7 @@ class RegisterCommerceTwo extends Component {
           <CardSection>
             <Input
               label="Ciudad:"
+              placeholder="Córdoba"
               value={this.props.city}
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'city', value })
@@ -203,12 +204,30 @@ class RegisterCommerceTwo extends Component {
               errorMessage={this.state.provinceError}
             />
           </CardSection>
-          <Ionicons
-            name="md-locate"
-            size={28}
-            color="black"
-            onPress={() => this.onMapPress()}
-          />
+
+          <CardSection>
+            <Button
+              title="Buscar en el mapa"
+              titleStyle={{ color: MAIN_COLOR }}
+              buttonStyle={{
+                borderRadius: 30,
+                borderColor: MAIN_COLOR
+              }}
+              color="white"
+              type="outline"
+              iconRight={true}
+              onPress={() => this.onMapPress()}
+              icon={
+                <Ionicons
+                  style={{ marginLeft: 10 }}
+                  name="md-pin"
+                  size={28}
+                  color={MAIN_COLOR}
+                />
+              }
+            />
+          </CardSection>
+
           <CardSection>
             <Button
               title="Registrar"
@@ -237,7 +256,13 @@ const mapStateToProps = state => {
     error
   } = state.commerceData;
 
-  const { address, provinceName, city } = state.locationData;
+  const {
+    address,
+    provinceName,
+    city,
+    latitude,
+    longitude
+  } = state.locationData;
 
   return {
     name,
@@ -253,7 +278,9 @@ const mapStateToProps = state => {
     provincesList,
     address,
     city,
-    provinceName
+    provinceName,
+    latitude,
+    longitude
   };
 };
 export default connect(

@@ -118,3 +118,4 @@ export const ON_PROVINCES_READ = 'on_provinces_read';
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
 export const ON_LOCATION_CHANGE = 'on_location_change';
+export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';

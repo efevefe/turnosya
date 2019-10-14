@@ -2,8 +2,8 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
-import { IconButton } from '../components/common';
-import GeocodingScreen from '../components/GeocodingScreen';
+import { IconButton, EmptyList } from '../components/common';
+import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
@@ -107,7 +107,7 @@ searchStack.navigationOptions = ({ navigation }) => {
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: GeocodingScreen,
+      screen: EmptyScreen,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (
