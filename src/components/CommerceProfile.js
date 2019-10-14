@@ -5,7 +5,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -49,8 +48,7 @@ class commerceData extends Component {
       cityError: '',
       provinceError: '',
       areaError: '',
-      showMapOptions: false,
-      flag: false
+      showMapOptions: false
     };
 
     props.navigation.setParams({ rightIcon: this.renderEditButton() });
@@ -111,12 +109,12 @@ class commerceData extends Component {
       email,
       phone,
       description,
-      city,
       province,
       area,
       profilePicture
     } = this.props;
-    const { address } = this.props.locationData;
+    const { address, city } = this.props.locationData;
+
     this.setState({
       editEnabled: true,
       stateBeforeChanges: {
@@ -204,6 +202,14 @@ class commerceData extends Component {
         value: stateBeforeChanges[prop]
       });
     }
+    this.props.onLocationValueChange({
+      prop: 'address',
+      value: stateBeforeChanges.address
+    });
+    this.props.onLocationValueChange({
+      prop: 'city',
+      value: stateBeforeChanges.city
+    });
 
     this.cleanErrors();
     this.disableEdit();
@@ -464,7 +470,7 @@ class commerceData extends Component {
 
   matchProvinceByValue = name => {
     const province = this.props.provincesList.find(
-      province => province.label === name
+      province => province.label.toLowerCase() === name.toLowerCase()
     );
 
     if (province) {
@@ -489,23 +495,18 @@ class commerceData extends Component {
       longitude
     } = this.props.locationData;
 
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'changeAddressMap',
-      params: {
-        callback: this.onProvinceNameChangeOnMap,
-        markers: [
-          {
-            address,
-            provinceName,
-            city,
-            latitude,
-            longitude
-          }
-        ]
-      }
+    this.props.navigation.navigate('changeAddressMap', {
+      callback: this.onProvinceNameChangeOnMap,
+      markers: [
+        {
+          address,
+          provinceName,
+          city,
+          latitude,
+          longitude
+        }
+      ]
     });
-
-    this.props.navigation.navigate(navigateAction);
   };
 
   renderMapOption = () => {

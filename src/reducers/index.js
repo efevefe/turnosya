@@ -10,7 +10,7 @@ import CommercesListReducer from './CommercesListReducer';
 import ScheduleRegisterReducer from './ScheduleRegisterReducer';
 import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 import CourtReservationReducer from './CourtReservationReducer';
-import UserLocationReducer from './UserLocationReducer';
+import LocationDataReducer from './LocationDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -24,5 +24,5 @@ export default combineReducers({
   scheduleRegister: ScheduleRegisterReducer,
   commerceCourtTypes: CommerceCourtTypesReducer,
   courtReservation: CourtReservationReducer,
-  locationData: UserLocationReducer
+  locationData: LocationDataReducer
 });

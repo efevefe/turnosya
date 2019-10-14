@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, AppState } from 'react-native';
+import { Platform, View, AppState, StyleSheet } from 'react-native';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -181,11 +181,11 @@ class LocationMessages extends Component {
   }
 }
 
-styles = {
+styles = StyleSheet.create({
   modalItemsContainer: {
     flexDirection: 'row'
   }
-};
+});
 
 export default connect(
   null,
