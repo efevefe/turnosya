@@ -139,7 +139,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
                   if (detailedReservations.length === snapshot.size) {
                     dispatch({
                       type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                      payload: { detailedReservations }
+                      payload: { detailedReservations: detailedReservations.sort((a, b) => a.startDate > b.startDate) }
                     });
                   }
                 });

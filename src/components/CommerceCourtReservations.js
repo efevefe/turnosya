@@ -109,13 +109,9 @@ class CommerceCourtReservations extends Component {
                     keyExtractor={reservation => reservation.id}
                 />
             );
-        } else {
-            return (
-                <EmptyList
-                    title='No hay turnos'
-                />
-            );
         }
+        
+        return <EmptyList title='No hay turnos' />;
     };
 
     render() {

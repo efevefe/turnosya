@@ -17,7 +17,7 @@ export const onClientReservationsListRead = () => {
     dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
     db.collection(`Profiles/${currentUser.uid}/Reservations`)
       .where("state", "==", null)
-      .orderBy("startDate", "asc")
+      .orderBy("startDate")
       .onSnapshot(snapshot => {
         const reservations = [];
         if (snapshot.empty) {
@@ -48,7 +48,7 @@ export const onClientReservationsListRead = () => {
                   if (snapshot.size === reservations.length)
                     dispatch({
                       type: ON_CLIENT_RESERVATIONS_READ,
-                      payload: reservations
+                      payload: reservations.sort((a, b) => a.startDate > b.startDate)
                     });
                 });
             });

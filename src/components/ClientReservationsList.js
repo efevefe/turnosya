@@ -31,13 +31,10 @@ class ClientReservationsList extends Component {
     var filteredList = [];
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations
-        .filter(res => res.endDate < moment())
-        .sort((a, b) => a.startDate < b.startDate);
+      filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
     } else {
       // turnos proximos
-      filteredList = reservations.filter(
-        res => res.startDate > moment());
+      filteredList = reservations.filter(res => res.startDate > moment());
     }
     this.setState({ filteredList, selectedIndex });
   };
@@ -68,14 +65,12 @@ class ClientReservationsList extends Component {
 
     if (filteredList.length)
       return (
-        <View>
-          <FlatList
-            data={filteredList}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={reservation => reservation.id}
-            refreshControl={this.onRefresh()}
-          />
-        </View>
+        <FlatList
+          data={filteredList}
+          renderItem={this.renderRow.bind(this)}
+          keyExtractor={reservation => reservation.id}
+          refreshControl={this.onRefresh()}
+        />
       );
 
     return <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />;
