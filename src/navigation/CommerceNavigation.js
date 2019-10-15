@@ -11,6 +11,7 @@ import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
+import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
@@ -128,6 +129,12 @@ const profileStack = createStackNavigator(
         headerLeft: navigation.getParam('leftIcon') || (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
+      })
+    },
+    changeAddressMap: {
+      screen: LocationMap,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Modificar mi Dirección'
       })
     }
   },

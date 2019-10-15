@@ -12,6 +12,7 @@ import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 import CourtReservationReducer from './CourtReservationReducer';
 import ClientReservationsListReducer from './ClientReservationsListReducer'
 import CourtReservationsListReducer from './CourtReservationsListReducer';
+import LocationDataReducer from './LocationDataReducer';
 import ProvinceDataReducer from './ProvinceDataReducer';
 
 export default combineReducers({
@@ -28,5 +29,6 @@ export default combineReducers({
   courtReservation: CourtReservationReducer,
   clientReservationsList:ClientReservationsListReducer,
   courtReservationsList: CourtReservationsListReducer,
+  locationData: LocationDataReducer,
   provinceData: ProvinceDataReducer
 });

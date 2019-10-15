@@ -19,14 +19,16 @@ class Welcome extends Component {
           <CardSection>
             <Text style={styles.textStyle}>
               ¡Bienvenido, registrá tu negocio!
-          </Text>
+            </Text>
           </CardSection>
           <CardSection style={{ paddingLeft: 25, paddingRight: 25 }}>
             <Button
               title="Continuar"
-              color='white'
+              color="white"
               titleStyle={{ color: MAIN_COLOR }}
-              onPress={() => this.props.navigation.navigate('commerceRegisterProfile')}
+              onPress={() =>
+                this.props.navigation.navigate('commerceRegisterProfile')
+              }
             />
           </CardSection>
         </View>
@@ -34,7 +36,7 @@ class Welcome extends Component {
           <CardSection>
             <Button
               title="Volver"
-              type='clear'
+              type="clear"
               titleStyle={{ color: 'white' }}
               icon={
                 <Ionicons

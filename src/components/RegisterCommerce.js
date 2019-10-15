@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input } from './common';
+import { CardSection, Button, Input, Picker } from './common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onCommerceValueChange,
   onCommerceFormOpen,
+  onAreasRead,
   validateCuit
 } from '../actions';
 import { validateValueType, trimString } from '../utils';
 
 class RegisterCommerce extends Component {
-  state = { phoneError: '', nameError: '', emailError: '', cuitError: '' };
+  state = {
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+    phoneError: '',
+    nameError: '',
+    emailError: '',
+    cuitError: '',
+    areaError: ''
+  };
 
   componentDidMount() {
     this.props.onCommerceFormOpen();
+    this.props.onAreasRead();
   }
 
   componentDidUpdate(prevProps) {
@@ -29,12 +38,27 @@ class RegisterCommerce extends Component {
     }
   }
 
+  onAreaPickerChange = async index => {
+    var { value, label } =
+      index > 0
+        ? this.props.areasList[index - 1]
+        : this.state.pickerPlaceholder;
+
+    await this.props.onCommerceValueChange({
+      prop: 'area',
+      value: { areaId: value, name: label }
+    });
+
+    this.renderAreaError();
+  };
+
   validateMinimumData = () => {
     return (
       this.renderNameError() &&
       this.renderCuitError() &&
       this.renderPhoneError() &&
-      this.renderEmailError()
+      this.renderEmailError() &&
+      this.renderAreaError()
     );
   };
 
@@ -91,6 +115,16 @@ class RegisterCommerce extends Component {
       return false;
     } else {
       this.setState({ cuitError: '' });
+      return true;
+    }
+  };
+
+  renderAreaError = () => {
+    if (this.props.area.areaId === '') {
+      this.setState({ areaError: 'Dato requerido' });
+      return false;
+    } else {
+      this.setState({ areaError: '' });
       return true;
     }
   };
@@ -170,6 +204,17 @@ class RegisterCommerce extends Component {
           </CardSection>
 
           <CardSection>
+            <Picker
+              title="Rubro:"
+              placeholder={this.state.pickerPlaceholder}
+              items={this.props.areasList}
+              value={this.props.area.areaId}
+              onValueChange={(value, index) => this.onAreaPickerChange(index)}
+              errorMessage={this.state.areaError}
+            />
+          </CardSection>
+
+          <CardSection>
             <Input
               label="Descripción"
               placeholder="Descripción"
@@ -211,6 +256,8 @@ const mapStateToProps = state => {
     cuit,
     email,
     phone,
+    area,
+    areasList,
     error,
     cuitExists
   } = state.commerceData;
@@ -218,15 +265,17 @@ const mapStateToProps = state => {
   return {
     name,
     description,
-    error,
     cuit,
     email,
     phone,
+    area,
+    areasList,
+    error,
     cuitExists
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceValueChange, onCommerceFormOpen, validateCuit }
+  { onCommerceValueChange, onCommerceFormOpen, onAreasRead, validateCuit }
 )(RegisterCommerce);

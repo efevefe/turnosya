@@ -22,7 +22,6 @@ const INITIAL_STATE = {
   password: '',
   confirmPassword: '',
   profilePicture: '',
-  location: null,
   firstName: '',
   lastName: '',
   phone: '',

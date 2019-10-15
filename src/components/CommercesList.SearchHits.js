@@ -10,6 +10,15 @@ import { LocationMessages, Button } from './common';
 import { connect } from 'react-redux';
 
 class Hits extends Component {
+  state = {
+    permissionStatus: null,
+    modal: true
+  };
+
+  callback = () => {
+    this.setState({ modal: false });
+  };
+
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
   }

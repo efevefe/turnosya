@@ -6,7 +6,7 @@ export * from './CommerceDataActions';
 export * from './CommercesListActions';
 export * from './CommerceScheduleActions';
 export * from './CourtReservationActions';
+export * from './LocationDataActions';
 export * from './ClientReservationsListActions';
 export * from './CourtReservationsListActions';
 export * from './ProvinceDataActions';
-
