@@ -17,19 +17,17 @@ class ClientReservationDetails extends Component {
     };
   }
 
-  renderCancelButton = reservation => {
-    const { startDate } = reservation;
+  renderCancelButton = () => {
+    const { startDate } = this.state.reservation;
     if (startDate > moment())
       return (
-        <CardSection style={{ flexDirection: "row" }}>
-          <View style={{ alignItems: "center", padding: 3, flex: 1 }}>
+        <CardSection>
             <Button
               loading={this.props.loading}
               title="Cancelar Reserva"
               type="solid"
               onPress={() => this.setState({ visible: true })}
             />
-          </View>
         </CardSection>
       );
   };
@@ -79,9 +77,8 @@ class ClientReservationDetails extends Component {
           price={price}
           light={light}
           showPrice={true}
-        >
-          <View>{this.renderCancelButton(this.state.reservation)}</View>
-        </CourtReservationDetails>
+        />
+        {this.renderCancelButton()}
       </View>
     );
   }

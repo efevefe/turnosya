@@ -91,20 +91,20 @@ export const onClientCancelReservation = (
 
           batch
             .commit()
-            .then(
-              dispatch({ type: ON_CLIENT_RESERVATION_CANCEL }),
-              navigation.goBack()
-            )
-            .catch(
+            .then(() => {
+              dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
+              navigation.goBack();
+            })
+            .catch(() => {
               dispatch({
                 type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-              })
-            );
+              });
+            });
         })
-        .catch(
+        .catch(() => {
           dispatch({
             type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-          })
-        );
+          });
+        });
   };
 };
