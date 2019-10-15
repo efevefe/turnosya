@@ -53,7 +53,7 @@ class ClientReservationsList extends Component {
         )} hs.`}
         bottomDivider
         onPress={() =>
-          this.props.navigation.navigate("reservationDetails", { item })
+          this.props.navigation.navigate("reservationDetails", {reservation: item })
         }
       ></ListItem>
     );

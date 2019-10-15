@@ -10,9 +10,9 @@ import { onClientCancelReservation } from "../actions";
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { item } = this.props.navigation.state.params;
+    const { reservation } = this.props.navigation.state.params;
     this.state = {
-      reservation: item,
+      reservation,
       visible: false
     };
   }
