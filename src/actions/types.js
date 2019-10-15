@@ -119,6 +119,15 @@ export const ON_CLIENT_COURT_RESERVATION_CREATE =
 export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL =
   'on_client_court_reservation_create_fail';
 export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
+
+// Client Reservations List
+export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
+export const ON_CLIENT_RESERVATIONS_READING = 'on_client_reservations_reading';
+export const ON_CLIENT_RESERVATION_CANCELING = 'on_client_reservation_canceling';
+export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
+export const ON_CLIENT_RESERVATION_CANCEL_FAIL = 'on_client_reservation_cancel_fail';
+
+//Commerce Reservations List
 export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE = 'on_court_reservations_list_value_change';
 export const ON_COMMERCE_COURT_RESERVATIONS_READING =
   'on_commerce_reservations_reading';
@@ -132,3 +141,4 @@ export const ON_RESERVATION_CLIENT_READ_FAIL = 'on_reservation_client_read_fail'
 
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';
+

@@ -115,6 +115,7 @@ class CourtReservationDetails extends Component {
             </View>
         );
     }
+
 }
 
 const styles = StyleSheet.create({

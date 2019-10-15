@@ -3,7 +3,6 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
@@ -16,12 +15,13 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
+import ClientReservationsList from '../components/ClientReservationsList'
+import ClientReservationDetails from '../components/ClientReservationDetails'
 import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const mainSearchStack = createStackNavigator(
-  {
+const mainSearchStack = createStackNavigator({
     commercesAreas: {
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
@@ -100,14 +100,20 @@ searchStack.navigationOptions = ({ navigation }) => {
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: EmptyScreen,
+      screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
-    }
+    },
+    reservationDetails: {
+      screen: ClientReservationDetails,
+      navigationOptions: {
+        title: 'Detalle del Turno'
+      }
+    },
   },
   stackNavigationOptions
 );
