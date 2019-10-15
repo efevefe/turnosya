@@ -78,7 +78,7 @@ const calendarStack = createStackNavigator(
     reservationDetails: {
       screen: ClientReservationDetails,
       navigationOptions: {
-        title: 'Detalle Turno'
+        title: 'Detalle del Turno'
       }
     },
   },

@@ -23,23 +23,18 @@ class ClientReservationsList extends Component {
     }
   }
 
-  onItemPress = reservation => {
-    this.props.navigation.navigate("reservationDetails", { reservation });
-  };
-
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
     var filteredList = [];
     if (selectedIndex == 0) {
       // turnos pasados
       filteredList = reservations
-        .filter(res => res.endDate < moment() && res.state !== "Cancelado")
+        .filter(res => res.endDate < moment())
         .sort((a, b) => a.startDate < b.startDate);
     } else {
       // turnos proximos
       filteredList = reservations.filter(
-        res => res.startDate > moment() && res.state !== "Cancelado"
-      );
+        res => res.startDate > moment());
     }
     this.setState({ filteredList, selectedIndex });
   };
@@ -57,7 +52,9 @@ class ClientReservationsList extends Component {
           "HH:mm"
         )} hs.`}
         bottomDivider
-        onPress={() => this.onItemPress(item)}
+        onPress={() =>
+          this.props.navigation.navigate("reservationDetails", { item })
+        }
       ></ListItem>
     );
   };
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { reservations, loading } = state.clientReservationList;
+  const { reservations, loading } = state.clientReservationsList;
   return { reservations, loading };
 };
 

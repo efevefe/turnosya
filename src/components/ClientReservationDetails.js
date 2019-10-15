@@ -10,9 +10,9 @@ import { onClientCancelReservation } from "../actions";
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { reservation } = this.props.navigation.state.params;
+    const { item } = this.props.navigation.state.params;
     this.state = {
-      reservation: reservation,
+      reservation: item,
       visible: false
     };
   }
@@ -87,7 +87,7 @@ class ClientReservationDetails extends Component {
   }
 }
 const mapStateToProps = state => {
-  const { loading } = state.clientReservationList;
+  const { loading } = state.clientReservationsList;
   return { loading };
 };
 

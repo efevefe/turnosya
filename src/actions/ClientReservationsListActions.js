@@ -1,8 +1,8 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import {
-  ON_CLIENT_RERSERVATION_READ,
-  ON_CLIENT_RERSERVATION_READING,
+  ON_CLIENT_RESERVATIONS_READ,
+  ON_CLIENT_RESERVATIONS_READING,
   ON_CLIENT_RESERVATION_CANCEL,
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
@@ -11,14 +11,21 @@ import moment from "moment";
 
 export const onClientReservationsListRead = () => {
   const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_CLIENT_RERSERVATION_READING });
+    dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
     db.collection(`Profiles/${currentUser.uid}/Reservations`)
+      .where("state", "==", null)
       .orderBy("startDate", "asc")
       .onSnapshot(snapshot => {
-        var reservations = [];
+        const reservations = [];
+        if (snapshot.empty) {
+          return dispatch({
+            type: ON_CLIENT_RESERVATIONS_READ,
+            payload: reservations
+          });
+        }
         snapshot.forEach(doc => {
           db.doc(`Commerces/${doc.data().commerceId}`)
             .get()
@@ -40,7 +47,7 @@ export const onClientReservationsListRead = () => {
                   });
                   if (snapshot.size === reservations.length)
                     dispatch({
-                      type: ON_CLIENT_RERSERVATION_READ,
+                      type: ON_CLIENT_RESERVATIONS_READ,
                       payload: reservations
                     });
                 });
@@ -60,33 +67,44 @@ export const onClientCancelReservation = (
   var batch = db.batch();
   return dispatch => {
     dispatch({ type: ON_CLIENT_RESERVATION_CANCELING }),
-    db.doc(`ReservationStates/canceled`)
-      .get()
-      .then(stateDoc => {
-        batch.update(
-          db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationsId}`),
-          { state: stateDoc.data().name }
-        );
-        batch.update(
-          db.doc(`Commerces/${commerceId}/Reservations/${reservationsId}`),
-          { state: stateDoc.data().name }
-        );
-
-        batch
-          .commit()
-          .then(
-            dispatch({ type: ON_CLIENT_RESERVATION_CANCEL }),
-            navigation.goBack()
-          )
-          .catch(
-            dispatch({
-              type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-            })
+      db
+        .doc(`ReservationStates/canceled`)
+        .get()
+        .then(stateDoc => {
+          const cancelationDate = new Date();
+          batch.update(
+            db.doc(
+              `Profiles/${currentUser.uid}/Reservations/${reservationsId}`
+            ),
+            {
+              state: { id: stateDoc.id, name: stateDoc.data().name },
+              cancelationDate
+            }
           );
-      })          
-      .catch(
-        dispatch({
-          type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-        }))
+          batch.update(
+            db.doc(`Commerces/${commerceId}/Reservations/${reservationsId}`),
+            {
+              state: { id: stateDoc.id, name: stateDoc.data().name },
+              cancelationDate
+            }
+          );
+
+          batch
+            .commit()
+            .then(
+              dispatch({ type: ON_CLIENT_RESERVATION_CANCEL }),
+              navigation.goBack()
+            )
+            .catch(
+              dispatch({
+                type: ON_CLIENT_RESERVATION_CANCEL_FAIL
+              })
+            );
+        })
+        .catch(
+          dispatch({
+            type: ON_CLIENT_RESERVATION_CANCEL_FAIL
+          })
+        );
   };
 };
