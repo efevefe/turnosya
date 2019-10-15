@@ -6,7 +6,8 @@ import {
   ONLY_FAVORITE_COMMERCES_READING,
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
-  ON_COMMERCE_SEARCHING
+  ON_COMMERCE_SEARCHING,
+  ON_PROVINCE_FILTER_UPDATE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -14,7 +15,8 @@ const INITIAL_STATE = {
   favoriteCommerces: [],
   loading: false,
   searching: true,
-  areas: []
+  areas: [],
+  provinceNameFilter: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -32,7 +34,7 @@ export default (state = INITIAL_STATE, action) => {
       var favorites = state.favoriteCommerces.concat(action.payload);
       return { ...state, favoriteCommerces: favorites };
     case ONLY_FAVORITE_COMMERCES_READING:
-      return {...state , loading: true };
+      return { ...state, loading: true };
     case FAVORITE_COMMERCES_READ:
       return { ...state, favoriteCommerces: action.payload };
     case ONLY_FAVORITE_COMMERCES_READ:
@@ -45,6 +47,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, areas: action.payload, loading: false };
     case ON_COMMERCE_SEARCHING:
       return { ...state, searching: action.payload };
+    case ON_PROVINCE_FILTER_UPDATE:
+      return { ...state, provinceNameFilter: action.payload };
     default:
       return state;
   }

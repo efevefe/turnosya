@@ -31,7 +31,6 @@ const INITIAL_STATE = {
   address: '',
   city: '',
   province: { provinceId: '', name: '' },
-  provincesList: [{ value: '', label: '' }],
   area: { areaId: '', name: '' },
   areasList: [{ value: '', label: '' }],
   profilePicture: '',
@@ -73,8 +72,6 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
-    case ON_PROVINCES_READ:
-      return { ...state, provincesList: action.payload };
     case ON_AREAS_READ:
       return { ...state, areasList: action.payload };
     case CUIT_EXISTS:

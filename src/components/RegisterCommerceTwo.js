@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { trimString } from '../utils';
 import { MAIN_COLOR } from '../constants';
@@ -10,8 +9,9 @@ import { CardSection, Button, Input, Picker } from './common';
 import {
   onCreateCommerce,
   onCommerceValueChange,
-  onProvincesRead,
-  onLocationValueChange
+  onProvincesIdRead,
+  onLocationValueChange,
+  onAreasRead
 } from '../actions';
 
 class RegisterCommerceTwo extends Component {
@@ -22,8 +22,8 @@ class RegisterCommerceTwo extends Component {
     provinceError: ''
   };
 
-  componentWillMount() {
-    this.props.onProvincesRead();
+  componentDidMount() {
+    this.props.onProvincesIdRead();
   }
 
   onButtonPressHandler() {
@@ -144,12 +144,7 @@ class RegisterCommerceTwo extends Component {
   };
 
   onMapPress = () => {
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'commerceRegisterMap',
-      params: { callback: this.onProvinceNameChangeOnMap }
-    });
-
-    this.props.navigation.navigate(navigateAction);
+    this.props.navigation.navigate('commerceRegisterMap', { callback: this.onProvinceNameChangeOnMap });
   };
 
   render() {
@@ -282,7 +277,7 @@ export default connect(
   {
     onCommerceValueChange,
     onCreateCommerce,
-    onProvincesRead,
+    onProvincesIdRead,
     onLocationValueChange
   }
 )(RegisterCommerceTwo);

@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import { Platform, View, AppState, StyleSheet } from 'react-native';
+import { Divider } from 'react-native-elements';
+import { Menu } from './Menu';
+import { MenuItem } from './MenuItem';
+import { connect } from 'react-redux';
+import { Divider } from 'react-native-elements';
+import { onLocationChange } from '../../actions';
+import { Menu, MenuItem, Button } from '../common';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -8,11 +15,6 @@ import {
   getPermissionLocationStatus,
   getAddressFromLatAndLong
 } from '../../utils';
-import { Divider } from 'react-native-elements';
-import { Menu } from './Menu';
-import { MenuItem } from './MenuItem';
-import { connect } from 'react-redux';
-import { onLocationChange } from '../../actions';
 
 class LocationMessages extends Component {
   state = {
@@ -162,7 +164,8 @@ class LocationMessages extends Component {
   closeModal = () => {
     this.setState({ modal: false });
   };
-  render() {
+
+render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
       this.getAndSaveLocation();
       return <View />;

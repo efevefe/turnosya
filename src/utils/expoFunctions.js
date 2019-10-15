@@ -55,8 +55,8 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
 };
 
 export const openGPSAndroid = () => {
-  IntentLauncher.startActivityAsync(
-    IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
+  IntentLauncherAndroid.startActivityAsync(
+    IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
   ).then(async () => {
     if (await Location.hasServicesEnabledAsync()) {
       return LocationStatus.permissionsAllowed;

@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
-import { FlatList, Text, RefreshControl, TouchableHighlight, View } from 'react-native';
+import {
+  FlatList,
+  Text,
+  RefreshControl,
+  TouchableHighlight,
+  View
+} from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../components/common';
-import { 
-  onCommerceCourtTypesRead, 
-  onCourtReservationValueChange 
+import {
+  onCommerceCourtTypesRead,
+  onCourtReservationValueChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class CommerceCourtTypes extends Component {
   componentDidMount() {
     this.props.onCommerceCourtTypesRead({
-      commerceId: this.props.commerceId,
+      commerceId: this.props.commerce.objectID,
       loadingType: 'loading'
     });
   }
@@ -23,7 +29,7 @@ class CommerceCourtTypes extends Component {
         refreshing={this.props.refreshing}
         onRefresh={() => {
           this.props.onCommerceCourtTypesRead({
-            commerceId: this.props.commerceId,
+            commerceId: this.props.commerce.objectID,
             loadingType: 'refreshing'
           });
         }}
@@ -40,13 +46,13 @@ class CommerceCourtTypes extends Component {
     });
 
     this.props.navigation.navigate('commerceSchedule');
-  }
+  };
 
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
         onPress={() => this.onCourtTypePress(item.name)}
-        underlayColor='transparent'
+        underlayColor="transparent"
       >
         <Card
           image={item.image ? { uri: item.image } : null}
@@ -79,11 +85,11 @@ class CommerceCourtTypes extends Component {
 
     return (
       <EmptyList
-        title='Parece que no hay canchas'
+        title="Parece que no hay canchas"
         refreshControl={this.onRefresh()}
       />
     );
-  }
+  };
 
   render() {
     const { loading } = this.props;
@@ -96,15 +102,15 @@ class CommerceCourtTypes extends Component {
 
 const mapStateToProps = state => {
   const { courtTypesList, loading, refreshing } = state.commerceCourtTypes;
-  const commerceId = state.courtReservation.commerce.objectID;
+  const { commerce } = state.courtReservation;
 
-  return { commerceId, courtTypesList, loading, refreshing };
+  return { commerce, courtTypesList, loading, refreshing };
 };
 
 export default connect(
   mapStateToProps,
-  { 
+  {
     onCommerceCourtTypesRead,
     onCourtReservationValueChange
-   }
+  }
 )(CommerceCourtTypes);

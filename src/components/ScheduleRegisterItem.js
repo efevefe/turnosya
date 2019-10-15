@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { selectedDays } = state.scheduleRegister;
+  const { selectedDays } = state.commerceSchedule;
 
   return {
     selectedDays

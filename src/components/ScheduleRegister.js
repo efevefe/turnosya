@@ -148,7 +148,7 @@ const mapStateToProps = state => {
     reservationDayPeriod,
     loading,
     refreshing
-  } = state.scheduleRegister;
+  } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
 
   return {

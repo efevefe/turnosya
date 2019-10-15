@@ -24,7 +24,7 @@ import {
   onCommerceUpdateWithPicture,
   onCommerceUpdateNoPicture,
   onCommerceValueChange,
-  onProvincesRead,
+  onProvincesIdRead,
   onAreasRead,
   onLocationValueChange,
   onLocationChange
@@ -100,7 +100,7 @@ class commerceData extends Component {
   };
 
   onEditPress = () => {
-    this.props.onProvincesRead();
+    this.props.onProvincesIdRead();
     this.props.onAreasRead();
 
     const {
@@ -800,7 +800,6 @@ const mapStateToProps = state => {
     address,
     city,
     province,
-    provincesList,
     area,
     areasList,
     profilePicture,
@@ -810,6 +809,7 @@ const mapStateToProps = state => {
     latitude,
     longitude
   } = state.commerceData;
+  const { provincesList } = state.provinceData;
 
   let locationData = { ...state.locationData };
 
@@ -850,9 +850,9 @@ export default connect(
     onCommerceUpdateWithPicture,
     onCommerceUpdateNoPicture,
     onCommerceValueChange,
-    onProvincesRead,
+    onProvincesIdRead,
     onAreasRead,
     onLocationValueChange,
     onLocationChange
   }
-)(commerceData);
+)(CommerceProfile);
