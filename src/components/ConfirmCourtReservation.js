@@ -10,7 +10,6 @@ import {
     onCourtReservationValueChange,
     onClientCourtReservationCreate,
     onCourtReservationClear,
-    onCommerceCourtsRead
 } from '../actions';
 import CourtReservationDetails from './CourtReservationDetails';
 
@@ -39,11 +38,6 @@ class ConfirmCourtReservation extends Component {
     onBackPress = () => {
         this.onNewReservation();
         this.props.navigation.goBack(null);
-
-        this.props.onCommerceCourtsRead({
-            commerceId: this.props.commerce.objectID,
-            courtType: this.props.courtType
-        });
     }
 
     priceButtons = () => {
@@ -186,17 +180,16 @@ class ConfirmCourtReservation extends Component {
                 <CourtReservationDetails
                     commerce={commerce}
                     court={court}
-                    startDate={slot.startHour}
-                    endDate={slot.endHour}
+                    startDate={slot.startDate}
+                    endDate={slot.endDate}
                     price={price}
                     light={light}
                     showPrice={saved}
-                >
-                    {this.renderPriceButtons()}
-                    <View style={styles.confirmButtonContainer}>
-                        {this.renderButtons()}
-                    </View>
-                </CourtReservationDetails>
+                />
+                {this.renderPriceButtons()}
+                <View style={styles.confirmButtonContainer}>
+                    {this.renderButtons()}
+                </View>
             </View>
         );
     }
@@ -231,6 +224,5 @@ export default connect(
         onCourtReservationValueChange,
         onClientCourtReservationCreate,
         onCourtReservationClear,
-        onCommerceCourtsRead
     }
 )(ConfirmCourtReservation);

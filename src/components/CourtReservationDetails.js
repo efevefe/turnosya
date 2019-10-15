@@ -1,23 +1,51 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Divider, Avatar } from 'react-native-elements';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Divider, Avatar, Icon } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './common';
 import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
 
-const CourtReservationDetails = props => {
-    const {
-        commerce,
-        court,
-        startDate,
-        endDate,
-        price,
-        light,
-        showPrice,
-        children
-    } = props;
+class CourtReservationDetails extends Component {
+    state = { name: '', profilePicture: '' };
+
+    componentDidMount() {
+        const { commerce, client } = this.props;
+
+        if (commerce) {
+            this.setState({ name: commerce.name, profilePicture: commerce.profilePicture });
+        } else {
+            this.setState({ name: `${client.firstName} ${client.lastName}`, profilePicture: client.profilePicture });
+        }
+    }
+
+    /*
+    Esto queda comentado por ahora ya que la propiedad provinceName se llama asi cuando el commerce viene desde Algolia
+    pero se llama province.name cuando la consulta viene directo desde la base de datos, entonces habria que solucionar eso
+
+    renderAddress = () => {
+        if (this.props.commerce) {
+            const { address, city, provinceName } = this.props.commerce;
+
+            return (
+                <CardSection style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}>
+                    <Icon
+                        name="md-pin"
+                        type="ionicon"
+                        size={16}
+                        containerStyle={{ marginRight: 5 }}
+                    />
+                    <Text style={styles.regularText}>
+                        {`${address}, ${city}, ${provinceName}`}
+                    </Text>
+                </CardSection>
+            );
+        }
+    }
+    */
 
     renderPrice = () => {
+        const { price, showPrice } = this.props;
+
         if (showPrice) {
             return (
                 <CardSection style={[styles.cardSections, { marginTop: 15 }]}>
@@ -29,66 +57,69 @@ const CourtReservationDetails = props => {
         }
     }
 
-    return (
-        <ScrollView>
-            <View style={{ flex: 1 }}>
-                <View style={styles.mainContainer}>
-                    <Avatar
-                        rounded
-                        source={commerce.profilePicture ? { uri: commerce.profilePicture } : null}
-                        size={90}
-                        icon={{ name: 'store' }}
-                        containerStyle={styles.avatarStyle}
-                    />
-                    <View style={styles.contentContainer}>
-                        <CardSection style={[styles.cardSections, { paddingBottom: 8 }]}>
-                            <Text style={styles.bigText}>
-                                {commerce.name}
-                            </Text>
-                        </CardSection>
-                        <CardSection style={[styles.cardSections, { paddingBottom: 3 }]}>
-                            <Text style={styles.mediumText}>
-                                {commerce.address}
-                            </Text>
-                        </CardSection>
-                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                            <Text style={styles.mediumText}>
-                                {court.name}
-                            </Text>
-                        </CardSection>
-                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                            <Text style={styles.regularText}>
-                                {`${court.court} - ${court.ground}`}
-                            </Text>
-                        </CardSection>
-                        <CardSection style={styles.cardSections}>
-                            <Text style={styles.regularText}>
-                                {light ? 'Con Luz' : 'Sin Luz'}
-                            </Text>
-                        </CardSection>
-                        <Divider style={styles.divider} />
-                        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                            <Text style={styles.regularText}>
-                                {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${MONTHS[moment(startDate).month()]}`}
-                            </Text>
-                        </CardSection>
-                        <CardSection style={styles.cardSections}>
-                            <Text style={styles.regularText}>
-                                {`De ${moment(startDate).format('HH:mm')} hs. a ${moment(endDate).format('HH:mm')} hs.`}
-                            </Text>
-                        </CardSection>
-                        {this.renderPrice()}
-                        {children}
-                    </View>
+    render() {
+        const {
+            court,
+            startDate,
+            endDate,
+            light,
+            commerce
+        } = this.props;
+
+        const { name, profilePicture } = this.state;
+
+        return (
+            <View style={styles.mainContainer}>
+                <Avatar
+                    rounded
+                    source={profilePicture ? { uri: profilePicture } : null}
+                    size={90}
+                    icon={{ name: commerce ? 'store' : 'person' }}
+                    containerStyle={styles.avatarStyle}
+                />
+                <View style={styles.contentContainer}>
+                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                        <Text style={styles.bigText}>
+                            {name}
+                        </Text>
+                    </CardSection>
+                    {/*this.renderAddress()*/}
+                    <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
+                        <Text style={styles.mediumText}>
+                            {court.name}
+                        </Text>
+                    </CardSection>
+                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                        <Text style={styles.regularText}>
+                            {`${court.court} - ${court.ground}`}
+                        </Text>
+                    </CardSection>
+                    <CardSection style={styles.cardSections}>
+                        <Text style={styles.regularText}>
+                            {light ? 'Con Luz' : 'Sin Luz'}
+                        </Text>
+                    </CardSection>
+                    <Divider style={styles.divider} />
+                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                        <Text style={styles.regularText}>
+                            {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${MONTHS[moment(startDate).month()]}`}
+                        </Text>
+                    </CardSection>
+                    <CardSection style={styles.cardSections}>
+                        <Text style={styles.regularText}>
+                            {`De ${moment(startDate).format('HH:mm')} hs. a ${moment(endDate).format('HH:mm')} hs.`}
+                        </Text>
+                    </CardSection>
+                    {this.renderPrice()}
                 </View>
             </View>
-        </ScrollView>
-    );
+        );
+    }
+
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1,
         padding: 5,
         paddingTop: 15,
         alignItems: 'center',
@@ -101,7 +132,6 @@ const styles = StyleSheet.create({
         marginBottom: 8
     },
     contentContainer: {
-        flex: 1,
         alignSelf: 'stretch',
         justifyContent: 'flex-start'
     },

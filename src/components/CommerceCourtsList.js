@@ -1,110 +1,82 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, Text } from 'react-native';
-import { ListItem } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
-import { Spinner, EmptyList } from './common';
-import { onCommerceCourtsRead, onCourtReservationValueChange } from '../actions';
+import { FlatList, View } from 'react-native';
+import { Spinner, EmptyList, Toast } from './common';
+import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
+import {
+  onCourtReservationValueChange,
+  onCommerceCourtTypeReservationsRead,
+} from '../actions';
 
 class CommerceCourtsList extends Component {
-    componentDidMount() {
-        this.props.onCommerceCourtsRead({
-            commerceId: this.props.commerce.objectID,
-            courtType: this.props.courtType
-        });
+  courtReservation = court => {
+    const { reservations, slot } = this.props;
+
+    return reservations.find(reservation => {
+      return (
+        reservation.startDate.toString() === slot.startDate.toString()
+        && reservation.courtId === court.id
+      );
+    });
+  }
+
+  onCourtPress = court => {
+    this.props.onCourtReservationValueChange({
+      prop: 'court',
+      value: court
+    });
+
+    this.props.navigation.navigate('confirmCourtReservation');
+  };
+
+  renderRow = ({ item }) => {
+    const courtAvailable = !this.courtReservation(item);
+
+    return (
+      <CommerceCourtsStateListItem
+        court={item}
+        commerceId={this.props.commerce.objectID}
+        navigation={this.props.navigation}
+        courtAvailable={courtAvailable}
+        onPress={() => courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya está reservada' })}
+      />
+    );
+  };
+
+  renderList = () => {
+    if (this.props.courts.length > 0) {
+      return (
+        <FlatList
+          data={this.props.courts}
+          renderItem={this.renderRow.bind(this)}
+          keyExtractor={court => court.id}
+          extraData={this.props.reservations}
+        />
+      );
     }
 
-    onCourtPress = court => {
-        this.props.onCourtReservationValueChange({
-            prop: 'court',
-            value: court
-        });
+    return <EmptyList title="No hay canchas disponibles" />;
+  };
 
-        this.props.navigation.navigate('confirmCourtReservation');
-    }
+  render() {
+    if (this.props.loading) return <Spinner />;
 
-    renderRow({ item }) {
-        const {
-            name,
-            court,
-            ground,
-            price,
-            lightPrice,
-            id
-        } = item;
-
-        return (
-            <ListItem
-                title={name}
-                titleStyle={{
-                    textAlign: 'left',
-                    display: 'flex'
-                }}
-                rightTitle={
-                    lightPrice !== '' ? (
-                        <View style={{ justifyContent: 'space-between' }}>
-                            <Text
-                                style={{
-                                    textAlign: 'right',
-                                    color: 'black'
-                                }}
-                            >{`Sin luz: $${price}`}</Text>
-                            <Text
-                                style={{
-                                    textAlign: 'right',
-                                    color: 'black'
-                                }}
-                            >{`Con luz: $${lightPrice}`}</Text>
-                        </View>
-                    ) : (
-                            <Text>{`Sin luz: $${price}`}</Text>
-                        )
-                }
-                key={id}
-                subtitle={
-                    <Text style={{ color: 'grey' }}>
-                        {`${court} - ${ground}`}
-                    </Text>
-                }
-                rightIcon={{ name: 'ios-arrow-forward', type: 'ionicon', color: 'black' }}
-                onPress={() => this.onCourtPress(item)}
-                bottomDivider
-            />
-        );
-    }
-
-    renderList = () => {
-        if (this.props.courts.length > 0) {
-            return (
-                <FlatList
-                    data={this.props.courts}
-                    renderItem={this.renderRow.bind(this)}
-                    keyExtractor={court => court.id}
-                    contentContainerStyle={{ paddingBottom: 95 }}
-                />
-            );
-        }
-
-        return <EmptyList title='No hay canchas disponibles' />;
-    }
-
-    render() {
-        if (this.props.loading) return <Spinner />;
-
-        return (
-            <View style={{ flex: 1 }}>
-                {this.renderList()}
-            </View>
-        );
-    }
+    return <View style={{ flex: 1 }}>{this.renderList()}</View>;
+  }
 }
 
 const mapStateToProps = state => {
-    const { courts, loading } = state.courtsList;
-    const { courtType } = state.courtReservation;
-    const { commerce } = state.courtReservation;
+  const { courts } = state.courtsList;
+  const { commerce, courtType, slot } = state.courtReservation;
+  const { reservations, loading } = state.courtReservationsList;
 
-    return { commerce, courtType, courts, loading };
+  return { commerce, courtType, reservations, courts, loading, slot };
 };
 
-export default connect(mapStateToProps, { onCommerceCourtsRead, onCourtReservationValueChange })(CommerceCourtsList);
+export default connect(
+  mapStateToProps,
+  {
+    onCourtReservationValueChange,
+    onCommerceCourtTypeReservationsRead,
+  }
+)(CommerceCourtsList);

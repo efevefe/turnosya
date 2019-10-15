@@ -17,10 +17,11 @@ import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
 import ClientReservationsList from '../components/ClientReservationsList'
 import ClientReservationDetails from '../components/ClientReservationDetails'
+import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
+
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const searchStack = createStackNavigator(
-  { 
+const mainSearchStack = createStackNavigator({
     commercesAreas: {
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
@@ -63,6 +64,38 @@ const searchStack = createStackNavigator(
   },
   stackNavigationOptions
 );
+
+const searchStack = createStackNavigator(
+  {
+    main: {
+      screen: mainSearchStack
+    },
+    commercesFiltersScreen: {
+      screen: CommercesFiltersScreen
+    }
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none'
+  }
+);
+
+searchStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === 'commercesFiltersScreen') {
+        tabBarVisible = false;
+      } else {
+        tabBarVisible = true;
+      }
+    });
+  }
+
+  return {
+    tabBarVisible
+  };
+};
 
 const calendarStack = createStackNavigator(
   {

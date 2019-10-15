@@ -7,10 +7,12 @@ import CourtFormReducer from './CourtFormReducer';
 import CourtListReducer from './CourtListReducer';
 import CommerceDataReducer from './CommerceDataReducer';
 import CommercesListReducer from './CommercesListReducer';
-import ScheduleRegisterReducer from './ScheduleRegisterReducer';
+import CommerceScheduleReducer from './CommerceScheduleReducer';
 import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 import CourtReservationReducer from './CourtReservationReducer';
 import ClientReservationsListReducer from './ClientReservationsListReducer'
+import CourtReservationsListReducer from './CourtReservationsListReducer';
+import ProvinceDataReducer from './ProvinceDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -21,8 +23,10 @@ export default combineReducers({
   courtsList: CourtListReducer,
   commerceData: CommerceDataReducer,
   commercesList: CommercesListReducer,
-  scheduleRegister: ScheduleRegisterReducer,
+  commerceSchedule: CommerceScheduleReducer,
   commerceCourtTypes: CommerceCourtTypesReducer,
   courtReservation: CourtReservationReducer,
-  clientReservationsList:ClientReservationsListReducer
+  clientReservationsList:ClientReservationsListReducer,
+  courtReservationsList: CourtReservationsListReducer,
+  provinceData: ProvinceDataReducer
 });
