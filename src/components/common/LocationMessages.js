@@ -4,9 +4,7 @@ import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
-import { Divider } from 'react-native-elements';
 import { onLocationChange } from '../../actions';
-import { Menu, MenuItem, Button } from '../common';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -165,7 +163,7 @@ class LocationMessages extends Component {
     this.setState({ modal: false });
   };
 
-render() {
+  render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
       this.getAndSaveLocation();
       return <View />;

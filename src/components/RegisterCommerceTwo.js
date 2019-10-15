@@ -10,20 +10,21 @@ import {
   onCreateCommerce,
   onCommerceValueChange,
   onProvincesIdRead,
-  onLocationValueChange,
-  onAreasRead
+  onLocationValueChange
 } from '../actions';
 
 class RegisterCommerceTwo extends Component {
-  state = {
-    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-    addressError: '',
-    cityError: '',
-    provinceError: ''
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
-    this.props.onProvincesIdRead();
+    this.state = {
+      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+      addressError: '',
+      cityError: '',
+      provinceError: ''
+    };
+
+    props.onProvincesIdRead();
   }
 
   onButtonPressHandler() {
@@ -144,7 +145,9 @@ class RegisterCommerceTwo extends Component {
   };
 
   onMapPress = () => {
-    this.props.navigation.navigate('commerceRegisterMap', { callback: this.onProvinceNameChangeOnMap });
+    this.props.navigation.navigate('commerceRegisterMap', {
+      callback: this.onProvinceNameChangeOnMap
+    });
   };
 
   render() {
@@ -238,12 +241,13 @@ const mapStateToProps = state => {
     phone,
     description,
     province,
-    provincesList,
     area,
     areasList,
     loading,
     error
   } = state.commerceData;
+
+  const { provincesList } = state.provinceData;
 
   const {
     address,

@@ -3,8 +3,8 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import ServicesList from '../components/ServicesList';
-import ServiceForm from '../components/ServiceForm';
+// import ServicesList from '../components/ServicesList';
+// import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
 import ScheduleRegister from '../components/ScheduleRegister';
@@ -89,12 +89,13 @@ const reservationsStack = createStackNavigator(
         )
       })
     },
-    reservationDetails: { // la pantalla de detalles del turno que es alternativa al modal
+    reservationDetails: {
+      // la pantalla de detalles del turno que es alternativa al modal
       screen: CommerceCourtReservationDetails,
       navigationOptions: {
         title: 'Detalles del Turno'
       }
-    },
+    }
   },
   stackNavigationOptions
 );

@@ -134,7 +134,7 @@ class LocationMap extends React.Component {
       this.getAddressFromLatAndLong({ latitude, longitude });
     } else {
       Toast.show({
-        text: 'No se han encontrado resultado, intente modificar la dirección.'
+        text: 'No se han encontrado resultados, intente modificar la dirección.'
       });
     }
   };

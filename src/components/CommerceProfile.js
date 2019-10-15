@@ -30,7 +30,7 @@ import {
   onLocationChange
 } from '../actions';
 
-class commerceData extends Component {
+class CommerceProfile extends Component {
   constructor(props) {
     super(props);
 
