@@ -25,8 +25,7 @@ class LocationMap extends React.Component {
 
     // Toda esta lógica hay que sacarla del constructor y meterla al componentDidMount. Leer documentación de React
 
-    const { markers } = props.navigation.state.params;
-    // CAMBIAR A GETPARAMS
+    const { markers } = props.navigation.getParam('markers', {});
     if (markers) {
       if (markers.length > 1) {
         props.onLocationValueChange({ prop: 'markers', value: markers });
@@ -51,7 +50,7 @@ class LocationMap extends React.Component {
   };
 
   async componentDidMount() {
-    const { markers } = this.props.navigation.state.params;
+    const { markers } = this.props.navigation.getParam('markers', {});
 
     if (!markers) {
       const { address, city, provinceName } = this.props;
