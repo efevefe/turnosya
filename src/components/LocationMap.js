@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import MapView from 'react-native-maps';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../constants';
 import { HeaderBackButton } from 'react-navigation-stack';
 import LocationMessages from './common/LocationMessages';
-import { Toast, IconButton } from '../components/common';
+import { Toast, IconButton } from './common';
 import { onLocationChange, onLocationValueChange } from '../actions';
 
 class LocationMap extends React.Component {
@@ -140,19 +140,21 @@ class LocationMap extends React.Component {
       latitude,
       longitude
     });
-    const { name, city, region, country } = addresResult;
+    const { name, street, city, region, country } = addresResult;
+
+    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
     const location = {
       latitude,
       longitude,
-      address: name,
+      address,
       provinceName: region,
       city,
       country
     };
 
     this.setState({
-      completeAddress: `${name}, ${region}, ${city}, ${country}`
+      completeAddress: `${address}, ${region}, ${city}, ${country}`
     });
 
     this.props.onLocationChange({ location });
