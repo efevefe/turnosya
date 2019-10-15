@@ -25,6 +25,7 @@ export const onCommerceCourtTypeReservationsRead = ({
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('courtType', '==', courtType)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
@@ -64,6 +65,7 @@ export const onCommerceCourtReservationsRead = ({
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
         'startDate',
@@ -100,6 +102,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
         'startDate',
