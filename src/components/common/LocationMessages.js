@@ -63,7 +63,7 @@ class LocationMessages extends Component {
       latitude,
       longitude
     });
-    const { name, city, region, country } = addresResult;
+    const { name, street, city, region, country } = addresResult;
 
     const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 

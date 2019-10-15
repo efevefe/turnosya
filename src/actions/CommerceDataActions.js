@@ -217,12 +217,12 @@ export const onCommerceUpdateNoPicture = ({
       })
       .then(() => {
         index.saveObject({
-          address: address,
+          address,
           areaName: area.name,
           objectID: commerceId,
-          description: description,
-          name: name,
-          city: city,
+          description,
+          name,
+          city,
           provinceName: province.name
         });
         dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
