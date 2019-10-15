@@ -23,14 +23,16 @@ class LocationMap extends React.Component {
       stateBeforeChanges: null
     };
 
-    const { markers } = this.props.navigation.state.params;
+    // Toda esta lógica hay que sacarla del constructor y meterla al componentDidMount. Leer documentación de React
 
+    const { markers } = props.navigation.state.params;
+    // CAMBIAR A GETPARAMS
     if (markers) {
       if (markers.length > 1) {
-        this.props.onLocationValueChange({ prop: 'markers', value: markers });
+        props.onLocationValueChange({ prop: 'markers', value: markers });
       } else {
         for (prop in markers[0]) {
-          this.props.onLocationValueChange({ prop, value: markers[0][prop] });
+          props.onLocationValueChange({ prop, value: markers[0][prop] });
         }
       }
     }

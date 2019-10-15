@@ -4,7 +4,7 @@ import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR } from '../constants';
-import GeocodingScreen from './GeocodingScreen';
+import LocationMap from './LocationMap';
 
 export default class CommercesFiltersMap extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class CommercesFiltersMap extends Component {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <GeocodingScreen />
+          <LocationMap navigation={this.props.navigation} />
         </View>
       </View>
     );
