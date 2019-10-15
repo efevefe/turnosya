@@ -13,7 +13,7 @@ class ClientReservationDetails extends Component {
     const { reservation } = this.props.navigation.state.params;
     this.state = {
       reservation,
-      visible: false
+      optionsVisible: false
     };
   }
 
@@ -21,14 +21,15 @@ class ClientReservationDetails extends Component {
     const { startDate } = this.state.reservation;
     if (startDate > moment())
       return (
-        <CardSection>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <CardSection>
             <Button
-              loading={this.props.loading}
               title="Cancelar Reserva"
               type="solid"
-              onPress={() => this.setState({ visible: true })}
+              onPress={() => this.setState({ optionsVisible: true })}
             />
-        </CardSection>
+          </CardSection>
+        </View>
       );
   };
 
@@ -48,25 +49,27 @@ class ClientReservationDetails extends Component {
       <View style={{ flex: 1 }}>
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
-          onBackdropPress={this.onOptionsPress}
-          isVisible={this.state.visible}
+          onBackdropPress={() => this.setState({ optionsVisible: false })}
+          isVisible={this.state.optionsVisible || this.props.loading}
         >
           <MenuItem
             title="Aceptar"
-            icon="md-trash"
-            onPress={() =>
-              this.props.onClientCancelReservation(
-                id,
+            icon="md-checkmark"
+            loadingWithText={this.props.loading}
+            onPress={() => {
+              this.setState({ optionsVisible: false });
+              this.props.onClientCancelReservation({
+                reservationId: id,
                 commerceId,
-                this.props.navigation
-              )
-            }
+                navigation: this.props.navigation
+              });
+            }}
           />
           <Divider style={{ backgroundColor: "grey" }} />
           <MenuItem
             title="Cancelar"
             icon="md-close"
-            onPress={() => this.setState({ visible: false })}
+            onPress={() => this.setState({ optionsVisible: false })}
           />
         </Menu>
         <CourtReservationDetails

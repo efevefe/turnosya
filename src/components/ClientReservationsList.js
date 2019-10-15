@@ -10,11 +10,14 @@ import moment from "moment";
 class ClientReservationsList extends Component {
   constructor(props) {
     super(props);
-    props.onClientReservationsListRead();
     this.state = {
       selectedIndex: 1,
       filteredList: []
     };
+  }
+
+  componentDidMount() {
+    this.props.onClientReservationsListRead();
   }
 
   componentDidUpdate(prevProps) {
@@ -46,14 +49,15 @@ class ClientReservationsList extends Component {
       <ListItem
         title={commerce.name}
         rightTitle={`$${price}`}
+        rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format("D")} de ${
           MONTHS[startDate.month()]
-        }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
-          "HH:mm"
-        )} hs.`}
+          }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
+            "HH:mm"
+          )} hs.`}
         bottomDivider
         onPress={() =>
-          this.props.navigation.navigate("reservationDetails", {reservation: item })
+          this.props.navigation.navigate("reservationDetails", { reservation: item })
         }
       ></ListItem>
     );
@@ -89,9 +93,8 @@ class ClientReservationsList extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
@@ -104,7 +107,12 @@ class ClientReservationsList extends Component {
           textStyle={{ color: "white" }}
           innerBorderStyle={{ width: 0 }}
         />
-        {this.renderList()}
+
+        {
+          this.props.loading
+            ? <Spinner style={{ position: 'relative' }} />
+            : this.renderList()
+        }
       </View>
     );
   }

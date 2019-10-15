@@ -57,14 +57,15 @@ export const onClientReservationsListRead = () => {
   };
 };
 
-export const onClientCancelReservation = (
-  reservationsId,
+export const onClientCancelReservation = ({
+  reservationId,
   commerceId,
   navigation
-) => {
+}) => {
   const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
-  var batch = db.batch();
+  const db = firebase.firestore();
+  const batch = db.batch();
+  
   return dispatch => {
     dispatch({ type: ON_CLIENT_RESERVATION_CANCELING }),
       db
@@ -74,7 +75,7 @@ export const onClientCancelReservation = (
           const cancelationDate = new Date();
           batch.update(
             db.doc(
-              `Profiles/${currentUser.uid}/Reservations/${reservationsId}`
+              `Profiles/${currentUser.uid}/Reservations/${reservationId}`
             ),
             {
               state: { id: stateDoc.id, name: stateDoc.data().name },
@@ -82,7 +83,7 @@ export const onClientCancelReservation = (
             }
           );
           batch.update(
-            db.doc(`Commerces/${commerceId}/Reservations/${reservationsId}`),
+            db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
             {
               state: { id: stateDoc.id, name: stateDoc.data().name },
               cancelationDate
