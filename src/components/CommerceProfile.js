@@ -464,11 +464,7 @@ class commerceData extends Component {
     }
   };
 
-  onProvinceNameChangeOnMap = newProvinceName => {
-    this.matchProvinceByValue(newProvinceName);
-  };
-
-  matchProvinceByValue = name => {
+  onProvinceNameChangeOnMap = name => {
     const province = this.props.provincesList.find(
       province => province.label.toLowerCase() === name.toLowerCase()
     );

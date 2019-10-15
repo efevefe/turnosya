@@ -65,8 +65,10 @@ class LocationMessages extends Component {
     });
     const { name, city, region, country } = addresResult;
 
+    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+
     const location = {
-      address: name,
+      address,
       city,
       provinceName: region,
       country,
@@ -181,7 +183,7 @@ class LocationMessages extends Component {
   }
 }
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   modalItemsContainer: {
     flexDirection: 'row'
   }

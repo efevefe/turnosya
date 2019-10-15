@@ -74,7 +74,11 @@ class LocationMap extends React.Component {
       prevProps.longitude !== this.props.longitude &&
       this.state.locationAsked
     ) {
-      this.setState({ locationAsked: false });
+      const { address, provinceName, city, country } = this.props;
+      this.setState({
+        locationAsked: false,
+        completeAddress: `${address}, ${provinceName}, ${city}, ${country}`
+      });
       if (this.props.navigation.state.params.callback) {
         this.props.navigation.state.params.callback(this.props.provinceName);
       }
@@ -130,7 +134,7 @@ class LocationMap extends React.Component {
       this.getAddressFromLatAndLong({ latitude, longitude });
     } else {
       Toast.show({
-        text: 'No se han encontrado resultado. Intente modificar dirección.'
+        text: 'No se han encontrado resultado, intente modificar la dirección.'
       });
     }
   };
