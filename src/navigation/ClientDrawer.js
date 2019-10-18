@@ -3,11 +3,11 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
 import ClientNavigation from './ClientNavigation';
 import ClientDrawerContent from './ClientDrawerContent';
-import Welcome from '../components/Welcome';
-import RegisterCommerce from '../components/RegisterCommerce';
-import RegisterCommerceTwo from '../components/RegisterCommerceTwo';
+import Welcome from '../components/client/Welcome';
+import RegisterCommerce from '../components/client/RegisterCommerce';
+import RegisterCommerceTwo from '../components/client/RegisterCommerceTwo';
 import LocationMap from '../components/LocationMap';
-import ClientSettings from '../components/ClientSettings';
+import ClientSettings from '../components/client/ClientSettings';
 import {
   stackNavigationOptions,
   drawerNavigationOptions

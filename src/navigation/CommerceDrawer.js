@@ -3,7 +3,7 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
-import CommerceSettings from '../components/CommerceSettings';
+import CommerceSettings from '../components/commerce/CommerceSettings';
 import {
   stackNavigationOptions,
   drawerNavigationOptions
