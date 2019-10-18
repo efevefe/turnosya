@@ -4,8 +4,8 @@ import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from './common';
 import {
-  onRegisterValueChange,
-  onRegister,
+  onClientDataValueChange,
+  onUserRegister,
   onRegisterFormOpen
 } from '../actions';
 import { validateValueType, trimString } from '../utils';
@@ -26,7 +26,7 @@ class RegisterForm extends Component {
 
   onButtonPressHandler = () => {
     if (this.validateMinimumData()) {
-      this.props.onRegister({
+      this.props.onUserRegister({
         email: this.props.email,
         password: this.props.password,
         firstName: this.props.firstName,
@@ -79,9 +79,9 @@ class RegisterForm extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onRegisterValueChange } = this.props;
+    const { firstName, onClientDataValueChange } = this.props;
     const value = trimString(firstName);
-    onRegisterValueChange({ prop: 'firstName', value });
+    onClientDataValueChange({ prop: 'firstName', value });
 
     if (value === '') {
       this.setState({ firstNameError: 'Dato requerido' });
@@ -96,9 +96,9 @@ class RegisterForm extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onRegisterValueChange } = this.props;
+    const { lastName, onClientDataValueChange } = this.props;
     const value = trimString(lastName);
-    onRegisterValueChange({ prop: 'lastName', value });
+    onClientDataValueChange({ prop: 'lastName', value });
 
     if (value === '') {
       this.setState({ lastNameError: 'Dato requerido' });
@@ -149,7 +149,7 @@ class RegisterForm extends Component {
               value={this.props.email}
               errorMessage={this.state.emailError || this.props.error}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'email',
                   value
                 })
@@ -167,7 +167,7 @@ class RegisterForm extends Component {
               value={this.props.password}
               errorMessage={this.state.passwordError}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'password',
                   value
                 })
@@ -185,7 +185,7 @@ class RegisterForm extends Component {
               value={this.props.confirmPassword}
               errorMessage={this.state.confirmPasswordError}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'confirmPassword',
                   value
                 })
@@ -202,7 +202,7 @@ class RegisterForm extends Component {
               value={this.props.firstName}
               errorMessage={this.state.firstNameError}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'firstName',
                   value
                 })
@@ -219,7 +219,7 @@ class RegisterForm extends Component {
               value={this.props.lastName}
               errorMessage={this.state.lastNameError}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'lastName',
                   value
                 })
@@ -237,7 +237,7 @@ class RegisterForm extends Component {
               value={this.props.phone}
               errorMessage={this.state.phoneError}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'phone',
                   value
                 })
@@ -285,5 +285,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onRegisterValueChange, onRegister, onRegisterFormOpen }
+  { onClientDataValueChange, onUserRegister, onRegisterFormOpen }
 )(RegisterForm);

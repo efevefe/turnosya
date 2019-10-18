@@ -27,11 +27,20 @@ class CommerceCourtReservations extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+    }
+
     onDateSelected = date => {
         const { commerceId } = this.props;
         const selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
 
-        this.props.onCommerceDetailedCourtReservationsRead({ commerceId, selectedDate });
+        this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+        this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({
+            commerceId,
+            selectedDate
+        });
+
         this.setState({ selectedDate });
     }
 
@@ -110,7 +119,7 @@ class CommerceCourtReservations extends Component {
                 />
             );
         }
-        
+
         return <EmptyList title='No hay turnos' />;
     };
 

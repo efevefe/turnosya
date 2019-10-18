@@ -8,7 +8,16 @@ import { MAIN_COLOR } from '../constants';
 
 class FavoriteCommercesList extends Component {
   componentDidMount() {
-    this.props.readOnlyFavoriteCommerces();
+    this.onFavoriteCommercesRead();
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFavoritesRead && this.unsubscribeFavoritesRead();
+  }
+
+  onFavoriteCommercesRead = () => {
+    this.unsubscribeFavoritesRead && this.unsubscribeFavoritesRead();
+    this.unsubscribeFavoritesRead = this.props.readOnlyFavoriteCommerces();
   }
 
   renderRow({ item }) {
@@ -21,7 +30,7 @@ class FavoriteCommercesList extends Component {
     return (
       <RefreshControl
         refreshing={this.props.refreshing}
-        onRefresh={() => this.props.readOnlyFavoriteCommerces()}
+        onRefresh={() => this.onFavoriteCommercesRead()}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />

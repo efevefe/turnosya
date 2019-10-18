@@ -262,7 +262,7 @@ class CommerceProfile extends Component {
       aspect: [1, 1]
     };
 
-    let response = await ImagePicker.launchImageLibraryAsync(options);
+    const response = await ImagePicker.launchImageLibraryAsync(options);
 
     if (!response.cancelled) {
       this.props.onCommerceValueChange({
@@ -285,7 +285,7 @@ class CommerceProfile extends Component {
       aspect: [1, 1]
     };
 
-    let response = await ImagePicker.launchCameraAsync(options);
+    const response = await ImagePicker.launchCameraAsync(options);
 
     if (!response.cancelled) {
       this.props.onCommerceValueChange({

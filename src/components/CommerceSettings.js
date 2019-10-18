@@ -25,7 +25,7 @@ class CommerceSettings extends Component {
     };
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });

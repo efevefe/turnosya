@@ -29,7 +29,7 @@ class RegisterCommerceTwo extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      var {
+      const {
         name,
         cuit,
         email,
@@ -62,7 +62,7 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = async index => {
-    var { value, label } =
+    const { value, label } =
       index > 0
         ? this.props.provincesList[index - 1]
         : this.state.pickerPlaceholder;

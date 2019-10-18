@@ -9,8 +9,12 @@ import { courtsRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class CourtList extends Component {
-  componentWillMount() {
-    this.props.courtsRead(this.props.commerceId);
+  componentDidMount() {
+    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
   }
 
   renderRow({ item }) {

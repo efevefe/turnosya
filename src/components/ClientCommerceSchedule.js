@@ -28,7 +28,7 @@ class ClientCommerceSchedule extends Component {
     });
 
     this.props.onScheduleRead(this.props.commerce.objectID);
-    this.props.onCommerceCourtsReadByType({
+    this.unsubscribeCourtsRead = this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
     });
@@ -38,6 +38,11 @@ class ClientCommerceSchedule extends Component {
     if (prevProps.reservations !== this.props.reservations) {
       this.reservationsOnSlots(this.props.slots);
     }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
+    this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
   }
 
   renderBackButton = () => {
@@ -57,7 +62,8 @@ class ClientCommerceSchedule extends Component {
   onDateChanged = date => {
     this.setState({ selectedDate: date });
 
-    this.props.onCommerceCourtTypeReservationsRead({
+    this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+    this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: date,
       courtType: this.props.courtType

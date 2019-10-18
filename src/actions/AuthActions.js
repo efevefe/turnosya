@@ -178,7 +178,7 @@ export const onLogout = () => {
 export const userReauthenticate = async (password = null) => {
   const { currentUser } = firebase.auth();
   const provider = currentUser.providerData[0].providerId;
-  var credential;
+  let credential;
 
   if (provider == 'password') {
     credential = await firebase.auth.EmailAuthProvider.credential(

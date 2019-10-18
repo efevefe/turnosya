@@ -13,12 +13,13 @@ class CommercesAreas extends Component {
     };
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.areasRead();
     this.props.navigation.setParams({
       rightIcon: this.renderRightIcon()
     });
   }
+
   renderRightIcon = () => {
     return (
       <TouchableOpacity

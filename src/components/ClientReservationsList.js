@@ -17,7 +17,7 @@ class ClientReservationsList extends Component {
   }
 
   componentDidMount() {
-    this.props.onClientReservationsListRead();
+    this.onReservationsRead();
   }
 
   componentDidUpdate(prevProps) {
@@ -26,9 +26,19 @@ class ClientReservationsList extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+  }
+
+  onReservationsRead = () => {
+    this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+    this.unsubscribeReservationsRead = this.props.onClientReservationsListRead();
+  }
+
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
-    var filteredList = [];
+    let filteredList = [];
+
     if (selectedIndex == 0) {
       // turnos pasados
       filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
@@ -36,7 +46,19 @@ class ClientReservationsList extends Component {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
     }
+    
     this.setState({ filteredList, selectedIndex });
+  };
+
+  onRefresh = () => {
+    return (
+      <RefreshControl
+        refreshing={this.props.refreshing}
+        onRefresh={() => this.onReservationsRead()}
+        colors={[MAIN_COLOR]}
+        tintColor={MAIN_COLOR}
+      />
+    );
   };
 
   renderRow = ({ item }) => {
@@ -56,7 +78,7 @@ class ClientReservationsList extends Component {
         onPress={() =>
           this.props.navigation.navigate("reservationDetails", { reservation: item })
         }
-      ></ListItem>
+      />
     );
   };
 
@@ -75,17 +97,6 @@ class ClientReservationsList extends Component {
 
     return <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />;
   }
-
-  onRefresh = () => {
-    return (
-      <RefreshControl
-        refreshing={this.props.refreshing}
-        onRefresh={() => this.props.onClientReservationsListRead()}
-        colors={[MAIN_COLOR]}
-        tintColor={MAIN_COLOR}
-      />
-    );
-  };
 
   render() {
     return (

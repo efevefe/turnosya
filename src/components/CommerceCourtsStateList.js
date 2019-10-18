@@ -4,7 +4,6 @@ import { FlatList, View } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from './common';
 import {
-  onCommerceCourtReservationsRead,
   onReservationClientRead,
   onCourtReservationsListValueChange
 } from '../actions';
@@ -136,5 +135,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCommerceCourtReservationsRead, onReservationClientRead, onCourtReservationsListValueChange }
+  { onReservationClientRead, onCourtReservationsListValueChange }
 )(CommerceCourtsStateList);

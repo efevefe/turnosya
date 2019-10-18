@@ -171,7 +171,7 @@ class Schedule extends Component {
   onRefresh = () => {
     return (
       <RefreshControl
-        refreshing={this.props.refreshing}
+        refreshing={this.props.refresh ? this.props.refreshing : false}
         onRefresh={this.props.refresh ? this.props.refresh : null}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}

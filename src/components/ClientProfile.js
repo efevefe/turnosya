@@ -21,8 +21,7 @@ import {
   onUserRead,
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
-  onRegisterValueChange,
-  servicesRead
+  onClientDataValueChange
 } from '../actions';
 
 class ClientProfile extends Component {
@@ -109,7 +108,7 @@ class ClientProfile extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
-      this.props.onRegisterValueChange({
+      this.props.onClientDataValueChange({
         prop,
         value: stateBeforeChanges[prop]
       });
@@ -175,7 +174,7 @@ class ClientProfile extends Component {
     let response = await ImagePicker.launchImageLibraryAsync(options);
 
     if (!response.cancelled) {
-      this.props.onRegisterValueChange({
+      this.props.onClientDataValueChange({
         prop: 'profilePicture',
         value: response.uri
       });
@@ -198,7 +197,7 @@ class ClientProfile extends Component {
     let response = await ImagePicker.launchCameraAsync(options);
 
     if (!response.cancelled) {
-      this.props.onRegisterValueChange({
+      this.props.onClientDataValueChange({
         prop: 'profilePicture',
         value: response.uri
       });
@@ -207,7 +206,7 @@ class ClientProfile extends Component {
   };
 
   onDeletePicturePress = () => {
-    this.props.onRegisterValueChange({ prop: 'profilePicture', value: '' });
+    this.props.onClientDataValueChange({ prop: 'profilePicture', value: '' });
     this.onEditPicturePress();
   };
 
@@ -231,7 +230,7 @@ class ClientProfile extends Component {
       longitude: position.coords.longitude
     });
 
-    this.props.onRegisterValueChange({
+    this.props.onClientDataValueChange({
       prop: 'location',
       value: { ...location[0] }
     });
@@ -260,9 +259,9 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onRegisterValueChange } = this.props;
+    const { firstName, onClientDataValueChange } = this.props;
 
-    onRegisterValueChange({ prop: 'firstName', value: trimString(firstName) });
+    onClientDataValueChange({ prop: 'firstName', value: trimString(firstName) });
     if (trimString(firstName) === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
@@ -273,9 +272,9 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onRegisterValueChange } = this.props;
+    const { lastName, onClientDataValueChange } = this.props;
 
-    onRegisterValueChange({ prop: 'lastName', value: trimString(lastName) });
+    onClientDataValueChange({ prop: 'lastName', value: trimString(lastName) });
     if (trimString(lastName) === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
@@ -372,7 +371,7 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               onChangeText={value =>
-                this.props.onRegisterValueChange({
+                this.props.onClientDataValueChange({
                   prop: 'firstName',
                   value
                 })
@@ -388,7 +387,7 @@ class ClientProfile extends Component {
               label="Apellido:"
               value={this.props.lastName}
               onChangeText={value =>
-                this.props.onRegisterValueChange({ prop: 'lastName', value })
+                this.props.onClientDataValueChange({ prop: 'lastName', value })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.lastNameError}
@@ -401,7 +400,7 @@ class ClientProfile extends Component {
               label="Teléfono:"
               value={this.props.phone}
               onChangeText={value =>
-                this.props.onRegisterValueChange({ prop: 'phone', value })
+                this.props.onClientDataValueChange({ prop: 'phone', value })
               }
               keyboardType="numeric"
               editable={this.state.editEnabled}
@@ -504,7 +503,6 @@ export default connect(
     onUserRead,
     onUserUpdateWithPicture,
     onUserUpdateNoPicture,
-    onRegisterValueChange,
-    servicesRead
+    onClientDataValueChange
   }
 )(ClientProfile);

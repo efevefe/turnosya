@@ -9,8 +9,12 @@ import { servicesRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
 
 class ServicesList extends Component {
-  componentWillMount() {
-    this.props.servicesRead(this.props.commerceId);
+  componentDidMount() {
+    this.unsubscribeServicesRead = this.props.servicesRead(this.props.commerceId);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeServicesRead && this.unsubscribeServicesRead();
   }
 
   renderRow({ item }) {
