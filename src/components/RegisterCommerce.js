@@ -33,9 +33,9 @@ class RegisterCommerce extends Component {
   }
 
   onButtonPressHandler() {
-    if (this.validateMinimumData()) {
-      this.props.navigation.navigate('commerceRegisterProfile1');
-    }
+    // if (this.validateMinimumData()) {
+    this.props.navigation.navigate('commerceRegisterProfile1');
+    // }
   }
 
   onAreaPickerChange = async index => {

@@ -26,20 +26,6 @@ class CourtForm extends Component {
     lightPriceOpen: false
   };
 
-  componentWillMount() {
-    const { params } = this.props.navigation.state;
-
-    if (params) {
-      const { court } = params;
-      for (prop in params.court) {
-        this.props.onCourtValueChange({ prop, value: court[prop] });
-      }
-      if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
-    } else {
-      this.props.onCourtFormOpen();
-    }
-  }
-
   componentDidUpdate(prevProps) {
     if (this.props.grounds !== prevProps.grounds) {
       const firstIndex = this.props.courts.findIndex(
@@ -47,6 +33,18 @@ class CourtForm extends Component {
       );
       if (firstIndex > -1)
         this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
+
+      const { params } = this.props.navigation.state;
+
+      if (params) {
+        const { court } = params;
+        for (prop in params.court) {
+          this.props.onCourtValueChange({ prop, value: court[prop] });
+        }
+        if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
+      } else {
+        this.props.onCourtFormOpen();
+      }
     }
   }
 

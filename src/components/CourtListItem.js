@@ -14,7 +14,10 @@ class CourtListItem extends Component {
   };
 
   onDeletePress = () => {
-    this.setState({ optionsVisible: false, deleteVisible: !this.state.deleteVisible });
+    this.setState({
+      optionsVisible: false,
+      deleteVisible: !this.state.deleteVisible
+    });
   };
 
   onConfirmDeletePress = () => {
@@ -91,11 +94,11 @@ class CourtListItem extends Component {
             courtState
               ? { textAlign: 'left', display: 'flex' }
               : {
-                textAlign: 'left',
-                display: 'flex',
-                color: 'grey',
-                fontStyle: 'italic'
-              }
+                  textAlign: 'left',
+                  display: 'flex',
+                  color: 'grey',
+                  fontStyle: 'italic'
+                }
           }
           rightTitle={
             lightPrice !== '' ? (
@@ -105,10 +108,10 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
+                          textAlign: 'right',
+                          color: 'grey',
+                          fontStyle: 'italic'
+                        }
                   }
                 >{`Sin luz: $${price}`}</Text>
                 <Text
@@ -116,18 +119,18 @@ class CourtListItem extends Component {
                     courtState
                       ? { textAlign: 'right', color: 'black' }
                       : {
-                        textAlign: 'right',
-                        color: 'grey',
-                        fontStyle: 'italic'
-                      }
+                          textAlign: 'right',
+                          color: 'grey',
+                          fontStyle: 'italic'
+                        }
                   }
                 >{`Con luz: $${lightPrice}`}</Text>
               </View>
             ) : (
-                <Text
-                  style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
-                >{`Sin luz: $${price}`}</Text>
-              )
+              <Text
+                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
+              >{`Sin luz: $${price}`}</Text>
+            )
           }
           key={id}
           subtitle={
@@ -142,8 +145,8 @@ class CourtListItem extends Component {
           onLongPress={this.onOptionsPress}
           rightElement={
             <IconButton
-              icon='md-more'
-              color='grey'
+              icon="md-more"
+              color="grey"
               iconSize={22}
               iconStyle={{ marginLeft: 5, marginRight: 8 }}
               onPress={this.onOptionsPress}

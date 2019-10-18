@@ -31,7 +31,14 @@ class ServiceForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, duration, price, description, navigation, commerceId } = this.props;
+      const {
+        name,
+        duration,
+        price,
+        description,
+        navigation,
+        commerceId
+      } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {

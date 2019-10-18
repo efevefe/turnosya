@@ -82,7 +82,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
     case ON_COMMERCE_DELETED:
-      Toast.show({ text: 'Se negocio se ha eliminado' });
+      Toast.show({ text: 'Su negocio se ha eliminado' });
       return INITIAL_STATE;
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
