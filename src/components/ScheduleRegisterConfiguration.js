@@ -116,9 +116,9 @@ class ScheduleRegisterConfiguration extends Component {
 const mapStateToProps = state => {
   return {
     commerceId: state.commerceData.commerceId,
-    loading: state.scheduleRegister.loading,
-    reservationMinLength: state.scheduleRegister.reservationMinLength,
-    reservationDayPeriod: state.scheduleRegister.reservationDayPeriod
+    loading: state.commerceSchedule.loading,
+    reservationMinLength: state.commerceSchedule.reservationMinLength,
+    reservationDayPeriod: state.commerceSchedule.reservationDayPeriod
   };
 };
 

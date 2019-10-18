@@ -4,10 +4,21 @@ import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from './common';
 import CommerceListItem from './CommerceListItem';
+import { getPermissionLocationStatus, getCurrentPosition } from '../utils';
+import { LocationMessages, Button } from './common';
 
 import { connect } from 'react-redux';
 
 class Hits extends Component {
+  state = {
+    permissionStatus: null,
+    modal: true
+  };
+
+  callback = () => {
+    this.setState({ modal: false });
+  };
+
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
   }

@@ -15,14 +15,14 @@ class Picker extends Component {
 
   render() {
     const enabled = this.props.disabled ? false : true;
-    const color = enabled ? MAIN_COLOR : GREY_DISABLED;
-    const textColor = enabled ? 'black' : 'grey';
+    const color = enabled ? this.props.color || MAIN_COLOR : GREY_DISABLED;
+    const textColor = enabled ? this.props.textColor || 'black' : 'grey';
     const borderBottomWidth = enabled ? 1.5 : 1;
 
     const { pickerStyle, iconContainer } = styles;
 
     return (
-      <View >
+      <View>
         <Text style={[styles.textStyle, { color }]}>{this.props.title}</Text>
         <RNPickerSelect
           {...this.props}
@@ -67,8 +67,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     paddingLeft: 5,
-    paddingRight: 5,
-    borderColor: MAIN_COLOR
+    paddingRight: 5
   },
   iconContainer: {
     top: 11,

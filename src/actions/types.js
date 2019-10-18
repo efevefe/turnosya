@@ -45,6 +45,8 @@ export const COURT_READ = 'court_read';
 export const COURT_READ_FAIL = 'court_read_fail';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
+export const COURT_READING_ONLY_AVAILABLE = 'court_reading_only_available';
+export const COURT_READ_ONLY_AVAILABLE = 'court_read_only_available';
 
 //Client Profile
 export const ON_USER_READING = 'on_user_reading';
@@ -70,7 +72,6 @@ export const ON_COMMERCE_READ_FAIL = 'on_commerce_read_fail';
 export const ON_COMMERCE_UPDATING = 'on_commerce_updating';
 export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
-export const ON_PROVINCES_READ = 'on_provinces_read';
 export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
@@ -79,6 +80,7 @@ export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
+export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 
 //Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
@@ -102,7 +104,6 @@ export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
 export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
 export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
 
-
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
@@ -110,3 +111,31 @@ export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
 export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_CLIENT_COURT_RESERVATION_CREATING = 'on_client_court_reservation_creating';
+export const ON_CLIENT_COURT_RESERVATION_CREATE = 'on_client_court_reservation_create';
+export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL = 'on_client_court_reservation_create_fail';
+export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
+
+// Location types
+export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
+export const ON_LOCATION_CHANGE = 'on_location_change';
+export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
+
+// Client Reservations List
+export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
+export const ON_CLIENT_RESERVATIONS_READING = 'on_client_reservations_reading';
+export const ON_CLIENT_RESERVATION_CANCELING = 'on_client_reservation_canceling';
+export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
+export const ON_CLIENT_RESERVATION_CANCEL_FAIL = 'on_client_reservation_cancel_fail';
+
+//Commerce Reservations List
+export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE = 'on_court_reservations_list_value_change';
+export const ON_COMMERCE_COURT_RESERVATIONS_READING = 'on_commerce_reservations_reading';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ = 'on_commerce_reservations_read';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL = 'on_commerce_reservations_read_fail';
+export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
+export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
+export const ON_RESERVATION_CLIENT_READ_FAIL = 'on_reservation_client_read_fail';
+
+// Province types
+export const ON_PROVINCES_READ = 'on_provinces_read';
