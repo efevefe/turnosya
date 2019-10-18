@@ -21,7 +21,7 @@ import { View, Text } from 'react-native';
 
 // const buttonPressed = () => {
 //   console.log('pressed');
-//   var db = firebase.firestore();
+//   const db = firebase.firestore();
 //   db.collection('Commerces')
 //     .where('softDelete', '==', null)
 //     .onSnapshot(snapShot => {

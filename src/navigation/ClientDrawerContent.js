@@ -9,7 +9,7 @@ import VerifyEmailModal from '../components/VerifyEmailModal';
 class ClientDrawerContent extends Component {
   state = { modal: false };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onUserRead();
   }
 

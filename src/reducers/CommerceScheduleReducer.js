@@ -14,7 +14,6 @@ import {
   ON_SCHEDULE_READ_EMPTY
 } from '../actions/types';
 import { Toast } from '../components/common';
-import moment from 'moment';
 
 const INITIAL_STATE = {
   cards: [
@@ -30,7 +29,7 @@ const INITIAL_STATE = {
   selectedDays: [],
   reservationMinLength: 10,
   reservationDayPeriod: 14,
-  selectedDate: moment(),
+  slots: [],
   loading: false,
   refreshing: false
 };
@@ -56,7 +55,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, cards: newCards };
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
-      var newSelectedDays = state.selectedDays.filter(
+      const newSelectedDays = state.selectedDays.filter(
         day => !cardToDelete.days.includes(day)
       );
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);

@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import { Platform, View, AppState, StyleSheet } from 'react-native';
+import { Divider } from 'react-native-elements';
+import { Menu } from './Menu';
+import { MenuItem } from './MenuItem';
+import { connect } from 'react-redux';
+import { onLocationChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -8,11 +13,6 @@ import {
   getPermissionLocationStatus,
   getAddressFromLatAndLong
 } from '../../utils';
-import { Divider } from 'react-native-elements';
-import { Menu } from './Menu';
-import { MenuItem } from './MenuItem';
-import { connect } from 'react-redux';
-import { onLocationChange } from '../../actions';
 
 class LocationMessages extends Component {
   state = {
@@ -63,10 +63,12 @@ class LocationMessages extends Component {
       latitude,
       longitude
     });
-    const { name, city, region, country } = addresResult;
+    const { name, street, city, region, country } = addresResult;
+
+    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
     const location = {
-      address: name,
+      address,
       city,
       provinceName: region,
       country,
@@ -160,6 +162,7 @@ class LocationMessages extends Component {
   closeModal = () => {
     this.setState({ modal: false });
   };
+
   render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
       this.getAndSaveLocation();
@@ -181,7 +184,7 @@ class LocationMessages extends Component {
   }
 }
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   modalItemsContainer: {
     flexDirection: 'row'
   }

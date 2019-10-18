@@ -3,8 +3,8 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import ServicesList from '../components/ServicesList';
-import ServiceForm from '../components/ServiceForm';
+// import ServicesList from '../components/ServicesList';
+// import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
 import ScheduleRegister from '../components/ScheduleRegister';
@@ -12,6 +12,9 @@ import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
 import LocationMap from '../components/LocationMap';
+import CommerceCourtsStateList from '../components/CommerceCourtsStateList';
+import CommerceCourtReservations from '../components/CommerceCourtReservations';
+import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -41,11 +44,18 @@ const calendarStack = createStackNavigator(
       navigationOptions: {
         title: 'Límites de turnos'
       }
+    },
+    commerceCourtsList: {
+      screen: CommerceCourtsStateList,
+      navigationOptions: {
+        title: 'Canchas Disponibles'
+      }
     }
   },
   stackNavigationOptions
 );
 
+/*
 const servicesStack = createStackNavigator(
   {
     servicesList: {
@@ -62,6 +72,29 @@ const servicesStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: navigation.getParam('title', 'Nuevo Servicio')
       })
+    }
+  },
+  stackNavigationOptions
+);
+*/
+
+const reservationsStack = createStackNavigator(
+  {
+    reservationsList: {
+      screen: CommerceCourtReservations,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Turnos',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    reservationDetails: {
+      // la pantalla de detalles del turno que es alternativa al modal
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
+      }
     }
   },
   stackNavigationOptions
@@ -114,7 +147,7 @@ const profileStack = createStackNavigator(
 const commerceTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
-    services: servicesStack,
+    reservations: reservationsStack,
     calendar: calendarStack,
     profile: profileStack
   },

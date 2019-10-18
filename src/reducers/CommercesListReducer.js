@@ -28,14 +28,14 @@ export default (state = INITIAL_STATE, action) => {
     case ON_AREAS_READING:
       return { ...state, loading: true };
     case FAVORITE_COMMERCE_DELETED:
-      var favoritesUpdate = state.favoriteCommerces.filter(element => {
+      const favoritesUpdate = state.favoriteCommerces.filter(element => {
         if (element !== action.payload) {
           return element;
         }
       });
       return { ...state, favoriteCommerces: favoritesUpdate };
     case FAVORITE_COMMERCE_ADDED:
-      var favorites = state.favoriteCommerces.concat(action.payload);
+      const favorites = state.favoriteCommerces.concat(action.payload);
       return { ...state, favoriteCommerces: favorites };
     case ONLY_FAVORITE_COMMERCES_READING:
       return { ...state, loading: true };

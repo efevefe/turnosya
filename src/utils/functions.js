@@ -99,15 +99,15 @@ const validarCuit = cuit => {
     return false;
   }
 
-  var acumulado = 0;
-  var digitos = cuit.split('');
-  var digito = digitos.pop();
+  let acumulado = 0;
+  const digitos = cuit.split('');
+  const digito = digitos.pop();
 
-  for (var i = 0; i < digitos.length; i++) {
+  for (let i = 0; i < digitos.length; i++) {
     acumulado += digitos[9 - i] * (2 + (i % 6));
   }
 
-  var verif = 11 - (acumulado % 11);
+  let verif = 11 - (acumulado % 11);
   if (verif == 11) {
     verif = 0;
   }

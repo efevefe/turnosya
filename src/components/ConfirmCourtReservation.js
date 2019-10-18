@@ -1,18 +1,44 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Divider, ButtonGroup, Avatar } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
+import { ButtonGroup, Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { CardSection, Button } from '../components/common';
-import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
-import { onCourtReservationValueChange } from '../actions';
+import { Ionicons } from '@expo/vector-icons';
+import { HeaderBackButton } from 'react-navigation-stack';
+import { CardSection, Button } from './common';
+import { MAIN_COLOR } from '../constants';
+import {
+  onCourtReservationValueChange,
+  onClientCourtReservationCreate,
+  onCourtReservationClear
+} from '../actions';
+import CourtReservationDetails from './CourtReservationDetails';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
 
-  componentDidMount() {
-    this.priceButtons();
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerLeft: navigation.getParam('leftButton')
+    };
+  };
+
+  async componentDidMount() {
+    this.props.navigation.setParams({
+      leftButton: this.renderBackButton()
+    });
+
+    await this.priceButtons();
+    this.onPriceSelect(0);
   }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+  };
+
+  onBackPress = () => {
+    this.onNewReservation();
+    this.props.navigation.goBack(null);
+  };
 
   priceButtons = () => {
     const { court } = this.props;
@@ -28,131 +54,145 @@ class ConfirmCourtReservation extends Component {
         prices.push(court.lightPrice);
       }
     }
-
-    this.setState({ priceButtons, prices });
   };
-
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
+
     this.props.onCourtReservationValueChange({
       prop: 'price',
       value: this.state.prices[selectedIndex]
     });
+
+    this.props.onCourtReservationValueChange({
+      prop: 'light',
+      value: !!selectedIndex // 0 = false = no light // 1 = true = light
+    });
+  };
+
+  renderPriceButtons = () => {
+    if (!this.props.saved) {
+      return (
+        <View>
+          <CardSection style={styles.cardSections}>
+            <ButtonGroup
+              onPress={this.onPriceSelect}
+              selectedIndex={this.state.selectedIndex}
+              buttons={this.state.priceButtons}
+              containerStyle={styles.priceButtons}
+              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
+              selectedTextStyle={{ color: 'white' }}
+              textStyle={{ color: 'black' }}
+              containerStyle={styles.priceButtons}
+              innerBorderStyle={{ color: MAIN_COLOR }}
+            />
+          </CardSection>
+        </View>
+      );
+    }
+  };
+
+  onConfirmReservation = () => {
+    const { commerce, court, courtType, slot, price, light } = this.props;
+
+    this.props.onClientCourtReservationCreate({
+      commerceId: commerce.objectID,
+      courtId: court.id,
+      courtType,
+      slot,
+      price,
+      light
+    });
+  };
+
+  onNewReservation = () => {
+    this.props.onCourtReservationValueChange({
+      prop: 'saved',
+      value: false
+    });
+  };
+
+  renderButtons = () => {
+    if (this.props.saved) {
+      return (
+        <CardSection style={{ flexDirection: 'row' }}>
+          <View style={{ alignItems: 'flex-start', flex: 1 }}>
+            <RNEButton
+              title="Reservar otro"
+              type="clear"
+              titleStyle={{ color: MAIN_COLOR }}
+              icon={
+                <Ionicons
+                  name="ios-arrow-back"
+                  size={30}
+                  color={MAIN_COLOR}
+                  style={{ marginRight: 10 }}
+                />
+              }
+              onPress={() => {
+                this.onNewReservation();
+                this.props.navigation.navigate('commerceCourtTypes');
+              }}
+            />
+          </View>
+          <View style={{ alignItems: 'flex-end' }}>
+            <RNEButton
+              title="Finalizar"
+              type="clear"
+              titleStyle={{ color: MAIN_COLOR }}
+              iconRight
+              icon={
+                <Ionicons
+                  name="ios-arrow-forward"
+                  size={30}
+                  color={MAIN_COLOR}
+                  style={{ marginLeft: 10 }}
+                />
+              }
+              onPress={() => {
+                this.onNewReservation();
+                this.props.navigation.navigate('commercesAreas');
+              }}
+            />
+          </View>
+        </CardSection>
+      );
+    }
+
+    return (
+      <CardSection>
+        <Button
+          title="Confirmar Reserva"
+          loading={this.props.loading}
+          onPress={this.onConfirmReservation}
+        />
+      </CardSection>
+    );
   };
 
   render() {
-    const { commerce, court, slot } = this.props;
+    const { commerce, court, slot, light, price, saved } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
-        {commerce && court && slot ? (
-          <View style={{ flex: 1 }}>
-            <View style={styles.mainContainer}>
-              <Avatar
-                rounded
-                source={
-                  commerce.profilePicture
-                    ? { uri: commerce.profilePicture }
-                    : null
-                }
-                size={90}
-                icon={{ name: 'store' }}
-                containerStyle={styles.avatarStyle}
-              />
-              <View style={styles.contentContainer}>
-                <CardSection
-                  style={[styles.cardSections, { paddingBottom: 8 }]}
-                >
-                  <Text style={styles.commerceName}>{commerce.name}</Text>
-                </CardSection>
-                <CardSection
-                  style={[styles.cardSections, { paddingBottom: 0 }]}
-                >
-                  <Text style={styles.courtName}>{court.name}</Text>
-                </CardSection>
-                <CardSection style={styles.cardSections}>
-                  <Text style={styles.textStyle}>
-                    {`${court.court} - ${court.ground}`}
-                  </Text>
-                </CardSection>
-                <Divider style={styles.divider} />
-                <CardSection
-                  style={[styles.cardSections, { paddingBottom: 0 }]}
-                >
-                  <Text style={styles.textStyle}>
-                    {`${DAYS[slot.startHour.day()]} ${slot.startHour.format(
-                      'D'
-                    )} de ${MONTHS[slot.startHour.month()]}`}
-                  </Text>
-                </CardSection>
-                <CardSection style={styles.cardSections}>
-                  <Text style={styles.textStyle}>
-                    {`De ${slot.startHour.format(
-                      'HH:mm'
-                    )} hs. a ${slot.endHour.format('HH:mm')} hs.`}
-                  </Text>
-                </CardSection>
-                <CardSection style={styles.cardSections}>
-                  <ButtonGroup
-                    onPress={this.onPriceSelect}
-                    selectedIndex={this.state.selectedIndex}
-                    buttons={this.state.priceButtons}
-                    containerStyle={styles.priceButtons}
-                    selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                    selectedTextStyle={{ color: 'white' }}
-                    textStyle={{ color: 'black' }}
-                    innerBorderStyle={{ color: MAIN_COLOR }}
-                  />
-                </CardSection>
-              </View>
-              <View style={styles.confirmButtonContainer}>
-                <CardSection>
-                  <Button title="Confirmar Reserva" />
-                </CardSection>
-              </View>
-            </View>
-          </View>
-        ) : null}
+        <CourtReservationDetails
+          commerce={commerce}
+          court={court}
+          startDate={slot.startDate}
+          endDate={slot.endDate}
+          price={price}
+          light={light}
+          showPrice={saved}
+        />
+        {this.renderPriceButtons()}
+        <View style={styles.confirmButtonContainer}>
+          {this.renderButtons()}
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    padding: 5,
-    paddingTop: 15,
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
-  avatarStyle: {
-    borderWidth: 3,
-    borderColor: MAIN_COLOR,
-    margin: 12,
-    marginBottom: 8
-  },
-  contentContainer: {
-    flex: 1,
-    alignSelf: 'stretch',
-    justifyContent: 'flex-start'
-  },
-  commerceName: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  courtName: {
-    fontSize: 17
-  },
-  textStyle: {
-    fontSize: 14
-  },
-  divider: {
-    margin: 10,
-    marginLeft: 40,
-    marginRight: 40,
-    backgroundColor: 'grey'
-  },
   cardSections: {
     alignItems: 'center'
   },
@@ -163,18 +203,32 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   confirmButtonContainer: {
+    flex: 1,
     justifyContent: 'flex-end',
     alignSelf: 'stretch'
   }
 });
 
 const mapStateToProps = state => {
-  const { commerce, court, slot, price } = state.courtReservation;
+  const {
+    commerce,
+    courtType,
+    court,
+    slot,
+    price,
+    light,
+    saved,
+    loading
+  } = state.courtReservation;
 
-  return { commerce, court, slot, price };
+  return { commerce, courtType, court, slot, price, light, saved, loading };
 };
 
 export default connect(
   mapStateToProps,
-  { onCourtReservationValueChange }
+  {
+    onCourtReservationValueChange,
+    onClientCourtReservationCreate,
+    onCourtReservationClear
+  }
 )(ConfirmCourtReservation);

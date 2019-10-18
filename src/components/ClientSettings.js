@@ -10,7 +10,7 @@ import {
   onCommerceDelete,
   onLoginValueChange,
   onCommerceValueChange,
-  onRegisterValueChange
+  onClientDataValueChange
 } from '../actions';
 
 class ClientSettings extends Component {
@@ -27,7 +27,7 @@ class ClientSettings extends Component {
     };
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
@@ -66,7 +66,7 @@ class ClientSettings extends Component {
       // ESTO SE DEBERIA REEMPLAZAR POR UN TOAST
       this.setState({ cantDeleteUser: true });
     } else {
-      this.props.onRegisterValueChange({
+      this.props.onClientDataValueChange({
         prop: 'confirmDeleteVisible',
         value: true
       });
@@ -188,7 +188,7 @@ class ClientSettings extends Component {
     this.props.onLoginValueChange({ prop: 'password', value: '' });
     this.props.onLoginValueChange({ prop: 'error', value: '' });
     // client
-    this.props.onRegisterValueChange({
+    this.props.onClientDataValueChange({
       prop: 'confirmDeleteVisible',
       value: false
     });
@@ -266,6 +266,6 @@ export default connect(
     onCommerceDelete,
     onLoginValueChange,
     onCommerceValueChange,
-    onRegisterValueChange
+    onClientDataValueChange
   }
 )(ClientSettings);

@@ -5,7 +5,7 @@ import { Drawer, DrawerItem } from '../components/common';
 import { onCommerceRead } from '../actions';
 
 class CommerceDrawerContent extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.props.onCommerceRead();
   }
 

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { trimString } from '../utils';
 import { MAIN_COLOR } from '../constants';
@@ -10,27 +9,29 @@ import { CardSection, Button, Input, Picker } from './common';
 import {
   onCreateCommerce,
   onCommerceValueChange,
-  onAreasRead,
   onProvincesIdRead,
   onLocationValueChange
 } from '../actions';
 
 class RegisterCommerceTwo extends Component {
-  state = {
-    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-    addressError: '',
-    cityError: '',
-    provinceError: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+      addressError: '',
+      cityError: '',
+      provinceError: ''
+    };
+  }
 
   componentWillMount() {
     this.props.onProvincesIdRead();
-    this.props.onAreasRead();
   }
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      var {
+      const {
         name,
         cuit,
         email,
@@ -63,7 +64,7 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = async index => {
-    var { value, label } =
+    const { value, label } =
       index > 0
         ? this.props.provincesList[index - 1]
         : this.state.pickerPlaceholder;
@@ -127,11 +128,7 @@ class RegisterCommerceTwo extends Component {
     );
   };
 
-  onProvinceNameChangeOnMap = newProvinceName => {
-    this.matchProvinceByValue(newProvinceName);
-  };
-
-  matchProvinceByValue = name => {
+  onProvinceNameChangeOnMap = name => {
     const province = this.props.provincesList.find(
       province => province.label.toLowerCase() === name.toLowerCase()
     );
@@ -150,12 +147,9 @@ class RegisterCommerceTwo extends Component {
   };
 
   onMapPress = () => {
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'commerceRegisterMap',
-      params: { callback: this.onProvinceNameChangeOnMap }
+    this.props.navigation.navigate('commerceRegisterMap', {
+      callback: this.onProvinceNameChangeOnMap
     });
-
-    this.props.navigation.navigate(navigateAction);
   };
 
   render() {
@@ -249,12 +243,12 @@ const mapStateToProps = state => {
     phone,
     description,
     province,
-    provincesList,
     area,
-    areasList,
     loading,
     error
   } = state.commerceData;
+
+  const { provincesList } = state.provinceData;
 
   const {
     address,
@@ -274,7 +268,6 @@ const mapStateToProps = state => {
     phone,
     province,
     area,
-    areasList,
     provincesList,
     address,
     city,
@@ -288,7 +281,6 @@ export default connect(
   {
     onCommerceValueChange,
     onCreateCommerce,
-    onAreasRead,
     onProvincesIdRead,
     onLocationValueChange
   }

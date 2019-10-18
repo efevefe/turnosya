@@ -14,7 +14,7 @@ const onProvincesRead = prop => {
       .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
-        var provincesList = [];
+        const provincesList = [];
         snapshot.forEach(doc =>
           prop === 'id' // Si agregaramos más atributos (ej: idPaís) sólo habría que agregar una wrapper action y exportarla
             ? provincesList.push({ value: doc.id, label: doc.data().name })

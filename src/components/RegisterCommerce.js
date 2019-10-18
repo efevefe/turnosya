@@ -39,7 +39,7 @@ class RegisterCommerce extends Component {
   }
 
   onAreaPickerChange = async index => {
-    var { value, label } =
+    const { value, label } =
       index > 0
         ? this.props.areasList[index - 1]
         : this.state.pickerPlaceholder;
