@@ -52,10 +52,6 @@ class CommercesList extends Component {
     this.setState({ searchVisible: true });
   };
 
-  obtainProvinceName = provinceName => {
-    this.setState({ provinceName });
-  };
-
   onFiltersPress = () => {
     this.props.navigation.navigate('commercesFiltersScreen');
   };
