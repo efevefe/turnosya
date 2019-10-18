@@ -18,6 +18,7 @@ import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
 import ClientReservationsList from '../components/ClientReservationsList'
 import ClientReservationDetails from '../components/ClientReservationDetails'
 import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
+import CommercesFiltersMap from '../components/CommercesFiltersMap';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -72,6 +73,9 @@ const searchStack = createStackNavigator(
     },
     commercesFiltersScreen: {
       screen: CommercesFiltersScreen
+    },
+    commercesFiltersMap: {
+      screen: CommercesFiltersMap
     }
   },
   {
@@ -84,7 +88,10 @@ searchStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
-      if (route.routeName === 'commercesFiltersScreen') {
+      if (
+        route.routeName === 'commercesFiltersScreen' ||
+        route.routeName === 'commercesFiltersMap'
+      ) {
         tabBarVisible = false;
       } else {
         tabBarVisible = true;

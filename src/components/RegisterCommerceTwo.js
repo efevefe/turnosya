@@ -23,8 +23,10 @@ class RegisterCommerceTwo extends Component {
       cityError: '',
       provinceError: ''
     };
+  }
 
-    props.onProvincesIdRead();
+  componentWillMount() {
+    this.props.onProvincesIdRead();
   }
 
   onButtonPressHandler() {
@@ -242,7 +244,6 @@ const mapStateToProps = state => {
     description,
     province,
     area,
-    areasList,
     loading,
     error
   } = state.commerceData;
@@ -267,7 +268,6 @@ const mapStateToProps = state => {
     phone,
     province,
     area,
-    areasList,
     provincesList,
     address,
     city,

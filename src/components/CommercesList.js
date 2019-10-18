@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { IconButton } from './common';
@@ -52,10 +52,6 @@ class CommercesList extends Component {
     this.setState({ searchVisible: true });
   };
 
-  obtainProvinceName = provinceName => {
-    this.setState({ provinceName });
-  };
-
   onFiltersPress = () => {
     this.props.navigation.navigate('commercesFiltersScreen');
   };
@@ -91,6 +87,15 @@ class CommercesList extends Component {
     ) : null;
   };
 
+  enableCurrentLocationFilter = () => {
+    return this.props.locationEnabled ? (
+      <Configure
+        aroundLatLng={`${this.props.latitude}, ${this.props.longitude}`}
+        aroundRadius={Math.round(1000 * this.props.locationRadiusKms)}
+      />
+    ) : null;
+  };
+
   render() {
     return (
       <InstantSearch
@@ -106,6 +111,7 @@ class CommercesList extends Component {
         {this.renderAlgoliaSearchBar()}
         {this.enableAreaFilter()}
         {this.enableProvinceFilter()}
+        {this.enableCurrentLocationFilter()}
         <ConnectedStateResults />
         <ConnectedHits />
       </InstantSearch>
@@ -117,9 +123,21 @@ const mapStateToProps = state => {
   const {
     refinement,
     favoriteCommerces,
-    provinceNameFilter
+    provinceNameFilter,
+    locationEnabled,
+    locationRadiusKms
   } = state.commercesList;
-  return { refinement, favoriteCommerces, provinceNameFilter };
+  const { latitude, longitude } = state.locationData;
+
+  return {
+    refinement,
+    favoriteCommerces,
+    provinceNameFilter,
+    locationEnabled,
+    locationRadiusKms,
+    latitude,
+    longitude
+  };
 };
 
 export default connect(
