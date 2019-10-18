@@ -116,8 +116,7 @@ export const onCreateCommerce = (
               address,
               city,
               provinceName: province.name,
-              latitude,
-              longitude
+              _geoloc: { lat: latitude, lng: longitude }
             });
 
             dispatch({ type: COMMERCE_PROFILE_CREATE });
@@ -213,7 +212,8 @@ export const onCommerceUpdateNoPicture = ({
           description,
           name,
           city,
-          provinceName: province.name
+          provinceName: province.name,
+          _geoloc: { lat: latitude, lng: longitude }
         });
         dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
       })
@@ -240,7 +240,8 @@ export const onCommerceUpdateWithPicture = ({
     .storage()
     .ref(`Commerces/${commerceId}`)
     .child(`${commerceId}-ProfilePicture`);
-    const db = firebase.firestore();
+
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_UPDATING });
@@ -276,7 +277,8 @@ export const onCommerceUpdateWithPicture = ({
                   description,
                   name,
                   city,
-                  provinceName: province.name
+                  provinceName: province.name,
+                  _geoloc: { lat: latitude, lng: longitude }
                 });
                 dispatch({ type: ON_COMMERCE_UPDATED, payload: url });
               })

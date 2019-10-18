@@ -3,22 +3,22 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import ClientProfile from '../components/ClientProfile';
-import CommercesList from '../components/CommercesList';
-import FavoriteCommercesList from '../components/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes';
+import ClientProfile from '../components/client/ClientProfile';
+import CommercesList from '../components/client/CommercesList';
+import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
+import CommerceCourtTypes from '../components/client/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
-import CommercesAreas from '../components/CommercesAreas';
-import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
-import CommerceCourtsList from '../components/CommerceCourtsList';
-import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
-import ClientReservationsList from '../components/ClientReservationsList'
-import ClientReservationDetails from '../components/ClientReservationDetails'
-import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
-import CommercesFiltersMap from '../components/CommercesFiltersMap';
+import CommercesAreas from '../components/client/CommercesAreas';
+import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
+import CommerceCourtsList from '../components/client/CommerceCourtsList';
+import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
+import ClientReservationsList from '../components/client/ClientReservationsList'
+import ClientReservationDetails from '../components/client/ClientReservationDetails'
+import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
+import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
