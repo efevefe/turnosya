@@ -131,24 +131,6 @@ class CommerceFiltersScreen extends Component {
               innerBorderStyle={{ color: MAIN_COLOR }}
             />
             {this.renderRadiusSlider()}
-            {/* <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
-              this.state.locationRadiusKms
-            )} km.`}</Text>
-            <Slider
-              style={locationSliderStyle}
-              animationType="spring"
-              minimumTrackTintColor="white"
-              minimumValue={1}
-              maximumTrackTintColor={MAIN_COLOR_DISABLED}
-              maximumValue={100}
-              // step={}
-              thumbTouchSize={{ width: 60, height: 60 }}
-              thumbTintColor="white"
-              value={this.state.locationRadiusKms}
-              onValueChange={value =>
-                this.setState({ locationRadiusKms: value })
-              }
-            /> */}
           </View>
         </View>
       </View>

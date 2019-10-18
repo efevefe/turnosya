@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
-import { connect } from 'react-redux';
 import { IconButton, Picker } from './common';
 import { MAIN_COLOR } from '../constants';
 import LocationMap from './LocationMap';
 
 export default class CommercesFiltersMap extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <View style={windowContainerStyle}>
