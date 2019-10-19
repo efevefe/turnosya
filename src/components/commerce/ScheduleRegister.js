@@ -6,14 +6,14 @@ import { Divider } from 'react-native-elements';
 import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
 import moment from 'moment';
-import { Spinner, IconButton, EmptyList, Menu, MenuItem } from './common';
+import { Spinner, IconButton, EmptyList, Menu, MenuItem } from '../common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
   onScheduleRead,
   onCommerceLastCourtReservationRead
-} from '../actions';
-import { MAIN_COLOR, DAYS, MONTHS } from '../constants';
+} from '../../actions';
+import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 
 class ScheduleRegister extends Component {
