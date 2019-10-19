@@ -7,7 +7,8 @@ import {
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
   ON_COMMERCE_SEARCHING,
-  ON_PROVINCE_FILTER_UPDATE
+  ON_PROVINCE_FILTER_UPDATE,
+  ON_UPDATE_ALL_FILTERS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -16,7 +17,10 @@ const INITIAL_STATE = {
   loading: false,
   searching: true,
   areas: [],
-  provinceNameFilter: ''
+  provinceNameFilter: '',
+  locationEnabled: false,
+  locationButtonIndex: 0,
+  locationRadiusKms: 10
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -49,6 +53,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, searching: action.payload };
     case ON_PROVINCE_FILTER_UPDATE:
       return { ...state, provinceNameFilter: action.payload };
+    case ON_UPDATE_ALL_FILTERS:
+      return { ...state, ...action.payload };
     default:
       return state;
   }

@@ -28,7 +28,6 @@ import { View, Text } from 'react-native';
 //       snapShot.forEach(docSnapShot => {
 //         const id = docSnapShot.id;
 //         const doc = docSnapShot.data();
-//         debugger;
 //         index.addObject({
 //           objectID: id,
 //           address: doc.address,

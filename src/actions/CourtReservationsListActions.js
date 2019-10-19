@@ -132,8 +132,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
       const detailedReservations = [];
 
       if (snapshot.empty) {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { detailedReservations } });
-        return;
+        return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { detailedReservations } });
       }
 
       snapshot.forEach(doc => {
@@ -156,9 +155,11 @@ export const onCommerceDetailedCourtReservationsRead = ({
                 });
 
                 if (detailedReservations.length === snapshot.size) {
+                  detailedReservations.sort((a, b) => a.startDate - b.startDate);
+                  
                   dispatch({
                     type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                    payload: { detailedReservations: detailedReservations.sort((a, b) => a.startDate > b.startDate) }
+                    payload: { detailedReservations }
                   });
                 }
               });
