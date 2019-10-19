@@ -7,7 +7,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions/CommercesListActions';
+import { readFavoriteCommerces } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 

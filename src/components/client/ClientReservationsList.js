@@ -41,7 +41,7 @@ class ClientReservationsList extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
+      filteredList = reservations.filter(res => res.endDate < moment()).reverse()
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
