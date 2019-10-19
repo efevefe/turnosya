@@ -2,18 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
+import { Divider } from 'react-native-elements';
 import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
-import { Spinner, IconButton, EmptyList } from './common';
+import moment from 'moment';
+import { Spinner, IconButton, EmptyList, Menu, MenuItem } from './common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
-  onScheduleRead
+  onScheduleRead,
+  onCommerceLastCourtReservationRead
 } from '../actions';
-import { MAIN_COLOR } from '../constants';
+import { MAIN_COLOR, DAYS, MONTHS } from '../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 
 class ScheduleRegister extends Component {
+  state = { reservationsModalVisible: false };
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon'),
@@ -28,10 +33,57 @@ class ScheduleRegister extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.lastReservationDate !== this.props.lastReservationDate
+      || prevProps.error !== this.props.error) {
+      this.setState({ reservationsModalVisible: true });
+    }
+  }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+  };
+
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
+  onSavePress = () => {
+    this.props.onCommerceLastCourtReservationRead();
+  }
+
+  onLastReservationValidate = () => {
+    const { lastReservationDate } = this.props;
+    const date = moment([lastReservationDate.year(), lastReservationDate.month(), lastReservationDate.date(), 0, 0, 0]).add(1, days);
+
+    if (date > moment()) return this.setState({ reservationsModalVisible: true });
+
+    this.onScheduleSave();
+  }
+
+  onScheduleSave = () => {
+    const {
+      cards,
+      commerceId,
+      reservationMinLength,
+      reservationDayPeriod,
+      lastReservationDate,
+      navigation
+    } = this.props;
+
+    this.props.onScheduleUpdate(
+      {
+        cards,
+        commerceId,
+        reservationMinLength,
+        reservationDayPeriod,
+        lastReservationDate
+      },
+      navigation
+    );
+  }
+
+  /*
   onSavePress = () => {
     const {
       cards,
@@ -51,10 +103,7 @@ class ScheduleRegister extends Component {
       navigation
     );
   };
-
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
-  };
+  */
 
   onBackPress = () => {
     this.props.navigation.goBack();
@@ -114,11 +163,35 @@ class ScheduleRegister extends Component {
   };
 
   render() {
+    const { lastReservationDate } = this.props;
+
     if (this.props.loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
         {this.renderList()}
+
+        <Menu
+          title={
+            'La ultima reserva que tienes es el ' +
+            `${DAYS[moment(lastReservationDate).day()]} ${moment(lastReservationDate).format('D')} de ${MONTHS[moment(lastReservationDate).month()]}`
+            + ', por lo que los nuevos horarios de atencion entraran en vigencia luego de esa fecha. ' +
+            '¿Desea confirmar los cambios?'}
+          onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
+          isVisible={this.state.reservationsModalVisible}
+        >
+          <MenuItem
+            title="Acepar"
+            icon="md-checkmark"
+            onPress={this.onScheduleSave}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Cancelar"
+            icon="md-close"
+            onPress={() => this.setState({ reservationsModalVisible: false })}
+          />
+        </Menu>
 
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -150,6 +223,7 @@ const mapStateToProps = state => {
     refreshing
   } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
+  const { lastReservationDate, error } = state.courtReservationsList;
 
   return {
     cards,
@@ -158,11 +232,13 @@ const mapStateToProps = state => {
     reservationMinLength,
     reservationDayPeriod,
     loading,
-    refreshing
+    refreshing,
+    lastReservationDate,
+    error
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleValueChange, onScheduleCreate, onScheduleRead }
+  { onScheduleValueChange, onScheduleCreate, onScheduleRead, onCommerceLastCourtReservationRead }
 )(ScheduleRegister);

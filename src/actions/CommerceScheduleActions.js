@@ -76,8 +76,7 @@ export const onScheduleRead = commerceId => {
   };
 };
 
-/*
-export const onScheduleCreate = cards => {
+export const onScheduleUpdate = ({ cards, commerceId, reservationMinLength, reservationDayPeriod, lastReservationDate }, navigation) => {
   //ESTA FUNCION ES PARA UPDATEAR LOS SCHEDULES SIN TENER QUE BORRAR Y VOLVER A ESCRIBIR
   const db = firebase.firestore();
   const batch = db.batch();
@@ -86,27 +85,30 @@ export const onScheduleCreate = cards => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
     //rutas hardcodeadas para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
+    db.collection(`Commerces/${commerceId}/Schedules/`)
       .where('endDate', '==', null)
       .get()
       .then(snapshot => {
         snapshot.forEach(oldSchedule => {
           batch.update(oldSchedule.ref, { endDate: new Date() });
 
-          db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
-            .add({ startDate: new Date(), endDate: null })
+          db.collection(`Commerces/${commerceId}/Schedules/`)
+            .add({ startDate: new Date(), endDate: null, reservationMinLength, reservationDayPeriod })
             .then(scheduleRef => {
               cards.forEach(card => {
                 const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
-                
+
                 const ref = db
-                  .collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${scheduleRef.id}/WorkShifts`)
+                  .collection(`Commerces/${commerceId}/Schedules/${scheduleRef.id}/WorkShifts`)
                   .doc(`${card.id}`);
                 batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
               });
 
               batch.commit()
-                .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
+                .then(() => {
+                  navigation.navigate('calendar');
+                  dispatch({ type: ON_SCHEDULE_CREATED })
+                })
                 .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
             })
             .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
@@ -115,7 +117,6 @@ export const onScheduleCreate = cards => {
       .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
   }
 };
-*/
 
 export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, reservationDayPeriod }, navigation) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD

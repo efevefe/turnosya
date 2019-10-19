@@ -7,11 +7,31 @@ import {
   ON_RESERVATION_CLIENT_READING,
   ON_RESERVATION_CLIENT_READ,
   ON_RESERVATION_CLIENT_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE
+  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ,
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
+}
+
+export const onCommerceLastCourtReservationRead = () => dispatch => {
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Reservations`)
+    .orderBy('startDate', 'desc')
+    .limit(1)
+    .get()
+    .then(snapshot => {
+      let lastReservationDate;
+      if (snapshot.empty) {
+        dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ, payload: null });
+      }
+      snapshot.forEach(doc => lastReservationDate = moment(doc.data().startDate.toDate()));
+      dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ, payload: lastReservationDate });
+    })
+    .catch(error => dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL, payload: error }));
 }
 
 export const onCommerceCourtTypeReservationsRead = ({
