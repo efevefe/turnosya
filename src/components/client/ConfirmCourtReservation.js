@@ -42,8 +42,8 @@ class ConfirmCourtReservation extends Component {
 
   priceButtons = () => {
       const { court } = this.props;
-      var priceButtons = [];
-      var prices = [];
+      const priceButtons = [];
+      const prices = [];
 
       if (court) {
           priceButtons.push(`Sin Luz: $${court.price}`);
