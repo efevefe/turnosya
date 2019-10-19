@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import CourtReservationDetails from "../CourtReservationDetails";
 import { connect } from "react-redux";
-import { Divider } from "react-native-elements";
+import { Divider, Button as ButtonRN } from "react-native-elements";
 import { CardSection, Button, Menu, MenuItem } from "../common";
 import moment from "moment";
-import { onClientCancelReservation } from "../../actions";
+import { onClientCancelReservation, onScheduleCancelRead } from "../../actions";
+import { stringFormatHours } from "../../utils/functions";
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -17,20 +18,45 @@ class ClientReservationDetails extends Component {
     };
   }
 
+  /*   componentWillMount  () {
+     this.props.onScheduleCancelRead(this.props.navigation.state.params.reservation.commerceId);
+  } */
+
+  validateCancelTime = async () => {
+    await this.props.onScheduleCancelRead(this.state.reservation.commerceId);
+  };
+
   renderCancelButton = () => {
     const { startDate } = this.state.reservation;
-    if (startDate > moment())
+    const { reservationMinCancelTime } = this.props;
+    if (startDate > moment()) {
+     this.validateCancelTime();
+      if (startDate.diff(moment(), "hours") > reservationMinCancelTime)
+        return (
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+            <CardSection>
+              <Button
+                title="Cancelar Reserva"
+                type="solid"
+                onPress={() => this.setState({ optionsVisible: true })}
+              />
+            </CardSection>
+          </View>
+        );
       return (
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <CardSection>
-            <Button
-              title="Cancelar Reserva"
-              type="solid"
-              onPress={() => this.setState({ optionsVisible: true })}
+            <ButtonRN
+              title={
+                "No puede cancelar el turno, el tiempo minimo permitido es " +
+                stringFormatHours(reservationMinCancelTime)
+              }
+              type="outline"
             />
           </CardSection>
         </View>
       );
+    }
   };
 
   render() {
@@ -88,10 +114,12 @@ class ClientReservationDetails extends Component {
 }
 const mapStateToProps = state => {
   const { loading } = state.clientReservationsList;
-  return { loading };
+  const { reservationMinCancelTime } = state.commerceSchedule;
+
+  return { loading, reservationMinCancelTime };
 };
 
 export default connect(
   mapStateToProps,
-  { onClientCancelReservation }
+  { onClientCancelReservation, onScheduleCancelRead }
 )(ClientReservationDetails);

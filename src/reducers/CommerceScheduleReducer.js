@@ -29,6 +29,7 @@ const INITIAL_STATE = {
   selectedDays: [],
   reservationMinLength: 10,
   reservationDayPeriod: 14,
+  reservationMinCancelTime: 4,
   slots: [],
   loading: false,
   refreshing: false
@@ -67,7 +68,6 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, ...action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
       Toast.show({ text: 'Aun no hay horarios de atencion' });
-
       return INITIAL_STATE;
     case ON_SCHEDULE_READ_FAIL:
       return { ...state, loading: false };
