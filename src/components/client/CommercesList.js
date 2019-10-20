@@ -7,7 +7,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions/CommercesListActions';
+import { readFavoriteCommerces } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -16,7 +16,7 @@ class CommercesList extends Component {
     super(props);
 
     this.state = {
-      areaName: props.navigation.state.params.areaName,
+      areaName: props.navigation.state.params.areaName, // Mover esto a Redux
       searchVisible: false
     };
   }
@@ -73,27 +73,25 @@ class CommercesList extends Component {
     }
   };
 
-  enableAreaFilter = () => {
-    return this.state.areaName ? (
-      <Configure filters={`areaName:\'${this.state.areaName}\'`} />
-    ) : null;
+  obtainFacetProps = () => {
+    if (this.state.areaName && this.props.provinceNameFilter)
+      return {
+        filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
+      };
+    else if (this.state.areaName)
+      return { filters: `areaName:\'${this.state.areaName}\'` };
+    else if (this.props.provinceNameFilter)
+      return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
+    else return null;
   };
 
-  enableProvinceFilter = () => {
-    return this.props.provinceNameFilter ? (
-      <Configure
-        filters={`provinceName:\'${this.props.provinceNameFilter}\'`}
-      />
-    ) : null;
-  };
-
-  enableCurrentLocationFilter = () => {
-    return this.props.locationEnabled ? (
-      <Configure
-        aroundLatLng={`${this.props.latitude}, ${this.props.longitude}`}
-        aroundRadius={Math.round(1000 * this.props.locationRadiusKms)}
-      />
-    ) : null;
+  obtainGeolocationProps = () => {
+    return this.props.locationEnabled
+      ? {
+          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+        }
+      : null;
   };
 
   render() {
@@ -109,9 +107,9 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        {this.enableAreaFilter()}
-        {this.enableProvinceFilter()}
-        {this.enableCurrentLocationFilter()}
+        <Configure
+          {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
+        />
         <ConnectedStateResults />
         <ConnectedHits />
       </InstantSearch>

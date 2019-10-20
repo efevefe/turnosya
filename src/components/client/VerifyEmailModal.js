@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { sendEmailVefification } from '../../actions';
-import { Menu, MenuItem } from '.';
+import { Menu, MenuItem } from '../common';
 
 class VerifyEmailModal extends React.Component {
   componentWillMount() {
