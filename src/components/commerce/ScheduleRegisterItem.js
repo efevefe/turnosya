@@ -68,10 +68,10 @@ class ScheduleRegister extends Component {
 
   renderPickerSecondShiftStart = () => {
     const { firstShiftEnd, secondShiftStart } = this.props.card;
-    console.log(secondShiftStart);
-    secondShiftStart > firstShiftEnd ||
+    
+    (secondShiftStart > firstShiftEnd ||
     secondShiftStart === null ||
-    secondShiftStart === ''
+    secondShiftStart === '')
       ? this.setState({ secondShiftStartError: '' })
       : this.setState({
           secondShiftStartError: `Segundo turno debe \nser mayor al primero`
@@ -108,9 +108,7 @@ class ScheduleRegister extends Component {
       //On day Added
       onScheduleValueChange({
         prop: 'selectedDays',
-        value: selectedDays.concat([
-          selectedIndexes[selectedIndexes.length - 1]
-        ])
+        value: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
       });
     } else {
       //On day Deleted

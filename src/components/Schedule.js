@@ -35,10 +35,7 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.cards !== this.props.cards ||
-      (prevProps.loadingSchedule && !this.props.loadingSchedule)
-    ) {
+    if (prevProps.cards !== this.props.cards) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
@@ -236,9 +233,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { slots, loading } = state.commerceSchedule;
+  const { slots } = state.commerceSchedule;
 
-  return { slots, loadingSchedule: loading };
+  return { slots };
 }
 
 export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);

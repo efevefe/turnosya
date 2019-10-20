@@ -11,13 +11,14 @@ import {
   onScheduleValueChange,
   onScheduleCreate,
   onScheduleRead,
+  onScheduleUpdate,
   onCommerceLastCourtReservationRead
 } from '../../actions';
 import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 
 class ScheduleRegister extends Component {
-  state = { reservationsModalVisible: false };
+  state = { reservationsModalVisible: false, startDate: null, prevCards: [] };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -31,12 +32,17 @@ class ScheduleRegister extends Component {
       rightIcon: this.renderSaveButton(),
       leftIcon: this.renderBackButton()
     });
+
+    this.setState({ startDate: moment([moment().year(), moment().month(), moment().date(), 0, 0, 0]) });
+
+    for (i in this.props.cards) {
+      this.setState({ prevCards: [...this.state.prevCards, this.props.cards[i]] });
+    }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.lastReservationDate !== this.props.lastReservationDate
-      || prevProps.error !== this.props.error) {
-      this.setState({ reservationsModalVisible: true });
+    if (prevProps.lastReservationDate !== this.props.lastReservationDate && !this.props.error) {
+      this.onLastReservationValidate();
     }
   }
 
@@ -49,65 +55,68 @@ class ScheduleRegister extends Component {
   };
 
   onSavePress = () => {
-    this.props.onCommerceLastCourtReservationRead();
+    //mejorar esta validacion
+    if (JSON.stringify(this.props.cards) !== JSON.stringify(this.state.prevCards)) {
+      return this.props.onCommerceLastCourtReservationRead(this.props.commerceId);
+    }
+
+    this.props.navigation.goBack();
   }
 
   onLastReservationValidate = () => {
     const { lastReservationDate } = this.props;
-    const date = moment([lastReservationDate.year(), lastReservationDate.month(), lastReservationDate.date(), 0, 0, 0]).add(1, days);
 
-    if (date > moment()) return this.setState({ reservationsModalVisible: true });
+    if (lastReservationDate) {
+      // se define la fecha de fin de vigencia de la diagramacion actual al final del dia de la ultima reserva
+      let startDate = moment([
+        lastReservationDate.year(),
+        lastReservationDate.month(),
+        lastReservationDate.date(),
+        0,
+        0,
+        0
+      ]).add(1, 'days');
+
+      if (startDate > moment()) {
+        return this.setState({ reservationsModalVisible: true, startDate });
+      }
+    }
 
     this.onScheduleSave();
   }
 
   onScheduleSave = () => {
     const {
-      cards,
       commerceId,
+      cards,
       reservationMinLength,
       reservationDayPeriod,
-      lastReservationDate,
       navigation
     } = this.props;
+
+    const { startDate } = this.state;
 
     this.props.onScheduleUpdate(
       {
-        cards,
         commerceId,
+        cards,
         reservationMinLength,
         reservationDayPeriod,
-        lastReservationDate
+        startDate
       },
       navigation
     );
+
+    // luego del guardado, en la navegacion se deberia volver a cargar la diagramacion
+    // vigente para la fecha que estaba seleccionada en el calendario
   }
-
-  /*
-  onSavePress = () => {
-    const {
-      cards,
-      commerceId,
-      reservationMinLength,
-      reservationDayPeriod,
-      navigation
-    } = this.props;
-
-    this.props.onScheduleCreate(
-      {
-        cards,
-        commerceId,
-        reservationMinLength,
-        reservationDayPeriod
-      },
-      navigation
-    );
-  };
-  */
 
   onBackPress = () => {
     this.props.navigation.goBack();
-    this.props.onScheduleRead(this.props.commerceId);
+    this.props.onScheduleRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.props.navigation.getParam('selectedDate')
+    });
   };
 
   onAddPress = () => {
@@ -174,8 +183,11 @@ class ScheduleRegister extends Component {
         <Menu
           title={
             'La ultima reserva que tienes es el ' +
-            `${DAYS[moment(lastReservationDate).day()]} ${moment(lastReservationDate).format('D')} de ${MONTHS[moment(lastReservationDate).month()]}`
-            + ', por lo que los nuevos horarios de atencion entraran en vigencia luego de esa fecha. ' +
+            `${DAYS[moment(lastReservationDate).day()]} ` +
+            `${moment(lastReservationDate).format('D')} de ` +
+            `${MONTHS[moment(lastReservationDate).month()]}, ` +
+            'por lo que los nuevos horarios de atencion entraran en vigencia luego ' +
+            'de esa fecha para evitar conflictos con las reservas existentes. ' +
             '¿Desea confirmar los cambios?'}
           onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
           isVisible={this.state.reservationsModalVisible}
@@ -183,7 +195,10 @@ class ScheduleRegister extends Component {
           <MenuItem
             title="Acepar"
             icon="md-checkmark"
-            onPress={this.onScheduleSave}
+            onPress={() => {
+              this.setState({ reservationsModalVisible: false });
+              this.onScheduleSave();
+            }}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -219,11 +234,14 @@ const mapStateToProps = state => {
     selectedDays,
     reservationMinLength,
     reservationDayPeriod,
+    endDate,
+    lastReservationDate,
+    error,
     loading,
     refreshing
   } = state.commerceSchedule;
+
   const { commerceId } = state.commerceData;
-  const { lastReservationDate, error } = state.courtReservationsList;
 
   return {
     cards,
@@ -231,14 +249,15 @@ const mapStateToProps = state => {
     commerceId,
     reservationMinLength,
     reservationDayPeriod,
-    loading,
-    refreshing,
+    endDate,
     lastReservationDate,
-    error
+    error,
+    loading,
+    refreshing
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleValueChange, onScheduleCreate, onScheduleRead, onCommerceLastCourtReservationRead }
+  { onScheduleValueChange, onScheduleCreate, onScheduleRead, onScheduleUpdate, onCommerceLastCourtReservationRead }
 )(ScheduleRegister);

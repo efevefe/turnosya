@@ -27,7 +27,11 @@ class ClientCommerceSchedule extends Component {
       leftButton: this.renderBackButton()
     });
 
-    this.props.onScheduleRead(this.props.commerce.objectID);
+    this.props.onScheduleRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: this.state.selectedDate
+    });
+
     this.unsubscribeCourtsRead = this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
@@ -68,6 +72,13 @@ class ClientCommerceSchedule extends Component {
       selectedDate: date,
       courtType: this.props.courtType
     });
+
+    if ((this.props.scheduleEndDate && date >= this.props.scheduleEndDate) || date < this.props.scheduleStartDate) {
+      this.props.onScheduleRead({
+        commerceId: this.props.commerce.objectID,
+        selectedDate: date
+      });
+    }
   }
 
   onSlotPress = slot => {
@@ -141,6 +152,8 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    startDate,
+    endDate,
     refreshing
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
@@ -157,6 +170,9 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    scheduleStartDate: startDate,
+    scheduleEndDate: endDate,
+    endDate,
     refreshing,
     reservations,
     slot,

@@ -11,7 +11,9 @@ import {
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
-  ON_SCHEDULE_READ_EMPTY
+  ON_SCHEDULE_READ_EMPTY,
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ,
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -27,11 +29,15 @@ const INITIAL_STATE = {
     }
   ],
   selectedDays: [],
-  reservationMinLength: 10,
+  reservationMinLength: 30,
   reservationDayPeriod: 14,
+  startDate: null,
+  endDate: null,
+  lastReservationDate: null,
+  error: null,
   slots: [],
   loading: false,
-  refreshing: false
+  refreshing: false,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -78,7 +84,7 @@ export default (state = INITIAL_STATE, action) => {
 
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CREATE_FAIL:
-      Toast.show({ text: 'Se ha producido un error' });
+      Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
 
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CONFIG_UPDATING:
@@ -87,6 +93,12 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Cambios guardados' });
 
       return { ...state, loading: false };
+    case ON_COMMERCE_LAST_COURT_RESERVATION_READ:
+      return { ...state, error: null, lastReservationDate: action.payload };
+    case ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL:
+      Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
+
+      return { ...state, error: action.payload };
     default:
       return state;
   }

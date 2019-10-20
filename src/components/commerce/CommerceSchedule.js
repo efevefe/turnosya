@@ -23,8 +23,13 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    this.props.onScheduleRead(this.props.commerceId);
+    this.props.onScheduleRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.state.selectedDate
+    });
+
     this.unsubscribeCourtsRead = this.props.courtsReadOnlyAvailable(this.props.commerceId);
+
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
@@ -49,6 +54,13 @@ class CommerceSchedule extends Component {
       commerceId: this.props.commerceId,
       selectedDate: date
     });
+
+    if ((this.props.scheduleEndDate && date >= this.props.scheduleEndDate) || date < this.props.scheduleStartDate) {
+      this.props.onScheduleRead({
+        commerceId: this.props.commerceId,
+        selectedDate: date
+      });
+    }
   };
 
   onSlotPress = slot => {
@@ -97,7 +109,7 @@ class CommerceSchedule extends Component {
     this.setState({ modal: false });
 
     //hay que ver la forma de que esto se haga en el .then() del update()
-    this.props.navigation.navigate('scheduleRegister');
+    this.props.navigation.navigate('scheduleRegister', { selectedDate: this.state.selectedDate });
   };
 
   onScheduleConfigurationPress = () => {
@@ -159,6 +171,8 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    startDate,
+    endDate
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
   const { commerceId } = state.commerceData;
@@ -173,6 +187,8 @@ const mapStateToProps = state => {
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    scheduleStartDate: startDate,
+    scheduleEndDate: endDate,
     commerceId,
     reservations,
     slot,

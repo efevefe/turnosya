@@ -6,9 +6,7 @@ import {
     ON_RESERVATION_CLIENT_READ_FAIL,
     ON_RESERVATION_CLIENT_READING,
     ON_RESERVATION_CLIENT_READ,
-    ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    ON_COMMERCE_LAST_COURT_RESERVATION_READ,
-    ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL
+    ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE
 } from '../actions/types';
 
 INITIAL_STATE = {
@@ -16,9 +14,7 @@ INITIAL_STATE = {
     detailedReservations: [],
     reservationClient: {},
     loading: false,
-    loadingClientData: false,
-    lastReservationDate: null,
-    error: null
+    loadingClientData: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -37,10 +33,6 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, loadingClientData: false, reservationClient: action.payload };
         case ON_RESERVATION_CLIENT_READ_FAIL:
             return { ...state, loadingClientData: false };
-        case ON_COMMERCE_LAST_COURT_RESERVATION_READ:
-            return { ...state, lastReservationDate: action.payload };
-        case ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL:
-            return { ...state, error: action.payload };
         default:
             return state;
     }

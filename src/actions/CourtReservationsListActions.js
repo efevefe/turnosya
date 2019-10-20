@@ -16,10 +16,11 @@ export const onCourtReservationsListValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
 }
 
-export const onCommerceLastCourtReservationRead = () => dispatch => {
+export const onCommerceLastCourtReservationRead = commerceId => dispatch => {
   const db = firebase.firestore();
 
-  db.collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Reservations`)
+  db.collection(`Commerces/${commerceId}/Reservations`)
+    .where('state', '==', null)
     .orderBy('startDate', 'desc')
     .limit(1)
     .get()
