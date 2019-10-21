@@ -8,12 +8,15 @@ import {
   onCourtValueChange,
   getCourtAndGroundTypes,
   courtCreate,
-  onCourtFormOpen,
   courtUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
 import { validateValueType, trimString } from '../../utils';
-import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../../constants';
+import {
+  MAIN_COLOR,
+  MAIN_COLOR_DISABLED,
+  GREY_DISABLED
+} from '../../constants';
 
 class CourtForm extends Component {
   state = {
@@ -26,11 +29,16 @@ class CourtForm extends Component {
     lightPriceOpen: false
   };
 
+  componentDidMount() {
+    this.props.getCourtAndGroundTypes();
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.grounds !== prevProps.grounds) {
       const firstIndex = this.props.courts.findIndex(
         item => item.value === this.props.court
       );
+
       if (firstIndex > -1)
         this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
 
@@ -42,14 +50,8 @@ class CourtForm extends Component {
           this.props.onCourtValueChange({ prop, value: court[prop] });
         }
         if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
-      } else {
-        this.props.onCourtFormOpen();
       }
     }
-  }
-
-  componentDidMount() {
-    this.props.getCourtAndGroundTypes();
   }
 
   onButtonPressHandler = () => {
@@ -437,7 +439,6 @@ export default connect(
     onCourtValueChange,
     getCourtAndGroundTypes,
     courtCreate,
-    courtUpdate,
-    onCourtFormOpen
+    courtUpdate
   }
 )(CourtForm);
