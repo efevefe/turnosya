@@ -15,14 +15,18 @@ class CommerceListItem extends Component {
 
   componentDidMount() {
     this.setState({
-      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+      favorite: this.props.favoriteCommerces.includes(
+        this.props.commerce.objectID
+      )
     });
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.favoriteCommerces !== this.props.favoriteCommerces) {
       this.setState({
-        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
+        favorite: this.props.favoriteCommerces.includes(
+          this.props.commerce.objectID
+        )
       });
     }
   }
@@ -40,13 +44,19 @@ class CommerceListItem extends Component {
     this.props.onCourtReservationValueChange({
       prop: 'commerce',
       value: this.props.commerce
-    })
+    });
 
-    this.props.navigation.navigate('commerceCourtTypes');
-  }
+    this.props.navigation.navigate('commerceProfileView');
+  };
 
   render() {
-    const { name, address, profilePicture, areaName, objectID } = this.props.commerce;
+    const {
+      name,
+      address,
+      profilePicture,
+      areaName,
+      objectID
+    } = this.props.commerce;
 
     return (
       <ListItem
@@ -87,13 +97,14 @@ const mapStateToProps = state => {
   };
 };
 
-export default withNavigation(connect(
-  mapStateToProps,
-  { 
-    registerFavoriteCommerce, 
-    deleteFavoriteCommerce, 
-    readFavoriteCommerces,
-    onCourtReservationValueChange 
-  }
-)(CommerceListItem));
-
+export default withNavigation(
+  connect(
+    mapStateToProps,
+    {
+      registerFavoriteCommerce,
+      deleteFavoriteCommerce,
+      readFavoriteCommerces,
+      onCourtReservationValueChange
+    }
+  )(CommerceListItem)
+);

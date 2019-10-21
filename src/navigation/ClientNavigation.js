@@ -15,13 +15,16 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
-import ClientReservationsList from '../components/ClientReservationsList'
-import ClientReservationDetails from '../components/ClientReservationDetails'
+import ClientReservationsList from '../components/ClientReservationsList';
+import ClientReservationDetails from '../components/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
+import CommerceProfileView from '../components/CommerceProfileView';
+import LocationMap from '../components/LocationMap';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const mainSearchStack = createStackNavigator({
+const mainSearchStack = createStackNavigator(
+  {
     commercesAreas: {
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
@@ -36,6 +39,18 @@ const mainSearchStack = createStackNavigator({
       navigationOptions: {
         title: 'Buscar Negocios'
       }
+    },
+    commerceProfileView: {
+      screen: CommerceProfileView,
+      navigationOptions: {
+        title: 'Perfil'
+      }
+    },
+    changeAddressMap: {
+      screen: LocationMap,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Dirección'
+      })
     },
     commerceCourtTypes: {
       screen: CommerceCourtTypes,
@@ -113,7 +128,7 @@ const calendarStack = createStackNavigator(
       navigationOptions: {
         title: 'Detalle del Turno'
       }
-    },
+    }
   },
   stackNavigationOptions
 );

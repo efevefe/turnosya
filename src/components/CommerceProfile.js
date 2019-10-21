@@ -316,13 +316,10 @@ class CommerceProfile extends Component {
 
       return (
         <View style={locationContainerStyle}>
-          <Icon
-            name="md-pin"
-            type="ionicon"
-            size={16}
-            containerStyle={{ marginRight: 5 }}
-          />
-          <Text>{`${address}, ${city}, ${name}`}</Text>
+          <Icon name="md-pin" type="ionicon" size={16} />
+          <Text
+            style={{ textAlign: 'center', paddingLeft: 5 }}
+          >{`${address}, ${city}, ${name}`}</Text>
         </View>
       );
     }
@@ -781,7 +778,7 @@ const styles = StyleSheet.create({
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center'
+    margin: 10
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
