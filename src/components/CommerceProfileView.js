@@ -15,7 +15,7 @@ import {
   deleteFavoriteCommerce
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
-import CommerceCourtTypes from './CommerceCourtTypes';
+import CommerceCourtTypes from './client/CommerceCourtTypes';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -29,10 +29,19 @@ class CommerceProfileView extends Component {
   };
 
   componentDidMount() {
-    this.setState({
-      favorite: this.props.favoriteCommerces.includes(this.props.commerceId)
-    });
-    this.props.onCommerceReadProfile(this.props.commerce.objectID);
+    if (this.props.navigation.state.routeName === 'commerceProfileView') {
+      this.setState({
+        favorite: this.props.favoriteCommerces.includes(
+          this.props.commerce.objectID
+        )
+      });
+      this.props.onCommerceReadProfile(this.props.commerce.objectID);
+    } else {
+      this.setState({
+        favorite: this.props.favoriteCommerces.includes(this.props.commerceId)
+      });
+      this.props.onCommerceReadProfile(this.props.commerceId);
+    }
   }
 
   renderDescription = () => {
@@ -128,7 +137,9 @@ class CommerceProfileView extends Component {
                   size={30}
                 />
               }
-              onPress={() => console.log('aa')}
+              onPress={() =>
+                this.props.navigation.navigate('commerceProfileInfo')
+              }
             />
 
             <Button

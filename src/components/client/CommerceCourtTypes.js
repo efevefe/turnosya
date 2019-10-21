@@ -17,10 +17,15 @@ import { MAIN_COLOR } from '../../constants';
 
 class CommerceCourtTypes extends Component {
   componentDidMount() {
-    this.props.onCommerceCourtTypesRead({
-      commerceId: this.props.commerce.objectID,
-      loadingType: 'loading'
-    });
+    this.props.navigation.state.routeName === 'commerceProfileView'
+      ? this.props.onCommerceCourtTypesRead({
+          commerceId: this.props.commerce.objectID,
+          loadingType: 'loading'
+        })
+      : this.props.onCommerceCourtTypesRead({
+          commerceId: this.props.commerceId,
+          loadingType: 'loading'
+        });
   }
 
   onRefresh = () => {
@@ -51,7 +56,11 @@ class CommerceCourtTypes extends Component {
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
-        onPress={() => this.onCourtTypePress(item.name)}
+        onPress={() =>
+          this.props.navigation.state.routeName === 'commerceProfileView'
+            ? this.onCourtTypePress(item.name)
+            : null
+        }
         underlayColor="transparent"
       >
         <Card
@@ -103,8 +112,9 @@ class CommerceCourtTypes extends Component {
 const mapStateToProps = state => {
   const { courtTypesList, loading, refreshing } = state.commerceCourtTypes;
   const { commerce } = state.courtReservation;
+  const { commerceId } = state.commerceData;
 
-  return { commerce, courtTypesList, loading, refreshing };
+  return { commerce, courtTypesList, loading, refreshing, commerceId };
 };
 
 export default connect(

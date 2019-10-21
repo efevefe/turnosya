@@ -29,6 +29,7 @@ import {
   onLocationValueChange,
   onLocationChange
 } from '../../actions';
+import { HeaderBackButton } from 'react-navigation-stack';
 
 class CommerceProfile extends Component {
   constructor(props) {
@@ -51,7 +52,10 @@ class CommerceProfile extends Component {
       showMapOptions: false
     };
 
-    props.navigation.setParams({ rightIcon: this.renderEditButton() });
+    props.navigation.setParams({
+      leftIcon: this.renderBackButton(),
+      rightIcon: this.renderEditButton()
+    });
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -97,6 +101,14 @@ class CommerceProfile extends Component {
 
   renderCancelButton = () => {
     return <IconButton icon="md-close" onPress={this.onCancelPress} />;
+  };
+  renderBackButton = () => {
+    return (
+      <HeaderBackButton
+        onPress={() => this.props.navigation.goBack(null)}
+        tintColor="white"
+      />
+    );
   };
 
   onEditPress = () => {
@@ -225,7 +237,7 @@ class CommerceProfile extends Component {
     this.props.navigation.setParams({
       title: 'Perfil',
       rightIcon: this.renderEditButton(),
-      leftIcon: null
+      leftIcon: this.renderBackButton()
     });
   };
 
