@@ -74,7 +74,7 @@ export const courtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           //Means that court's name already exists
           dispatch({ type: COURT_EXISTED });
@@ -159,7 +159,7 @@ export const courtUpdate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty && querySnapshot.docs[0].id !== id) {
           dispatch({ type: COURT_EXISTED });
         } else {
@@ -229,7 +229,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
+export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -240,15 +240,10 @@ export const onCommerceCourtsRead = ({ commerceId, courtType }) => {
       .where('softDelete', '==', null)
       .where('courtState', '==', true)
       .orderBy('name', 'asc')
-      .get()
-      .then(snapshot => {
+      .onSnapshot(snapshot => {
         var courts = [];
         snapshot.forEach(doc => courts.push({ id: doc.id, ...doc.data() }));
         dispatch({ type: COURT_READ, payload: courts });
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: COURT_READ_FAIL });
       });
   };
 };

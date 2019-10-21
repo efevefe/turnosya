@@ -3,16 +3,19 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { HeaderBackButton } from 'react-navigation-stack';
 import Schedule from './Schedule';
+import { Toast } from './common';
 import {
   onScheduleRead,
   onScheduleValueChange,
   onCourtReservationValueChange,
   onCommerceCourtTypeReservationsRead,
-  onCommerceCourtsRead,
+  onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
 } from '../actions';
 
 class ClientCommerceSchedule extends Component {
+  state = { selectedDate: moment() };
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerLeft: navigation.getParam('leftButton')
@@ -29,7 +32,7 @@ class ClientCommerceSchedule extends Component {
     });
 
     this.props.onScheduleRead(this.props.commerce.objectID);
-    this.props.onCommerceCourtsRead({
+    this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
     });
@@ -40,6 +43,7 @@ class ClientCommerceSchedule extends Component {
       this.reservationsOnSlots(this.props.slots);
     }
   }
+
   renderBackButton = () => {
     return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
   };
@@ -55,7 +59,7 @@ class ClientCommerceSchedule extends Component {
   };
 
   onDateChanged = date => {
-    this.props.onScheduleValueChange({ prop: 'selectedDate', value: date });
+    this.setState({ selectedDate: date });
 
     this.props.onCommerceCourtTypeReservationsRead({
       commerceId: this.props.commerce.objectID,
@@ -65,6 +69,11 @@ class ClientCommerceSchedule extends Component {
   };
 
   onSlotPress = slot => {
+    if (!slot.available)
+      return Toast.show({
+        text: 'No hay más canchas disponibles en este horario'
+      });
+
     this.props.onCourtReservationValueChange({
       prop: 'slot',
       value: slot
@@ -76,43 +85,39 @@ class ClientCommerceSchedule extends Component {
   reservationsOnSlots = slots => {
     const { reservations, courts } = this.props;
 
-    var slots = slots.map(slot => {
-      var ocupate = 0;
-      var available = true;
+    const newSlots = slots.map(slot => {
+      let reserved = 0;
+      let available = true;
 
       reservations.forEach(reservation => {
-        slot.startDate.toString() === reservation.startDate.toString()
-          ? ocupate++
-          : null;
+        if (slot.startDate.toString() === reservation.startDate.toString())
+          reserved++;
       });
 
-      if (ocupate >= courts.length) {
-        available = false;
-      }
+      if (reserved >= courts.length) available = false;
 
       return {
         ...slot,
-        free: courts.length - ocupate,
+        free: courts.length - reserved,
         total: courts.length,
-        available,
-        disabled: !available
+        available
       };
     });
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
   };
 
   render() {
     const {
       cards,
-      selectedDate,
       reservationDayPeriod,
       reservationMinLength,
-      onScheduleRead,
       loadingSchedule,
       loadingReservations,
       loadingCourts
     } = this.props;
+
+    const { selectedDate } = this.state;
 
     return (
       <Schedule
@@ -128,7 +133,6 @@ class ClientCommerceSchedule extends Component {
         ]}
         loading={loadingSchedule || loadingReservations || loadingCourts}
         onDateChanged={date => this.onDateChanged(date)}
-        onRefresh={() => onScheduleRead(this.props.commerce.objectID)}
         onSlotPress={slot => this.onSlotPress(slot)}
       />
     );
@@ -138,13 +142,12 @@ class ClientCommerceSchedule extends Component {
 const mapStateToProps = state => {
   const {
     cards,
-    selectedDate,
     slots,
     reservationDayPeriod,
     reservationMinLength,
     refreshing
-  } = state.scheduleRegister;
-  const loadingSchedule = state.scheduleRegister.loading;
+  } = state.commerceSchedule;
+  const loadingSchedule = state.commerceSchedule.loading;
   const { commerce, courtType } = state.courtReservation;
   const { reservations } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
@@ -156,7 +159,6 @@ const mapStateToProps = state => {
     commerce,
     cards,
     slots,
-    selectedDate,
     reservationDayPeriod,
     reservationMinLength,
     refreshing,
@@ -177,7 +179,7 @@ export default connect(
     onScheduleRead,
     onCourtReservationValueChange,
     onCommerceCourtTypeReservationsRead,
-    onCommerceCourtsRead,
+    onCommerceCourtsReadByType,
     onCommerceCourtTypesRead
   }
 )(ClientCommerceSchedule);

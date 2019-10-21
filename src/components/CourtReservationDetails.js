@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider, Avatar } from 'react-native-elements';
+import { Divider, Avatar, Icon } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './common';
 import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
@@ -17,6 +17,31 @@ class CourtReservationDetails extends Component {
             this.setState({ name: `${client.firstName} ${client.lastName}`, profilePicture: client.profilePicture });
         }
     }
+
+    /*
+    Esto queda comentado por ahora ya que la propiedad provinceName se llama asi cuando el commerce viene desde Algolia
+    pero se llama province.name cuando la consulta viene directo desde la base de datos, entonces habria que solucionar eso
+
+    renderAddress = () => {
+        if (this.props.commerce) {
+            const { address, city, provinceName } = this.props.commerce;
+
+            return (
+                <CardSection style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}>
+                    <Icon
+                        name="md-pin"
+                        type="ionicon"
+                        size={16}
+                        containerStyle={{ marginRight: 5 }}
+                    />
+                    <Text style={styles.regularText}>
+                        {`${address}, ${city}, ${provinceName}`}
+                    </Text>
+                </CardSection>
+            );
+        }
+    }
+    */
 
     renderPrice = () => {
         const { price, showPrice } = this.props;
@@ -37,7 +62,8 @@ class CourtReservationDetails extends Component {
             court,
             startDate,
             endDate,
-            light
+            light,
+            commerce
         } = this.props;
 
         const { name, profilePicture } = this.state;
@@ -48,16 +74,17 @@ class CourtReservationDetails extends Component {
                     rounded
                     source={profilePicture ? { uri: profilePicture } : null}
                     size={90}
-                    icon={{ name: 'store' }}
+                    icon={{ name: commerce ? 'store' : 'person' }}
                     containerStyle={styles.avatarStyle}
                 />
                 <View style={styles.contentContainer}>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 8 }]}>
+                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
                         <Text style={styles.bigText}>
                             {name}
                         </Text>
                     </CardSection>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                    {/*this.renderAddress()*/}
+                    <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
                         <Text style={styles.mediumText}>
                             {court.name}
                         </Text>
@@ -88,6 +115,7 @@ class CourtReservationDetails extends Component {
             </View>
         );
     }
+
 }
 
 const styles = StyleSheet.create({

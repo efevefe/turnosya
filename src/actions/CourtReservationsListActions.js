@@ -4,18 +4,15 @@ import moment from 'moment';
 import {
   ON_COMMERCE_COURT_RESERVATIONS_READ,
   ON_COMMERCE_COURT_RESERVATIONS_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ
+  ON_RESERVATION_CLIENT_READING,
+  ON_RESERVATION_CLIENT_READ,
+  ON_RESERVATION_CLIENT_READ_FAIL,
+  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
-  return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload: { prop, value }
-  };
-};
+  return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
+}
 
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
@@ -28,6 +25,7 @@ export const onCommerceCourtTypeReservationsRead = ({
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('courtType', '==', courtType)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
@@ -37,9 +35,8 @@ export const onCommerceCourtTypeReservationsRead = ({
           .add(1, 'days')
           .toDate()
       )
-      .get()
-      .then(snapshot => {
-        var reservations = [];
+      .onSnapshot(snapshot => {
+        const reservations = [];
 
         snapshot.forEach(doc => {
           reservations.push({
@@ -54,10 +51,6 @@ export const onCommerceCourtTypeReservationsRead = ({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: { reservations }
         });
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
       });
   };
 };
@@ -72,6 +65,7 @@ export const onCommerceCourtReservationsRead = ({
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
         'startDate',
@@ -80,9 +74,8 @@ export const onCommerceCourtReservationsRead = ({
           .add(1, 'days')
           .toDate()
       )
-      .get()
-      .then(snapshot => {
-        var reservations = [];
+      .onSnapshot(snapshot => {
+        const reservations = [];
 
         snapshot.forEach(doc => {
           reservations.push({
@@ -96,50 +89,11 @@ export const onCommerceCourtReservationsRead = ({
           type: ON_COMMERCE_COURT_RESERVATIONS_READ,
           payload: { reservations }
         });
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL });
       });
   };
 };
 
-export const onCommerceCourtReservationsReadOnSlot = ({
-  commerceId,
-  startDate
-}) => {
-  const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READING });
-
-    db.collection(`Commerces/${commerceId}/Reservations`)
-      .where('startDate', '==', startDate.toDate())
-      .get()
-      .then(snapshot => {
-        var reservations = [];
-
-        snapshot.forEach(doc => {
-          reservations.push({
-            id: doc.id,
-            ...doc.data(),
-            startDate: moment(doc.data().startDate.toDate()),
-            endDate: moment(doc.data().endDate.toDate())
-          });
-        });
-
-        dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_ON_SLOT_READ,
-          payload: reservations
-        });
-      })
-      .catch(error =>
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL })
-      );
-  };
-};
-
-export const onCommerceCourtReservationsListRead = ({
+export const onCommerceDetailedCourtReservationsRead = ({
   commerceId,
   selectedDate
 }) => {
@@ -148,6 +102,7 @@ export const onCommerceCourtReservationsListRead = ({
   return dispatch => {
     dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
     db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
       .where('startDate', '>=', selectedDate.toDate())
       .where(
         'startDate',
@@ -158,10 +113,10 @@ export const onCommerceCourtReservationsListRead = ({
       )
       .orderBy('startDate')
       .onSnapshot(snapshot => {
-        var reservationsDetailed = [];
+        const detailedReservations = [];
 
         if (snapshot.empty) {
-          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: [] });
+          dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { detailedReservations } });
           return;
         }
 
@@ -172,7 +127,7 @@ export const onCommerceCourtReservationsListRead = ({
               db.doc(`Profiles/${doc.data().clientId}`)
                 .get()
                 .then(client => {
-                  reservationsDetailed.push({
+                  detailedReservations.push({
                     id: doc.id,
                     ...doc.data(),
                     startDate: moment(doc.data().startDate.toDate()),
@@ -184,10 +139,10 @@ export const onCommerceCourtReservationsListRead = ({
                     court: { id: court.id, ...court.data() }
                   });
 
-                  if (reservationsDetailed.length === snapshot.size) {
+                  if (detailedReservations.length === snapshot.size) {
                     dispatch({
                       type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                      payload: { reservationsDetailed }
+                      payload: { detailedReservations: detailedReservations.sort((a, b) => a.startDate > b.startDate) }
                     });
                   }
                 });
@@ -196,3 +151,18 @@ export const onCommerceCourtReservationsListRead = ({
       });
   };
 };
+
+export const onReservationClientRead = clientId => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_RESERVATION_CLIENT_READING });
+
+    db.doc(`Profiles/${clientId}`)
+      .get()
+      .then(doc => {
+        dispatch({ type: ON_RESERVATION_CLIENT_READ, payload: { id: doc.id, ...doc.data() } });
+      })
+      .catch(error => dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL }));
+  }
+}

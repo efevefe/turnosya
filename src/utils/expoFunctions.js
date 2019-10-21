@@ -1,5 +1,7 @@
 import { Platform, Linking } from 'react-native';
-import { Permissions, Location, IntentLauncherAndroid } from 'expo';
+import * as IntentLauncher from 'expo-intent-launcher';
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 const LocationStatus = {
   permissionsAllowed: 'permissionsAllowed',
@@ -17,13 +19,13 @@ export const getPermissionLocationStatus = async () => {
 };
 
 const getLocationAndroid = async status => {
-  if (status !== 'denied') {
-    return (await Location.hasServicesEnabledAsync())
-      ? LocationStatus.permissionsAllowed
-      : LocationStatus.permissionsAllowedWithGPSOff;
+  if (status === 'denied' || status === 'undetermined') {
+    return LocationStatus.permissionsDenied;
   }
 
-  return LocationStatus.permissionsDenied;
+  return (await Location.hasServicesEnabledAsync())
+    ? LocationStatus.permissionsAllowed
+    : LocationStatus.permissionsAllowedWithGPSOff;
 };
 
 const getLocationIos = async status => {
@@ -41,12 +43,20 @@ const getLocationIos = async status => {
 };
 
 export const getCurrentPosition = async () => {
+  // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
   return await Location.getCurrentPositionAsync({});
 };
 
+export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
+  return await Location.reverseGeocodeAsync({
+    latitude,
+    longitude
+  });
+};
+
 export const openGPSAndroid = () => {
-  IntentLauncherAndroid.startActivityAsync(
-    IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
+  IntentLauncher.startActivityAsync(
+    IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
   ).then(async () => {
     if (await Location.hasServicesEnabledAsync()) {
       return LocationStatus.permissionsAllowed;
@@ -67,28 +77,3 @@ const getPermissionLocation = async () => {
 export const askPermissionLocation = async () => {
   return await Permissions.askAsync(Permissions.LOCATION);
 };
-
-// location = Es un objeto. Tiene datos como:
-//     coords  {
-//        accuracy --> ,
-//        altitude --> ,
-//        heading --> ,
-//        latitude --> ,
-//        longitude --> ,
-//        sped -->
-//      }
-//    mocked -->
-//    timestamp -->
-
-// let moreData = await Location.reverseGeocodeAsync({
-//   latitude: location.coords.latitude,
-//   longitude: location.coords.longitude
-// });
-// moreData = Es un array. Agrega datos como:
-//     city --> Córdoba,
-//     street --> null,
-//     region --> Córdoba,
-//     postalCode --> null,
-//     country --> Argentina,
-//     isoCountryCode --> AR,
-//     name --> C1662

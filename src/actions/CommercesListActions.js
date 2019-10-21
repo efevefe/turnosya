@@ -8,7 +8,8 @@ import {
   ONLY_FAVORITE_COMMERCES_READING,
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
-  ON_COMMERCE_SEARCHING
+  ON_COMMERCE_SEARCHING,
+  ON_PROVINCE_FILTER_UPDATE
 } from './types';
 
 export const commerceSearching = isSearching => {
@@ -37,7 +38,9 @@ export const deleteFavoriteCommerce = commerceId => {
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .delete()
-      .then(() => dispatch({ type: FAVORITE_COMMERCE_DELETED, payload: commerceId }))
+      .then(() =>
+        dispatch({ type: FAVORITE_COMMERCE_DELETED, payload: commerceId })
+      )
       .catch(err => console.log(err));
   };
 };
@@ -48,7 +51,9 @@ export const registerFavoriteCommerce = commerceId => {
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
       .set({})
-      .then(() => dispatch({ type: FAVORITE_COMMERCE_ADDED, payload: commerceId }))
+      .then(() =>
+        dispatch({ type: FAVORITE_COMMERCE_ADDED, payload: commerceId })
+      )
       .catch(err => console.log(err));
   };
 };
@@ -64,8 +69,7 @@ export const readFavoriteCommerces = () => {
         var favorites = [];
         snapshot.forEach(doc => favorites.push(doc.id));
         dispatch({ type: FAVORITE_COMMERCES_READ, payload: favorites });
-      }
-      );
+      });
   };
 };
 
@@ -97,12 +101,19 @@ export const readOnlyFavoriteCommerces = () => {
             .then(commerce => {
               if (commerce.data().softDelete == null) {
                 const { profilePicture, name, area, address } = commerce.data();
-                onlyFavoriteCommerces.push({ profilePicture, name, address, areaName: area.name, objectID: commerce.id });
+                onlyFavoriteCommerces.push({
+                  profilePicture,
+                  name,
+                  address,
+                  areaName: area.name,
+                  objectID: commerce.id
+                });
               }
 
               processedItems++;
 
-              if (processedItems == favoriteCommerces.length) { // solucion provisoria
+              if (processedItems == favoriteCommerces.length) {
+                // solucion provisoria
                 dispatch({
                   type: ONLY_FAVORITE_COMMERCES_READ,
                   payload: { favoriteCommerces, onlyFavoriteCommerces }
@@ -113,3 +124,8 @@ export const readOnlyFavoriteCommerces = () => {
       });
   };
 };
+
+export const updateProvinceFilter = provinceName => ({
+  type: ON_PROVINCE_FILTER_UPDATE,
+  payload: provinceName
+});

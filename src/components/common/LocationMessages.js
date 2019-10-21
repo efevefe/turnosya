@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
-import { Platform, View, AppState, Text } from 'react-native';
+import { Platform, View, AppState, StyleSheet } from 'react-native';
+import { Divider } from 'react-native-elements';
+import { Menu } from './Menu';
+import { MenuItem } from './MenuItem';
+import { connect } from 'react-redux';
+import { onLocationChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
   askPermissionLocation,
   getCurrentPosition,
-  getPermissionLocationStatus
+  getPermissionLocationStatus,
+  getAddressFromLatAndLong
 } from '../../utils';
-import { Divider } from 'react-native-elements';
-import { Menu, MenuItem, Button } from '../common';
 
 class LocationMessages extends Component {
   state = {
@@ -52,8 +56,27 @@ class LocationMessages extends Component {
       : 'Activa GPS para recibir una mejor búsqueda cerca de ti';
   };
 
-  getLocation = async () => {
-    this.setState({ location: await getCurrentPosition() });
+  getAndSaveLocation = async () => {
+    const currentLatLong = await getCurrentPosition();
+    const { latitude, longitude } = currentLatLong.coords;
+    const [addresResult] = await getAddressFromLatAndLong({
+      latitude,
+      longitude
+    });
+    const { name, street, city, region, country } = addresResult;
+
+    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+
+    const location = {
+      address,
+      city,
+      provinceName: region,
+      country,
+      latitude,
+      longitude
+    };
+
+    this.props.onLocationChange({ location });
   };
 
   renderItems = () => {
@@ -142,15 +165,8 @@ class LocationMessages extends Component {
 
   render() {
     if (this.state.permissionStatus === 'permissionsAllowed') {
-      return (
-        <View>
-          <Button
-            title="Hacer algun cambio en el state"
-            onPress={() => this.getLocation()}
-          />
-          <Text>{JSON.stringify(this.state.location)}</Text>
-        </View>
-      );
+      this.getAndSaveLocation();
+      return <View />;
     } else {
       return (
         <View>
@@ -168,10 +184,13 @@ class LocationMessages extends Component {
   }
 }
 
-styles = {
+const styles = StyleSheet.create({
   modalItemsContainer: {
     flexDirection: 'row'
   }
-};
+});
 
-export { LocationMessages };
+export default connect(
+  null,
+  { onLocationChange }
+)(LocationMessages);

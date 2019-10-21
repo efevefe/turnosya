@@ -3,15 +3,16 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import ServicesList from '../components/ServicesList';
-import ServiceForm from '../components/ServiceForm';
+// import ServicesList from '../components/ServicesList';
+// import ServiceForm from '../components/ServiceForm';
 import CourtList from '../components/CourtList';
 import CourtForm from '../components/CourtForm';
 import ScheduleRegister from '../components/ScheduleRegister';
 import CommerceProfile from '../components/CommerceProfile';
 import CommerceSchedule from '../components/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
-import CommerceCourtsStateOnSlot from '../components/CommerceCourtsStateOnSlot';
+import LocationMap from '../components/LocationMap';
+import CommerceCourtsStateList from '../components/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
 import {
@@ -45,7 +46,7 @@ const calendarStack = createStackNavigator(
       }
     },
     commerceCourtsList: {
-      screen: CommerceCourtsStateOnSlot,
+      screen: CommerceCourtsStateList,
       navigationOptions: {
         title: 'Canchas Disponibles'
       }
@@ -88,12 +89,13 @@ const reservationsStack = createStackNavigator(
         )
       })
     },
-    reservationDetails: { // la pantalla de detalles del turno que es alternativa al modal
+    reservationDetails: {
+      // la pantalla de detalles del turno que es alternativa al modal
       screen: CommerceCourtReservationDetails,
       navigationOptions: {
         title: 'Detalles del Turno'
       }
-    },
+    }
   },
   stackNavigationOptions
 );
@@ -128,6 +130,12 @@ const profileStack = createStackNavigator(
         headerLeft: navigation.getParam('leftIcon') || (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
+      })
+    },
+    changeAddressMap: {
+      screen: LocationMap,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Modificar mi Dirección'
       })
     }
   },

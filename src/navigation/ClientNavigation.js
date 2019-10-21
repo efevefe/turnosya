@@ -3,7 +3,6 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import EmptyScreen from '../components/EmptyScreen';
 import ClientProfile from '../components/ClientProfile';
 import CommercesList from '../components/CommercesList';
 import FavoriteCommercesList from '../components/FavoriteCommercesList';
@@ -16,10 +15,15 @@ import CommercesAreas from '../components/CommercesAreas';
 import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
+import ClientReservationsList from '../components/ClientReservationsList';
+import ClientReservationDetails from '../components/ClientReservationDetails';
+import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
+import CommerceProfileView from '../components/CommerceProfileView';
+import LocationMap from '../components/LocationMap';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const searchStack = createStackNavigator(
+const mainSearchStack = createStackNavigator(
   {
     commercesAreas: {
       screen: CommercesAreas,
@@ -35,6 +39,18 @@ const searchStack = createStackNavigator(
       navigationOptions: {
         title: 'Buscar Negocios'
       }
+    },
+    commerceProfileView: {
+      screen: CommerceProfileView,
+      navigationOptions: {
+        title: 'Perfil'
+      }
+    },
+    changeAddressMap: {
+      screen: LocationMap,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Dirección'
+      })
     },
     commerceCourtTypes: {
       screen: CommerceCourtTypes,
@@ -64,16 +80,54 @@ const searchStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const searchStack = createStackNavigator(
+  {
+    main: {
+      screen: mainSearchStack
+    },
+    commercesFiltersScreen: {
+      screen: CommercesFiltersScreen
+    }
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none'
+  }
+);
+
+searchStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length > 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === 'commercesFiltersScreen') {
+        tabBarVisible = false;
+      } else {
+        tabBarVisible = true;
+      }
+    });
+  }
+
+  return {
+    tabBarVisible
+  };
+};
+
 const calendarStack = createStackNavigator(
   {
     reservations: {
-      screen: EmptyScreen,
+      screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
         headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
+    },
+    reservationDetails: {
+      screen: ClientReservationDetails,
+      navigationOptions: {
+        title: 'Detalle del Turno'
+      }
     }
   },
   stackNavigationOptions

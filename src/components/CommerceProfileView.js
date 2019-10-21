@@ -1,0 +1,274 @@
+import React, { Component } from 'react';
+import {
+  View,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView
+} from 'react-native';
+import { Avatar, Text, Divider, Image, Button } from 'react-native-elements';
+import { connect } from 'react-redux';
+import {
+  onCommerceReadProfile,
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce
+} from '../actions';
+import { MAIN_COLOR } from '../constants';
+import CommerceCourtTypes from './CommerceCourtTypes';
+import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const imageSizeWidth = Math.round(Dimensions.get('window').width);
+const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
+
+class CommerceProfileView extends Component {
+  state = {
+    favorite: false
+  };
+
+  componentDidMount() {
+    this.setState({
+      favorite: this.props.favoriteCommerces.includes(this.props.commerceId)
+    });
+    this.props.onCommerceReadProfile(this.props.commerce.objectID);
+  }
+
+  renderDescription = () => {
+    if (this.props.description)
+      return (
+        <View style={styles.descriptionStyle}>
+          <Text style={{ textAlign: 'center', fontSize: 20 }}>
+            {this.props.description}
+          </Text>
+        </View>
+      );
+  };
+
+  renderLocation = () => {
+    const { address, city } = this.props.locationData;
+    const { provinceId, name } = this.props.province;
+
+    if (address || city || provinceId) {
+      const { locationContainerStyle } = styles;
+
+      return (
+        <TouchableOpacity
+          onPress={() => this.onMapPress()}
+          style={locationContainerStyle}
+        >
+          <Ionicons name="md-pin" type="ionicon" size={16} />
+
+          <Text
+            style={{ textAlign: 'center', paddingLeft: 5 }}
+          >{`${address}, ${city}, ${name}`}</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  onFavoritePress = commerceId => {
+    if (this.state.favorite) {
+      this.props.deleteFavoriteCommerce(commerceId);
+    } else {
+      this.props.registerFavoriteCommerce(commerceId);
+    }
+    this.setState({ favorite: !this.state.favorite });
+  };
+
+  onMapPress = () => {
+    const {
+      address,
+      provinceName,
+      city,
+      latitude,
+      longitude
+    } = this.props.locationData;
+
+    this.props.navigation.navigate('changeAddressMap', {
+      markers: [
+        {
+          address,
+          provinceName,
+          city,
+          latitude,
+          longitude
+        }
+      ]
+    });
+  };
+
+  render() {
+    const {
+      containerStyle,
+      headerContainerStyle,
+      avatarContainerStyle,
+      avatarStyle
+    } = styles;
+
+    return (
+      <ScrollView>
+        <View>
+          <Image
+            style={{
+              height: imageSizeHeight,
+              width: imageSizeWidth,
+              position: 'absolute'
+            }}
+            source={{ uri: this.props.profilePicture }}
+          />
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <Button
+              type="clear"
+              icon={
+                <Ionicons
+                  name="md-information-circle-outline"
+                  color={'white'}
+                  size={30}
+                />
+              }
+              onPress={() => console.log('aa')}
+            />
+
+            <Button
+              type="clear"
+              icon={
+                this.state.favorite ? (
+                  <Icon name="favorite" color={'red'} size={30} />
+                ) : (
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
+              }
+              onPress={() => this.onFavoritePress(this.props.commerceId)}
+            />
+          </View>
+
+          <View style={headerContainerStyle}>
+            <View style={avatarContainerStyle}>
+              <Avatar
+                rounded
+                source={
+                  this.props.profilePicture
+                    ? { uri: this.props.profilePicture }
+                    : null
+                }
+                size={avatarSize}
+                icon={{ name: 'store' }}
+                containerStyle={avatarStyle}
+              />
+            </View>
+
+            <Text h3>{this.props.name}</Text>
+            {this.renderLocation()}
+          </View>
+
+          <View>{this.renderDescription()}</View>
+          <Divider
+            style={{
+              backgroundColor: 'grey',
+              marginTop: 10,
+              margin: 5,
+              marginLeft: 15,
+              marginRight: 15
+            }}
+          />
+        </View>
+
+        <CommerceCourtTypes navigation={this.props.navigation} />
+      </ScrollView>
+    );
+  }
+}
+const styles = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
+    alignSelf: 'stretch'
+  },
+  headerContainerStyle: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    marginTop: imageSizeHeight / 2 - 49
+  },
+  avatarContainerStyle: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end'
+  },
+  avatarStyle: {
+    borderWidth: 4,
+    borderColor: MAIN_COLOR,
+    marginBottom: 10
+  },
+  locationContainerStyle: {
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    margin: 10
+  },
+  descriptionStyle: {
+    alignItems: 'center',
+    marginHorizontal: 15
+  }
+});
+
+const mapStateToProps = state => {
+  const { commerce } = state.courtReservation;
+  const { favoriteCommerces } = state.commercesList;
+
+  const {
+    name,
+    cuit,
+    email,
+    phone,
+    description,
+    address,
+    city,
+    province,
+    area,
+    areasList,
+    profilePicture,
+    commerceId,
+    loading,
+    refreshing,
+    latitude,
+    longitude
+  } = state.commerceData;
+  const { provincesList } = state.provinceData;
+
+  let locationData = { ...state.locationData };
+
+  if (!locationData.country) {
+    locationData = {
+      ...state.locationData,
+      address,
+      city,
+      provinceName: province.name,
+      latitude,
+      longitude,
+      country: 'Argentina'
+    };
+  }
+
+  return {
+    name,
+    cuit,
+    email,
+    phone,
+    description,
+    province,
+    provincesList,
+    area,
+    areasList,
+    profilePicture,
+    commerceId,
+    loading,
+    refreshing,
+    locationData,
+    commerce,
+    favoriteCommerces
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { onCommerceReadProfile, registerFavoriteCommerce, deleteFavoriteCommerce }
+)(CommerceProfileView);

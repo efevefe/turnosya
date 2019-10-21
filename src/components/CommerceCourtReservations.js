@@ -1,26 +1,24 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { ListItem, ButtonGroup, Overlay } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from './common';
-import { onCommerceCourtReservationsListRead } from '../actions';
+import { onCommerceDetailedCourtReservationsRead } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CourtReservationDetails from './CourtReservationDetails';
 
 class CommerceCourtReservations extends Component {
-    state = { selectedDate: moment(), selectedIndex: 1, filteredList: [], selectedReservation: {}, detailsVisible: false };
+    state = {
+        selectedDate: moment(),
+        selectedIndex: 1,
+        filteredList: [],
+        selectedReservation: {},
+        detailsVisible: false
+    };
 
     componentDidMount() {
         this.onDateSelected(moment());
-    }
-
-    onDateSelected = date => {
-        const { commerceId } = this.props;
-        var selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
-
-        this.props.onCommerceCourtReservationsListRead({ commerceId, selectedDate });
-        this.setState({ selectedDate });
     }
 
     componentDidUpdate(prevProps) {
@@ -29,15 +27,21 @@ class CommerceCourtReservations extends Component {
         }
     }
 
-    updateIndex = (selectedIndex) => {
-        this.setState({ selectedIndex });
+    onDateSelected = date => {
+        const { commerceId } = this.props;
+        const selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
 
+        this.props.onCommerceDetailedCourtReservationsRead({ commerceId, selectedDate });
+        this.setState({ selectedDate });
+    }
+
+    updateIndex = selectedIndex => {
         const { reservations } = this.props;
-        var filteredList = [];
+        let filteredList = [];
 
         if (selectedIndex == 0) {
             // turnos pasados
-            filteredList = reservations.filter(res => res.endDate < moment());
+            filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
         } else if (selectedIndex == 1) {
             // turnos en curso
             filteredList = reservations.filter(res => (res.startDate <= moment() && res.endDate >= moment()));
@@ -46,7 +50,7 @@ class CommerceCourtReservations extends Component {
             filteredList = reservations.filter(res => res.startDate > moment());
         }
 
-        this.setState({ filteredList });
+        this.setState({ filteredList, selectedIndex });
     }
 
     renderDetails = () => {
@@ -60,22 +64,17 @@ class CommerceCourtReservations extends Component {
                 height='auto'
                 animationType="fade"
             >
-                    <CourtReservationDetails
-                        client={client}
-                        court={court}
-                        startDate={startDate}
-                        endDate={endDate}
-                        price={price}
-                        light={light}
-                        showPrice={true}
-                    />
+                <CourtReservationDetails
+                    client={client}
+                    court={court}
+                    startDate={startDate}
+                    endDate={endDate}
+                    price={price}
+                    light={light}
+                    showPrice={true}
+                />
             </Overlay>
         );
-    }
-
-    onReservationPress = async reservation => {
-        await this.setState({ selectedReservation: reservation });
-        this.setState({ detailsVisible: true });
     }
 
     renderList = ({ item }) => {
@@ -87,31 +86,14 @@ class CommerceCourtReservations extends Component {
                     color: 'black'
                 }}
                 title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
-                //subtitle={`${item.client.firstName} ${item.client.lastName}\n${item.court.name} - ${item.courtType} - ${item.court.ground}`}
                 subtitle={`${item.client.firstName} ${item.client.lastName}\n${item.court.name}`}
                 rightTitle={`$${item.price}`}
-                rightTitleStyle={{ fontWeight: 'bold', color: 'black' }}
+                rightTitleStyle={styles.listItemRightTitleStyle}
                 rightSubtitle={item.light ? 'Con Luz' : 'Sin Luz'}
-                rightSubtitleStyle={{ color: 'grey' }}
+                rightSubtitleStyle={styles.listItemRightSubtitleStyle}
                 //onPress={() => this.props.navigation.navigate('reservationDetails', { reservation: item })}
-                onPress={() => this.onReservationPress(item)}
+                onPress={() => this.setState({ detailsVisible: true, selectedReservation: item })}
                 bottomDivider
-            />
-        );
-    };
-
-    onRefresh = () => {
-        return (
-            <RefreshControl
-                refreshing={this.props.refreshing}
-                onRefresh={() => {
-                    this.props.onCommerceCourtReservationsListRead({
-                        commerceId: this.props.commerceId,
-                        selectedDate: this.state.selectedDate
-                    });
-                }}
-                colors={[MAIN_COLOR]}
-                tintColor={MAIN_COLOR}
             />
         );
     };
@@ -125,17 +107,11 @@ class CommerceCourtReservations extends Component {
                     data={filteredList}
                     renderItem={this.renderList.bind(this)}
                     keyExtractor={reservation => reservation.id}
-                    refreshControl={this.onRefresh()}
-                />
-            );
-        } else {
-            return (
-                <EmptyList
-                    title='No hay turnos'
-                    refreshControl={this.onRefresh()}
                 />
             );
         }
+        
+        return <EmptyList title='No hay turnos' />;
     };
 
     render() {
@@ -150,20 +126,12 @@ class CommerceCourtReservations extends Component {
                     selectedIndex={this.state.selectedIndex}
                     buttons={['PASADOS', 'EN CURSO', 'PROXIMOS']}
                     containerBorderRadius={0}
-                    containerStyle={{
-                        height: 40,
-                        borderRadius: 0,
-                        borderWidth: 0,
-                        borderBottomWidth: 0.5,
-                        marginBottom: 0,
-                        marginTop: 0,
-                        marginLeft: 0,
-                        marginRight: 0
-                    }}
-                    selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                    selectedTextStyle={{ color: 'white' }}
-                    textStyle={{ color: MAIN_COLOR }}
-                    innerBorderStyle={{ width: 0 }}
+                    containerStyle={styles.buttonGroupContainerStyle}
+                    selectedButtonStyle={styles.buttonGroupSelectedButtonStyle}
+                    buttonStyle={styles.buttonGroupButtonStyle}
+                    textStyle={styles.buttonGroupTextStyle}
+                    selectedTextStyle={styles.buttonGroupSelectedTextStyle}
+                    innerBorderStyle={styles.buttonGroupInnerBorderStyle}
                 />
                 {
                     this.props.loading
@@ -177,11 +145,46 @@ class CommerceCourtReservations extends Component {
     }
 }
 
+const styles = StyleSheet.create({
+    buttonGroupContainerStyle: {
+        height: 40,
+        borderRadius: 0,
+        borderWidth: 0,
+        borderBottomWidth: 0.5,
+        marginBottom: 0,
+        marginTop: 0,
+        marginLeft: 0,
+        marginRight: 0
+    },
+    buttonGroupSelectedButtonStyle: {
+        backgroundColor: 'white'
+    },
+    buttonGroupButtonStyle: {
+        backgroundColor: MAIN_COLOR
+    },
+    buttonGroupTextStyle: {
+        color: 'white'
+    },
+    buttonGroupSelectedTextStyle: {
+        color: MAIN_COLOR
+    },
+    buttonGroupInnerBorderStyle: {
+        width: 0
+    },
+    listItemRightTitleStyle: {
+        fontWeight: 'bold',
+        color: 'black'
+    },
+    listItemRightSubtitleStyle: {
+        color: 'grey'
+    }
+});
+
 const mapStateToProps = state => {
     const { commerceId } = state.commerceData;
-    const { reservationsDetailed, loading } = state.courtReservationsList;
+    const { detailedReservations, loading } = state.courtReservationsList;
 
-    return { commerceId, reservations: reservationsDetailed, loading };
+    return { commerceId, reservations: detailedReservations, loading };
 }
 
-export default connect(mapStateToProps, { onCommerceCourtReservationsListRead })(CommerceCourtReservations);
+export default connect(mapStateToProps, { onCommerceDetailedCourtReservationsRead })(CommerceCourtReservations);
