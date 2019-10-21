@@ -18,10 +18,6 @@ class Hits extends Component {
   //   debugger;
   // }
 
-  componentDidMount() {
-    console.log(this.props.hits);
-  }
-
   callback = () => {
     this.setState({ modal: false });
   };

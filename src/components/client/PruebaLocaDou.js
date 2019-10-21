@@ -13,23 +13,25 @@ const MapSearch = connectGeoSearch(({ hits }) => {
     <MapView
       ref={map => (this.map = map)}
       loadingEnabled={true}
-      provider={MapView.PROVIDER_GOOGLE}
       initialRegion={{
-        latitude: -27.7729,
-        longitude: -64.2675,
+        latitude: -31.4229,
+        longitude: -64.1675,
         latitudeDelta: 0.0382,
         longitudeDelta: LONGITUDE_DELTA
       }}
-      showsUserLocation={true}
+      showsUserLocation
       style={styles.map}
     >
       {hits.map(hit => {
+        console.log(hit);
         <Marker
           key={hit.objectID}
           coordinate={{
             latitude: hit._geoloc.lat,
             longitude: hit._geoloc.lng
           }}
+          title={hit.name}
+          description={hit.description}
         />;
       })}
     </MapView>

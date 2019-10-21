@@ -10,6 +10,9 @@ import ConnectedStateResults from './CommercesList.StateResults';
 import { readFavoriteCommerces } from '../../actions';
 
 import MapSearch from './PruebaLocaDou';
+import { Fab } from 'native-base';
+import { MAIN_COLOR } from '../../constants';
+import { Ionicons } from '@expo/vector-icons';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -19,7 +22,8 @@ class CommercesList extends Component {
 
     this.state = {
       areaName: props.navigation.state.params.areaName, // Mover esto a Redux
-      searchVisible: false
+      searchVisible: false,
+      showingMap: false
     };
   }
 
@@ -96,6 +100,14 @@ class CommercesList extends Component {
       : null;
   };
 
+  onMapFabPress = () => {
+    this.setState({ showingMap: !this.state.showingMap });
+  };
+
+  renderResults = () => {
+    return this.state.showingMap ? <MapSearch /> : <ConnectedHits />;
+  };
+
   render() {
     return (
       <InstantSearch
@@ -113,10 +125,16 @@ class CommercesList extends Component {
           {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
         />
         <ConnectedStateResults />
-        <View style={{ height: 500 }}>
-          <MapSearch />
-        </View>
-        <ConnectedHits />
+        {/* <MapSearch /> */}
+        {/* <ConnectedHits /> */}
+        {this.renderResults()}
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={this.onMapFabPress}
+        >
+          <Ionicons name="md-pin" />
+        </Fab>
       </InstantSearch>
     );
   }
