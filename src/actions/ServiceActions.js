@@ -20,7 +20,7 @@ export const onFormOpen = () => {
 };
 
 export const serviceCreate = ({ name, duration, price, description, commerceId }, navigation) => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
@@ -30,41 +30,37 @@ export const serviceCreate = ({ name, duration, price, description, commerceId }
       .then(() => {
         dispatch({ type: SERVICE_CREATE });
         navigation.goBack();
-      })
-      .catch(error => console.log(error));
-  };
-};
-
-export const servicesRead = commerceId => {
-  var db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: SERVICES_READING });
-
-    db.collection(`Commerces/${commerceId}/Services`)
-      .where('softDelete', '==', null)
-      .orderBy('name', 'asc')
-      .onSnapshot(snapshot => {
-        var services = [];
-        snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
-        dispatch({ type: SERVICES_READ, payload: services });
       });
   };
 };
 
+export const servicesRead = commerceId => dispatch => {
+  dispatch({ type: SERVICES_READING });
+
+  const db = firebase.firestore();
+
+  return db.collection(`Commerces/${commerceId}/Services`)
+    .where('softDelete', '==', null)
+    .orderBy('name', 'asc')
+    .onSnapshot(snapshot => {
+      const services = [];
+      snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
+      dispatch({ type: SERVICES_READ, payload: services });
+    });
+};
+
 export const serviceDelete = ({ id, commerceId }) => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     db.doc(`Commerces/${commerceId}/Services/${id}`)
       .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: SERVICE_DELETE }))
-      .catch(error => console.log(error));
+      .then(() => dispatch({ type: SERVICE_DELETE }));
   };
 };
 
 export const serviceUpdate = ({ id, name, duration, price, description, commerceId }, navigation) => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
@@ -74,7 +70,6 @@ export const serviceUpdate = ({ id, name, duration, price, description, commerce
       .then(() => {
         dispatch({ type: SERVICE_UPDATE });
         navigation.goBack();
-      })
-      .catch(error => console.log(error));
+      });
   };
 };

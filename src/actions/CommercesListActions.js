@@ -9,12 +9,14 @@ import {
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
   ON_COMMERCE_SEARCHING,
-  ON_PROVINCE_FILTER_UPDATE
+  ON_PROVINCE_FILTER_UPDATE,
+  ON_UPDATE_ALL_FILTERS
 } from './types';
 
-export const commerceSearching = isSearching => {
-  return { type: ON_COMMERCE_SEARCHING, payload: isSearching };
-};
+export const commerceSearching = isSearching => ({
+  type: ON_COMMERCE_SEARCHING,
+  payload: isSearching
+});
 
 export const areasRead = () => {
   const db = firebase.firestore();
@@ -24,16 +26,17 @@ export const areasRead = () => {
     db.collection('Areas')
       .where('softDelete', '==', null)
       .orderBy('name', 'asc')
-      .onSnapshot(snapShot => {
+      .get()
+      .then(snapshot => {
         const areas = [];
-        snapShot.forEach(doc => areas.push({ ...doc.data(), id: doc.id }));
+        snapshot.forEach(doc => areas.push({ ...doc.data(), id: doc.id }));
         dispatch({ type: ON_AREAS_SEARCH_READ, payload: areas });
       });
   };
 };
 
 export const deleteFavoriteCommerce = commerceId => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
@@ -46,7 +49,7 @@ export const deleteFavoriteCommerce = commerceId => {
 };
 
 export const registerFavoriteCommerce = commerceId => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
   const { currentUser } = firebase.auth();
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}/FavoriteCommerces/${commerceId}`)
@@ -59,73 +62,75 @@ export const registerFavoriteCommerce = commerceId => {
 };
 
 export const readFavoriteCommerces = () => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
   return dispatch => {
     db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
       .get()
       .then(snapshot => {
-        var favorites = [];
+        const favorites = [];
         snapshot.forEach(doc => favorites.push(doc.id));
         dispatch({ type: FAVORITE_COMMERCES_READ, payload: favorites });
       });
   };
 };
 
-export const readOnlyFavoriteCommerces = () => {
-  var db = firebase.firestore();
+export const readOnlyFavoriteCommerces = () => dispatch => {
+  dispatch({ type: ONLY_FAVORITE_COMMERCES_READING });
+
+  const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
-  return dispatch => {
-    dispatch({ type: ONLY_FAVORITE_COMMERCES_READING });
+  return db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
+    .onSnapshot(snapshot => {
+      const favoriteCommerces = [];
+      const onlyFavoriteCommerces = [];
+      let processedItems = 0;
 
-    db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
-      .onSnapshot(snapshot => {
-        var favoriteCommerces = [];
-        var onlyFavoriteCommerces = [];
-        var processedItems = 0;
-
-        if (snapshot.empty) {
-          return dispatch({
-            type: ONLY_FAVORITE_COMMERCES_READ,
-            payload: { favoriteCommerces, onlyFavoriteCommerces }
-          });
-        }
-
-        snapshot.forEach(doc => {
-          favoriteCommerces.push(doc.id);
-
-          db.doc(`Commerces/${doc.id}`)
-            .get()
-            .then(commerce => {
-              if (commerce.data().softDelete == null) {
-                const { profilePicture, name, area, address } = commerce.data();
-                onlyFavoriteCommerces.push({
-                  profilePicture,
-                  name,
-                  address,
-                  areaName: area.name,
-                  objectID: commerce.id
-                });
-              }
-
-              processedItems++;
-
-              if (processedItems == favoriteCommerces.length) {
-                // solucion provisoria
-                dispatch({
-                  type: ONLY_FAVORITE_COMMERCES_READ,
-                  payload: { favoriteCommerces, onlyFavoriteCommerces }
-                });
-              }
-            });
+      if (snapshot.empty) {
+        return dispatch({
+          type: ONLY_FAVORITE_COMMERCES_READ,
+          payload: { favoriteCommerces, onlyFavoriteCommerces }
         });
+      }
+
+      snapshot.forEach(doc => {
+        favoriteCommerces.push(doc.id);
+
+        db.doc(`Commerces/${doc.id}`)
+          .get()
+          .then(commerce => {
+            if (commerce.data().softDelete == null) {
+              const { profilePicture, name, area, address } = commerce.data();
+              onlyFavoriteCommerces.push({
+                profilePicture,
+                name,
+                address,
+                areaName: area.name,
+                objectID: commerce.id
+              });
+            }
+
+            processedItems++;
+
+            if (processedItems == favoriteCommerces.length) {
+              dispatch({
+                type: ONLY_FAVORITE_COMMERCES_READ,
+                payload: { favoriteCommerces, onlyFavoriteCommerces }
+              });
+            }
+          });
       });
-  };
+    });
 };
 
 export const updateProvinceFilter = provinceName => ({
   type: ON_PROVINCE_FILTER_UPDATE,
   payload: provinceName
+});
+
+export const updateAllFilters = filters => ({
+  type: ON_UPDATE_ALL_FILTERS,
+  payload: filters
 });

@@ -1,9 +1,9 @@
 import {
   ON_REGISTER_VALUE_CHANGE,
-  ON_REGISTER,
+  ON_USER_REGISTER,
   ON_REGISTER_FORM_OPEN,
-  ON_REGISTER_SUCCESS,
-  ON_REGISTER_FAIL,
+  ON_USER_REGISTER_SUCCESS,
+  ON_USER_REGISTER_FAIL,
   ON_USER_READING,
   ON_USER_READ,
   ON_USER_UPDATING,
@@ -36,13 +36,13 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_REGISTER_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
-    case ON_REGISTER:
+    case ON_USER_REGISTER:
       return { ...state, loading: true, error: '' };
     case ON_REGISTER_FORM_OPEN:
       return { ...INITIAL_STATE };
-    case ON_REGISTER_SUCCESS:
+    case ON_USER_REGISTER_SUCCESS:
       return INITIAL_STATE;
-    case ON_REGISTER_FAIL:
+    case ON_USER_REGISTER_FAIL:
       return { ...state, loading: false, error: 'Usuario existente' };
     case ON_USER_READING:
       return { ...state, refreshing: true };

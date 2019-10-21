@@ -10,7 +10,7 @@ import CommercesListReducer from './CommercesListReducer';
 import CommerceScheduleReducer from './CommerceScheduleReducer';
 import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
 import CourtReservationReducer from './CourtReservationReducer';
-import ClientReservationsListReducer from './ClientReservationsListReducer'
+import ClientReservationsListReducer from './ClientReservationsListReducer';
 import CourtReservationsListReducer from './CourtReservationsListReducer';
 import LocationDataReducer from './LocationDataReducer';
 import ProvinceDataReducer from './ProvinceDataReducer';
@@ -27,7 +27,7 @@ export default combineReducers({
   commerceSchedule: CommerceScheduleReducer,
   commerceCourtTypes: CommerceCourtTypesReducer,
   courtReservation: CourtReservationReducer,
-  clientReservationsList:ClientReservationsListReducer,
+  clientReservationsList: ClientReservationsListReducer,
   courtReservationsList: CourtReservationsListReducer,
   locationData: LocationDataReducer,
   provinceData: ProvinceDataReducer
