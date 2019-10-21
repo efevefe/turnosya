@@ -13,6 +13,11 @@ class Hits extends Component {
     modal: true
   };
 
+  // componentDidUpdate() {
+  //   this.props;
+  //   debugger;
+  // }
+
   componentDidMount() {
     console.log(this.props.hits);
   }

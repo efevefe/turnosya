@@ -9,6 +9,8 @@ import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
 import { readFavoriteCommerces } from '../../actions';
 
+import MapSearch from './PruebaLocaDou';
+
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
@@ -111,6 +113,9 @@ class CommercesList extends Component {
           {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
         />
         <ConnectedStateResults />
+        <View style={{ height: 500 }}>
+          <MapSearch />
+        </View>
         <ConnectedHits />
       </InstantSearch>
     );

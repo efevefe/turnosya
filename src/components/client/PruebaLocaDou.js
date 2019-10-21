@@ -15,25 +15,23 @@ const MapSearch = connectGeoSearch(({ hits }) => {
       loadingEnabled={true}
       provider={MapView.PROVIDER_GOOGLE}
       initialRegion={{
-        latitude: -37.8136,
-        longitude: 144.9631,
+        latitude: -27.7729,
+        longitude: -64.2675,
         latitudeDelta: 0.0382,
         longitudeDelta: LONGITUDE_DELTA
       }}
       showsUserLocation={true}
       style={styles.map}
-      customMapStyle={mapStyle}
     >
       {hits.map(hit => {
-        console.log(hit);
+        <Marker
+          key={hit.objectID}
+          coordinate={{
+            latitude: hit._geoloc.lat,
+            longitude: hit._geoloc.lng
+          }}
+        />;
       })}
-      <Marker
-        key={hit.objectID}
-        coordinate={{
-          latitude: -37.812032,
-          longitude: 144.960521
-        }}
-      />
     </MapView>
   );
 });
