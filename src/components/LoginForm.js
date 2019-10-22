@@ -125,6 +125,7 @@ class LoginForm extends Component {
             <Button
               title="Iniciar Sesión"
               loading={this.props.loadingLogin}
+              buttonStyle={styles.buttonStyle}
               onPress={this.onButonPressHandler.bind(this)}
             />
           </CardSection>
@@ -133,6 +134,7 @@ class LoginForm extends Component {
             style={{
               backgroundColor: 'grey',
               margin: 10,
+              marginTop: 20,
               marginBottom: 0
             }}
           />
@@ -142,6 +144,7 @@ class LoginForm extends Component {
               title="Conectar con Google"
               color="#de5145"
               loading={this.props.loadingGoogle}
+              buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onGoogleLogin()}
               icon={
                 <Icon
@@ -156,6 +159,7 @@ class LoginForm extends Component {
               title="Conectar con Facebook"
               color="#4267b2"
               loading={this.props.loadingFacebook}
+              buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onFacebookLogin()}
               icon={
                 <Icon
@@ -169,11 +173,12 @@ class LoginForm extends Component {
           </CardSection>
         </View>
         <View style={createAccountContainerStyle}>
-          <CardSection>
+          <CardSection style={{ paddingTop: 0 }}>
             <Button
               title="Crear Cuenta"
               type="clear"
               color="white"
+              buttonStyle={styles.buttonStyle}
               onPress={this.onCreateAcount.bind(this)}
             />
           </CardSection>
@@ -198,10 +203,14 @@ const styles = StyleSheet.create({
     paddingTop: iconSize / 3
   },
   loginContainerStyle: {
-    justifyContent: 'center'
+    justifyContent: 'flex-end'
   },
   createAccountContainerStyle: {
     justifyContent: 'flex-end'
+  },
+  buttonStyle: {
+    marginBottom: 0,
+    marginTop: 0
   }
 });
 

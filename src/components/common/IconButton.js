@@ -56,7 +56,6 @@ const IconButton = ({ icon, iconSize, color, onPress, iconStyle, containerStyle 
 
 var styles = StyleSheet.create({
     containerStyle: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingLeft: 8,
