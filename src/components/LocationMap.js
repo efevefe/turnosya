@@ -13,34 +13,12 @@ import { Toast, IconButton } from './common';
 import { onLocationChange, onLocationValueChange } from '../actions';
 
 class LocationMap extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      defaultAddress: 'Córdoba, Argentina',
-      completeAddress: '',
-      locationAsked: false,
-      stateBeforeChanges: null
-    };
-
-    // Toda esta lógica hay que sacarla del constructor y meterla al componentDidMount. Leer documentación de React
-
-    const { markers } = props.navigation.getParam('markers', {});
-    if (markers) {
-      if (markers.length > 1) {
-        props.onLocationValueChange({ prop: 'markers', value: markers });
-      } else {
-        for (prop in markers[0]) {
-          props.onLocationValueChange({ prop, value: markers[0][prop] });
-        }
-      }
-    }
-
-    props.navigation.setParams({
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton()
-    });
-  }
+  state = {
+    defaultAddress: 'Córdoba, Argentina',
+    completeAddress: '',
+    locationAsked: false,
+    stateBeforeChanges: null
+  };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -50,19 +28,31 @@ class LocationMap extends React.Component {
   };
 
   async componentDidMount() {
-    const { markers } = this.props.navigation.getParam('markers', {});
+    this.props.navigation.setParams({
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton()
+    });
+
+    const markers = this.props.navigation.getParam('markers', {});
 
     if (!markers) {
       const { address, city, provinceName } = this.props;
+
       this.setState({
         stateBeforeChanges: { address, city, provinceName }
       });
     } else if (markers.length === 1) {
+      for (prop in markers[0]) {
+        props.onLocationValueChange({ prop, value: markers[0][prop] });
+      }
+
       const { address, provinceName, city, longitude, latitude } = markers[0];
 
       this.setState({
         stateBeforeChanges: { address, provinceName, city, latitude, longitude }
       });
+    } else {
+      props.onLocationValueChange({ prop: 'markers', value: markers });
     }
 
     await this.setAddressString();
@@ -134,6 +124,9 @@ class LocationMap extends React.Component {
       const { latitude, longitude } = latLongResult;
       this.getAddressFromLatAndLong({ latitude, longitude });
     } else {
+      this.setState({
+        completeAddress: this.state.completeAddress.replace('Calle', '')
+      });
       Toast.show({
         text: 'No se han encontrado resultados, intente modificar la dirección.'
       });
@@ -179,7 +172,7 @@ class LocationMap extends React.Component {
             longitude: longitude ? longitude : -64.18384
           }}
           title={address}
-          draggable
+          draggable={this.props.navigation.getParam('dragable', true)}
           onDragEnd={e =>
             this.getAddressFromLatAndLong({
               latitude: e.nativeEvent.coordinate.latitude,

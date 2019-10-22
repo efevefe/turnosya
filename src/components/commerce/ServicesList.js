@@ -5,12 +5,14 @@ import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Spinner, EmptyList } from '../common';
 import ServicesListItem from './ServicesListItem';
-import { servicesRead } from '../../actions';
+import { servicesRead, onFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class ServicesList extends Component {
   componentDidMount() {
-    this.unsubscribeServicesRead = this.props.servicesRead(this.props.commerceId);
+    this.unsubscribeServicesRead = this.props.servicesRead(
+      this.props.commerceId
+    );
   }
 
   componentWillUnmount() {
@@ -28,6 +30,7 @@ class ServicesList extends Component {
   }
 
   onAddPress = () => {
+    this.props.onFormOpen();
     this.props.navigation.navigate('serviceForm');
   };
 
@@ -41,7 +44,7 @@ class ServicesList extends Component {
         <Ionicons name="md-add" />
       </Fab>
     );
-  }
+  };
 
   renderList = () => {
     if (this.props.services.length > 0) {
@@ -56,7 +59,7 @@ class ServicesList extends Component {
     }
 
     return <EmptyList title="No hay ningun servicio" />;
-  }
+  };
 
   render() {
     if (this.props.loading) {
@@ -88,5 +91,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { servicesRead }
+  { servicesRead, onFormOpen }
 )(ServicesList);

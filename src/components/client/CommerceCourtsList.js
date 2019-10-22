@@ -11,11 +11,11 @@ class CommerceCourtsList extends Component {
 
     return reservations.find(reservation => {
       return (
-        reservation.startDate.toString() === slot.startDate.toString()
-        && reservation.courtId === court.id
+        reservation.startDate.toString() === slot.startDate.toString() &&
+        reservation.courtId === court.id
       );
     });
-  }
+  };
 
   onCourtPress = court => {
     this.props.onCourtReservationValueChange({
@@ -35,7 +35,11 @@ class CommerceCourtsList extends Component {
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
         courtAvailable={courtAvailable}
-        onPress={() => courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya está reservada' })}
+        onPress={() =>
+          courtAvailable
+            ? this.onCourtPress(item)
+            : Toast.show({ text: 'Esta cancha ya está reservada' })
+        }
       />
     );
   };
