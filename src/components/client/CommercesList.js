@@ -12,14 +12,10 @@ import { readFavoriteCommerces } from '../../actions';
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      areaName: props.navigation.state.params.areaName, // Mover esto a Redux
-      searchVisible: false
-    };
-  }
+  state = {
+    areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
+    searchVisible: false
+  };
 
   componentDidMount() {
     this.props.readFavoriteCommerces();

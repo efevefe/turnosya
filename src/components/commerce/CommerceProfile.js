@@ -31,28 +31,22 @@ import {
 } from '../../actions';
 
 class CommerceProfile extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      editEnabled: false,
-      pictureOptionsVisible: false,
-      newProfilePicture: false,
-      stateBeforeChanges: null,
-      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-      nameError: '',
-      cuitError: '',
-      emailError: '',
-      phoneError: '',
-      addressError: '',
-      cityError: '',
-      provinceError: '',
-      areaError: '',
-      showMapOptions: false
-    };
-
-    props.navigation.setParams({ rightIcon: this.renderEditButton() });
-  }
+  state = {
+    editEnabled: false,
+    pictureOptionsVisible: false,
+    newProfilePicture: false,
+    stateBeforeChanges: null,
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+    nameError: '',
+    cuitError: '',
+    emailError: '',
+    phoneError: '',
+    addressError: '',
+    cityError: '',
+    provinceError: '',
+    areaError: '',
+    showMapOptions: false
+  };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -81,6 +75,7 @@ class CommerceProfile extends Component {
     };
 
     this.props.onLocationChange({ location });
+    this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
   }
 
   onRefresh = () => {

@@ -33,7 +33,7 @@ class LocationMap extends React.Component {
       leftIcon: this.renderBackButton()
     });
 
-    const { markers } = this.props.navigation.getParam('markers', {});
+    const markers = this.props.navigation.getParam('markers', {});
 
     if (!markers) {
       const { address, city, provinceName } = this.props;

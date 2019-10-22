@@ -8,16 +8,12 @@ import { onProvincesNameRead, updateAllFilters } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
 class CommerceFiltersScreen extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      provinceName: props.provinceNameFilter,
-      locationButtonIndex: props.locationButtonIndex,
-      locationRadiusKms: props.locationRadiusKms, // Kilometers (Algolia accepts meters)
-      locationEnabled: props.locationEnabled
-    };
-  }
+  state = {
+    provinceName: this.props.provinceNameFilter,
+    locationButtonIndex: this.props.locationButtonIndex,
+    locationRadiusKms: this.props.locationRadiusKms, // Kilometers (Algolia accepts meters)
+    locationEnabled: this.props.locationEnabled
+  };
 
   componentDidMount = () => {
     this.props.onProvincesNameRead();
