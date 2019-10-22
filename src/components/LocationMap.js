@@ -43,7 +43,7 @@ class LocationMap extends React.Component {
       });
     } else if (markers.length === 1) {
       for (prop in markers[0]) {
-        props.onLocationValueChange({ prop, value: markers[0][prop] });
+        this.props.onLocationValueChange({ prop, value: markers[0][prop] });
       }
 
       const { address, provinceName, city, longitude, latitude } = markers[0];
@@ -52,7 +52,7 @@ class LocationMap extends React.Component {
         stateBeforeChanges: { address, provinceName, city, latitude, longitude }
       });
     } else {
-      props.onLocationValueChange({ prop: 'markers', value: markers });
+      this.props.onLocationValueChange({ prop: 'markers', value: markers });
     }
 
     await this.setAddressString();
