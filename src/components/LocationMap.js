@@ -56,7 +56,7 @@ class LocationMap extends React.Component {
           latitude,
           longitude
         },
-        completeAddress: `${address} ${provinceName}, ${city}`
+        completeAddress: `${address}, ${city}, ${provinceName}`
       });
     } else {
       this.props.onLocationValueChange({ prop: 'markers', value: markers });
@@ -75,7 +75,7 @@ class LocationMap extends React.Component {
       const { address, provinceName, city, country } = this.props;
       this.setState({
         locationAsked: false,
-        completeAddress: `${address}, ${provinceName}, ${city}, ${country}`
+        completeAddress: `${address}, ${city}, ${provinceName}, ${country}`
       });
       if (this.props.navigation.state.params.callback) {
         this.props.navigation.state.params.callback(this.props.provinceName);
@@ -159,7 +159,7 @@ class LocationMap extends React.Component {
     };
 
     this.setState({
-      completeAddress: `${address}, ${region}, ${city}, ${country}`
+      completeAddress: `${address}, ${city}, ${region}, ${country}`
     });
 
     this.props.onLocationChange({ location });
