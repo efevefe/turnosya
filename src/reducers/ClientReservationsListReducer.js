@@ -15,7 +15,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_CLIENT_RESERVATIONS_READ:
-      return {...state, loading: false, reservations: action.payload };
+      return { ...state, loading: false, reservations: action.payload };
     case ON_CLIENT_RESERVATIONS_READING:
       return { ...state, loading: true };
     case ON_CLIENT_RESERVATION_CANCELING:
@@ -24,7 +24,7 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: "Error al intentar cancelar el turno" });
       return { ...state, loading: false };
     case ON_CLIENT_RESERVATION_CANCEL:
-      Toast.show({ text: "Turno Cancelado" });
+      Toast.show({ text: "El turno ha sido cancelado" });
       return { ...state, loading: false };
     default:
       return state;

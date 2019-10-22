@@ -32,12 +32,11 @@ class CommerceCourtReservations extends Component {
     }
 
     onDateSelected = date => {
-        const { commerceId } = this.props;
         const selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
 
         this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
         this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({
-            commerceId,
+            commerceId: this.props.commerceId,
             selectedDate
         });
 
@@ -50,7 +49,7 @@ class CommerceCourtReservations extends Component {
 
         if (selectedIndex == 0) {
             // turnos pasados
-            filteredList = reservations.filter(res => res.endDate < moment()).sort((a, b) => a.startDate < b.startDate);
+            filteredList = reservations.filter(res => res.endDate < moment()).reverse();
         } else if (selectedIndex == 1) {
             // turnos en curso
             filteredList = reservations.filter(res => (res.startDate <= moment() && res.endDate >= moment()));
