@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem, IconButton } from '../common';
+import { Menu, MenuItem } from '../common';
 import { serviceDelete, onFormOpen } from '../../actions';
 
 class ServicesListItem extends Component {
@@ -82,15 +82,12 @@ class ServicesListItem extends Component {
           rightTitle={`$${price}`}
           key={id}
           onLongPress={this.onOptionsPress.bind(this)}
-          rightElement={
-            <IconButton
-              icon="md-more"
-              color="grey"
-              iconSize={22}
-              iconStyle={{ marginLeft: 5, marginRight: 8 }}
-              onPress={this.onOptionsPress}
-            />
-          }
+          rightIcon={{
+            name: 'md-more',
+            type: 'ionicon',
+            containerStyle: { height: 20, width: 10 },
+            onPress: this.onOptionsPress
+          }}
           bottomDivider
         />
       </View>

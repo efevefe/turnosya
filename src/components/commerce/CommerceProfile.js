@@ -123,8 +123,7 @@ class CommerceProfile extends Component {
         province,
         area,
         profilePicture
-      },
-      showMapOptions: true
+      }
     });
     this.props.navigation.setParams({
       title: 'Modificar Datos',
@@ -214,8 +213,7 @@ class CommerceProfile extends Component {
     this.setState({
       editEnabled: false,
       newProfilePicture: false,
-      stateBeforeChanges: null,
-      showMapOptions: false
+      stateBeforeChanges: null
     });
     this.props.navigation.setParams({
       title: 'Perfil',
@@ -501,14 +499,15 @@ class CommerceProfile extends Component {
   };
 
   renderMapOption = () => {
-    if (this.state.showMapOptions) {
+    if (this.state.editEnabled) {
       return (
-        <CardSection>
+        <CardSection style={{ paddingTop: 0 }}>
           <Button
-            title="Buscar en el mapa"
+            title="Buscar en el Mapa"
             titleStyle={{ color: MAIN_COLOR }}
             buttonStyle={{
-              borderRadius: 30,
+              marginTop: 0,
+              borderRadius: 8,
               borderColor: MAIN_COLOR
             }}
             color="white"
@@ -519,7 +518,7 @@ class CommerceProfile extends Component {
               <Ionicons
                 style={{ marginLeft: 10 }}
                 name="md-pin"
-                size={28}
+                size={22}
                 color={MAIN_COLOR}
               />
             }

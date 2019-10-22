@@ -134,9 +134,9 @@ const profileStack = createStackNavigator(
     },
     changeAddressMap: {
       screen: LocationMap,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Modificar mi Dirección'
-      })
+      }
     }
   },
   stackNavigationOptions
