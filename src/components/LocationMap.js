@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
-import MapView from 'react-native-maps';
+import MapView, { AnimatedRegion } from 'react-native-maps';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
@@ -43,16 +43,23 @@ class LocationMap extends React.Component {
       });
     } else if (markers.length === 1) {
       for (prop in markers[0]) {
-        props.onLocationValueChange({ prop, value: markers[0][prop] });
+        this.props.onLocationValueChange({ prop, value: markers[0][prop] });
       }
 
       const { address, provinceName, city, longitude, latitude } = markers[0];
 
       this.setState({
-        stateBeforeChanges: { address, provinceName, city, latitude, longitude }
+        stateBeforeChanges: {
+          address,
+          provinceName,
+          city,
+          latitude,
+          longitude
+        },
+        completeAddress: `${address} ${provinceName}, ${city}`
       });
     } else {
-      props.onLocationValueChange({ prop: 'markers', value: markers });
+      this.props.onLocationValueChange({ prop: 'markers', value: markers });
     }
 
     await this.setAddressString();
