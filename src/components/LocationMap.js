@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { AnimatedRegion } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
