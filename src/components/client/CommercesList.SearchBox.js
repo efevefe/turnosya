@@ -19,7 +19,7 @@ class SearchBox extends Component {
           onCancel={this.props.onCancel}
           value={this.props.currentRefinement}
           containerStyle={styles.searchBarContainer}
-          inputStyle={{ marginTop: 1 }}
+          inputStyle={{ marginTop: 1, marginLeft: 12, marginRight: 0 }}
           searchIcon={{ color: MAIN_COLOR }}
           cancelIcon={{ color: MAIN_COLOR }}
           clearIcon={{ color: MAIN_COLOR }}

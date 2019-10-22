@@ -227,24 +227,6 @@ class LocationMap extends React.Component {
 
     return (
       <View style={{ flex: 1, position: 'relative' }}>
-        <View style={styles.mainContainer}>
-          <SearchBar
-            {...this.props}
-            platform="android"
-            placeholder="San Martín 30, Córdoba, Argentina"
-            onChangeText={text => this.setState({ completeAddress: text })}
-            onCancel={() => this.setState({ completeAddress: '' })}
-            value={validAddress}
-            containerStyle={styles.searchBarContainer}
-            inputStyle={{ marginTop: 1, fontSize: 16 }}
-            searchIcon={{ color: MAIN_COLOR }}
-            cancelIcon={{ color: MAIN_COLOR }}
-            clearIcon={{ color: MAIN_COLOR }}
-            onEndEditing={e =>
-              this.getLocationAndLongitudeFromString(e.nativeEvent.text)
-            }
-          />
-        </View>
         <MapView
           style={{ flex: 1 }}
           ref={ref => (this.map = ref)}
@@ -268,6 +250,25 @@ class LocationMap extends React.Component {
         </MapView>
         {this.renderLocationMessage()}
 
+        <View style={styles.mainContainer}>
+          <SearchBar
+            {...this.props}
+            platform="android"
+            placeholder="San Martín 30, Córdoba, Argentina"
+            onChangeText={text => this.setState({ completeAddress: text })}
+            onCancel={() => this.setState({ completeAddress: '' })}
+            value={validAddress}
+            containerStyle={styles.searchBarContainer}
+            inputStyle={styles.searchInput}
+            searchIcon={{ color: MAIN_COLOR }}
+            cancelIcon={{ color: MAIN_COLOR }}
+            clearIcon={{ color: MAIN_COLOR }}
+            onEndEditing={e =>
+              this.getLocationAndLongitudeFromString(e.nativeEvent.text)
+            }
+          />
+        </View>
+
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
@@ -282,10 +283,21 @@ class LocationMap extends React.Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    height: NAVIGATION_HEIGHT,
+    height: NAVIGATION_HEIGHT + 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: 'transparent',
+    position: 'absolute'
+  },
+  searchBarContainer: {
     alignSelf: 'stretch',
-    justifyContent: 'flex-end',
-    backgroundColor: MAIN_COLOR,
+    height: NAVIGATION_HEIGHT,
+    paddingTop: 4,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -295,12 +307,11 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2
   },
-  searchBarContainer: {
-    alignSelf: 'stretch',
-    height: NAVIGATION_HEIGHT,
-    paddingTop: 4,
-    paddingRight: 5,
-    paddingLeft: 5
+  searchInput: {
+    marginTop: 1,
+    fontSize: 16,
+    marginLeft: 12,
+    marginRight: 0
   }
 });
 
