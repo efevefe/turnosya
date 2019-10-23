@@ -8,11 +8,13 @@ import {
   ScrollView
 } from 'react-native';
 import { Avatar, Text, Divider, Image, Button } from 'react-native-elements';
+import { PictureView } from './common';
 import { connect } from 'react-redux';
 import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
-  deleteFavoriteCommerce
+  deleteFavoriteCommerce,
+  onScheduleRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -25,7 +27,8 @@ const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
   state = {
-    favorite: false
+    favorite: false,
+    pictureVisible: false
   };
 
   componentDidMount() {
@@ -108,13 +111,14 @@ class CommerceProfileView extends Component {
     });
   };
 
+  onPicturePress = () => {
+    this.setState({ pictureVisible: !this.state.pictureVisible });
+  };
+
   render() {
-    const {
-      containerStyle,
-      headerContainerStyle,
-      avatarContainerStyle,
-      avatarStyle
-    } = styles;
+    const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
+
+    const { profilePicture, name, commerceId, navigation } = this.props;
 
     return (
       <ScrollView>
@@ -125,8 +129,9 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={{ uri: this.props.profilePicture }}
+            source={profilePicture ? { uri: profilePicture } : null}
           />
+
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
               type="clear"
@@ -137,9 +142,7 @@ class CommerceProfileView extends Component {
                   size={30}
                 />
               }
-              onPress={() =>
-                this.props.navigation.navigate('commerceProfileInfo')
-              }
+              onPress={() => navigation.navigate('commerceProfileInfo')}
             />
 
             <Button
@@ -151,7 +154,7 @@ class CommerceProfileView extends Component {
                   <Icon name="favorite-border" color={'white'} size={30} />
                 )
               }
-              onPress={() => this.onFavoritePress(this.props.commerceId)}
+              onPress={() => this.onFavoritePress(commerceId)}
             />
           </View>
 
@@ -159,18 +162,15 @@ class CommerceProfileView extends Component {
             <View style={avatarContainerStyle}>
               <Avatar
                 rounded
-                source={
-                  this.props.profilePicture
-                    ? { uri: this.props.profilePicture }
-                    : null
-                }
+                source={profilePicture ? { uri: profilePicture } : null}
                 size={avatarSize}
                 icon={{ name: 'store' }}
                 containerStyle={avatarStyle}
+                onPress={() => this.onPicturePress()}
               />
             </View>
 
-            <Text h3>{this.props.name}</Text>
+            <Text h3>{name}</Text>
             {this.renderLocation()}
           </View>
 
@@ -185,8 +185,14 @@ class CommerceProfileView extends Component {
             }}
           />
         </View>
-
-        <CommerceCourtTypes navigation={this.props.navigation} />
+        <CommerceCourtTypes navigation={navigation} />
+        <PictureView
+          isVisible={this.state.pictureVisible}
+          onClosePress={this.onPicturePress}
+          picture={this.props.profilePicture}
+          width={imageSizeWidth}
+          height={(imageSizeHeight / 0.2) * 0.5}
+        />
       </ScrollView>
     );
   }
@@ -213,7 +219,9 @@ const styles = StyleSheet.create({
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    margin: 10
+    margin: 10,
+    marginLeft: 15,
+    marginRight: 15
   },
   descriptionStyle: {
     alignItems: 'center',
@@ -244,6 +252,7 @@ const mapStateToProps = state => {
     longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
+  const { cards } = state.commerceSchedule;
 
   let locationData = { ...state.locationData };
 
@@ -275,11 +284,17 @@ const mapStateToProps = state => {
     refreshing,
     locationData,
     commerce,
-    favoriteCommerces
+    favoriteCommerces,
+    cards
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onCommerceReadProfile, registerFavoriteCommerce, deleteFavoriteCommerce }
+  {
+    onCommerceReadProfile,
+    registerFavoriteCommerce,
+    deleteFavoriteCommerce,
+    onScheduleRead
+  }
 )(CommerceProfileView);
