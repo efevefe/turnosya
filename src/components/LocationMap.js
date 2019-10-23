@@ -43,16 +43,23 @@ class LocationMap extends React.Component {
       });
     } else if (markers.length === 1) {
       for (prop in markers[0]) {
-        props.onLocationValueChange({ prop, value: markers[0][prop] });
+        this.props.onLocationValueChange({ prop, value: markers[0][prop] });
       }
 
       const { address, provinceName, city, longitude, latitude } = markers[0];
 
       this.setState({
-        stateBeforeChanges: { address, provinceName, city, latitude, longitude }
+        stateBeforeChanges: {
+          address,
+          provinceName,
+          city,
+          latitude,
+          longitude
+        },
+        completeAddress: `${address}, ${city}, ${provinceName}`
       });
     } else {
-      props.onLocationValueChange({ prop: 'markers', value: markers });
+      this.props.onLocationValueChange({ prop: 'markers', value: markers });
     }
 
     await this.setAddressString();
@@ -68,7 +75,7 @@ class LocationMap extends React.Component {
       const { address, provinceName, city, country } = this.props;
       this.setState({
         locationAsked: false,
-        completeAddress: `${address}, ${provinceName}, ${city}, ${country}`
+        completeAddress: `${address}, ${city}, ${provinceName}, ${country}`
       });
       if (this.props.navigation.state.params.callback) {
         this.props.navigation.state.params.callback(this.props.provinceName);
@@ -152,7 +159,7 @@ class LocationMap extends React.Component {
     };
 
     this.setState({
-      completeAddress: `${address}, ${region}, ${city}, ${country}`
+      completeAddress: `${address}, ${city}, ${region}, ${country}`
     });
 
     this.props.onLocationChange({ location });
