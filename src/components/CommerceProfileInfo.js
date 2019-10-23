@@ -5,9 +5,12 @@ import { onScheduleRead } from '../actions';
 import { Spinner } from './common';
 import { DAYS } from '../constants';
 import { View } from 'native-base';
-import { Divider } from 'react-native-elements';
+import { Divider, Card } from 'react-native-elements';
+import moment from 'moment';
 
 class CommerceProfileInfo extends Component {
+  state = { onDay: new Date().getDay() };
+
   componentDidMount() {
     this.props.onScheduleRead(this.props.commerceId);
   }
@@ -24,7 +27,7 @@ class CommerceProfileInfo extends Component {
         const dayName = DAYS[day];
         const id = day;
         hoursOnDay.push({
-          id: id,
+          id,
           dayName,
           firstShiftStart,
           firstShiftEnd,
@@ -38,7 +41,7 @@ class CommerceProfileInfo extends Component {
   };
 
   renderRow = ({ item }) => {
-    console.log(item);
+    const { onDay } = this.state;
     return (
       <View
         style={{
@@ -55,29 +58,39 @@ class CommerceProfileInfo extends Component {
           }}
         >
           <Text
-            style={{
-              fontSize: 15,
-              width: 70
-            }}
+            style={
+              item.id === onDay
+                ? {
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                    width: 72
+                  }
+                : {
+                    fontSize: 15,
+                    width: 72
+                  }
+            }
           >
             {item.dayName}
           </Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'column',
-            alignItems: 'flex-start'
-          }}
-        >
+
+        <Text
+          style={
+            item.id === onDay
+              ? { fontSize: 15, fontWeight: 'bold', padding: 5 }
+              : { fontSize: 15, padding: 5 }
+          }
+        >{`${item.firstShiftStart} - ${item.firstShiftEnd}`}</Text>
+        {item.secondShiftStart !== null ? (
           <Text
-            style={{ fontSize: 15, padding: 5 }}
-          >{`${item.firstShiftStart} - ${item.firstShiftEnd}`}</Text>
-          {item.secondShiftStart !== null ? (
-            <Text
-              style={{ fontSize: 15, padding: 5 }}
-            >{`${item.secondShiftStart} - ${item.secondShiftEnd}`}</Text>
-          ) : null}
-        </View>
+            style={
+              item.id === onDay
+                ? { fontSize: 15, fontWeight: 'bold', padding: 5 }
+                : { fontSize: 15, padding: 5 }
+            }
+          >{`${item.secondShiftStart} - ${item.secondShiftEnd}`}</Text>
+        ) : null}
       </View>
     );
   };
@@ -90,11 +103,31 @@ class CommerceProfileInfo extends Component {
 
     return (
       <View>
-        <FlatList
-          data={hoursOnDay}
-          renderItem={this.renderRow}
-          keyExtractor={hourOnDay => hourOnDay.id}
-        />
+        <Card
+          title="Horarios"
+          textAlign="center"
+          containerStyle={{ borderRadius: 10 }}
+        >
+          <FlatList
+            data={hoursOnDay}
+            renderItem={this.renderRow}
+            keyExtractor={hourOnDay => hourOnDay.id}
+          />
+        </Card>
+        <Card
+          title="Informacion de contacto"
+          textAlign="center"
+          containerStyle={{ borderRadius: 10 }}
+        >
+          <View style={{ flexDirection: 'column', marginRight: 15 }}>
+            <Text
+              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
+            >{`e-mail: ${this.props.email}`}</Text>
+            <Text
+              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
+            >{`Telefeno: ${this.props.phone}`}</Text>
+          </View>
+        </Card>
       </View>
     );
   }
