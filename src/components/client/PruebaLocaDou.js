@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
-import { connectGeoSearch } from 'react-instantsearch-native';
+import { connectGeoSearch } from 'react-instantsearch/connectors';
 import MapView, { Marker } from 'react-native-maps';
 
 const { height, width } = Dimensions.get('screen');
@@ -23,16 +23,17 @@ const MapSearch = connectGeoSearch(({ hits }) => {
       style={styles.map}
     >
       {hits.map(hit => {
-        console.log(hit);
-        <Marker
-          key={hit.objectID}
-          coordinate={{
-            latitude: hit._geoloc.lat,
-            longitude: hit._geoloc.lng
-          }}
-          title={hit.name}
-          description={hit.description}
-        />;
+        return (
+          <Marker
+            key={hit.objectID}
+            coordinate={{
+              latitude: hit._geoloc.lat,
+              longitude: hit._geoloc.lng
+            }}
+            title={hit.name}
+            description={hit.description}
+          />
+        );
       })}
     </MapView>
   );

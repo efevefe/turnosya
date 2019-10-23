@@ -8,19 +8,10 @@ import CommerceListItem from './CommerceListItem';
 import { connect } from 'react-redux';
 
 class Hits extends Component {
-  state = {
-    permissionStatus: null,
-    modal: true
-  };
-
   // componentDidUpdate() {
   //   this.props;
   //   debugger;
   // }
-
-  callback = () => {
-    this.setState({ modal: false });
-  };
 
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
