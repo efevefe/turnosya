@@ -44,7 +44,9 @@ const getLocationIos = async status => {
 
 export const getCurrentPosition = async () => {
   // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
-  return await Location.getCurrentPositionAsync({});
+  return await Location.getCurrentPositionAsync({
+    accuracy: Location.Accuracy.High
+  });
 };
 
 export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
