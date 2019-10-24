@@ -7,18 +7,7 @@ import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  Picker,
-  IconButton,
-  Button
-} from '../common';
 import { MAIN_COLOR } from '../../constants';
-import { imageToBlob, validateValueType, trimString } from '../../utils';
 import {
   onCommerceRead,
   onCommerceUpdateWithPicture,
@@ -29,6 +18,17 @@ import {
   onLocationValueChange,
   onLocationChange
 } from '../../actions';
+import {
+  CardSection,
+  Input,
+  Spinner,
+  Menu,
+  MenuItem,
+  Picker,
+  IconButton,
+  Button
+} from '../common';
+import { imageToBlob, validateValueType, trimString } from '../../utils';
 
 class CommerceProfile extends Component {
   state = {
@@ -476,25 +476,8 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    const {
-      address,
-      provinceName,
-      city,
-      latitude,
-      longitude
-    } = this.props.locationData;
-
     this.props.navigation.navigate('changeAddressMap', {
-      callback: this.onProvinceNameChangeOnMap,
-      markers: [
-        {
-          address,
-          provinceName,
-          city,
-          latitude,
-          longitude
-        }
-      ]
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 
