@@ -1,20 +1,14 @@
-import React, { Component } from "react";
-import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
-import { ListItem, ButtonGroup } from "react-native-elements";
-import { connect } from "react-redux";
-import { MONTHS, DAYS, MAIN_COLOR } from "../../constants";
-import { Spinner, EmptyList } from "../common";
-import { onClientReservationsListRead } from "../../actions";
-import moment from "moment";
+import React, { Component } from 'react';
+import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { ListItem, ButtonGroup } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { MONTHS, DAYS, MAIN_COLOR } from '../../constants';
+import { Spinner, EmptyList } from '../common';
+import { onClientReservationsListRead } from '../../actions';
+import moment from 'moment';
 
 class ClientReservationsList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedIndex: 1,
-      filteredList: []
-    };
-  }
+  state = { selectedIndex: 1, filteredList: [] };
 
   componentDidMount() {
     this.onReservationsRead();
@@ -33,7 +27,7 @@ class ClientReservationsList extends Component {
   onReservationsRead = () => {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeReservationsRead = this.props.onClientReservationsListRead();
-  }
+  };
 
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
@@ -41,12 +35,14 @@ class ClientReservationsList extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations.filter(res => res.endDate < moment()).reverse()
+      filteredList = reservations
+        .filter(res => res.endDate < moment())
+        .reverse();
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
     }
-    
+
     this.setState({ filteredList, selectedIndex });
   };
 
@@ -69,14 +65,16 @@ class ClientReservationsList extends Component {
         title={commerce.name}
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
-        subtitle={`${DAYS[startDate.day()]} ${startDate.format("D")} de ${
+        subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
-          }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
-            "HH:mm"
-          )} hs.`}
+        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
+          'HH:mm'
+        )} hs.`}
         bottomDivider
         onPress={() =>
-          this.props.navigation.navigate("reservationDetails", { reservation: item })
+          this.props.navigation.navigate('reservationDetails', {
+            reservation: item
+          })
         }
       />
     );
@@ -104,21 +102,21 @@ class ClientReservationsList extends Component {
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
-          buttons={["PASADOS", "PROXIMOS"]}
+          buttons={['PASADOS', 'PROXIMOS']}
           containerBorderRadius={0}
           containerStyle={styles.buttonGroupStyle}
-          selectedButtonStyle={{ backgroundColor: "white" }}
+          selectedButtonStyle={{ backgroundColor: 'white' }}
           buttonStyle={{ backgroundColor: MAIN_COLOR }}
           selectedTextStyle={{ color: MAIN_COLOR }}
-          textStyle={{ color: "white" }}
+          textStyle={{ color: 'white' }}
           innerBorderStyle={{ width: 0 }}
         />
 
-        {
-          this.props.loading
-            ? <Spinner style={{ position: 'relative' }} />
-            : this.renderList()
-        }
+        {this.props.loading ? (
+          <Spinner style={{ position: 'relative' }} />
+        ) : (
+          this.renderList()
+        )}
       </View>
     );
   }
