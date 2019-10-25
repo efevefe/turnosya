@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
-import { Avatar, Text, Divider, Icon } from 'react-native-elements';
+import { View, StyleSheet, RefreshControl, Dimensions } from 'react-native';
+import { Avatar, Text, Divider, Icon, Image } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -30,6 +30,10 @@ import {
   onLocationChange
 } from '../../actions';
 import { HeaderBackButton } from 'react-navigation-stack';
+
+const imageSizeWidth = Math.round(Dimensions.get('window').width);
+const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfile extends Component {
   state = {
@@ -75,35 +79,6 @@ class CommerceProfile extends Component {
       country
     };
 
-    this.props.onLocationChange({ location });
-    this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
-  }
-
-  onRefresh = () => {
-    this.props.onCommerceRead();
-  };
-
-  renderEditButton = () => {
-    return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  };
-
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  };
-
-  renderCancelButton = () => {
-    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
-  };
-  renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        onPress={() => this.props.navigation.goBack(null)}
-        tintColor="white"
-      />
-    );
-  };
-
-  onEditPress = () => {
     this.props.onProvincesIdRead();
     this.props.onAreasRead();
 
@@ -117,10 +92,8 @@ class CommerceProfile extends Component {
       area,
       profilePicture
     } = this.props;
-    const { address, city } = this.props.locationData;
 
     this.setState({
-      editEnabled: true,
       stateBeforeChanges: {
         name,
         cuit,
@@ -134,11 +107,25 @@ class CommerceProfile extends Component {
         profilePicture
       }
     });
+
+    this.props.onLocationChange({ location });
     this.props.navigation.setParams({
       title: 'Modificar Datos',
       rightIcon: this.renderSaveButton(),
       leftIcon: this.renderCancelButton()
     });
+  }
+
+  onRefresh = () => {
+    this.props.onCommerceRead();
+  };
+
+  renderSaveButton = () => {
+    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
+  };
+
+  renderCancelButton = () => {
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onSavePress = async () => {
@@ -192,7 +179,7 @@ class CommerceProfile extends Component {
         });
       }
 
-      this.disableEdit();
+      this.props.navigation.goBack(null);
     }
   };
 
@@ -215,36 +202,7 @@ class CommerceProfile extends Component {
     });
 
     this.cleanErrors();
-    this.disableEdit();
-  };
-
-  disableEdit = () => {
-    this.setState({
-      editEnabled: false,
-      newProfilePicture: false,
-      stateBeforeChanges: null
-    });
-    this.props.navigation.setParams({
-      title: 'Perfil',
-      rightIcon: this.renderEditButton(),
-      leftIcon: this.renderBackButton()
-    });
-  };
-
-  renderEditPictureButton = () => {
-    if (this.state.editEnabled) {
-      return (
-        <Icon
-          name="md-camera"
-          color={MAIN_COLOR}
-          type="ionicon"
-          size={20}
-          reverse
-          containerStyle={{ padding: 5, position: 'absolute' }}
-          onPress={this.onEditPicturePress}
-        />
-      );
-    }
+    this.props.navigation.goBack(null);
   };
 
   onEditPicturePress = () => {
@@ -504,36 +462,6 @@ class CommerceProfile extends Component {
     });
   };
 
-  renderMapOption = () => {
-    if (this.state.editEnabled) {
-      return (
-        <CardSection style={{ paddingTop: 0 }}>
-          <Button
-            title="Buscar en el Mapa"
-            titleStyle={{ color: MAIN_COLOR }}
-            buttonStyle={{
-              marginTop: 0,
-              borderRadius: 8,
-              borderColor: MAIN_COLOR
-            }}
-            color="white"
-            type="outline"
-            iconRight={true}
-            onPress={() => this.onMapPress()}
-            icon={
-              <Ionicons
-                style={{ marginLeft: 10 }}
-                name="md-pin"
-                size={22}
-                color={MAIN_COLOR}
-              />
-            }
-          />
-        </CardSection>
-      );
-    }
-  };
-
   cleanErrors = () => {
     this.setState({
       nameError: '',
@@ -584,6 +512,18 @@ class CommerceProfile extends Component {
           />
         }
       >
+        <Image
+          style={{
+            height: imageSizeHeight,
+            width: imageSizeWidth,
+            position: 'absolute'
+          }}
+          source={
+            this.props.profilePicture
+              ? { uri: this.props.profilePicture }
+              : null
+          }
+        />
         <View style={headerContainerStyle}>
           <View style={avatarContainerStyle}>
             <Avatar
@@ -593,16 +533,38 @@ class CommerceProfile extends Component {
                   ? { uri: this.props.profilePicture }
                   : null
               }
-              size="xlarge"
+              size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
             />
-
-            {this.renderEditPictureButton()}
+            <Icon
+              name="md-camera"
+              color={MAIN_COLOR}
+              type="ionicon"
+              size={20}
+              reverse
+              containerStyle={{ padding: 5, position: 'absolute' }}
+              onPress={this.onEditPicturePress}
+            />
           </View>
           {this.renderName()}
           {this.renderLocation()}
+          <Icon
+            name="md-camera"
+            color={MAIN_COLOR}
+            type="ionicon"
+            size={20}
+            reverse
+            containerStyle={{
+              position: 'absolute',
+              alignSelf: 'flex-end',
+              marginTop: avatarSize / 5.5,
+              marginRight: 5
+            }}
+            onPress={this.onEditPicturePress}
+          />
         </View>
+
         <Divider
           style={{
             backgroundColor: 'grey',
@@ -619,7 +581,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'name', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
@@ -633,7 +594,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'cuit', value })
               }
               keyboardType="numeric"
-              editable={this.state.editEnabled}
               errorMessage={this.state.cuitError}
               onFocus={() => this.setState({ cuitError: '' })}
               onBlur={this.renderCuitError}
@@ -647,7 +607,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'phone', value })
               }
               keyboardType="numeric"
-              editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
@@ -661,7 +620,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'email', value })
               }
               keyboardType="email-address"
-              editable={this.state.editEnabled}
               errorMessage={this.state.emailError}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
@@ -674,7 +632,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'description', value })
               }
-              editable={this.state.editEnabled}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -687,7 +644,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'address', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
               onBlur={this.renderAddressError}
@@ -700,7 +656,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'city', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -713,11 +668,32 @@ class CommerceProfile extends Component {
               items={this.props.provincesList}
               value={this.props.province.provinceId}
               onValueChange={value => this.onProvincePickerChange(value)}
-              disabled={!this.state.editEnabled}
               errorMessage={this.state.provinceError}
             />
           </CardSection>
-          {this.renderMapOption()}
+          <CardSection style={{ paddingTop: 0 }}>
+            <Button
+              title="Buscar en el Mapa"
+              titleStyle={{ color: MAIN_COLOR }}
+              buttonStyle={{
+                marginTop: 0,
+                borderRadius: 8,
+                borderColor: MAIN_COLOR
+              }}
+              color="white"
+              type="outline"
+              iconRight={true}
+              onPress={() => this.onMapPress()}
+              icon={
+                <Ionicons
+                  style={{ marginLeft: 10 }}
+                  name="md-pin"
+                  size={22}
+                  color={MAIN_COLOR}
+                />
+              }
+            />
+          </CardSection>
           <CardSection>
             <Picker
               title="Rubro:"
@@ -725,12 +701,10 @@ class CommerceProfile extends Component {
               items={this.props.areasList}
               value={this.props.area.areaId}
               onValueChange={value => this.onAreaPickerChange(value)}
-              disabled={!this.state.editEnabled}
               errorMessage={this.state.areaError}
             />
           </CardSection>
         </View>
-
         <Menu
           title="Foto de Perfil"
           onBackdropPress={this.onEditPicturePress}
@@ -767,7 +741,7 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    padding: 20
+    marginTop: imageSizeHeight / 2
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
@@ -776,12 +750,14 @@ const styles = StyleSheet.create({
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    margin: 10
+    marginBottom: 10
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    margin: 10
+    margin: 10,
+    marginLeft: 15,
+    marginRight: 15
   },
   infoContainerStyle: {
     alignSelf: 'stretch',

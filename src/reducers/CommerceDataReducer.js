@@ -33,6 +33,7 @@ const INITIAL_STATE = {
   area: { areaId: '', name: '' },
   areasList: [{ value: '', label: '' }],
   profilePicture: '',
+  headerPicture: '',
   commerceId: null,
   error: '',
   loading: false,
