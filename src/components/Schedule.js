@@ -44,9 +44,7 @@ class Schedule extends Component {
     selectedDate = moment([
       selectedDate.year(),
       selectedDate.month(),
-      selectedDate.date(),
-      0,
-      0
+      selectedDate.date()
     ]);
 
     //slots & shifts

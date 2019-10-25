@@ -415,7 +415,7 @@ const mapStateToProps = state => {
     existedError,
     courtState
   } = state.courtForm;
-
+  
   const { commerceId } = state.commerceData;
 
   return {

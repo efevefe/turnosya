@@ -16,6 +16,7 @@ import {
 } from '../../actions';
 import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
+import { hourToDate } from '../../utils';
 
 class ScheduleRegister extends Component {
   state = { reservationsModalVisible: false, startDate: null, prevCards: [] };
@@ -33,7 +34,7 @@ class ScheduleRegister extends Component {
       leftIcon: this.renderBackButton()
     });
 
-    this.setState({ startDate: moment([moment().year(), moment().month(), moment().date(), 0, 0, 0]) });
+    this.setState({ startDate: moment([moment().year(), moment().month(), moment().date()]) });
 
     for (i in this.props.cards) {
       this.setState({ prevCards: [...this.state.prevCards, this.props.cards[i]] });
@@ -56,11 +57,78 @@ class ScheduleRegister extends Component {
 
   onSavePress = () => {
     //mejorar esta validacion
-    if (JSON.stringify(this.props.cards) !== JSON.stringify(this.state.prevCards)) {
-      return this.props.onCommerceLastCourtReservationRead(this.props.commerceId);
+    // if (JSON.stringify(this.props.cards) !== JSON.stringify(this.state.prevCards)) {
+    //   return this.props.onCommerceLastCourtReservationRead(this.props.commerceId);
+    // }
+
+    // this.props.navigation.goBack();
+    console.log(this._onValidateUpdate());
+  }
+
+  _onValidateUpdate = () => {
+    const { reservationMinLength } = this.props;
+
+    for (i in this.state.prevCards) {
+      // primer horarios de atencion actuales
+      var { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = this.state.prevCards[i];
+      const fss = hourToDate(firstShiftStart);
+      const fse = hourToDate(firstShiftEnd);
+
+      // defino los segundos horarios de atencion como null y luego si tienen valor los asigno
+      let sss = sse = null;
+      if (secondShiftStart && secondShiftEnd) {
+        sss = hourToDate(secondShiftStart);
+        sse = hourToDate(secondShiftEnd);
+      }
+
+      const days = this.state.prevCards[i].days;
+
+      for (j in days) {
+        const newCard = this.props.cards.find(card => card.days.includes(days[j]));
+
+        // si saco un dia donde antes si atendia retorna false
+        if (!newCard) return false;
+
+        // primer horarios de atencion nuevos
+        var { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = newCard;
+        const nfss = hourToDate(firstShiftStart);
+        const nfse = hourToDate(firstShiftEnd);
+        
+        // defino los nuevos segundos horarios de atencion como null y luego si tienen valor los asigno
+        let nsss = nsse = null;
+        if (secondShiftStart && secondShiftEnd) {
+          nsss = hourToDate(secondShiftStart);
+          nsse = hourToDate(secondShiftEnd);
+        }
+
+        // si los nuevos primer horarios no son compatibles con el tamaño de turno o son menores a los anteriores, retorna false
+        if (!this._compatibleHour(fss, nfss, reservationMinLength) || !this._compatibleHour(nfse, fse, reservationMinLength)) return false;
+
+        // si antes tenia segundo horario de atencion en tal dia y ahora no, retorna false
+        if ((sss && sse) && (!nsss || !nsse)) return false;
+
+        // en caso de conservar los segundos horarios de atencion para tal dia
+        if ((sss && sse) && (nsss && nsse)) {
+          // si los nuevos segundos horarios no son compatibles con el tamaño de turno o son menores a los anteriores, retorna false
+          if (!this._compatibleHour(sss, nsss, reservationMinLength) && !this._compatibleHour(nsse, sse, reservationMinLength)) return false;
+        }
+      }
     }
 
-    this.props.navigation.goBack();
+    return true;
+  }
+
+  _compatibleHour = (prevHour, newHour, minutesStep) => {
+    // la primer hora es la que deberia ser mayor y la segunda la menor
+    prevHour = moment(prevHour);
+    newHour = moment(newHour);
+
+    while (prevHour >= newHour) {
+      if (prevHour.format('HH:mm') === newHour.format('HH:mm')) return true;
+      newHour.add(minutesStep, 'minutes');
+    }
+
+    return false;
   }
 
   onLastReservationValidate = () => {

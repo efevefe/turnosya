@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
     ON_COMMERCE_COURT_RESERVATIONS_READING,
     ON_COMMERCE_COURT_RESERVATIONS_READ,

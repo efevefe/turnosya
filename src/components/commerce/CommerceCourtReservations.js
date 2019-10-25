@@ -32,7 +32,7 @@ class CommerceCourtReservations extends Component {
     }
 
     onDateSelected = date => {
-        const selectedDate = moment([date.year(), date.month(), date.date(), 0, 0, 0]);
+        const selectedDate = moment([date.year(), date.month(), date.date()]);
 
         this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
         this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({

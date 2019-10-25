@@ -1,3 +1,22 @@
+import moment from 'moment';
+
+export const formattedDate = date => {
+  // receives moment date and returns the same date at 00:00
+  return moment([date.year(), date.month(), date.date()]);
+}
+
+export const getHourAndMinutes = hour => {
+  // receives string hour and returns and object that contains 2 props, the hour and the minutes
+  hour = hour.split(':').map(num => parseInt(num));
+  return { hour: hour[0], minutes: hour[1] };
+};
+
+export const hourToDate = stringHour => {
+  // receives string hour and returns the current date at that hour
+  const { hour, minutes } = getHourAndMinutes(stringHour);
+  return moment([moment().year(), moment().month(), moment().date(), hour, minutes]);
+}
+
 export const imageToBlob = async uri => {
   // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
 
@@ -149,9 +168,4 @@ export const stringFormatDays = totalDays => {
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
   else return stringDays + '.';
-};
-
-export const getHourAndMinutes = hour => {
-  hour = hour.split(':').map(num => parseInt(num));
-  return { hour: hour[0], minutes: hour[1] };
 };
