@@ -3,7 +3,7 @@ import { View } from "react-native";
 import CourtReservationDetails from "../CourtReservationDetails";
 import { connect } from "react-redux";
 import { Divider, Button as ButtonRN } from "react-native-elements";
-import { CardSection, Button, Menu, MenuItem } from "../common";
+import { CardSection, Button, Menu, MenuItem, Spinner } from "../common";
 import moment from "moment";
 import { onClientCancelReservation, onScheduleCancelRead } from "../../actions";
 import { stringFormatHours } from "../../utils/functions";
@@ -18,19 +18,16 @@ class ClientReservationDetails extends Component {
     };
   }
 
-  /*   componentWillMount  () {
-     this.props.onScheduleCancelRead(this.props.navigation.state.params.reservation.commerceId);
-  } */
-
-  validateCancelTime = async () => {
-    await this.props.onScheduleCancelRead(this.state.reservation.commerceId);
-  };
+  componentWillMount() {
+    this.props.onScheduleCancelRead(
+      this.props.navigation.state.params.reservation.commerceId
+    );
+  }
 
   renderCancelButton = () => {
     const { startDate } = this.state.reservation;
     const { reservationMinCancelTime } = this.props;
     if (startDate > moment()) {
-     this.validateCancelTime();
       if (startDate.diff(moment(), "hours") > reservationMinCancelTime)
         return (
           <View style={{ flex: 1, justifyContent: "flex-end" }}>
@@ -70,6 +67,8 @@ class ClientReservationDetails extends Component {
       id,
       commerceId
     } = this.state.reservation;
+
+    if (this.props.loadingCancel) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
@@ -113,10 +112,15 @@ class ClientReservationDetails extends Component {
   }
 }
 const mapStateToProps = state => {
-  const { loading } = state.clientReservationsList;
+  const loading = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
+  const loadingCancel = state.commerceSchedule.loading;
 
-  return { loading, reservationMinCancelTime };
+  return {
+    loading,
+    loadingCancel,
+    reservationMinCancelTime
+  };
 };
 
 export default connect(

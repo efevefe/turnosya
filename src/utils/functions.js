@@ -161,9 +161,16 @@ export const stringFormatHours = totalHours => {
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
 
-  if (hours && days) return days + ' dias ' + hours + ' horas.';
-  else if (hours) return hours + ' horas.';
-  else return days + ' dias.';
+  const stringHours =
+  hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+
+const stringDays =
+  days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+
+
+  if (hours && days) return stringDays + ' y ' + stringHours + '.';
+  else if (hours) return stringHours + '.';
+  else return stringDays + '.';
 };
 
 

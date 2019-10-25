@@ -230,14 +230,22 @@ export const onScheduleCancelRead = commerceId => {
 
     db.doc(`Commerces/${commerceId}/Schedules/0`)
       .get()
-      .then(doc =>
-        dispatch({
-          type: ON_SCHEDULE_READ,
-          payload: {
-            reservationMinCancelTime: doc.data().reservationMinCancelTime
-          }
-        })
-      )
+      .then(doc => {
+        if (doc.data().reservationMinCancelTime)
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: doc.data().reservationMinCancelTime
+            }
+          });
+        else
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: 2
+            }
+          });
+      })
       .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
   };
 };
