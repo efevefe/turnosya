@@ -68,7 +68,6 @@ class ScheduleRegister extends Component {
 
   renderPickerSecondShiftStart = () => {
     const { firstShiftEnd, secondShiftStart } = this.props.card;
-    console.log(secondShiftStart);
     secondShiftStart > firstShiftEnd ||
     secondShiftStart === null ||
     secondShiftStart === ''
