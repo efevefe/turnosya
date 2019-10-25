@@ -17,15 +17,10 @@ import { Ionicons } from '@expo/vector-icons';
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      areaName: props.navigation.state.params.areaName, // Mover esto a Redux
-      searchVisible: false,
-      showingMap: false
-    };
-  }
+  state = {
+    areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
+    searchVisible: false
+  };
 
   componentDidMount() {
     this.props.readFavoriteCommerces();
@@ -47,7 +42,7 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton icon="md-search" onPress={this.onSearchPress} />
+        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );

@@ -23,7 +23,8 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE
+  ON_REGISTER_VALUE_CHANGE,
+  ON_PROVINCES_READ
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -164,10 +165,13 @@ export const onCommerceRead = () => {
               type: ON_COMMERCE_READ,
               payload: {
                 ...doc.data(),
-                provincesList: [province],
                 areasList: [area],
                 commerceId: doc.id
               }
+            });
+            dispatch({
+              type: ON_PROVINCES_READ,
+              payload: [province]
             });
           })
           .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));

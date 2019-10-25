@@ -14,18 +14,14 @@ import {
 } from '../../actions';
 
 class RegisterCommerceTwo extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+    addressError: '',
+    cityError: '',
+    provinceError: ''
+  };
 
-    this.state = {
-      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-      addressError: '',
-      cityError: '',
-      provinceError: ''
-    };
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     this.props.onProvincesIdRead();
   }
 
@@ -148,7 +144,7 @@ class RegisterCommerceTwo extends Component {
 
   onMapPress = () => {
     this.props.navigation.navigate('commerceRegisterMap', {
-      callback: this.onProvinceNameChangeOnMap
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 

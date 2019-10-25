@@ -1,16 +1,17 @@
-import React, { Component } from "react";
-import { View } from "react-native";
-import CourtReservationDetails from "../CourtReservationDetails";
-import { connect } from "react-redux";
-import { Divider } from "react-native-elements";
-import { CardSection, Button, Menu, MenuItem } from "../common";
-import moment from "moment";
-import { onClientCancelReservation } from "../../actions";
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import CourtReservationDetails from '../CourtReservationDetails';
+import { connect } from 'react-redux';
+import { Divider } from 'react-native-elements';
+import { CardSection, Button, Menu, MenuItem } from '../common';
+import moment from 'moment';
+import { onClientCancelReservation } from '../../actions';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { reservation } = this.props.navigation.state.params;
+
+    const reservation = props.navigation.getParam('reservation');
     this.state = {
       reservation,
       optionsVisible: false
@@ -65,7 +66,7 @@ class ClientReservationDetails extends Component {
               });
             }}
           />
-          <Divider style={{ backgroundColor: "grey" }} />
+          <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cancelar"
             icon="md-close"

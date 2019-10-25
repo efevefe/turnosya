@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { CardSection, Button, Input, Picker } from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onCommerceValueChange,
@@ -10,6 +9,7 @@ import {
   validateCuit
 } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
+import { CardSection, Button, Input, Picker } from '../common';
 
 class RegisterCommerce extends Component {
   state = {
@@ -32,7 +32,7 @@ class RegisterCommerce extends Component {
     }
   }
 
-  onButtonPressHandler() {
+  onContinueButtonPress() {
     if (this.validateMinimumData()) {
       this.props.navigation.navigate('commerceRegisterProfile1');
     }
@@ -240,7 +240,7 @@ class RegisterCommerce extends Component {
           <CardSection>
             <Button
               title="Continuar"
-              onPress={this.onButtonPressHandler.bind(this)}
+              onPress={this.onContinueButtonPress.bind(this)}
             />
           </CardSection>
         </View>

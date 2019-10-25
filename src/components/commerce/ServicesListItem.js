@@ -3,19 +3,22 @@ import { View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem, IconButton } from '../common';
-import { serviceDelete } from '../../actions';
+import { Menu, MenuItem } from '../common';
+import { serviceDelete, onFormOpen } from '../../actions';
 
 class ServicesListItem extends Component {
-  state = { optionsVisible: false, deleteVisible: false  };
+  state = { optionsVisible: false, deleteVisible: false };
 
   onOptionsPress = () => {
     this.setState({ optionsVisible: !this.state.optionsVisible });
-  }
+  };
 
   onDeletePress = () => {
-    this.setState({ optionsVisible: false, deleteVisible: !this.state.deleteVisible });
-  }
+    this.setState({
+      optionsVisible: false,
+      deleteVisible: !this.state.deleteVisible
+    });
+  };
 
   onConfirmDeletePress = () => {
     const { service, commerceId } = this.props;
@@ -25,6 +28,7 @@ class ServicesListItem extends Component {
   };
 
   onUpdatePress = () => {
+    this.props.onFormOpen();
     const navigateAction = NavigationActions.navigate({
       routeName: 'serviceForm',
       params: { service: this.props.service, title: 'Editar Servicio' }
@@ -33,7 +37,7 @@ class ServicesListItem extends Component {
     this.setState({ optionsVisible: !this.state.optionsVisible });
 
     this.props.navigation.navigate(navigateAction);
-  }
+  };
 
   render() {
     const { name, duration, price, id } = this.props.service;
@@ -78,15 +82,12 @@ class ServicesListItem extends Component {
           rightTitle={`$${price}`}
           key={id}
           onLongPress={this.onOptionsPress.bind(this)}
-          rightElement={
-            <IconButton
-              icon='md-more'
-              color='grey'
-              iconSize={22}
-              iconStyle={{ marginLeft: 5, marginRight: 8 }}
-              onPress={this.onOptionsPress}
-            />
-          }
+          rightIcon={{
+            name: 'md-more',
+            type: 'ionicon',
+            containerStyle: { height: 20, width: 10 },
+            onPress: this.onOptionsPress
+          }}
           bottomDivider
         />
       </View>
@@ -96,5 +97,5 @@ class ServicesListItem extends Component {
 
 export default connect(
   null,
-  { serviceDelete }
+  { serviceDelete, onFormOpen }
 )(ServicesListItem);
