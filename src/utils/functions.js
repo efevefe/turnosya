@@ -1,18 +1,19 @@
 import moment from 'moment';
 
-export const formattedDate = date => {
-  // receives moment date and returns the same date at 00:00
+export const formattedMoment = (date = moment()) => { // ver nombre de esta funcion
+  // receives moment date and returns the same date at 00:00 in moment format
+  // if not receive a date as param, returns the current date
   return moment([date.year(), date.month(), date.date()]);
 }
 
 export const getHourAndMinutes = hour => {
-  // receives string hour and returns and object that contains 2 props, the hour and the minutes
+  // receives string hour (HH:mm) and returns and object that contains 2 props, the hour and the minutes
   hour = hour.split(':').map(num => parseInt(num));
   return { hour: hour[0], minutes: hour[1] };
 };
 
 export const hourToDate = stringHour => {
-  // receives string hour and returns the current date at that hour
+  // receives string hour (HH:mm) and returns the current date at that hour in moment format
   const { hour, minutes } = getHourAndMinutes(stringHour);
   return moment([moment().year(), moment().month(), moment().date(), hour, minutes]);
 }

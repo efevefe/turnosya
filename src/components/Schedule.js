@@ -35,7 +35,7 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    if (prevProps.cards !== this.props.cards) {
+    if (JSON.stringify(prevProps.cards) !== JSON.stringify(this.props.cards)) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
