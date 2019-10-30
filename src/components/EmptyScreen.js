@@ -21,14 +21,13 @@ import { View, Text } from 'react-native';
 
 // const buttonPressed = () => {
 //   console.log('pressed');
-//   var db = firebase.firestore();
+//   const db = firebase.firestore();
 //   db.collection('Commerces')
 //     .where('softDelete', '==', null)
 //     .onSnapshot(snapShot => {
 //       snapShot.forEach(docSnapShot => {
 //         const id = docSnapShot.id;
 //         const doc = docSnapShot.data();
-//         debugger;
 //         index.addObject({
 //           objectID: id,
 //           address: doc.address,

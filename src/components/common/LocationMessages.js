@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, AppState, StyleSheet } from 'react-native';
+import { Platform, View, AppState, StyleSheet, Image, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
@@ -52,8 +52,8 @@ class LocationMessages extends Component {
 
   renderTitle = () => {
     return this.state.permissionStatus === 'permissionsDenied'
-      ? 'TurnosYa requiere permisos de localización'
-      : 'Activa GPS para recibir una mejor búsqueda cerca de ti';
+      ? 'TurnosYa necesita permisos para acceder a tu ubicación'
+      : 'Activa el GPS para recibir una mejor búsqueda cerca de ti';
   };
 
   getAndSaveLocation = async () => {
@@ -80,67 +80,66 @@ class LocationMessages extends Component {
   };
 
   renderItems = () => {
-    const plat = Platform.OS;
-    if (plat === 'ios') {
+    if (Platform.OS === 'ios') {
       switch (this.state.permissionStatus) {
         case 'permissionsDenied':
           return (
-            <View style={styles.modalItemsContainer}>
+            <View>
               <MenuItem
-                title="Más tarde"
-                // icon=""
-                onPress={() => this.closeModal()}
-              />
-              <MenuItem
-                title="Ir a Configuraciones"
-                // icon=""
+                title="Ir a Configuración"
+                icon="md-settings"
                 onPress={() => {
                   openSettingIos();
                   this.closeModal();
                 }}
+              />
+              <Divider />
+              <MenuItem
+                title="Más tarde"
+                icon="md-time"
+                onPress={() => this.closeModal()}
               />
             </View>
           );
         case 'permissionsAllowedWithGPSOff':
           return (
             <View>
+              <View style={styles.iosModalItem}>
+                <Image source={require('../../../assets/ios-icons/settings.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Abrí la aplicación Ajustes</Text>
+              </View>
+              <Divider />
+              <View style={styles.iosModalItem}>
+                <Image source={require('../../../assets/ios-icons/privacy.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Seleccioná Privacidad</Text>
+              </View>
+              <Divider />
+              <View style={styles.iosModalItem}>
+                <Image source={require('../../../assets/ios-icons/location.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Seleccioná Localización</Text>
+              </View>
+              <Divider />
+              <View style={styles.iosModalItem}>
+                <Image source={require('../../../assets/ios-icons/switch.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Activá la Localización</Text>
+              </View>
               <Divider />
               <MenuItem
-                title="1. Abre la aplicación Ajustes"
-                disabled
-                disabledTitleStyle={{ color: 'black' }}
-              />
-              <MenuItem
-                title="2. Selecciona Privacidad"
-                disabled
-                disabledTitleStyle={{ color: 'black' }}
-              />
-              <MenuItem
-                title="3. Selecciona Localización"
-                disabled
-                disabledTitleStyle={{ color: 'black' }}
-              />
-              <MenuItem
-                title="4. Activa Localización"
-                disabled
-                disabledTitleStyle={{ color: 'black' }}
-              />
-              <MenuItem
-                title="Aceptar"
+                title="Cerrar"
+                icon='md-close'
                 onPress={() => this.closeModal()}
-                titleStyle={{ textAlign: 'right', fontSize: 15 }}
-                buttonStyle={{ justifyContent: 'flex-end', paddingRight: 0 }}
-                color={'#0339B1'}
+                buttonStyle={{ justifyContent: 'flex-end', paddingRight: 5 }}
+                titleStyle={{ marginLeft: 5 }}
               />
             </View>
           );
       }
     } else {
       return (
-        <View style={styles.modalItemsContainer}>
+        <View>
           <MenuItem
-            title="Ir a Configuraciones"
-            // icon=""
+            title="Ir a Configuración"
+            icon="md-settings"
             onPress={() => {
               this.state.permissionStatus === 'permissionsDenied'
                 ? askPermissionLocation()
@@ -151,7 +150,7 @@ class LocationMessages extends Component {
           <Divider />
           <MenuItem
             title="Más tarde"
-            // icon=""
+            icon="md-time"
             onPress={() => this.closeModal()}
           />
         </View>
@@ -185,8 +184,21 @@ class LocationMessages extends Component {
 }
 
 const styles = StyleSheet.create({
-  modalItemsContainer: {
-    flexDirection: 'row'
+  iosModalItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    padding: 8,
+    paddingLeft: 15
+  },
+  iosModalText: {
+    fontWeight: '400',
+    fontSize: 13,
+    marginLeft: 15
+  },
+  iosModalIcon: { 
+    height: 30, 
+    width: 30 
   }
 });
 

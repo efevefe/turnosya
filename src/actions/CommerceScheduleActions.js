@@ -47,7 +47,7 @@ export const onScheduleRead = commerceId => {
         }
 
         snapshot.forEach(doc => {
-          var { reservationDayPeriod, reservationMinLength } = doc.data();
+          const { reservationDayPeriod, reservationMinLength } = doc.data();
 
           db.collection(`Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`)
             .get()
@@ -56,8 +56,8 @@ export const onScheduleRead = commerceId => {
                 return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
               }
 
-              var cards = [];
-              var selectedDays = [];
+              const cards = [];
+              let selectedDays = [];
 
               snapshot.forEach(doc => {
                 cards.push({ ...doc.data(), id: parseInt(doc.id) });
@@ -69,16 +69,10 @@ export const onScheduleRead = commerceId => {
                 payload: { cards, selectedDays, reservationDayPeriod, reservationMinLength }
               });
             })
-            .catch(error => {
-              console.log(error);
-              dispatch({ type: ON_SCHEDULE_READ_FAIL });
-            });
+            .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
         })
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_READ_FAIL });
-      });
+      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
   };
 };
 
@@ -86,7 +80,7 @@ export const onScheduleRead = commerceId => {
 export const onScheduleCreate = cards => {
   //ESTA FUNCION ES PARA UPDATEAR LOS SCHEDULES SIN TENER QUE BORRAR Y VOLVER A ESCRIBIR
   const db = firebase.firestore();
-  var batch = db.batch();
+  const batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
@@ -105,7 +99,7 @@ export const onScheduleCreate = cards => {
               cards.forEach(card => {
                 const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
                 
-                var ref = db
+                const ref = db
                   .collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${scheduleRef.id}/WorkShifts`)
                   .doc(`${card.id}`);
                 batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
@@ -113,21 +107,12 @@ export const onScheduleCreate = cards => {
 
               batch.commit()
                 .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
-                .catch(error => {
-                  console.log(error);
-                  dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-                });
+                .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
             })
-            .catch(error => {
-              console.log(error);
-              dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-            });
+            .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
         })
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-      });
+      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
   }
 };
 */
@@ -135,7 +120,7 @@ export const onScheduleCreate = cards => {
 export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, reservationDayPeriod }, navigation) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
-  var batch = db.batch();
+  const batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
@@ -153,7 +138,7 @@ export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, rese
             cards.forEach(card => {
               const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
 
-              var ref = db
+              const ref = db
                 .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
                 .doc(`${card.id}`);
               batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
@@ -164,20 +149,11 @@ export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, rese
                 navigation.navigate('calendar');
                 dispatch({ type: ON_SCHEDULE_CREATED });
               })
-              .catch(error => {
-                console.log(error);
-                dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-              });
+              .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
           })
-          .catch(error => {
-            console.log(error);
-            dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-          });
+          .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-      });
+      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
   }
 };
 
@@ -198,7 +174,6 @@ export const onScheduleConfigSave = ({
       .then(() => {
         navigation.navigate('calendar');
         dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED })
-      })
-      .catch(error => console.log(error));
+      });
   };
 };

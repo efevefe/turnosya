@@ -13,4 +13,4 @@ export * from './Calendar';
 export * from './Drawer';
 export * from './EmptyList';
 export * from './IconButton';
-export * from './LocationMessages';
+export * from './PictureView';

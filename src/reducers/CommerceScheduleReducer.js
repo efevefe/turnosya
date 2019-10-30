@@ -55,7 +55,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, cards: newCards };
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
-      var newSelectedDays = state.selectedDays.filter(
+      const newSelectedDays = state.selectedDays.filter(
         day => !cardToDelete.days.includes(day)
       );
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
@@ -66,7 +66,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_READ:
       return { ...state, ...action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
-      Toast.show({ text: 'Aun no hay horarios de atencion' });
+      Toast.show({ text: 'Aun no hay horarios de atención' });
 
       return INITIAL_STATE;
     case ON_SCHEDULE_READ_FAIL:

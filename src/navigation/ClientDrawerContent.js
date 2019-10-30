@@ -9,12 +9,12 @@ import {
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
-import VerifyEmailModal from '../components/VerifyEmailModal';
+import VerifyEmailModal from '../components/client/VerifyEmailModal';
 
 class ClientDrawerContent extends Component {
   state = { modal: false };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onUserRead();
   }
 

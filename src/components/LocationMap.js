@@ -13,33 +13,12 @@ import { Toast, IconButton } from './common';
 import { onLocationChange, onLocationValueChange } from '../actions';
 
 class LocationMap extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      defaultAddress: 'Córdoba, Argentina',
-      completeAddress: '',
-      locationAsked: false,
-      stateBeforeChanges: null
-    };
-
-    const { markers } = props.navigation.state.params;
-
-    if (markers) {
-      if (markers.length > 1) {
-        props.onLocationValueChange({ prop: 'markers', value: markers });
-      } else {
-        for (prop in markers[0]) {
-          props.onLocationValueChange({ prop, value: markers[0][prop] });
-        }
-      }
-    }
-
-    props.navigation.setParams({
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton()
-    });
-  }
+  state = {
+    defaultAddress: 'Córdoba, Argentina',
+    completeAddress: '',
+    locationAsked: false,
+    stateBeforeChanges: null
+  };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -49,19 +28,38 @@ class LocationMap extends React.Component {
   };
 
   async componentDidMount() {
-    const { markers } = this.props.navigation.state.params;
+    this.props.navigation.setParams({
+      rightIcon: this.renderSaveButton(),
+      leftIcon: this.renderBackButton()
+    });
+
+    const markers = this.props.navigation.getParam('markers', {});
 
     if (!markers) {
       const { address, city, provinceName } = this.props;
+
       this.setState({
         stateBeforeChanges: { address, city, provinceName }
       });
     } else if (markers.length === 1) {
+      for (prop in markers[0]) {
+        this.props.onLocationValueChange({ prop, value: markers[0][prop] });
+      }
+
       const { address, provinceName, city, longitude, latitude } = markers[0];
 
       this.setState({
-        stateBeforeChanges: { address, provinceName, city, latitude, longitude }
+        stateBeforeChanges: {
+          address,
+          provinceName,
+          city,
+          latitude,
+          longitude
+        },
+        completeAddress: `${address}, ${city}, ${provinceName}`
       });
+    } else {
+      this.props.onLocationValueChange({ prop: 'markers', value: markers });
     }
 
     await this.setAddressString();
@@ -77,7 +75,7 @@ class LocationMap extends React.Component {
       const { address, provinceName, city, country } = this.props;
       this.setState({
         locationAsked: false,
-        completeAddress: `${address}, ${provinceName}, ${city}, ${country}`
+        completeAddress: `${address}, ${city}, ${provinceName}, ${country}`
       });
       if (this.props.navigation.state.params.callback) {
         this.props.navigation.state.params.callback(this.props.provinceName);
@@ -133,6 +131,9 @@ class LocationMap extends React.Component {
       const { latitude, longitude } = latLongResult;
       this.getAddressFromLatAndLong({ latitude, longitude });
     } else {
+      this.setState({
+        completeAddress: this.state.completeAddress.replace('Calle', '')
+      });
       Toast.show({
         text: 'No se han encontrado resultados, intente modificar la dirección.'
       });
@@ -158,7 +159,7 @@ class LocationMap extends React.Component {
     };
 
     this.setState({
-      completeAddress: `${address}, ${region}, ${city}, ${country}`
+      completeAddress: `${address}, ${city}, ${region}, ${country}`
     });
 
     this.props.onLocationChange({ location });
@@ -178,7 +179,7 @@ class LocationMap extends React.Component {
             longitude: longitude ? longitude : -64.18384
           }}
           title={address}
-          draggable
+          draggable={this.props.navigation.getParam('dragable', true)}
           onDragEnd={e =>
             this.getAddressFromLatAndLong({
               latitude: e.nativeEvent.coordinate.latitude,
@@ -226,24 +227,6 @@ class LocationMap extends React.Component {
 
     return (
       <View style={{ flex: 1, position: 'relative' }}>
-        <View style={styles.mainContainer}>
-          <SearchBar
-            {...this.props}
-            platform="android"
-            placeholder="San Martín 30, Córdoba, Argentina"
-            onChangeText={text => this.setState({ completeAddress: text })}
-            onCancel={() => this.setState({ completeAddress: '' })}
-            value={validAddress}
-            containerStyle={styles.searchBarContainer}
-            inputStyle={{ marginTop: 1, fontSize: 16 }}
-            searchIcon={{ color: MAIN_COLOR }}
-            cancelIcon={{ color: MAIN_COLOR }}
-            clearIcon={{ color: MAIN_COLOR }}
-            onEndEditing={e =>
-              this.getLocationAndLongitudeFromString(e.nativeEvent.text)
-            }
-          />
-        </View>
         <MapView
           style={{ flex: 1 }}
           ref={ref => (this.map = ref)}
@@ -267,6 +250,25 @@ class LocationMap extends React.Component {
         </MapView>
         {this.renderLocationMessage()}
 
+        <View style={styles.mainContainer}>
+          <SearchBar
+            {...this.props}
+            platform="android"
+            placeholder="San Martín 30, Córdoba, Argentina"
+            onChangeText={text => this.setState({ completeAddress: text })}
+            onCancel={() => this.setState({ completeAddress: '' })}
+            value={validAddress}
+            containerStyle={styles.searchBarContainer}
+            inputStyle={styles.searchInput}
+            searchIcon={{ color: MAIN_COLOR }}
+            cancelIcon={{ color: MAIN_COLOR }}
+            clearIcon={{ color: MAIN_COLOR }}
+            onEndEditing={e =>
+              this.getLocationAndLongitudeFromString(e.nativeEvent.text)
+            }
+          />
+        </View>
+
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
@@ -281,10 +283,21 @@ class LocationMap extends React.Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    height: NAVIGATION_HEIGHT,
+    height: NAVIGATION_HEIGHT + 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: 'transparent',
+    position: 'absolute'
+  },
+  searchBarContainer: {
     alignSelf: 'stretch',
-    justifyContent: 'flex-end',
-    backgroundColor: MAIN_COLOR,
+    height: NAVIGATION_HEIGHT,
+    paddingTop: 4,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -294,12 +307,11 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2
   },
-  searchBarContainer: {
-    alignSelf: 'stretch',
-    height: NAVIGATION_HEIGHT,
-    paddingTop: 4,
-    paddingRight: 5,
-    paddingLeft: 5
+  searchInput: {
+    marginTop: 1,
+    fontSize: 16,
+    marginLeft: 12,
+    marginRight: 0
   }
 });
 

@@ -3,24 +3,25 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-import ClientProfile from '../components/ClientProfile';
-import CommercesList from '../components/CommercesList';
-import FavoriteCommercesList from '../components/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/CommerceCourtTypes';
+import ClientProfile from '../components/client/ClientProfile';
+import CommercesList from '../components/client/CommercesList';
+import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
+import CommerceCourtTypes from '../components/client/CommerceCourtTypes';
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
-import CommercesAreas from '../components/CommercesAreas';
-import ClientCommerceSchedule from '../components/ClientCommerceSchedule';
-import CommerceCourtsList from '../components/CommerceCourtsList';
-import ConfirmCourtReservation from '../components/ConfirmCourtReservation';
-import ClientReservationsList from '../components/ClientReservationsList';
-import ClientReservationDetails from '../components/ClientReservationDetails';
-import CommercesFiltersScreen from '../components/CommercesFiltersScreen';
+import CommercesAreas from '../components/client/CommercesAreas';
+import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
+import CommerceCourtsList from '../components/client/CommerceCourtsList';
+import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
+import ClientReservationsList from '../components/client/ClientReservationsList';
+import ClientReservationDetails from '../components/client/ClientReservationDetails';
+import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
+import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 import CommerceProfileView from '../components/CommerceProfileView';
 import LocationMap from '../components/LocationMap';
-
+import CommerceProfileInfo from '../components/CommerceProfileInfo';
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const mainSearchStack = createStackNavigator(
@@ -44,6 +45,12 @@ const mainSearchStack = createStackNavigator(
       screen: CommerceProfileView,
       navigationOptions: {
         title: 'Perfil'
+      }
+    },
+    commerceProfileInfo: {
+      screen: CommerceProfileInfo,
+      navigationOptions: {
+        title: 'Informacion'
       }
     },
     changeAddressMap: {
@@ -87,6 +94,9 @@ const searchStack = createStackNavigator(
     },
     commercesFiltersScreen: {
       screen: CommercesFiltersScreen
+    },
+    commercesFiltersMap: {
+      screen: CommercesFiltersMap
     }
   },
   {
@@ -99,7 +109,10 @@ searchStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
-      if (route.routeName === 'commercesFiltersScreen') {
+      if (
+        route.routeName === 'commercesFiltersScreen' ||
+        route.routeName === 'commercesFiltersMap'
+      ) {
         tabBarVisible = false;
       } else {
         tabBarVisible = true;

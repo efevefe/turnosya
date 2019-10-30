@@ -12,7 +12,6 @@ import {
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
@@ -24,7 +23,8 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE
+  ON_REGISTER_VALUE_CHANGE,
+  ON_PROVINCES_READ
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -48,7 +48,7 @@ export const onCommerceFormOpen = () => {
 
 export const onCommerceOpen = navigation => {
   const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     db.doc(`Profiles/${currentUser.uid}`)
@@ -61,9 +61,6 @@ export const onCommerceOpen = navigation => {
 
           navigation.navigate('commerce');
         }
-      })
-      .catch(error => {
-        console.log(error);
       });
   };
 };
@@ -85,12 +82,12 @@ export const onCreateCommerce = (
   navigation
 ) => {
   const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_REGISTER_COMMERCE });
 
-    var docId;
+    let docId;
 
     db.collection(`Commerces`)
       .add({
@@ -112,20 +109,26 @@ export const onCreateCommerce = (
         db.doc(`Profiles/${currentUser.uid}`)
           .update({ commerceId: docId })
           .then(() => {
-            index.addObject({
-              objectID: docId,
-              name,
-              description,
-              areaName: area.name,
-              address,
-              city,
-              provinceName: province.name,
-              latitude,
-              longitude
-            });
-
-            dispatch({ type: COMMERCE_PROFILE_CREATE });
-            navigation.navigate('commerce');
+            index
+              .addObject({
+                objectID: docId,
+                name,
+                description,
+                areaName: area.name,
+                address,
+                city,
+                provinceName: province.name,
+                ...(latitude && longitude
+                  ? { _geoloc: { lat: latitude, lng: longitude } }
+                  : {})
+              })
+              .then(() => {
+                dispatch({ type: COMMERCE_PROFILE_CREATE });
+                navigation.navigate('commerce');
+              })
+              .catch(error =>
+                dispatch({ type: COMMERCE_FAIL, payload: error })
+              );
           })
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
@@ -135,7 +138,7 @@ export const onCreateCommerce = (
 
 export const onCommerceRead = () => {
   const { currentUser } = firebase.auth();
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_READING });
@@ -162,21 +165,18 @@ export const onCommerceRead = () => {
               type: ON_COMMERCE_READ,
               payload: {
                 ...doc.data(),
-                provincesList: [province],
                 areasList: [area],
                 commerceId: doc.id
               }
             });
+            dispatch({
+              type: ON_PROVINCES_READ,
+              payload: [province]
+            });
           })
-          .catch(error => {
-            dispatch({ type: ON_COMMERCE_READ_FAIL });
-            console.log(error);
-          });
+          .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
       })
-      .catch(error => {
-        dispatch({ type: ON_COMMERCE_READ_FAIL });
-        console.log(error);
-      });
+      .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
   };
 };
 
@@ -250,21 +250,28 @@ export const onCommerceUpdateNoPicture = ({
         longitude
       })
       .then(() => {
-        index.saveObject({
-          address,
-          areaName: area.name,
-          objectID: commerceId,
-          description,
-          name,
-          city,
-          provinceName: province.name
-        });
-        dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
+        index
+          .saveObject({
+            address,
+            areaName: area.name,
+            objectID: commerceId,
+            description,
+            name,
+            city,
+            provinceName: province.name,
+            ...(latitude && longitude
+              ? { _geoloc: { lat: latitude, lng: longitude } }
+              : {})
+          })
+          .then(() =>
+            dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture })
+          )
+          .catch(error => {
+            debugger;
+            dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
+          });
       })
-      .catch(error => {
-        dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-        console.log(error);
-      });
+      .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
   };
 };
 
@@ -283,11 +290,12 @@ export const onCommerceUpdateWithPicture = ({
   latitude,
   longitude
 }) => {
-  var ref = firebase
+  const ref = firebase
     .storage()
     .ref(`Commerces/${commerceId}`)
     .child(`${commerceId}-ProfilePicture`);
-  var db = firebase.firestore();
+
+  const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_UPDATING });
@@ -315,32 +323,32 @@ export const onCommerceUpdateWithPicture = ({
                 longitude
               })
               .then(() => {
-                index.saveObject({
-                  address,
-                  areaName: area.name,
-                  profilePicture: url,
-                  objectID: commerceId,
-                  description,
-                  name,
-                  city,
-                  provinceName: province.name
-                });
-                dispatch({ type: ON_COMMERCE_UPDATED, payload: url });
+                index
+                  .saveObject({
+                    address,
+                    areaName: area.name,
+                    profilePicture: url,
+                    objectID: commerceId,
+                    description,
+                    name,
+                    city,
+                    provinceName: province.name,
+                    ...(latitude && longitude
+                      ? { _geoloc: { lat: latitude, lng: longitude } }
+                      : {})
+                  })
+                  .then(() =>
+                    dispatch({ type: ON_COMMERCE_UPDATED, payload: url })
+                  )
+                  .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
               })
-              .catch(error => {
-                dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-                console.log(error);
-              });
+              .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
           })
-          .catch(error => {
-            dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-            console.log(error);
-          });
+          .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
       })
       .catch(error => {
         profilePicture.close();
         dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-        console.log(error);
       });
   };
 };
@@ -353,7 +361,7 @@ export const onAreasRead = () => {
       .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
-        var areasList = [];
+        const areasList = [];
         snapshot.forEach(doc =>
           areasList.push({ value: doc.id, label: doc.data().name })
         );
@@ -363,7 +371,7 @@ export const onAreasRead = () => {
 };
 
 export const validateCuit = cuit => {
-  var db = firebase.firestore();
+  const db = firebase.firestore();
 
   return dispatch => {
     db.collection(`Commerces/`)
@@ -383,7 +391,7 @@ export const validateCuit = cuit => {
 export const onCommerceDelete = (password, navigation = null) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
-  var docId;
+  let docId;
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_DELETING });
@@ -392,38 +400,37 @@ export const onCommerceDelete = (password, navigation = null) => {
       .then(() => {
         dispatch({ type: ON_REAUTH_SUCCESS });
 
-        var userRef = db.doc(`Profiles/${currentUser.uid}`);
+        const userRef = db.doc(`Profiles/${currentUser.uid}`);
 
         db.runTransaction(transaction => {
           return transaction.get(userRef).then(userDoc => {
             docId = userDoc.data().commerceId;
 
-            var commerceRef = db.doc(`Commerces/${docId}`);
+            const commerceRef = db.doc(`Commerces/${docId}`);
 
             transaction.update(userRef, { commerceId: null });
             transaction.update(commerceRef, { softDelete: new Date() });
           });
         })
           .then(() => {
-            index.deleteObject(docId);
+            index
+              .deleteObject(docId)
+              .then(() => {
+                dispatch({ type: ON_COMMERCE_DELETED });
+                dispatch({
+                  type: ON_REGISTER_VALUE_CHANGE,
+                  payload: { prop: 'commerceId', value: null }
+                });
 
-            dispatch({ type: ON_COMMERCE_DELETED });
-            dispatch({
-              type: ON_REGISTER_VALUE_CHANGE,
-              payload: { prop: 'commerceId', value: null }
-            });
-
-            if (navigation) {
-              navigation.navigate('client');
-            }
+                if (navigation) {
+                  navigation.navigate('client');
+                }
+              })
+              .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
           })
-          .catch(error => {
-            console.log(error);
-            dispatch({ type: ON_COMMERCE_DELETE_FAIL });
-          });
+          .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
       })
       .catch(error => {
-        console.log(error);
         dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_COMMERCE_DELETE_FAIL });
       });
