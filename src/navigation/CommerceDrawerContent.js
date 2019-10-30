@@ -48,9 +48,8 @@ class CommerceDrawerContent extends Component {
 const mapStateToProps = state => {
   const { name, profilePicture } = state.commerceData;
   const { loading } = state.auth;
-  const { slots } = state.scheduleRegister;
 
-  return { name, profilePicture, loading, slots };
+  return { name, profilePicture, loading };
 };
 
 export default connect(

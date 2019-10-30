@@ -83,9 +83,8 @@ class ClientDrawerContent extends Component {
 const mapStateToProps = state => {
   const { profilePicture, firstName, lastName } = state.clientData;
   const { loading } = state.auth;
-  const { slots } = state.scheduleRegister;
 
-  return { profilePicture, firstName, lastName, loading, slots };
+  return { profilePicture, firstName, lastName, loading };
 };
 
 export default connect(
