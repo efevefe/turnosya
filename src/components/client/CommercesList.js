@@ -2,24 +2,24 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { MAIN_COLOR } from '../../constants';
 import { IconButton } from '../common';
 import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
 import { readFavoriteCommerces } from '../../actions';
-
-import MapSearch from './PruebaLocaDou';
-import { Fab } from 'native-base';
-import { MAIN_COLOR } from '../../constants';
-import { Ionicons } from '@expo/vector-icons';
+import Map from '../common/Map';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
   state = {
     areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
-    searchVisible: false
+    searchVisible: false,
+    showingMap: false
   };
 
   componentDidMount() {
@@ -42,7 +42,11 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
+        <IconButton
+          icon="md-search"
+          containerStyle={{ paddingRight: 0 }}
+          onPress={this.onSearchPress}
+        />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
@@ -100,7 +104,28 @@ class CommercesList extends Component {
   };
 
   renderResults = () => {
-    return this.state.showingMap ? <MapSearch /> : <ConnectedHits />;
+    const {
+      latitude,
+      longitude,
+      address,
+      city,
+      provinceName,
+      country
+    } = this.props;
+    return this.state.showingMap ? (
+      <Map
+        marker={{
+          address,
+          city,
+          provinceName,
+          country,
+          latitude,
+          longitude
+        }}
+      />
+    ) : (
+      <ConnectedHits />
+    );
   };
 
   render() {
@@ -120,8 +145,6 @@ class CommercesList extends Component {
           {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
         />
         <ConnectedStateResults />
-        {/* <MapSearch /> */}
-        {/* <ConnectedHits /> */}
         {this.renderResults()}
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -143,7 +166,15 @@ const mapStateToProps = state => {
     locationEnabled,
     locationRadiusKms
   } = state.commercesList;
-  const { latitude, longitude } = state.locationData;
+
+  const {
+    address,
+    city,
+    provinceName,
+    country,
+    latitude,
+    longitude
+  } = state.locationData;
 
   return {
     refinement,
@@ -152,7 +183,11 @@ const mapStateToProps = state => {
     locationEnabled,
     locationRadiusKms,
     latitude,
-    longitude
+    longitude,
+    address,
+    city,
+    provinceName,
+    country
   };
 };
 

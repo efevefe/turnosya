@@ -10,8 +10,7 @@ const INITIAL_STATE = {
   provinceName: '',
   country: '',
   latitude: null,
-  longitude: null,
-  markers: []
+  longitude: null
 };
 
 export default (state = INITIAL_STATE, action) => {

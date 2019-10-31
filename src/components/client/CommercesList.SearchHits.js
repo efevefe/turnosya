@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { FlatList } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from '../common';
 import CommerceListItem from './CommerceListItem';
-
-import { connect } from 'react-redux';
+import { commerceHitsUpdate } from '../../actions';
 
 class Hits extends Component {
-  // componentDidUpdate() {
-  //   this.props;
-  //   debugger;
-  // }
+  componentDidUpdate() {
+    this.props.commerceHitsUpdate(this.props.hits);
+  }
 
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
@@ -48,5 +47,5 @@ const ConnectedHits = connectInfiniteHits(Hits);
 
 export default connect(
   mapStateToProps,
-  {}
+  { commerceHitsUpdate }
 )(ConnectedHits);

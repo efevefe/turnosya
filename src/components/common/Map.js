@@ -150,16 +150,18 @@ class LocationMap extends React.Component {
   renderCommerceMarkers = () => {
     // TODO: give it a different style to differentiate it with user's marker
     if (this.props.markers) {
-      return this.props.markers.map((marker, index) => (
-        <MapView.Marker
-          key={index}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude
-          }}
-          title={marker.address}
-        />
-      ));
+      return this.props.markers.map((marker, index) =>
+        marker._geoloc ? (
+          <MapView.Marker
+            key={index}
+            coordinate={{
+              latitude: marker._geoloc.lat,
+              longitude: marker._geoloc.lng
+            }}
+            title={marker.address}
+          />
+        ) : null
+      );
     }
   };
 
@@ -278,9 +280,10 @@ const mapStateToProps = state => {
     provinceName,
     country,
     latitude,
-    longitude,
-    markers
+    longitude
   } = state.locationData;
+
+  const { markers } = state.commercesList;
 
   return { address, city, provinceName, country, latitude, longitude, markers };
 };

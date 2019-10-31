@@ -47,7 +47,7 @@ export const COURT_UPDATE = 'court_update';
 export const COURT_READING_ONLY_AVAILABLE = 'court_reading_only_available';
 export const COURT_READ_ONLY_AVAILABLE = 'court_read_only_available';
 
-//Client Profile
+// Client Profile
 export const ON_USER_READING = 'on_user_reading';
 export const ON_USER_READ = 'on_user_read';
 export const ON_USER_READ_FAIL = 'on_user_read_fail';
@@ -55,7 +55,7 @@ export const ON_USER_UPDATING = 'on_user_updating';
 export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
-//Commerce Profile
+// Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
 export const ON_COMMERCE_OPEN = 'on_commerce_open';
 export const COMMERCE_FAIL = 'commerce_fail';
@@ -75,14 +75,15 @@ export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 
-//Commerces List
+// Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
 export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 export const ON_UPDATE_ALL_FILTERS = 'on_update_all_filters';
+export const ON_HITS_UPDATE = 'on_hits_update';
 
-//Schedule Register
+// Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
@@ -134,7 +135,7 @@ export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
 export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
   'on_client_reservation_cancel_fail';
 
-//Commerce Reservations List
+// Commerce Reservations List
 export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE =
   'on_court_reservations_list_value_change';
 export const ON_COMMERCE_COURT_RESERVATIONS_READING =

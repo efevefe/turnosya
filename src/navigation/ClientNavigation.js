@@ -15,14 +15,15 @@ import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
-import ClientReservationsList from '../components/client/ClientReservationsList'
-import ClientReservationDetails from '../components/client/ClientReservationDetails'
+import ClientReservationsList from '../components/client/ClientReservationsList';
+import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const mainSearchStack = createStackNavigator({
+const mainSearchStack = createStackNavigator(
+  {
     commercesAreas: {
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
@@ -120,7 +121,7 @@ const calendarStack = createStackNavigator(
       navigationOptions: {
         title: 'Detalle del Turno'
       }
-    },
+    }
   },
   stackNavigationOptions
 );
