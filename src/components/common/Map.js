@@ -141,12 +141,14 @@ class LocationMap extends React.Component {
               longitude: e.nativeEvent.coordinate.longitude
             })
           }
+          pinColor={MAIN_COLOR}
         />
       );
     }
   };
 
   renderCommerceMarkers = () => {
+    // TODO: give it a different style to differentiate it with user's marker
     if (this.props.markers) {
       return this.props.markers.map((marker, index) => (
         <MapView.Marker

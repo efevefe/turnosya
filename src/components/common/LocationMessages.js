@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Platform, View, AppState, StyleSheet, Image, Text } from 'react-native';
+import {
+  Platform,
+  View,
+  AppState,
+  StyleSheet,
+  Image,
+  Text
+} from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
@@ -36,8 +43,8 @@ class LocationMessages extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (
-      prevState.appState !== this.state.appState &&
-      this.state.appState === 'active'
+      this.state.appState === 'active' &&
+      prevState.appState !== this.state.appState
     ) {
       this.setState({
         permissionStatus: await getPermissionLocationStatus(),
@@ -105,28 +112,42 @@ class LocationMessages extends Component {
           return (
             <View>
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/settings.png')} style={styles.iosModalIcon} />
-                <Text style={styles.iosModalText}>Abrí la aplicación Ajustes</Text>
+                <Image
+                  source={require('../../../assets/ios-icons/settings.png')}
+                  style={styles.iosModalIcon}
+                />
+                <Text style={styles.iosModalText}>
+                  Abrí la aplicación Ajustes
+                </Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/privacy.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require('../../../assets/ios-icons/privacy.png')}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Seleccioná Privacidad</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/location.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require('../../../assets/ios-icons/location.png')}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Seleccioná Localización</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/switch.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require('../../../assets/ios-icons/switch.png')}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Activá la Localización</Text>
               </View>
               <Divider />
               <MenuItem
                 title="Cerrar"
-                icon='md-close'
+                icon="md-close"
                 onPress={() => this.closeModal()}
                 buttonStyle={{ justifyContent: 'flex-end', paddingRight: 5 }}
                 titleStyle={{ marginLeft: 5 }}
@@ -196,9 +217,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginLeft: 15
   },
-  iosModalIcon: { 
-    height: 30, 
-    width: 30 
+  iosModalIcon: {
+    height: 30,
+    width: 30
   }
 });
 

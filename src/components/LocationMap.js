@@ -70,8 +70,7 @@ class LocationMap extends React.Component {
       provinceName,
       country,
       latitude,
-      longitude,
-      markers
+      longitude
     } = this.props;
     const marker = {
       address,
@@ -87,7 +86,6 @@ class LocationMap extends React.Component {
         style={{ flex: 1, position: 'relative' }}
         searchBar={true}
         marker={marker}
-        markers={markers ? markers : null}
         onProvinceNameChange={
           this.props.navigation.state.params.onProvinceNameChange
         }
