@@ -10,66 +10,93 @@ const LocationStatus = {
 };
 
 export const getPermissionLocationStatus = async () => {
-  const { status } = await getPermissionLocation();
-  // const { status } = await Permissions.askAsync(Permissions.LOCATION);
+  try {
+    const { status } = await getPermissionLocation();
 
-  return Platform.OS === 'ios'
-    ? getLocationIos(status)
-    : getLocationAndroid(status);
+    return Platform.OS === 'ios'
+      ? getLocationIos(status)
+      : getLocationAndroid(status);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const getLocationAndroid = async status => {
-  if (status === 'denied' || status === 'undetermined') {
-    return LocationStatus.permissionsDenied;
-  }
+  try {
+    if (status === 'denied' || status === 'undetermined') {
+      return LocationStatus.permissionsDenied;
+    }
 
-  return (await Location.hasServicesEnabledAsync())
-    ? LocationStatus.permissionsAllowed
-    : LocationStatus.permissionsAllowedWithGPSOff;
+    return (await Location.hasServicesEnabledAsync())
+      ? LocationStatus.permissionsAllowed
+      : LocationStatus.permissionsAllowedWithGPSOff;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const getLocationIos = async status => {
-  if (status === 'denied') {
-    return (await Location.hasServicesEnabledAsync())
-      ? LocationStatus.permissionsDenied
-      : LocationStatus.permissionsAllowedWithGPSOff;
-  } else if (status === 'undetermined') {
-    //es cuando le pregunta por primera vez en la historia
-    Permissions.askAsync(Permissions.LOCATION);
-    return LocationStatus.permissionsDenied;
-  }
+  try {
+    if (status === 'denied') {
+      return (await Location.hasServicesEnabledAsync())
+        ? LocationStatus.permissionsDenied
+        : LocationStatus.permissionsAllowedWithGPSOff;
+    } else if (status === 'undetermined') {
+      //es cuando le pregunta por primera vez en la historia
+      Permissions.askAsync(Permissions.LOCATION);
+      return LocationStatus.permissionsDenied;
+    }
 
-  return LocationStatus.permissionsAllowed;
+    return LocationStatus.permissionsAllowed;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const getCurrentPosition = async () => {
-  // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
-  return await Location.getCurrentPositionAsync({
-    accuracy: Location.Accuracy.High
-  });
+  try {
+    // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
+    return await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
-  return await Location.reverseGeocodeAsync({
-    latitude,
-    longitude
-  });
+  try {
+    return await Location.reverseGeocodeAsync({
+      latitude,
+      longitude
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const getLocationAndLongitudeFromString = async string => {
-  return await Location.geocodeAsync(string);
+  try {
+    return await Location.geocodeAsync(string);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const openGPSAndroid = () => {
-  IntentLauncher.startActivityAsync(
-    IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
-  ).then(async () => {
-    if (await Location.hasServicesEnabledAsync()) {
-      return LocationStatus.permissionsAllowed;
-    }
+  try {
+    IntentLauncher.startActivityAsync(
+      IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
+    ).then(async () => {
+      if (await Location.hasServicesEnabledAsync()) {
+        return LocationStatus.permissionsAllowed;
+      }
 
-    return LocationStatus.permissionsAllowedWithGPSOff;
-  });
+      return LocationStatus.permissionsAllowedWithGPSOff;
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const openSettingIos = () => {
@@ -77,9 +104,17 @@ export const openSettingIos = () => {
 };
 
 const getPermissionLocation = async () => {
-  return await Permissions.getAsync(Permissions.LOCATION);
+  try {
+    return await Permissions.getAsync(Permissions.LOCATION);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const askPermissionLocation = async () => {
-  return await Permissions.askAsync(Permissions.LOCATION);
+  try {
+    return await Permissions.askAsync(Permissions.LOCATION);
+  } catch (e) {
+    console.error(e);
+  }
 };

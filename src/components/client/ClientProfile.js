@@ -79,28 +79,32 @@ class ClientProfile extends Component {
   };
 
   onSavePress = async () => {
-    if (this.validateMinimumData()) {
-      var { firstName, lastName, phone, profilePicture } = this.props;
-      const { newProfilePicture } = this.state;
+    try {
+      if (this.validateMinimumData()) {
+        var { firstName, lastName, phone, profilePicture } = this.props;
+        const { newProfilePicture } = this.state;
 
-      if (newProfilePicture) {
-        var profilePicture = await imageToBlob(profilePicture);
-        this.props.onUserUpdateWithPicture({
-          firstName,
-          lastName,
-          phone,
-          profilePicture
-        });
-      } else {
-        this.props.onUserUpdateNoPicture({
-          firstName,
-          lastName,
-          phone,
-          profilePicture
-        });
+        if (newProfilePicture) {
+          var profilePicture = await imageToBlob(profilePicture);
+          this.props.onUserUpdateWithPicture({
+            firstName,
+            lastName,
+            phone,
+            profilePicture
+          });
+        } else {
+          this.props.onUserUpdateNoPicture({
+            firstName,
+            lastName,
+            phone,
+            profilePicture
+          });
+        }
+
+        this.disableEdit();
       }
-
-      this.disableEdit();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -152,56 +156,68 @@ class ClientProfile extends Component {
   };
 
   getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+    try {
+      if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
       }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    await this.getPermissionAsync();
+      await this.getPermissionAsync();
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    let response = await ImagePicker.launchImageLibraryAsync(options);
+      let response = await ImagePicker.launchImageLibraryAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onClientDataValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onClientDataValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   onTakePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+      await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      await Permissions.askAsync(Permissions.CAMERA);
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    let response = await ImagePicker.launchCameraAsync(options);
+      let response = await ImagePicker.launchCameraAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onClientDataValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onClientDataValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 

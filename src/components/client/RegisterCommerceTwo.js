@@ -60,22 +60,26 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = async index => {
-    const { value, label } =
-      index > 0
-        ? this.props.provincesList[index - 1]
-        : this.state.pickerPlaceholder;
+    try {
+      const { value, label } =
+        index > 0
+          ? this.props.provincesList[index - 1]
+          : this.state.pickerPlaceholder;
 
-    await this.props.onCommerceValueChange({
-      prop: 'province',
-      value: { provinceId: value, name: label }
-    });
+      await this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: value, name: label }
+      });
 
-    this.props.onLocationValueChange({
-      prop: 'provinceName',
-      value: index > 0 ? label : ''
-    });
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: index > 0 ? label : ''
+      });
 
-    this.renderProvinceError();
+      this.renderProvinceError();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   renderAddressError = () => {

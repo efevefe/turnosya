@@ -30,11 +30,16 @@ class LocationMessages extends Component {
   };
 
   async componentDidMount() {
-    const permissionStatus = await getPermissionLocationStatus();
-    permissionStatus === 'permissionsAllowed'
-      ? this.setState({ permissionStatus })
-      : this.setState({ permissionStatus, modal: true });
-    AppState.addEventListener('change', this._handleAppStateChange);
+    try {
+      const permissionStatus = await getPermissionLocationStatus();
+
+      permissionStatus === 'permissionsAllowed'
+        ? this.setState({ permissionStatus })
+        : this.setState({ permissionStatus, modal: true });
+      AppState.addEventListener('change', this._handleAppStateChange);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   componentWillUnmount() {
@@ -42,14 +47,18 @@ class LocationMessages extends Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (
-      this.state.appState === 'active' &&
-      prevState.appState !== this.state.appState
-    ) {
-      this.setState({
-        permissionStatus: await getPermissionLocationStatus(),
-        modal: true
-      });
+    try {
+      if (
+        this.state.appState === 'active' &&
+        prevState.appState !== this.state.appState
+      ) {
+        this.setState({
+          permissionStatus: await getPermissionLocationStatus(),
+          modal: true
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -64,26 +73,30 @@ class LocationMessages extends Component {
   };
 
   getAndSaveLocation = async () => {
-    const currentLatLong = await getCurrentPosition();
-    const { latitude, longitude } = currentLatLong.coords;
-    const [addresResult] = await getAddressFromLatAndLong({
-      latitude,
-      longitude
-    });
-    const { name, street, city, region, country } = addresResult;
+    try {
+      const currentLatLong = await getCurrentPosition();
+      const { latitude, longitude } = currentLatLong.coords;
+      const [addresResult] = await getAddressFromLatAndLong({
+        latitude,
+        longitude
+      });
+      const { name, street, city, region, country } = addresResult;
 
-    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+      const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
-    const location = {
-      address,
-      city,
-      provinceName: region,
-      country,
-      latitude,
-      longitude
-    };
+      const location = {
+        address,
+        city,
+        provinceName: region,
+        country,
+        latitude,
+        longitude
+      };
 
-    this.props.onLocationChange({ location });
+      this.props.onLocationChange({ location });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   renderItems = () => {

@@ -14,9 +14,13 @@ class ClientDrawerContent extends Component {
   }
 
   onMyCommercePress = async () => {
-    (await isEmailVerified())
-      ? this.props.onCommerceOpen(this.props.navigation)
-      : this.setState({ modal: true });
+    try {
+      (await isEmailVerified())
+        ? this.props.onCommerceOpen(this.props.navigation)
+        : this.setState({ modal: true });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   onModalClose = () => {
