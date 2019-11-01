@@ -144,7 +144,7 @@ class RegisterCommerceTwo extends Component {
 
   onMapPress = () => {
     this.props.navigation.navigate('commerceRegisterMap', {
-      callback: this.onProvinceNameChangeOnMap
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 

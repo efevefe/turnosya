@@ -56,6 +56,10 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
   });
 };
 
+export const getLocationAndLongitudeFromString = async string => {
+  return await Location.geocodeAsync(string);
+};
+
 export const openGPSAndroid = () => {
   IntentLauncher.startActivityAsync(
     IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
