@@ -22,6 +22,7 @@ const INITIAL_STATE = {
   locationEnabled: false,
   locationButtonIndex: 0,
   locationRadiusKms: 10,
+  marker: {},
   markers: []
 };
 

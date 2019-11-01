@@ -64,28 +64,10 @@ class LocationMap extends React.Component {
   };
 
   render() {
-    const {
-      address,
-      city,
-      provinceName,
-      country,
-      latitude,
-      longitude
-    } = this.props;
-    const marker = {
-      address,
-      city,
-      provinceName,
-      country,
-      latitude,
-      longitude
-    };
-
     return (
       <Map
         style={{ flex: 1, position: 'relative' }}
         searchBar={true}
-        marker={marker}
         onProvinceNameChange={
           this.props.navigation.state.params.onProvinceNameChange
         }
