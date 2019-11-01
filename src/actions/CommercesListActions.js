@@ -20,7 +20,13 @@ export const commerceSearching = isSearching => ({
 });
 
 export const commerceHitsUpdate = hits => {
-  return { type: ON_HITS_UPDATE, payload: hits };
+  const normalizedHits = [];
+  hits.forEach(hit => {
+    if (hit._geoloc) {
+      normalizedHits.push({ ...hit, latitude: hit._geoloc.lat, longitude: hit._geoloc.lng })
+    }
+  })
+  return { type: ON_HITS_UPDATE, payload: normalizedHits };
 };
 
 export const areasRead = () => {

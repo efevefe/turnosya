@@ -1,23 +1,23 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import MapView from 'react-native-maps';
-import { View, StyleSheet, Platform } from 'react-native';
-import { Fab } from 'native-base';
-import { SearchBar } from 'react-native-elements';
-import { onLocationChange, onLocationValueChange } from '../../actions';
-import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
-import LocationMessages from '../common/LocationMessages';
-import { Toast } from '../common';
+import React from "react";
+import { connect } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
+import MapView from "react-native-maps";
+import { View, StyleSheet, Platform } from "react-native";
+import { Fab } from "native-base";
+import { SearchBar } from "react-native-elements";
+import { onLocationChange, onLocationValueChange } from "../../actions";
+import { MAIN_COLOR, NAVIGATION_HEIGHT } from "../../constants";
+import LocationMessages from "../common/LocationMessages";
+import { Toast } from "../common";
 import {
   getAddressFromLatAndLong,
   getLocationAndLongitudeFromString
-} from '../../utils';
+} from "../../utils";
 
 class LocationMap extends React.Component {
   state = {
-    defaultAddress: 'Córdoba, Argentina',
-    completeAddress: '',
+    defaultAddress: "Córdoba, Argentina",
+    completeAddress: "",
     locationAsked: false
   };
 
@@ -63,15 +63,15 @@ class LocationMap extends React.Component {
     en la prop, y por mas que la calle sea una Avenida, Boulevard, pje ..porque después el mapa busca la dirección,
     y lo cambia con el nombre correcto
     */
-    let newAddress = `${address !== '' ? `Calle ${address}, ` : ''}`;
+    let newAddress = `${address !== "" ? `Calle ${address}, ` : ""}`;
 
-    newAddress += `${city !== '' ? city + ', ' : ''}`;
+    newAddress += `${city !== "" ? city + ", " : ""}`;
 
-    newAddress += `${provinceName !== '' ? provinceName + ', ' : ''}`;
+    newAddress += `${provinceName !== "" ? provinceName + ", " : ""}`;
 
-    newAddress += 'Argentina';
+    newAddress += "Argentina";
 
-    if (newAddress === 'Argentina') {
+    if (newAddress === "Argentina") {
       newAddress = this.state.defaultAddress;
     }
 
@@ -89,10 +89,10 @@ class LocationMap extends React.Component {
       this.updateAddressFromLatAndLong({ latitude, longitude });
     } else {
       this.setState({
-        completeAddress: this.state.completeAddress.replace('Calle', '')
+        completeAddress: this.state.completeAddress.replace("Calle", "")
       });
       Toast.show({
-        text: 'No se han encontrado resultados, intente modificar la dirección.'
+        text: "No se han encontrado resultados, intente modificar la dirección."
       });
     }
   };
@@ -104,7 +104,7 @@ class LocationMap extends React.Component {
     });
     const { name, street, city, region, country } = addresResult;
 
-    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+    const address = Platform.OS === "ios" ? name : `${street} ${name}`;
 
     const location = {
       latitude,
@@ -150,27 +150,25 @@ class LocationMap extends React.Component {
   renderCommerceMarkers = () => {
     // TODO: give it a different style to differentiate it with user's marker
     if (this.props.markers) {
-      return this.props.markers.map((marker, index) =>
-        marker._geoloc ? (
-          <MapView.Marker
-            key={index}
-            coordinate={{
-              latitude: marker._geoloc.lat,
-              longitude: marker._geoloc.lng
-            }}
-            title={marker.address}
-          />
-        ) : null
-      );
+      return this.props.markers.map((marker, index) => (
+        <MapView.Marker
+          key={index}
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude
+          }}
+          title={marker.address}
+        />
+      ));
     }
   };
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
       const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
+        this.state.completeAddress !== "Córdoba, Argentina"
           ? this.state.completeAddress
-          : '';
+          : "";
 
       return (
         <View style={mainContainer}>
@@ -179,7 +177,7 @@ class LocationMap extends React.Component {
             platform="android"
             placeholder="San Martín 30, Córdoba, Argentina"
             onChangeText={text => this.setState({ completeAddress: text })}
-            onCancel={() => this.setState({ completeAddress: '' })}
+            onCancel={() => this.setState({ completeAddress: "" })}
             value={validAddress}
             containerStyle={searchBarContainer}
             inputStyle={searchInput}
@@ -200,7 +198,7 @@ class LocationMap extends React.Component {
     const { latitude, longitude } = this.props;
 
     return (
-      <View style={{ flex: 1, position: 'relative' }}>
+      <View style={{ flex: 1, position: "relative" }}>
         <MapView
           {...this.props}
           style={{ flex: 1 }}
@@ -242,21 +240,21 @@ class LocationMap extends React.Component {
 const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
   mainContainer: {
     height: NAVIGATION_HEIGHT + 20,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 10,
-    backgroundColor: 'transparent',
-    position: 'absolute'
+    backgroundColor: "transparent",
+    position: "absolute"
   },
   searchBarContainer: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     height: NAVIGATION_HEIGHT,
     paddingTop: 4,
     paddingRight: 5,
     paddingLeft: 5,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1

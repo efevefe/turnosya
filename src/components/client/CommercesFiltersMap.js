@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
 import { IconButton, Picker } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import LocationMap from '../LocationMap';
+import Map from '../common/Map';
 
 export default class CommercesFiltersMap extends Component {
   render() {
@@ -23,7 +23,7 @@ export default class CommercesFiltersMap extends Component {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <LocationMap navigation={this.props.navigation} />
+          <Map />
         </View>
       </View>
     );
