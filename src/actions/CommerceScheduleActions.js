@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
@@ -14,7 +14,7 @@ import {
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY
-} from "./types";
+} from './types';
 
 export const onScheduleValueChange = ({ prop, value }) => {
   return { type: ON_SCHEDULE_VALUE_CHANGE, payload: { prop, value } };
@@ -39,7 +39,7 @@ export const onScheduleRead = commerceId => {
     dispatch({ type: ON_SCHEDULE_READING });
 
     db.collection(`Commerces/${commerceId}/Schedules`)
-      .where("endDate", "==", null)
+      .where('endDate', '==', null)
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
@@ -182,7 +182,7 @@ export const onScheduleCreate = (
             batch
               .commit()
               .then(() => {
-                navigation.navigate("calendar");
+                navigation.navigate('calendar');
                 dispatch({ type: ON_SCHEDULE_CREATED });
               })
               .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
@@ -193,7 +193,7 @@ export const onScheduleCreate = (
   };
 };
 
-export const onScheduleConfigSave = (
+export const onScheduleConfigurationSave = (
   {
     reservationMinLength,
     reservationDayPeriod,
@@ -217,14 +217,15 @@ export const onScheduleConfigSave = (
         { merge: true }
       )
       .then(() => {
-        navigation.navigate("calendar");
+        navigation.navigate('calendar');
         dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
       });
   };
 };
 
-export const onScheduleCancelRead = commerceId => {
+export const readScheduleOfCanceledTimeAllowed = commerceId => {
   const db = firebase.firestore();
+
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_READING });
 
