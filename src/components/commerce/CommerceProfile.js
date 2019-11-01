@@ -29,7 +29,6 @@ import {
   onLocationValueChange,
   onLocationChange
 } from '../../actions';
-import { HeaderBackButton } from 'react-navigation-stack';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -37,8 +36,9 @@ const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfile extends Component {
   state = {
-    editEnabled: false,
     pictureOptionsVisible: false,
+    pictureProfileEdit: false,
+    pictureHeaderEdit: false,
     newProfilePicture: false,
     stateBeforeChanges: null,
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
@@ -49,8 +49,7 @@ class CommerceProfile extends Component {
     addressError: '',
     cityError: '',
     provinceError: '',
-    areaError: '',
-    showMapOptions: false
+    areaError: ''
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -206,11 +205,23 @@ class CommerceProfile extends Component {
   };
 
   onEditPicturePress = () => {
-    this.setState({ pictureOptionsVisible: !this.state.pictureOptionsVisible });
+    this.setState({ pictureOptionsVisible: false });
+    this.setState({ pictureProfileEdit: false });
+    this.setState({ pictureHeaderEdit: false });
+  };
+
+  onEditProfilePicturePress = () => {
+    this.setState({ pictureProfileEdit: !this.state.pictureProfileEdit });
+    this.setState({ pictureOptionsVisible: true });
+  };
+
+  onEditHeaderPicturePress = () => {
+    this.setState({ pictureHeaderEdit: !this.state.pictureHeaderEdit });
+    this.setState({ pictureOptionsVisible: true });
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
+    this.setState({ pictureOptionsVisible: false });
 
     if (Constants.platform.ios) {
       await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -234,7 +245,7 @@ class CommerceProfile extends Component {
   };
 
   onTakePicturePress = async () => {
-    this.onEditPicturePress();
+    this.setState({ pictureOptionsVisible: false });
 
     await Permissions.askAsync(Permissions.CAMERA_ROLL);
     await Permissions.askAsync(Permissions.CAMERA);
@@ -258,7 +269,7 @@ class CommerceProfile extends Component {
 
   onDeletePicturePress = () => {
     this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
-    this.onEditPicturePress();
+    this.setState({ pictureOptionsVisible: false });
   };
 
   renderName = () => {
@@ -495,7 +506,6 @@ class CommerceProfile extends Component {
       avatarStyle,
       infoContainerStyle
     } = styles;
-
     if (this.props.loading) return <Spinner />;
 
     return (
@@ -544,7 +554,7 @@ class CommerceProfile extends Component {
               size={20}
               reverse
               containerStyle={{ padding: 5, position: 'absolute' }}
-              onPress={this.onEditPicturePress}
+              onPress={this.onEditProfilePicturePress}
             />
           </View>
           {this.renderName()}
@@ -561,7 +571,7 @@ class CommerceProfile extends Component {
               marginTop: avatarSize / 5.5,
               marginRight: 5
             }}
-            onPress={this.onEditPicturePress}
+            onPress={this.onEditHeaderPicturePress}
           />
         </View>
 
