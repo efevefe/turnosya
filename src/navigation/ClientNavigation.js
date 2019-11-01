@@ -1,24 +1,25 @@
-import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
-import { IconButton } from '../components/common';
-import ClientProfile from '../components/client/ClientProfile';
-import CommercesList from '../components/client/CommercesList';
-import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/client/CommerceCourtTypes';
+import React from "react";
+import { createAppContainer } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import { createStackNavigator } from "react-navigation-stack";
+import { IconButton } from "../components/common";
+import ClientProfile from "../components/client/ClientProfile";
+import CommercesList from "../components/client/CommercesList";
+import FavoriteCommercesList from "../components/client/FavoriteCommercesList";
+import CommerceCourtTypes from "../components/client/CommerceCourtTypes";
 import {
   stackNavigationOptions,
   tabNavigationOptions
-} from './NavigationOptions';
-import CommercesAreas from '../components/client/CommercesAreas';
-import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
-import CommerceCourtsList from '../components/client/CommerceCourtsList';
-import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
-import ClientReservationsList from '../components/client/ClientReservationsList';
-import ClientReservationDetails from '../components/client/ClientReservationDetails';
-import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
-import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
+} from "./NavigationOptions";
+import CommercesAreas from "../components/client/CommercesAreas";
+import ClientCommerceSchedule from "../components/client/ClientCommerceSchedule";
+import CommerceCourtsList from "../components/client/CommerceCourtsList";
+import ConfirmCourtReservation from "../components/client/ConfirmCourtReservation";
+import ClientReservationsList from "../components/client/ClientReservationsList";
+import ClientReservationDetails from "../components/client/ClientReservationDetails";
+import CommercesFiltersScreen from "../components/client/CommercesFiltersScreen";
+import CommercesFiltersMap from "../components/client/CommercesFiltersMap";
+import Map from "../components/common/Map";
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -27,7 +28,7 @@ const mainSearchStack = createStackNavigator(
     commercesAreas: {
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
-        title: 'Buscar Negocios',
+        title: "Buscar Negocios",
         headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
@@ -36,31 +37,34 @@ const mainSearchStack = createStackNavigator(
     commercesList: {
       screen: CommercesList,
       navigationOptions: {
-        title: 'Buscar Negocios'
+        title: "Buscar Negocios"
       }
+    },
+    commercesListMap: {
+      screen: Map
     },
     commerceCourtTypes: {
       screen: CommerceCourtTypes,
       navigationOptions: {
-        title: 'Tipos de Cancha'
+        title: "Tipos de Cancha"
       }
     },
     commerceSchedule: {
       screen: ClientCommerceSchedule,
       navigationOptions: {
-        title: 'Turnos Disponibles'
+        title: "Turnos Disponibles"
       }
     },
     commerceCourtsList: {
       screen: CommerceCourtsList,
       navigationOptions: {
-        title: 'Canchas Disponibles'
+        title: "Canchas Disponibles"
       }
     },
     confirmCourtReservation: {
       screen: ConfirmCourtReservation,
       navigationOptions: {
-        title: 'Turno'
+        title: "Turno"
       }
     }
   },
@@ -80,8 +84,8 @@ const searchStack = createStackNavigator(
     }
   },
   {
-    mode: 'modal',
-    headerMode: 'none'
+    mode: "modal",
+    headerMode: "none"
   }
 );
 
@@ -90,8 +94,8 @@ searchStack.navigationOptions = ({ navigation }) => {
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
       if (
-        route.routeName === 'commercesFiltersScreen' ||
-        route.routeName === 'commercesFiltersMap'
+        route.routeName === "commercesFiltersScreen" ||
+        route.routeName === "commercesFiltersMap"
       ) {
         tabBarVisible = false;
       } else {
@@ -110,7 +114,7 @@ const calendarStack = createStackNavigator(
     reservations: {
       screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
-        title: 'Mis Turnos',
+        title: "Mis Turnos",
         headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
@@ -119,7 +123,7 @@ const calendarStack = createStackNavigator(
     reservationDetails: {
       screen: ClientReservationDetails,
       navigationOptions: {
-        title: 'Detalle del Turno'
+        title: "Detalle del Turno"
       }
     }
   },
@@ -131,7 +135,7 @@ const favoritesStack = createStackNavigator(
     favoritesList: {
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
-        title: 'Favoritos',
+        title: "Favoritos",
         headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
@@ -146,8 +150,8 @@ const profileStack = createStackNavigator(
     profile: {
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
-        title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
+        title: "Perfil",
+        headerLeft: navigation.getParam("leftIcon") || (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
@@ -167,7 +171,7 @@ const clientTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'search'
+    initialRouteName: "search"
   }
 );
 

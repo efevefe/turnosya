@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { connect } from 'react-redux';
-import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { Fab } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import { MAIN_COLOR } from '../../constants';
-import { IconButton } from '../common';
-import getEnvVars from '../../../environment';
-import ConnectedHits from './CommercesList.SearchHits';
-import ConnectedSearchBox from './CommercesList.SearchBox';
-import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions';
-import Map from '../common/Map';
+import React, { Component } from "react";
+import { View } from "react-native";
+import { connect } from "react-redux";
+import { InstantSearch, Configure } from "react-instantsearch/native";
+import { Fab } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
+import { MAIN_COLOR } from "../../constants";
+import { IconButton } from "../common";
+import getEnvVars from "../../../environment";
+import ConnectedHits from "./CommercesList.SearchHits";
+import ConnectedSearchBox from "./CommercesList.SearchBox";
+import ConnectedStateResults from "./CommercesList.StateResults";
+import { readFavoriteCommerces } from "../../actions";
+import Map from "../common/Map";
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -33,15 +33,15 @@ class CommercesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'Buscar negocios',
-      headerRight: navigation.getParam('rightIcons'),
-      header: navigation.getParam('header')
+      headerTitle: "Buscar negocios",
+      headerRight: navigation.getParam("rightIcons"),
+      header: navigation.getParam("header")
     };
   };
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+      <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
         <IconButton
           icon="md-search"
           containerStyle={{ paddingRight: 0 }}
@@ -58,7 +58,7 @@ class CommercesList extends Component {
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate('commercesFiltersScreen');
+    this.props.navigation.navigate("commercesFiltersScreen");
   };
 
   onCancelPress = () => {
@@ -100,33 +100,40 @@ class CommercesList extends Component {
   };
 
   onMapFabPress = () => {
-    this.setState({ showingMap: !this.state.showingMap });
+    // this.setState({ showingMap: !this.state.showingMap });
+    this.props.navigation.navigate("commercesListMap");
   };
 
-  renderResults = () => {
-    const {
-      latitude,
-      longitude,
-      address,
-      city,
-      provinceName,
-      country
-    } = this.props;
-    return this.state.showingMap ? (
-      <Map
-        marker={{
-          address,
-          city,
-          provinceName,
-          country,
-          latitude,
-          longitude
-        }}
-      />
-    ) : (
-      <ConnectedHits />
-    );
-  };
+  // renderResults = () => {
+  //   const {
+  //     latitude,
+  //     longitude,
+  //     address,
+  //     city,
+  //     provinceName,
+  //     country
+  //   } = this.props;
+  //   return this.state.showingMap ? (
+  //     <View>
+  //       <Map
+  //         marker={{
+  //           address,
+  //           city,
+  //           provinceName,
+  //           country,
+  //           latitude,
+  //           longitude
+  //         }}
+  //         style={{ flex: 1 }}
+  //       />
+  //       <View style={{ height: 0, flex: 0 }}>
+  //         <ConnectedHits />
+  //       </View>
+  //     </View>
+  //   ) : (
+  //     <ConnectedHits />
+  //   );
+  // };
 
   render() {
     return (
@@ -145,13 +152,13 @@ class CommercesList extends Component {
           {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
         />
         <ConnectedStateResults />
-        {this.renderResults()}
+        <ConnectedHits />
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
           position="bottomRight"
           onPress={this.onMapFabPress}
         >
-          <Ionicons name="md-pin" />
+          <Ionicons name="md-compass" />
         </Fab>
       </InstantSearch>
     );

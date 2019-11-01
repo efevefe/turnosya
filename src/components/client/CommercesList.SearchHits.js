@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { FlatList } from 'react-native';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { connectInfiniteHits } from 'react-instantsearch/connectors';
-import { EmptyList, Spinner } from '../common';
-import CommerceListItem from './CommerceListItem';
-import { commerceHitsUpdate } from '../../actions';
+import React, { Component } from "react";
+import { FlatList } from "react-native";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { connectInfiniteHits } from "react-instantsearch/connectors";
+import { EmptyList, Spinner } from "../common";
+import CommerceListItem from "./CommerceListItem";
+import { commerceHitsUpdate } from "../../actions";
 
 class Hits extends Component {
   componentDidUpdate() {
@@ -25,7 +25,7 @@ class Hits extends Component {
         initialNumToRender={20}
       />
     ) : this.props.searching ? (
-      <Spinner style={{ position: 'relative' }} />
+      <Spinner style={{ position: "relative" }} />
     ) : (
       <EmptyList title="No se encontraron negocios" />
     );
