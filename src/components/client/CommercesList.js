@@ -11,15 +11,13 @@ import ConnectedHits from "./CommercesList.SearchHits";
 import ConnectedSearchBox from "./CommercesList.SearchBox";
 import ConnectedStateResults from "./CommercesList.StateResults";
 import { readFavoriteCommerces } from "../../actions";
-import Map from "../common/Map";
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
   state = {
     areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
-    searchVisible: false,
-    showingMap: false
+    searchVisible: false
   };
 
   componentDidMount() {
@@ -100,40 +98,8 @@ class CommercesList extends Component {
   };
 
   onMapFabPress = () => {
-    // this.setState({ showingMap: !this.state.showingMap });
     this.props.navigation.navigate("commercesListMap");
   };
-
-  // renderResults = () => {
-  //   const {
-  //     latitude,
-  //     longitude,
-  //     address,
-  //     city,
-  //     provinceName,
-  //     country
-  //   } = this.props;
-  //   return this.state.showingMap ? (
-  //     <View>
-  //       <Map
-  //         marker={{
-  //           address,
-  //           city,
-  //           provinceName,
-  //           country,
-  //           latitude,
-  //           longitude
-  //         }}
-  //         style={{ flex: 1 }}
-  //       />
-  //       <View style={{ height: 0, flex: 0 }}>
-  //         <ConnectedHits />
-  //       </View>
-  //     </View>
-  //   ) : (
-  //     <ConnectedHits />
-  //   );
-  // };
 
   render() {
     return (
