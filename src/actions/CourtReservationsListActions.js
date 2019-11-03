@@ -9,30 +9,41 @@ import {
   ON_RESERVATION_CLIENT_READ_FAIL,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_LAST_COURT_RESERVATION_READ,
-  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL,
+  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
 }
 
-export const onCommerceLastCourtReservationRead = commerceId => dispatch => {
+export const onNextReservationsDatesRead = ({ commerceId, startDate }) => {
   const db = firebase.firestore();
 
-  db.collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
-    .orderBy('startDate', 'desc')
-    .limit(1)
-    .get()
-    .then(snapshot => {
-      let lastReservationDate;
-      if (snapshot.empty) {
-        dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ, payload: null });
-      }
-      snapshot.forEach(doc => lastReservationDate = moment(doc.data().startDate.toDate()));
-      dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ, payload: lastReservationDate });
-    })
-    .catch(error => dispatch({ type: ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL, payload: error }));
+  return dispatch => {
+    db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
+      .where('startDate', '>=', startDate.toDate())
+      .orderBy('startDate')
+      .get()
+      .then(snapshot => {
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+
+        const nextReservationsDates = [];
+
+        if (snapshot.empty) {
+          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservationsDates } });
+        }
+
+        snapshot.forEach(doc => {
+          nextReservationsDates.push(moment(doc.data().startDate.toDate()))
+          nextReservationsDates.push(moment(doc.data().endDate.toDate()))
+        });
+
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservationsDates } });
+      })
+      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+  }
 }
 
 export const onCommerceCourtTypeReservationsRead = ({
@@ -157,7 +168,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
 
                 if (detailedReservations.length === snapshot.size) {
                   detailedReservations.sort((a, b) => a.startDate - b.startDate);
-                  
+
                   dispatch({
                     type: ON_COMMERCE_COURT_RESERVATIONS_READ,
                     payload: { detailedReservations }

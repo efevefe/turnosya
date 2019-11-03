@@ -12,6 +12,7 @@ INITIAL_STATE = {
     reservations: [],
     detailedReservations: [],
     reservationClient: {},
+    nextReservationsDates: [],
     loading: false,
     loadingClientData: false
 };

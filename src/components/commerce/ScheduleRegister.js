@@ -6,20 +6,24 @@ import { Divider } from 'react-native-elements';
 import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
 import moment from 'moment';
+import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
+import ScheduleRegisterItem from './ScheduleRegisterItem';
+import { hourToDate, formattedMoment } from '../../utils';
 import { Spinner, IconButton, EmptyList, Menu, MenuItem } from '../common';
 import {
   onScheduleValueChange,
   onScheduleCreate,
   onScheduleRead,
   onScheduleUpdate,
-  onCommerceLastCourtReservationRead
+  onNextReservationsDatesRead
 } from '../../actions';
-import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
-import ScheduleRegisterItem from './ScheduleRegisterItem';
-import { hourToDate, formattedMoment } from '../../utils';
 
 class ScheduleRegister extends Component {
-  state = { reservationsModalVisible: false, startDate: null, prevCards: [] };
+  state = {
+    reservationsModalVisible: false,
+    lastReservationDate: formattedMoment(),
+    prevCards: []
+  };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -34,16 +38,12 @@ class ScheduleRegister extends Component {
       leftIcon: this.renderBackButton()
     });
 
-    this.setState({ startDate: formattedMoment() });
-
-    for (i in this.props.cards) {
-      this.setState({ prevCards: [...this.state.prevCards, this.props.cards[i]] });
-    }
+    this.setState({ prevCards: [...this.props.cards] });
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.lastReservationDate !== this.props.lastReservationDate && !this.props.error) {
-      this.onLastReservationValidate();
+    if (prevProps.nextReservationsDates !== this.props.nextReservationsDates) {
+      this.workShiftsValidate();
     }
   }
 
@@ -57,91 +57,76 @@ class ScheduleRegister extends Component {
 
   onSavePress = () => {
     if (JSON.stringify(this.props.cards) !== JSON.stringify(this.state.prevCards)) {
-      if (this._compatibleSchedule()) return this.onScheduleSave();
-
-      return this.props.onCommerceLastCourtReservationRead(this.props.commerceId);
+      return this.props.onNextReservationsDatesRead({
+        commerceId: this.props.commerceId,
+        startDate: formattedMoment()
+      });
     }
 
     this.props.navigation.goBack();
   }
 
+  workShiftsValidate = () => {
+    const { nextReservationsDates } = this.props;
+
+    if (nextReservationsDates) {
+      if (!this._compatibleSchedule()) {
+        return this.setState({
+          reservationsModalVisible: true,
+          lastReservationDate: nextReservationsDates[nextReservationsDates.length - 1]
+        });
+      }
+    }
+
+    this.onScheduleSave(formattedMoment());
+  }
+
   _compatibleSchedule = () => {
-    const { reservationMinLength } = this.props;
+    const { nextReservationsDates, cards } = this.props;
 
-    for (i in this.state.prevCards) {
-      const prevCard = this.state.prevCards[i];
+    for (i in cards) {
+      // nuevos horarios de atencion
+      const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
-      // primer horarios de atencion actuales
-      let prevShifts = [prevCard.firstShiftStart, prevCard.firstShiftEnd];
+      // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos proximos
+      let cont = this._compatibleShift(firstShiftStart, firstShiftEnd, days);
 
-      // agrego los segundos horarios de atencion si existen
-      if (prevCard.secondShiftStart && prevCard.secondShiftEnd) {
-        prevShifts = [...prevShifts, prevCard.secondShiftStart, prevCard.secondShiftEnd];
+      // si existen segundos horarios, se verifica lo mismo que los primeros horarios
+      if (!(cont % 2) && secondShiftStart && secondShiftEnd) {
+        cont += this._compatibleShift(secondShiftStart, secondShiftEnd, days);
       }
 
-      const days = this.state.prevCards[i].days;
-
-      for (j in days) {
-        const newCard = this.props.cards.find(card => card.days.includes(days[j]));
-
-        // si saco un dia donde antes si atendia retorna false
-        if (!newCard) return false;
-
-        // nuevos horarios de atencion
-        const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = newCard;
-
-        // se verifica si los nuevos horarios siguen abarcando los horarios anteriores
-        let cont = this._compatibleShift(firstShiftStart, firstShiftEnd, prevShifts, reservationMinLength);
-
-        // si existen segundos horarios, se verifica si siguen abarcando los horarios anteriores
-        if (secondShiftStart && secondShiftEnd) {
-          cont += this._compatibleShift(secondShiftStart, secondShiftEnd, prevShifts, reservationMinLength);
-        }
-
-        if (cont < prevShifts.length) return false;
-      }
+      if (cont < nextReservationsDates.length) return false;
     }
 
     return true;
   }
 
-  _compatibleShift = (shiftStart, shiftEnd, prevShifts, minutesStep) => {
+  _compatibleShift = (shiftStart, shiftEnd, days) => {
+    const { nextReservationsDates, reservationMinLength } = this.props;
+
     shiftStart = hourToDate(shiftStart);
     shiftEnd = hourToDate(shiftEnd);
 
     let cont = 0;
 
     while (shiftStart <= shiftEnd) {
-      if (prevShifts.includes(shiftStart.format('HH:mm'))) cont++;
-      shiftStart.add(minutesStep, 'minutes');
+      cont += nextReservationsDates.filter(date => {
+        return (date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
+      }).length;
+
+      shiftStart.add(reservationMinLength, 'minutes');
     }
 
-    /* el turno de atencion nuevo deberia cubrir los mismos horarios que el turno anterior
-    o incluso podria cubrir los horarios de todos los turnos anteriores, pero no puede cubrir
-    1 o 3 horarios porque eso significa que al medio quedaria un hueco sin cubrir */
-    return (cont % 2) ? 0 : cont;
+    return cont;
   }
 
-  onLastReservationValidate = () => {
-    const { lastReservationDate } = this.props;
-
-    if (lastReservationDate) {
-      // se define la fecha de fin de vigencia de la diagramacion actual al final del dia de la ultima reserva
-      let startDate = moment([
-        lastReservationDate.year(),
-        lastReservationDate.month(),
-        lastReservationDate.date(),
-      ]).add(1, 'days');
-
-      if (startDate > moment()) {
-        return this.setState({ reservationsModalVisible: true, startDate });
-      }
-    }
-
-    this.onScheduleSave();
+  onModalSavePress = () => {
+    this.onScheduleSave(formattedMoment(this.state.lastReservationDate));
+    this.setState({ reservationsModalVisible: false });
   }
 
-  onScheduleSave = () => {
+  onScheduleSave = startDate => {
     const {
       commerceId,
       cards,
@@ -149,8 +134,6 @@ class ScheduleRegister extends Component {
       reservationDayPeriod,
       navigation
     } = this.props;
-
-    const { startDate } = this.state;
 
     this.props.onScheduleUpdate(
       {
@@ -163,8 +146,7 @@ class ScheduleRegister extends Component {
       navigation
     );
 
-    // luego del guardado, en la navegacion se deberia volver a cargar la diagramacion
-    // vigente para la fecha que estaba seleccionada en el calendario
+    this.onBackPress();
   }
 
   onBackPress = () => {
@@ -203,7 +185,7 @@ class ScheduleRegister extends Component {
   };
 
   renderList = () => {
-    const { cards, refreshing } = this.props;
+    const { cards, refreshing, loadingReservations } = this.props;
 
     if (cards.length > 0) {
       return (
@@ -215,7 +197,7 @@ class ScheduleRegister extends Component {
           contentContainerStyle={{ paddingBottom: 95 }}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
+              refreshing={refreshing || loadingReservations}
               colors={[MAIN_COLOR]}
               tintColor={MAIN_COLOR}
             />
@@ -228,7 +210,7 @@ class ScheduleRegister extends Component {
   };
 
   render() {
-    const { lastReservationDate } = this.props;
+    const { lastReservationDate } = this.state;
 
     if (this.props.loading) return <Spinner />;
 
@@ -239,11 +221,11 @@ class ScheduleRegister extends Component {
         <Menu
           title={
             'La ultima reserva que tienes es el ' +
-            `${DAYS[moment(lastReservationDate).day()]} ` +
-            `${moment(lastReservationDate).format('D')} de ` +
-            `${MONTHS[moment(lastReservationDate).month()]}, ` +
+            `${DAYS[lastReservationDate.day()]} ` +
+            `${lastReservationDate.format('D')} de ` +
+            `${MONTHS[lastReservationDate.month()]}, ` +
             'por lo que los nuevos horarios de atencion entraran en vigencia luego ' +
-            'de esa fecha para evitar conflictos con las reservas existentes. ' +
+            'de esa fecha debido a que entran en conflictos con reservas existentes. ' +
             '¿Desea confirmar los cambios?'}
           onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
           isVisible={this.state.reservationsModalVisible}
@@ -251,10 +233,7 @@ class ScheduleRegister extends Component {
           <MenuItem
             title="Acepar"
             icon="md-checkmark"
-            onPress={() => {
-              this.setState({ reservationsModalVisible: false });
-              this.onScheduleSave();
-            }}
+            onPress={this.onModalSavePress}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -291,12 +270,12 @@ const mapStateToProps = state => {
     reservationMinLength,
     reservationDayPeriod,
     endDate,
-    lastReservationDate,
     error,
     loading,
     refreshing
   } = state.commerceSchedule;
-
+  const { nextReservationsDates } = state.courtReservationsList;
+  const loadingReservations = state.courtReservationsList.loading;
   const { commerceId } = state.commerceData;
 
   return {
@@ -306,14 +285,21 @@ const mapStateToProps = state => {
     reservationMinLength,
     reservationDayPeriod,
     endDate,
-    lastReservationDate,
     error,
     loading,
-    refreshing
+    loadingReservations,
+    refreshing,
+    nextReservationsDates
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleValueChange, onScheduleCreate, onScheduleRead, onScheduleUpdate, onCommerceLastCourtReservationRead }
+  {
+    onScheduleValueChange,
+    onScheduleCreate,
+    onScheduleRead,
+    onScheduleUpdate,
+    onNextReservationsDatesRead
+  }
 )(ScheduleRegister);

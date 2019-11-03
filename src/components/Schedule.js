@@ -3,6 +3,7 @@ import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { withNavigationFocus  } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -38,6 +39,10 @@ class Schedule extends Component {
     if (JSON.stringify(prevProps.cards) !== JSON.stringify(this.props.cards)) {
       this.onDateSelected(this.props.selectedDate);
     }
+  }
+
+  shouldComponentUpdate() {
+    return this.props.isFocused;
   }
 
   onDateSelected = selectedDate => {
@@ -225,8 +230,8 @@ const styles = StyleSheet.create({
   slotContainerStyle: {
     backgroundColor: 'white'
   },
-  slotRightSubtitleStyle: { 
-    color: 'grey' 
+  slotRightSubtitleStyle: {
+    color: 'grey'
   }
 });
 
@@ -236,4 +241,4 @@ const mapStateToProps = state => {
   return { slots };
 }
 
-export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
+export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));

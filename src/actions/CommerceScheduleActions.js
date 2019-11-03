@@ -64,7 +64,7 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => {
 
                 snapshot.forEach(doc => {
                   cards.push({ ...doc.data(), id: parseInt(doc.id) });
-                  selectedDays = [ ...selectedDays, ...doc.data().days ];
+                  selectedDays = [...selectedDays, ...doc.data().days];
                 });
 
                 dispatch({

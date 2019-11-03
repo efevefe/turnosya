@@ -37,7 +37,7 @@ class CommerceSchedule extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.reservations !== this.props.reservations) {
-      this.reservationsOnSlots(this.props.slots);
+      this.reservationsOnSlots();
     }
   }
 
@@ -72,8 +72,9 @@ class CommerceSchedule extends Component {
     this.props.navigation.navigate('commerceCourtsList');
   };
 
-  reservationsOnSlots = slots => {
-    const { reservations, courtsAvailable } = this.props;
+  reservationsOnSlots = () => {
+    // aca capaz ni hace falta pasar los slots por parametro, no se porque estaba asi
+    const { reservations, courtsAvailable, slots } = this.props;
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
