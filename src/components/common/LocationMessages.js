@@ -11,7 +11,7 @@ import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
-import { onLocationChange } from '../../actions';
+import { onUserLocationChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -83,7 +83,7 @@ class LocationMessages extends Component {
       longitude
     };
 
-    this.props.onLocationChange({ location });
+    this.props.onUserLocationChange({ location });
   };
 
   renderItems = () => {
@@ -225,5 +225,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   null,
-  { onLocationChange }
+  { onUserLocationChange }
 )(LocationMessages);

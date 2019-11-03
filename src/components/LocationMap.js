@@ -66,7 +66,6 @@ class LocationMap extends React.Component {
   render() {
     return (
       <Map
-        style={{ flex: 1, position: 'relative' }}
         searchBar={true}
         onProvinceNameChange={
           this.props.navigation.state.params.onProvinceNameChange
@@ -83,11 +82,10 @@ const mapStateToProps = state => {
     provinceName,
     country,
     latitude,
-    longitude,
-    markers
+    longitude
   } = state.locationData;
 
-  return { address, city, provinceName, country, latitude, longitude, markers };
+  return { address, city, provinceName, country, latitude, longitude };
 };
 
 export default connect(

@@ -108,7 +108,7 @@ class CommerceProfile extends Component {
       area,
       profilePicture
     } = this.props;
-    const { address, city } = this.props.locationData;
+    const { address, city, latitude, longitude } = this.props.locationData;
 
     this.setState({
       editEnabled: true,
@@ -122,7 +122,9 @@ class CommerceProfile extends Component {
         city,
         province,
         area,
-        profilePicture
+        profilePicture,
+        latitude,
+        longitude
       }
     });
     this.props.navigation.setParams({
@@ -191,19 +193,29 @@ class CommerceProfile extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
+      if (prop === 'address' || prop === 'city') {
+        this.props.onCommerceValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
+      if (prop === 'latitude' || prop === 'longitude') {
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
       this.props.onCommerceValueChange({
         prop,
         value: stateBeforeChanges[prop]
       });
     }
-    this.props.onLocationValueChange({
-      prop: 'address',
-      value: stateBeforeChanges.address
-    });
-    this.props.onLocationValueChange({
-      prop: 'city',
-      value: stateBeforeChanges.city
-    });
 
     this.cleanErrors();
     this.disableEdit();
@@ -302,9 +314,9 @@ class CommerceProfile extends Component {
 
   renderLocation = () => {
     const { address, city } = this.props.locationData;
-    const { provinceId, name } = this.props.province;
+    const { name } = this.props.province;
 
-    if (address || city || provinceId) {
+    if (address || city || name) {
       const { locationContainerStyle } = styles;
 
       return (

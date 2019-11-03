@@ -1,44 +1,46 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import MapView from 'react-native-maps';
-import { View, StyleSheet, Platform } from 'react-native';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import { onLocationChange, onLocationValueChange } from '../../actions';
+import {
+  onLocationChange,
+  onUserLocationChange,
+  onLocationValueChange
+} from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from '../common/LocationMessages';
 import { Toast } from '../common';
 import {
   getAddressFromLatAndLong,
-  getLocationAndLongitudeFromString
+  getLatitudeAndLongitudeFromString
 } from '../../utils';
 
 class Map extends React.Component {
   state = {
     defaultAddress: 'Córdoba, Argentina',
     completeAddress: '',
-    locationAsked: false
+    locationAsked: false,
+    userLocationChanged: false
   };
 
   componentDidMount() {
-    const { address, city, provinceName, country } = this.props;
-
-    this.setState({
-      completeAddress: `${address}, ${city}, ${provinceName}, ${country}`
-    });
+    this.onStringSearch(this.setAddressString());
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.latitude !== this.props.latitude &&
-      prevProps.longitude !== this.props.longitude &&
-      this.state.locationAsked
+      this.state.locationAsked &&
+      prevProps.userLocation !== this.props.userLocation
     ) {
-      const { address, provinceName, city, country } = this.props;
+      // const { address, provinceName, city, country } = this.props.userLocation;
+
       this.setState({
         locationAsked: false,
-        completeAddress: `${address}, ${city}, ${provinceName}, ${country}`
+        // completeAddress: `${address}, ${city}, ${provinceName}, ${country}`,
+        userLocationChanged: true
       });
     }
 
@@ -49,7 +51,7 @@ class Map extends React.Component {
   }
 
   setAddressString = () => {
-    const { address, city, provinceName } = this.props.marker;
+    const { address, city, provinceName } = this.props;
 
     /* 
     Se le agrega 'Calle' antes para que el mapa lo busque mejor. Sirve por mas que ya se le haya puesto 'Calle' 
@@ -62,18 +64,19 @@ class Map extends React.Component {
 
     newAddress += `${provinceName !== '' ? provinceName + ', ' : ''}`;
 
-    newAddress += 'Argentina';
+    newAddress += 'Argentina'; // gets error when addres is from other country
 
     if (newAddress === 'Argentina') {
       newAddress = this.state.defaultAddress;
     }
 
     this.setState({ completeAddress: newAddress });
+
     return newAddress;
   };
 
   onStringSearch = async string => {
-    const [latLongResult] = await getLocationAndLongitudeFromString(
+    const [latLongResult] = await getLatitudeAndLongitudeFromString(
       string ? string : this.state.completeAddress
     );
 
@@ -88,6 +91,8 @@ class Map extends React.Component {
         text: 'No se han encontrado resultados, intente modificar la dirección.'
       });
     }
+
+    this.setState({ userLocationChanged: false });
   };
 
   updateAddressFromLatAndLong = async ({ latitude, longitude }) => {
@@ -109,44 +114,63 @@ class Map extends React.Component {
     };
 
     this.setState({
-      completeAddress: `${address}, ${city}, ${region}, ${country}`
+      completeAddress: `${address}, ${city}, ${region}, ${country}`,
+      userLocationChanged: false
     });
 
     this.props.onLocationChange({ location });
   };
 
-  renderUserMarker = () => {
-    const { latitude, longitude, address } = this.props;
+  mapRegion = () => {
+    let region = {};
+    if (this.state.userLocationChanged) {
+      const { latitude, longitude } = this.props.userLocation;
 
-    return (
-      <MapView.Marker
-        coordinate={{
-          latitude: latitude ? latitude : -31.417378,
-          longitude: longitude ? longitude : -64.18384
-        }}
-        title={address}
-        draggable={true}
-        onDragEnd={e =>
-          this.updateAddressFromLatAndLong({
-            latitude: e.nativeEvent.coordinate.latitude,
-            longitude: e.nativeEvent.coordinate.longitude
-          })
-        }
-        pinColor={MAIN_COLOR}
-      />
-    );
+      region = { latitude, longitude };
+    } else if (this.props.latitude && this.props.longitude) {
+      const { latitude, longitude } = this.props;
+
+      region = { latitude, longitude };
+    } else {
+      region = { latitude: -31.417378, longitude: -64.18384 };
+    }
+
+    return { ...region, latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
 
-  renderMarker = () => {
-    if (this.props.marker && this.props.marker.length > 0) {
-      const { latitude, longitude, address } = this.props.marker;
+  renderUserMarker = () => {
+    const { latitude, longitude, address } = this.props.userLocation;
 
+    if (latitude && longitude && address) {
       return (
         <MapView.Marker
           coordinate={{
-            latitude: latitude ? latitude : -31.417378,
-            longitude: longitude ? longitude : -64.18384
+            latitude,
+            longitude
           }}
+          title={address}
+          pinColor={MAIN_COLOR}
+        >
+          <Image
+            source={require('../../../assets/turnosya-grey.png')}
+            style={{ height: 40, width: 40 }}
+          />
+        </MapView.Marker>
+      );
+    }
+  };
+
+  renderPointerMarker = () => {
+    const { latitude, longitude, address } = this.props;
+
+    if (latitude && longitude && address) {
+      return (
+        <MapView.Marker
+          coordinate={{
+            latitude,
+            longitude
+          }}
+          draggable={this.props.draggable ? this.props.draggable : true}
           title={address}
           onDragEnd={e =>
             this.updateAddressFromLatAndLong({
@@ -160,9 +184,9 @@ class Map extends React.Component {
     }
   };
 
-  renderCommerceMarkers = () => {
-    // TODO: give it a different style to differentiate it with user's marker
-    if (this.props.markers) {
+  renderCommercesMarkers = () => {
+    // TODO: give it a different style to differentiate it with user's and current pointer marker
+    if (this.props.markers && this.props.markers.length) {
       return this.props.markers.map((marker, index) => (
         <MapView.Marker
           key={index}
@@ -204,26 +228,21 @@ class Map extends React.Component {
       );
     }
   };
+
   renderLocationMessage = () => {
     if (this.state.locationAsked) return <LocationMessages />;
   };
 
   render() {
-    const { latitude, longitude } = this.props;
-
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         <MapView
           {...this.props}
           style={{ flex: 1 }}
           ref={ref => (this.map = ref)}
+          provider={PROVIDER_GOOGLE}
           initialRegion={this.region}
-          region={{
-            latitude: latitude ? latitude : -31.417378,
-            longitude: longitude ? longitude : -64.18384,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01
-          }}
+          region={this.mapRegion()}
           onRegionChangeComplete={region => (this.region = region)}
           animateToRegion={{ region: this.region, duration: 3000 }}
           onLongPress={e =>
@@ -234,8 +253,8 @@ class Map extends React.Component {
           }
         >
           {this.renderUserMarker()}
-          {this.renderMarker()}
-          {this.renderCommerceMarkers()}
+          {this.renderPointerMarker()}
+          {this.renderCommercesMarkers()}
         </MapView>
         {this.renderLocationMessage()}
         {this.renderSearchBar()}
@@ -293,10 +312,11 @@ const mapStateToProps = state => {
     provinceName,
     country,
     latitude,
-    longitude
+    longitude,
+    userLocation
   } = state.locationData;
 
-  const { marker, markers } = state.commercesList;
+  const { markers } = state.commercesList;
 
   return {
     address,
@@ -305,12 +325,12 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    marker,
+    userLocation,
     markers
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onLocationChange, onLocationValueChange }
+  { onLocationChange, onUserLocationChange, onLocationValueChange }
 )(Map);

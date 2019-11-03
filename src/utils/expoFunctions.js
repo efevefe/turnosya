@@ -56,7 +56,7 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
   });
 };
 
-export const getLocationAndLongitudeFromString = async string => {
+export const getLatitudeAndLongitudeFromString = async string => {
   return await Location.geocodeAsync(string);
 };
 
