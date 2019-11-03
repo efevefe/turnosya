@@ -4,7 +4,11 @@ import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { IconButton, Picker } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
-import { onProvincesNameRead, updateAllFilters } from '../../actions';
+import {
+  onProvincesNameRead,
+  updateAllFilters,
+  onLocationChange
+} from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
 class CommerceFiltersScreen extends Component {
@@ -41,8 +45,10 @@ class CommerceFiltersScreen extends Component {
       ? this.setState({ locationEnabled: false })
       : this.setState({ locationEnabled: true });
 
-    if (buttonIndex === 2)
+    if (buttonIndex === 2) {
+      this.props.onLocationChange({ latitude: null, longitude: null });
       this.props.navigation.navigate('commercesFiltersMap');
+    }
   }
 
   renderLocationMessage = () =>
@@ -215,5 +221,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onProvincesNameRead, updateAllFilters }
+  { onProvincesNameRead, updateAllFilters, onLocationChange }
 )(CommerceFiltersScreen);

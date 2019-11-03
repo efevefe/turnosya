@@ -27,7 +27,7 @@ class Map extends React.Component {
   };
 
   componentDidMount() {
-    if (!this.props.navigation) {
+    if (!this.props.markers) {
       this.onStringSearch(this.setAddressString());
     }
   }
