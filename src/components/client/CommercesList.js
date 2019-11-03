@@ -10,7 +10,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions';
+import { readFavoriteCommerces, onLocationChange } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -98,6 +98,7 @@ class CommercesList extends Component {
   };
 
   onMapFabPress = () => {
+    this.props.onLocationChange({ latitude: null, longitude: null });
     this.props.navigation.navigate('commercesListMap');
   };
 
@@ -166,5 +167,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { readFavoriteCommerces }
+  { readFavoriteCommerces, onLocationChange }
 )(CommercesList);

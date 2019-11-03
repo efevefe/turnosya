@@ -27,7 +27,9 @@ class Map extends React.Component {
   };
 
   componentDidMount() {
-    this.onStringSearch(this.setAddressString());
+    if (!this.props.navigation) {
+      this.onStringSearch(this.setAddressString());
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -124,10 +126,41 @@ class Map extends React.Component {
         userLocationChanged: false
       });
 
-      this.props.onLocationChange({ location });
+      this.props.onLocationChange(location);
     } catch (e) {
       console.error(e);
     }
+  };
+
+  calculateMarkersRegion = markers => {
+    let minLat, maxLat, minLng, maxLng;
+
+    (marker => {
+      minLat = marker._geoloc.lat;
+      maxLat = marker._geoloc.lat;
+      minLng = marker._geoloc.lng;
+      maxLng = marker._geoloc.lng;
+    })(markers[0]);
+
+    markers.forEach(marker => {
+      minLat = Math.min(minLat, marker._geoloc.lat);
+      maxLat = Math.max(maxLat, marker._geoloc.lat);
+      minLng = Math.min(minLng, marker._geoloc.lng);
+      maxLng = Math.max(maxLng, marker._geoloc.lng);
+    });
+
+    const midLat = (minLat + maxLat) / 2;
+    const midLng = (minLng + maxLng) / 2;
+
+    const deltaLat = maxLat - minLat + 0.02;
+    const deltaLng = maxLng - minLng + 0.08;
+
+    return {
+      latitude: midLat,
+      longitude: midLng,
+      latitudeDelta: deltaLat,
+      longitudeDelta: deltaLng
+    };
   };
 
   mapRegion = () => {
@@ -141,10 +174,10 @@ class Map extends React.Component {
 
       region = { latitude, longitude };
     } else {
-      region = { latitude: -31.417378, longitude: -64.18384 };
+      return this.calculateMarkersRegion(this.props.markers);
     }
 
-    return { ...region, latitudeDelta: 0.01, longitudeDelta: 0.01 };
+    return { latitudeDelta: 0.01, longitudeDelta: 0.01, ...region };
   };
 
   renderUserMarker = () => {
@@ -158,11 +191,10 @@ class Map extends React.Component {
             longitude
           }}
           title={address}
-          pinColor={MAIN_COLOR}
         >
           <Image
             source={require('../../../assets/turnosya-grey.png')}
-            style={{ height: 40, width: 40 }}
+            style={{ height: 30, width: 30 }}
           />
         </MapView.Marker>
       );
@@ -187,7 +219,7 @@ class Map extends React.Component {
               longitude: e.nativeEvent.coordinate.longitude
             })
           }
-          pinColor={'yellow'}
+          pinColor={MAIN_COLOR}
         />
       );
     }

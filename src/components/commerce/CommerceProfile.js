@@ -74,7 +74,7 @@ class CommerceProfile extends Component {
       country
     };
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
   }
 

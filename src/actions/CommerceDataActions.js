@@ -16,6 +16,7 @@ import {
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
+  ON_HITS_UPDATE,
   CUIT_NOT_EXISTS,
   CUIT_EXISTS,
   ON_COMMERCE_DELETING,
@@ -43,6 +44,7 @@ export const onCommerceFormOpen = () => {
   return dispatch => {
     dispatch({ type: ON_COMMERCE_CREATING });
     dispatch({ type: ON_LOCATION_VALUES_RESET });
+    dispatch({ type: ON_HITS_UPDATE, payload: [] });
   };
 };
 
@@ -58,6 +60,8 @@ export const onCommerceOpen = navigation => {
           navigation.navigate('commerceRegister');
         } else {
           dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
+          dispatch({ type: ON_LOCATION_VALUES_RESET });
+          dispatch({ type: ON_HITS_UPDATE, payload: [] });
 
           navigation.navigate('commerce');
         }

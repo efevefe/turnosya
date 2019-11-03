@@ -9,7 +9,7 @@ export const onLocationValueChange = ({ prop, value }) => {
   return { type: ON_LOCATION_VALUE_CHANGE, payload: { prop, value } };
 };
 
-export const onLocationChange = ({ location }) => {
+export const onLocationChange = location => {
   return { type: ON_LOCATION_CHANGE, payload: location };
 };
 
