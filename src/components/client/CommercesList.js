@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import { View } from "react-native";
-import { connect } from "react-redux";
-import { InstantSearch, Configure } from "react-instantsearch/native";
-import { Fab } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import { MAIN_COLOR } from "../../constants";
-import { IconButton } from "../common";
-import getEnvVars from "../../../environment";
-import ConnectedHits from "./CommercesList.SearchHits";
-import ConnectedSearchBox from "./CommercesList.SearchBox";
-import ConnectedStateResults from "./CommercesList.StateResults";
-import { readFavoriteCommerces } from "../../actions";
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
+import { InstantSearch, Configure } from 'react-instantsearch/native';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { MAIN_COLOR } from '../../constants';
+import { IconButton } from '../common';
+import getEnvVars from '../../../environment';
+import ConnectedHits from './CommercesList.SearchHits';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedStateResults from './CommercesList.StateResults';
+import { readFavoriteCommerces } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -31,15 +31,15 @@ class CommercesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: "Buscar negocios",
-      headerRight: navigation.getParam("rightIcons"),
-      header: navigation.getParam("header")
+      headerTitle: 'Buscar negocios',
+      headerRight: navigation.getParam('rightIcons'),
+      header: navigation.getParam('header')
     };
   };
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
         <IconButton
           icon="md-search"
           containerStyle={{ paddingRight: 0 }}
@@ -50,13 +50,13 @@ class CommercesList extends Component {
     );
   };
 
-  onSearchPress = async () => {
+  onSearchPress = () => {
     this.props.navigation.setParams({ header: null });
     this.setState({ searchVisible: true });
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate("commercesFiltersScreen");
+    this.props.navigation.navigate('commercesFiltersScreen');
   };
 
   onCancelPress = () => {
@@ -98,7 +98,7 @@ class CommercesList extends Component {
   };
 
   onMapFabPress = () => {
-    this.props.navigation.navigate("commercesListMap");
+    this.props.navigation.navigate('commercesListMap');
   };
 
   render() {

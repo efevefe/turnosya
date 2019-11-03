@@ -135,57 +135,61 @@ class CommerceProfile extends Component {
   };
 
   onSavePress = async () => {
-    if (this.validateMinimumData()) {
-      var {
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        province,
-        area,
-        profilePicture,
-        commerceId
-      } = this.props;
-      const { address, city, latitude, longitude } = this.props.locationData;
-      const { newProfilePicture } = this.state;
+    try {
+      if (this.validateMinimumData()) {
+        var {
+          name,
+          cuit,
+          email,
+          phone,
+          description,
+          province,
+          area,
+          profilePicture,
+          commerceId
+        } = this.props;
+        const { address, city, latitude, longitude } = this.props.locationData;
+        const { newProfilePicture } = this.state;
 
-      if (newProfilePicture) {
-        var profilePicture = await imageToBlob(profilePicture);
-        this.props.onCommerceUpdateWithPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
-      } else {
-        this.props.onCommerceUpdateNoPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
+        if (newProfilePicture) {
+          var profilePicture = await imageToBlob(profilePicture);
+          this.props.onCommerceUpdateWithPicture({
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            commerceId,
+            latitude,
+            longitude
+          });
+        } else {
+          this.props.onCommerceUpdateNoPicture({
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            commerceId,
+            latitude,
+            longitude
+          });
+        }
+
+        this.disableEdit();
       }
-
-      this.disableEdit();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -255,49 +259,57 @@ class CommerceProfile extends Component {
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    if (Constants.platform.ios) {
-      await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
+      if (Constants.platform.ios) {
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      }
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    const response = await ImagePicker.launchImageLibraryAsync(options);
+      const response = await ImagePicker.launchImageLibraryAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   onTakePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+      await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      await Permissions.askAsync(Permissions.CAMERA);
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    const response = await ImagePicker.launchCameraAsync(options);
+      const response = await ImagePicker.launchCameraAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -334,35 +346,43 @@ class CommerceProfile extends Component {
   };
 
   onProvincePickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.provincesList.find(
-        province => province.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.provincesList.find(
+          province => province.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'province',
+          value: { provinceId: value, name: label }
+        });
 
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: label
-      });
+        this.props.onLocationValueChange({
+          prop: 'provinceName',
+          value: label
+        });
+      }
+
+      this.renderProvinceError();
+    } catch (e) {
+      console.error(e);
     }
-
-    this.renderProvinceError();
   };
 
   onAreaPickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.areasList.find(
-        area => area.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.areasList.find(
+          area => area.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'area',
+          value: { areaId: value, name: label }
+        });
 
-      this.renderAreaError();
+        this.renderAreaError();
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 

@@ -1,9 +1,12 @@
 import firebase from 'firebase/app';
 
 export const isEmailVerified = async () => {
-  const { currentUser } = firebase.auth();
+  try {
+    const { currentUser } = firebase.auth();
+    await currentUser.reload();
 
-  await currentUser.reload();
-
-  return currentUser.emailVerified;
+    return currentUser.emailVerified;
+  } catch (e) {
+    console.error(e);
+  }
 };

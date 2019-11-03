@@ -45,9 +45,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_CARD_VALUE_CHANGE:
       const newCard = action.payload;
       var newCards = state.cards.map(card => {
-        if (card.id !== newCard.id) {
-          return card;
-        }
+        if (card.id !== newCard.id) return card;
 
         return { ...card, ...newCard };
       });

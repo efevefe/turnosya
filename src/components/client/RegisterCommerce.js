@@ -39,17 +39,21 @@ class RegisterCommerce extends Component {
   }
 
   onAreaPickerChange = async index => {
-    const { value, label } =
-      index > 0
-        ? this.props.areasList[index - 1]
-        : this.state.pickerPlaceholder;
+    try {
+      const { value, label } =
+        index > 0
+          ? this.props.areasList[index - 1]
+          : this.state.pickerPlaceholder;
 
-    await this.props.onCommerceValueChange({
-      prop: 'area',
-      value: { areaId: value, name: label }
-    });
+      await this.props.onCommerceValueChange({
+        prop: 'area',
+        value: { areaId: value, name: label }
+      });
 
-    this.renderAreaError();
+      this.renderAreaError();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   validateMinimumData = () => {

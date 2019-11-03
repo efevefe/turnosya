@@ -76,49 +76,58 @@ class Map extends React.Component {
   };
 
   onStringSearch = async string => {
-    const [latLongResult] = await getLatitudeAndLongitudeFromString(
-      string ? string : this.state.completeAddress
-    );
+    try {
+      const [latLongResult] = await getLatitudeAndLongitudeFromString(
+        string ? string : this.state.completeAddress
+      );
 
-    if (latLongResult !== undefined) {
-      const { latitude, longitude } = latLongResult;
-      this.updateAddressFromLatAndLong({ latitude, longitude });
-    } else {
-      this.setState({
-        completeAddress: this.state.completeAddress.replace('Calle', '')
-      });
-      Toast.show({
-        text: 'No se han encontrado resultados, intente modificar la dirección.'
-      });
+      if (latLongResult !== undefined) {
+        const { latitude, longitude } = latLongResult;
+        this.updateAddressFromLatAndLong({ latitude, longitude });
+      } else {
+        this.setState({
+          completeAddress: this.state.completeAddress.replace('Calle', '')
+        });
+        Toast.show({
+          text:
+            'No se han encontrado resultados, intente modificar la dirección.'
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
 
     this.setState({ userLocationChanged: false });
   };
 
   updateAddressFromLatAndLong = async ({ latitude, longitude }) => {
-    const [addresResult] = await getAddressFromLatAndLong({
-      latitude,
-      longitude
-    });
-    const { name, street, city, region, country } = addresResult;
+    try {
+      const [addresResult] = await getAddressFromLatAndLong({
+        latitude,
+        longitude
+      });
+      const { name, street, city, region, country } = addresResult;
 
-    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+      const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
-    const location = {
-      latitude,
-      longitude,
-      address,
-      provinceName: region,
-      city,
-      country
-    };
+      const location = {
+        latitude,
+        longitude,
+        address,
+        provinceName: region,
+        city,
+        country
+      };
 
-    this.setState({
-      completeAddress: `${address}, ${city}, ${region}, ${country}`,
-      userLocationChanged: false
-    });
+      this.setState({
+        completeAddress: `${address}, ${city}, ${region}, ${country}`,
+        userLocationChanged: false
+      });
 
-    this.props.onLocationChange({ location });
+      this.props.onLocationChange({ location });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   mapRegion = () => {
