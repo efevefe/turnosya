@@ -93,7 +93,7 @@ class LocationMessages extends Component {
         longitude
       };
 
-      this.props.onLocationChange({ location });
+      this.props.onUserLocationChange({ location });
     } catch (e) {
       console.error(e);
     }
