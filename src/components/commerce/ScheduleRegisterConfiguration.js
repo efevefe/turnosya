@@ -31,6 +31,7 @@ class ScheduleRegisterConfiguration extends Component {
       reservationDayPeriod,
       reservationMinCancelTime
     } = this.props;
+
     this.setState({
       reservationMinValue: reservationMinLength,
       reservationDayValue: reservationDayPeriod,
@@ -94,8 +95,7 @@ class ScheduleRegisterConfiguration extends Component {
         <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
             <Text>
-              Duración mínima de turnos:
-              {stringFormatMinutes(reservationMinValue)}
+              Duración mínima de turnos: {stringFormatMinutes(reservationMinValue)}
             </Text>
             <Slider
               animationType="spring"

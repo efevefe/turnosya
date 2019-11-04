@@ -18,12 +18,12 @@ class CommercesList extends Component {
   };
 
   componentDidMount() {
-    this.props.readFavoriteCommerces();
-
     this.props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
+    
+    this.props.readFavoriteCommerces();
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -84,9 +84,9 @@ class CommercesList extends Component {
   obtainGeolocationProps = () => {
     return this.props.locationEnabled
       ? {
-          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-        }
+        aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+        aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+      }
       : null;
   };
 

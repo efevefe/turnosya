@@ -77,7 +77,7 @@ export const onScheduleRead = commerceId => {
                   selectedDays,
                   reservationDayPeriod,
                   reservationMinLength,
-                  reservationMinCancelTime
+                  reservationMinCancelTime: reservationMinCancelTime ? reservationMinCancelTime : 2 // provisorio
                 }
               });
             })
@@ -130,7 +130,7 @@ export const onScheduleCreate = cards => {
 */
 
 export const onScheduleCreate = (
-  { cards, commerceId, reservationMinLength, reservationDayPeriod },
+  { cards, commerceId, reservationMinLength, reservationDayPeriod, reservationMinCancelTime },
   navigation
 ) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
@@ -146,7 +146,8 @@ export const onScheduleCreate = (
           startDate: new Date(),
           endDate: null,
           reservationMinLength,
-          reservationDayPeriod
+          reservationDayPeriod,
+          reservationMinCancelTime
         },
         { merge: true }
       )

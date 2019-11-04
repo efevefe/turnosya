@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../common';
 import CommerceListItem from './CommerceListItem';
