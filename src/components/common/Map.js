@@ -5,11 +5,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import {
-  onLocationChange,
-  onUserLocationChange,
-  onLocationValueChange
-} from '../../actions';
+import { onLocationChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from '../common/LocationMessages';
 import { Toast } from '../common';
@@ -27,7 +23,7 @@ class Map extends React.Component {
   };
 
   componentDidMount() {
-    if (!this.props.markers) {
+    if (this.props.markers.length < 1) {
       this.onStringSearch(this.setAddressString());
     }
   }
@@ -135,18 +131,16 @@ class Map extends React.Component {
   calculateMarkersRegion = markers => {
     let minLat, maxLat, minLng, maxLng;
 
-    (marker => {
-      minLat = marker._geoloc.lat;
-      maxLat = marker._geoloc.lat;
-      minLng = marker._geoloc.lng;
-      maxLng = marker._geoloc.lng;
-    })(markers[0]);
+    minLat = markers[0].latitude;
+    maxLat = markers[0].latitude;
+    minLng = markers[0].longitude;
+    maxLng = markers[0].longitude;
 
     markers.forEach(marker => {
-      minLat = Math.min(minLat, marker._geoloc.lat);
-      maxLat = Math.max(maxLat, marker._geoloc.lat);
-      minLng = Math.min(minLng, marker._geoloc.lng);
-      maxLng = Math.max(maxLng, marker._geoloc.lng);
+      minLat = Math.min(minLat, marker.latitude);
+      maxLat = Math.max(maxLat, marker.latitude);
+      minLng = Math.min(minLng, marker.longitude);
+      maxLng = Math.max(maxLng, marker.longitude);
     });
 
     const midLat = (minLat + maxLat) / 2;
@@ -173,7 +167,7 @@ class Map extends React.Component {
       const { latitude, longitude } = this.props;
 
       region = { latitude, longitude };
-    } else {
+    } else if (this.props.markers.length > 0) {
       return this.calculateMarkersRegion(this.props.markers);
     }
 
@@ -373,5 +367,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLocationChange, onUserLocationChange, onLocationValueChange }
+  { onLocationChange }
 )(Map);
