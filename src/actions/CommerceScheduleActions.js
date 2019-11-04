@@ -223,7 +223,7 @@ export const onScheduleConfigurationSave = (
   };
 };
 
-export const readScheduleOfCanceledTimeAllowed = commerceId => {
+export const readCancellationTimeAllowed = commerceId => {
   const db = firebase.firestore();
 
   return dispatch => {

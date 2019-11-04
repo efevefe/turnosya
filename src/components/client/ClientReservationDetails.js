@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { CardSection, Button, Menu, MenuItem, Spinner, Toast } from '../common';
 import moment from 'moment';
-import { onClientCancelReservation, readScheduleOfCanceledTimeAllowed } from '../../actions';
+import { onClientCancelReservation, readCancellationTimeAllowed } from '../../actions';
 import { stringFormatHours } from '../../utils/functions';
 
 class ClientReservationDetails extends Component {
@@ -19,7 +19,7 @@ class ClientReservationDetails extends Component {
   }
 
   componentDidMount() {
-    this.props.readScheduleOfCanceledTimeAllowed(
+    this.props.readCancellationTimeAllowed(
       this.props.navigation.state.params.reservation.commerceId
     );
   }
@@ -121,5 +121,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onClientCancelReservation, readScheduleOfCanceledTimeAllowed }
+  { onClientCancelReservation, readCancellationTimeAllowed }
 )(ClientReservationDetails);
