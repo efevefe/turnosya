@@ -1,24 +1,33 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 import { Button } from 'react-native-elements';
-import { IconButton, Picker } from '../common';
+import { IconButton } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import Map from '../common/Map';
 
-export default class CommercesFiltersMap extends Component {
+class CommercesFiltersMap extends Component {
+  onCancelOrAceptPress = () => {
+    this.props.latitude && this.props.longitude
+      ? this.props.navigation.state.params.locationEstablished(true)
+      : this.props.navigation.state.params.locationEstablished(false);
+
+    this.props.navigation.goBack();
+  };
+
   render() {
     return (
       <View style={windowContainerStyle}>
         <View style={windowTopContainerStyle}>
           <IconButton
             icon="md-close"
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() => this.onCancelOrAceptPress()}
           />
           <Button
             title="Aceptar"
             type="clear"
             titleStyle={{ color: 'white' }}
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() => this.onCancelOrAceptPress()}
             style={applyFilterButtonStyle}
           />
         </View>
@@ -45,3 +54,14 @@ const {
   },
   applyFilterButtonStyle: { marginRight: 10, padding: 5 }
 });
+
+const mapStateToProps = state => {
+  const { latitude, longitude } = state.locationData;
+
+  return { latitude, longitude };
+};
+
+export default connect(
+  mapStateToProps,
+  {}
+)(CommercesFiltersMap);

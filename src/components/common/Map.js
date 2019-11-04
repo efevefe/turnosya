@@ -163,12 +163,12 @@ class Map extends React.Component {
       const { latitude, longitude } = this.props.userLocation;
 
       region = { latitude, longitude };
+    } else if (this.props.markers.length > 0) {
+      return this.calculateMarkersRegion(this.props.markers);
     } else if (this.props.latitude && this.props.longitude) {
       const { latitude, longitude } = this.props;
 
       region = { latitude, longitude };
-    } else if (this.props.markers.length > 0) {
-      return this.calculateMarkersRegion(this.props.markers);
     }
 
     return { latitudeDelta: 0.01, longitudeDelta: 0.01, ...region };

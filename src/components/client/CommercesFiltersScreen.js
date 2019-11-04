@@ -25,6 +25,7 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress = () => {
+    // add logic according manu code to persist or not locationEstablished
     this.props.navigation.goBack();
   };
 
@@ -52,9 +53,15 @@ class CommerceFiltersScreen extends Component {
 
     if (buttonIndex === 2) {
       this.props.onLocationChange({ latitude: null, longitude: null });
-      this.props.navigation.navigate('commercesFiltersMap');
+      this.props.navigation.navigate('commercesFiltersMap', {
+        locationEstablished: this.setLocationEstablishedOnMap
+      });
     }
   }
+
+  setLocationEstablishedOnMap = value => {
+    return this.props.navigation.state.params.locationEstablished(value);
+  };
 
   renderLocationMessage() {
     return this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
