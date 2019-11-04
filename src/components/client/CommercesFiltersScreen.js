@@ -7,7 +7,8 @@ import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   updateAllFilters,
-  onLocationChange
+  onLocationChange,
+  specificLocationEnabled
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -35,10 +36,14 @@ class CommerceFiltersScreen extends Component {
       locationRadiusKms: this.state.locationRadiusKms
     });
 
+    // this.props.specificLocationEnabled(this.state.locationButtonIndex !== 1);
+
     this.props.navigation.goBack();
   }
 
   onLocationOptionPress(buttonIndex) {
+    this.props.specificLocationEnabled(buttonIndex !== 1); // tengo que ver cual de los 2 dejar - en el prox commit
+
     this.setState({ locationButtonIndex: buttonIndex });
 
     buttonIndex === 0
@@ -51,8 +56,9 @@ class CommerceFiltersScreen extends Component {
     }
   }
 
-  renderLocationMessage = () =>
-    this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+  renderLocationMessage() {
+    return this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+  }
 
   renderRadiusSlider = () =>
     this.state.locationEnabled ? (
@@ -221,5 +227,10 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onProvincesNameRead, updateAllFilters, onLocationChange }
+  {
+    onProvincesNameRead,
+    updateAllFilters,
+    onLocationChange,
+    specificLocationEnabled
+  }
 )(CommerceFiltersScreen);

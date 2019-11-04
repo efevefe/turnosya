@@ -11,6 +11,7 @@ import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
+import * as Location from 'expo-location';
 import { onUserLocationChange } from '../../actions';
 import {
   openGPSAndroid,
@@ -32,10 +33,15 @@ class LocationMessages extends Component {
   async componentDidMount() {
     try {
       const permissionStatus = await getPermissionLocationStatus();
-
-      permissionStatus === 'permissionsAllowed'
-        ? this.setState({ permissionStatus })
-        : this.setState({ permissionStatus, modal: true });
+      if (permissionStatus === 'permissionsAllowed') {
+        const {
+          coords: { latitude, longitude }
+        } = await Location.getCurrentPositionAsync();
+        this.props.onUserLocationChange({ location: { latitude, longitude } });
+        this.setState({ permissionStatus });
+      } else {
+        this.setState({ permissionStatus, modal: true });
+      }
       AppState.addEventListener('change', this._handleAppStateChange);
     } catch (e) {
       console.error(e);
