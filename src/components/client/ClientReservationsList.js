@@ -102,7 +102,7 @@ class ClientReservationsList extends Component {
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
-          buttons={['PASADOS', 'PROXIMOS']}
+          buttons={['PASADOS', 'PRÓXIMOS']}
           containerBorderRadius={0}
           containerStyle={styles.buttonGroupStyle}
           selectedButtonStyle={{ backgroundColor: 'white' }}
