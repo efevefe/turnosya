@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { View, StyleSheet, Platform, Image } from 'react-native';
+import { View, StyleSheet, Platform, Image, Text } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import { onLocationChange } from '../../actions';
+import { onLocationChange, onCourtReservationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from '../common/LocationMessages';
 import { Toast } from '../common';
@@ -185,11 +185,12 @@ class Map extends React.Component {
             longitude
           }}
           title={address}
+          pinColor={'#1589FF'}
         >
-          <Image
+          {/* <Image
             source={require('../../../assets/turnosya-grey.png')}
             style={{ height: 30, width: 30 }}
-          />
+          /> */}
         </MapView.Marker>
       );
     }
@@ -230,10 +231,26 @@ class Map extends React.Component {
             longitude: marker.longitude
           }}
           title={marker.name}
-          pinColor={'green'}
-        />
+          pinColor={'black'}
+        >
+          <MapView.Callout
+            tooltip
+            onPress={() => this.onMarkerTitlePress(marker)}
+          >
+            <Text>{marker.name}</Text>
+          </MapView.Callout>
+        </MapView.Marker>
       ));
     }
+  };
+
+  onMarkerTitlePress = marker => {
+    this.props.onCourtReservationValueChange({
+      prop: 'commerce',
+      value: marker
+    });
+
+    this.props.navigation.navigate('commerceCourtTypes');
   };
 
   renderSearchBar = () => {
@@ -367,5 +384,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onLocationChange }
+  { onLocationChange, onCourtReservationValueChange }
 )(Map);
