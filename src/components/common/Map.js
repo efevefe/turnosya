@@ -222,14 +222,14 @@ class Map extends React.Component {
   renderCommercesMarkers = () => {
     // TODO: give it a different style to differentiate it with user's and current pointer marker
     if (this.props.markers && this.props.markers.length) {
-      return this.props.markers.map((marker, index) => (
+      return this.props.markers.map(marker => (
         <MapView.Marker
-          key={index}
+          key={marker.objectID}
           coordinate={{
             latitude: marker.latitude,
             longitude: marker.longitude
           }}
-          title={marker.address}
+          title={marker.name}
           pinColor={'green'}
         />
       ));

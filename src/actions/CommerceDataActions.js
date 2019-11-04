@@ -224,6 +224,7 @@ export const onCommerceUpdateNoPicture = ({
           .saveObject({
             address,
             areaName: area.name,
+            profilePicture,
             objectID: commerceId,
             description,
             name,
@@ -237,7 +238,6 @@ export const onCommerceUpdateNoPicture = ({
             dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture })
           )
           .catch(error => {
-            debugger;
             dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
           });
       })
