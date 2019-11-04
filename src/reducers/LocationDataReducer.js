@@ -29,7 +29,9 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOCATION_CHANGE:
-      return { ...state, ...action.payload };
+      return state.specificLocationEnabled
+        ? { ...state, ...action.payload }
+        : state;
     case ON_USER_LOCATION_CHANGE:
       return state.specificLocationEnabled
         ? {

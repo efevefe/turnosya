@@ -34,10 +34,6 @@ class LocationMessages extends Component {
     try {
       const permissionStatus = await getPermissionLocationStatus();
       if (permissionStatus === 'permissionsAllowed') {
-        const {
-          coords: { latitude, longitude }
-        } = await Location.getCurrentPositionAsync();
-        this.props.onUserLocationChange({ location: { latitude, longitude } });
         this.setState({ permissionStatus });
       } else {
         this.setState({ permissionStatus, modal: true });
@@ -65,6 +61,13 @@ class LocationMessages extends Component {
       }
     } catch (e) {
       console.error(e);
+    }
+
+    if (this.state.permissionStatus === 'permissionsAllowed') {
+      const {
+        coords: { latitude, longitude }
+      } = await Location.getCurrentPositionAsync();
+      this.props.onUserLocationChange({ location: { latitude, longitude } });
     }
   }
 
