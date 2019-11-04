@@ -73,7 +73,6 @@ class CommerceSchedule extends Component {
   };
 
   reservationsOnSlots = () => {
-    // aca capaz ni hace falta pasar los slots por parametro, no se porque estaba asi
     const { reservations, courtsAvailable, slots } = this.props;
 
     const newSlots = slots.map(slot => {

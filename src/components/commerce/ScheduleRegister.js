@@ -5,7 +5,6 @@ import { FlatList, View, RefreshControl } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
-import moment from 'moment';
 import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 import { hourToDate, formattedMoment } from '../../utils';
@@ -43,6 +42,7 @@ class ScheduleRegister extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.nextReservationsDates !== this.props.nextReservationsDates) {
+      // verificar tambien si no se produjo un error al leer las reservas
       this.workShiftsValidate();
     }
   }
@@ -73,7 +73,6 @@ class ScheduleRegister extends Component {
       if (!this._compatibleSchedule()) {
         return this.setState({
           reservationsModalVisible: true,
-          lastReservationDate: nextReservationsDates[nextReservationsDates.length - 1]
         });
       }
     }
@@ -83,42 +82,44 @@ class ScheduleRegister extends Component {
 
   _compatibleSchedule = () => {
     const { nextReservationsDates, cards } = this.props;
+    let notCoveredDates = [];
 
     for (i in cards) {
       // nuevos horarios de atencion
       const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos proximos
-      let cont = this._compatibleShift(firstShiftStart, firstShiftEnd, days);
+      notCoveredDates = this._compatibleShift(firstShiftStart, firstShiftEnd, days, nextReservationsDates);
 
       // si existen segundos horarios, se verifica lo mismo que los primeros horarios
-      if (!(cont % 2) && secondShiftStart && secondShiftEnd) {
-        cont += this._compatibleShift(secondShiftStart, secondShiftEnd, days);
+      if (!(notCoveredDates.length % 2) && secondShiftStart && secondShiftEnd) {
+        notCoveredDates = this._compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredDates);
       }
 
-      if (cont < nextReservationsDates.length) return false;
+      if (notCoveredDates.length) {
+        this.setState({ lastReservationDate: notCoveredDates[notCoveredDates.length - 1] })
+        return false;
+      }
     }
 
     return true;
   }
 
-  _compatibleShift = (shiftStart, shiftEnd, days) => {
-    const { nextReservationsDates, reservationMinLength } = this.props;
+  _compatibleShift = (shiftStart, shiftEnd, days, notCoveredDates) => {
+    const { reservationMinLength } = this.props;
 
     shiftStart = hourToDate(shiftStart);
     shiftEnd = hourToDate(shiftEnd);
 
-    let cont = 0;
-
     while (shiftStart <= shiftEnd) {
-      cont += nextReservationsDates.filter(date => {
-        return (date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
-      }).length;
+      notCoveredDates = notCoveredDates.filter(date => {
+        return !(date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
+      });
 
       shiftStart.add(reservationMinLength, 'minutes');
     }
 
-    return cont;
+    return notCoveredDates;
   }
 
   onModalSavePress = () => {
@@ -146,10 +147,13 @@ class ScheduleRegister extends Component {
       navigation
     );
 
+    // aca no va el goback, pero si la consulta
     this.onBackPress();
   }
 
   onBackPress = () => {
+    // aca deberia verificar si hay cambios no guardados y preguntar si quiere descartar
+
     this.props.navigation.goBack();
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
@@ -220,13 +224,12 @@ class ScheduleRegister extends Component {
 
         <Menu
           title={
-            'La ultima reserva que tienes es el ' +
+            'Los nuevos horarios de atencion entraran en vigencia luego del ' +
             `${DAYS[lastReservationDate.day()]} ` +
             `${lastReservationDate.format('D')} de ` +
             `${MONTHS[lastReservationDate.month()]}, ` +
-            'por lo que los nuevos horarios de atencion entraran en vigencia luego ' +
-            'de esa fecha debido a que entran en conflictos con reservas existentes. ' +
-            '¿Desea confirmar los cambios?'}
+            'debido a que entran en conflicto con una o mas reservas existentes ' +
+            'hasta esa fecha. ¿Desea confirmar los cambios?'}
           onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
           isVisible={this.state.reservationsModalVisible}
         >
