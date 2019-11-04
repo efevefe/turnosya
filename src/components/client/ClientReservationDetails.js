@@ -8,10 +8,12 @@ import moment from 'moment';
 import { onClientCancelReservation, readCancellationTimeAllowed } from '../../actions';
 import { stringFormatHours } from '../../utils/functions';
 
+
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { reservation } = this.props.navigation.state.params;
+
+    const reservation = props.navigation.getParam('reservation');
     this.state = {
       reservation,
       optionsVisible: false

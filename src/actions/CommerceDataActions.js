@@ -23,7 +23,8 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE
+  ON_REGISTER_VALUE_CHANGE,
+  ON_PROVINCES_READ
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -108,19 +109,26 @@ export const onCreateCommerce = (
         db.doc(`Profiles/${currentUser.uid}`)
           .update({ commerceId: docId })
           .then(() => {
-            index.addObject({
-              objectID: docId,
-              name,
-              description,
-              areaName: area.name,
-              address,
-              city,
-              provinceName: province.name,
-              _geoloc: { lat: latitude, lng: longitude }
-            });
-
-            dispatch({ type: COMMERCE_PROFILE_CREATE });
-            navigation.navigate('commerce');
+            index
+              .addObject({
+                objectID: docId,
+                name,
+                description,
+                areaName: area.name,
+                address,
+                city,
+                provinceName: province.name,
+                ...(latitude && longitude
+                  ? { _geoloc: { lat: latitude, lng: longitude } }
+                  : {})
+              })
+              .then(() => {
+                dispatch({ type: COMMERCE_PROFILE_CREATE });
+                navigation.navigate('commerce');
+              })
+              .catch(error =>
+                dispatch({ type: COMMERCE_FAIL, payload: error })
+              );
           })
           .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
       })
@@ -157,10 +165,13 @@ export const onCommerceRead = () => {
               type: ON_COMMERCE_READ,
               payload: {
                 ...doc.data(),
-                provincesList: [province],
                 areasList: [area],
                 commerceId: doc.id
               }
+            });
+            dispatch({
+              type: ON_PROVINCES_READ,
+              payload: [province]
             });
           })
           .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
@@ -205,17 +216,26 @@ export const onCommerceUpdateNoPicture = ({
         longitude
       })
       .then(() => {
-        index.saveObject({
-          address,
-          areaName: area.name,
-          objectID: commerceId,
-          description,
-          name,
-          city,
-          provinceName: province.name,
-          _geoloc: { lat: latitude, lng: longitude }
-        });
-        dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture });
+        index
+          .saveObject({
+            address,
+            areaName: area.name,
+            objectID: commerceId,
+            description,
+            name,
+            city,
+            provinceName: province.name,
+            ...(latitude && longitude
+              ? { _geoloc: { lat: latitude, lng: longitude } }
+              : {})
+          })
+          .then(() =>
+            dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture })
+          )
+          .catch(error => {
+            debugger;
+            dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
+          });
       })
       .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
   };
@@ -269,18 +289,24 @@ export const onCommerceUpdateWithPicture = ({
                 longitude
               })
               .then(() => {
-                index.saveObject({
-                  address,
-                  areaName: area.name,
-                  profilePicture: url,
-                  objectID: commerceId,
-                  description,
-                  name,
-                  city,
-                  provinceName: province.name,
-                  _geoloc: { lat: latitude, lng: longitude }
-                });
-                dispatch({ type: ON_COMMERCE_UPDATED, payload: url });
+                index
+                  .saveObject({
+                    address,
+                    areaName: area.name,
+                    profilePicture: url,
+                    objectID: commerceId,
+                    description,
+                    name,
+                    city,
+                    provinceName: province.name,
+                    ...(latitude && longitude
+                      ? { _geoloc: { lat: latitude, lng: longitude } }
+                      : {})
+                  })
+                  .then(() =>
+                    dispatch({ type: ON_COMMERCE_UPDATED, payload: url })
+                  )
+                  .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
               })
               .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
           })
@@ -353,17 +379,20 @@ export const onCommerceDelete = (password, navigation = null) => {
           });
         })
           .then(() => {
-            index.deleteObject(docId);
+            index
+              .deleteObject(docId)
+              .then(() => {
+                dispatch({ type: ON_COMMERCE_DELETED });
+                dispatch({
+                  type: ON_REGISTER_VALUE_CHANGE,
+                  payload: { prop: 'commerceId', value: null }
+                });
 
-            dispatch({ type: ON_COMMERCE_DELETED });
-            dispatch({
-              type: ON_REGISTER_VALUE_CHANGE,
-              payload: { prop: 'commerceId', value: null }
-            });
-
-            if (navigation) {
-              navigation.navigate('client');
-            }
+                if (navigation) {
+                  navigation.navigate('client');
+                }
+              })
+              .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
           })
           .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
       })

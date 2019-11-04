@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Icon } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
@@ -15,13 +14,15 @@ import {
   MenuItem,
   IconButton
 } from '../common';
+import LocationMessages from '../common/LocationMessages';
 import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 import {
   onUserRead,
   onUserUpdateWithPicture,
   onUserUpdateNoPicture,
-  onClientDataValueChange
+  onClientDataValueChange,
+  onLocationValuesReset
 } from '../../actions';
 
 class ClientProfile extends Component {
@@ -45,12 +46,11 @@ class ClientProfile extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
-    this.getLocation();
+    this.props.onLocationValuesReset();
   }
 
   onRefresh = () => {
     this.props.onUserRead();
-    this.getLocation();
   };
 
   renderEditButton = () => {
@@ -218,50 +218,29 @@ class ClientProfile extends Component {
     }
   };
 
-  getLocation = async () => {
-    await Permissions.askAsync(Permissions.LOCATION);
-
-    let position = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High
-    });
-
-    let location = await Location.reverseGeocodeAsync({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude
-    });
-
-    this.props.onClientDataValueChange({
-      prop: 'location',
-      value: { ...location[0] }
-    });
-  };
-
   renderLocation = () => {
-    if (this.props.location) {
-      const { city, region } = this.props.location;
-
-      if (city || region) {
-        const { locationContainerStyle } = styles;
-
-        return (
-          <View style={locationContainerStyle}>
-            <Icon
-              name="md-pin"
-              type="ionicon"
-              size={16}
-              containerStyle={{ marginRight: 5 }}
-            />
-            <Text>{`${city}, ${region}`}</Text>
-          </View>
-        );
-      }
+    if (this.props.city && this.props.provinceName) {
+      return (
+        <View style={locationContainerStyle}>
+          <Icon
+            name="md-pin"
+            type="ionicon"
+            size={16}
+            containerStyle={{ marginRight: 5 }}
+          />
+          <Text>{`${this.props.city}, ${this.props.provinceName}`}</Text>
+        </View>
+      );
     }
   };
 
   renderFirstNameError = () => {
     const { firstName, onClientDataValueChange } = this.props;
 
-    onClientDataValueChange({ prop: 'firstName', value: trimString(firstName) });
+    onClientDataValueChange({
+      prop: 'firstName',
+      value: trimString(firstName)
+    });
     if (trimString(firstName) === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
@@ -314,14 +293,6 @@ class ClientProfile extends Component {
   };
 
   render() {
-    const {
-      containerStyle,
-      headerContainerStyle,
-      avatarContainerStyle,
-      avatarStyle,
-      infoContainerStyle
-    } = styles;
-
     if (this.props.loading) return <Spinner />;
 
     return (
@@ -338,6 +309,7 @@ class ClientProfile extends Component {
           />
         }
       >
+        <LocationMessages />
         <View style={headerContainerStyle}>
           <View style={avatarContainerStyle}>
             <Avatar
@@ -442,7 +414,14 @@ class ClientProfile extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const {
+  containerStyle,
+  headerContainerStyle,
+  avatarContainerStyle,
+  avatarStyle,
+  locationContainerStyle,
+  infoContainerStyle
+} = StyleSheet.create({
   containerStyle: {
     flex: 1,
     alignSelf: 'stretch'
@@ -480,10 +459,11 @@ const mapStateToProps = state => {
     phone,
     email,
     profilePicture,
-    location,
     loading,
     refreshing
   } = state.clientData;
+
+  const { city, provinceName } = state.locationData;
 
   return {
     firstName,
@@ -491,9 +471,10 @@ const mapStateToProps = state => {
     phone,
     email,
     profilePicture,
-    location,
     loading,
-    refreshing
+    refreshing,
+    city,
+    provinceName
   };
 };
 
@@ -503,6 +484,7 @@ export default connect(
     onUserRead,
     onUserUpdateWithPicture,
     onUserUpdateNoPicture,
-    onClientDataValueChange
+    onClientDataValueChange,
+    onLocationValuesReset
   }
 )(ClientProfile);

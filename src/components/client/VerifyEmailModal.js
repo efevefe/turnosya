@@ -4,9 +4,7 @@ import { sendEmailVefification } from '../../actions';
 import { Menu, MenuItem } from '../common';
 
 class VerifyEmailModal extends React.Component {
-  componentWillMount() {
-    this.setState({ isVisible: true });
-  }
+  state = { isVisible: true };
 
   onBackdropPress = () => {
     this.setState({ isVisible: false });

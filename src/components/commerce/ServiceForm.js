@@ -7,7 +7,6 @@ import { CardSection, Button, Input } from '../common';
 import { validateValueType } from '../../utils';
 import {
   onServiceValueChange,
-  onFormOpen,
   serviceCreate,
   serviceUpdate
 } from '../../actions';
@@ -15,7 +14,7 @@ import {
 class ServiceForm extends Component {
   state = { nameError: '', durationError: '', priceError: '' };
 
-  componentWillMount() {
+  componentDidMount() {
     const { params } = this.props.navigation.state;
 
     if (params) {
@@ -24,14 +23,19 @@ class ServiceForm extends Component {
       for (prop in service) {
         this.props.onServiceValueChange({ prop, value: service[prop] });
       }
-    } else {
-      this.props.onFormOpen();
     }
   }
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const { name, duration, price, description, navigation, commerceId } = this.props;
+      const {
+        name,
+        duration,
+        price,
+        description,
+        navigation,
+        commerceId
+      } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {
@@ -218,5 +222,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onServiceValueChange, onFormOpen, serviceCreate, serviceUpdate }
+  { onServiceValueChange, serviceCreate, serviceUpdate }
 )(ServiceForm);

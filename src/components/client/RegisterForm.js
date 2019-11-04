@@ -20,7 +20,7 @@ class RegisterForm extends Component {
     phoneError: ''
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onRegisterFormOpen();
   }
 
