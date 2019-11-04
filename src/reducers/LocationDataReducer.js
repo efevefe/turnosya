@@ -2,10 +2,12 @@ import {
   ON_LOCATION_VALUE_CHANGE,
   ON_LOCATION_CHANGE,
   ON_USER_LOCATION_CHANGE,
-  ON_LOCATION_VALUES_RESET
+  ON_LOCATION_VALUES_RESET,
+  ON_SPECIFIC_LOCATION_ENABLED
 } from '../actions/types';
 
 const INITIAL_STATE = {
+  specificLocationEnabled: false,
   address: '',
   city: '',
   provinceName: '',
@@ -29,12 +31,20 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_CHANGE:
       return { ...state, ...action.payload };
     case ON_USER_LOCATION_CHANGE:
-      return {
-        ...state,
-        userLocation: { ...action.payload }
-      };
+      return state.specificLocationEnabled
+        ? {
+            ...state,
+            userLocation: { ...action.payload }
+          }
+        : {
+            specificLocationEnabled: state.specificLocationEnabled,
+            ...action.payload,
+            userLocation: { ...action.payload }
+          };
     case ON_LOCATION_VALUES_RESET:
       return { ...INITIAL_STATE };
+    case ON_SPECIFIC_LOCATION_ENABLED:
+      return { ...state, specificLocationEnabled: action.payload };
     default:
       return state;
   }
