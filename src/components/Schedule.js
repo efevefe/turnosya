@@ -3,7 +3,6 @@ import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -36,7 +35,10 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    if (JSON.stringify(prevProps.cards) !== JSON.stringify(this.props.cards)) {
+    if (
+      prevProps.cards !== this.props.cards ||
+      (prevProps.loadingSchedule && !this.props.loadingSchedule)
+    ) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
@@ -234,9 +236,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { slots } = state.commerceSchedule;
+  const { slots, loading } = state.commerceSchedule;
 
-  return { slots };
+  return { slots, loadingSchedule: loading };
 }
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
