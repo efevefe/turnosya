@@ -38,15 +38,17 @@ class ScheduleRegister extends Component {
       commerceId,
       reservationMinLength,
       reservationDayPeriod,
+      reservationMinCancelTime,
       navigation
     } = this.props;
-
+    
     this.props.onScheduleCreate(
       {
         cards,
         commerceId,
         reservationMinLength,
-        reservationDayPeriod
+        reservationDayPeriod,
+        reservationMinCancelTime,
       },
       navigation
     );
@@ -146,16 +148,18 @@ const mapStateToProps = state => {
     selectedDays,
     reservationMinLength,
     reservationDayPeriod,
+    reservationMinCancelTime,
     loading,
     refreshing
   } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
-
+  
   return {
     cards,
     selectedDays,
     commerceId,
     reservationMinLength,
+    reservationMinCancelTime,
     reservationDayPeriod,
     loading,
     refreshing

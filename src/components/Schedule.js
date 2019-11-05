@@ -3,6 +3,7 @@ import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -35,12 +36,13 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.cards !== this.props.cards ||
-      (prevProps.loadingSchedule && !this.props.loadingSchedule)
-    ) {
+    if (JSON.stringify(prevProps.cards) !== JSON.stringify(this.props.cards)) {
       this.onDateSelected(this.props.selectedDate);
     }
+  }
+
+  shouldComponentUpdate() {
+    return this.props.isFocused;
   }
 
   onDateSelected = selectedDate => {
@@ -230,15 +232,15 @@ const styles = StyleSheet.create({
   slotContainerStyle: {
     backgroundColor: 'white'
   },
-  slotRightSubtitleStyle: { 
-    color: 'grey' 
+  slotRightSubtitleStyle: {
+    color: 'grey'
   }
 });
 
 const mapStateToProps = state => {
-  const { slots, loading } = state.commerceSchedule;
+  const { slots } = state.commerceSchedule;
 
-  return { slots, loadingSchedule: loading };
+  return { slots };
 }
 
-export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
+export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));

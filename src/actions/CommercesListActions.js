@@ -108,13 +108,12 @@ export const readOnlyFavoriteCommerces = () => dispatch => {
       }
 
       snapshot.forEach(doc => {
-        favoriteCommerces.push(doc.id);
-
         db.doc(`Commerces/${doc.id}`)
           .get()
           .then(commerce => {
             if (commerce.data().softDelete == null) {
               const { profilePicture, name, area, address } = commerce.data();
+
               onlyFavoriteCommerces.push({
                 profilePicture,
                 name,
@@ -122,11 +121,13 @@ export const readOnlyFavoriteCommerces = () => dispatch => {
                 areaName: area.name,
                 objectID: commerce.id
               });
+
+              favoriteCommerces.push(doc.id);
             }
 
             processedItems++;
 
-            if (processedItems == favoriteCommerces.length) {
+            if (processedItems === snapshot.size) {
               dispatch({
                 type: ONLY_FAVORITE_COMMERCES_READ,
                 payload: { favoriteCommerces, onlyFavoriteCommerces }

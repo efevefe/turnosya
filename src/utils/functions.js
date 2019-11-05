@@ -155,6 +155,29 @@ export const stringFormatDays = totalDays => {
   else return stringDays + '.';
 };
 
+/**
+ * Formats the input value (hours) into a String containing the hours and
+ * days that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalHours The amount of minutes to format
+ * @return {String}            String with the following format: 'XX day. XX hours.'
+ */
+export const stringFormatHours = totalHours => {
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+
+  const stringHours =
+  hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+
+const stringDays =
+  days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+
+
+  if (hours && days) return stringDays + ' y ' + stringHours + '.';
+  else if (hours) return stringHours + '.';
+  else return stringDays + '.';
+};
+
+
 export const getHourAndMinutes = hour => {
   hour = hour.split(':').map(num => parseInt(num));
   return { hour: hour[0], minutes: hour[1] };
