@@ -29,6 +29,7 @@ class Hits extends Component {
         renderItem={this.renderItem}
         keyExtractor={item => item.objectID}
         initialNumToRender={20}
+        contentContainerStyle={{ paddingBottom: 95 }}
       />
     ) : this.props.searching ? (
       <Spinner style={{ position: 'relative' }} />

@@ -43,7 +43,10 @@ const mainSearchStack = createStackNavigator(
       }
     },
     commercesListMap: {
-      screen: Map
+      screen: Map,
+      navigationOptions: {
+        title: 'Buscar Negocios'
+      }
     },
     commerceProfileView: {
       screen: CommerceProfileView,
