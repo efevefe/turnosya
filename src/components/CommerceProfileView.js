@@ -54,7 +54,7 @@ class CommerceProfileView extends Component {
     if (this.props.description)
       return (
         <View style={styles.descriptionStyle}>
-          <Text style={{ textAlign: 'center', fontSize: 20 }}>
+          <Text style={{ textAlign: 'center', fontSize: 16 }}>
             {this.props.description}
           </Text>
         </View>
@@ -164,7 +164,7 @@ class CommerceProfileView extends Component {
               />
             </View>
 
-            <Text h3>{name}</Text>
+            <Text h4>{name}</Text>
             {this.renderLocation()}
           </View>
 

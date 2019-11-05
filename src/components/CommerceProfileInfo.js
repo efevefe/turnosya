@@ -127,7 +127,7 @@ class CommerceProfileInfo extends Component {
             >{`E-mail: ${this.props.email}`}</Text>
             <Text
               style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`Teléfeno: ${this.props.phone}`}</Text>
+            >{`Teléfono: ${this.props.phone}`}</Text>
           </View>
         </Card>
       </View>
