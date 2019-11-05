@@ -32,7 +32,6 @@ class CommercesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'Buscar negocios',
       headerRight: navigation.getParam('rightIcons'),
       header: navigation.getParam('header')
     };
