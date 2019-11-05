@@ -21,6 +21,8 @@ import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen'
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 import Map from '../components/common/Map';
 
+import CommerceProfileView from '../components/CommerceProfileView';
+import CommerceProfileInfo from '../components/CommerceProfileInfo';
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const mainSearchStack = createStackNavigator(
@@ -42,6 +44,24 @@ const mainSearchStack = createStackNavigator(
     },
     commercesListMap: {
       screen: Map
+    },
+    commerceProfileView: {
+      screen: CommerceProfileView,
+      navigationOptions: {
+        title: 'Perfil'
+      }
+    },
+    commerceProfileInfo: {
+      screen: CommerceProfileInfo,
+      navigationOptions: {
+        title: 'Información'
+      }
+    },
+    changeAddressMap: {
+      screen: Map,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Dirección'
+      })
     },
     commerceCourtTypes: {
       screen: CommerceCourtTypes,

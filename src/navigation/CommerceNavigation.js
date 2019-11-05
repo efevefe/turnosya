@@ -15,6 +15,8 @@ import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceProfileView from '../components/CommerceProfileView';
+import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -124,13 +126,32 @@ const courtsStack = createStackNavigator(
 const profileStack = createStackNavigator(
   {
     profile: {
-      screen: CommerceProfile,
+      screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
+        headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        ),
+        headerRight: (
+          <IconButton
+            icon="md-create"
+            onPress={() => navigation.navigate('profileEdit')}
+          />
         )
       })
+    },
+    profileEdit: {
+      screen: CommerceProfile,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Editar Perfil',
+        headerLeft: navigation.getParam('leftIcon')
+      })
+    },
+    commerceProfileInfo: {
+      screen: CommerceProfileInfo,
+      navigationOptions: {
+        title: 'Informacion'
+      }
     },
     changeAddressMap: {
       screen: LocationMap,

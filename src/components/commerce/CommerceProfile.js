@@ -29,6 +29,7 @@ import {
   Button
 } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
+import { HeaderBackButton } from 'react-navigation-stack';
 
 class CommerceProfile extends Component {
   state = {
@@ -92,6 +93,14 @@ class CommerceProfile extends Component {
 
   renderCancelButton = () => {
     return <IconButton icon="md-close" onPress={this.onCancelPress} />;
+  };
+  renderBackButton = () => {
+    return (
+      <HeaderBackButton
+        onPress={() => this.props.navigation.goBack(null)}
+        tintColor="white"
+      />
+    );
   };
 
   onEditPress = () => {
@@ -234,7 +243,7 @@ class CommerceProfile extends Component {
     this.props.navigation.setParams({
       title: 'Perfil',
       rightIcon: this.renderEditButton(),
-      leftIcon: null
+      leftIcon: this.renderBackButton()
     });
   };
 
@@ -333,13 +342,10 @@ class CommerceProfile extends Component {
 
       return (
         <View style={locationContainerStyle}>
-          <Icon
-            name="md-pin"
-            type="ionicon"
-            size={16}
-            containerStyle={{ marginRight: 5 }}
-          />
-          <Text>{`${address}, ${city}, ${name}`}</Text>
+          <Icon name="md-pin" type="ionicon" size={16} />
+          <Text
+            style={{ textAlign: 'center', paddingLeft: 5 }}
+          >{`${address}, ${city}, ${name}`}</Text>
         </View>
       );
     }
@@ -790,7 +796,7 @@ const styles = StyleSheet.create({
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center'
+    margin: 10
   },
   infoContainerStyle: {
     alignSelf: 'stretch',

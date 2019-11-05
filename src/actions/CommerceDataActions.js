@@ -184,6 +184,40 @@ export const onCommerceRead = () => {
   };
 };
 
+export const onCommerceReadProfile = commerceId => {
+  var db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_COMMERCE_READING });
+
+    db.doc(`Commerces/${commerceId}`)
+      .get()
+      .then(doc => {
+        //province
+        var { name, provinceId } = doc.data().province;
+        const province = { value: provinceId, label: name };
+
+        //area
+        var { name, areaId } = doc.data().area;
+        const area = { value: areaId, label: name };
+
+        dispatch({
+          type: ON_COMMERCE_READ,
+          payload: {
+            ...doc.data(),
+            provincesList: [province],
+            areasList: [area],
+            commerceId: doc.id
+          }
+        });
+      })
+      .catch(error => {
+        dispatch({ type: ON_COMMERCE_READ_FAIL });
+        console.log(error);
+      });
+  };
+};
+
 export const onCommerceUpdateNoPicture = ({
   name,
   cuit,

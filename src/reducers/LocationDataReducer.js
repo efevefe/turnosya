@@ -7,7 +7,7 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-  specificLocationEnabled: false,
+  specificLocationEnabled: null,
   address: '',
   city: '',
   provinceName: '',
@@ -29,6 +29,10 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOCATION_CHANGE:
+      if (state.specificLocationEnabled === null) {
+        return { ...state, ...action.payload };
+      }
+
       return state.specificLocationEnabled
         ? { ...state, ...action.payload }
         : state;

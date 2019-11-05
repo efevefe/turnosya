@@ -1,15 +1,18 @@
-import React, { Component } from "react";
-import { FlatList } from "react-native";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { connectInfiniteHits } from "react-instantsearch/connectors";
-import { EmptyList, Spinner } from "../common";
-import CommerceListItem from "./CommerceListItem";
-import { commerceHitsUpdate } from "../../actions";
+import React, { Component } from 'react';
+import { FlatList } from 'react-native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { connectInfiniteHits } from 'react-instantsearch/connectors';
+import { EmptyList, Spinner } from '../common';
+import CommerceListItem from './CommerceListItem';
+import { commerceHitsUpdate } from '../../actions';
+import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    // if (this.props.isFocused && prevProps.isFocused !== this.props.isFocused) {
     this.props.commerceHitsUpdate(this.props.hits);
+    // }
   }
 
   renderItem({ item }) {
@@ -25,7 +28,7 @@ class Hits extends Component {
         initialNumToRender={20}
       />
     ) : this.props.searching ? (
-      <Spinner style={{ position: "relative" }} />
+      <Spinner style={{ position: 'relative' }} />
     ) : (
       <EmptyList title="No se encontraron negocios" />
     );
@@ -48,4 +51,4 @@ const ConnectedHits = connectInfiniteHits(Hits);
 export default connect(
   mapStateToProps,
   { commerceHitsUpdate }
-)(ConnectedHits);
+)(withNavigationFocus(ConnectedHits));

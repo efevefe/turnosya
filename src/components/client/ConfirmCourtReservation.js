@@ -132,7 +132,7 @@ class ConfirmCourtReservation extends Component {
               }
               onPress={() => {
                 this.onNewReservation();
-                this.props.navigation.navigate('commerceCourtTypes');
+                this.props.navigation.navigate('commerceProfileView');
               }}
             />
           </View>
