@@ -56,6 +56,8 @@ class CommerceFiltersScreen extends Component {
       this.props.navigation.navigate('commercesFiltersMap', {
         locationEstablished: this.setLocationEstablishedOnMap
       });
+    } else {
+      this.setLocationEstablishedOnMap(false);
     }
   }
 

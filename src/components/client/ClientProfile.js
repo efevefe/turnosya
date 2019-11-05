@@ -479,7 +479,7 @@ const mapStateToProps = state => {
     refreshing
   } = state.clientData;
 
-  const { city, provinceName } = state.locationData;
+  const { city, provinceName } = state.locationData.userLocation;
 
   return {
     firstName,
