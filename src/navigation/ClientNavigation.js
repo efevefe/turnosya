@@ -60,7 +60,7 @@ const mainSearchStack = createStackNavigator(
         title: 'Información'
       }
     },
-    changeAddressMap: {
+    showMyAddressMap: {
       screen: Map,
       navigationOptions: ({ navigation }) => ({
         title: 'Dirección'

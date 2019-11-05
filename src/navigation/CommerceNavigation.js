@@ -17,6 +17,7 @@ import CommerceCourtReservations from '../components/commerce/CommerceCourtReser
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -150,8 +151,14 @@ const profileStack = createStackNavigator(
     commerceProfileInfo: {
       screen: CommerceProfileInfo,
       navigationOptions: {
-        title: 'Informacion'
+        title: 'Información'
       }
+    },
+    showMyAddressMap: {
+      screen: Map,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Dirección'
+      })
     },
     changeAddressMap: {
       screen: LocationMap,

@@ -102,7 +102,7 @@ class CommerceProfileView extends Component {
       longitude
     });
 
-    this.props.navigation.navigate('changeAddressMap');
+    this.props.navigation.navigate('showMyAddressMap');
   };
 
   onPicturePress = () => {
