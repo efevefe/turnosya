@@ -152,7 +152,7 @@ class Schedule extends Component {
         }}
         rightElement={
           <Badge
-            value={`Disponibles: ${item.free.toString()} / ${item.total.toString()}`}
+            value={item.free ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}` : 'Ocupadas'}
             badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
           />
         }

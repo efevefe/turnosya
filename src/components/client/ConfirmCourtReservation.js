@@ -39,7 +39,7 @@ class ConfirmCourtReservation extends Component {
     this.props.navigation.goBack(null);
   };
 
-  priceButtons = () => {
+  priceButtons = async () => {
     const { court } = this.props;
     const priceButtons = [];
     const prices = [];
@@ -54,7 +54,7 @@ class ConfirmCourtReservation extends Component {
       }
     }
 
-    this.setState({ priceButtons, prices }, this.onPriceSelect(0));
+    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
   };
 
   onPriceSelect = selectedIndex => {
