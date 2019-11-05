@@ -26,13 +26,12 @@ class CommercesList extends Component {
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
-    
+
     this.props.readFavoriteCommerces();
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'Buscar negocios',
       headerRight: navigation.getParam('rightIcons'),
       header: navigation.getParam('header')
     };
@@ -98,9 +97,9 @@ class CommercesList extends Component {
   obtainGeolocationProps = () => {
     return this.props.locationEnabled
       ? {
-        aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
-        aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-      }
+          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+        }
       : null;
   };
 
