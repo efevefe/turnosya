@@ -41,10 +41,6 @@ class Schedule extends Component {
     }
   }
 
-  shouldComponentUpdate() {
-    return this.props.isFocused;
-  }
-
   onDateSelected = selectedDate => {
     selectedDate = moment([
       selectedDate.year(),

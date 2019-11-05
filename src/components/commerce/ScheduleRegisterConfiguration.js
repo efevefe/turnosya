@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
+import { HeaderBackButton } from 'react-navigation-stack';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../../constants';
 import {
@@ -11,7 +12,8 @@ import {
 } from '../../utils';
 import {
   onScheduleConfigurationSave,
-  onScheduleValueChange
+  onScheduleValueChange,
+  onScheduleRead
 } from '../../actions';
 
 class ScheduleRegisterConfiguration extends Component {
@@ -25,6 +27,10 @@ class ScheduleRegisterConfiguration extends Component {
     reservationMinHoursCancelValue: 2
   };
 
+  static navigationOptions = ({ navigation }) => {
+    return { headerLeft: navigation.getParam('leftIcon') };
+  };
+
   componentDidMount() {
     const {
       reservationMinLength,
@@ -32,12 +38,23 @@ class ScheduleRegisterConfiguration extends Component {
       reservationMinCancelTime
     } = this.props;
 
+    this.props.navigation.setParams({ leftIcon: this.renderBackButton() });
+
     this.setState({
       reservationMinValue: reservationMinLength,
       reservationDayValue: reservationDayPeriod,
       reservationMinHoursCancelValue: reservationMinCancelTime
     });
   }
+
+  renderBackButton = () => {
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+  };
+
+  onBackPress = () => {
+    this.props.onScheduleRead(this.props.commerceId);
+    this.props.navigation.goBack();
+  };
 
   onSavePressHandler() {
     const {
@@ -185,5 +202,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onScheduleConfigurationSave, onScheduleValueChange }
+  { onScheduleConfigurationSave, onScheduleValueChange, onScheduleRead }
 )(ScheduleRegisterConfiguration);
