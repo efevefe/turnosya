@@ -179,15 +179,14 @@ const {
   dividerContainerStyle: { flexDirection: 'row', justifyContent: 'center' },
   windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
   windowTopContainerStyle: {
-    paddingTop: 30,
-    paddingRight: 10,
+    paddingTop: 20,
     height: 70,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row'
   },
   windowContentContainerStyle: { flex: 1, alignItems: 'center' },
-  applyFilterButtonStyle: { padding: 5 },
+  applyFilterButtonStyle: { marginRight: 10, padding: 5 },
   provinceContainerStyle: {
     alignSelf: 'stretch',
     paddingBottom: 20,
