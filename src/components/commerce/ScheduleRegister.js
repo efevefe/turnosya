@@ -59,8 +59,8 @@ class ScheduleRegister extends Component {
   };
 
   onBackPress = () => {
-    this.props.navigation.goBack();
     this.props.onScheduleRead(this.props.commerceId);
+    this.props.navigation.goBack();
   };
 
   onAddPress = () => {
