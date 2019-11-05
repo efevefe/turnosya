@@ -250,7 +250,7 @@ class Map extends React.Component {
       value: marker
     });
 
-    this.props.navigation.navigate('commerceCourtTypes');
+    this.props.navigation.navigate('commerceProfileView');
   };
 
   renderSearchBar = () => {

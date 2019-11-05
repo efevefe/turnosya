@@ -10,9 +10,12 @@ import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
   componentDidUpdate(prevProps, prevState) {
-    // if (this.props.isFocused && prevProps.isFocused !== this.props.isFocused) {
-    this.props.commerceHitsUpdate(this.props.hits);
-    // }
+    if (
+      (prevProps.hits !== this.props.hits && this.props.hits.length > 0) ||
+      (this.props.isFocused && this.props.isFocused !== prevProps.isFocused)
+    ) {
+      this.props.commerceHitsUpdate(this.props.hits);
+    }
   }
 
   renderItem({ item }) {
