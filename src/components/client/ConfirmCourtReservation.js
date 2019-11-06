@@ -39,7 +39,7 @@ class ConfirmCourtReservation extends Component {
     this.props.navigation.goBack(null);
   };
 
-  priceButtons = async () => {
+  priceButtons = () => {
     const { court } = this.props;
     const priceButtons = [];
     const prices = [];
