@@ -97,17 +97,7 @@ class CommerceProfileView extends Component {
       longitude
     } = this.props.locationData;
 
-    this.props.navigation.navigate('changeAddressMap', {
-      markers: [
-        {
-          address,
-          provinceName,
-          city,
-          latitude,
-          longitude
-        }
-      ]
-    });
+    this.props.navigation.navigate('changeAddressMap');
   };
 
   onPicturePress = () => {

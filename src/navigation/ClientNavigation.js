@@ -50,7 +50,7 @@ const mainSearchStack = createStackNavigator(
     commerceProfileInfo: {
       screen: CommerceProfileInfo,
       navigationOptions: {
-        title: 'Informacion'
+        title: 'Información'
       }
     },
     changeAddressMap: {

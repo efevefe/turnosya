@@ -5,8 +5,7 @@ import { onScheduleRead } from '../actions';
 import { Spinner } from './common';
 import { DAYS } from '../constants';
 import { View } from 'native-base';
-import { Divider, Card } from 'react-native-elements';
-import moment from 'moment';
+import { Card } from 'react-native-elements';
 
 class CommerceProfileInfo extends Component {
   state = { onDay: new Date().getDay() };
@@ -18,6 +17,7 @@ class CommerceProfileInfo extends Component {
   renderSchedule = () => {
     const { cards } = this.props;
     const hoursOnDay = [];
+
     cards.forEach(card => {
       card.days.forEach(day => {
         const firstShiftStart = card.firstShiftStart;
@@ -37,11 +37,13 @@ class CommerceProfileInfo extends Component {
       });
     });
     hoursOnDay.sort((a, b) => a.id - b.id);
+
     return hoursOnDay;
   };
 
   renderRow = ({ item }) => {
     const { onDay } = this.state;
+
     return (
       <View
         style={{
@@ -111,21 +113,21 @@ class CommerceProfileInfo extends Component {
           <FlatList
             data={hoursOnDay}
             renderItem={this.renderRow}
-            keyExtractor={hourOnDay => hourOnDay.id}
+            keyExtractor={hourOnDay => hourOnDay.id.toString()}
           />
         </Card>
         <Card
-          title="Informacion de contacto"
+          title="Información de contacto"
           textAlign="center"
           containerStyle={{ borderRadius: 10 }}
         >
           <View style={{ flexDirection: 'column', marginRight: 15 }}>
             <Text
               style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`e-mail: ${this.props.email}`}</Text>
+            >{`E-mail: ${this.props.email}`}</Text>
             <Text
               style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`Telefeno: ${this.props.phone}`}</Text>
+            >{`Teléfeno: ${this.props.phone}`}</Text>
           </View>
         </Card>
       </View>

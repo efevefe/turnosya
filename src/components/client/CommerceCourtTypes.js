@@ -3,8 +3,7 @@ import {
   FlatList,
   Text,
   RefreshControl,
-  TouchableHighlight,
-  View
+  TouchableHighlight
 } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
