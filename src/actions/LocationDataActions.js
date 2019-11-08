@@ -4,7 +4,7 @@ import {
   ON_USER_LOCATION_CHANGE,
   ON_LOCATION_VALUES_RESET,
   ON_SPECIFIC_LOCATION_ENABLED
-} from './types';
+} from "./types";
 
 export const onLocationValueChange = ({ prop, value }) => {
   return { type: ON_LOCATION_VALUE_CHANGE, payload: { prop, value } };
@@ -22,6 +22,6 @@ export const onLocationValuesReset = () => {
   return { type: ON_LOCATION_VALUES_RESET };
 };
 
-export const specificLocationEnabled = value => {
+export const onSpecificLocationEnabled = value => {
   return { type: ON_SPECIFIC_LOCATION_ENABLED, payload: value };
 };

@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { connect } from 'react-redux';
-import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { Fab } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import { MAIN_COLOR } from '../../constants';
-import { IconButton } from '../common';
-import getEnvVars from '../../../environment';
-import ConnectedHits from './CommercesList.SearchHits';
-import ConnectedSearchBox from './CommercesList.SearchBox';
-import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces, onLocationChange } from '../../actions';
+import React, { Component } from "react";
+import { View } from "react-native";
+import { connect } from "react-redux";
+import { InstantSearch, Configure } from "react-instantsearch/native";
+import { Fab } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
+import { MAIN_COLOR } from "../../constants";
+import { IconButton } from "../common";
+import getEnvVars from "../../../environment";
+import ConnectedHits from "./CommercesList.SearchHits";
+import ConnectedSearchBox from "./CommercesList.SearchBox";
+import ConnectedStateResults from "./CommercesList.StateResults";
+import { readFavoriteCommerces, onLocationChange } from "../../actions";
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -26,20 +26,20 @@ class CommercesList extends Component {
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
-    
+
     this.props.readFavoriteCommerces();
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcons'),
-      header: navigation.getParam('header')
+      headerRight: navigation.getParam("rightIcons"),
+      header: navigation.getParam("header")
     };
   };
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+      <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
         <IconButton
           icon="md-search"
           containerStyle={{ paddingRight: 0 }}
@@ -60,7 +60,7 @@ class CommercesList extends Component {
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate('commercesFiltersScreen', {
+    this.props.navigation.navigate("commercesFiltersScreen", {
       locationEstablished: this.setLocationEstablished
     });
   };
@@ -97,18 +97,18 @@ class CommercesList extends Component {
   obtainGeolocationProps = () => {
     return this.props.locationEnabled
       ? {
-        aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
-        aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-      }
+          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+        }
       : null;
   };
 
   onMapFabPress = () => {
-    if (!this.state.isLocationEstablishedOnMap) {
+    if (!this.props.specificLocationEnabled) {
       this.props.onLocationChange({ latitude: null, longitude: null });
     }
 
-    this.props.navigation.navigate('commercesListMap');
+    this.props.navigation.navigate("commercesListMap");
   };
 
   render() {
@@ -151,6 +151,7 @@ const mapStateToProps = state => {
   } = state.commercesList;
 
   const {
+    specificLocationEnabled,
     address,
     city,
     provinceName,
@@ -165,6 +166,7 @@ const mapStateToProps = state => {
     provinceNameFilter,
     locationEnabled,
     locationRadiusKms,
+    specificLocationEnabled,
     latitude,
     longitude,
     address,

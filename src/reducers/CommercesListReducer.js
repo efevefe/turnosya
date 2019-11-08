@@ -10,7 +10,7 @@ import {
   ON_PROVINCE_FILTER_UPDATE,
   ON_UPDATE_ALL_FILTERS,
   ON_HITS_UPDATE
-} from '../actions/types';
+} from "../actions/types";
 
 const INITIAL_STATE = {
   onlyFavoriteCommerces: [],
@@ -18,10 +18,10 @@ const INITIAL_STATE = {
   loading: false,
   searching: true,
   areas: [],
-  provinceNameFilter: '',
+  provinceNameFilter: "",
   locationEnabled: false,
   locationButtonIndex: 0,
-  locationRadiusKms: 10,
+  locationRadiusKms: 5,
   marker: {},
   markers: []
 };

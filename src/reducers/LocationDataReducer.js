@@ -4,21 +4,21 @@ import {
   ON_USER_LOCATION_CHANGE,
   ON_LOCATION_VALUES_RESET,
   ON_SPECIFIC_LOCATION_ENABLED
-} from '../actions/types';
+} from "../actions/types";
 
 const INITIAL_STATE = {
   specificLocationEnabled: false,
-  address: '',
-  city: '',
-  provinceName: '',
-  country: '',
+  address: "",
+  city: "",
+  provinceName: "",
+  country: "",
   latitude: null,
   longitude: null,
   userLocation: {
-    address: '',
-    city: '',
-    provinceName: '',
-    country: '',
+    address: "",
+    city: "",
+    provinceName: "",
+    country: "",
     latitude: null,
     longitude: null
   }
@@ -31,7 +31,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_CHANGE:
       return state.specificLocationEnabled
         ? { ...state, ...action.payload }
-        : state;
+        : { ...state };
     case ON_USER_LOCATION_CHANGE:
       return state.specificLocationEnabled
         ? {

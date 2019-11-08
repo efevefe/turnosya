@@ -1,33 +1,25 @@
-import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
-import { Button } from 'react-native-elements';
-import { IconButton } from '../common';
-import { MAIN_COLOR } from '../../constants';
-import Map from '../common/Map';
+import React, { Component } from "react";
+import { View, StyleSheet } from "react-native";
+import { connect } from "react-redux";
+import { Button } from "react-native-elements";
+import { IconButton } from "../common";
+import { MAIN_COLOR } from "../../constants";
+import Map from "../common/Map";
 
 class CommercesFiltersMap extends Component {
-  onCancelOrAceptPress = () => {
-    this.props.latitude && this.props.longitude
-      ? this.props.navigation.state.params.locationEstablished(true)
-      : this.props.navigation.state.params.locationEstablished(false);
-
-    this.props.navigation.goBack();
-  };
-
   render() {
     return (
       <View style={windowContainerStyle}>
         <View style={windowTopContainerStyle}>
           <IconButton
             icon="md-close"
-            onPress={() => this.onCancelOrAceptPress()}
+            onPress={() => this.props.navigation.goBack()}
           />
           <Button
             title="Aceptar"
             type="clear"
-            titleStyle={{ color: 'white' }}
-            onPress={() => this.onCancelOrAceptPress()}
+            titleStyle={{ color: "white" }}
+            onPress={() => this.props.navigation.goBack()}
             style={applyFilterButtonStyle}
           />
         </View>
@@ -48,9 +40,9 @@ const {
   windowTopContainerStyle: {
     paddingTop: 20,
     height: 70,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row'
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row"
   },
   applyFilterButtonStyle: { marginRight: 10, padding: 5 }
 });

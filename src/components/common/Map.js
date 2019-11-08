@@ -1,23 +1,23 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { View, StyleSheet, Platform, Image, Text } from 'react-native';
-import { Fab } from 'native-base';
-import { SearchBar } from 'react-native-elements';
-import { onLocationChange, onCourtReservationValueChange } from '../../actions';
-import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
-import LocationMessages from '../common/LocationMessages';
-import { Toast } from '../common';
+import React from "react";
+import { connect } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { View, StyleSheet, Platform, Image, Text } from "react-native";
+import { Fab } from "native-base";
+import { SearchBar } from "react-native-elements";
+import { onLocationChange, onCourtReservationValueChange } from "../../actions";
+import { MAIN_COLOR, NAVIGATION_HEIGHT } from "../../constants";
+import LocationMessages from "../common/LocationMessages";
+import { Toast } from "../common";
 import {
   getAddressFromLatAndLong,
   getLatitudeAndLongitudeFromString
-} from '../../utils';
+} from "../../utils";
 
 class Map extends React.Component {
   state = {
-    defaultAddress: 'Córdoba, Argentina',
-    completeAddress: '',
+    defaultAddress: "Córdoba, Argentina",
+    completeAddress: "",
     locationAsked: false,
     userLocationChanged: false
   };
@@ -56,15 +56,15 @@ class Map extends React.Component {
     en la prop, y por mas que la calle sea una Avenida, Boulevard, pje ..porque después el mapa busca la dirección,
     y lo cambia con el nombre correcto
     */
-    let newAddress = `${address !== '' ? `Calle ${address}, ` : ''}`;
+    let newAddress = `${address !== "" ? `Calle ${address}, ` : ""}`;
 
-    newAddress += `${city !== '' ? city + ', ' : ''}`;
+    newAddress += `${city !== "" ? city + ", " : ""}`;
 
-    newAddress += `${provinceName !== '' ? provinceName + ', ' : ''}`;
+    newAddress += `${provinceName !== "" ? provinceName + ", " : ""}`;
 
-    newAddress += 'Argentina'; // gets error when addres is from other country
+    newAddress += "Argentina"; // gets error when addres is from other country
 
-    if (newAddress === 'Argentina') {
+    if (newAddress === "Argentina") {
       newAddress = this.state.defaultAddress;
     }
 
@@ -84,11 +84,11 @@ class Map extends React.Component {
         this.updateAddressFromLatAndLong({ latitude, longitude });
       } else {
         this.setState({
-          completeAddress: this.state.completeAddress.replace('Calle', '')
+          completeAddress: this.state.completeAddress.replace("Calle", "")
         });
         Toast.show({
           text:
-            'No se han encontrado resultados, intente modificar la dirección.'
+            "No se han encontrado resultados, intente modificar la dirección."
         });
       }
     } catch (e) {
@@ -106,7 +106,7 @@ class Map extends React.Component {
       });
       const { name, street, city, region, country } = addresResult;
 
-      const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+      const address = Platform.OS === "ios" ? name : `${street} ${name}`;
 
       const location = {
         latitude,
@@ -185,7 +185,7 @@ class Map extends React.Component {
             longitude
           }}
           title={address}
-          pinColor={'#1589FF'}
+          pinColor={"#1589FF"}
         >
           {/* <Image
             source={require('../../../assets/turnosya-grey.png')}
@@ -231,7 +231,7 @@ class Map extends React.Component {
             longitude: marker.longitude
           }}
           title={marker.name}
-          pinColor={'black'}
+          pinColor={"black"}
         >
           <MapView.Callout
             tooltip
@@ -246,19 +246,19 @@ class Map extends React.Component {
 
   onMarkerTitlePress = marker => {
     this.props.onCourtReservationValueChange({
-      prop: 'commerce',
+      prop: "commerce",
       value: marker
     });
 
-    this.props.navigation.navigate('commerceCourtTypes');
+    this.props.navigation.navigate("commerceCourtTypes");
   };
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
       const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
+        this.state.completeAddress !== "Córdoba, Argentina"
           ? this.state.completeAddress
-          : '';
+          : "";
 
       return (
         <View style={mainContainer}>
@@ -267,7 +267,7 @@ class Map extends React.Component {
             platform="android"
             placeholder="San Martín 30, Córdoba, Argentina"
             onChangeText={text => this.setState({ completeAddress: text })}
-            onCancel={() => this.setState({ completeAddress: '' })}
+            onCancel={() => this.setState({ completeAddress: "" })}
             value={validAddress}
             containerStyle={searchBarContainer}
             inputStyle={searchInput}
@@ -285,9 +285,17 @@ class Map extends React.Component {
     if (this.state.locationAsked) return <LocationMessages />;
   };
 
+  onLongPressHandler = e => {
+    if (this.props.specificLocationEnabled)
+      this.updateAddressFromLatAndLong({
+        latitude: e.nativeEvent.coordinate.latitude,
+        longitude: e.nativeEvent.coordinate.longitude
+      });
+  };
+
   render() {
     return (
-      <View style={{ flex: 1, position: 'relative' }}>
+      <View style={{ flex: 1, position: "relative" }}>
         <MapView
           {...this.props}
           style={{ flex: 1 }}
@@ -297,12 +305,7 @@ class Map extends React.Component {
           region={this.mapRegion()}
           onRegionChangeComplete={region => (this.region = region)}
           animateToRegion={{ region: this.region, duration: 3000 }}
-          onLongPress={e =>
-            this.updateAddressFromLatAndLong({
-              latitude: e.nativeEvent.coordinate.latitude,
-              longitude: e.nativeEvent.coordinate.longitude
-            })
-          }
+          onLongPress={this.onLongPressHandler}
         >
           {this.renderUserMarker()}
           {this.renderPointerMarker()}
@@ -326,21 +329,21 @@ class Map extends React.Component {
 const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
   mainContainer: {
     height: NAVIGATION_HEIGHT + 20,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 10,
-    backgroundColor: 'transparent',
-    position: 'absolute'
+    backgroundColor: "transparent",
+    position: "absolute"
   },
   searchBarContainer: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     height: NAVIGATION_HEIGHT,
     paddingTop: 4,
     paddingRight: 5,
     paddingLeft: 5,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1
@@ -359,6 +362,7 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 
 const mapStateToProps = state => {
   const {
+    specificLocationEnabled,
     address,
     city,
     provinceName,
@@ -371,6 +375,7 @@ const mapStateToProps = state => {
   const { markers } = state.commercesList;
 
   return {
+    specificLocationEnabled,
     address,
     city,
     provinceName,
