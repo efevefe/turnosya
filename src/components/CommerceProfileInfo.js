@@ -3,6 +3,7 @@ import { Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { onScheduleRead } from '../actions';
 import { Spinner } from './common';
+import Map from './common/Map';
 import { DAYS } from '../constants';
 import { View } from 'native-base';
 import { Card } from 'react-native-elements';
@@ -103,8 +104,13 @@ class CommerceProfileInfo extends Component {
       var hoursOnDay = this.renderSchedule();
     }
 
+    const { address, latitude, longitude } = this.props.locationData;
+    const marker = { address, latitude, longitude };
     return (
-      <View>
+      <View style={{ flex: 1 }}>
+        <View style={{ height: '30%' }}>
+          <Map marker={marker} draggable={false} />
+        </View>
         <Card
           title="Horarios"
           textAlign="center"

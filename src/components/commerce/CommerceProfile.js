@@ -40,6 +40,7 @@ class CommerceProfile extends Component {
     pictureProfileEdit: false,
     pictureHeaderEdit: false,
     newProfilePicture: false,
+    newHeaderPicture: false,
     stateBeforeChanges: null,
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     nameError: '',
@@ -89,7 +90,8 @@ class CommerceProfile extends Component {
       description,
       province,
       area,
-      profilePicture
+      profilePicture,
+      headerPicture
     } = this.props;
 
     this.setState({
@@ -103,7 +105,8 @@ class CommerceProfile extends Component {
         city,
         province,
         area,
-        profilePicture
+        profilePicture,
+        headerPicture
       }
     });
 
@@ -138,10 +141,11 @@ class CommerceProfile extends Component {
         province,
         area,
         profilePicture,
+        headerPicture,
         commerceId
       } = this.props;
       const { address, city, latitude, longitude } = this.props.locationData;
-      const { newProfilePicture } = this.state;
+      const { newProfilePicture, newHeaderPicture } = this.state;
 
       if (newProfilePicture) {
         var profilePicture = await imageToBlob(profilePicture);
@@ -172,6 +176,7 @@ class CommerceProfile extends Component {
           province,
           area,
           profilePicture,
+          headerPicture,
           commerceId,
           latitude,
           longitude
@@ -236,12 +241,24 @@ class CommerceProfile extends Component {
     const response = await ImagePicker.launchImageLibraryAsync(options);
 
     if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      console.log('a', this.state.pictureProfileEdit);
+      console.log('b', this.state.pictureHeaderEdit);
+
+      if (this.state.pictureProfileEdit) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      } else {
+        this.props.onCommerceValueChange({
+          prop: 'headerPicture',
+          value: response.uri
+        });
+        this.setState({ newHeaderPicture: true });
+      }
     }
+    this.onEditPicturePress();
   };
 
   onTakePicturePress = async () => {
@@ -259,17 +276,28 @@ class CommerceProfile extends Component {
     const response = await ImagePicker.launchCameraAsync(options);
 
     if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (this.state.pictureProfileEdit) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      } else {
+        this.props.onCommerceValueChange({
+          prop: 'headerPicture',
+          value: response.uri
+        });
+        this.setState({ newHeaderPicture: true });
+      }
     }
+    this.onEditPicturePress();
   };
 
   onDeletePicturePress = () => {
-    this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
-    this.setState({ pictureOptionsVisible: false });
+    this.state.pictureProfileEdit
+      ? this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' })
+      : this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+    this.onEditPicturePress();
   };
 
   renderName = () => {
@@ -512,9 +540,7 @@ class CommerceProfile extends Component {
             position: 'absolute'
           }}
           source={
-            this.props.profilePicture
-              ? { uri: this.props.profilePicture }
-              : null
+            this.props.headerPicture ? { uri: this.props.headerPicture } : null
           }
         />
         <View style={headerContainerStyle}>

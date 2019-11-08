@@ -13,7 +13,8 @@ import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onScheduleRead
+  onScheduleRead,
+  onLocationValuesReset
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -107,7 +108,13 @@ class CommerceProfileView extends Component {
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
-    const { profilePicture, name, commerceId, navigation } = this.props;
+    const {
+      profilePicture,
+      headerPicture,
+      name,
+      commerceId,
+      navigation
+    } = this.props;
 
     return (
       <ScrollView>
@@ -118,7 +125,7 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={profilePicture ? { uri: profilePicture } : null}
+            source={headerPicture ? { uri: headerPicture } : null}
           />
 
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -131,7 +138,10 @@ class CommerceProfileView extends Component {
                   size={30}
                 />
               }
-              onPress={() => navigation.navigate('commerceProfileInfo')}
+              onPress={() => {
+                this.props.onLocationValuesReset();
+                navigation.navigate('commerceProfileInfo');
+              }}
             />
 
             <Button
@@ -234,6 +244,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -268,6 +279,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -284,6 +296,7 @@ export default connect(
     onCommerceReadProfile,
     registerFavoriteCommerce,
     deleteFavoriteCommerce,
-    onScheduleRead
+    onScheduleRead,
+    onLocationValuesReset
   }
 )(CommerceProfileView);
