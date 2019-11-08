@@ -67,17 +67,29 @@ class ScheduleRegister extends Component {
   }
 
   workShiftsValidate = () => {
-    const { nextReservationsDates } = this.props;
+    const { nextReservationsDates, cards } = this.props;
 
     if (nextReservationsDates) {
-      if (!this._compatibleSchedule()) {
-        return this.setState({
-          reservationsModalVisible: true,
-        });
+      if (cards) {
+        if (!this._compatibleSchedule()) {
+          return this.setState({ reservationsModalVisible: true });
+        }
+        return this.onScheduleSave(formattedMoment());
       }
+
+      // esto todavia no hace nada
+      return this.setState({
+        deleteModalVisible: true,
+        lastReservationDate: nextReservationsDates[nextReservationsDates.length - 1]
+      });
     }
 
-    this.onScheduleSave(formattedMoment());
+    if (cards) {
+      return this.onScheduleSave(formattedMoment());
+    }
+
+    // esto todavia no hace nada
+    return this.setState({ deleteModalVisible: true });
   }
 
   _compatibleSchedule = () => {
@@ -188,6 +200,66 @@ class ScheduleRegister extends Component {
     );
   };
 
+  renderUpdateScheduleModal = () => {
+    const { lastReservationDate } = this.state;
+
+    return (
+      <Menu
+        title={
+          'Los nuevos horarios de atencion entraran en vigencia luego del ' +
+          `${DAYS[lastReservationDate.day()]} ` +
+          `${lastReservationDate.format('D')} de ` +
+          `${MONTHS[lastReservationDate.month()]}, ` +
+          'debido a que entran en conflicto con una o mas reservas existentes ' +
+          'hasta esa fecha. ¿Desea confirmar los cambios?'}
+        onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
+        isVisible={this.state.reservationsModalVisible}
+      >
+        <MenuItem
+          title="Acepar"
+          icon="md-checkmark"
+          onPress={this.onModalSavePress}
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem
+          title="Cancelar"
+          icon="md-close"
+          onPress={() => this.setState({ reservationsModalVisible: false })}
+        />
+      </Menu>
+    );
+  }
+
+  renderDeleteScheduleModal = () => {
+    const { lastReservationDate } = this.state;
+
+    return (
+      <Menu
+        title={
+          'Tienes reservas hasta el ' +
+          `${DAYS[lastReservationDate.day()]} ` +
+          `${lastReservationDate.format('D')} de ` +
+          `${MONTHS[lastReservationDate.month()]}, ` +
+          'por lo que la baja de los horarios de atencion entrará en ' +
+          'vigencia luego de esa fecha. ¿Desea confirmar los cambios?'}
+        onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
+        isVisible={this.state.reservationsModalVisible}
+      >
+        <MenuItem
+          title="Acepar"
+          icon="md-checkmark"
+          onPress={() => console.log('eliminar horarios')}
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem
+          title="Cancelar"
+          icon="md-close"
+          onPress={() => this.setState({ deleteModalVisible: false })}
+        />
+      </Menu>
+    );
+  }
+
   renderList = () => {
     const { cards, refreshing, loadingReservations } = this.props;
 
@@ -214,37 +286,13 @@ class ScheduleRegister extends Component {
   };
 
   render() {
-    const { lastReservationDate } = this.state;
-
     if (this.props.loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
         {this.renderList()}
-
-        <Menu
-          title={
-            'Los nuevos horarios de atencion entraran en vigencia luego del ' +
-            `${DAYS[lastReservationDate.day()]} ` +
-            `${lastReservationDate.format('D')} de ` +
-            `${MONTHS[lastReservationDate.month()]}, ` +
-            'debido a que entran en conflicto con una o mas reservas existentes ' +
-            'hasta esa fecha. ¿Desea confirmar los cambios?'}
-          onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
-          isVisible={this.state.reservationsModalVisible}
-        >
-          <MenuItem
-            title="Acepar"
-            icon="md-checkmark"
-            onPress={this.onModalSavePress}
-          />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ reservationsModalVisible: false })}
-          />
-        </Menu>
+        {this.renderUpdateScheduleModal()}
+        {this.renderDeleteScheduleModal()}
 
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
