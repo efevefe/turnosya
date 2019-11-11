@@ -1,41 +1,34 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  StatusBar
-} from 'react-native';
-import { Overlay, Divider, Image } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { View, StyleSheet, StatusBar } from 'react-native';
+import { Overlay, Image } from 'react-native-elements';
+import { IconButton } from './IconButton';
 
-class PictureView extends Component {
+const PictureView = props => {
   renderPicture = () => {
-    if (this.props.picture === '') return null;
+    if (!props.picture) return null;
 
     return (
       <Overlay
-        overlayStyle={[styles.overlayStyle, this.props.overlayStyle]}
-        onBackdropPress={this.props.onBackdropPress}
-        isVisible={this.props.isVisible}
+        overlayStyle={[styles.overlayStyle, props.overlayStyle]}
+        onBackdropPress={props.onBackdropPress}
+        isVisible={props.isVisible}
         animationType="fade"
         fullScreen
         overlayBackgroundColor="black"
       >
-        <View style={{ flex: 1 }}>
-          <TouchableHighlight
-            onPress={this.props.onClosePress}
-            style={{ alignItems: 'flex-end', marginTop: 20, marginRight: 15 }}
-          >
-            <Ionicons name="md-close" color={'white'} size={30} />
-          </TouchableHighlight>
-          <View style={{ justifyContent: 'center', flex: 1 }}>
+        <View style={styles.mainContainerStyle}>
+          <IconButton
+            icon='md-close'
+            containerStyle={styles.iconButtonContainerStyle}
+            onPress={props.onClosePress}
+          />
+          <View style={styles.imageContainerStyle}>
             <Image
               style={{
-                height: this.props.height,
-                width: this.props.width
+                height: props.height,
+                width: props.width
               }}
-              source={{ uri: this.props.picture }}
+              source={{ uri: props.picture }}
             />
             <StatusBar hidden />
           </View>
@@ -44,15 +37,25 @@ class PictureView extends Component {
     );
   };
 
-  render() {
-    return this.renderPicture();
-  }
+  return renderPicture();
 }
 
 const styles = StyleSheet.create({
   overlayStyle: {
     padding: 0,
     alignItems: 'stretch'
+  },
+  mainContainerStyle: {
+    flex: 1,
+    alignItems: 'flex-end'
+  },
+  iconButtonContainerStyle: {
+    padding: 10,
+    position: 'absolute'
+  },
+  imageContainerStyle: {
+    justifyContent: 'center',
+    flex: 1
   }
 });
 

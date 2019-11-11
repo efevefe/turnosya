@@ -284,6 +284,7 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
         headerPicture: headerPictureURL ? headerPictureURL : headerPicture
       }
     });
+    
     navigation.goBack();
   } catch (error) {
     dispatch({ type: ON_COMMERCE_UPDATE_FAIL });

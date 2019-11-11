@@ -282,9 +282,13 @@ class CommerceProfile extends Component {
   };
 
   onDeletePicturePress = () => {
-    this.state.profilePictureEdit
-      ? this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' })
-      : this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+    if (this.state.profilePictureEdit) {
+      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' })
+      this.setState({ newProfilePicture: false });
+    } else {
+      this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+      this.setState({ newHeaderPicture: false });
+    }
 
     this.onEditPicturePress();
   };
