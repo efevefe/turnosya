@@ -78,64 +78,44 @@ export const onUserRead = () => {
   };
 };
 
-export const onUserUpdateNoPicture = ({
+export const onUserUpdate = ({
   firstName,
   lastName,
   phone,
   profilePicture
-}) => {
-  // on this function, profilePicture is an URL
+}) => async dispatch => {
+  dispatch({ type: ON_USER_UPDATING });
 
   const { currentUser } = firebase.auth();
-  const db = firebase.firestore();
 
-  return dispatch => {
-    dispatch({ type: ON_USER_UPDATING });
+  let url = null;
 
-    db.doc(`Profiles/${currentUser.uid}`)
-      .update({ firstName, lastName, phone, profilePicture })
-      .then(dispatch({ type: ON_USER_UPDATED, payload: profilePicture }))
-      .catch(error => dispatch({ type: ON_USER_UPDATE_FAIL }));
-  };
-};
+  try {
+    if (profilePicture instanceof Blob) {
+      const snapshot = await firebase
+        .storage()
+        .ref(`Users/${currentUser.uid}`)
+        .child(`${currentUser.uid}-ProfilePicture`).put(profilePicture);
 
-export const onUserUpdateWithPicture = ({
-  firstName,
-  lastName,
-  phone,
-  profilePicture
-}) => {
-  // on this function, profilePicture is a BLOB
+      url = await snapshot.ref.getDownloadURL();
+    }
 
-  const { currentUser } = firebase.auth();
-  const ref = firebase
-    .storage()
-    .ref(`Users/${currentUser.uid}`)
-    .child(`${currentUser.uid}-ProfilePicture`);
-  const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: ON_USER_UPDATING });
-
-    ref
-      .put(profilePicture)
-      .then(snapshot => {
-        profilePicture.close();
-        snapshot.ref
-          .getDownloadURL()
-          .then(url => {
-            db.doc(`Profiles/${currentUser.uid}`)
-              .update({ firstName, lastName, phone, profilePicture: url })
-              .then(dispatch({ type: ON_USER_UPDATED, payload: url }))
-              .catch(error => dispatch({ type: ON_USER_UPDATE_FAIL }));
-          })
-          .catch(error => dispatch({ type: ON_USER_UPDATE_FAIL }));
+    await firebase
+      .firestore()
+      .doc(`Profiles/${currentUser.uid}`)
+      .update({
+        firstName,
+        lastName,
+        phone,
+        profilePicture: url ? url : profilePicture
       })
-      .catch(error => {
-        profilePicture.close();
-        dispatch({ type: ON_USER_UPDATE_FAIL });
-      });
-  };
+
+    dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture })
+  } catch (error) {
+    dispatch({ type: ON_USER_UPDATE_FAIL })
+  } finally {
+    profilePicture.close();
+  }
 };
 
 export const onUserDelete = password => {
