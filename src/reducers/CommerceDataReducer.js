@@ -68,7 +68,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, refreshing: true };
     case ON_COMMERCE_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
-      return { ...state, profilePicture: action.payload, refreshing: false };
+      return { ...state, ...action.payload, refreshing: false };
     case ON_COMMERCE_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };

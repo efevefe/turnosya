@@ -10,8 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
 import {
   onCommerceRead,
-  onCommerceUpdateWithPicture,
-  onCommerceUpdateNoPicture,
+  onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
   onAreasRead,
@@ -37,8 +36,8 @@ const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 class CommerceProfile extends Component {
   state = {
     pictureOptionsVisible: false,
-    pictureProfileEdit: false,
-    pictureHeaderEdit: false,
+    profilePictureEdit: false,
+    headerPictureEdit: false,
     newProfilePicture: false,
     newHeaderPicture: false,
     stateBeforeChanges: null,
@@ -70,6 +69,7 @@ class CommerceProfile extends Component {
       longitude,
       country
     } = this.props.locationData;
+
     const location = {
       address,
       city,
@@ -111,6 +111,7 @@ class CommerceProfile extends Component {
     });
 
     this.props.onLocationChange({ location });
+
     this.props.navigation.setParams({
       title: 'Modificar Datos',
       rightIcon: this.renderSaveButton(),
@@ -144,46 +145,32 @@ class CommerceProfile extends Component {
         headerPicture,
         commerceId
       } = this.props;
+
       const { address, city, latitude, longitude } = this.props.locationData;
       const { newProfilePicture, newHeaderPicture } = this.state;
 
-      if (newProfilePicture) {
+      if (newProfilePicture)
         var profilePicture = await imageToBlob(profilePicture);
-        this.props.onCommerceUpdateWithPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
-      } else {
-        this.props.onCommerceUpdateNoPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          headerPicture,
-          commerceId,
-          latitude,
-          longitude
-        });
-      }
 
-      this.props.navigation.goBack(null);
+      if (newHeaderPicture)
+        var headerPicture = await imageToBlob(headerPicture);
+
+      this.props.onCommerceUpdate({
+        name,
+        cuit,
+        email,
+        phone,
+        description,
+        address,
+        city,
+        province,
+        area,
+        profilePicture,
+        headerPicture,
+        commerceId,
+        latitude,
+        longitude
+      }, this.props.navigation);
     }
   };
 
@@ -196,10 +183,12 @@ class CommerceProfile extends Component {
         value: stateBeforeChanges[prop]
       });
     }
+
     this.props.onLocationValueChange({
       prop: 'address',
       value: stateBeforeChanges.address
     });
+
     this.props.onLocationValueChange({
       prop: 'city',
       value: stateBeforeChanges.city
@@ -210,19 +199,15 @@ class CommerceProfile extends Component {
   };
 
   onEditPicturePress = () => {
-    this.setState({ pictureOptionsVisible: false });
-    this.setState({ pictureProfileEdit: false });
-    this.setState({ pictureHeaderEdit: false });
+    this.setState({ pictureOptionsVisible: false, profilePictureEdit: false, headerPictureEdit: false });
   };
 
   onEditProfilePicturePress = () => {
-    this.setState({ pictureProfileEdit: !this.state.pictureProfileEdit });
-    this.setState({ pictureOptionsVisible: true });
+    this.setState({ profilePictureEdit: true, pictureOptionsVisible: true });
   };
 
   onEditHeaderPicturePress = () => {
-    this.setState({ pictureHeaderEdit: !this.state.pictureHeaderEdit });
-    this.setState({ pictureOptionsVisible: true });
+    this.setState({ headerPictureEdit: true, pictureOptionsVisible: true });
   };
 
   onChoosePicturePress = async () => {
@@ -235,29 +220,29 @@ class CommerceProfile extends Component {
     const options = {
       mediaTypes: 'Images',
       allowsEditing: true,
-      aspect: [1, 1]
+      aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
     };
 
     const response = await ImagePicker.launchImageLibraryAsync(options);
 
     if (!response.cancelled) {
-      console.log('a', this.state.pictureProfileEdit);
-      console.log('b', this.state.pictureHeaderEdit);
-
-      if (this.state.pictureProfileEdit) {
+      if (this.state.profilePictureEdit) {
         this.props.onCommerceValueChange({
           prop: 'profilePicture',
           value: response.uri
         });
+
         this.setState({ newProfilePicture: true });
       } else {
         this.props.onCommerceValueChange({
           prop: 'headerPicture',
           value: response.uri
         });
+
         this.setState({ newHeaderPicture: true });
       }
     }
+
     this.onEditPicturePress();
   };
 
@@ -270,33 +255,37 @@ class CommerceProfile extends Component {
     const options = {
       mediaTypes: 'Images',
       allowsEditing: true,
-      aspect: [1, 1]
+      aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
     };
 
     const response = await ImagePicker.launchCameraAsync(options);
 
     if (!response.cancelled) {
-      if (this.state.pictureProfileEdit) {
+      if (this.state.profilePictureEdit) {
         this.props.onCommerceValueChange({
           prop: 'profilePicture',
           value: response.uri
         });
+
         this.setState({ newProfilePicture: true });
       } else {
         this.props.onCommerceValueChange({
           prop: 'headerPicture',
           value: response.uri
         });
+
         this.setState({ newHeaderPicture: true });
       }
     }
+
     this.onEditPicturePress();
   };
 
   onDeletePicturePress = () => {
-    this.state.pictureProfileEdit
+    this.state.profilePictureEdit
       ? this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' })
       : this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+
     this.onEditPicturePress();
   };
 
@@ -513,10 +502,13 @@ class CommerceProfile extends Component {
     const {
       containerStyle,
       headerContainerStyle,
+      headerPictureStyle,
       avatarContainerStyle,
       avatarStyle,
+      textContainerStyle,
       infoContainerStyle
     } = styles;
+
     if (this.props.loading) return <Spinner />;
 
     return (
@@ -533,25 +525,24 @@ class CommerceProfile extends Component {
           />
         }
       >
-        <Image
-          style={{
-            height: imageSizeHeight,
-            width: imageSizeWidth,
-            position: 'absolute'
-          }}
-          source={
-            this.props.headerPicture ? { uri: this.props.headerPicture } : null
-          }
-        />
         <View style={headerContainerStyle}>
+          <Image
+            style={headerPictureStyle}
+            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
+          >
+            <Icon
+              name="md-camera"
+              color={MAIN_COLOR}
+              type="ionicon"
+              size={20}
+              reverse
+              onPress={this.onEditHeaderPicturePress}
+            />
+          </Image>
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={
-                this.props.profilePicture
-                  ? { uri: this.props.profilePicture }
-                  : null
-              }
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
@@ -562,28 +553,15 @@ class CommerceProfile extends Component {
               type="ionicon"
               size={20}
               reverse
-              containerStyle={{ padding: 5, position: 'absolute' }}
+              containerStyle={{ position: 'absolute' }}
               onPress={this.onEditProfilePicturePress}
             />
           </View>
+        </View>
+        <View style={textContainerStyle}>
           {this.renderName()}
           {this.renderLocation()}
-          <Icon
-            name="md-camera"
-            color={MAIN_COLOR}
-            type="ionicon"
-            size={20}
-            reverse
-            containerStyle={{
-              position: 'absolute',
-              alignSelf: 'flex-end',
-              marginTop: avatarSize / 5.5,
-              marginRight: 5
-            }}
-            onPress={this.onEditHeaderPicturePress}
-          />
         </View>
-
         <Divider
           style={{
             backgroundColor: 'grey',
@@ -724,8 +702,9 @@ class CommerceProfile extends Component {
             />
           </CardSection>
         </View>
+
         <Menu
-          title="Foto de Perfil"
+          title={this.state.profilePictureEdit ? "Foto de Perfil" : "Foto de Portada"}
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
@@ -760,16 +739,30 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: imageSizeHeight / 2
+    height: imageSizeHeight * 1.5,
+    marginBottom: 15
+  },
+  headerPictureStyle: {
+    height: imageSizeHeight,
+    width: imageSizeWidth,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end'
   },
   avatarContainerStyle: {
+    position: 'absolute',
+    paddingTop: imageSizeHeight * 0.5,
     justifyContent: 'flex-end',
     alignItems: 'flex-end'
   },
   avatarStyle: {
+    margin: 5,
+    marginTop: 0,
     borderWidth: 4,
-    borderColor: MAIN_COLOR,
-    marginBottom: 10
+    borderColor: MAIN_COLOR
+  },
+  textContainerStyle: {
+    alignSelf: 'stretch',
+    alignItems: 'center'
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
@@ -798,6 +791,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -831,6 +825,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -842,8 +837,7 @@ export default connect(
   mapStateToProps,
   {
     onCommerceRead,
-    onCommerceUpdateWithPicture,
-    onCommerceUpdateNoPicture,
+    onCommerceUpdate,
     onCommerceValueChange,
     onProvincesIdRead,
     onAreasRead,
