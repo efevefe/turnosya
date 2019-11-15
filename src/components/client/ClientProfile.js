@@ -19,8 +19,7 @@ import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 import {
   onUserRead,
-  onUserUpdateWithPicture,
-  onUserUpdateNoPicture,
+  onUserUpdate,
   onClientDataValueChange,
   onLocationValuesReset
 } from '../../actions';
@@ -84,29 +83,22 @@ class ClientProfile extends Component {
         var { firstName, lastName, phone, profilePicture } = this.props;
         const { newProfilePicture } = this.state;
 
-        if (newProfilePicture) {
+        if (newProfilePicture)
           var profilePicture = await imageToBlob(profilePicture);
-          this.props.onUserUpdateWithPicture({
-            firstName,
-            lastName,
-            phone,
-            profilePicture
-          });
-        } else {
-          this.props.onUserUpdateNoPicture({
-            firstName,
-            lastName,
-            phone,
-            profilePicture
-          });
-        }
+
+        this.props.onUserUpdate({
+          firstName,
+          lastName,
+          phone,
+          profilePicture
+        });
 
         this.disableEdit();
       }
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
   onCancelPress = () => {
     const { stateBeforeChanges } = this.state;
@@ -498,8 +490,7 @@ export default connect(
   mapStateToProps,
   {
     onUserRead,
-    onUserUpdateWithPicture,
-    onUserUpdateNoPicture,
+    onUserUpdate,
     onClientDataValueChange,
     onLocationValuesReset
   }

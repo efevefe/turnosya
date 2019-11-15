@@ -62,9 +62,9 @@ const mainSearchStack = createStackNavigator(
     },
     showMyAddressMap: {
       screen: Map,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Dirección'
-      })
+      }
     },
     commerceCourtTypes: {
       screen: CommerceCourtTypes,

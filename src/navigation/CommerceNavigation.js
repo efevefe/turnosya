@@ -156,9 +156,9 @@ const profileStack = createStackNavigator(
     },
     showMyAddressMap: {
       screen: Map,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Dirección'
-      })
+      }
     },
     changeAddressMap: {
       screen: LocationMap,
