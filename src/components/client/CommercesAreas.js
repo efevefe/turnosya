@@ -23,9 +23,11 @@ class CommercesAreas extends Component {
   renderRightIcon = () => {
     return (
       <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('commercesList', { areaName: '' })}
+        onPress={() =>
+          this.props.navigation.navigate('commercesList', { areaName: '' })
+        }
         activeOpacity={0.5}
-        style={{ backgorundColor: "transparent" }}
+        style={{ backgorundColor: 'transparent' }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text

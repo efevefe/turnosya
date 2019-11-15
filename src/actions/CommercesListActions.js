@@ -10,13 +10,24 @@ import {
   ON_AREAS_SEARCH_READ,
   ON_COMMERCE_SEARCHING,
   ON_PROVINCE_FILTER_UPDATE,
-  ON_UPDATE_ALL_FILTERS
+  ON_UPDATE_ALL_FILTERS,
+  ON_HITS_UPDATE
 } from './types';
 
 export const commerceSearching = isSearching => ({
   type: ON_COMMERCE_SEARCHING,
   payload: isSearching
 });
+
+export const commerceHitsUpdate = hits => {
+  const normalizedHits = [];
+  hits.forEach(hit => {
+    if (hit._geoloc) {
+      normalizedHits.push({ ...hit, latitude: hit._geoloc.lat, longitude: hit._geoloc.lng })
+    }
+  })
+  return { type: ON_HITS_UPDATE, payload: normalizedHits };
+};
 
 export const areasRead = () => {
   const db = firebase.firestore();
@@ -82,7 +93,8 @@ export const readOnlyFavoriteCommerces = () => dispatch => {
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
-  return db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
+  return db
+    .collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
     .onSnapshot(snapshot => {
       const favoriteCommerces = [];
       const onlyFavoriteCommerces = [];

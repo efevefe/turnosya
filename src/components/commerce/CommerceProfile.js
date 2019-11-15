@@ -7,18 +7,7 @@ import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  Picker,
-  IconButton,
-  Button
-} from '../common';
 import { MAIN_COLOR } from '../../constants';
-import { imageToBlob, validateValueType, trimString } from '../../utils';
 import {
   onCommerceRead,
   onCommerceUpdateWithPicture,
@@ -29,6 +18,17 @@ import {
   onLocationValueChange,
   onLocationChange
 } from '../../actions';
+import {
+  CardSection,
+  Input,
+  Spinner,
+  Menu,
+  MenuItem,
+  Picker,
+  IconButton,
+  Button
+} from '../common';
+import { imageToBlob, validateValueType, trimString } from '../../utils';
 
 class CommerceProfile extends Component {
   state = {
@@ -74,7 +74,7 @@ class CommerceProfile extends Component {
       country
     };
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
   }
 
@@ -108,7 +108,7 @@ class CommerceProfile extends Component {
       area,
       profilePicture
     } = this.props;
-    const { address, city } = this.props.locationData;
+    const { address, city, latitude, longitude } = this.props.locationData;
 
     this.setState({
       editEnabled: true,
@@ -122,7 +122,9 @@ class CommerceProfile extends Component {
         city,
         province,
         area,
-        profilePicture
+        profilePicture,
+        latitude,
+        longitude
       }
     });
     this.props.navigation.setParams({
@@ -133,57 +135,61 @@ class CommerceProfile extends Component {
   };
 
   onSavePress = async () => {
-    if (this.validateMinimumData()) {
-      var {
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        province,
-        area,
-        profilePicture,
-        commerceId
-      } = this.props;
-      const { address, city, latitude, longitude } = this.props.locationData;
-      const { newProfilePicture } = this.state;
+    try {
+      if (this.validateMinimumData()) {
+        var {
+          name,
+          cuit,
+          email,
+          phone,
+          description,
+          province,
+          area,
+          profilePicture,
+          commerceId
+        } = this.props;
+        const { address, city, latitude, longitude } = this.props.locationData;
+        const { newProfilePicture } = this.state;
 
-      if (newProfilePicture) {
-        var profilePicture = await imageToBlob(profilePicture);
-        this.props.onCommerceUpdateWithPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
-      } else {
-        this.props.onCommerceUpdateNoPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
+        if (newProfilePicture) {
+          var profilePicture = await imageToBlob(profilePicture);
+          this.props.onCommerceUpdateWithPicture({
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            commerceId,
+            latitude,
+            longitude
+          });
+        } else {
+          this.props.onCommerceUpdateNoPicture({
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            commerceId,
+            latitude,
+            longitude
+          });
+        }
+
+        this.disableEdit();
       }
-
-      this.disableEdit();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -191,19 +197,29 @@ class CommerceProfile extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
+      if (prop === 'address' || prop === 'city') {
+        this.props.onCommerceValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
+      if (prop === 'latitude' || prop === 'longitude') {
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
       this.props.onCommerceValueChange({
         prop,
         value: stateBeforeChanges[prop]
       });
     }
-    this.props.onLocationValueChange({
-      prop: 'address',
-      value: stateBeforeChanges.address
-    });
-    this.props.onLocationValueChange({
-      prop: 'city',
-      value: stateBeforeChanges.city
-    });
 
     this.cleanErrors();
     this.disableEdit();
@@ -243,49 +259,57 @@ class CommerceProfile extends Component {
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    if (Constants.platform.ios) {
-      await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
+      if (Constants.platform.ios) {
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      }
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    const response = await ImagePicker.launchImageLibraryAsync(options);
+      const response = await ImagePicker.launchImageLibraryAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   onTakePicturePress = async () => {
-    this.onEditPicturePress();
+    try {
+      this.onEditPicturePress();
 
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+      await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      await Permissions.askAsync(Permissions.CAMERA);
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: [1, 1]
+      };
 
-    const response = await ImagePicker.launchCameraAsync(options);
+      const response = await ImagePicker.launchCameraAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        this.props.onCommerceValueChange({
+          prop: 'profilePicture',
+          value: response.uri
+        });
+        this.setState({ newProfilePicture: true });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -302,9 +326,9 @@ class CommerceProfile extends Component {
 
   renderLocation = () => {
     const { address, city } = this.props.locationData;
-    const { provinceId, name } = this.props.province;
+    const { name } = this.props.province;
 
-    if (address || city || provinceId) {
+    if (address || city || name) {
       const { locationContainerStyle } = styles;
 
       return (
@@ -322,35 +346,43 @@ class CommerceProfile extends Component {
   };
 
   onProvincePickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.provincesList.find(
-        province => province.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.provincesList.find(
+          province => province.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'province',
+          value: { provinceId: value, name: label }
+        });
 
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: label
-      });
+        this.props.onLocationValueChange({
+          prop: 'provinceName',
+          value: label
+        });
+      }
+
+      this.renderProvinceError();
+    } catch (e) {
+      console.error(e);
     }
-
-    this.renderProvinceError();
   };
 
   onAreaPickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.areasList.find(
-        area => area.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.areasList.find(
+          area => area.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'area',
+          value: { areaId: value, name: label }
+        });
 
-      this.renderAreaError();
+        this.renderAreaError();
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -476,25 +508,8 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    const {
-      address,
-      provinceName,
-      city,
-      latitude,
-      longitude
-    } = this.props.locationData;
-
     this.props.navigation.navigate('changeAddressMap', {
-      callback: this.onProvinceNameChangeOnMap,
-      markers: [
-        {
-          address,
-          provinceName,
-          city,
-          latitude,
-          longitude
-        }
-      ]
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 

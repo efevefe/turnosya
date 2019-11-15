@@ -8,8 +8,9 @@ import {
   ON_AREAS_SEARCH_READ,
   ON_COMMERCE_SEARCHING,
   ON_PROVINCE_FILTER_UPDATE,
-  ON_UPDATE_ALL_FILTERS
-} from '../actions/types';
+  ON_UPDATE_ALL_FILTERS,
+  ON_HITS_UPDATE
+} from "../actions/types";
 
 const INITIAL_STATE = {
   onlyFavoriteCommerces: [],
@@ -17,10 +18,12 @@ const INITIAL_STATE = {
   loading: false,
   searching: true,
   areas: [],
-  provinceNameFilter: '',
+  provinceNameFilter: "",
   locationEnabled: false,
   locationButtonIndex: 0,
-  locationRadiusKms: 10
+  locationRadiusKms: 5,
+  marker: {},
+  markers: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -55,6 +58,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, provinceNameFilter: action.payload };
     case ON_UPDATE_ALL_FILTERS:
       return { ...state, ...action.payload };
+    case ON_HITS_UPDATE:
+      return { ...state, markers: action.payload };
     default:
       return state;
   }

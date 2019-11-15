@@ -39,6 +39,14 @@ class ScheduleRegister extends Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.card !== this.props.card) {
+      this.renderPickerFirstShiftEnd();
+      this.renderPickerSecondShiftStart();
+      this.renderPickerSecondShiftEnd();
+    }
+  }
+
   getDisabledCheckBox = () => {
     return (
       this.props.card.firstShiftEnd === '' ||
@@ -68,7 +76,6 @@ class ScheduleRegister extends Component {
 
   renderPickerSecondShiftStart = () => {
     const { firstShiftEnd, secondShiftStart } = this.props.card;
-    console.log(secondShiftStart);
     secondShiftStart > firstShiftEnd ||
     secondShiftStart === null ||
     secondShiftStart === ''
@@ -128,10 +135,8 @@ class ScheduleRegister extends Component {
   };
 
   onSecondTurnPress = () => {
-    const { checked } = this.state;
-
     if (this.state.firstShiftEndError === '') {
-      this.setState({ checked: !checked });
+      this.setState({ checked: !this.state.checked });
 
       this.props.onScheduleCardValueChange({
         id: this.props.card.id,
@@ -144,41 +149,42 @@ class ScheduleRegister extends Component {
   };
 
   renderSecondTurn() {
-    if (this.state.checked) {
-      return (
-        <CardSection style={styles.viewPickerDate}>
-          <DatePicker
-            date={this.props.card.secondShiftStart}
-            mode="time"
-            label="Desde las:"
-            placeholder="Hora de apertura"
-            onDateChange={async value => {
-              await this.props.onScheduleCardValueChange({
-                id: this.props.card.id,
-                secondShiftStart: value
-              });
-              this.renderPickerSecondShiftStart();
-              this.renderPickerSecondShiftEnd();
-            }}
-            errorMessage={this.state.secondShiftStartError}
-          />
+    try {
+      if (this.state.checked) {
+        return (
+          <CardSection style={styles.viewPickerDate}>
+            <DatePicker
+              date={this.props.card.secondShiftStart}
+              mode="time"
+              label="Desde las:"
+              placeholder="Hora de apertura"
+              onDateChange={value =>
+                this.props.onScheduleCardValueChange({
+                  id: this.props.card.id,
+                  secondShiftStart: value
+                })
+              }
+              errorMessage={this.state.secondShiftStartError}
+            />
 
-          <DatePicker
-            date={this.props.card.secondShiftEnd}
-            label="Hasta las:"
-            placeholder="Hora de cierre"
-            onDateChange={async value => {
-              await this.props.onScheduleCardValueChange({
-                id: this.props.card.id,
-                secondShiftEnd: value
-              });
-              this.renderPickerSecondShiftEnd();
-            }}
-            disabled={this.getDisabledSecondPickerEnd()}
-            errorMessage={this.state.secondShiftEndError}
-          />
-        </CardSection>
-      );
+            <DatePicker
+              date={this.props.card.secondShiftEnd}
+              label="Hasta las:"
+              placeholder="Hora de cierre"
+              onDateChange={value =>
+                this.props.onScheduleCardValueChange({
+                  id: this.props.card.id,
+                  secondShiftEnd: value
+                })
+              }
+              disabled={this.getDisabledSecondPickerEnd()}
+              errorMessage={this.state.secondShiftEndError}
+            />
+          </CardSection>
+        );
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -207,26 +213,23 @@ class ScheduleRegister extends Component {
               date={this.props.card.firstShiftStart}
               label="Desde las:"
               placeholder="Hora de apertura"
-              onDateChange={async value => {
-                await this.props.onScheduleCardValueChange({
+              onDateChange={value =>
+                this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstShiftStart: value
-                });
-                this.renderPickerFirstShiftEnd();
-              }}
+                })
+              }
             />
             <DatePicker
               date={this.props.card.firstShiftEnd}
               label="Hasta las:"
               placeholder="Hora de cierre"
-              onDateChange={async value => {
-                await this.props.onScheduleCardValueChange({
+              onDateChange={value =>
+                this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstShiftEnd: value
-                });
-                this.renderPickerFirstShiftEnd();
-                this.renderPickerSecondShiftStart();
-              }}
+                })
+              }
               disabled={!this.props.card.firstShiftStart}
               errorMessage={this.state.firstShiftEndError}
             />

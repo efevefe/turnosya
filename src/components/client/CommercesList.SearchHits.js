@@ -1,23 +1,16 @@
-import React, { Component } from 'react';
-import { FlatList } from 'react-native';
-import PropTypes from 'prop-types';
-import { connectInfiniteHits } from 'react-instantsearch/connectors';
-import { EmptyList, Spinner } from '../common';
-import CommerceListItem from './CommerceListItem';
-import { getPermissionLocationStatus, getCurrentPosition } from '../../utils';
-import { LocationMessages, Button } from '../common';
-
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { FlatList } from "react-native";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { connectInfiniteHits } from "react-instantsearch/connectors";
+import { EmptyList, Spinner } from "../common";
+import CommerceListItem from "./CommerceListItem";
+import { commerceHitsUpdate } from "../../actions";
 
 class Hits extends Component {
-  state = {
-    permissionStatus: null,
-    modal: true
-  };
-
-  callback = () => {
-    this.setState({ modal: false });
-  };
+  componentDidUpdate() {
+    this.props.commerceHitsUpdate(this.props.hits);
+  }
 
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
@@ -30,9 +23,10 @@ class Hits extends Component {
         renderItem={this.renderItem}
         keyExtractor={item => item.objectID}
         initialNumToRender={20}
+        contentContainerStyle={{ paddingBottom: 95 }}
       />
     ) : this.props.searching ? (
-      <Spinner style={{ position: 'relative' }} />
+      <Spinner style={{ position: "relative" }} />
     ) : (
       <EmptyList title="No se encontraron negocios" />
     );
@@ -54,5 +48,5 @@ const ConnectedHits = connectInfiniteHits(Hits);
 
 export default connect(
   mapStateToProps,
-  {}
+  { commerceHitsUpdate }
 )(ConnectedHits);

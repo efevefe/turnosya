@@ -1,10 +1,18 @@
-import React, { Component } from 'react';
-import { Platform, View, AppState, StyleSheet, Image, Text } from 'react-native';
-import { Divider } from 'react-native-elements';
-import { Menu } from './Menu';
-import { MenuItem } from './MenuItem';
-import { connect } from 'react-redux';
-import { onLocationChange } from '../../actions';
+import React, { Component } from "react";
+import {
+  Platform,
+  View,
+  AppState,
+  StyleSheet,
+  Image,
+  Text
+} from "react-native";
+import { Divider } from "react-native-elements";
+import { Menu } from "./Menu";
+import { MenuItem } from "./MenuItem";
+import { connect } from "react-redux";
+import * as Location from "expo-location";
+import { onUserLocationChange } from "../../actions";
 import {
   openGPSAndroid,
   openSettingIos,
@@ -12,37 +20,54 @@ import {
   getCurrentPosition,
   getPermissionLocationStatus,
   getAddressFromLatAndLong
-} from '../../utils';
+} from "../../utils";
 
 class LocationMessages extends Component {
   state = {
-    location: 'location sin setear',
+    location: "location sin setear",
     appState: AppState.currentState,
     permissionStatus: null,
     modal: false
   };
 
   async componentDidMount() {
-    const permissionStatus = await getPermissionLocationStatus();
-    permissionStatus === 'permissionsAllowed'
-      ? this.setState({ permissionStatus })
-      : this.setState({ permissionStatus, modal: true });
-    AppState.addEventListener('change', this._handleAppStateChange);
+    try {
+      const permissionStatus = await getPermissionLocationStatus();
+      if (permissionStatus === "permissionsAllowed") {
+        this.setState({ permissionStatus });
+      } else {
+        this.setState({ permissionStatus, modal: true });
+      }
+      AppState.addEventListener("change", this._handleAppStateChange);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener("change", this._handleAppStateChange);
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.appState !== this.state.appState &&
-      this.state.appState === 'active'
-    ) {
-      this.setState({
-        permissionStatus: await getPermissionLocationStatus(),
-        modal: true
-      });
+    try {
+      if (
+        this.state.appState === "active" &&
+        prevState.appState !== this.state.appState
+      ) {
+        this.setState({
+          permissionStatus: await getPermissionLocationStatus(),
+          modal: true
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (this.state.permissionStatus === "permissionsAllowed") {
+      const {
+        coords: { latitude, longitude }
+      } = await Location.getCurrentPositionAsync();
+      this.props.onUserLocationChange({ location: { latitude, longitude } });
     }
   }
 
@@ -51,38 +76,42 @@ class LocationMessages extends Component {
   };
 
   renderTitle = () => {
-    return this.state.permissionStatus === 'permissionsDenied'
-      ? 'TurnosYa necesita permisos para acceder a tu ubicación'
-      : 'Activa el GPS para recibir una mejor búsqueda cerca de ti';
+    return this.state.permissionStatus === "permissionsDenied"
+      ? "TurnosYa necesita permisos para acceder a tu ubicación"
+      : "Activa el GPS para recibir una mejor búsqueda cerca de ti";
   };
 
   getAndSaveLocation = async () => {
-    const currentLatLong = await getCurrentPosition();
-    const { latitude, longitude } = currentLatLong.coords;
-    const [addresResult] = await getAddressFromLatAndLong({
-      latitude,
-      longitude
-    });
-    const { name, street, city, region, country } = addresResult;
+    try {
+      const currentLatLong = await getCurrentPosition();
+      const { latitude, longitude } = currentLatLong.coords;
+      const [addressResult] = await getAddressFromLatAndLong({
+        latitude,
+        longitude
+      });
+      const { name, street, city, region, country } = addressResult;
 
-    const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+      const address = Platform.OS === "ios" ? name : `${street} ${name}`;
 
-    const location = {
-      address,
-      city,
-      provinceName: region,
-      country,
-      latitude,
-      longitude
-    };
+      const location = {
+        address,
+        city,
+        provinceName: region,
+        country,
+        latitude,
+        longitude
+      };
 
-    this.props.onLocationChange({ location });
+      this.props.onUserLocationChange({ location });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   renderItems = () => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === "ios") {
       switch (this.state.permissionStatus) {
-        case 'permissionsDenied':
+        case "permissionsDenied":
           return (
             <View>
               <MenuItem
@@ -101,34 +130,48 @@ class LocationMessages extends Component {
               />
             </View>
           );
-        case 'permissionsAllowedWithGPSOff':
+        case "permissionsAllowedWithGPSOff":
           return (
             <View>
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/settings.png')} style={styles.iosModalIcon} />
-                <Text style={styles.iosModalText}>Abrí la aplicación Ajustes</Text>
+                <Image
+                  source={require("../../../assets/ios-icons/settings.png")}
+                  style={styles.iosModalIcon}
+                />
+                <Text style={styles.iosModalText}>
+                  Abrí la aplicación Ajustes
+                </Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/privacy.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require("../../../assets/ios-icons/privacy.png")}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Seleccioná Privacidad</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/location.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require("../../../assets/ios-icons/location.png")}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Seleccioná Localización</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image source={require('../../../assets/ios-icons/switch.png')} style={styles.iosModalIcon} />
+                <Image
+                  source={require("../../../assets/ios-icons/switch.png")}
+                  style={styles.iosModalIcon}
+                />
                 <Text style={styles.iosModalText}>Activá la Localización</Text>
               </View>
               <Divider />
               <MenuItem
                 title="Cerrar"
-                icon='md-close'
+                icon="md-close"
                 onPress={() => this.closeModal()}
-                buttonStyle={{ justifyContent: 'flex-end', paddingRight: 5 }}
+                buttonStyle={{ justifyContent: "flex-end", paddingRight: 5 }}
                 titleStyle={{ marginLeft: 5 }}
               />
             </View>
@@ -141,7 +184,7 @@ class LocationMessages extends Component {
             title="Ir a Configuración"
             icon="md-settings"
             onPress={() => {
-              this.state.permissionStatus === 'permissionsDenied'
+              this.state.permissionStatus === "permissionsDenied"
                 ? askPermissionLocation()
                 : openGPSAndroid();
               this.closeModal();
@@ -163,7 +206,7 @@ class LocationMessages extends Component {
   };
 
   render() {
-    if (this.state.permissionStatus === 'permissionsAllowed') {
+    if (this.state.permissionStatus === "permissionsAllowed") {
       this.getAndSaveLocation();
       return <View />;
     } else {
@@ -171,8 +214,8 @@ class LocationMessages extends Component {
         <View>
           <Menu
             title={this.renderTitle()}
-            titleContainerStyle={{ alignSelf: 'center' }}
-            titleStyle={{ textAlign: 'center' }}
+            titleContainerStyle={{ alignSelf: "center" }}
+            titleStyle={{ textAlign: "center" }}
             isVisible={this.state.modal}
           >
             {this.renderItems()}
@@ -185,24 +228,21 @@ class LocationMessages extends Component {
 
 const styles = StyleSheet.create({
   iosModalItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
     padding: 8,
     paddingLeft: 15
   },
   iosModalText: {
-    fontWeight: '400',
+    fontWeight: "400",
     fontSize: 13,
     marginLeft: 15
   },
-  iosModalIcon: { 
-    height: 30, 
-    width: 30 
+  iosModalIcon: {
+    height: 30,
+    width: 30
   }
 });
 
-export default connect(
-  null,
-  { onLocationChange }
-)(LocationMessages);
+export default connect(null, { onUserLocationChange })(LocationMessages);
