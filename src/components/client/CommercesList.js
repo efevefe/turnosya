@@ -17,8 +17,7 @@ const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 class CommercesList extends Component {
   state = {
     areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
-    searchVisible: false,
-    isLocationEstablishedOnMap: false
+    searchVisible: false
   };
 
   componentDidMount() {
@@ -55,14 +54,8 @@ class CommercesList extends Component {
     this.setState({ searchVisible: true });
   };
 
-  setLocationEstablished = value => {
-    this.setState({ isLocationEstablishedOnMap: value });
-  };
-
   onFiltersPress = () => {
-    this.props.navigation.navigate("commercesFiltersScreen", {
-      locationEstablished: this.setLocationEstablished
-    });
+    this.props.navigation.navigate("commercesFiltersScreen");
   };
 
   onCancelPress = () => {
@@ -176,7 +169,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { readFavoriteCommerces, onLocationChange }
-)(CommercesList);
+export default connect(mapStateToProps, {
+  readFavoriteCommerces,
+  onLocationChange
+})(CommercesList);
