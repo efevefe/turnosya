@@ -65,6 +65,8 @@ class ClientReservationsList extends Component {
         title={commerce.name}
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
+        rightSubtitle={endDate < moment() ? '¡Calificá el servicio!' : null}
+        rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
         }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
@@ -140,7 +142,6 @@ const mapStateToProps = state => {
   return { reservations, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { onClientReservationsListRead }
-)(ClientReservationsList);
+export default connect(mapStateToProps, { onClientReservationsListRead })(
+  ClientReservationsList
+);

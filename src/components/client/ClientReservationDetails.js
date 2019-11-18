@@ -1,13 +1,26 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
-import { Divider } from 'react-native-elements';
-import { CardSection, Button, Menu, MenuItem, Spinner, Toast } from '../common';
+import { Divider, AirbnbRating, Rating } from 'react-native-elements';
+import {
+  CardSection,
+  Button,
+  Menu,
+  MenuItem,
+  Spinner,
+  Toast,
+  Input
+} from '../common';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
-import { onClientCancelReservation, readCancellationTimeAllowed } from '../../actions';
+import {
+  onClientCancelReservation,
+  readCancellationTimeAllowed,
+  reviewValueChange
+} from '../../actions';
 import { stringFormatHours } from '../../utils/functions';
-
+import { MAIN_COLOR } from '../../constants';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -29,7 +42,7 @@ class ClientReservationDetails extends Component {
   onPressCancelButton = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
-    if (startDate.diff(moment(), "hours") > reservationMinCancelTime)
+    if (startDate.diff(moment(), 'hours') > reservationMinCancelTime)
       this.setState({ optionsVisible: true });
     else
       Toast.show({
@@ -43,11 +56,78 @@ class ClientReservationDetails extends Component {
     const { startDate } = this.state.reservation;
     if (startDate > moment()) {
       return (
-        <Button
-          title="Cancelar Reserva"
-          type="solid"
-          onPress={this.onPressCancelButton}
-        />
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <CardSection>
+            <Button
+              title="Cancelar Reserva"
+              type="solid"
+              onPress={this.onPressCancelButton}
+            />
+          </CardSection>
+        </View>
+      );
+    }
+  };
+
+  renderCommerceReview = () => {
+    if (this.state.reservation.startDate < moment()) {
+      return (
+        <View>
+          <Divider
+            style={{
+              margin: 10,
+              marginLeft: 40,
+              marginRight: 40,
+              backgroundColor: 'grey'
+            }}
+          />
+          <CardSection>
+            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+              Calificación de la Atención
+            </Text>
+          </CardSection>
+          <CardSection>
+            <AirbnbRating
+              onFinishRating={value =>
+                this.props.reviewValueChange('rating', value)
+              }
+              defaultRating={2.67}
+              showRating={false}
+              size={25}
+            />
+          </CardSection>
+          <View style={{ marginTop: 10 }}>
+            <Input
+              onChangeText={value =>
+                this.props.reviewValueChange('comment', value)
+              }
+              editable={true}
+              multiline={true}
+              maxLength={128}
+              maxHeight={180}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'stretch',
+              marginBottom: 10
+            }}
+          >
+            <Button
+              title="Borrar Review"
+              type="clear"
+              color="white"
+              titleStyle={{ color: MAIN_COLOR }}
+              outerContainerStyle={{ flex: 1 }}
+            />
+            <Button
+              title="Guardar"
+              type="solid"
+              outerContainerStyle={{ flex: 1 }}
+            />
+          </View>
+        </View>
       );
     }
   };
@@ -67,16 +147,22 @@ class ClientReservationDetails extends Component {
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <View style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        style={{ flex: 1, alignSelf: 'stretch' }}
+        extraScrollHeight={70}
+      >
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={this.state.optionsVisible || this.props.loadingReservations }
+          isVisible={
+            this.state.optionsVisible || this.props.loadingReservations
+          }
         >
           <MenuItem
             title="Aceptar"
             icon="md-checkmark"
-            loadingWithText={this.props.loadingReservations }
+            loadingWithText={this.props.loadingReservations}
             onPress={() => {
               this.setState({ optionsVisible: false });
               this.props.onClientCancelReservation({
@@ -102,26 +188,26 @@ class ClientReservationDetails extends Component {
           light={light}
           showPrice={true}
         />
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <CardSection>{this.renderCancelButton()}</CardSection>
-        </View>
-      </View>
+        {this.renderCommerceReview()}
+        {this.renderCancelButton()}
+      </KeyboardAwareScrollView>
     );
   }
 }
 const mapStateToProps = state => {
-  const loadingReservations  = state.clientReservationsList.loading;
+  const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
 
   return {
-    loadingReservations ,
+    loadingReservations,
     loadingCancel,
     reservationMinCancelTime
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onClientCancelReservation, readCancellationTimeAllowed }
-)(ClientReservationDetails);
+export default connect(mapStateToProps, {
+  onClientCancelReservation,
+  readCancellationTimeAllowed,
+  reviewValueChange
+})(ClientReservationDetails);
