@@ -19,7 +19,11 @@ class Map extends React.Component {
     defaultAddress: "Córdoba, Argentina",
     completeAddress: "",
     locationAsked: false,
-    userLocationChanged: false
+    userLocationChanged: false,
+    draggable: !(
+      this.props.navigation &&
+      this.props.navigation.state.routeName === 'showMyAddressMap'
+    )
   };
 
   componentDidMount() {
@@ -206,7 +210,7 @@ class Map extends React.Component {
             latitude,
             longitude
           }}
-          draggable={this.props.draggable ? this.props.draggable : true}
+          draggable={this.state.draggable}
           title={address}
           onDragEnd={e =>
             this.updateAddressFromLatAndLong({
@@ -250,7 +254,7 @@ class Map extends React.Component {
       value: marker
     });
 
-    this.props.navigation.navigate("commerceCourtTypes");
+    this.props.navigation.navigate('commerceProfileView');
   };
 
   renderSearchBar = () => {
@@ -305,7 +309,14 @@ class Map extends React.Component {
           region={this.mapRegion()}
           onRegionChangeComplete={region => (this.region = region)}
           animateToRegion={{ region: this.region, duration: 3000 }}
-          onLongPress={this.onLongPressHandler}
+          onLongPress={e => {
+            if (this.state.draggable) {
+              this.updateAddressFromLatAndLong({
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude
+              });
+            }
+          }}
         >
           {this.renderUserMarker()}
           {this.renderPointerMarker()}

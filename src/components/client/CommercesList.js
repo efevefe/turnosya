@@ -31,8 +31,8 @@ class CommercesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam("rightIcons"),
-      header: navigation.getParam("header")
+      headerRight: navigation.getParam('rightIcons'),
+      header: navigation.getParam('header')
     };
   };
 
