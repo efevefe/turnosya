@@ -36,6 +36,7 @@ class CommerceProfileInfo extends Component {
         });
       });
     });
+    
     hoursOnDay.sort((a, b) => a.id - b.id);
 
     return hoursOnDay;
@@ -99,6 +100,7 @@ class CommerceProfileInfo extends Component {
 
   render() {
     if (this.props.loading) return <Spinner />;
+
     {
       var hoursOnDay = this.renderSchedule();
     }
@@ -117,7 +119,7 @@ class CommerceProfileInfo extends Component {
           />
         </Card>
         <Card
-          title="Información de contacto"
+          title="Información de Contacto"
           textAlign="center"
           containerStyle={{ borderRadius: 10 }}
         >

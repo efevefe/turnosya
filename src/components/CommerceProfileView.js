@@ -112,7 +112,7 @@ class CommerceProfileView extends Component {
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
-    const { profilePicture, name, commerceId, navigation } = this.props;
+    const { profilePicture, headerPicture, name, commerceId, navigation } = this.props;
 
     return (
       <ScrollView>
@@ -123,7 +123,7 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={profilePicture ? { uri: profilePicture } : null}
+            source={profilePicture ? { uri: headerPicture } : null}
           />
 
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -234,6 +234,7 @@ const mapStateToProps = state => {
     city,
     province,
     profilePicture,
+    headerPicture,
     commerceId,
     latitude,
     longitude
@@ -247,6 +248,7 @@ const mapStateToProps = state => {
     city,
     province,
     profilePicture,
+    headerPicture,
     commerceId,
     latitude,
     longitude,
