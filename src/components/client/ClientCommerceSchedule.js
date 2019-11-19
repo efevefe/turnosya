@@ -23,6 +23,10 @@ class ClientCommerceSchedule extends Component {
   };
 
   componentDidMount() {
+    this.props.onScheduleValueChange({
+      prop: 'selectedDate',
+      value: moment()
+    });
     this.props.navigation.setParams({
       leftButton: this.renderBackButton()
     });

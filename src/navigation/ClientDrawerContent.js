@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { onCommerceOpen, onLogout, onUserRead } from '../actions';
+import {
+  onCommerceOpen,
+  onLogout,
+  onUserRead,
+  onScheduleValueChange
+} from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/client/VerifyEmailModal';
@@ -83,5 +88,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCommerceOpen, onLogout, onUserRead }
+  { onCommerceOpen, onLogout, onUserRead, onScheduleValueChange }
 )(ClientDrawerContent);

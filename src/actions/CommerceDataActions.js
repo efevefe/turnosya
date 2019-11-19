@@ -184,143 +184,115 @@ export const onCommerceRead = () => {
   };
 };
 
-export const onCommerceUpdateNoPicture = ({
-  name,
-  cuit,
-  email,
-  phone,
-  description,
-  address,
-  city,
-  province,
-  area,
-  profilePicture,
-  commerceId,
-  latitude,
-  longitude
-}) => {
-  const db = firebase.firestore();
+export const onCommerceReadProfile = commerceId => {
+  var db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COMMERCE_UPDATING });
+    dispatch({ type: ON_COMMERCE_READING });
 
     db.doc(`Commerces/${commerceId}`)
-      .update({
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        address,
-        city,
-        province,
-        area,
-        profilePicture,
-        latitude,
-        longitude
+      .get()
+      .then(doc => {
+        //province
+        var { name, provinceId } = doc.data().province;
+        const province = { value: provinceId, label: name };
+
+        //area
+        var { name, areaId } = doc.data().area;
+        const area = { value: areaId, label: name };
+
+        dispatch({
+          type: ON_COMMERCE_READ,
+          payload: {
+            ...doc.data(),
+            provincesList: [province],
+            areasList: [area],
+            commerceId: doc.id
+          }
+        });
       })
-      .then(() => {
-        index
-          .saveObject({
-            address,
-            areaName: area.name,
-            profilePicture,
-            objectID: commerceId,
-            description,
-            name,
-            city,
-            provinceName: province.name,
-            ...(latitude && longitude
-              ? { _geoloc: { lat: latitude, lng: longitude } }
-              : {})
-          })
-          .then(() =>
-            dispatch({ type: ON_COMMERCE_UPDATED, payload: profilePicture })
-          )
-          .catch(error => {
-            dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-          });
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
+      .catch(error => {
+        dispatch({ type: ON_COMMERCE_READ_FAIL });
+      });
   };
 };
 
-export const onCommerceUpdateWithPicture = ({
-  name,
-  cuit,
-  email,
-  phone,
-  description,
-  address,
-  city,
-  province,
-  area,
-  profilePicture,
-  commerceId,
-  latitude,
-  longitude
-}) => {
-  const ref = firebase
-    .storage()
-    .ref(`Commerces/${commerceId}`)
-    .child(`${commerceId}-ProfilePicture`);
+onPictureUpdate = async (commerceId, picture, type) => {
+  const ref = firebase.storage().ref(`Commerces/${commerceId}`).child(`${commerceId}-${type}`);
 
-  const db = firebase.firestore();
+  try {
+    const snapshot = await ref.put(picture);
+    const url = await snapshot.ref.getDownloadURL();
+    return url;
+  } catch (error) {
+    throw new Error(error);
+  } finally {
+    picture.close();
+  }
+}
 
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_UPDATING });
+export const onCommerceUpdate = (commerceData, navigation) => async dispatch => {
+  dispatch({ type: ON_COMMERCE_UPDATING });
 
-    ref
-      .put(profilePicture)
-      .then(snapshot => {
-        profilePicture.close();
-        snapshot.ref
-          .getDownloadURL()
-          .then(url => {
-            db.doc(`Commerces/${commerceId}`)
-              .update({
-                name,
-                cuit,
-                email,
-                phone,
-                description,
-                address,
-                city,
-                province,
-                area,
-                profilePicture: url,
-                latitude,
-                longitude
-              })
-              .then(() => {
-                index
-                  .saveObject({
-                    address,
-                    areaName: area.name,
-                    profilePicture: url,
-                    objectID: commerceId,
-                    description,
-                    name,
-                    city,
-                    provinceName: province.name,
-                    ...(latitude && longitude
-                      ? { _geoloc: { lat: latitude, lng: longitude } }
-                      : {})
-                  })
-                  .then(() =>
-                    dispatch({ type: ON_COMMERCE_UPDATED, payload: url })
-                  )
-                  .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
-              })
-              .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
-          })
-          .catch(error => dispatch({ type: ON_COMMERCE_UPDATE_FAIL }));
-      })
-      .catch(error => {
-        profilePicture.close();
-        dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
-      });
-  };
+  const {
+    name,
+    cuit,
+    email,
+    phone,
+    description,
+    address,
+    city,
+    province,
+    area,
+    profilePicture,
+    headerPicture,
+    commerceId,
+    latitude,
+    longitude
+  } = commerceData;
+
+  let profilePictureURL = null;
+  let headerPictureURL = null;
+
+  try {
+    if (profilePicture instanceof Blob)
+      profilePictureURL = await onPictureUpdate(commerceId, profilePicture, 'ProfilePicture');
+
+    if (headerPicture instanceof Blob)
+      headerPictureURL = await onPictureUpdate(commerceId, headerPicture, 'HeaderPicture');
+
+    await firebase.firestore().doc(`Commerces/${commerceId}`).update({
+      ...commerceData,
+      profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
+      headerPicture: headerPictureURL ? headerPictureURL : headerPicture
+    });
+
+    await index.saveObject({
+      address,
+      areaName: area.name,
+      profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
+      objectID: commerceId,
+      description,
+      name,
+      city,
+      provinceName: province.name,
+      ...(latitude && longitude
+        ? { _geoloc: { lat: latitude, lng: longitude } }
+        : {})
+    });
+
+    dispatch({
+      type: ON_COMMERCE_UPDATED,
+      payload: {
+        profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
+      }
+    });
+    
+    navigation.goBack();
+  } catch (error) {
+    dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
+  }
 };
 
 export const onAreasRead = () => {
@@ -348,7 +320,7 @@ export const validateCuit = cuit => {
       .where('cuit', '==', cuit)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: CUIT_EXISTS });
         } else {

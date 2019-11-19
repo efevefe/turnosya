@@ -46,7 +46,7 @@ class CommerceListItem extends Component {
       value: this.props.commerce
     });
 
-    this.props.navigation.navigate('commerceCourtTypes');
+    this.props.navigation.navigate('commerceProfileView');
   };
 
   render() {
