@@ -14,7 +14,7 @@ import ClientReservationsListReducer from './ClientReservationsListReducer';
 import CourtReservationsListReducer from './CourtReservationsListReducer';
 import LocationDataReducer from './LocationDataReducer';
 import ProvinceDataReducer from './ProvinceDataReducer';
-import ReviewDataReducer from './ReviewDataReducer';
+import CommerceReviewDataReducer from './CommerceCommerceReviewDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -32,5 +32,5 @@ export default combineReducers({
   courtReservationsList: CourtReservationsListReducer,
   locationData: LocationDataReducer,
   provinceData: ProvinceDataReducer,
-  reviewData: ReviewDataReducer
+  commerceReviewData: CommerceReviewDataReducer
 });

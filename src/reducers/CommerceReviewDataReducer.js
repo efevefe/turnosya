@@ -1,4 +1,4 @@
-import { ON_REVIEW_VALUE_CHANGE } from '../actions/types';
+import { ON_COMMERCE_REVIEW_VALUE_CHANGE } from '../actions/types';
 
 const INITIAL_STATE = {
   rating: 3,
@@ -10,7 +10,7 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_REVIEW_VALUE_CHANGE:
+    case ON_COMMERCE_REVIEW_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     default:
       return state;

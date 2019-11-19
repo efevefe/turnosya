@@ -155,4 +155,5 @@ export const ON_RESERVATION_CLIENT_READ_FAIL =
 export const ON_PROVINCES_READ = 'on_provinces_read';
 
 // Review types
-export const ON_REVIEW_VALUE_CHANGE = 'on_review_value_change';
+export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
+  'on_commerce_review_value_change';

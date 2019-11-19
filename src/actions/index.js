@@ -10,4 +10,4 @@ export * from './LocationDataActions';
 export * from './ClientReservationsListActions';
 export * from './CourtReservationsListActions';
 export * from './ProvinceDataActions';
-export * from './ReviewDataActions';
+export * from './CommerceReviewDataActions';

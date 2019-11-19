@@ -17,7 +17,7 @@ import moment from 'moment';
 import {
   onClientCancelReservation,
   readCancellationTimeAllowed,
-  reviewValueChange
+  commerceReviewValueChange
 } from '../../actions';
 import { stringFormatHours } from '../../utils/functions';
 import { MAIN_COLOR } from '../../constants';
@@ -89,7 +89,7 @@ class ClientReservationDetails extends Component {
           <CardSection>
             <AirbnbRating
               onFinishRating={value =>
-                this.props.reviewValueChange('rating', value)
+                this.props.commerceReviewValueChange('rating', value)
               }
               defaultRating={2.67}
               showRating={false}
@@ -99,7 +99,7 @@ class ClientReservationDetails extends Component {
           <View style={{ marginTop: 10 }}>
             <Input
               onChangeText={value =>
-                this.props.reviewValueChange('comment', value)
+                this.props.commerceReviewValueChange('comment', value)
               }
               editable={true}
               multiline={true}
@@ -209,5 +209,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onClientCancelReservation,
   readCancellationTimeAllowed,
-  reviewValueChange
+  commerceReviewValueChange
 })(ClientReservationDetails);
