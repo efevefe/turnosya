@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from '../common';
 import { onCommerceDetailedCourtReservationsRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
-import CourtReservationDetails from '../CourtReservationDetails';
-import CommerceCourtReservationDetails from './CommerceCourtReservationDetails';
 class CommerceCourtReservations extends Component {
   state = {
     selectedDate: moment(),
@@ -75,7 +73,6 @@ class CommerceCourtReservations extends Component {
   };
 
   renderList = ({ item }) => {
-    console.log(item);
     return (
       <ListItem
         rightIcon={{

@@ -19,17 +19,9 @@ class CommerceCourtReservationDetails extends Component {
     this.state = {
       reservation,
       optionsVisible: false,
-      commentVisible: false,
-      comment: ''
+      error: ''
     };
   }
-
-  onCancelPress = () => {
-    this.setState({
-      optionsVisible: false,
-      commentVisible: !this.state.commentVisible
-    });
-  };
 
   renderCancelButton = () => {
     if (this.state.reservation.startDate > moment()) {
@@ -41,6 +33,63 @@ class CommerceCourtReservationDetails extends Component {
           }
         />
       );
+    }
+  };
+
+  renderReasonInput = () => {
+    return (
+      <View style={{ alignSelf: 'stretch' }}>
+        <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
+          <Input
+            placeholder="Motivos de cancelación..."
+            multiline={true}
+            color="black"
+            onChangeText={value => {
+              this.props.onCourtReservationsListValueChange({
+                prop: 'cancelationReason',
+                value
+              });
+              this.setState({ error: '' });
+            }}
+            value={this.props.cancelationReason}
+            errorMessage={this.state.error}
+            onFocus={() => this.setState({ error: '' })}
+          />
+        </CardSection>
+        <Divider style={{ backgroundColor: 'grey' }} />
+      </View>
+    );
+  };
+
+  renderError = () => {
+    if (this.props.cancelationReason === '') {
+      this.setState({ error: 'Debe informar el motivo' });
+      return false;
+    } else {
+      this.setState({ error: '' });
+      return true;
+    }
+  };
+
+  onBackdropPress = () => {
+    this.setState({ optionsVisible: false });
+    this.setState({ error: '' });
+    this.props.onCourtReservationsListValueChange({
+      prop: 'cancelationReason',
+      value: ''
+    });
+  };
+
+  onConfirmDelete = (id, clientId) => {
+    if (this.renderError()) {
+      this.setState({ optionsVisible: false });
+      this.props.onCommerceCancelReservation({
+        commerceId: this.props.commerceId,
+        reservationId: id,
+        clientId,
+        cancelationReason: this.props.cancelationReason,
+        navigation: this.props.navigation
+      });
     }
   };
 
@@ -69,59 +118,22 @@ class CommerceCourtReservationDetails extends Component {
         <CardSection>{this.renderCancelButton()}</CardSection>
 
         <Menu
-          title="¿Está seguro que desea cancelar el turno?"
-          onBackdropPress={() => this.setState({ optionsVisible: false })}
+          title="Informar el motivo de la cancelación"
+          onBackdropPress={() => this.onBackdropPress()}
           isVisible={this.state.optionsVisible}
         >
+          {this.renderReasonInput()}
           <MenuItem
-            title="Aceptar"
+            title="Confirmar Cancelación"
             icon="md-checkmark"
-            // loadingWithText={this.props.loadingReservations}
-            onPress={this.onCancelPress}
-          />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ optionsVisible: false })}
-          />
-        </Menu>
-        <Menu
-          title="Informar el motivo de la cancelación"
-          onBackdropPress={() => this.setState({ commentVisible: false })}
-          isVisible={this.state.commentVisible}
-        >
-          <Input
-            placeholder="Motivos por los que decidio cancelar el turno..."
-            multiline={true}
-            color="black"
-            onChangeText={value =>
-              this.props.onCourtReservationsListValueChange({
-                prop: 'cancelComment',
-                value
-              })
-            }
-            value={this.props.cancelComment}
+            loadingWithText={this.props.loading}
+            onPress={() => this.onConfirmDelete(id, clientId)}
           />
           <MenuItem
-            title="Confirmar"
-            icon="md-checkmark"
-            onPress={() => {
-              this.onCancelPress();
-              this.props.onCommerceCancelReservation({
-                commerceId: this.props.commerceId,
-                reservationId: id,
-                clientId,
-                cancelComment: this.props.cancelComment,
-                navigation: this.props.navigation
-              });
-            }}
-          />
-          {/* <MenuItem
-            title="Cancelar"
+            title="Cerrar"
             icon="md-close"
-            onPress={() => this.setState({ commentVisible: false })}
-          /> */}
+            onPress={() => this.onBackdropPress()}
+          />
         </Menu>
       </View>
     );
@@ -129,10 +141,10 @@ class CommerceCourtReservationDetails extends Component {
 }
 
 const mapStateToProps = state => {
-  const { loading, cancelComment } = state.courtReservationsList;
+  const { loading, cancelationReason } = state.courtReservationsList;
   const { commerceId } = state.commerceData;
 
-  return { loading, commerceId, cancelComment };
+  return { loading, commerceId, cancelationReason };
 };
 
 export default connect(mapStateToProps, {

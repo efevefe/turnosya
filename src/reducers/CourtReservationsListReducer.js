@@ -18,7 +18,7 @@ INITIAL_STATE = {
   reservationClient: {},
   loading: false,
   loadingClientData: false,
-  cancelComment: ''
+  cancelationReason: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -45,10 +45,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ON_COMMERCE_RESERVATION_CANCEL:
       Toast.show({ text: 'El turno ha sido cancelado' });
-      return { ...state, loading: false };
+      return { ...state, loading: false, cancelationReason: '' };
     case ON_COMMERCE_RESERVATION_CANCEL_FAIL:
       Toast.show({ text: 'Error al intentar cancelar el turno' });
-      return { ...state, loading: false, cancelComment: '' };
+      return { ...state, loading: false };
     default:
       return state;
   }

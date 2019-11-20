@@ -164,7 +164,7 @@ export const onCommerceCancelReservation = ({
   commerceId,
   reservationId,
   clientId,
-  cancelComment,
+  cancelationReason,
   navigation
 }) => {
   const db = firebase.firestore();
@@ -183,7 +183,7 @@ export const onCommerceCancelReservation = ({
             state: {
               id: stateDoc.id,
               name: stateDoc.data().name,
-              description: cancelComment
+              cancelationReason
             },
             cancelationDate
           }
@@ -194,7 +194,7 @@ export const onCommerceCancelReservation = ({
             state: {
               id: stateDoc.id,
               name: stateDoc.data().name,
-              description: cancelComment
+              cancelationReason
             },
             cancelationDate
           }
@@ -222,20 +222,20 @@ export const onCommerceCancelReservation = ({
   };
 };
 
-export const onReservationClientRead = clientId => {
-  const db = firebase.firestore();
+export const onReservationClientRead = clientId => async dispatch => {
+  dispatch({ type: ON_RESERVATION_CLIENT_READING });
 
-  return dispatch => {
-    dispatch({ type: ON_RESERVATION_CLIENT_READING });
+  try {
+    const doc = await firebase
+      .firestore()
+      .doc(`Profiles/${clientId}`)
+      .get();
 
-    db.doc(`Profiles/${clientId}`)
-      .get()
-      .then(doc => {
-        dispatch({
-          type: ON_RESERVATION_CLIENT_READ,
-          payload: { id: doc.id, ...doc.data() }
-        });
-      })
-      .catch(error => dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL }));
-  };
+    dispatch({
+      type: ON_RESERVATION_CLIENT_READ,
+      payload: { id: doc.id, ...doc.data() }
+    });
+  } catch (error) {
+    dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL });
+  }
 };

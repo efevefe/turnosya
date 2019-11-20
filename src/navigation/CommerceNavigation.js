@@ -53,6 +53,12 @@ const calendarStack = createStackNavigator(
       navigationOptions: {
         title: 'Canchas Disponibles'
       }
+    },
+    reservationDetails: {
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
+      }
     }
   },
   stackNavigationOptions
