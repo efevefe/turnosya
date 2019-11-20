@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import CourtReservationDetails from '../CourtReservationDetails';
-import { connect } from 'react-redux';
-import { Divider, AirbnbRating, Rating } from 'react-native-elements';
+import React, { Component } from "react";
+import { View, Text } from "react-native";
+import CourtReservationDetails from "../CourtReservationDetails";
+import { connect } from "react-redux";
+import { Divider, AirbnbRating, Rating } from "react-native-elements";
 import {
   CardSection,
   Button,
@@ -11,22 +11,25 @@ import {
   Spinner,
   Toast,
   Input
-} from '../common';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import moment from 'moment';
+} from "../common";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import moment from "moment";
 import {
   onClientCancelReservation,
   readCancellationTimeAllowed,
-  commerceReviewValueChange
-} from '../../actions';
-import { stringFormatHours } from '../../utils/functions';
-import { MAIN_COLOR } from '../../constants';
+  createCommerceReview,
+  readCommerceReview,
+  commerceReviewValueChange,
+  commerceReviewClear
+} from "../../actions";
+import { stringFormatHours } from "../../utils/functions";
+import { MAIN_COLOR } from "../../constants";
 
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
 
-    const reservation = props.navigation.getParam('reservation');
+    const reservation = props.navigation.getParam("reservation");
     this.state = {
       reservation,
       optionsVisible: false
@@ -37,17 +40,26 @@ class ClientReservationDetails extends Component {
     this.props.readCancellationTimeAllowed(
       this.props.navigation.state.params.reservation.commerceId
     );
+
+    this.props.readCommerceReview(
+      this.state.reservation.commerceId,
+      this.state.reservation.reviewId
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.commerceReviewClear();
   }
 
   onPressCancelButton = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
-    if (startDate.diff(moment(), 'hours') > reservationMinCancelTime)
+    if (startDate.diff(moment(), "hours") > reservationMinCancelTime)
       this.setState({ optionsVisible: true });
     else
       Toast.show({
         text:
-          'No puede cancelar el turno, el tiempo minimo permitido es ' +
+          "No puede cancelar el turno, el tiempo minimo permitido es " +
           stringFormatHours(reservationMinCancelTime)
       });
   };
@@ -56,7 +68,7 @@ class ClientReservationDetails extends Component {
     const { startDate } = this.state.reservation;
     if (startDate > moment()) {
       return (
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <CardSection>
             <Button
               title="Cancelar Reserva"
@@ -69,6 +81,15 @@ class ClientReservationDetails extends Component {
     }
   };
 
+  onSaveReviewHandler = () => {
+    this.props.createCommerceReview({
+      reservationId: this.state.reservation.id,
+      comment: this.props.comment,
+      rating: this.props.rating,
+      commerceId: this.state.reservation.commerceId
+    });
+  };
+
   renderCommerceReview = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
@@ -78,39 +99,40 @@ class ClientReservationDetails extends Component {
               margin: 10,
               marginLeft: 40,
               marginRight: 40,
-              backgroundColor: 'grey'
+              backgroundColor: "grey"
             }}
           />
           <CardSection>
-            <Text style={{ fontSize: 16, textAlign: 'center' }}>
+            <Text style={{ fontSize: 16, textAlign: "center" }}>
               Calificación de la Atención
             </Text>
           </CardSection>
           <CardSection>
             <AirbnbRating
               onFinishRating={value =>
-                this.props.commerceReviewValueChange('rating', value)
+                this.props.commerceReviewValueChange("rating", value)
               }
-              defaultRating={2.67}
               showRating={false}
               size={25}
+              defaultRating={this.props.rating}
             />
           </CardSection>
           <View style={{ marginTop: 10 }}>
             <Input
               onChangeText={value =>
-                this.props.commerceReviewValueChange('comment', value)
+                this.props.commerceReviewValueChange("comment", value)
               }
               editable={true}
               multiline={true}
               maxLength={128}
               maxHeight={180}
+              defaultValue={this.props.comment}
             />
           </View>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'stretch',
+              flexDirection: "row",
+              alignItems: "stretch",
               marginBottom: 10
             }}
           >
@@ -125,6 +147,8 @@ class ClientReservationDetails extends Component {
               title="Guardar"
               type="solid"
               outerContainerStyle={{ flex: 1 }}
+              onPress={this.onSaveReviewHandler}
+              loading={this.props.saveReviewLoading}
             />
           </View>
         </View>
@@ -149,7 +173,7 @@ class ClientReservationDetails extends Component {
     return (
       <KeyboardAwareScrollView
         enableOnAndroid
-        style={{ flex: 1, alignSelf: 'stretch' }}
+        style={{ flex: 1, alignSelf: "stretch" }}
         extraScrollHeight={70}
       >
         <Menu
@@ -172,7 +196,7 @@ class ClientReservationDetails extends Component {
               });
             }}
           />
-          <Divider style={{ backgroundColor: 'grey' }} />
+          <Divider style={{ backgroundColor: "grey" }} />
           <MenuItem
             title="Cancelar"
             icon="md-close"
@@ -198,16 +222,23 @@ const mapStateToProps = state => {
   const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
+  const { rating, comment, saveLoading } = state.commerceReviewData;
 
   return {
     loadingReservations,
     loadingCancel,
-    reservationMinCancelTime
+    reservationMinCancelTime,
+    rating,
+    comment,
+    saveReviewLoading: saveLoading
   };
 };
 
 export default connect(mapStateToProps, {
   onClientCancelReservation,
   readCancellationTimeAllowed,
-  commerceReviewValueChange
+  createCommerceReview,
+  readCommerceReview,
+  commerceReviewValueChange,
+  commerceReviewClear
 })(ClientReservationDetails);
