@@ -5,9 +5,11 @@ import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { CardSection, Button, Menu, MenuItem, Spinner, Toast } from '../common';
 import moment from 'moment';
-import { onClientCancelReservation, readCancellationTimeAllowed } from '../../actions';
+import {
+  onClientCancelReservation,
+  readCancellationTimeAllowed
+} from '../../actions';
 import { stringFormatHours } from '../../utils/functions';
-
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -29,7 +31,7 @@ class ClientReservationDetails extends Component {
   onPressCancelButton = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
-    if (startDate.diff(moment(), "hours") > reservationMinCancelTime)
+    if (startDate.diff(moment(), 'hours', 'minutes') > reservationMinCancelTime)
       this.setState({ optionsVisible: true });
     else
       Toast.show({
@@ -71,12 +73,14 @@ class ClientReservationDetails extends Component {
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={this.state.optionsVisible || this.props.loadingReservations }
+          isVisible={
+            this.state.optionsVisible || this.props.loadingReservations
+          }
         >
           <MenuItem
             title="Aceptar"
             icon="md-checkmark"
-            loadingWithText={this.props.loadingReservations }
+            loadingWithText={this.props.loadingReservations}
             onPress={() => {
               this.setState({ optionsVisible: false });
               this.props.onClientCancelReservation({
@@ -110,18 +114,18 @@ class ClientReservationDetails extends Component {
   }
 }
 const mapStateToProps = state => {
-  const loadingReservations  = state.clientReservationsList.loading;
+  const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
 
   return {
-    loadingReservations ,
+    loadingReservations,
     loadingCancel,
     reservationMinCancelTime
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onClientCancelReservation, readCancellationTimeAllowed }
-)(ClientReservationDetails);
+export default connect(mapStateToProps, {
+  onClientCancelReservation,
+  readCancellationTimeAllowed
+})(ClientReservationDetails);
