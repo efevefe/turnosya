@@ -19,6 +19,7 @@ import {
   readCancellationTimeAllowed,
   createCommerceReview,
   readCommerceReview,
+  updateCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear
 } from "../../actions";
@@ -32,7 +33,8 @@ class ClientReservationDetails extends Component {
     const reservation = props.navigation.getParam("reservation");
     this.state = {
       reservation,
-      optionsVisible: false
+      optionsVisible: false,
+      hasReview: !!reservation.reviewId
     };
   }
 
@@ -82,12 +84,23 @@ class ClientReservationDetails extends Component {
   };
 
   onSaveReviewHandler = () => {
-    this.props.createCommerceReview({
-      reservationId: this.state.reservation.id,
-      comment: this.props.comment,
-      rating: this.props.rating,
-      commerceId: this.state.reservation.commerceId
-    });
+    if (this.state.hasReview)
+      // Si tenia calificacion guardar
+      this.props.createCommerceReview({
+        reservationId: this.state.reservation.id,
+        comment: this.props.comment,
+        rating: this.props.rating,
+        reviewId: this.state.reservation.reviewId
+      });
+    // Si la reserva no tiene calificacion, crearla
+    else
+      this.props.createCommerceReview({
+        reservationId: this.state.reservation.id,
+        comment: this.props.comment,
+        rating: this.props.rating,
+        commerceId: this.state.reservation.commerceId
+      });
+    this.setState({ hasReview: true });
   };
 
   renderCommerceReview = () => {
@@ -239,6 +252,7 @@ export default connect(mapStateToProps, {
   readCancellationTimeAllowed,
   createCommerceReview,
   readCommerceReview,
+  updateCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear
 })(ClientReservationDetails);

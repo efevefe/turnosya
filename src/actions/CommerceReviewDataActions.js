@@ -40,7 +40,7 @@ export const createCommerceReview = ({
     .collection(`Profiles/${currentUser.uid}/Reservations`)
     .doc(reservationId);
   batch.update(reservationRef, { reviewId: reviewRef.id });
-
+  console.log("create");
   batch
     .commit()
     .then(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATED }))
@@ -57,6 +57,7 @@ export const readCommerceReview = (commerceId, reviewId) => dispatch => {
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
         if (!softDelete) {
+          console.log("read");
           dispatch({
             type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
             payload: { prop: "rating", value: rating }
@@ -67,6 +68,30 @@ export const readCommerceReview = (commerceId, reviewId) => dispatch => {
           });
         }
       });
+};
+
+export const updateCommerceReview = ({
+  commerceId,
+  rating,
+  comment,
+  reviewId
+}) => dispatch => {
+  dispatch({ type: ON_COMMERCE_REVIEW_CREATING });
+
+  const db = firebase.firestore();
+
+  const currentDate = moment().format();
+
+  console.log("update");
+  db.collection(`Commerces/${commerceId}/Reviews`)
+    .doc(reviewId)
+    .update({
+      rating,
+      comment,
+      date: currentDate
+    })
+    .then(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATED }))
+    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATE_FAIL }));
 };
 
 export const commerceReviewClear = () => {
