@@ -102,7 +102,7 @@ class CommerceProfileView extends Component {
       longitude
     });
 
-    this.props.navigation.navigate('showMyAddressMap');
+    this.props.navigation.navigate('commerceLocationMap');
   };
 
   onPicturePress = () => {
@@ -112,7 +112,13 @@ class CommerceProfileView extends Component {
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
-    const { profilePicture, headerPicture, name, commerceId, navigation } = this.props;
+    const {
+      profilePicture,
+      headerPicture,
+      name,
+      commerceId,
+      navigation
+    } = this.props;
 
     return (
       <ScrollView>
@@ -123,7 +129,7 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={profilePicture ? { uri: headerPicture } : null}
+            source={headerPicture ? { uri: headerPicture } : null}
           />
 
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -258,14 +264,11 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceReadProfile,
-    registerFavoriteCommerce,
-    deleteFavoriteCommerce,
-    onScheduleRead,
-    commerceHitsUpdate,
-    onLocationChange
-  }
-)(CommerceProfileView);
+export default connect(mapStateToProps, {
+  onCommerceReadProfile,
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce,
+  onScheduleRead,
+  commerceHitsUpdate,
+  onLocationChange
+})(CommerceProfileView);

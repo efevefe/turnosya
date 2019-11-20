@@ -152,7 +152,7 @@ class CommerceProfile extends Component {
       rightIcon: this.renderSaveButton(),
       leftIcon: this.renderCancelButton()
     });
-  }
+  };
 
   onRefresh = () => {
     this.props.onCommerceRead();
@@ -191,22 +191,25 @@ class CommerceProfile extends Component {
         if (newHeaderPicture)
           var headerPicture = await imageToBlob(headerPicture);
 
-        this.props.onCommerceUpdate({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          headerPicture,
-          commerceId,
-          latitude,
-          longitude
-        }, this.props.navigation);
+        this.props.onCommerceUpdate(
+          {
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            headerPicture,
+            commerceId,
+            latitude,
+            longitude
+          },
+          this.props.navigation
+        );
       }
 
       this.disableEdit();
@@ -259,10 +262,14 @@ class CommerceProfile extends Component {
       rightIcon: this.renderEditButton(),
       leftIcon: this.renderBackButton()
     });
-  }
+  };
 
   onEditPicturePress = () => {
-    this.setState({ pictureOptionsVisible: false, profilePictureEdit: false, headerPictureEdit: false });
+    this.setState({
+      pictureOptionsVisible: false,
+      profilePictureEdit: false,
+      headerPictureEdit: false
+    });
   };
 
   onEditProfilePicturePress = () => {
@@ -354,7 +361,7 @@ class CommerceProfile extends Component {
 
   onDeletePicturePress = () => {
     if (this.state.profilePictureEdit) {
-      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' })
+      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
       this.setState({ newProfilePicture: false });
     } else {
       this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
@@ -551,7 +558,7 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    this.props.navigation.navigate('changeAddressMap', {
+    this.props.navigation.navigate('changeCommerceLocationMap', {
       onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
@@ -611,7 +618,11 @@ class CommerceProfile extends Component {
         <View style={headerContainerStyle}>
           <Image
             style={headerPictureStyle}
-            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
+            source={
+              this.props.headerPicture
+                ? { uri: this.props.headerPicture }
+                : null
+            }
           >
             <Icon
               name="md-camera"
@@ -625,7 +636,11 @@ class CommerceProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
+              source={
+                this.props.profilePicture
+                  ? { uri: this.props.profilePicture }
+                  : null
+              }
               size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
@@ -787,7 +802,9 @@ class CommerceProfile extends Component {
         </View>
 
         <Menu
-          title={this.state.profilePictureEdit ? "Foto de Perfil" : "Foto de Portada"}
+          title={
+            this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'
+          }
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
@@ -916,15 +933,12 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceRead,
-    onCommerceUpdate,
-    onCommerceValueChange,
-    onProvincesIdRead,
-    onAreasRead,
-    onLocationValueChange,
-    onLocationChange
-  }
-)(CommerceProfile);
+export default connect(mapStateToProps, {
+  onCommerceRead,
+  onCommerceUpdate,
+  onCommerceValueChange,
+  onProvincesIdRead,
+  onAreasRead,
+  onLocationValueChange,
+  onLocationChange
+})(CommerceProfile);
