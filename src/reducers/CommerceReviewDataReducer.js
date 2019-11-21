@@ -1,9 +1,13 @@
 import {
   ON_COMMERCE_REVIEW_VALUE_CHANGE,
-  ON_COMMERCE_REVIEW_CREATING,
+  ON_COMMERCE_REVIEW_SAVING,
+  ON_COMMERCE_REVIEW_SAVED,
+  ON_COMMERCE_REVIEW_SAVE_FAIL,
+  ON_COMMERCE_REVIEW_CLEAR,
   ON_COMMERCE_REVIEW_CREATED,
-  ON_COMMERCE_REVIEW_CREATE_FAIL,
-  ON_COMMERCE_REVIEW_CLEAR
+  ON_COMMERCE_REVIEW_DELETING,
+  ON_COMMERCE_REVIEW_DELETED,
+  ON_COMMERCE_REVIEW_DELETE_FAIL
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -12,19 +16,29 @@ const INITIAL_STATE = {
   date: "",
   clientId: "",
   commerceId: "",
-  saveLoading: false
+  reviewId: "",
+  saveLoading: false,
+  deleteLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COMMERCE_REVIEW_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
-    case ON_COMMERCE_REVIEW_CREATING:
+    case ON_COMMERCE_REVIEW_SAVING:
       return { ...state, saveLoading: true };
+    case ON_COMMERCE_REVIEW_SAVED:
+      return { ...state, saveLoading: false };
+    case ON_COMMERCE_REVIEW_SAVE_FAIL:
+      return { ...state, saveLoading: false };
     case ON_COMMERCE_REVIEW_CREATED:
-      return { ...state, saveLoading: false };
-    case ON_COMMERCE_REVIEW_CREATE_FAIL:
-      return { ...state, saveLoading: false };
+      return { ...state, reviewId: action.payload };
+    case ON_COMMERCE_REVIEW_DELETING:
+      return { ...state, deleteLoading: true };
+    case ON_COMMERCE_REVIEW_DELETED:
+      return INITIAL_STATE;
+    case ON_COMMERCE_REVIEW_DELETE_FAIL:
+      return { ...state, deleteLoading: false };
     case ON_COMMERCE_REVIEW_CLEAR:
       return INITIAL_STATE;
     default:

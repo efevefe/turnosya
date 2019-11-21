@@ -20,6 +20,7 @@ import {
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,
+  deleteCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear
 } from "../../actions";
@@ -33,8 +34,7 @@ class ClientReservationDetails extends Component {
     const reservation = props.navigation.getParam("reservation");
     this.state = {
       reservation,
-      optionsVisible: false,
-      hasReview: !!reservation.reviewId
+      optionsVisible: false
     };
   }
 
@@ -43,10 +43,10 @@ class ClientReservationDetails extends Component {
       this.props.navigation.state.params.reservation.commerceId
     );
 
-    this.props.readCommerceReview(
-      this.state.reservation.commerceId,
-      this.state.reservation.reviewId
-    );
+    this.props.readCommerceReview({
+      commerceId: this.state.reservation.commerceId,
+      reviewId: this.state.reservation.reviewId
+    });
   }
 
   componentWillUnmount() {
@@ -84,23 +84,31 @@ class ClientReservationDetails extends Component {
   };
 
   onSaveReviewHandler = () => {
-    if (this.state.hasReview)
+    if (this.state.reservation.reviewId || this.props.reviewId) {
       // Si tenia calificacion guardar
-      this.props.createCommerceReview({
-        reservationId: this.state.reservation.id,
+      this.props.updateCommerceReview({
+        commerceId: this.state.reservation.commerceId,
         comment: this.props.comment,
         rating: this.props.rating,
-        reviewId: this.state.reservation.reviewId
+        reviewId: this.state.reservation.reviewId || this.props.reviewId
       });
-    // Si la reserva no tiene calificacion, crearla
-    else
+    } else {
+      // Si la reserva no tiene calificacion, crearla
       this.props.createCommerceReview({
-        reservationId: this.state.reservation.id,
+        commerceId: this.state.reservation.commerceId,
         comment: this.props.comment,
         rating: this.props.rating,
-        commerceId: this.state.reservation.commerceId
+        reservationId: this.state.reservation.id
       });
-    this.setState({ hasReview: true });
+    }
+  };
+
+  onDeleteReviewHandler = () => {
+    this.props.deleteCommerceReview({
+      commerceId: this.state.reservation.commerceId,
+      reservationId: this.state.reservation.id,
+      reviewId: this.state.reservation.reviewId || this.props.reviewId
+    });
   };
 
   renderCommerceReview = () => {
@@ -151,10 +159,10 @@ class ClientReservationDetails extends Component {
           >
             <Button
               title="Borrar Review"
-              type="clear"
-              color="white"
-              titleStyle={{ color: MAIN_COLOR }}
+              type="solid"
               outerContainerStyle={{ flex: 1 }}
+              onPress={this.onDeleteReviewHandler}
+              loading={this.props.deleteReviewLoading}
             />
             <Button
               title="Guardar"
@@ -187,7 +195,6 @@ class ClientReservationDetails extends Component {
       <KeyboardAwareScrollView
         enableOnAndroid
         style={{ flex: 1, alignSelf: "stretch" }}
-        extraScrollHeight={70}
       >
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
@@ -231,11 +238,18 @@ class ClientReservationDetails extends Component {
     );
   }
 }
+
 const mapStateToProps = state => {
   const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
-  const { rating, comment, saveLoading } = state.commerceReviewData;
+  const {
+    rating,
+    comment,
+    saveLoading,
+    deleteLoading,
+    reviewId
+  } = state.commerceReviewData;
 
   return {
     loadingReservations,
@@ -243,7 +257,9 @@ const mapStateToProps = state => {
     reservationMinCancelTime,
     rating,
     comment,
-    saveReviewLoading: saveLoading
+    saveReviewLoading: saveLoading,
+    deleteReviewLoading: deleteLoading,
+    reviewId
   };
 };
 
@@ -253,6 +269,7 @@ export default connect(mapStateToProps, {
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,
+  deleteCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear
 })(ClientReservationDetails);

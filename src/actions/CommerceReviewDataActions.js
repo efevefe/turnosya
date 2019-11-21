@@ -3,10 +3,14 @@ import "firebase/firestore";
 import moment from "moment";
 import {
   ON_COMMERCE_REVIEW_VALUE_CHANGE,
+  ON_COMMERCE_REVIEW_SAVED,
+  ON_COMMERCE_REVIEW_SAVING,
+  ON_COMMERCE_REVIEW_SAVE_FAIL,
+  ON_COMMERCE_REVIEW_CLEAR,
   ON_COMMERCE_REVIEW_CREATED,
-  ON_COMMERCE_REVIEW_CREATING,
-  ON_COMMERCE_REVIEW_CREATE_FAIL,
-  ON_COMMERCE_REVIEW_CLEAR
+  ON_COMMERCE_REVIEW_DELETED,
+  ON_COMMERCE_REVIEW_DELETING,
+  ON_COMMERCE_REVIEW_DELETE_FAIL
 } from "./types";
 
 export const commerceReviewValueChange = (prop, value) => {
@@ -19,7 +23,7 @@ export const createCommerceReview = ({
   comment,
   reservationId
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_REVIEW_CREATING });
+  dispatch({ type: ON_COMMERCE_REVIEW_SAVING });
 
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -43,11 +47,14 @@ export const createCommerceReview = ({
   console.log("create");
   batch
     .commit()
-    .then(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATED }))
-    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATE_FAIL }));
+    .then(() => {
+      dispatch({ type: ON_COMMERCE_REVIEW_SAVED });
+      dispatch({ type: ON_COMMERCE_REVIEW_CREATED, payload: reviewRef.id });
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVE_FAIL }));
 };
 
-export const readCommerceReview = (commerceId, reviewId) => dispatch => {
+export const readCommerceReview = ({ commerceId, reviewId }) => dispatch => {
   const db = firebase.firestore();
 
   if (reviewId)
@@ -76,13 +83,11 @@ export const updateCommerceReview = ({
   comment,
   reviewId
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_REVIEW_CREATING });
+  dispatch({ type: ON_COMMERCE_REVIEW_SAVING });
 
   const db = firebase.firestore();
-
   const currentDate = moment().format();
 
-  console.log("update");
   db.collection(`Commerces/${commerceId}/Reviews`)
     .doc(reviewId)
     .update({
@@ -90,8 +95,37 @@ export const updateCommerceReview = ({
       comment,
       date: currentDate
     })
-    .then(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATED }))
-    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_CREATE_FAIL }));
+    .then(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVED }))
+    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVE_FAIL }));
+};
+
+export const deleteCommerceReview = ({
+  commerceId,
+  reservationId,
+  reviewId
+}) => dispatch => {
+  dispatch({ type: ON_COMMERCE_REVIEW_DELETING });
+
+  const db = firebase.firestore();
+  const { currentUser } = firebase.auth();
+  const currentDate = moment().format();
+
+  const batch = db.batch();
+
+  const reviewRef = db
+    .collection(`Commerces/${commerceId}/Reviews`)
+    .doc(reviewId);
+  batch.update(reviewRef, { softDelete: currentDate });
+
+  const reservationRef = db
+    .collection(`Profiles/${currentUser.uid}/Reservations`)
+    .doc(reservationId);
+  batch.update(reservationRef, { reviewId: null });
+
+  batch
+    .commit()
+    .then(() => dispatch({ type: ON_COMMERCE_REVIEW_DELETED }))
+    .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_DELETE_FAIL }));
 };
 
 export const commerceReviewClear = () => {

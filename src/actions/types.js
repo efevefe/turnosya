@@ -157,7 +157,11 @@ export const ON_PROVINCES_READ = "on_provinces_read";
 // Review types
 export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
   "on_commerce_review_value_change";
-export const ON_COMMERCE_REVIEW_CREATING = "on_commerce_review_creating";
-export const ON_COMMERCE_REVIEW_CREATED = "on_commerce_review_created";
-export const ON_COMMERCE_REVIEW_CREATE_FAIL = "on_commerce_review_create_fail";
+export const ON_COMMERCE_REVIEW_SAVING = "on_commerce_review_saving";
+export const ON_COMMERCE_REVIEW_SAVED = "on_commerce_review_saved";
+export const ON_COMMERCE_REVIEW_SAVE_FAIL = "on_commerce_review_save_fail";
 export const ON_COMMERCE_REVIEW_CLEAR = "on_commerce_review_clear";
+export const ON_COMMERCE_REVIEW_CREATED = "on_commerce_review_created";
+export const ON_COMMERCE_REVIEW_DELETING = "on_commerce_review_deleting";
+export const ON_COMMERCE_REVIEW_DELETED = "on_commerce_review_deleted";
+export const ON_COMMERCE_REVIEW_DELETE_FAIL = "on_commerce_review_delete_fail";
