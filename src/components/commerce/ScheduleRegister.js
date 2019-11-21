@@ -80,12 +80,13 @@ class ScheduleRegister extends Component {
       // esto todavia no hace nada
       return this.setState({
         deleteModalVisible: true,
-        lastReservationDate: nextReservationsDates[nextReservationsDates.length - 1]
+        lastReservationDate: nextReservationsDates[nextReservationsDates.length - 1].startDate
       });
     }
 
     if (cards) {
-      return this.onScheduleSave(formattedMoment());
+      alert('no hay reservas');
+      //return this.onScheduleSave(formattedMoment());
     }
 
     // esto todavia no hace nada
@@ -94,22 +95,22 @@ class ScheduleRegister extends Component {
 
   _compatibleSchedule = () => {
     const { nextReservationsDates, cards } = this.props;
-    let notCoveredDates = [];
+    let notCoveredReservations = [];
 
     for (i in cards) {
       // nuevos horarios de atencion
       const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos proximos
-      notCoveredDates = this._compatibleShift(firstShiftStart, firstShiftEnd, days, nextReservationsDates);
+      notCoveredReservations = this._compatibleShift(firstShiftStart, firstShiftEnd, days, nextReservationsDates);
 
       // si existen segundos horarios, se verifica lo mismo que los primeros horarios
-      if (!(notCoveredDates.length % 2) && secondShiftStart && secondShiftEnd) {
-        notCoveredDates = this._compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredDates);
+      if (notCoveredReservations.length && secondShiftStart && secondShiftEnd) {
+        notCoveredReservations = this._compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredReservations);
       }
 
-      if (notCoveredDates.length) {
-        this.setState({ lastReservationDate: notCoveredDates[notCoveredDates.length - 1] })
+      if (notCoveredReservations.length) {
+        this.setState({ lastReservationDate: notCoveredReservations[notCoveredReservations.length - 1].startDate })
         return false;
       }
     }
@@ -117,22 +118,56 @@ class ScheduleRegister extends Component {
     return true;
   }
 
-  _compatibleShift = (shiftStart, shiftEnd, days, notCoveredDates) => {
+  _compatibleShift = (shiftStart, shiftEnd, days, notCoveredReservations) => {
     const { reservationMinLength } = this.props;
 
     shiftStart = hourToDate(shiftStart);
     shiftEnd = hourToDate(shiftEnd);
 
-    while (shiftStart <= shiftEnd) {
-      notCoveredDates = notCoveredDates.filter(date => {
-        return !(date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
-      });
+    notCoveredReservations = notCoveredReservations.filter(reservation => {
+      const { startDate, endDate } = reservation;
 
-      shiftStart.add(reservationMinLength, 'minutes');
-    }
+      shiftStart.year(startDate.year());
+      shiftStart.month(startDate.month());
+      shiftStart.date(startDate.date());
 
-    return notCoveredDates;
+      shiftEnd.year(startDate.year());
+      shiftEnd.month(startDate.month());
+      shiftEnd.date(startDate.date());
+
+      if (startDate >= shiftStart && endDate <= shiftEnd) {
+        const startDiff = shiftStart.diff(startDate, 'minutes');
+        const reservationDuration = startDate.diff(endDate, 'minutes');
+
+        return (
+          (startDiff % reservationMinLength) ||
+          (reservationDuration % reservationMinLength) ||
+          !days.includes(startDate.day())
+        );
+      }
+
+      return true;
+    })
+
+    return notCoveredReservations;
   }
+
+  // _compatibleShift = (shiftStart, shiftEnd, days, notCoveredDates) => {
+  //   const { reservationMinLength } = this.props;
+
+  //   shiftStart = hourToDate(shiftStart);
+  //   shiftEnd = hourToDate(shiftEnd);
+
+  //   while (shiftStart <= shiftEnd) {
+  //     notCoveredDates = notCoveredDates.filter(date => {
+  //       return !(date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
+  //     });
+
+  //     shiftStart.add(reservationMinLength, 'minutes');
+  //   }
+
+  //   return notCoveredDates;
+  // }
 
   onModalSavePress = () => {
     this.onScheduleSave(formattedMoment(this.state.lastReservationDate));
@@ -141,6 +176,7 @@ class ScheduleRegister extends Component {
 
   onScheduleSave = startDate => {
     const {
+      schedules,
       commerceId,
       cards,
       reservationMinLength,
@@ -150,6 +186,7 @@ class ScheduleRegister extends Component {
 
     this.props.onScheduleUpdate(
       {
+        schedules,
         commerceId,
         cards,
         reservationMinLength,
@@ -160,17 +197,17 @@ class ScheduleRegister extends Component {
     );
 
     // aca no va el goback, pero si la consulta
-    this.onBackPress();
+    // this.onBackPress();
   }
 
   onBackPress = () => {
     // aca deberia verificar si hay cambios no guardados y preguntar si quiere descartar
 
     this.props.navigation.goBack();
-    this.props.onScheduleRead({
-      commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate')
-    });
+    // this.props.onScheduleRead({
+    //   commerceId: this.props.commerceId,
+    //   selectedDate: this.props.navigation.getParam('selectedDate')
+    // });
   };
 
   onAddPress = () => {
@@ -292,7 +329,7 @@ class ScheduleRegister extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
         {this.renderUpdateScheduleModal()}
-        {this.renderDeleteScheduleModal()}
+        {/*this.renderDeleteScheduleModal()*/}
 
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -316,6 +353,7 @@ const emptyCard = {
 
 const mapStateToProps = state => {
   const {
+    schedules,
     cards,
     selectedDays,
     reservationMinLength,
@@ -330,6 +368,7 @@ const mapStateToProps = state => {
   const { commerceId } = state.commerceData;
 
   return {
+    schedules,
     cards,
     selectedDays,
     commerceId,

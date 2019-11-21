@@ -109,7 +109,8 @@ class CommerceSchedule extends Component {
     this.setState({ modal: false });
 
     //hay que ver la forma de que esto se haga en el .then() del update()
-    this.props.navigation.navigate('scheduleRegister', { selectedDate: this.state.selectedDate });
+    // this.props.navigation.navigate('scheduleRegister', { selectedDate: this.state.selectedDate });
+    this.props.navigation.navigate('schedulesList', { selectedDate: this.state.selectedDate });
   };
 
   onScheduleConfigurationPress = () => {

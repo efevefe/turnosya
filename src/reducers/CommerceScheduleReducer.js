@@ -13,11 +13,14 @@ import {
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY,
   ON_COMMERCE_LAST_COURT_RESERVATION_READ,
-  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL
+  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL,
+  ON_ACTIVE_SCHEDULES_READ
 } from '../actions/types';
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
+  schedules: [],
+  id: '',
   cards: [
     {
       id: 0,
@@ -71,6 +74,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ON_SCHEDULE_READ:
       return { ...state, ...action.payload, loading: false };
+    case ON_ACTIVE_SCHEDULES_READ: // este capaz ni hace falta, se podria usar la misma otra action
+      return { ...state, schedules: action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
       Toast.show({ text: 'Aun no hay horarios de atencion' });
 

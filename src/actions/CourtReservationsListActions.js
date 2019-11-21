@@ -36,8 +36,10 @@ export const onNextReservationsDatesRead = ({ commerceId, startDate }) => {
         }
 
         snapshot.forEach(doc => {
-          nextReservationsDates.push(moment(doc.data().startDate.toDate()))
-          nextReservationsDates.push(moment(doc.data().endDate.toDate()))
+          nextReservationsDates.push({
+            startDate: moment(doc.data().startDate.toDate()),
+            endDate: moment(doc.data().endDate.toDate())
+          });
         });
 
         dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservationsDates } });

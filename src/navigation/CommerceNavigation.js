@@ -15,6 +15,7 @@ import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -32,6 +33,12 @@ const calendarStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
+    },
+    schedulesList: {
+      screen: CommerceSchedulesList,
+      navigationOptions: {
+        title: 'Horarios de Atencion'
+      }
     },
     scheduleRegister: {
       screen: ScheduleRegister,
