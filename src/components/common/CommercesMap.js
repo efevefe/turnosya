@@ -19,11 +19,7 @@ class CommercesMap extends React.Component {
     defaultAddress: 'Córdoba, Argentina',
     completeAddress: '',
     locationAsked: false,
-    userLocationChanged: false,
-    draggable: !(
-      this.props.navigation &&
-      this.props.navigation.state.routeName === 'commerceLocationMap'
-    )
+    userLocationChanged: false
   };
 
   componentDidMount() {
@@ -37,18 +33,10 @@ class CommercesMap extends React.Component {
       this.state.locationAsked &&
       prevProps.userLocation !== this.props.userLocation
     ) {
-      // const { address, provinceName, city, country } = this.props.userLocation;
-
       this.setState({
         locationAsked: false,
-        // completeAddress: `${address}, ${city}, ${provinceName}, ${country}`,
         userLocationChanged: true
       });
-    }
-
-    if (prevProps.provinceName !== this.props.provinceName) {
-      this.props.onProvinceNameChange &&
-        this.props.onProvinceNameChange(this.props.provinceName);
     }
   }
 
@@ -210,7 +198,7 @@ class CommercesMap extends React.Component {
             latitude,
             longitude
           }}
-          draggable={this.state.draggable}
+          draggable
           title={address}
           onDragEnd={e =>
             this.updateAddressFromLatAndLong({
@@ -298,8 +286,6 @@ class CommercesMap extends React.Component {
   };
 
   render() {
-    console.log('Lot commerce map');
-
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         <MapView
@@ -311,14 +297,7 @@ class CommercesMap extends React.Component {
           region={this.mapRegion()}
           onRegionChangeComplete={region => (this.region = region)}
           animateToRegion={{ region: this.region, duration: 3000 }}
-          onLongPress={e => {
-            if (this.state.draggable) {
-              this.updateAddressFromLatAndLong({
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude
-              });
-            }
-          }}
+          onLongPress={this.onLongPressHandler}
         >
           {this.renderUserMarker()}
           {this.renderPointerMarker()}
