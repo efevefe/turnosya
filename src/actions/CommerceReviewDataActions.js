@@ -44,7 +44,6 @@ export const createCommerceReview = ({
     .collection(`Profiles/${currentUser.uid}/Reservations`)
     .doc(reservationId);
   batch.update(reservationRef, { reviewId: reviewRef.id });
-  console.log("create");
   batch
     .commit()
     .then(() => {
@@ -64,7 +63,6 @@ export const readCommerceReview = ({ commerceId, reviewId }) => dispatch => {
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
         if (!softDelete) {
-          console.log("read");
           dispatch({
             type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
             payload: { prop: "rating", value: rating }

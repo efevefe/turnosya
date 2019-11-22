@@ -25,7 +25,6 @@ import {
   commerceReviewClear
 } from "../../actions";
 import { stringFormatHours } from "../../utils/functions";
-import { MAIN_COLOR } from "../../constants";
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -34,9 +33,15 @@ class ClientReservationDetails extends Component {
     const reservation = props.navigation.getParam("reservation");
     this.state = {
       reservation,
-      optionsVisible: false
+      optionsVisible: false,
+      confirmDeleteVisible: false,
+      isOneWeekOld: !moment()
+        .subtract(1, "w")
+        .isBefore(reservation.endDate)
     };
   }
+
+  // ** Lifecycle methods **
 
   componentDidMount() {
     this.props.readCancellationTimeAllowed(
@@ -52,6 +57,8 @@ class ClientReservationDetails extends Component {
   componentWillUnmount() {
     this.props.commerceReviewClear();
   }
+
+  // ** Cancelation methods **
 
   onPressCancelButton = () => {
     const { reservationMinCancelTime } = this.props;
@@ -83,6 +90,8 @@ class ClientReservationDetails extends Component {
     }
   };
 
+  // ** Commerce Review methods **
+
   onSaveReviewHandler = () => {
     if (this.state.reservation.reviewId || this.props.reviewId) {
       // Si tenia calificacion guardar
@@ -104,6 +113,15 @@ class ClientReservationDetails extends Component {
   };
 
   onDeleteReviewHandler = () => {
+    this.setState({ confirmDeleteVisible: true });
+  };
+
+  onDeleteConfirmBackdropPress = () => {
+    this.setState({ confirmDeleteVisible: false });
+  };
+
+  deleteReview = () => {
+    this.setState({ confirmDeleteVisible: false });
     this.props.deleteCommerceReview({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
@@ -136,6 +154,7 @@ class ClientReservationDetails extends Component {
               showRating={false}
               size={25}
               defaultRating={this.props.rating}
+              isDisabled={this.state.isOneWeekOld}
             />
           </CardSection>
           <View style={{ marginTop: 10 }}>
@@ -148,6 +167,7 @@ class ClientReservationDetails extends Component {
               maxLength={128}
               maxHeight={180}
               defaultValue={this.props.comment}
+              editable={!this.state.isOneWeekOld}
             />
           </View>
           <View
@@ -158,11 +178,12 @@ class ClientReservationDetails extends Component {
             }}
           >
             <Button
-              title="Borrar Review"
+              title="Borrar"
               type="solid"
               outerContainerStyle={{ flex: 1 }}
               onPress={this.onDeleteReviewHandler}
               loading={this.props.deleteReviewLoading}
+              disabled={this.state.isOneWeekOld}
             />
             <Button
               title="Guardar"
@@ -170,12 +191,37 @@ class ClientReservationDetails extends Component {
               outerContainerStyle={{ flex: 1 }}
               onPress={this.onSaveReviewHandler}
               loading={this.props.saveReviewLoading}
+              disabled={this.state.isOneWeekOld}
             />
           </View>
         </View>
       );
     }
   };
+
+  renderConfirmCommerceDelete = () => {
+    return (
+      <Menu
+        title="¿Esta seguro que desea eliminar su negocio?"
+        onBackdropPress={this.onDeleteConfirmBackdropPress}
+        isVisible={this.state.confirmDeleteVisible}
+      >
+        <MenuItem
+          title="Confirmar"
+          icon="md-checkmark"
+          onPress={this.deleteReview}
+        />
+        <Divider style={{ backgroundColor: "grey" }} />
+        <MenuItem
+          title="Cancelar"
+          icon="md-close"
+          onPress={this.onDeleteConfirmBackdropPress}
+        />
+      </Menu>
+    );
+  };
+
+  // ** Render method **
 
   render() {
     const {
@@ -233,6 +279,7 @@ class ClientReservationDetails extends Component {
           showPrice={true}
         />
         {this.renderCommerceReview()}
+        {this.renderConfirmCommerceDelete()}
         {this.renderCancelButton()}
       </KeyboardAwareScrollView>
     );

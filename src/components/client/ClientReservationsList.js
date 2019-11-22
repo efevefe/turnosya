@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { ListItem, ButtonGroup } from 'react-native-elements';
-import { connect } from 'react-redux';
-import { MONTHS, DAYS, MAIN_COLOR } from '../../constants';
-import { Spinner, EmptyList } from '../common';
-import { onClientReservationsListRead } from '../../actions';
-import moment from 'moment';
+import React, { Component } from "react";
+import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import { ListItem, ButtonGroup } from "react-native-elements";
+import { connect } from "react-redux";
+import { MONTHS, DAYS, MAIN_COLOR } from "../../constants";
+import { Spinner, EmptyList } from "../common";
+import { onClientReservationsListRead } from "../../actions";
+import moment from "moment";
 
 class ClientReservationsList extends Component {
   state = { selectedIndex: 1, filteredList: [] };
@@ -57,6 +57,11 @@ class ClientReservationsList extends Component {
     );
   };
 
+  isOneWeekOld = date =>
+    !moment()
+      .subtract(1, "w")
+      .isBefore(date);
+
   renderRow = ({ item }) => {
     const { commerce, startDate, endDate, price } = item;
 
@@ -64,17 +69,23 @@ class ClientReservationsList extends Component {
       <ListItem
         title={commerce.name}
         rightTitle={`$${price}`}
-        rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
-        rightSubtitle={endDate < moment() ? '¡Calificá el servicio!' : null}
-        rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
-        subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
+        rightTitleStyle={{ color: "black", fontWeight: "bold" }}
+        rightSubtitle={
+          endDate < moment()
+            ? this.isOneWeekOld(endDate)
+              ? "Ya no se puede calificar"
+              : "¡Calificá el servicio!"
+            : null
+        }
+        rightSubtitleStyle={{ textAlign: "right", fontSize: 11 }}
+        subtitle={`${DAYS[startDate.day()]} ${startDate.format("D")} de ${
           MONTHS[startDate.month()]
-        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
-          'HH:mm'
+        }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
+          "HH:mm"
         )} hs.`}
         bottomDivider
         onPress={() =>
-          this.props.navigation.navigate('reservationDetails', {
+          this.props.navigation.navigate("reservationDetails", {
             reservation: item
           })
         }
@@ -104,18 +115,18 @@ class ClientReservationsList extends Component {
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
-          buttons={['PASADOS', 'PRÓXIMOS']}
+          buttons={["PASADOS", "PRÓXIMOS"]}
           containerBorderRadius={0}
           containerStyle={styles.buttonGroupStyle}
-          selectedButtonStyle={{ backgroundColor: 'white' }}
+          selectedButtonStyle={{ backgroundColor: "white" }}
           buttonStyle={{ backgroundColor: MAIN_COLOR }}
           selectedTextStyle={{ color: MAIN_COLOR }}
-          textStyle={{ color: 'white' }}
+          textStyle={{ color: "white" }}
           innerBorderStyle={{ width: 0 }}
         />
 
         {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
+          <Spinner style={{ position: "relative" }} />
         ) : (
           this.renderList()
         )}
