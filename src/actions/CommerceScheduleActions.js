@@ -109,7 +109,7 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
   const schedules = [];
 
   try {
-    let snapshot = await schedulesRef.where('endDate', '>=', date).get();
+    let snapshot = await schedulesRef.where('endDate', '>=', date).orderBy('endDate').get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
     }
@@ -219,6 +219,18 @@ export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => 
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
   }
 };
+
+export const onScheduleDelete = ({ commerceId, scheduleId, endDate }) => async dispatch => {
+  const db = firebase.firestore();
+  const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
+
+  try {
+    await scheduleRef.update({ endDate: endDate.toDate() })
+    dispatch({ type: ON_SCHEDULE_CREATED });
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+  }
+}
 
 export const onScheduleConfigSave = ({
   reservationMinLength,

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlatList, View, RefreshControl } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Fab } from 'native-base';
+import moment from 'moment';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { MAIN_COLOR, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
@@ -56,10 +57,14 @@ class ScheduleRegister extends Component {
   };
 
   onSavePress = () => {
+    let startDate = formattedMoment();
+
+    if (this.props.startDate > startDate) startDate = this.props.startDate;
+
     if (JSON.stringify(this.props.cards) !== JSON.stringify(this.state.prevCards)) {
       return this.props.onNextReservationsDatesRead({
         commerceId: this.props.commerceId,
-        startDate: formattedMoment()
+        startDate
       });
     }
 
@@ -67,13 +72,18 @@ class ScheduleRegister extends Component {
   }
 
   workShiftsValidate = () => {
-    const { nextReservationsDates, cards } = this.props;
+    const { nextReservationsDates, cards, startDate } = this.props;
 
     if (nextReservationsDates) {
       if (cards) {
         if (!this._compatibleSchedule()) {
           return this.setState({ reservationsModalVisible: true });
         }
+
+        if (startDate && startDate > moment()) {
+          return this.onScheduleSave(this.props.startDate);
+        }
+
         return this.onScheduleSave(formattedMoment());
       }
 
@@ -85,8 +95,11 @@ class ScheduleRegister extends Component {
     }
 
     if (cards) {
-      alert('no hay reservas');
-      //return this.onScheduleSave(formattedMoment());
+      if (startDate && startDate > moment()) {
+        return this.onScheduleSave(this.props.startDate);
+      }
+
+      return this.onScheduleSave(formattedMoment());
     }
 
     // esto todavia no hace nada
@@ -151,23 +164,6 @@ class ScheduleRegister extends Component {
 
     return notCoveredReservations;
   }
-
-  // _compatibleShift = (shiftStart, shiftEnd, days, notCoveredDates) => {
-  //   const { reservationMinLength } = this.props;
-
-  //   shiftStart = hourToDate(shiftStart);
-  //   shiftEnd = hourToDate(shiftEnd);
-
-  //   while (shiftStart <= shiftEnd) {
-  //     notCoveredDates = notCoveredDates.filter(date => {
-  //       return !(date.format('HH:mm') === shiftStart.format('HH:mm') && days.includes(date.day()))
-  //     });
-
-  //     shiftStart.add(reservationMinLength, 'minutes');
-  //   }
-
-  //   return notCoveredDates;
-  // }
 
   onModalSavePress = () => {
     this.onScheduleSave(formattedMoment(this.state.lastReservationDate));
@@ -267,36 +263,6 @@ class ScheduleRegister extends Component {
     );
   }
 
-  renderDeleteScheduleModal = () => {
-    const { lastReservationDate } = this.state;
-
-    return (
-      <Menu
-        title={
-          'Tienes reservas hasta el ' +
-          `${DAYS[lastReservationDate.day()]} ` +
-          `${lastReservationDate.format('D')} de ` +
-          `${MONTHS[lastReservationDate.month()]}, ` +
-          'por lo que la baja de los horarios de atencion entrará en ' +
-          'vigencia luego de esa fecha. ¿Desea confirmar los cambios?'}
-        onBackdropPress={() => this.setState({ reservationsModalVisible: false })}
-        isVisible={this.state.reservationsModalVisible}
-      >
-        <MenuItem
-          title="Acepar"
-          icon="md-checkmark"
-          onPress={() => console.log('eliminar horarios')}
-        />
-        <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={() => this.setState({ deleteModalVisible: false })}
-        />
-      </Menu>
-    );
-  }
-
   renderList = () => {
     const { cards, refreshing, loadingReservations } = this.props;
 
@@ -358,6 +324,7 @@ const mapStateToProps = state => {
     selectedDays,
     reservationMinLength,
     reservationDayPeriod,
+    startDate,
     endDate,
     error,
     loading,
@@ -374,6 +341,7 @@ const mapStateToProps = state => {
     commerceId,
     reservationMinLength,
     reservationDayPeriod,
+    startDate,
     endDate,
     error,
     loading,
