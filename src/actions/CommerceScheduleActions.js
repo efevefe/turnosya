@@ -47,17 +47,23 @@ export const onScheduleRead = commerceId => {
         }
 
         snapshot.forEach(doc => {
-          var { reservationDayPeriod, reservationMinLength } = doc.data();
+          const {
+            reservationDayPeriod,
+            reservationMinLength,
+            reservationMinCancelTime
+          } = doc.data();
 
-          db.collection(`Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`)
+          db.collection(
+            `Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`
+          )
             .get()
             .then(snapshot => {
               if (snapshot.empty) {
                 return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
               }
 
-              var cards = [];
-              var selectedDays = [];
+              const cards = [];
+              let selectedDays = [];
 
               snapshot.forEach(doc => {
                 cards.push({ ...doc.data(), id: parseInt(doc.id) });
@@ -66,19 +72,19 @@ export const onScheduleRead = commerceId => {
 
               dispatch({
                 type: ON_SCHEDULE_READ,
-                payload: { cards, selectedDays, reservationDayPeriod, reservationMinLength }
+                payload: {
+                  cards,
+                  selectedDays,
+                  reservationDayPeriod,
+                  reservationMinLength,
+                  reservationMinCancelTime: reservationMinCancelTime ? reservationMinCancelTime : 2 // provisorio
+                }
               });
             })
-            .catch(error => {
-              console.log(error);
-              dispatch({ type: ON_SCHEDULE_READ_FAIL });
-            });
-        })
+            .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
+        });
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_READ_FAIL });
-      });
+      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
   };
 };
 
@@ -86,7 +92,7 @@ export const onScheduleRead = commerceId => {
 export const onScheduleCreate = cards => {
   //ESTA FUNCION ES PARA UPDATEAR LOS SCHEDULES SIN TENER QUE BORRAR Y VOLVER A ESCRIBIR
   const db = firebase.firestore();
-  var batch = db.batch();
+  const batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
@@ -105,7 +111,7 @@ export const onScheduleCreate = cards => {
               cards.forEach(card => {
                 const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
                 
-                var ref = db
+                const ref = db
                   .collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${scheduleRef.id}/WorkShifts`)
                   .doc(`${card.id}`);
                 batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
@@ -113,35 +119,38 @@ export const onScheduleCreate = cards => {
 
               batch.commit()
                 .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
-                .catch(error => {
-                  console.log(error);
-                  dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-                });
+                .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
             })
-            .catch(error => {
-              console.log(error);
-              dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-            });
+            .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
         })
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-      });
+      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
   }
 };
 */
 
-export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, reservationDayPeriod }, navigation) => {
+export const onScheduleCreate = (
+  { cards, commerceId, reservationMinLength, reservationDayPeriod, reservationMinCancelTime },
+  navigation
+) => {
   //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
   const db = firebase.firestore();
-  var batch = db.batch();
+  const batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CREATING });
 
     db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set({ startDate: new Date(), endDate: null, reservationMinLength, reservationDayPeriod }, { merge: true })
+      .set(
+        {
+          startDate: new Date(),
+          endDate: null,
+          reservationMinLength,
+          reservationDayPeriod,
+          reservationMinCancelTime
+        },
+        { merge: true }
+      )
       .then(() => {
         db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
           .get()
@@ -151,41 +160,47 @@ export const onScheduleCreate = ({ cards, commerceId, reservationMinLength, rese
             });
 
             cards.forEach(card => {
-              const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+              const {
+                days,
+                firstShiftStart,
+                firstShiftEnd,
+                secondShiftStart,
+                secondShiftEnd
+              } = card;
 
-              var ref = db
+              const ref = db
                 .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
                 .doc(`${card.id}`);
-              batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+              batch.set(ref, {
+                days,
+                firstShiftStart,
+                firstShiftEnd,
+                secondShiftStart,
+                secondShiftEnd
+              });
             });
 
-            batch.commit()
+            batch
+              .commit()
               .then(() => {
                 navigation.navigate('calendar');
                 dispatch({ type: ON_SCHEDULE_CREATED });
               })
-              .catch(error => {
-                console.log(error);
-                dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-              });
+              .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
           })
-          .catch(error => {
-            console.log(error);
-            dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-          });
+          .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
       })
-      .catch(error => {
-        console.log(error);
-        dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-      });
-  }
+      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
+  };
 };
 
-export const onScheduleConfigSave = ({
-  reservationMinLength,
-  reservationDayPeriod,
-  commerceId
-},
+export const onScheduleConfigurationSave = (
+  {
+    reservationMinLength,
+    reservationDayPeriod,
+    reservationMinCancelTime,
+    commerceId
+  },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -194,11 +209,45 @@ export const onScheduleConfigSave = ({
     dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
 
     db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set({ reservationMinLength, reservationDayPeriod }, { merge: true })
+      .set(
+        {
+          reservationMinLength,
+          reservationDayPeriod,
+          reservationMinCancelTime
+        },
+        { merge: true }
+      )
       .then(() => {
         navigation.navigate('calendar');
-        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED })
+        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
+      });
+  };
+};
+
+export const readCancellationTimeAllowed = commerceId => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_SCHEDULE_READING });
+
+    db.doc(`Commerces/${commerceId}/Schedules/0`)
+      .get()
+      .then(doc => {
+        if (doc.data().reservationMinCancelTime)
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: doc.data().reservationMinCancelTime
+            }
+          });
+        else
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: 2
+            }
+          });
       })
-      .catch(error => console.log(error));
+      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
   };
 };

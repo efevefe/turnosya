@@ -1,20 +1,24 @@
 export const imageToBlob = async uri => {
-  // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
+  try {
+    // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
 
-  const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      resolve(xhr.response);
-    };
-    xhr.onerror = function() {
-      reject(new TypeError('Network request failed'));
-    };
-    xhr.responseType = 'blob';
-    xhr.open('GET', uri, true);
-    xhr.send(null);
-  });
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
 
-  return blob;
+    return blob;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 //Funcion para eliminar espacios vacios antes y despues de un string.
@@ -99,15 +103,15 @@ const validarCuit = cuit => {
     return false;
   }
 
-  var acumulado = 0;
-  var digitos = cuit.split('');
-  var digito = digitos.pop();
+  let acumulado = 0;
+  const digitos = cuit.split('');
+  const digito = digitos.pop();
 
-  for (var i = 0; i < digitos.length; i++) {
+  for (let i = 0; i < digitos.length; i++) {
     acumulado += digitos[9 - i] * (2 + (i % 6));
   }
 
-  var verif = 11 - (acumulado % 11);
+  let verif = 11 - (acumulado % 11);
   if (verif == 11) {
     verif = 0;
   }
@@ -150,6 +154,29 @@ export const stringFormatDays = totalDays => {
   else if (months) return stringMonths + '.';
   else return stringDays + '.';
 };
+
+/**
+ * Formats the input value (hours) into a String containing the hours and
+ * days that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalHours The amount of minutes to format
+ * @return {String}            String with the following format: 'XX day. XX hours.'
+ */
+export const stringFormatHours = totalHours => {
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+
+  const stringHours =
+  hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+
+const stringDays =
+  days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+
+
+  if (hours && days) return stringDays + ' y ' + stringHours + '.';
+  else if (hours) return stringHours + '.';
+  else return stringDays + '.';
+};
+
 
 export const getHourAndMinutes = hour => {
   hour = hour.split(':').map(num => parseInt(num));

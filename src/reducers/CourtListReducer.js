@@ -1,7 +1,6 @@
 import {
   COURT_READ,
   COURT_READING,
-  COURT_READ_FAIL,
   COURT_READING_ONLY_AVAILABLE,
   COURT_READ_ONLY_AVAILABLE
 } from '../actions/types';
@@ -18,8 +17,6 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case COURT_READ_ONLY_AVAILABLE:
       return { ...state, courtsAvailable: action.payload, loading: false };
-    case COURT_READ_FAIL:
-      return { ...state, loading: false };
     default:
       return state;
   }

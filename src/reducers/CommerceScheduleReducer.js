@@ -12,15 +12,15 @@ import {
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY
-} from '../actions/types';
-import { Toast } from '../components/common';
+} from "../actions/types";
+import { Toast } from "../components/common";
 
 const INITIAL_STATE = {
   cards: [
     {
       id: 0,
-      firstShiftStart: '',
-      firstShiftEnd: '',
+      firstShiftStart: "",
+      firstShiftEnd: "",
       secondShiftStart: null,
       secondShiftEnd: null,
       days: []
@@ -29,6 +29,7 @@ const INITIAL_STATE = {
   selectedDays: [],
   reservationMinLength: 10,
   reservationDayPeriod: 14,
+  reservationMinCancelTime: 2,
   slots: [],
   loading: false,
   refreshing: false
@@ -45,9 +46,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_CARD_VALUE_CHANGE:
       const newCard = action.payload;
       var newCards = state.cards.map(card => {
-        if (card.id !== newCard.id) {
-          return card;
-        }
+        if (card.id !== newCard.id) return card;
 
         return { ...card, ...newCard };
       });
@@ -55,7 +54,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, cards: newCards };
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
-      var newSelectedDays = state.selectedDays.filter(
+      const newSelectedDays = state.selectedDays.filter(
         day => !cardToDelete.days.includes(day)
       );
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
@@ -66,25 +65,24 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_READ:
       return { ...state, ...action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
-      Toast.show({ text: 'Aun no hay horarios de atencion' });
-
+      Toast.show({ text: "Aún no hay horarios de atención" });
       return INITIAL_STATE;
     case ON_SCHEDULE_READ_FAIL:
       return { ...state, loading: false };
     case ON_SCHEDULE_CREATING:
       return { ...state, refreshing: true };
     case ON_SCHEDULE_CREATED:
-      Toast.show({ text: 'Cambios guardados' });
+      Toast.show({ text: "Cambios guardados" });
 
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CREATE_FAIL:
-      Toast.show({ text: 'Se ha producido un error' });
+      Toast.show({ text: "Se ha producido un error" });
 
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
     case ON_SCHEDULE_CONFIG_UPDATED:
-      Toast.show({ text: 'Cambios guardados' });
+      Toast.show({ text: "Cambios guardados" });
 
       return { ...state, loading: false };
     default:

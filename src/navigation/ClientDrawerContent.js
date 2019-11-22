@@ -1,22 +1,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
-import { onCommerceOpen, onLogout, onUserRead } from '../actions';
+import {
+  onCommerceOpen,
+  onLogout,
+  onUserRead,
+  onScheduleValueChange
+} from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
-import VerifyEmailModal from '../components/VerifyEmailModal';
+import VerifyEmailModal from '../components/client/VerifyEmailModal';
 
 class ClientDrawerContent extends Component {
   state = { modal: false };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.onUserRead();
   }
 
   onMyCommercePress = async () => {
-    (await isEmailVerified())
-      ? this.props.onCommerceOpen(this.props.navigation)
-      : this.setState({ modal: true });
+    try {
+      (await isEmailVerified())
+        ? this.props.onCommerceOpen(this.props.navigation)
+        : this.setState({ modal: true });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   onModalClose = () => {
@@ -79,5 +88,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCommerceOpen, onLogout, onUserRead }
+  { onCommerceOpen, onLogout, onUserRead, onScheduleValueChange }
 )(ClientDrawerContent);

@@ -176,37 +176,41 @@ export const onLogout = () => {
 };
 
 export const userReauthenticate = async (password = null) => {
-  const { currentUser } = firebase.auth();
-  const provider = currentUser.providerData[0].providerId;
-  var credential;
+  try {
+    const { currentUser } = firebase.auth();
+    const provider = currentUser.providerData[0].providerId;
+    let credential;
 
-  if (provider == 'password') {
-    credential = await firebase.auth.EmailAuthProvider.credential(
-      currentUser.email,
-      password
-    );
-  } else if (provider == 'facebook.com') {
-    await Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
-      permissions: facebookPermissions
-    }).then(({ type, token }) => {
-      if (type === 'success') {
-        credential = firebase.auth.FacebookAuthProvider.credential(token);
-      }
-    });
-  } else if (provider == 'google.com') {
-    await Google.logInAsync({
-      iosClientId,
-      androidClientId,
-      scopes: googleScopes
-    }).then(({ type, idToken, accessToken }) => {
-      if (type === 'success') {
-        credential = firebase.auth.GoogleAuthProvider.credential(
-          idToken,
-          accessToken
-        );
-      }
-    });
+    if (provider == 'password') {
+      credential = await firebase.auth.EmailAuthProvider.credential(
+        currentUser.email,
+        password
+      );
+    } else if (provider == 'facebook.com') {
+      await Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+        permissions: facebookPermissions
+      }).then(({ type, token }) => {
+        if (type === 'success') {
+          credential = firebase.auth.FacebookAuthProvider.credential(token);
+        }
+      });
+    } else if (provider == 'google.com') {
+      await Google.logInAsync({
+        iosClientId,
+        androidClientId,
+        scopes: googleScopes
+      }).then(({ type, idToken, accessToken }) => {
+        if (type === 'success') {
+          credential = firebase.auth.GoogleAuthProvider.credential(
+            idToken,
+            accessToken
+          );
+        }
+      });
+    }
+
+    return currentUser.reauthenticateWithCredential(credential);
+  } catch (e) {
+    console.error(e);
   }
-
-  return currentUser.reauthenticateWithCredential(credential);
 };

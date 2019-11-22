@@ -2,7 +2,7 @@ import {
   ON_COURT_VALUE_CHANGE,
   COURT_CREATE,
   COURT_FORM_SUBMIT,
-  COURT_EXISTED,
+  COURT_EXISTS,
   ON_COURT_FORM_OPEN,
   COURT_UPDATE,
   COURT_DELETE
@@ -43,7 +43,7 @@ export default (state = INITIAL_STATE, action) => {
     case COURT_DELETE:
         Toast.show({ text: 'La cancha se ha eliminado' });
       return INITIAL_STATE;
-    case COURT_EXISTED:
+    case COURT_EXISTS:
       return { ...state, loading: false, existedError: true };
     default:
       return state;

@@ -3,18 +3,21 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-// import ServicesList from '../components/ServicesList';
-// import ServiceForm from '../components/ServiceForm';
-import CourtList from '../components/CourtList';
-import CourtForm from '../components/CourtForm';
-import ScheduleRegister from '../components/ScheduleRegister';
-import CommerceProfile from '../components/CommerceProfile';
-import CommerceSchedule from '../components/CommerceSchedule';
-import ScheduleRegisterConfiguration from '../components/ScheduleRegisterConfiguration';
+// import ServicesList from '../components/commerce/ServicesList';
+// import ServiceForm from '../components/commerce/ServiceForm';
+import CourtList from '../components/commerce/CourtList';
+import CourtForm from '../components/commerce/CourtForm';
+import ScheduleRegister from '../components/commerce/ScheduleRegister';
+import CommerceProfile from '../components/commerce/CommerceProfile';
+import CommerceSchedule from '../components/commerce/CommerceSchedule';
+import ScheduleRegisterConfiguration from '../components/commerce/ScheduleRegisterConfiguration';
 import LocationMap from '../components/LocationMap';
-import CommerceCourtsStateList from '../components/CommerceCourtsStateList';
-import CommerceCourtReservations from '../components/CommerceCourtReservations';
-import CommerceCourtReservationDetails from '../components/CommerceCourtReservationDetails';
+import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
+import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
+import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceProfileView from '../components/CommerceProfileView';
+import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -124,19 +127,44 @@ const courtsStack = createStackNavigator(
 const profileStack = createStackNavigator(
   {
     profile: {
-      screen: CommerceProfile,
+      screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
+        headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        ),
+        headerRight: (
+          <IconButton
+            icon="md-create"
+            onPress={() => navigation.navigate('profileEdit')}
+          />
         )
       })
     },
+    profileEdit: {
+      screen: CommerceProfile,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Editar Perfil',
+        headerLeft: navigation.getParam('leftIcon')
+      })
+    },
+    commerceProfileInfo: {
+      screen: CommerceProfileInfo,
+      navigationOptions: {
+        title: 'Información'
+      }
+    },
+    showMyAddressMap: {
+      screen: Map,
+      navigationOptions: {
+        title: 'Dirección'
+      }
+    },
     changeAddressMap: {
       screen: LocationMap,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Modificar mi Dirección'
-      })
+      }
     }
   },
   stackNavigationOptions

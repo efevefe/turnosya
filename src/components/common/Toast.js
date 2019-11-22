@@ -3,13 +3,13 @@ import Constants from 'expo-constants';
 
 export const Toast = {
   show: params => {
-    var style;
+    let style;
     Constants.platform.ios ? (style = iosStyle) : (style = androidStyle);
 
     NBToast.show({ ...style, ...params, textStyle, duration: 3000 });
   },
   hide: params => {
-    var style;
+    let style;
     Constants.platform.ios ? (style = iosStyle) : (style = androidStyle);
 
     NBToast.hide({ ...style, ...params, textStyle });

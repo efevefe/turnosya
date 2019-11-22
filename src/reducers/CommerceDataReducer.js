@@ -9,7 +9,6 @@ import {
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_PROVINCES_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
@@ -34,6 +33,7 @@ const INITIAL_STATE = {
   area: { areaId: '', name: '' },
   areasList: [{ value: '', label: '' }],
   profilePicture: '',
+  headerPicture: '',
   commerceId: null,
   error: '',
   loading: false,
@@ -68,7 +68,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, refreshing: true };
     case ON_COMMERCE_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
-      return { ...state, profilePicture: action.payload, refreshing: false };
+      return { ...state, ...action.payload, refreshing: false };
     case ON_COMMERCE_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
@@ -83,7 +83,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
     case ON_COMMERCE_DELETED:
-      Toast.show({ text: 'Se negocio se ha eliminado' });
+      Toast.show({ text: 'Su negocio se ha eliminado' });
       return INITIAL_STATE;
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };

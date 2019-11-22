@@ -154,7 +154,7 @@ class Schedule extends Component {
         }}
         rightElement={
           <Badge
-            value={`Disponibles: ${item.free.toString()} / ${item.total.toString()}`}
+            value={item.free ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}` : 'Ocupadas'}
             badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
           />
         }
@@ -171,7 +171,7 @@ class Schedule extends Component {
   onRefresh = () => {
     return (
       <RefreshControl
-        refreshing={this.props.refreshing}
+        refreshing={this.props.refresh ? this.props.refreshing : false}
         onRefresh={this.props.refresh ? this.props.refresh : null}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
   slotContainerStyle: {
     backgroundColor: 'white'
   },
-  slotRightSubtitleStyle: { 
-    color: 'grey' 
+  slotRightSubtitleStyle: {
+    color: 'grey'
   }
 });
 

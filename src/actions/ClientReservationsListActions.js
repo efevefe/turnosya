@@ -9,52 +9,51 @@ import {
 } from "./types";
 import moment from "moment";
 
-export const onClientReservationsListRead = () => {
+export const onClientReservationsListRead = () => dispatch => {
+  dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
+
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
-  return dispatch => {
-    dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
-    db.collection(`Profiles/${currentUser.uid}/Reservations`)
-      .where("state", "==", null)
-      .orderBy("startDate")
-      .onSnapshot(snapshot => {
-        const reservations = [];
-        if (snapshot.empty) {
-          return dispatch({
-            type: ON_CLIENT_RESERVATIONS_READ,
-            payload: reservations
-          });
-        }
-        snapshot.forEach(doc => {
-          db.doc(`Commerces/${doc.data().commerceId}`)
-            .get()
-            .then(commerceData => {
-              db.doc(
-                `Commerces/${doc.data().commerceId}/Courts/${
-                  doc.data().courtId
-                }`
-              )
-                .get()
-                .then(courtData => {
-                  reservations.push({
-                    ...doc.data(),
-                    court: courtData.data(),
-                    commerce: commerceData.data(),
-                    id: doc.id,
-                    startDate: moment(doc.data().startDate.toDate()),
-                    endDate: moment(doc.data().endDate.toDate())
-                  });
-                  if (snapshot.size === reservations.length)
-                    dispatch({
-                      type: ON_CLIENT_RESERVATIONS_READ,
-                      payload: reservations.sort((a, b) => a.startDate > b.startDate)
-                    });
-                });
-            });
+  return db.collection(`Profiles/${currentUser.uid}/Reservations`)
+    .where('state', "==", null)
+    .orderBy('startDate')
+    .onSnapshot(snapshot => {
+      const reservations = [];
+
+      if (snapshot.empty) {
+        return dispatch({
+          type: ON_CLIENT_RESERVATIONS_READ,
+          payload: reservations
         });
+      }
+
+      snapshot.forEach(doc => {
+        db.doc(`Commerces/${doc.data().commerceId}`)
+          .get()
+          .then(commerceData => {
+            db.doc(`Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`)
+              .get()
+              .then(courtData => {
+                reservations.push({
+                  ...doc.data(),
+                  court: courtData.data(),
+                  commerce: commerceData.data(),
+                  id: doc.id,
+                  startDate: moment(doc.data().startDate.toDate()),
+                  endDate: moment(doc.data().endDate.toDate())
+                });
+
+                if (snapshot.size === reservations.length) {
+                  dispatch({
+                    type: ON_CLIENT_RESERVATIONS_READ,
+                    payload: reservations.sort((a, b) => a.startDate - b.startDate)
+                  });
+                }
+              });
+          });
       });
-  };
+    });
 };
 
 export const onClientCancelReservation = ({
@@ -65,7 +64,7 @@ export const onClientCancelReservation = ({
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
   const batch = db.batch();
-  
+
   return dispatch => {
     dispatch({ type: ON_CLIENT_RESERVATION_CANCELING }),
       db
