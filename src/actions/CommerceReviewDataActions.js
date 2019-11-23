@@ -30,7 +30,6 @@ export const createCommerceReview = ({
 
   const currentDate = moment().format();
 
-  // Create a reference to the commerce.
   const reviewRef = db.collection(`Commerces/${commerceId}/Reviews`).doc();
   const reservationRef = db
     .collection(`Profiles/${currentUser.uid}/Reservations`)
@@ -39,10 +38,6 @@ export const createCommerceReview = ({
 
   db.runTransaction(transaction => {
     return transaction.get(commerceRef).then(commerce => {
-      if (!commerce.exists) {
-        throw "Document does not exist!";
-      }
-
       const commerceRating = commerce.data().rating;
       const ratingTotal = commerceRating ? commerceRating.total : 0;
       const ratingCount = commerceRating ? commerceRating.count : 0;
@@ -112,10 +107,6 @@ export const updateCommerceReview = ({
 
   db.runTransaction(transaction => {
     return transaction.get(commerceRef).then(commerce => {
-      if (!commerce.exists) {
-        throw "Document does not exist!";
-      }
-
       const { total, count } = commerce.data().rating;
 
       transaction.update(reviewRef, {
@@ -157,10 +148,6 @@ export const deleteCommerceReview = ({
 
   db.runTransaction(transaction => {
     return transaction.get(commerceRef).then(commerce => {
-      if (!commerce.exists) {
-        throw "Document does not exist!";
-      }
-
       const { total, count } = commerce.data().rating;
 
       transaction.update(reservationRef, { reviewId: null });

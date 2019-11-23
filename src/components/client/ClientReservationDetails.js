@@ -205,7 +205,10 @@ class ClientReservationDetails extends Component {
               outerContainerStyle={{ flex: 1 }}
               onPress={this.onDeleteReviewHandler}
               loading={this.props.deleteReviewLoading}
-              disabled={this.state.isOneWeekOld}
+              disabled={
+                this.state.isOneWeekOld ||
+                !(this.state.reservation.reviewId || this.props.reviewId)
+              }
             />
             <Button
               title="Guardar"
