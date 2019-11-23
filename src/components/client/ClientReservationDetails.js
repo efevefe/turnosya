@@ -94,7 +94,7 @@ class ClientReservationDetails extends Component {
 
   onSaveReviewHandler = () => {
     if (this.state.reservation.reviewId || this.props.reviewId) {
-      // Si tenia calificacion guardar
+      // Si tenia calificacion actualizarla
       this.props.updateCommerceReview({
         commerceId: this.state.reservation.commerceId,
         comment: this.props.comment,
@@ -127,6 +127,28 @@ class ClientReservationDetails extends Component {
       reservationId: this.state.reservation.id,
       reviewId: this.state.reservation.reviewId || this.props.reviewId
     });
+  };
+
+  renderConfirmCommerceDelete = () => {
+    return (
+      <Menu
+        title="¿Esta seguro que desea eliminar su negocio?"
+        onBackdropPress={this.onDeleteConfirmBackdropPress}
+        isVisible={this.state.confirmDeleteVisible}
+      >
+        <MenuItem
+          title="Confirmar"
+          icon="md-checkmark"
+          onPress={this.deleteReview}
+        />
+        <Divider style={{ backgroundColor: "grey" }} />
+        <MenuItem
+          title="Cancelar"
+          icon="md-close"
+          onPress={this.onDeleteConfirmBackdropPress}
+        />
+      </Menu>
+    );
   };
 
   renderCommerceReview = () => {
@@ -197,28 +219,6 @@ class ClientReservationDetails extends Component {
         </View>
       );
     }
-  };
-
-  renderConfirmCommerceDelete = () => {
-    return (
-      <Menu
-        title="¿Esta seguro que desea eliminar su negocio?"
-        onBackdropPress={this.onDeleteConfirmBackdropPress}
-        isVisible={this.state.confirmDeleteVisible}
-      >
-        <MenuItem
-          title="Confirmar"
-          icon="md-checkmark"
-          onPress={this.deleteReview}
-        />
-        <Divider style={{ backgroundColor: "grey" }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onDeleteConfirmBackdropPress}
-        />
-      </Menu>
-    );
   };
 
   // ** Render method **
