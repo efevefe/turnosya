@@ -6,7 +6,14 @@ import {
   Dimensions,
   ScrollView
 } from 'react-native';
-import { Avatar, Text, Divider, Image, Button } from 'react-native-elements';
+import {
+  Avatar,
+  Text,
+  Divider,
+  Image,
+  Button,
+  Rating
+} from 'react-native-elements';
 import { PictureView } from './common';
 import { connect } from 'react-redux';
 import {
@@ -112,7 +119,14 @@ class CommerceProfileView extends Component {
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
-    const { profilePicture, headerPicture, name, commerceId, navigation } = this.props;
+    const {
+      profilePicture,
+      headerPicture,
+      name,
+      commerceId,
+      navigation,
+      rating
+    } = this.props;
 
     return (
       <ScrollView>
@@ -165,6 +179,12 @@ class CommerceProfileView extends Component {
             </View>
 
             <Text h4>{name}</Text>
+            <Rating
+              style={{ padding: 8 }}
+              readonly
+              imageSize={22}
+              startingValue={3}
+            />
             {this.renderLocation()}
           </View>
 
@@ -237,7 +257,8 @@ const mapStateToProps = state => {
     headerPicture,
     commerceId,
     latitude,
-    longitude
+    longitude,
+    rating
   } = state.commerceData;
   const { cards } = state.commerceSchedule;
 
@@ -252,20 +273,18 @@ const mapStateToProps = state => {
     commerceId,
     latitude,
     longitude,
+    rating,
     commerce,
     favoriteCommerces,
     cards
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceReadProfile,
-    registerFavoriteCommerce,
-    deleteFavoriteCommerce,
-    onScheduleRead,
-    commerceHitsUpdate,
-    onLocationChange
-  }
-)(CommerceProfileView);
+export default connect(mapStateToProps, {
+  onCommerceReadProfile,
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce,
+  onScheduleRead,
+  commerceHitsUpdate,
+  onLocationChange
+})(CommerceProfileView);
