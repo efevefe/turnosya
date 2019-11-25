@@ -45,7 +45,7 @@ export const createCommerceReview = ({
       transaction.set(reviewRef, {
         rating,
         comment,
-        date: currentDate,
+        date: new Date(currentDate),
         clientId: currentUser.uid,
         softDelete: null
       });
@@ -112,7 +112,7 @@ export const updateCommerceReview = ({
       transaction.update(reviewRef, {
         rating,
         comment,
-        date: currentDate
+        date: new Date(currentDate)
       });
 
       transaction.update(commerceRef, {

@@ -121,7 +121,10 @@ class ClientReservationDetails extends Component {
   };
 
   deleteReview = () => {
-    this.setState({ confirmDeleteVisible: false });
+    this.setState({
+      confirmDeleteVisible: false,
+      reservation: { ...this.state.reservation, reviewId: null }
+    });
     this.props.deleteCommerceReview({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,

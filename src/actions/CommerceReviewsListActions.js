@@ -14,10 +14,11 @@ export const readCommerceReviews = commerceId => dispatch => {
 
   db.collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
+    .orderBy('date', 'desc')
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => reviews.push({ ...doc.data(), id: doc.id }));
       dispatch({ type: ON_COMMERCE_REVIEWS_READ, payload: reviews });
     })
-    .catch(() => dispatch({ type: ON_COMMERCE_REVIEWS_READ_FAIL }));
+    .catch((e) => { console.log(e); dispatch({ type: ON_COMMERCE_REVIEWS_READ_FAIL }) });
 };

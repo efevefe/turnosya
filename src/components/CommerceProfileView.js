@@ -164,8 +164,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -199,7 +199,10 @@ class CommerceProfileView extends Component {
                   <Ionicons name="ios-bookmarks" color={'black'} size={22} />
                 }
                 onPress={() =>
-                  this.props.navigation.navigate('commerceReviewsList')
+                  this.props.navigation.navigate(
+                    'commerceReviewsList',
+                    { commerceId: this.props.commerceId }
+                  )
                 }
               />
             </View>
