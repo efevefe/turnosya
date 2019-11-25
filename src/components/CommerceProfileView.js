@@ -116,6 +116,11 @@ class CommerceProfileView extends Component {
     this.setState({ pictureVisible: !this.state.pictureVisible });
   };
 
+  getRatingValue = () => {
+    const { total, count } = this.props.rating;
+    return total ? total / count : 0;
+  };
+
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
@@ -179,12 +184,25 @@ class CommerceProfileView extends Component {
             </View>
 
             <Text h4>{name}</Text>
-            <Rating
-              style={{ padding: 8 }}
-              readonly
-              imageSize={22}
-              startingValue={3}
-            />
+
+            <View style={{ flexDirection: 'row' }}>
+              <Rating
+                style={{ padding: 8 }}
+                readonly
+                imageSize={22}
+                startingValue={this.getRatingValue()}
+              />
+              <View style={styles.ratingsDividerStyle} />
+              <Button
+                type="clear"
+                icon={
+                  <Ionicons name="ios-bookmarks" color={'black'} size={22} />
+                }
+                onPress={() =>
+                  this.props.navigation.navigate('commerceReviewsList')
+                }
+              />
+            </View>
             {this.renderLocation()}
           </View>
 
@@ -240,6 +258,13 @@ const styles = StyleSheet.create({
   descriptionStyle: {
     alignItems: 'center',
     marginHorizontal: 15
+  },
+  ratingsDividerStyle: {
+    height: 20,
+    alignSelf: 'center',
+    marginHorizontal: 5,
+    width: 1,
+    backgroundColor: 'black'
   }
 });
 

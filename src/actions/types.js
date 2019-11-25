@@ -165,3 +165,6 @@ export const ON_COMMERCE_REVIEW_CREATED = "on_commerce_review_created";
 export const ON_COMMERCE_REVIEW_DELETING = "on_commerce_review_deleting";
 export const ON_COMMERCE_REVIEW_DELETED = "on_commerce_review_deleted";
 export const ON_COMMERCE_REVIEW_DELETE_FAIL = "on_commerce_review_delete_fail";
+export const ON_COMMERCE_REVIEWS_READING = "on_commerce_reviews_reading";
+export const ON_COMMERCE_REVIEWS_READ = "on_commerce_reviews_read";
+export const ON_COMMERCE_REVIEWS_READ_FAIL = "on_commerce_reviews_read_fail";
