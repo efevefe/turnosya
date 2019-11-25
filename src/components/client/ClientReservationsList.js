@@ -63,7 +63,7 @@ class ClientReservationsList extends Component {
       .isBefore(date);
 
   renderRow = ({ item }) => {
-    const { commerce, startDate, endDate, price } = item;
+    const { commerce, startDate, endDate, price, reviewId } = item;
 
     return (
       <ListItem
@@ -71,18 +71,16 @@ class ClientReservationsList extends Component {
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: "black", fontWeight: "bold" }}
         rightSubtitle={
-          endDate < moment()
-            ? this.isOneWeekOld(endDate)
-              ? "Ya no se puede calificar"
-              : "¡Calificá el servicio!"
+          endDate < moment() && !this.isOneWeekOld(endDate) && !reviewId
+            ? "¡Calificá el servicio!"
             : null
         }
         rightSubtitleStyle={{ textAlign: "right", fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format("D")} de ${
           MONTHS[startDate.month()]
-        }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
-          "HH:mm"
-        )} hs.`}
+          }\nDe ${startDate.format("HH:mm")} hs. a ${endDate.format(
+            "HH:mm"
+          )} hs.`}
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate("reservationDetails", {
@@ -128,8 +126,8 @@ class ClientReservationsList extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: "relative" }} />
         ) : (
-          this.renderList()
-        )}
+            this.renderList()
+          )}
       </View>
     );
   }

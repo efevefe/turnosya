@@ -170,7 +170,7 @@ const profileStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reviews'
+        title: 'Reseñas'
       }
     }
   },

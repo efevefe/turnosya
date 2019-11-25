@@ -3,7 +3,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider, Rating } from 'react-native-elements';
 import moment from 'moment';
-import { CardSection, Spinner } from './common';
+import { CardSection, Spinner, EmptyList } from './common';
 import { readCommerceReviews } from '../actions';
 
 class CommerceReviewsList extends Component {
@@ -46,11 +46,15 @@ class CommerceReviewsList extends Component {
 
   render() {
     return this.props.loading ? <Spinner /> : (
-      <FlatList
-        data={this.props.commerceReviews}
-        renderItem={this.renderItem}
-        keyExtractor={review => review.id}
-      />
+      this.props.commerceReviews.length > 0
+        ? <FlatList
+          data={this.props.commerceReviews}
+          renderItem={this.renderItem}
+          keyExtractor={review => review.id}
+        />
+        : <EmptyList
+          title="Parece que no hay reseñas"
+        />
     );
   }
 }

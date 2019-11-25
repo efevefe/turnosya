@@ -169,6 +169,19 @@ class CommerceProfileView extends Component {
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
+
+            <Button
+              type="clear"
+              icon={
+                <Ionicons name="md-text" color={'white'} size={30} />
+              }
+              onPress={() =>
+                this.props.navigation.navigate(
+                  'commerceReviewsList',
+                  { commerceId: this.props.commerceId }
+                )
+              }
+            />
           </View>
 
           <View style={headerContainerStyle}>
@@ -185,27 +198,13 @@ class CommerceProfileView extends Component {
 
             <Text h4>{name}</Text>
 
-            <View style={{ flexDirection: 'row' }}>
-              <Rating
-                style={{ padding: 8 }}
-                readonly
-                imageSize={22}
-                startingValue={this.getRatingValue()}
-              />
-              <View style={styles.ratingsDividerStyle} />
-              <Button
-                type="clear"
-                icon={
-                  <Ionicons name="ios-bookmarks" color={'black'} size={22} />
-                }
-                onPress={() =>
-                  this.props.navigation.navigate(
-                    'commerceReviewsList',
-                    { commerceId: this.props.commerceId }
-                  )
-                }
-              />
-            </View>
+            <Rating
+              style={{ padding: 8 }}
+              readonly
+              imageSize={22}
+              startingValue={this.getRatingValue()}
+            />
+
             {this.renderLocation()}
           </View>
 
@@ -261,13 +260,6 @@ const styles = StyleSheet.create({
   descriptionStyle: {
     alignItems: 'center',
     marginHorizontal: 15
-  },
-  ratingsDividerStyle: {
-    height: 20,
-    alignSelf: 'center',
-    marginHorizontal: 5,
-    width: 1,
-    backgroundColor: 'black'
   }
 });
 
