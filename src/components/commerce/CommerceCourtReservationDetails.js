@@ -15,9 +15,8 @@ class CommerceCourtReservationDetails extends Component {
 
   constructor(props) {
     super(props);
-    const reservation = this.props.navigation.getParam('reservation');
     this.state = {
-      reservation,
+      reservation: props.navigation.getParam('reservation'),
       optionsVisible: false,
       error: ''
     };
@@ -36,31 +35,6 @@ class CommerceCourtReservationDetails extends Component {
     }
   };
 
-  renderReasonInput = () => {
-    return (
-      <View style={{ alignSelf: 'stretch' }}>
-        <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
-          <Input
-            placeholder="Motivos de cancelación..."
-            multiline={true}
-            color="black"
-            onChangeText={value => {
-              this.props.onCourtReservationsListValueChange({
-                prop: 'cancelationReason',
-                value
-              });
-              this.setState({ error: '' });
-            }}
-            value={this.props.cancelationReason}
-            errorMessage={this.state.error}
-            onFocus={() => this.setState({ error: '' })}
-          />
-        </CardSection>
-        <Divider style={{ backgroundColor: 'grey' }} />
-      </View>
-    );
-  };
-
   renderError = () => {
     if (this.props.cancelationReason === '') {
       this.setState({ error: 'Debe informar el motivo' });
@@ -72,8 +46,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   onBackdropPress = () => {
-    this.setState({ optionsVisible: false });
-    this.setState({ error: '' });
+    this.setState({ optionsVisible: false, error: '' });
     this.props.onCourtReservationsListValueChange({
       prop: 'cancelationReason',
       value: ''
@@ -122,7 +95,28 @@ class CommerceCourtReservationDetails extends Component {
           onBackdropPress={() => this.onBackdropPress()}
           isVisible={this.state.optionsVisible}
         >
-          {this.renderReasonInput()}
+          <View style={{ alignSelf: 'stretch' }}>
+            <CardSection
+              style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
+            >
+              <Input
+                placeholder="Motivos de cancelación..."
+                multiline={true}
+                color="black"
+                onChangeText={value => {
+                  this.props.onCourtReservationsListValueChange({
+                    prop: 'cancelationReason',
+                    value
+                  });
+                  this.setState({ error: '' });
+                }}
+                value={this.props.cancelationReason}
+                errorMessage={this.state.error}
+                onFocus={() => this.setState({ error: '' })}
+              />
+            </CardSection>
+            <Divider style={{ backgroundColor: 'grey' }} />
+          </View>
           <MenuItem
             title="Confirmar Cancelación"
             icon="md-checkmark"

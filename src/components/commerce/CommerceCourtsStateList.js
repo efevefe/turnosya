@@ -27,27 +27,29 @@ class CommerceCourtsStateList extends Component {
 
   onReservedCourtPress = async (court, courtReservation) => {
     // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
-    const res = this.props.detailedReservations.find(
-      res => res.id === courtReservation.id
-    );
-    if (res) {
-      await this.props.onCourtReservationsListValueChange({
-        prop: 'reservationClient',
-        value: res.client
+    try {
+      const res = this.props.detailedReservations.find(
+        res => res.id === courtReservation.id
+      );
+      if (res) {
+        await this.props.onCourtReservationsListValueChange({
+          prop: 'reservationClient',
+          value: res.client
+        });
+      } else {
+        await this.props.onReservationClientRead(courtReservation.clientId);
+      }
+
+      const reservation = {
+        client: { ...this.props.reservationClient },
+        court: { ...court },
+        ...courtReservation
+      };
+
+      this.props.navigation.navigate('reservationDetails', {
+        reservation
       });
-    } else {
-      await this.props.onReservationClientRead(courtReservation.clientId);
-    }
-
-    const reservation = {
-      client: { ...this.props.reservationClient },
-      court: { ...court },
-      ...courtReservation
-    };
-
-    this.props.navigation.navigate('reservationDetails', {
-      reservation
-    });
+    } catch {}
   };
 
   renderRow({ item }) {
@@ -59,7 +61,7 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
-        onPress={async () =>
+        onPress={() =>
           !courtReservation
             ? null
             : this.onReservedCourtPress(item, courtReservation)

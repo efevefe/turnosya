@@ -7,7 +7,7 @@ import {
   ON_RESERVATION_CLIENT_READ,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
-  ON_COMMERCE_RESERVATION_CANCEL,
+  ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
@@ -43,7 +43,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loadingClientData: false };
     case ON_COMMERCE_RESERVATION_CANCELING:
       return { ...state, loading: true };
-    case ON_COMMERCE_RESERVATION_CANCEL:
+    case ON_COMMERCE_RESERVATION_CANCELED:
       Toast.show({ text: 'El turno ha sido cancelado' });
       return { ...state, loading: false, cancelationReason: '' };
     case ON_COMMERCE_RESERVATION_CANCEL_FAIL:

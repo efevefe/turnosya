@@ -152,7 +152,8 @@ export const ON_RESERVATION_CLIENT_READ_FAIL =
   'on_reservation_client_read_fail';
 export const ON_COMMERCE_RESERVATION_CANCELING =
   'on_commerce_reservation_canceling';
-export const ON_COMMERCE_RESERVATION_CANCEL = 'on_commerce_reservation_cancel';
+export const ON_COMMERCE_RESERVATION_CANCELED =
+  'on_commerce_reservation_cancel';
 export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
   'on_commerce_reservation_cancel_fail';
 

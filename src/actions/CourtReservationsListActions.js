@@ -9,7 +9,7 @@ import {
   ON_RESERVATION_CLIENT_READ_FAIL,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
-  ON_COMMERCE_RESERVATION_CANCEL,
+  ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 
@@ -177,44 +177,36 @@ export const onCommerceCancelReservation = ({
       .get()
       .then(stateDoc => {
         const cancelationDate = new Date();
+        const cancelationData = {
+          state: {
+            id: stateDoc.id,
+            name: stateDoc.data().name,
+            cancelationReason
+          },
+          cancelationDate
+        };
         batch.update(
           db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
-          {
-            state: {
-              id: stateDoc.id,
-              name: stateDoc.data().name,
-              cancelationReason
-            },
-            cancelationDate
-          }
+          cancelationData
         );
         batch.update(
           db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
-          {
-            state: {
-              id: stateDoc.id,
-              name: stateDoc.data().name,
-              cancelationReason
-            },
-            cancelationDate
-          }
+          cancelationData
         );
 
         batch
           .commit()
           .then(() => {
-            dispatch({ type: ON_COMMERCE_RESERVATION_CANCEL });
+            dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
           .catch(e => {
-            console.log(e);
             dispatch({
               type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
             });
           });
       })
       .catch(e => {
-        console.log(e);
         dispatch({
           type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
         });

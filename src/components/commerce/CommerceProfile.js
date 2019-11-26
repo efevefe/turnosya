@@ -149,25 +149,11 @@ class CommerceProfile extends Component {
     });
 
     this.props.onLocationChange({ location });
-
-    // this.props.navigation.setParams({
-    //   title: 'Modificar Datos',
-    //   rightIcon: this.renderSaveButton(),
-    //   leftIcon: this.renderCancelButton()
-    // });
   };
 
   onRefresh = () => {
     this.props.onCommerceRead();
   };
-
-  // renderSaveButton = () => {
-  //   return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  // };
-
-  // renderCancelButton = () => {
-  //   return <IconButton icon="md-close" onPress={this.onCancelPress} />;
-  // };
 
   onSavePress = async () => {
     try {
