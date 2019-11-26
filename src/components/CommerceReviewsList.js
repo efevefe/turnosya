@@ -8,14 +8,14 @@ import { readCommerceReviews } from '../actions';
 
 class CommerceReviewsList extends Component {
   componentDidMount() {
-    const commerceId = this.props.navigation.getParam('commerceId', 0);
+    const commerceId = this.props.navigation.getParam('commerceId');
     this.props.readCommerceReviews(commerceId);
   }
 
   renderRating = rating => {
     return (
       <Rating
-        style={{ padding: 8 }}
+        style={ratingContainerStyle}
         readonly
         imageSize={25}
         startingValue={rating}
@@ -25,7 +25,7 @@ class CommerceReviewsList extends Component {
 
   renderItem = ({ item }) => {
     return (
-      <View style={{ alignItem: 'flex-start' }}>
+      <View style={listItemContainerStyle}>
         <CardSection>
           <View
             style={topCardContainerStyle}
@@ -59,7 +59,12 @@ class CommerceReviewsList extends Component {
   }
 }
 
-const { topCardContainerStyle, commentStyle } = StyleSheet.create({
+const {
+  topCardContainerStyle,
+  commentStyle,
+  listItemContainerStyle,
+  ratingContainerStyle
+} = StyleSheet.create({
   topCardContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -71,6 +76,12 @@ const { topCardContainerStyle, commentStyle } = StyleSheet.create({
     marginTop: 7,
     marginBottom: 9,
     marginLeft: 10
+  },
+  listItemContainerStyle: {
+    alignItems: 'flex-start'
+  },
+  ratingContainerStyle: {
+    padding: 8
   }
 })
 
