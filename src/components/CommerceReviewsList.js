@@ -25,7 +25,7 @@ class CommerceReviewsList extends Component {
 
   renderItem = ({ item }) => {
     return (
-      <View style={listItemContainerStyle}>
+      <View>
         <CardSection>
           <View style={topCardContainerStyle}>
             <Rating readonly imageSize={20} startingValue={item.rating} />
@@ -56,7 +56,6 @@ class CommerceReviewsList extends Component {
 const {
   topCardContainerStyle,
   commentStyle,
-  listItemContainerStyle,
   ratingContainerStyle
 } = StyleSheet.create({
   topCardContainerStyle: {
@@ -70,9 +69,6 @@ const {
     marginTop: 7,
     marginBottom: 9,
     marginLeft: 10
-  },
-  listItemContainerStyle: {
-    alignItems: 'flex-start'
   },
   ratingContainerStyle: {
     padding: 8

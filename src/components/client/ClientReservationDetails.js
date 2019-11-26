@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
-import { Divider, AirbnbRating, Rating } from 'react-native-elements';
+import { Divider, AirbnbRating } from 'react-native-elements';
 import {
   CardSection,
   Button,
