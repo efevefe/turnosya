@@ -1,21 +1,21 @@
-import { combineReducers } from "redux";
-import ServiceFormReducer from "./ServiceFormReducer";
-import ServicesListReducer from "./ServicesListReducer";
-import AuthReducer from "./AuthReducer";
-import ClientDataReducer from "./ClientDataReducer";
-import CourtFormReducer from "./CourtFormReducer";
-import CourtListReducer from "./CourtListReducer";
-import CommerceDataReducer from "./CommerceDataReducer";
-import CommercesListReducer from "./CommercesListReducer";
-import CommerceScheduleReducer from "./CommerceScheduleReducer";
-import CommerceCourtTypesReducer from "./CommerceCourtTypesReducer";
-import CourtReservationReducer from "./CourtReservationReducer";
-import ClientReservationsListReducer from "./ClientReservationsListReducer";
-import CourtReservationsListReducer from "./CourtReservationsListReducer";
-import LocationDataReducer from "./LocationDataReducer";
-import ProvinceDataReducer from "./ProvinceDataReducer";
-import CommerceReviewDataReducer from "./CommerceReviewDataReducer";
-import CommerceReviewsListReducer from "./CommerceReviewsListReducer";
+import { combineReducers } from 'redux';
+import ServiceFormReducer from './ServiceFormReducer';
+import ServicesListReducer from './ServicesListReducer';
+import AuthReducer from './AuthReducer';
+import ClientDataReducer from './ClientDataReducer';
+import CourtFormReducer from './CourtFormReducer';
+import CourtListReducer from './CourtListReducer';
+import CommerceDataReducer from './CommerceDataReducer';
+import CommercesListReducer from './CommercesListReducer';
+import CommerceScheduleReducer from './CommerceScheduleReducer';
+import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
+import CourtReservationReducer from './CourtReservationReducer';
+import ClientReservationsListReducer from './ClientReservationsListReducer';
+import CourtReservationsListReducer from './CourtReservationsListReducer';
+import LocationDataReducer from './LocationDataReducer';
+import ProvinceDataReducer from './ProvinceDataReducer';
+import CommerceReviewDataReducer from './CommerceReviewDataReducer';
+import CommerceReviewsListReducer from './CommerceReviewsListReducer';
 
 export default combineReducers({
   auth: AuthReducer,

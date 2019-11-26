@@ -27,14 +27,8 @@ class CommerceReviewsList extends Component {
     return (
       <View style={listItemContainerStyle}>
         <CardSection>
-          <View
-            style={topCardContainerStyle}
-          >
-            <Rating
-              readonly
-              imageSize={20}
-              startingValue={item.rating}
-            />
+          <View style={topCardContainerStyle}>
+            <Rating readonly imageSize={20} startingValue={item.rating} />
             <Text>{moment(item.date.toDate()).format('ll')}</Text>
           </View>
           <Text style={commentStyle}>{item.comment}</Text>
@@ -45,16 +39,16 @@ class CommerceReviewsList extends Component {
   };
 
   render() {
-    return this.props.loading ? <Spinner /> : (
-      this.props.commerceReviews.length > 0
-        ? <FlatList
-          data={this.props.commerceReviews}
-          renderItem={this.renderItem}
-          keyExtractor={review => review.id}
-        />
-        : <EmptyList
-          title="Parece que no hay reseñas"
-        />
+    return this.props.loading ? (
+      <Spinner />
+    ) : this.props.commerceReviews.length > 0 ? (
+      <FlatList
+        data={this.props.commerceReviews}
+        renderItem={this.renderItem}
+        keyExtractor={review => review.id}
+      />
+    ) : (
+      <EmptyList title="Parece que no hay reseñas" />
     );
   }
 }
@@ -83,7 +77,7 @@ const {
   ratingContainerStyle: {
     padding: 8
   }
-})
+});
 
 const mapStateToProps = state => {
   const { loading, commerceReviews } = state.commerceReviewsList;

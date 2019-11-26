@@ -20,5 +20,5 @@ export const readCommerceReviews = commerceId => dispatch => {
       querySnapshot.forEach(doc => reviews.push({ ...doc.data(), id: doc.id }));
       dispatch({ type: ON_COMMERCE_REVIEWS_READ, payload: reviews });
     })
-    .catch((e) => { console.log(e); dispatch({ type: ON_COMMERCE_REVIEWS_READ_FAIL }) });
+    .catch(() => dispatch({ type: ON_COMMERCE_REVIEWS_READ_FAIL }));
 };

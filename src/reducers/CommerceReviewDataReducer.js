@@ -8,16 +8,16 @@ import {
   ON_COMMERCE_REVIEW_DELETING,
   ON_COMMERCE_REVIEW_DELETED,
   ON_COMMERCE_REVIEW_DELETE_FAIL
-} from "../actions/types";
-import { Toast } from "../components/common";
+} from '../actions/types';
+import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
   rating: 4,
-  comment: "",
-  date: "",
-  clientId: "",
-  commerceId: "",
-  reviewId: "",
+  comment: '',
+  date: '',
+  clientId: '',
+  commerceId: '',
+  reviewId: '',
   saveLoading: false,
   deleteLoading: false
 };
@@ -29,20 +29,20 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_REVIEW_SAVING:
       return { ...state, saveLoading: true };
     case ON_COMMERCE_REVIEW_SAVED:
-      Toast.show({ text: "Calificación guardada con éxito." });
+      Toast.show({ text: 'Calificación guardada con éxito.' });
       return { ...state, saveLoading: false };
     case ON_COMMERCE_REVIEW_SAVE_FAIL:
-      Toast.show({ text: "Se ha producido un error, inténtelo de nuevo." });
+      Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state, saveLoading: false };
     case ON_COMMERCE_REVIEW_CREATED:
       return { ...state, reviewId: action.payload };
     case ON_COMMERCE_REVIEW_DELETING:
       return { ...state, deleteLoading: true };
     case ON_COMMERCE_REVIEW_DELETED:
-      Toast.show({ text: "Calificación borrada con éxito." });
+      Toast.show({ text: 'Calificación borrada con éxito.' });
       return INITIAL_STATE;
     case ON_COMMERCE_REVIEW_DELETE_FAIL:
-      Toast.show({ text: "Se ha producido un error, inténtelo de nuevo." });
+      Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state, deleteLoading: false };
     case ON_COMMERCE_REVIEW_CLEAR:
       return INITIAL_STATE;

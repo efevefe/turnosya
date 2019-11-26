@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import moment from "moment";
 import {
   ON_COMMERCE_REVIEW_VALUE_CHANGE,
   ON_COMMERCE_REVIEW_SAVED,
@@ -28,8 +27,6 @@ export const createCommerceReview = ({
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
-  const currentDate = moment().format();
-
   const reviewRef = db.collection(`Commerces/${commerceId}/Reviews`).doc();
   const reservationRef = db
     .collection(`Profiles/${currentUser.uid}/Reservations`)
@@ -45,7 +42,7 @@ export const createCommerceReview = ({
       transaction.set(reviewRef, {
         rating,
         comment,
-        date: new Date(currentDate),
+        date: new Date(),
         clientId: currentUser.uid,
         softDelete: null
       });
@@ -95,7 +92,6 @@ export const updateCommerceReview = ({
   dispatch({ type: ON_COMMERCE_REVIEW_SAVING });
 
   const db = firebase.firestore();
-  const currentDate = moment().format();
 
   const commerceRef = db.collection("Commerces").doc(commerceId);
   const reviewRef = db
@@ -112,7 +108,7 @@ export const updateCommerceReview = ({
       transaction.update(reviewRef, {
         rating,
         comment,
-        date: new Date(currentDate)
+        date: new Date()
       });
 
       transaction.update(commerceRef, {
@@ -133,7 +129,6 @@ export const deleteCommerceReview = ({
 
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
-  const currentDate = moment().format();
 
   const commerceRef = db.collection("Commerces").doc(commerceId);
   const reviewRef = db
@@ -152,7 +147,7 @@ export const deleteCommerceReview = ({
 
       transaction.update(reservationRef, { reviewId: null });
 
-      transaction.update(reviewRef, { softDelete: currentDate });
+      transaction.update(reviewRef, { softDelete: new Date() });
 
       transaction.update(commerceRef, {
         rating: { total: total - oldRating, count: count - 1 }
