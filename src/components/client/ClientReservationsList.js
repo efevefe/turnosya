@@ -6,6 +6,7 @@ import { MONTHS, DAYS, MAIN_COLOR } from '../../constants';
 import { Spinner, EmptyList } from '../common';
 import { onClientReservationsListRead } from '../../actions';
 import moment from 'moment';
+import { isOneWeekOld } from '../../utils/functions';
 
 class ClientReservationsList extends Component {
   state = { selectedIndex: 1, filteredList: [] };
@@ -57,11 +58,6 @@ class ClientReservationsList extends Component {
     );
   };
 
-  isOneWeekOld = date =>
-    !moment()
-      .subtract(1, 'w')
-      .isBefore(date);
-
   renderRow = ({ item }) => {
     const { commerce, startDate, endDate, price, reviewId } = item;
 
@@ -71,7 +67,7 @@ class ClientReservationsList extends Component {
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
         rightSubtitle={
-          endDate < moment() && !this.isOneWeekOld(endDate) && !reviewId
+          endDate < moment() && !isOneWeekOld(endDate) && !reviewId
             ? '¡Calificá el servicio!'
             : null
         }

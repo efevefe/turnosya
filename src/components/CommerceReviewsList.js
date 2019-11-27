@@ -12,17 +12,6 @@ class CommerceReviewsList extends Component {
     this.props.readCommerceReviews(commerceId);
   }
 
-  renderRating = rating => {
-    return (
-      <Rating
-        style={ratingContainerStyle}
-        readonly
-        imageSize={25}
-        startingValue={rating}
-      />
-    );
-  };
-
   renderItem = ({ item }) => {
     return (
       <View>

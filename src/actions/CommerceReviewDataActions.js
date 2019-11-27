@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import {
   ON_COMMERCE_REVIEW_VALUE_CHANGE,
   ON_COMMERCE_REVIEW_SAVED,
@@ -10,7 +10,7 @@ import {
   ON_COMMERCE_REVIEW_DELETED,
   ON_COMMERCE_REVIEW_DELETING,
   ON_COMMERCE_REVIEW_DELETE_FAIL
-} from "./types";
+} from './types';
 
 export const commerceReviewValueChange = (prop, value) => {
   return { type: ON_COMMERCE_REVIEW_VALUE_CHANGE, payload: { prop, value } };
@@ -31,7 +31,7 @@ export const createCommerceReview = ({
   const reservationRef = db
     .collection(`Profiles/${currentUser.uid}/Reservations`)
     .doc(reservationId);
-  const commerceRef = db.collection("Commerces").doc(commerceId);
+  const commerceRef = db.collection('Commerces').doc(commerceId);
 
   db.runTransaction(transaction => {
     return transaction.get(commerceRef).then(commerce => {
@@ -55,7 +55,6 @@ export const createCommerceReview = ({
     });
   })
     .then(() => {
-      dispatch({ type: ON_COMMERCE_REVIEW_SAVED });
       dispatch({ type: ON_COMMERCE_REVIEW_CREATED, payload: reviewRef.id });
     })
     .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVE_FAIL }));
@@ -73,11 +72,11 @@ export const readCommerceReview = ({ commerceId, reviewId }) => dispatch => {
         if (!softDelete) {
           dispatch({
             type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
-            payload: { prop: "rating", value: rating }
+            payload: { prop: 'rating', value: rating }
           });
           dispatch({
             type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
-            payload: { prop: "comment", value: comment }
+            payload: { prop: 'comment', value: comment }
           });
         }
       });
@@ -93,7 +92,7 @@ export const updateCommerceReview = ({
 
   const db = firebase.firestore();
 
-  const commerceRef = db.collection("Commerces").doc(commerceId);
+  const commerceRef = db.collection('Commerces').doc(commerceId);
   const reviewRef = db
     .collection(`Commerces/${commerceId}/Reviews`)
     .doc(reviewId);
@@ -130,7 +129,7 @@ export const deleteCommerceReview = ({
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
-  const commerceRef = db.collection("Commerces").doc(commerceId);
+  const commerceRef = db.collection('Commerces').doc(commerceId);
   const reviewRef = db
     .collection(`Commerces/${commerceId}/Reviews`)
     .doc(reviewId);

@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  TouchableHighlight,
   Dimensions,
   ScrollView
 } from 'react-native';
@@ -164,22 +165,19 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
 
             <Button
               type="clear"
-              icon={
-                <Ionicons name="md-text" color={'white'} size={30} />
-              }
+              icon={<Ionicons name="md-text" color={'white'} size={30} />}
               onPress={() =>
-                this.props.navigation.navigate(
-                  'commerceReviewsList',
-                  { commerceId: this.props.commerceId }
-                )
+                this.props.navigation.navigate('commerceReviewsList', {
+                  commerceId: this.props.commerceId
+                })
               }
             />
           </View>
@@ -198,12 +196,20 @@ class CommerceProfileView extends Component {
 
             <Text h4>{name}</Text>
 
-            <Rating
-              style={{ padding: 8 }}
-              readonly
-              imageSize={22}
-              startingValue={this.getRatingValue()}
-            />
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate('commerceReviewsList', {
+                  commerceId: this.props.commerceId
+                })
+              }
+            >
+              <Rating
+                style={{ padding: 8 }}
+                readonly
+                imageSize={22}
+                startingValue={this.getRatingValue()}
+              />
+            </TouchableOpacity>
 
             {this.renderLocation()}
           </View>

@@ -24,7 +24,7 @@ import {
   commerceReviewValueChange,
   commerceReviewClear
 } from '../../actions';
-import { stringFormatHours } from '../../utils/functions';
+import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -35,9 +35,7 @@ class ClientReservationDetails extends Component {
       reservation,
       optionsVisible: false,
       confirmDeleteVisible: false,
-      isOneWeekOld: !moment()
-        .subtract(1, 'w')
-        .isBefore(reservation.endDate)
+      isOneWeekOld: isOneWeekOld(reservation.endDate)
     };
   }
 
@@ -68,7 +66,7 @@ class ClientReservationDetails extends Component {
     else
       Toast.show({
         text:
-          'No puede cancelar el turno, el tiempo minimo permitido es ' +
+          'No puede cancelar el turno, el tiempo mínimo permitido es ' +
           stringFormatHours(reservationMinCancelTime)
       });
   };
@@ -135,7 +133,7 @@ class ClientReservationDetails extends Component {
   renderConfirmCommerceDelete = () => {
     return (
       <Menu
-        title="¿Esta seguro que desea eliminar su negocio?"
+        title="¿Está seguro que desea borrar su reseña?"
         onBackdropPress={this.onDeleteConfirmBackdropPress}
         isVisible={this.state.confirmDeleteVisible}
       >
@@ -154,59 +152,79 @@ class ClientReservationDetails extends Component {
     );
   };
 
+  renderReviewButtons = () => {
+    return this.state.isOneWeekOld ? null : (
+      <View style={reviewButtonsContainerStyle}>
+        <Button
+          title="Borrar"
+          type="solid"
+          outerContainerStyle={{ flex: 1 }}
+          onPress={this.onDeleteReviewHandler}
+          loading={this.props.deleteReviewLoading}
+          disabled={
+            this.state.isOneWeekOld ||
+            !(this.state.reservation.reviewId || this.props.reviewId)
+          }
+        />
+        <Button
+          title="Guardar"
+          type="solid"
+          outerContainerStyle={{ flex: 1 }}
+          onPress={this.onSaveReviewHandler}
+          loading={this.props.saveReviewLoading}
+          disabled={this.state.isOneWeekOld}
+        />
+      </View>
+    );
+  };
+
+  renderRatingAndComment = () => {
+    return this.state.isOneWeekOld &&
+      !this.state.reservation.reviewId ? null : (
+      <View>
+        <CardSection>
+          <AirbnbRating
+            onFinishRating={value =>
+              this.props.commerceReviewValueChange('rating', value)
+            }
+            showRating={false}
+            size={25}
+            defaultRating={this.props.rating}
+            isDisabled={this.state.isOneWeekOld}
+          />
+        </CardSection>
+        <View style={{ marginTop: 10 }}>
+          <Input
+            onChangeText={value =>
+              this.props.commerceReviewValueChange('comment', value)
+            }
+            editable={true}
+            multiline={true}
+            maxLength={128}
+            maxHeight={180}
+            placeholder="Deje un comentario sobre la atención..."
+            defaultValue={this.props.comment}
+            editable={!this.state.isOneWeekOld}
+          />
+        </View>
+      </View>
+    );
+  };
+
   renderCommerceReview = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
         <View>
           <Divider style={reviewDividerStyle} />
           <CardSection>
-            <Text style={reviewTitleStyle}>Calificación de la Atención</Text>
+            <Text style={reviewTitleStyle}>
+              {this.state.isOneWeekOld
+                ? 'Ya pasó el período de calificación'
+                : 'Calificación de la Atención'}
+            </Text>
           </CardSection>
-          <CardSection>
-            <AirbnbRating
-              onFinishRating={value =>
-                this.props.commerceReviewValueChange('rating', value)
-              }
-              showRating={false}
-              size={25}
-              defaultRating={this.props.rating}
-              isDisabled={this.state.isOneWeekOld}
-            />
-          </CardSection>
-          <View style={{ marginTop: 10 }}>
-            <Input
-              onChangeText={value =>
-                this.props.commerceReviewValueChange('comment', value)
-              }
-              editable={true}
-              multiline={true}
-              maxLength={128}
-              maxHeight={180}
-              defaultValue={this.props.comment}
-              editable={!this.state.isOneWeekOld}
-            />
-          </View>
-          <View style={reviewButtonsContainerStyle}>
-            <Button
-              title="Borrar"
-              type="solid"
-              outerContainerStyle={{ flex: 1 }}
-              onPress={this.onDeleteReviewHandler}
-              loading={this.props.deleteReviewLoading}
-              disabled={
-                this.state.isOneWeekOld ||
-                !(this.state.reservation.reviewId || this.props.reviewId)
-              }
-            />
-            <Button
-              title="Guardar"
-              type="solid"
-              outerContainerStyle={{ flex: 1 }}
-              onPress={this.onSaveReviewHandler}
-              loading={this.props.saveReviewLoading}
-              disabled={this.state.isOneWeekOld}
-            />
-          </View>
+          {this.renderRatingAndComment()}
+          {this.renderReviewButtons()}
         </View>
       );
     }
