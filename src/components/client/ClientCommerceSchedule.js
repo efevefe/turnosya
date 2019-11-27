@@ -78,9 +78,15 @@ class ClientCommerceSchedule extends Component {
 
   onSlotPress = slot => {
     if (!slot.available)
-      return Toast.show({
-        text: 'No hay más canchas disponibles en este horario'
-      });
+      if (moment().isSameOrAfter(slot.startDate.toString())) {
+        return Toast.show({
+          text: 'Horario no disponible'
+        });
+      } else {
+        return Toast.show({
+          text: 'No hay más canchas disponibles en este horario'
+        });
+      }
 
     this.props.onCourtReservationValueChange({
       prop: 'slot',
@@ -102,7 +108,11 @@ class ClientCommerceSchedule extends Component {
           reserved++;
       });
 
-      if (reserved >= courts.length) available = false;
+      if (
+        reserved >= courts.length ||
+        moment().isSameOrAfter(slot.startDate.toString())
+      )
+        available = false;
 
       return {
         ...slot,
@@ -180,14 +190,11 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onScheduleValueChange,
-    onScheduleRead,
-    onCourtReservationValueChange,
-    onCommerceCourtTypeReservationsRead,
-    onCommerceCourtsReadByType,
-    onCommerceCourtTypesRead
-  }
-)(ClientCommerceSchedule);
+export default connect(mapStateToProps, {
+  onScheduleValueChange,
+  onScheduleRead,
+  onCourtReservationValueChange,
+  onCommerceCourtTypeReservationsRead,
+  onCommerceCourtsReadByType,
+  onCommerceCourtTypesRead
+})(ClientCommerceSchedule);

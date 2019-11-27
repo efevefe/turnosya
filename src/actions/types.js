@@ -150,6 +150,12 @@ export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
 export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
 export const ON_RESERVATION_CLIENT_READ_FAIL =
   'on_reservation_client_read_fail';
+export const ON_COMMERCE_RESERVATION_CANCELING =
+  'on_commerce_reservation_canceling';
+export const ON_COMMERCE_RESERVATION_CANCELED =
+  'on_commerce_reservation_canceled';
+export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
+  'on_commerce_reservation_cancel_fail';
 
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';

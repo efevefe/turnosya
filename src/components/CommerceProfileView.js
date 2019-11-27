@@ -112,7 +112,13 @@ class CommerceProfileView extends Component {
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
-    const { profilePicture, headerPicture, name, commerceId, navigation } = this.props;
+    const {
+      profilePicture,
+      headerPicture,
+      name,
+      commerceId,
+      navigation
+    } = this.props;
 
     return (
       <ScrollView>
@@ -164,7 +170,9 @@ class CommerceProfileView extends Component {
               />
             </View>
 
-            <Text h4>{name}</Text>
+            <Text h4 style={{ textAlign: 'center', marginHorizontal: 10 }}>
+              {name}
+            </Text>
             {this.renderLocation()}
           </View>
 
@@ -258,14 +266,11 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceReadProfile,
-    registerFavoriteCommerce,
-    deleteFavoriteCommerce,
-    onScheduleRead,
-    commerceHitsUpdate,
-    onLocationChange
-  }
-)(CommerceProfileView);
+export default connect(mapStateToProps, {
+  onCommerceReadProfile,
+  registerFavoriteCommerce,
+  deleteFavoriteCommerce,
+  onScheduleRead,
+  commerceHitsUpdate,
+  onLocationChange
+})(CommerceProfileView);
