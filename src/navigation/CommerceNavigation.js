@@ -54,6 +54,12 @@ const calendarStack = createStackNavigator(
       navigationOptions: {
         title: 'Canchas Disponibles'
       }
+    },
+    reservationDetails: {
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
+      }
     }
   },
   stackNavigationOptions
@@ -146,7 +152,8 @@ const profileStack = createStackNavigator(
       screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Editar Perfil',
-        headerLeft: navigation.getParam('leftIcon')
+        headerLeft: navigation.getParam('leftIcon'),
+        headerRight: navigation.getParam('rightIcon')
       })
     },
     commerceProfileInfo: {

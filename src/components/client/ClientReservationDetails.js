@@ -61,7 +61,7 @@ class ClientReservationDetails extends Component {
   onPressCancelButton = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
-    if (startDate.diff(moment(), 'hours') > reservationMinCancelTime)
+    if (startDate.diff(moment(), 'hours', 'minutes') > reservationMinCancelTime)
       this.setState({ optionsVisible: true });
     else
       Toast.show({

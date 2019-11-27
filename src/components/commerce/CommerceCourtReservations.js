@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from '../common';
 import { onCommerceDetailedCourtReservationsRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
-import CourtReservationDetails from '../CourtReservationDetails';
-
 class CommerceCourtReservations extends Component {
   state = {
     selectedDate: moment(),
@@ -74,37 +72,6 @@ class CommerceCourtReservations extends Component {
     this.setState({ filteredList, selectedIndex });
   };
 
-  renderDetails = () => {
-    const {
-      client,
-      court,
-      startDate,
-      endDate,
-      price,
-      light
-    } = this.state.selectedReservation;
-
-    return (
-      <Overlay
-        isVisible={this.state.detailsVisible}
-        onBackdropPress={() => this.setState({ detailsVisible: false })}
-        overlayStyle={{ borderRadius: 8, paddingBottom: 23 }}
-        height="auto"
-        animationType="fade"
-      >
-        <CourtReservationDetails
-          client={client}
-          court={court}
-          startDate={startDate}
-          endDate={endDate}
-          price={price}
-          light={light}
-          showPrice={true}
-        />
-      </Overlay>
-    );
-  };
-
   renderList = ({ item }) => {
     return (
       <ListItem
@@ -121,9 +88,10 @@ class CommerceCourtReservations extends Component {
         rightTitleStyle={styles.listItemRightTitleStyle}
         rightSubtitle={item.light ? 'Con Luz' : 'Sin Luz'}
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
-        //onPress={() => this.props.navigation.navigate('reservationDetails', { reservation: item })}
         onPress={() =>
-          this.setState({ detailsVisible: true, selectedReservation: item })
+          this.props.navigation.navigate('reservationDetails', {
+            reservation: item
+          })
         }
         bottomDivider
       />
@@ -170,8 +138,6 @@ class CommerceCourtReservations extends Component {
         ) : (
           this.renderItems()
         )}
-
-        {this.renderDetails()}
       </View>
     );
   }
@@ -219,7 +185,6 @@ const mapStateToProps = state => {
   return { commerceId, reservations: detailedReservations, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { onCommerceDetailedCourtReservationsRead }
-)(CommerceCourtReservations);
+export default connect(mapStateToProps, {
+  onCommerceDetailedCourtReservationsRead
+})(CommerceCourtReservations);

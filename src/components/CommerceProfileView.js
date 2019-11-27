@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
   Dimensions,
   ScrollView
 } from 'react-native';
@@ -130,8 +129,7 @@ class CommerceProfileView extends Component {
       headerPicture,
       name,
       commerceId,
-      navigation,
-      rating
+      navigation
     } = this.props;
 
     return (
