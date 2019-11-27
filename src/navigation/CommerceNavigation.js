@@ -43,7 +43,7 @@ const calendarStack = createStackNavigator(
     scheduleRegister: {
       screen: ScheduleRegister,
       navigationOptions: {
-        title: 'Generar calendario'
+        title: 'Horarios de Atencion'
       }
     },
     registerConfiguration: {

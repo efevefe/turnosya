@@ -18,8 +18,8 @@ import {
 } from '../actions/types';
 import { Toast } from '../components/common';
 
-const INITIAL_STATE = {
-  schedules: [],
+// revisar esto
+const INITIAL_WORKSHIFTS = {
   id: '',
   cards: [
     {
@@ -32,10 +32,15 @@ const INITIAL_STATE = {
     }
   ],
   selectedDays: [],
-  reservationMinLength: 30,
-  reservationDayPeriod: 14,
   startDate: null,
   endDate: null,
+  reservationMinLength: 30
+}
+
+const INITIAL_STATE = {
+  ...INITIAL_WORKSHIFTS,
+  schedules: [],
+  reservationDayPeriod: 14,
   lastReservationDate: null,
   error: null,
   slots: [],
@@ -46,7 +51,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_SCHEDULE_FORM_OPEN:
-      return INITIAL_STATE;
+      return { ...state, ...INITIAL_WORKSHIFTS };
     case ON_SCHEDULE_VALUE_CHANGE:
       const { prop, value } = action.payload;
 

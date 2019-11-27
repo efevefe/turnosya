@@ -2,49 +2,58 @@ import React, { Component } from 'react';
 import { FlatList, View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 import { Spinner, EmptyList, IconButton, Menu, MenuItem } from '../common';
-import { DAYS, MONTHS } from '../../constants';
+import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
 import { formattedMoment } from '../../utils';
 import {
     onActiveSchedulesRead,
     onScheduleValueChange,
     onScheduleDelete,
-    onNextReservationsDatesRead
+    onNextReservationsRead,
+    onScheduleDeleteWithReservations,
+    onScheduleFormOpen
 } from '../../actions';
 
 class CommerceSchedulesList extends Component {
     state = {
         deleteModalVisible: false,
+        deleteConfirmVisible: false,
         optionsVisible: false,
-        lastReservationDate: formattedMoment(),
+        lastReservationDate: null,
         selectedSchedule: {}
     }
 
     componentDidMount() {
-        this.unsubscribeSchedulesRead = this.props.onActiveSchedulesRead({
+        this.props.onActiveSchedulesRead({
             commerceId: this.props.commerceId,
             date: new Date()
         })
     }
 
-    componentWillUnmount() {
-        this.unsubscribeSchedulesRead && this.unsubscribeSchedulesRead();
-    }
-
     componentDidUpdate(prevProps) {
-        if (prevProps.nextReservationsDates !== this.props.nextReservationsDates) {
+        this.props.schedules;
+        if (prevProps.nextReservations !== this.props.nextReservations) {
             this.props.navigation.isFocused() && this.onScheduleDelete();
         }
     }
 
-    onScheduleEditPress = schedule => {
+    onScheduleAddPress = () => {
+        this.props.onScheduleFormOpen();
+        this.props.navigation.navigate('scheduleRegister');
+    }
+
+    onScheduleEditPress = () => {
+        const { selectedSchedule } = this.state;
         this.setState({ optionsVisible: false });
 
-        for (prop in schedule) {
-            this.props.onScheduleValueChange({ prop, value: schedule[prop] });
+        for (prop in selectedSchedule) {
+            this.props.onScheduleValueChange({ prop, value: selectedSchedule[prop] });
         }
 
-        this.props.navigation.navigate('scheduleRegister', { schedule });
+        // este param capaz no hace falta
+        this.props.navigation.navigate('scheduleRegister', { schedule: selectedSchedule });
     }
 
     onScheduleDeletePress = () => {
@@ -55,22 +64,21 @@ class CommerceSchedulesList extends Component {
 
         if (selectedSchedule.startDate > startDate) startDate = selectedSchedule.startDate;
 
-        this.props.onNextReservationsDatesRead({ commerceId, startDate });
+        this.props.onNextReservationsRead({ commerceId, startDate, endDate: selectedSchedule.endDate });
         this.setState({ optionsVisible: false });
     }
 
     onScheduleDelete = () => {
-        const { nextReservationsDates } = this.props;
+        const { nextReservations } = this.props;
         let { lastReservationDate } = this.state;
 
-        if (nextReservationsDates.length) {
-            lastReservationDate = nextReservationsDates[nextReservationsDates.length - 1].startDate;
+        if (nextReservations.length) {
+            lastReservationDate = nextReservations[nextReservations.length - 1].startDate;
+            this.setState({ deleteModalVisible: true, lastReservationDate });
+        } else {
+            lastReservationDate = formattedMoment();
+            this.setState({ deleteConfirmVisible: true, lastReservationDate });
         }
-
-        this.setState({
-            deleteModalVisible: true,
-            lastReservationDate
-        });
     }
 
     onScheduleDeleteConfirm = async () => {
@@ -85,40 +93,60 @@ class CommerceSchedulesList extends Component {
         this.setState({ deleteModalVisible: false });
     }
 
-    renderDeleteScheduleModal = () => {
-        const { lastReservationDate } = this.state;
+    onCancelReservations = async () => {
+        const { commerceId, nextReservations } = this.props;
+        const { selectedSchedule } = this.state;
 
-        return (
-            <Menu
-                title={
-                    'Tienes reservas hasta el ' +
-                    `${DAYS[lastReservationDate.day()]} ` +
-                    `${lastReservationDate.format('D')} de ` +
-                    `${MONTHS[lastReservationDate.month()]}, ` +
-                    'por lo que la baja de los horarios de atencion entrará en ' +
-                    'vigencia luego de esa fecha. ¿Desea confirmar los cambios?'}
-                onBackdropPress={() => this.setState({ deleteModalVisible: false })}
-                isVisible={this.state.deleteModalVisible}
-            >
-                <MenuItem
-                    title="Acepar"
-                    icon="md-checkmark"
-                    onPress={this.onScheduleDeleteConfirm}
-                />
-                <Divider style={{ backgroundColor: 'grey' }} />
-                <MenuItem
-                    title="Seleccionar fecha"
-                    icon="md-calendar"
-                    onPress={() => console.log('seleccionar fecha')}
-                />
-                <Divider style={{ backgroundColor: 'grey' }} />
-                <MenuItem
-                    title="Cancelar"
-                    icon="md-close"
-                    onPress={() => this.setState({ deleteModalVisible: false })}
-                />
-            </Menu>
-        );
+        await this.props.onScheduleDeleteWithReservations({
+            commerceId,
+            schedule: selectedSchedule,
+            endDate: formattedMoment(),
+            reservations: nextReservations
+        });
+
+        this.setState({ deleteModalVisible: false });
+    }
+
+    renderDeleteScheduleModal = () => {
+        const { lastReservationDate, deleteModalVisible } = this.state;
+
+        if (lastReservationDate && deleteModalVisible) {
+            return (
+                <Menu
+                    title={
+                        'Tienes reservas hasta el ' +
+                        `${DAYS[lastReservationDate.day()]} ` +
+                        `${lastReservationDate.format('D')} de ` +
+                        `${MONTHS[lastReservationDate.month()]}, ` +
+                        'por lo que la baja de los horarios de atencion entrará en ' +
+                        'vigencia luego de esa fecha. Seleccione "Aceptar" para ' +
+                        'confirmar estos cambios o "Cancelar reservas y notificar" ' +
+                        'para que la baja entre en vigencia ahora mismo.'
+                    }
+                    onBackdropPress={() => this.setState({ deleteModalVisible: false })}
+                    isVisible={this.state.deleteModalVisible}
+                >
+                    <MenuItem
+                        title="Acepar"
+                        icon="md-checkmark"
+                        onPress={this.onScheduleDeleteConfirm}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title="Cancelar reservas y notificar"
+                        icon="md-trash"
+                        onPress={this.onCancelReservations}
+                    />
+                    <Divider style={{ backgroundColor: 'grey' }} />
+                    <MenuItem
+                        title="Cancelar"
+                        icon="md-close"
+                        onPress={() => this.setState({ deleteModalVisible: false })}
+                    />
+                </Menu>
+            );
+        }
+
     }
 
     cardToText = card => {
@@ -176,7 +204,6 @@ class CommerceSchedulesList extends Component {
 
     render() {
         const { schedules, loading } = this.props;
-        const { selectedSchedule } = this.state;
 
         if (loading) return <Spinner />;
 
@@ -187,7 +214,16 @@ class CommerceSchedulesList extends Component {
                         data={schedules}
                         renderItem={this.renderItem}
                         keyExtractor={schedule => schedule.id}
+                        contentContainerStyle={{ paddingBottom: 95 }}
                     />
+
+                    <Fab
+                        style={{ backgroundColor: MAIN_COLOR }}
+                        position="bottomRight"
+                        onPress={this.onScheduleAddPress}
+                    >
+                        <Ionicons name="md-add" />
+                    </Fab>
 
                     <Menu
                         title={'Horarios de Atencion'}
@@ -199,17 +235,30 @@ class CommerceSchedulesList extends Component {
                             icon="md-create"
                             onPress={this.onScheduleEditPress}
                         />
-                        {
-                            !selectedSchedule.endDate &&
-                            <View>
-                                <Divider style={{ backgroundColor: 'grey' }} />
-                                <MenuItem
-                                    title="Eliminar"
-                                    icon="md-trash"
-                                    onPress={this.onScheduleDeletePress}
-                                />
-                            </View>
-                        }
+                        <Divider style={{ backgroundColor: 'grey' }} />
+                        <MenuItem
+                            title="Eliminar"
+                            icon="md-trash"
+                            onPress={this.onScheduleDeletePress}
+                        />
+                    </Menu>
+
+                    <Menu
+                        title={'¿Esta seguro que desea eliminar los horarios de atencion?'}
+                        onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
+                        isVisible={this.state.deleteConfirmVisible}
+                    >
+                        <MenuItem
+                            title="Aceptar"
+                            icon="md-checkmark"
+                            onPress={this.onScheduleDeleteConfirm}
+                        />
+                        <Divider style={{ backgroundColor: 'grey' }} />
+                        <MenuItem
+                            title="Cancelar"
+                            icon="md-close"
+                            onPress={() => this.setState({ deleteConfirmVisible: false })}
+                        />
                     </Menu>
 
                     {this.renderDeleteScheduleModal()}
@@ -223,15 +272,17 @@ class CommerceSchedulesList extends Component {
 
 const mapStateToProps = state => {
     const { schedules, loading } = state.commerceSchedule;
-    const { nextReservationsDates } = state.courtReservationsList;
+    const { nextReservations } = state.courtReservationsList;
     const { commerceId } = state.commerceData;
 
-    return { schedules, commerceId, loading, nextReservationsDates };
+    return { schedules, commerceId, loading, nextReservations };
 }
 
 export default connect(mapStateToProps, {
     onActiveSchedulesRead,
     onScheduleValueChange,
     onScheduleDelete,
-    onNextReservationsDatesRead
+    onNextReservationsRead,
+    onScheduleDeleteWithReservations,
+    onScheduleFormOpen
 })(CommerceSchedulesList);

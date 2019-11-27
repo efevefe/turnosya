@@ -12,10 +12,10 @@ export const getHourAndMinutes = hour => {
   return { hour: hour[0], minutes: hour[1] };
 };
 
-export const hourToDate = stringHour => {
+export const hourToDate = (stringHour, date = moment()) => {
   // receives string hour (HH:mm) and returns the current date at that hour in moment format
   const { hour, minutes } = getHourAndMinutes(stringHour);
-  return moment([moment().year(), moment().month(), moment().date(), hour, minutes]);
+  return moment([date.year(), date.month(), date.date(), hour, minutes]);
 }
 
 export const imageToBlob = async uri => {
@@ -23,10 +23,10 @@ export const imageToBlob = async uri => {
 
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
+    xhr.onload = function () {
       resolve(xhr.response);
     };
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';

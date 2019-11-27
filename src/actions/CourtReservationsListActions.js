@@ -17,37 +17,6 @@ export const onCourtReservationsListValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
 }
 
-export const onNextReservationsDatesRead = ({ commerceId, startDate }) => {
-  const db = firebase.firestore();
-
-  return dispatch => {
-    db.collection(`Commerces/${commerceId}/Reservations`)
-      .where('state', '==', null)
-      .where('startDate', '>=', startDate.toDate())
-      .orderBy('startDate')
-      .get()
-      .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
-
-        const nextReservationsDates = [];
-
-        if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservationsDates } });
-        }
-
-        snapshot.forEach(doc => {
-          nextReservationsDates.push({
-            startDate: moment(doc.data().startDate.toDate()),
-            endDate: moment(doc.data().endDate.toDate())
-          });
-        });
-
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservationsDates } });
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
-  }
-}
-
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
   selectedDate,
@@ -194,5 +163,40 @@ export const onReservationClientRead = clientId => {
         dispatch({ type: ON_RESERVATION_CLIENT_READ, payload: { id: doc.id, ...doc.data() } });
       })
       .catch(error => dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL }));
+  }
+}
+
+export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
+  // cambiarle el nombre a la consulta y a la variable en el reducer
+  const db = firebase.firestore();
+
+  return dispatch => {
+    db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
+      .where('startDate', '>=', startDate.toDate())
+      .orderBy('startDate')
+      .get()
+      .then(snapshot => {
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+
+        const nextReservations = [];
+
+        if (snapshot.empty) {
+          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        }
+
+        snapshot.forEach(doc => {
+          if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
+            nextReservations.push({
+              id: doc.id,
+              clientId: doc.data().clientId,
+              startDate: moment(doc.data().startDate.toDate()),
+              endDate: moment(doc.data().endDate.toDate())
+            });
+        });
+
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+      })
+      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }

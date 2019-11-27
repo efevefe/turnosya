@@ -60,7 +60,7 @@ class ScheduleRegister extends Component {
       this.setState({ firstShiftEndError: '' });
     } else {
       this.setState({
-        firstShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
+        firstShiftEndError: `Hora de cierre debe ser mayor a la de apertura`
       });
       this.onSecondTurnPress();
     }
@@ -74,7 +74,7 @@ class ScheduleRegister extends Component {
     secondShiftStart === '')
       ? this.setState({ secondShiftStartError: '' })
       : this.setState({
-          secondShiftStartError: `Segundo turno debe \nser mayor al primero`
+          secondShiftStartError: `Segundo turno debe ser mayor al primero`
         });
   };
 
@@ -86,7 +86,7 @@ class ScheduleRegister extends Component {
     secondShiftEnd === ''
       ? this.setState({ secondShiftEndError: '' })
       : this.setState({
-          secondShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
+          secondShiftEndError: `Hora de cierre debe ser mayor a la de apertura`
         });
   };
 
@@ -147,7 +147,6 @@ class ScheduleRegister extends Component {
         <CardSection style={styles.viewPickerDate}>
           <DatePicker
             date={this.props.card.secondShiftStart}
-            mode="time"
             label="Desde las:"
             placeholder="Hora de apertura"
             onDateChange={async value => {

@@ -41,6 +41,7 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => {
     dispatch({ type: ON_SCHEDULE_READING });
 
     db.collection(`Commerces/${commerceId}/Schedules`)
+      .where('softDelete', '==', null)
       .where('startDate', '<=', selectedDate.toDate())
       .get()
       .then(snapshot => {
@@ -94,7 +95,7 @@ const formatScheduleDoc = scheduleDoc => {
   return {
     id,
     startDate: moment(startDate.toDate()),
-    endDate: endDate ? moment(endDate.toDate()) : endDate,
+    endDate: endDate ? moment(endDate.toDate()) : null,
     reservationDayPeriod,
     reservationMinLength
   }
@@ -109,12 +110,12 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
   const schedules = [];
 
   try {
-    let snapshot = await schedulesRef.where('endDate', '>=', date).orderBy('endDate').get();
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date).orderBy('endDate').get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
     }
 
-    snapshot = await schedulesRef.where('endDate', '==', null).get();
+    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
     };
@@ -181,10 +182,49 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 //   }
 // };
 
+// export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => {
+//   dispatch({ type: ON_SCHEDULE_CREATING });
+
+//   const { commerceId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
+//   const db = firebase.firestore();
+//   const batch = db.batch();
+
+//   schedules.forEach(schedule => {
+//     const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
+
+//     if ((schedule.startDate < startDate) && (!schedule.endDate || (schedule.endDate > startDate))) {
+//       batch.update(scheduleRef, { endDate: startDate.toDate() })
+//     }
+
+//     if (schedule.startDate >= startDate) {
+//       batch.update(scheduleRef, { softDelete: new Date() });
+//     }
+//   })
+
+//   try {
+//     const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+//       .add({ startDate: startDate.toDate(), endDate: null, softDelete: null, reservationMinLength, reservationDayPeriod });
+
+//     cards.forEach(card => {
+//       const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+
+//       const cardRef = db.doc(`Commerces/${commerceId}/Schedules/${newSchedule.id}/WorkShifts/${card.id}`);
+//       batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+//     });
+
+//     await batch.commit();
+
+//     dispatch({ type: ON_SCHEDULE_CREATED });
+//     navigation.goBack();
+//   } catch (error) {
+//     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+//   }
+// };
+
 export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CREATING });
 
-  const { commerceId, cards, reservationMinLength, reservationDayPeriod, startDate, schedules } = scheduleData;
+  const { commerceId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
   const db = firebase.firestore();
   const batch = db.batch();
 
@@ -194,15 +234,17 @@ export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => 
     if ((schedule.startDate < startDate) && (!schedule.endDate || (schedule.endDate > startDate))) {
       batch.update(scheduleRef, { endDate: startDate.toDate() })
     }
-
-    if (schedule.startDate >= startDate) {
-      batch.delete(scheduleRef);
-    }
   })
 
   try {
     const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
-      .add({ startDate: startDate.toDate(), endDate: null, reservationMinLength, reservationDayPeriod });
+      .add({
+        startDate: startDate.toDate(),
+        endDate: endDate.toDate(),
+        softDelete: null,
+        reservationMinLength,
+        reservationDayPeriod
+      });
 
     cards.forEach(card => {
       const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
@@ -225,9 +267,39 @@ export const onScheduleDelete = ({ commerceId, scheduleId, endDate }) => async d
   const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
 
   try {
-    await scheduleRef.update({ endDate: endDate.toDate() })
+    await scheduleRef.update({ endDate: endDate.toDate() });
     dispatch({ type: ON_SCHEDULE_CREATED });
   } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+  }
+}
+
+export const onScheduleDeleteWithReservations = ({ commerceId, schedule, endDate, reservations }) => async dispatch => {
+  const db = firebase.firestore();
+  const batch = db.batch();
+  const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
+
+  try {
+    const state = await db.doc(`ReservationStates/canceled`).get();
+
+    reservations.forEach(res => {
+      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+      //batch.update(commerceResRef, { state: { id: state.id, name: state.data().name } });
+      //batch.update(clientResRef, { state: { id: state.id, name: state.data().name } });
+    });
+
+    if (endDate <= schedule.startDate) {
+      batch.update(scheduleRef, { softDelete: new Date() });
+    } else {
+      batch.update(scheduleRef, { endDate: endDate.toDate() });
+    }
+
+    await batch.commit();
+
+    dispatch({ type: ON_SCHEDULE_CREATED });
+  } catch (error) {
+    console.log(error);
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
   }
 }
