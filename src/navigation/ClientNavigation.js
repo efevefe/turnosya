@@ -23,6 +23,7 @@ import Map from '../components/common/Map';
 
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import CommerceReviewsList from '../components/CommerceReviewsList';
 // Aca hay un stack por cada tab que tiene el tab navigation
 
 const mainSearchStack = createStackNavigator(
@@ -88,6 +89,12 @@ const mainSearchStack = createStackNavigator(
       screen: ConfirmCourtReservation,
       navigationOptions: {
         title: 'Turno'
+      }
+    },
+    commerceReviewsList: {
+      screen: CommerceReviewsList,
+      navigationOptions: {
+        title: 'Reseñas'
       }
     }
   },

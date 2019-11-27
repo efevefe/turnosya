@@ -8,7 +8,7 @@ class Button extends Component {
     const color = this.props.color || MAIN_COLOR;
 
     return (
-      <View>
+      <View style={this.props.outerContainerStyle}>
         <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
         <RNEButton
           {...this.props}

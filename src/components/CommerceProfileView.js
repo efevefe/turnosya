@@ -6,7 +6,14 @@ import {
   Dimensions,
   ScrollView
 } from 'react-native';
-import { Avatar, Text, Divider, Image, Button } from 'react-native-elements';
+import {
+  Avatar,
+  Text,
+  Divider,
+  Image,
+  Button,
+  Rating
+} from 'react-native-elements';
 import { PictureView } from './common';
 import { connect } from 'react-redux';
 import {
@@ -109,6 +116,11 @@ class CommerceProfileView extends Component {
     this.setState({ pictureVisible: !this.state.pictureVisible });
   };
 
+  getRatingValue = () => {
+    const { total, count } = this.props.rating;
+    return total ? total / count : 0;
+  };
+
   render() {
     const { headerContainerStyle, avatarContainerStyle, avatarStyle } = styles;
 
@@ -156,6 +168,16 @@ class CommerceProfileView extends Component {
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
+
+            <Button
+              type="clear"
+              icon={<Ionicons name="md-text" color={'white'} size={30} />}
+              onPress={() =>
+                this.props.navigation.navigate('commerceReviewsList', {
+                  commerceId: this.props.commerceId
+                })
+              }
+            />
           </View>
 
           <View style={headerContainerStyle}>
@@ -170,9 +192,23 @@ class CommerceProfileView extends Component {
               />
             </View>
 
-            <Text h4 style={{ textAlign: 'center', marginHorizontal: 10 }}>
-              {name}
-            </Text>
+            <Text h4>{name}</Text>
+
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate('commerceReviewsList', {
+                  commerceId: this.props.commerceId
+                })
+              }
+            >
+              <Rating
+                style={{ padding: 8 }}
+                readonly
+                imageSize={22}
+                startingValue={this.getRatingValue()}
+              />
+            </TouchableOpacity>
+
             {this.renderLocation()}
           </View>
 
@@ -245,7 +281,8 @@ const mapStateToProps = state => {
     headerPicture,
     commerceId,
     latitude,
-    longitude
+    longitude,
+    rating
   } = state.commerceData;
   const { cards } = state.commerceSchedule;
 
@@ -260,6 +297,7 @@ const mapStateToProps = state => {
     commerceId,
     latitude,
     longitude,
+    rating,
     commerce,
     favoriteCommerces,
     cards

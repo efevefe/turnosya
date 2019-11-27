@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const imageToBlob = async uri => {
   try {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
@@ -166,17 +168,21 @@ export const stringFormatHours = totalHours => {
   const hours = totalHours % 24;
 
   const stringHours =
-  hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+    hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
 
-const stringDays =
-  days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
-
+  const stringDays =
+    days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
 
   if (hours && days) return stringDays + ' y ' + stringHours + '.';
   else if (hours) return stringHours + '.';
   else return stringDays + '.';
 };
 
+export const isOneWeekOld = date => {
+  return !moment()
+    .subtract(1, 'w')
+    .isBefore(date);
+};
 
 export const getHourAndMinutes = hour => {
   hour = hour.split(':').map(num => parseInt(num));
