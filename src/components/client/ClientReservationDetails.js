@@ -130,7 +130,7 @@ class ClientReservationDetails extends Component {
     });
   };
 
-  renderConfirmCommerceDelete = () => {
+  renderConfirmReviewDelete = () => {
     return (
       <Menu
         title="¿Está seguro que desea borrar su reseña?"

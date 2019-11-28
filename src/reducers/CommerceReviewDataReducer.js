@@ -35,7 +35,7 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state, saveLoading: false };
     case ON_COMMERCE_REVIEW_CREATED:
-      Toast.show({ text: 'Calificación creada con éxito.' });
+      Toast.show({ text: 'Calificación guardada con éxito.' });
       return { ...state, reviewId: action.payload, saveLoading: false };
     case ON_COMMERCE_REVIEW_DELETING:
       return { ...state, deleteLoading: true };
