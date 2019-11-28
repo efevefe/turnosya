@@ -285,7 +285,7 @@ class ClientReservationDetails extends Component {
           showPrice={true}
         />
         {this.renderCommerceReview()}
-        {this.renderConfirmCommerceDelete()}
+        {this.renderConfirmReviewDelete()}
         {this.renderCancelButton()}
       </KeyboardAwareScrollView>
     );
