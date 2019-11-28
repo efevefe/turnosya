@@ -34,6 +34,7 @@ export const onScheduleFormOpen = () => {
   return { type: ON_SCHEDULE_FORM_OPEN };
 };
 
+// A MEJORAR
 export const onScheduleRead = ({ commerceId, selectedDate }) => {
   const db = firebase.firestore();
 
@@ -224,15 +225,28 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CREATING });
 
-  const { commerceId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
+  const { commerceId, scheduleId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
   const db = firebase.firestore();
   const batch = db.batch();
 
   schedules.forEach(schedule => {
     const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
 
-    if ((schedule.startDate < startDate) && (!schedule.endDate || (schedule.endDate > startDate))) {
-      batch.update(scheduleRef, { endDate: startDate.toDate() })
+    if ((schedule.startDate < startDate) && (!schedule.endDate || (startDate < schedule.endDate))) {
+      batch.update(scheduleRef, { endDate: startDate.toDate() });
+    }
+
+    if ((schedule.startDate >= startDate) && (!endDate || (schedule.endDate && (schedule.endDate <= endDate)))) {
+      // revisar esto
+      if (schedule.id === scheduleId) {
+        batch.delete(scheduleRef);
+      } else {
+        batch.update(scheduleRef, { softDelete: new Date() });
+      }
+    }
+
+    if ((endDate && (endDate > schedule.startDate)) && (!schedule.endDate || (endDate && endDate < schedule.endDate))) {
+      batch.update(scheduleRef, { startDate: endDate.toDate() });
     }
   })
 

@@ -39,7 +39,7 @@ const INITIAL_WORKSHIFTS = {
 
 const INITIAL_STATE = {
   ...INITIAL_WORKSHIFTS,
-  schedules: [],
+  schedules: [], // capaz puede ir en otro reducer
   reservationDayPeriod: 14,
   lastReservationDate: null,
   error: null,

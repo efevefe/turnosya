@@ -167,7 +167,6 @@ export const onReservationClientRead = clientId => {
 }
 
 export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
-  // cambiarle el nombre a la consulta y a la variable en el reducer
   const db = firebase.firestore();
 
   return dispatch => {

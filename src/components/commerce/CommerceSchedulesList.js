@@ -52,7 +52,6 @@ class CommerceSchedulesList extends Component {
             this.props.onScheduleValueChange({ prop, value: selectedSchedule[prop] });
         }
 
-        // este param capaz no hace falta
         this.props.navigation.navigate('scheduleRegister', { schedule: selectedSchedule });
     }
 
