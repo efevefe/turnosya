@@ -160,7 +160,7 @@ export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';
 
-// Review types
+// Commerce review types
 export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
   'on_commerce_review_value_change';
 export const ON_COMMERCE_REVIEW_SAVING = 'on_commerce_review_saving';
@@ -174,3 +174,17 @@ export const ON_COMMERCE_REVIEW_DELETE_FAIL = 'on_commerce_review_delete_fail';
 export const ON_COMMERCE_REVIEWS_READING = 'on_commerce_reviews_reading';
 export const ON_COMMERCE_REVIEWS_READ = 'on_commerce_reviews_read';
 export const ON_COMMERCE_REVIEWS_READ_FAIL = 'on_commerce_reviews_read_fail';
+
+// Client review types
+export const ON_CLIENT_REVIEW_VALUE_CHANGE = 'on_client_review_value_change';
+export const ON_CLIENT_REVIEW_SAVING = 'on_client_review_saving';
+export const ON_CLIENT_REVIEW_SAVED = 'on_client_review_saved';
+export const ON_CLIENT_REVIEW_SAVE_FAIL = 'on_client_review_save_fail';
+export const ON_CLIENT_REVIEW_CLEAR = 'on_client_review_clear';
+export const ON_CLIENT_REVIEW_CREATED = 'on_client_review_created';
+export const ON_CLIENT_REVIEW_DELETING = 'on_client_review_deleting';
+export const ON_CLIENT_REVIEW_DELETED = 'on_client_review_deleted';
+export const ON_CLIENT_REVIEW_DELETE_FAIL = 'on_client_review_delete_fail';
+export const ON_CLIENT_REVIEW_READING = 'on_client_reviews_reading';
+export const ON_CLIENT_REVIEW_READ = 'on_client_reviews_read';
+export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_reviews_read_fail';

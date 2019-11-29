@@ -16,6 +16,7 @@ import LocationDataReducer from './LocationDataReducer';
 import ProvinceDataReducer from './ProvinceDataReducer';
 import CommerceReviewDataReducer from './CommerceReviewDataReducer';
 import CommerceReviewsListReducer from './CommerceReviewsListReducer';
+import ClientReviewDataReducer from './ClientReviewDataReducer';
 
 export default combineReducers({
   auth: AuthReducer,
@@ -34,5 +35,6 @@ export default combineReducers({
   locationData: LocationDataReducer,
   provinceData: ProvinceDataReducer,
   commerceReviewData: CommerceReviewDataReducer,
-  commerceReviewsList: CommerceReviewsListReducer
+  commerceReviewsList: CommerceReviewsListReducer,
+  clientReviewData: ClientReviewDataReducer
 });
