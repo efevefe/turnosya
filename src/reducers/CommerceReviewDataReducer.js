@@ -14,9 +14,6 @@ import { Toast } from '../components/common';
 const INITIAL_STATE = {
   rating: 4,
   comment: '',
-  date: '',
-  clientId: '',
-  commerceId: '',
   reviewId: '',
   saveLoading: false,
   deleteLoading: false

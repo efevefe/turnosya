@@ -17,9 +17,6 @@ import { Toast } from '../components/common';
 const INITIAL_STATE = {
   rating: 4,
   comment: '',
-  date: null,
-  clientId: '',
-  commerceId: '',
   reviewId: '',
   saveLoading: false,
   deleteLoading: false,
@@ -32,6 +29,9 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_CLIENT_REVIEW_SAVING:
       return { ...state, saveLoading: true };
+    case ON_CLIENT_REVIEW_SAVED:
+      Toast.show({ text: 'Calificación guardada con éxito.' });
+      return { ...state, saveLoading: false };
     case ON_CLIENT_REVIEW_SAVE_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state, saveLoading: false };
@@ -46,6 +46,14 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
     case ON_CLIENT_REVIEW_READ:
       return { ...state, dataLoading: false };
+    case ON_CLIENT_REVIEW_DELETING:
+      return { ...state, deleteLoading: true };
+    case ON_CLIENT_REVIEW_DELETED:
+      Toast.show({ text: 'Calificación borrada con éxito.' });
+      return INITIAL_STATE;
+    case ON_CLIENT_REVIEW_DELETE_FAIL:
+      Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
+      return { ...state, deleteLoading: false };
     default:
       return state;
   }

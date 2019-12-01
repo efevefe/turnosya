@@ -12,6 +12,8 @@ import {
   clientReviewValueChange,
   createClientReview,
   readClientReview,
+  updateClientReview,
+  deleteClientReview,
   clientReviewClear
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
@@ -91,24 +93,34 @@ class CommerceCourtReservationDetails extends Component {
   // *** Review Methods ***
 
   onSaveReviewHandler = () => {
-    // if (this.state.reservation.reviewId || this.props.reviewId) {
-    //   // Si tenia calificacion actualizarla
-    //   this.props.updateCommerceReview({
-    //     commerceId: this.state.reservation.commerceId,
-    //     comment: this.props.comment,
-    //     rating: this.props.rating,
-    //     reviewId: this.state.reservation.reviewId || this.props.reviewId
-    //   });
-    // } else {
-    //   // Si la reserva no tiene calificacion, crearla
-    this.props.createClientReview({
-      commerceId: this.props.commerceId,
-      comment: this.props.comment,
-      rating: this.props.rating,
+    if (this.props.reviewId) {
+      // Si tenia calificacion actualizarla
+      this.props.updateClientReview({
+        clientId: this.state.reservation.clientId,
+        comment: this.props.comment,
+        rating: this.props.rating,
+        reviewId: this.props.reviewId
+      });
+    } else {
+      // Si la reserva no tiene calificacion, crearla
+      this.props.createClientReview({
+        clientId: this.state.reservation.clientId,
+        comment: this.props.comment,
+        rating: this.props.rating,
+        reservationId: this.state.reservation.id,
+        commerceId: this.props.commerceId
+      });
+    }
+  };
+
+  onDeleteReviewHandler = () => {
+    this.props.deleteClientReview({
+      clientId: this.state.reservation.clientId,
+      reviewId: this.props.reviewId,
       reservationId: this.state.reservation.id,
-      clientId: this.state.reservation.clientId
+      commerceId: this.props.commerceId
     });
-    // }
+    this.setState({ confirmDeleteVisible: false });
   };
 
   renderConfirmReviewDelete = () => {
@@ -121,7 +133,7 @@ class CommerceCourtReservationDetails extends Component {
         <MenuItem
           title="Confirmar"
           icon="md-checkmark"
-          onPress={() => console.log('this.deleteReview')}
+          onPress={this.onDeleteReviewHandler}
         />
         <Divider style={overlayDividerStyle} />
         <MenuItem
@@ -141,11 +153,8 @@ class CommerceCourtReservationDetails extends Component {
           type="solid"
           outerContainerStyle={{ flex: 1 }}
           onPress={() => this.setState({ confirmDeleteVisible: true })}
-          // loading={this.props.deleteReviewLoading}
-          // disabled={
-          //   this.state.isOneWeekOld ||
-          //   !(this.state.reservation.reviewId || this.props.reviewId)
-          // }
+          loading={this.props.deleteReviewLoading}
+          disabled={this.state.isOneWeekOld || !this.props.reviewId}
         />
         <Button
           title="Guardar"
@@ -160,8 +169,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   renderRatingAndComment = () => {
-    return this.state.isOneWeekOld &&
-      !this.state.reservation.reviewId ? null : (
+    return this.state.isOneWeekOld && !this.props.reviewId ? null : (
       <View>
         <CardSection>
           <AirbnbRating
@@ -316,6 +324,7 @@ const mapStateToProps = state => {
     comment,
     reviewId,
     saveLoading,
+    deleteLoading,
     dataLoading
   } = state.clientReviewData;
 
@@ -327,6 +336,7 @@ const mapStateToProps = state => {
     comment,
     reviewId,
     saveReviewLoading: saveLoading,
+    deleteReviewLoading: deleteLoading,
     reviewDataLoading: dataLoading
   };
 };
@@ -337,5 +347,7 @@ export default connect(mapStateToProps, {
   clientReviewValueChange,
   createClientReview,
   readClientReview,
+  updateClientReview,
+  deleteClientReview,
   clientReviewClear
 })(CommerceCourtReservationDetails);

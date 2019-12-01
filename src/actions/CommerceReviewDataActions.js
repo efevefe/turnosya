@@ -78,6 +78,10 @@ export const readCommerceReview = ({ commerceId, reviewId }) => dispatch => {
             type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
             payload: { prop: 'comment', value: comment }
           });
+          dispatch({
+            type: ON_COMMERCE_REVIEW_VALUE_CHANGE,
+            payload: { prop: 'reviewId', value: reviewId }
+          });
         }
       });
 };

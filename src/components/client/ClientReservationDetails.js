@@ -91,13 +91,13 @@ class ClientReservationDetails extends Component {
   // ** Commerce Review methods **
 
   onSaveReviewHandler = () => {
-    if (this.state.reservation.reviewId || this.props.reviewId) {
+    if (this.props.reviewId) {
       // Si tenia calificacion actualizarla
       this.props.updateCommerceReview({
         commerceId: this.state.reservation.commerceId,
         comment: this.props.comment,
         rating: this.props.rating,
-        reviewId: this.state.reservation.reviewId || this.props.reviewId
+        reviewId: this.props.reviewId
       });
     } else {
       // Si la reserva no tiene calificacion, crearla
@@ -126,7 +126,7 @@ class ClientReservationDetails extends Component {
     this.props.deleteCommerceReview({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
-      reviewId: this.state.reservation.reviewId || this.props.reviewId
+      reviewId: this.props.reviewId
     });
   };
 
@@ -161,10 +161,7 @@ class ClientReservationDetails extends Component {
           outerContainerStyle={{ flex: 1 }}
           onPress={this.onDeleteReviewHandler}
           loading={this.props.deleteReviewLoading}
-          disabled={
-            this.state.isOneWeekOld ||
-            !(this.state.reservation.reviewId || this.props.reviewId)
-          }
+          disabled={this.state.isOneWeekOld || !this.props.reviewId}
         />
         <Button
           title="Guardar"
@@ -179,8 +176,7 @@ class ClientReservationDetails extends Component {
   };
 
   renderRatingAndComment = () => {
-    return this.state.isOneWeekOld &&
-      !this.state.reservation.reviewId ? null : (
+    return this.state.isOneWeekOld && !this.props.reviewId ? null : (
       <View>
         <CardSection>
           <AirbnbRating
