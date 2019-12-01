@@ -18,6 +18,7 @@ import CommerceCourtReservationDetails from '../components/commerce/CommerceCour
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
+import ClientProfileView from '../components/ClientProfileView';
 import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
@@ -59,6 +60,12 @@ const calendarStack = createStackNavigator(
       screen: CommerceCourtReservationDetails,
       navigationOptions: {
         title: 'Detalles del Turno'
+      }
+    },
+    clientProfileView: {
+      screen: ClientProfileView,
+      navigationOptions: {
+        title: 'Perfil del Cliente'
       }
     }
   },
@@ -104,6 +111,12 @@ const reservationsStack = createStackNavigator(
       screen: CommerceCourtReservationDetails,
       navigationOptions: {
         title: 'Detalles del Turno'
+      }
+    },
+    clientProfileView: {
+      screen: ClientProfileView,
+      navigationOptions: {
+        title: 'Perfil del Cliente'
       }
     }
   },

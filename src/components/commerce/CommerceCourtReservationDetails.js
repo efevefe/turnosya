@@ -4,7 +4,15 @@ import { connect } from 'react-redux';
 import { Divider, AirbnbRating } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
-import { Button, Menu, MenuItem, Input, CardSection, Spinner } from '../common';
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Input,
+  CardSection,
+  Spinner,
+  Toast
+} from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCommerceCancelReservation,
@@ -248,6 +256,7 @@ class CommerceCourtReservationDetails extends Component {
           price={price}
           light={light}
           showPrice={true}
+          navigation={this.props.navigation}
         />
         <CardSection>{this.renderCancelButton()}</CardSection>
 
