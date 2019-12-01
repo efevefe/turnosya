@@ -15,7 +15,7 @@ import {
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
-  rating: 4,
+  rating: 0,
   comment: '',
   reviewId: '',
   saveLoading: false,

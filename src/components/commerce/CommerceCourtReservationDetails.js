@@ -93,23 +93,27 @@ class CommerceCourtReservationDetails extends Component {
   // *** Review Methods ***
 
   onSaveReviewHandler = () => {
-    if (this.props.reviewId) {
-      // Si tenia calificacion actualizarla
-      this.props.updateClientReview({
-        clientId: this.state.reservation.clientId,
-        comment: this.props.comment,
-        rating: this.props.rating,
-        reviewId: this.props.reviewId
-      });
+    if (this.props.rating === 0) {
+      Toast.show({ text: 'Debe primero especificar una calificación.' });
     } else {
-      // Si la reserva no tiene calificacion, crearla
-      this.props.createClientReview({
-        clientId: this.state.reservation.clientId,
-        comment: this.props.comment,
-        rating: this.props.rating,
-        reservationId: this.state.reservation.id,
-        commerceId: this.props.commerceId
-      });
+      if (this.props.reviewId) {
+        // Si tenia calificacion actualizarla
+        this.props.updateClientReview({
+          clientId: this.state.reservation.clientId,
+          comment: this.props.comment,
+          rating: this.props.rating,
+          reviewId: this.props.reviewId
+        });
+      } else {
+        // Si la reserva no tiene calificacion, crearla
+        this.props.createClientReview({
+          clientId: this.state.reservation.clientId,
+          comment: this.props.comment,
+          rating: this.props.rating,
+          reservationId: this.state.reservation.id,
+          commerceId: this.props.commerceId
+        });
+      }
     }
   };
 
