@@ -183,49 +183,21 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 //   }
 // };
 
-// export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => {
-//   dispatch({ type: ON_SCHEDULE_CREATING });
-
-//   const { commerceId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
-//   const db = firebase.firestore();
-//   const batch = db.batch();
-
-//   schedules.forEach(schedule => {
-//     const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
-
-//     if ((schedule.startDate < startDate) && (!schedule.endDate || (schedule.endDate > startDate))) {
-//       batch.update(scheduleRef, { endDate: startDate.toDate() })
-//     }
-
-//     if (schedule.startDate >= startDate) {
-//       batch.update(scheduleRef, { softDelete: new Date() });
-//     }
-//   })
-
-//   try {
-//     const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
-//       .add({ startDate: startDate.toDate(), endDate: null, softDelete: null, reservationMinLength, reservationDayPeriod });
-
-//     cards.forEach(card => {
-//       const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
-
-//       const cardRef = db.doc(`Commerces/${commerceId}/Schedules/${newSchedule.id}/WorkShifts/${card.id}`);
-//       batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-//     });
-
-//     await batch.commit();
-
-//     dispatch({ type: ON_SCHEDULE_CREATED });
-//     navigation.goBack();
-//   } catch (error) {
-//     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-//   }
-// };
-
 export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CREATING });
 
-  const { commerceId, scheduleId, cards, reservationMinLength, reservationDayPeriod, startDate, endDate, schedules } = scheduleData;
+  const {
+    commerceId,
+    scheduleId,
+    cards,
+    reservationMinLength,
+    reservationDayPeriod,
+    startDate,
+    endDate,
+    schedules,
+    reservationsToCancel
+  } = scheduleData;
+
   const db = firebase.firestore();
   const batch = db.batch();
 
@@ -233,87 +205,103 @@ export const onScheduleUpdate = (scheduleData, navigation) => async dispatch => 
     const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
 
     if ((schedule.startDate < startDate) && (!schedule.endDate || (startDate < schedule.endDate))) {
-      batch.update(scheduleRef, { endDate: startDate.toDate() });
+      // batch.update(scheduleRef, { endDate: startDate.toDate() });
+      console.log('endDate ==> startDate');
     }
 
     if ((schedule.startDate >= startDate) && (!endDate || (schedule.endDate && (schedule.endDate <= endDate)))) {
       // revisar esto
       if (schedule.id === scheduleId) {
-        batch.delete(scheduleRef);
+        // batch.delete(scheduleRef);
+        console.log('delete old schedule');
       } else {
-        batch.update(scheduleRef, { softDelete: new Date() });
+        // batch.update(scheduleRef, { softDelete: new Date() });
+        console.log('softDelete');
       }
     }
 
     if ((endDate && (endDate > schedule.startDate)) && (!schedule.endDate || (endDate && endDate < schedule.endDate))) {
-      batch.update(scheduleRef, { startDate: endDate.toDate() });
+      // batch.update(scheduleRef, { startDate: endDate.toDate() });
+      console.log('startDate ==> endDate');
     }
   })
 
   try {
-    const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
-      .add({
-        startDate: startDate.toDate(),
-        endDate: endDate.toDate(),
-        softDelete: null,
-        reservationMinLength,
-        reservationDayPeriod
+    // new schedule creation
+    // const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+    //   .add({
+    //     startDate: startDate.toDate(),
+    //     endDate: endDate.toDate(),
+    //     softDelete: null,
+    //     reservationMinLength,
+    //     reservationDayPeriod
+    //   });
+
+    // cards.forEach(card => {
+    //   const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+
+    //   const cardRef = db.doc(`Commerces/${commerceId}/Schedules/${newSchedule.id}/WorkShifts/${card.id}`);
+    //   batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+    // });
+
+    // reservations cancel
+    if (reservationsToCancel.length) {
+      const state = await db.doc(`ReservationStates/canceled`).get();
+      const updateObj = {
+        cancellationDate: new Date(),
+        state: { id: state.id, name: state.data().name }
+      };
+
+      reservationsToCancel.forEach(res => {
+        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        //batch.update(commerceResRef, updateObj);
+        //batch.update(clientResRef, updateObj);
       });
+    }
 
-    cards.forEach(card => {
-      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
-
-      const cardRef = db.doc(`Commerces/${commerceId}/Schedules/${newSchedule.id}/WorkShifts/${card.id}`);
-      batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-    });
-
-    await batch.commit();
+    // await batch.commit();
 
     dispatch({ type: ON_SCHEDULE_CREATED });
-    navigation.goBack();
+    // navigation.goBack();
   } catch (error) {
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
   }
 };
 
-export const onScheduleDelete = ({ commerceId, scheduleId, endDate }) => async dispatch => {
-  const db = firebase.firestore();
-  const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
-
-  try {
-    await scheduleRef.update({ endDate: endDate.toDate() });
-    dispatch({ type: ON_SCHEDULE_CREATED });
-  } catch (error) {
-    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
-  }
-}
-
-export const onScheduleDeleteWithReservations = ({ commerceId, schedule, endDate, reservations }) => async dispatch => {
+export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
   const batch = db.batch();
   const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
 
   try {
-    const state = await db.doc(`ReservationStates/canceled`).get();
+    if (reservationsToCancel.length) {
+      const state = await db.doc(`ReservationStates/canceled`).get();
+      const updateObj = {
+        cancellationDate: new Date(),
+        state: { id: state.id, name: state.data().name }
+      };
 
-    reservations.forEach(res => {
-      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-      //batch.update(commerceResRef, { state: { id: state.id, name: state.data().name } });
-      //batch.update(clientResRef, { state: { id: state.id, name: state.data().name } });
-    });
-
-    if (endDate <= schedule.startDate) {
-      batch.update(scheduleRef, { softDelete: new Date() });
-    } else {
-      batch.update(scheduleRef, { endDate: endDate.toDate() });
+      reservationsToCancel.forEach(res => {
+        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        //batch.update(commerceResRef, updateObj);
+        //batch.update(clientResRef, updateObj);
+      });
     }
 
-    await batch.commit();
+    if (endDate <= schedule.startDate) {
+      // batch.update(scheduleRef, { softDelete: new Date() });
+      console.log('softDelete');
+    } else {
+      // batch.update(scheduleRef, { endDate: endDate.toDate() });
+      console.log('endDate ==> lastReservation')
+    }
+
+    // await batch.commit();
 
     dispatch({ type: ON_SCHEDULE_CREATED });
   } catch (error) {
-    console.log(error);
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
   }
 }

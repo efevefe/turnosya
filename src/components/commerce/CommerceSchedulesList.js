@@ -22,6 +22,7 @@ class CommerceSchedulesList extends Component {
         deleteConfirmVisible: false,
         optionsVisible: false,
         lastReservationDate: null,
+        reservationsToCancel: [],
         selectedSchedule: {}
     }
 
@@ -64,7 +65,7 @@ class CommerceSchedulesList extends Component {
         if (selectedSchedule.startDate > startDate) startDate = selectedSchedule.startDate;
 
         this.props.onNextReservationsRead({ commerceId, startDate, endDate: selectedSchedule.endDate });
-        this.setState({ optionsVisible: false });
+        this.setState({ optionsVisible: false, reservationsToCancel: [] });
     }
 
     onScheduleDelete = () => {
@@ -72,7 +73,9 @@ class CommerceSchedulesList extends Component {
         let { lastReservationDate } = this.state;
 
         if (nextReservations.length) {
-            lastReservationDate = nextReservations[nextReservations.length - 1].startDate;
+            lastReservationDate = formattedMoment(
+                nextReservations[nextReservations.length - 1].startDate
+            );
             this.setState({ deleteModalVisible: true, lastReservationDate });
         } else {
             lastReservationDate = formattedMoment();
@@ -80,30 +83,27 @@ class CommerceSchedulesList extends Component {
         }
     }
 
+    onCancelReservations = async () => {
+        const { nextReservations } = this.props;
+
+        this.setState({
+            lastReservationDate: formattedMoment(),
+            reservationsToCancel: nextReservations,
+            deleteModalVisible: false
+        }, this.onScheduleDeleteConfirm)
+    }
+
     onScheduleDeleteConfirm = async () => {
-        const { lastReservationDate, selectedSchedule } = this.state;
+        const { lastReservationDate, selectedSchedule, reservationsToCancel } = this.state;
 
         await this.props.onScheduleDelete({
             commerceId: this.props.commerceId,
-            scheduleId: selectedSchedule.id,
-            endDate: lastReservationDate
-        });
-
-        this.setState({ deleteModalVisible: false });
-    }
-
-    onCancelReservations = async () => {
-        const { commerceId, nextReservations } = this.props;
-        const { selectedSchedule } = this.state;
-
-        await this.props.onScheduleDeleteWithReservations({
-            commerceId,
             schedule: selectedSchedule,
-            endDate: formattedMoment(),
-            reservations: nextReservations
+            endDate: lastReservationDate,
+            reservationsToCancel
         });
 
-        this.setState({ deleteModalVisible: false });
+        this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
     }
 
     renderDeleteScheduleModal = () => {
@@ -114,9 +114,9 @@ class CommerceSchedulesList extends Component {
                 <Menu
                     title={
                         'Tienes reservas hasta el ' +
-                        `${DAYS[lastReservationDate.day()]} ` +
-                        `${lastReservationDate.format('D')} de ` +
-                        `${MONTHS[lastReservationDate.month()]}, ` +
+                        DAYS[lastReservationDate.day()] + ' ' +
+                        lastReservationDate.format('D') + ' de ' +
+                        MONTHS[lastReservationDate.month()] + ' ' +
                         'por lo que la baja de los horarios de atencion entrará en ' +
                         'vigencia luego de esa fecha. Seleccione "Aceptar" para ' +
                         'confirmar estos cambios o "Cancelar reservas y notificar" ' +

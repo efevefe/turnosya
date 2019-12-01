@@ -58,8 +58,10 @@ class ScheduleRegister extends Component {
       this.workShiftsValidate();
     }
 
-    if (prevProps.startDate !== this.props.startDate) this.renderStartDateError();
-    if (prevProps.endDate !== this.props.endDate) this.renderEndDateError();
+    if (prevProps.startDate !== this.props.startDate || prevProps.endDate !== this.props.endDate) {
+      this.renderStartDateError();
+      this.renderEndDateError();
+    }
   }
 
   renderBackButton = () => {
@@ -80,26 +82,26 @@ class ScheduleRegister extends Component {
     // });
   };
 
+  // bien
   onSavePress = () => {
     if (!this.validateMinimumData()) {
-      return Toast.show({ text: 'Hay datos faltantes o incorrectos' });
+      return Toast.show({ text: 'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.' });
     }
 
     this.setState({ reservationsToCancel: [] });
 
     let startDate = formattedMoment();
-    let { endDate } = this.props;
-
+    let { endDate, commerceId } = this.props;
     const { prevSchedule } = this.state;
 
     if (prevSchedule && prevSchedule.startDate > startDate)
       startDate = prevSchedule.startDate;
 
-    if (prevSchedule) endDate = prevSchedule.endDate
+    if (prevSchedule) endDate = prevSchedule.endDate;
 
     if (JSON.stringify(this.props.prevSchedule) !== JSON.stringify(this.state.prevSchedule)) {
       return this.props.onNextReservationsRead({
-        commerceId: this.props.commerceId,
+        commerceId,
         startDate,
         endDate
       });
@@ -134,30 +136,34 @@ class ScheduleRegister extends Component {
     const { prevSchedule } = this.state;
 
     if (nextReservations) {
-      // si hay reservas en el periodo de vigencia del horario que estamos modificando
+      // si hay reservas en el periodo de vigencia del horario que estamos modificando o creando
 
-      // si luego de la fecha de fin de vigencia hay reservas
+      // si estamos modificando horarios y cambiamos las fechas de inicio y fin de vigencia
+      // de modo que estan quedando afuera resevas que antes eran cubiertas por este horario
       if (prevSchedule && !this._validEndDate()) return;
 
-      // si no es compatible con reservas existentes
+      // si no es compatible con reservas existentes dentro del periodo definido
       if (!this._compatibleSchedule()) return;
     }
 
-    // es compatible, haya o no reservas
+    // no hay reservas o si las hay, no entran en conflicto
     return this.onScheduleSave();
   }
 
   // bien
   _compatibleSchedule = () => {
-    const { nextReservations, cards } = this.props;
-    let notCoveredReservations = [];
+    const { nextReservations, cards, startDate, endDate } = this.props;
+
+    let notCoveredReservations = nextReservations.filter(res => {
+      return (res.startDate >= startDate && (!endDate || (endDate && res.endDate <= endDate)))
+    })
 
     for (i in cards) {
       // nuevos horarios de atencion
       const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos proximos
-      notCoveredReservations = this._compatibleShift(firstShiftStart, firstShiftEnd, days, nextReservations);
+      notCoveredReservations = this._compatibleShift(firstShiftStart, firstShiftEnd, days, notCoveredReservations);
 
       // si existen segundos horarios, se verifica lo mismo que los primeros horarios
       if (notCoveredReservations.length && secondShiftStart && secondShiftEnd) {
@@ -217,7 +223,7 @@ class ScheduleRegister extends Component {
       && (startDate < newStartDate)) {
 
       const reservationsAfterEndDate = nextReservations.filter(res => {
-        return (res.startDate >= endDate);
+        return (res.startDate >= newEndDate);
       });
 
       if (reservationsAfterEndDate.length) {
@@ -308,7 +314,7 @@ class ScheduleRegister extends Component {
     return false;
   }
 
-  onScheduleSave = () => {
+  onScheduleSave = async () => {
     let {
       commerceId,
       scheduleId,
@@ -320,11 +326,12 @@ class ScheduleRegister extends Component {
       schedules,
       navigation
     } = this.props;
+    const { reservationsToCancel } = this.state;
 
     if (startDate < formattedMoment()) startDate = formattedMoment();
 
-    if (false && scheduleId) {
-      this.props.onScheduleUpdate(
+    if (this.validateMinimumData()) {
+      await this.props.onScheduleUpdate(
         {
           commerceId,
           scheduleId,
@@ -334,6 +341,7 @@ class ScheduleRegister extends Component {
           startDate,
           endDate,
           schedules,
+          reservationsToCancel
         },
         navigation
       );
@@ -353,11 +361,11 @@ class ScheduleRegister extends Component {
         <Menu
           title={
             'Los nuevos horarios de atencion entraran en vigencia luego del ' +
-            DAYS[lastReservationDate.day()] +
+            DAYS[lastReservationDate.day()] + ' ' +
             lastReservationDate.format('D') + ' de ' +
-            MONTHS[lastReservationDate.month()] +
+            MONTHS[lastReservationDate.month()] + ' ' +
             'debido a que entran en conflicto con una o mas reservas existentes ' +
-            'hasta esa fecha. ¿Desea confirmar los cambios?. Seleccione "Aceptar" ' +
+            'hasta esa fecha. Seleccione "Aceptar" ' +
             'para confirmar estos cambios o "Cancelar reservas y notificar" para ' +
             'iniciar la vigencia en la fecha ingresada'
           }
@@ -372,7 +380,7 @@ class ScheduleRegister extends Component {
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cancelar reservas y notificar"
-            icon="md-checkmark"
+            icon="md-trash"
             onPress={this.onIncompatibleScheduleSave}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
@@ -389,19 +397,19 @@ class ScheduleRegister extends Component {
   onSetNewStartDate = newStartDate => {
     this.props.onScheduleValueChange({
       prop: 'startDate',
-      value: newStartDate
+      value: formattedMoment(newStartDate).add(1, 'days')
     });
 
-    this.setState({ incompatibleScheduleVisible: false });
+    this.setState({ incompatibleScheduleVisible: false }, this.onScheduleSave);
   }
 
   onIncompatibleScheduleSave = () => {
-    const { reservationsToCancel } = this.state;
+    const { reservationsToCancel, notCoveredReservations } = this.state;
 
     this.setState({
-      reservationsToCancel: [...reservationsToCancel, ...this.state.reservationsAfterEndDate],
+      reservationsToCancel: [...reservationsToCancel, notCoveredReservations],
       incompatibleScheduleVisible: false
-    });
+    }, this.onScheduleSave);
   }
 
   renderIncompatibleEndDateModal = () => {
@@ -414,12 +422,12 @@ class ScheduleRegister extends Component {
         <Menu
           title={
             'Tienes reservas hasta el ' +
-            DAYS[lastReservationDate.day()] +
+            DAYS[lastReservationDate.day()] + ' ' +
             lastReservationDate.format('D') + ' de ' +
-            MONTHS[lastReservationDate.month()] +
+            MONTHS[lastReservationDate.month()] + ' ' +
             '¿Desea establecer el fin de vigencia luego de esta fecha?. ' +
             'Seleccione "Aceptar" confirmar estos cambios o ' +
-            '"Cancelar reservas y notificar" para cancelar dichas reservas' +
+            '"Cancelar reservas y notificar" para cancelar dichas reservas ' +
             'y establecer la fecha ingresada como fin de vigencia'
           }
           onBackdropPress={() => this.setState({ incompatibleEndDateVisible: false })}
@@ -450,21 +458,19 @@ class ScheduleRegister extends Component {
   onSetNewEndDate = newEndDate => {
     this.props.onScheduleValueChange({
       prop: 'endDate',
-      value: newEndDate.add(1, 'days')
+      value: formattedMoment(newEndDate).add(1, 'days')
     });
 
-    this.setState({ incompatibleEndDateVisible: false });
-
-    this._compatibleSchedule();
+    this.setState({ incompatibleEndDateVisible: false }, this._compatibleSchedule);
   }
 
   onIncompatibleEndDateSave = () => {
-    this.setState({
-      reservationsToCancel: this.state.reservationsAfterEndDate,
-      incompatibleEndDateVisible: false
-    });
+    const { reservationsToCancel, reservationsAfterEndDate } = this.state;
 
-    this._compatibleSchedule();
+    this.setState({
+      reservationsToCancel: [...reservationsToCancel, reservationsAfterEndDate],
+      incompatibleEndDateVisible: false
+    }, this._compatibleSchedule);
   }
 
   renderRow = ({ item }) => {
@@ -525,7 +531,7 @@ class ScheduleRegister extends Component {
               date={this.props.endDate}
               mode="date"
               label="Fin de vigencia:"
-              placeholder="Sin fecha"
+              placeholder="Opcional"
               errorMessage={this.state.endDateError}
               onDateChange={this.onEndDateValueChange}
             />
@@ -571,6 +577,7 @@ class ScheduleRegister extends Component {
 
         {this.renderList()}
         {this.renderIncompatibleScheduleModal()}
+        {this.renderIncompatibleEndDateModal()}
 
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
