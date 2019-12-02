@@ -77,7 +77,7 @@ class CourtReservationDetails extends Component {
           onPress={() => {
             if (this.props.client)
               this.props.navigation.navigate('clientProfileView', {
-                client: this.props.client
+                clientId: this.props.client.id
               });
           }}
         />

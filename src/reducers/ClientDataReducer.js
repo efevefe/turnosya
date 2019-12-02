@@ -26,6 +26,7 @@ const INITIAL_STATE = {
   lastName: '',
   phone: '',
   commerceId: null,
+  rating: { total: 0, count: 0 },
   loading: false,
   refreshing: false,
   error: '',

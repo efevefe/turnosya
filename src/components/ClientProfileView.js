@@ -1,38 +1,60 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  TouchableNativeFeedbackBase
+} from 'react-native';
 import { Avatar, Text, Divider, Rating } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
+import { onUserRead } from '../actions';
+import { Spinner, Button } from './common';
 
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
-export default class ClientProfileView extends React.Component {
+class ClientProfileView extends React.Component {
   constructor(props) {
     super(props);
 
-    const client = props.navigation.getParam('client');
+    const clientId = props.navigation.getParam('clientId');
 
-    this.state = { client };
+    this.state = { clientId };
+  }
+
+  componentDidMount() {
+    this.props.onUserRead(this.state.clientId);
   }
 
   getRatingValue = () => {
-    const { total, count } = this.state.client.rating;
+    const { total, count } = this.props.rating;
     return total ? total / count : 0;
   };
 
   renderClientEmail = () => {
-    const { email } = this.state.client;
+    const { email } = this.props;
     return email ? <Text style={clientInfoStyle}>{email}</Text> : null;
   };
 
   renderClientPhone = () => {
-    const { phone } = this.state.client;
+    const { phone } = this.props;
     return phone ? <Text style={clientInfoStyle}>{phone}</Text> : null;
   };
 
-  render() {
-    const { firstName, lastName, profilePicture } = this.state.client;
+  onReviewButtonPress = () => {
+    this.props.navigation.navigate('clientReviewsList', {
+      clientId: this.state.clientId
+    });
+  };
 
-    return (
+  render() {
+    const { firstName, lastName, profilePicture } = this.props;
+
+    return this.props.loading ? (
+      <Spinner />
+    ) : (
       <View style={mainContainerStyle}>
         <Avatar
           rounded
@@ -42,7 +64,7 @@ export default class ClientProfileView extends React.Component {
           containerStyle={avatarStyle}
         />
         <Text h4>{`${firstName} ${lastName}`}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={this.onReviewButtonPress}>
           <Rating
             style={{ padding: 10 }}
             readonly
@@ -50,11 +72,12 @@ export default class ClientProfileView extends React.Component {
             startingValue={this.getRatingValue()}
           />
         </TouchableOpacity>
+        <TouchableOpacity onPress={this.onReviewButtonPress}>
+          <Ionicons name="md-text" color={MAIN_COLOR} size={30} />
+        </TouchableOpacity>
         <Divider style={dividerStyle} />
         {this.renderClientEmail()}
         {this.renderClientPhone()}
-        {/* <Text style={clientInfoStyle}>{email}</Text>
-        <Text style={clientInfoStyle}>{phone}</Text> */}
       </View>
     );
   }
@@ -86,3 +109,19 @@ const {
     backgroundColor: 'grey'
   }
 });
+
+const mapStateToProps = state => {
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    profilePicture,
+    rating,
+    loading
+  } = state.clientData;
+
+  return { firstName, lastName, email, phone, profilePicture, rating, loading };
+};
+
+export default connect(mapStateToProps, { onUserRead })(ClientProfileView);

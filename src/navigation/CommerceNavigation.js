@@ -19,6 +19,7 @@ import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import ClientProfileView from '../components/ClientProfileView';
+import ClientReviewsList from '../components/ClientReviewsList';
 import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
@@ -66,6 +67,12 @@ const calendarStack = createStackNavigator(
       screen: ClientProfileView,
       navigationOptions: {
         title: 'Perfil del Cliente'
+      }
+    },
+    clientReviewsList: {
+      screen: ClientReviewsList,
+      navigationOptions: {
+        title: 'Reseñas del Cliente'
       }
     }
   },
@@ -190,7 +197,7 @@ const profileStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas'
+        title: 'Reseñas del Comercio'
       }
     }
   },

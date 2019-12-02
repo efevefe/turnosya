@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { Divider, Rating } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection, Spinner, EmptyList } from './common';
-import { readCommerceReviews } from '../actions';
+import { readClientReviews } from '../actions';
 
-class CommerceReviewsList extends Component {
+class ClientReviewsList extends Component {
   componentDidMount() {
-    const commerceId = this.props.navigation.getParam('commerceId');
-    this.props.readCommerceReviews(commerceId);
+    const clientId = this.props.navigation.getParam('clientId');
+    this.props.readClientReviews(clientId);
   }
 
   renderItem = ({ item }) => {
@@ -32,9 +32,9 @@ class CommerceReviewsList extends Component {
   render() {
     return this.props.loading ? (
       <Spinner />
-    ) : this.props.commerceReviews.length > 0 ? (
+    ) : this.props.clientReviews.length > 0 ? (
       <FlatList
-        data={this.props.commerceReviews}
+        data={this.props.clientReviews}
         renderItem={this.renderItem}
         keyExtractor={review => review.id}
       />
@@ -44,7 +44,11 @@ class CommerceReviewsList extends Component {
   }
 }
 
-const { topCardContainerStyle, commentStyle } = StyleSheet.create({
+const {
+  topCardContainerStyle,
+  commentStyle,
+  ratingContainerStyle
+} = StyleSheet.create({
   topCardContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -56,14 +60,17 @@ const { topCardContainerStyle, commentStyle } = StyleSheet.create({
     marginTop: 7,
     marginBottom: 9,
     marginLeft: 10
+  },
+  ratingContainerStyle: {
+    padding: 8
   }
 });
 
 const mapStateToProps = state => {
-  const { loading, commerceReviews } = state.commerceReviewsList;
-  return { loading, commerceReviews };
+  const { loading, clientReviews } = state.clientReviewsList;
+  return { loading, clientReviews };
 };
 
-export default connect(mapStateToProps, { readCommerceReviews })(
-  CommerceReviewsList
+export default connect(mapStateToProps, { readClientReviews })(
+  ClientReviewsList
 );

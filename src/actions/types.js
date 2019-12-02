@@ -188,3 +188,6 @@ export const ON_CLIENT_REVIEW_DELETE_FAIL = 'on_client_review_delete_fail';
 export const ON_CLIENT_REVIEW_READING = 'on_client_reviews_reading';
 export const ON_CLIENT_REVIEW_READ = 'on_client_reviews_read';
 export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_reviews_read_fail';
+export const ON_CLIENT_REVIEWS_READING = 'on_client_reviews_reading';
+export const ON_CLIENT_REVIEWS_READ = 'on_client_reviews_read';
+export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';

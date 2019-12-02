@@ -70,13 +70,13 @@ export const onUserRegister = ({
   };
 };
 
-export const onUserRead = (currentUser = firebase.auth().currentUser) => {
+export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_USER_READING });
 
-    db.doc(`Profiles/${currentUser.uid}`)
+    db.doc(`Profiles/${clientId}`)
       .get()
       .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));

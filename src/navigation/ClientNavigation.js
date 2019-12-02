@@ -94,7 +94,7 @@ const mainSearchStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas'
+        title: 'Reseñas del Comercio'
       }
     }
   },
