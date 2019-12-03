@@ -277,6 +277,20 @@ class CommercesMap extends React.Component {
     if (this.state.locationAsked) return <LocationMessages />;
   };
 
+  renderFabLocation = () => {
+    if (this.props.specificLocationEnabled) {
+      return (
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={() => this.setState({ locationAsked: true })}
+        >
+          <Ionicons name="md-locate" />
+        </Fab>
+      );
+    }
+  };
+
   onLongPressHandler = e => {
     if (this.props.specificLocationEnabled)
       this.updateAddressFromLatAndLong({
@@ -305,14 +319,7 @@ class CommercesMap extends React.Component {
         </MapView>
         {this.renderLocationMessage()}
         {this.renderSearchBar()}
-
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.setState({ locationAsked: true })}
-        >
-          <Ionicons name="md-locate" />
-        </Fab>
+        {this.renderFabLocation()}
       </View>
     );
   }

@@ -254,7 +254,6 @@ class CommerceLocationMap extends React.Component {
   };
 
   render() {
-    console.log('render');
     return (
       <View style={{ flex: 1, position: 'relative' }}>
         <MapView
