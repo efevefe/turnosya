@@ -52,7 +52,6 @@ const mapStateToProps = state => {
 
 const ConnectedHits = connectInfiniteHits(Hits);
 
-export default connect(
-  mapStateToProps,
-  { commerceHitsUpdate }
-)(withNavigationFocus(ConnectedHits));
+export default connect(mapStateToProps, { commerceHitsUpdate })(
+  withNavigationFocus(ConnectedHits)
+);

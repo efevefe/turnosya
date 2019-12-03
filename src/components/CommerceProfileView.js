@@ -53,8 +53,6 @@ class CommerceProfileView extends Component {
       });
       this.props.onCommerceReadProfile(this.props.commerceId);
     }
-
-    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
