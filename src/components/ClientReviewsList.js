@@ -32,7 +32,7 @@ class ClientReviewsList extends Component {
   render() {
     return this.props.loading ? (
       <Spinner />
-    ) : this.props.clientReviews.length > 0 ? (
+    ) : this.props.clientReviews && this.props.clientReviews.length > 0 ? (
       <FlatList
         data={this.props.clientReviews}
         renderItem={this.renderItem}
@@ -44,11 +44,7 @@ class ClientReviewsList extends Component {
   }
 }
 
-const {
-  topCardContainerStyle,
-  commentStyle,
-  ratingContainerStyle
-} = StyleSheet.create({
+const { topCardContainerStyle, commentStyle } = StyleSheet.create({
   topCardContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -60,9 +56,6 @@ const {
     marginTop: 7,
     marginBottom: 9,
     marginLeft: 10
-  },
-  ratingContainerStyle: {
-    padding: 8
   }
 });
 

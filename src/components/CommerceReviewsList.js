@@ -32,7 +32,7 @@ class CommerceReviewsList extends Component {
   render() {
     return this.props.loading ? (
       <Spinner />
-    ) : this.props.commerceReviews.length > 0 ? (
+    ) : this.props.clientReviews && this.props.commerceReviews.length > 0 ? (
       <FlatList
         data={this.props.commerceReviews}
         renderItem={this.renderItem}
