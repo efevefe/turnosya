@@ -6,6 +6,7 @@ import { MONTHS, DAYS, MAIN_COLOR } from '../../constants';
 import { Spinner, EmptyList } from '../common';
 import { onClientReservationsListRead } from '../../actions';
 import moment from 'moment';
+import { isOneWeekOld } from '../../utils/functions';
 
 class ClientReservationsList extends Component {
   state = { selectedIndex: 1, filteredList: [] };
@@ -58,13 +59,19 @@ class ClientReservationsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    const { commerce, startDate, endDate, price } = item;
+    const { commerce, startDate, endDate, price, reviewId } = item;
 
     return (
       <ListItem
         title={commerce.name}
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
+        rightSubtitle={
+          endDate < moment() && !isOneWeekOld(endDate) && !reviewId
+            ? '¡Calificá el servicio!'
+            : null
+        }
+        rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
         }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
@@ -140,7 +147,6 @@ const mapStateToProps = state => {
   return { reservations, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { onClientReservationsListRead }
-)(ClientReservationsList);
+export default connect(mapStateToProps, { onClientReservationsListRead })(
+  ClientReservationsList
+);

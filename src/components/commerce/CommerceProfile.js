@@ -81,16 +81,19 @@ class CommerceProfile extends Component {
     };
 
     this.props.onLocationChange(location);
-    this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+    this.props.navigation.setParams({
+      leftIcon: this.renderCancelButton(),
+      rightIcon: this.renderSaveButton()
+    });
   }
 
   onRefresh = () => {
     this.props.onCommerceRead();
   };
 
-  renderEditButton = () => {
-    return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  };
+  // renderEditButton = () => {
+  //   return <IconButton icon="md-create" onPress={this.onEditPress} />;
+  // };
 
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
@@ -146,24 +149,10 @@ class CommerceProfile extends Component {
     });
 
     this.props.onLocationChange({ location });
-
-    this.props.navigation.setParams({
-      title: 'Modificar Datos',
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderCancelButton()
-    });
   };
 
   onRefresh = () => {
     this.props.onCommerceRead();
-  };
-
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  };
-
-  renderCancelButton = () => {
-    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onSavePress = async () => {
@@ -211,8 +200,6 @@ class CommerceProfile extends Component {
           this.props.navigation
         );
       }
-
-      this.disableEdit();
     } catch (e) {
       console.error(e);
     }
@@ -250,19 +237,19 @@ class CommerceProfile extends Component {
     this.props.navigation.goBack(null);
   };
 
-  disableEdit = () => {
-    this.setState({
-      editEnabled: false,
-      newProfilePicture: false,
-      stateBeforeChanges: null
-    });
+  // disableEdit = () => {
+  //   this.setState({
+  //     editEnabled: false,
+  //     newProfilePicture: false,
+  //     stateBeforeChanges: null
+  //   });
 
-    this.props.navigation.setParams({
-      title: 'Perfil',
-      rightIcon: this.renderEditButton(),
-      leftIcon: this.renderBackButton()
-    });
-  };
+  //   this.props.navigation.setParams({
+  //     title: 'Perfil',
+  //     rightIcon: this.renderEditButton(),
+  //     leftIcon: this.renderBackButton()
+  //   });
+  // }
 
   onEditPicturePress = () => {
     this.setState({
@@ -374,7 +361,12 @@ class CommerceProfile extends Component {
   renderName = () => {
     const { name } = this.props;
 
-    if (name) return <Text h4>{name}</Text>;
+    if (name)
+      return (
+        <Text h4 style={{ textAlign: 'center', marginHorizontal: 10 }}>
+          {name}
+        </Text>
+      );
   };
 
   renderLocation = () => {
@@ -679,6 +671,7 @@ class CommerceProfile extends Component {
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
+              maxLength={50}
             />
           </CardSection>
           <CardSection>

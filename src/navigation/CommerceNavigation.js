@@ -18,6 +18,7 @@ import CommerceCourtReservationDetails from '../components/commerce/CommerceCour
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
+import CommerceReviewsList from '../components/CommerceReviewsList';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -52,6 +53,12 @@ const calendarStack = createStackNavigator(
       screen: CommerceCourtsStateList,
       navigationOptions: {
         title: 'Canchas Disponibles'
+      }
+    },
+    reservationDetails: {
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
       }
     }
   },
@@ -145,7 +152,8 @@ const profileStack = createStackNavigator(
       screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Editar Perfil',
-        headerLeft: navigation.getParam('leftIcon')
+        headerLeft: navigation.getParam('leftIcon'),
+        headerRight: navigation.getParam('rightIcon')
       })
     },
     commerceProfileInfo: {
@@ -164,6 +172,12 @@ const profileStack = createStackNavigator(
       screen: LocationMap,
       navigationOptions: {
         title: 'Modificar mi Dirección'
+      }
+    },
+    commerceReviewsList: {
+      screen: CommerceReviewsList,
+      navigationOptions: {
+        title: 'Reseñas'
       }
     }
   },

@@ -1,72 +1,56 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
-import { Overlay } from 'react-native-elements';
 import { Spinner, EmptyList } from '../common';
 import {
   onReservationClientRead,
   onCourtReservationsListValueChange
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
-import CourtReservationDetails from '../CourtReservationDetails';
 
 class CommerceCourtsStateList extends Component {
-  state = { selectedReservation: {}, selectedCourt: {}, detailsVisible: false };
+  state = {
+    selectedReservation: {},
+    selectedCourt: {}
+  };
 
   courtReservation = court => {
     const { reservations, slot } = this.props;
 
     return reservations.find(reservation => {
       return (
-        reservation.startDate.toString() === slot.startDate.toString()
-        && reservation.courtId === court.id
+        reservation.startDate.toString() === slot.startDate.toString() &&
+        reservation.courtId === court.id
       );
     });
-  }
+  };
 
-  onReservedCourtPress = (court, reservation) => {
-    this.setState({ selectedReservation: reservation, selectedCourt: court, detailsVisible: true });
-
+  onReservedCourtPress = async (court, courtReservation) => {
     // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
-    const res = this.props.detailedReservations.find(res => res.id === reservation.id);
-    if (res) return this.props.onCourtReservationsListValueChange({ prop: 'reservationClient', value: res.client });
-
-    this.props.onReservationClientRead(reservation.clientId);
-  }
-
-  renderDetails = () => {
-    if (this.state.detailsVisible) {
-      const { startDate, endDate, price, light } = this.state.selectedReservation;
-      const { selectedCourt } = this.state;
-      const { reservationClient, loadingClientData } = this.props;
-
-      return (
-        <Overlay
-          isVisible={this.state.detailsVisible}
-          onBackdropPress={() => this.setState({ detailsVisible: false })}
-          overlayStyle={{ borderRadius: 8, paddingBottom: 25 }}
-          height='auto'
-          animationType="fade"
-        >
-          {
-            loadingClientData
-              ? <Spinner style={{ position: 'relative', padding: 20, paddingTop: 35 }} />
-              : (
-                <CourtReservationDetails
-                  client={reservationClient}
-                  court={selectedCourt}
-                  startDate={startDate}
-                  endDate={endDate}
-                  price={price}
-                  light={light}
-                  showPrice={true}
-                />
-              )
-          }
-        </Overlay>
+    try {
+      const res = this.props.detailedReservations.find(
+        res => res.id === courtReservation.id
       );
-    }
-  }
+      if (res) {
+        await this.props.onCourtReservationsListValueChange({
+          prop: 'reservationClient',
+          value: res.client
+        });
+      } else {
+        await this.props.onReservationClientRead(courtReservation.clientId);
+      }
+
+      const reservation = {
+        client: { ...this.props.reservationClient },
+        court: { ...court },
+        ...courtReservation
+      };
+
+      this.props.navigation.navigate('reservationDetails', {
+        reservation
+      });
+    } catch {}
+  };
 
   renderRow({ item }) {
     const courtReservation = this.courtReservation(item);
@@ -77,7 +61,11 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
-        onPress={() => !courtReservation ? null : this.onReservedCourtPress(item, courtReservation)}
+        onPress={() =>
+          !courtReservation
+            ? null
+            : this.onReservedCourtPress(item, courtReservation)
+        }
       />
     );
   }
@@ -100,12 +88,7 @@ class CommerceCourtsStateList extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
-    return (
-      <View style={{ flex: 1 }}>
-        {this.renderList()}
-        {this.renderDetails()}
-      </View>
-    );
+    return this.renderList();
   }
 }
 
@@ -133,7 +116,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onReservationClientRead, onCourtReservationsListValueChange }
-)(CommerceCourtsStateList);
+export default connect(mapStateToProps, {
+  onReservationClientRead,
+  onCourtReservationsListValueChange
+})(CommerceCourtsStateList);

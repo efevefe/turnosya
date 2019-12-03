@@ -32,6 +32,7 @@ const INITIAL_STATE = {
   province: { provinceId: '', name: '' },
   area: { areaId: '', name: '' },
   areasList: [{ value: '', label: '' }],
+  rating: { total: 0, count: 0 },
   profilePicture: '',
   headerPicture: '',
   commerceId: null,
