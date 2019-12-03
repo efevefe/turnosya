@@ -39,7 +39,8 @@ class ClientCommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
+    if (prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts) {
       this.reservationsOnSlots(this.props.slots);
     }
   }
@@ -64,7 +65,7 @@ class ClientCommerceSchedule extends Component {
   }
 
   onDateChanged = date => {
-    this.setState({ selectedDate: date });
+    const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead({
@@ -73,12 +74,14 @@ class ClientCommerceSchedule extends Component {
       courtType: this.props.courtType
     });
 
-    if ((this.props.scheduleEndDate && date >= this.props.scheduleEndDate) || date < this.props.scheduleStartDate) {
+    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
       this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
         selectedDate: date
       });
     }
+
+    this.setState({ selectedDate: date });
   }
 
   onSlotPress = slot => {
@@ -148,6 +151,7 @@ class ClientCommerceSchedule extends Component {
 
 const mapStateToProps = state => {
   const {
+    id,
     cards,
     slots,
     reservationDayPeriod,
@@ -165,6 +169,7 @@ const mapStateToProps = state => {
   const loadingCourts = state.courtsList.loading;
 
   return {
+    scheduleId: id,
     commerce,
     cards,
     slots,

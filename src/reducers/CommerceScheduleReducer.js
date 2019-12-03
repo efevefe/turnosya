@@ -17,6 +17,7 @@ import {
   ON_ACTIVE_SCHEDULES_READ
 } from '../actions/types';
 import { Toast } from '../components/common';
+import { formattedMoment } from '../utils';
 
 // revisar esto
 const INITIAL_WORKSHIFTS = {
@@ -39,7 +40,7 @@ const INITIAL_WORKSHIFTS = {
 
 const INITIAL_STATE = {
   ...INITIAL_WORKSHIFTS,
-  schedules: [], // capaz puede ir en otro reducer
+  schedules: [],
   reservationDayPeriod: 14,
   lastReservationDate: null,
   error: null,
@@ -51,7 +52,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_SCHEDULE_FORM_OPEN:
-      return { ...state, ...INITIAL_WORKSHIFTS };
+      return { ...state, ...INITIAL_WORKSHIFTS, startDate: formattedMoment() };
     case ON_SCHEDULE_VALUE_CHANGE:
       const { prop, value } = action.payload;
 

@@ -85,6 +85,7 @@ export const onCommerceCourtReservationsRead = ({
           endDate: moment(doc.data().endDate.toDate())
         });
       });
+      
       dispatch({
         type: ON_COMMERCE_COURT_RESERVATIONS_READ,
         payload: { reservations }

@@ -3,6 +3,7 @@ import { FlatList, View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Fab } from 'native-base';
+import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner, EmptyList, IconButton, Menu, MenuItem } from '../common';
 import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
@@ -13,7 +14,8 @@ import {
     onScheduleDelete,
     onNextReservationsRead,
     onScheduleDeleteWithReservations,
-    onScheduleFormOpen
+    onScheduleFormOpen,
+    onScheduleRead
 } from '../../actions';
 
 class CommerceSchedulesList extends Component {
@@ -26,7 +28,17 @@ class CommerceSchedulesList extends Component {
         selectedSchedule: {}
     }
 
+    static navigationOptions = ({ navigation }) => {
+        return {
+            headerLeft: navigation.getParam('leftIcon')
+        };
+    };
+
     componentDidMount() {
+        this.props.navigation.setParams({
+            leftIcon: this.renderBackButton()
+        });
+
         this.props.onActiveSchedulesRead({
             commerceId: this.props.commerceId,
             date: new Date()
@@ -40,6 +52,19 @@ class CommerceSchedulesList extends Component {
         }
     }
 
+    renderBackButton = () => {
+        return <HeaderBackButton tintColor='white' title='Volver' onPress={this.onBackPress} />
+    }
+
+    onBackPress = () => {
+        this.props.onScheduleRead({
+            commerceId: this.props.commerceId,
+            selectedDate: this.props.navigation.getParam('selectedDate')
+        })
+
+        this.props.navigation.goBack();
+    }
+
     onScheduleAddPress = () => {
         this.props.onScheduleFormOpen();
         this.props.navigation.navigate('scheduleRegister');
@@ -50,7 +75,11 @@ class CommerceSchedulesList extends Component {
         this.setState({ optionsVisible: false });
 
         for (prop in selectedSchedule) {
-            this.props.onScheduleValueChange({ prop, value: selectedSchedule[prop] });
+            if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
+                this.props.onScheduleValueChange({ prop, value: formattedMoment() });
+            } else {
+                this.props.onScheduleValueChange({ prop, value: selectedSchedule[prop] });
+            }
         }
 
         this.props.navigation.navigate('scheduleRegister', { schedule: selectedSchedule });
@@ -283,5 +312,6 @@ export default connect(mapStateToProps, {
     onScheduleDelete,
     onNextReservationsRead,
     onScheduleDeleteWithReservations,
-    onScheduleFormOpen
+    onScheduleFormOpen,
+    onScheduleRead
 })(CommerceSchedulesList);

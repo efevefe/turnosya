@@ -36,7 +36,8 @@ class CommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
+    if (prevProps.reservations !== this.props.reservations ||
+      prevProps.courtsAvailable !== this.props.courtsAvailable) {
       this.reservationsOnSlots();
     }
   }
@@ -47,7 +48,7 @@ class CommerceSchedule extends Component {
   }
 
   onDateChanged = date => {
-    this.setState({ selectedDate: date });
+    const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead({
@@ -55,12 +56,14 @@ class CommerceSchedule extends Component {
       selectedDate: date
     });
 
-    if ((this.props.scheduleEndDate && date >= this.props.scheduleEndDate) || date < this.props.scheduleStartDate) {
+    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date
       });
     }
+
+    this.setState({ selectedDate: date });
   };
 
   onSlotPress = slot => {
@@ -107,16 +110,11 @@ class CommerceSchedule extends Component {
 
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
-
-    //hay que ver la forma de que esto se haga en el .then() del update()
-    // this.props.navigation.navigate('scheduleRegister', { selectedDate: this.state.selectedDate });
     this.props.navigation.navigate('schedulesList', { selectedDate: this.state.selectedDate });
   };
 
   onScheduleConfigurationPress = () => {
     this.setState({ modal: false });
-
-    //hay que ver la forma de que esto se haga en el .then() del update()
     this.props.navigation.navigate('registerConfiguration');
   };
 
@@ -168,6 +166,7 @@ class CommerceSchedule extends Component {
 
 const mapStateToProps = state => {
   const {
+    id,
     cards,
     slots,
     reservationDayPeriod,
@@ -184,6 +183,7 @@ const mapStateToProps = state => {
   const loadingCourts = state.courtsList.loading;
 
   return {
+    scheduleId: id,
     cards,
     slots,
     reservationDayPeriod,

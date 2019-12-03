@@ -5,7 +5,6 @@ import { FlatList, View, RefreshControl, Text } from 'react-native';
 import { Divider, Card, Slider, CheckBox } from 'react-native-elements';
 import { Fab } from 'native-base';
 import moment from 'moment';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 import { hourToDate, formattedMoment, stringFormatMinutes } from '../../utils';
@@ -15,7 +14,8 @@ import {
   onScheduleCreate,
   onScheduleRead,
   onScheduleUpdate,
-  onNextReservationsRead
+  onNextReservationsRead,
+  onActiveSchedulesRead
 } from '../../actions';
 
 class ScheduleRegister extends Component {
@@ -26,6 +26,7 @@ class ScheduleRegister extends Component {
     notCoveredReservations: [],
     reservationsToCancel: [],
     prevSchedule: null,
+    overlappedSchedule: null,
     startDateError: '',
     endDateError: '',
     sliderValues: {
@@ -37,15 +38,13 @@ class ScheduleRegister extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon')
+      headerRight: navigation.getParam('rightIcon')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton()
+      rightIcon: this.renderSaveButton()
     });
 
     const prevSchedule = this.props.navigation.getParam('schedule');
@@ -54,7 +53,6 @@ class ScheduleRegister extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.nextReservations !== this.props.nextReservations) {
-      // verificar tambien si no se produjo un error al leer las reservas
       this.workShiftsValidate();
     }
 
@@ -64,40 +62,31 @@ class ScheduleRegister extends Component {
     }
   }
 
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
-  };
-
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
 
-  onBackPress = () => {
-    // aca deberia verificar si hay cambios no guardados y preguntar si quiere descartar
-
-    this.props.navigation.goBack();
-    // this.props.onScheduleRead({
-    //   commerceId: this.props.commerceId,
-    //   selectedDate: this.props.navigation.getParam('selectedDate')
-    // });
-  };
-
-  // bien
   onSavePress = () => {
     if (!this.validateMinimumData()) {
       return Toast.show({ text: 'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.' });
     }
 
-    this.setState({ reservationsToCancel: [] });
-
-    let startDate = formattedMoment();
-    let { endDate, commerceId } = this.props;
+    let { startDate, endDate, commerceId, schedules } = this.props;
     const { prevSchedule } = this.state;
 
-    if (prevSchedule && prevSchedule.startDate > startDate)
-      startDate = prevSchedule.startDate;
+    const overlappedSchedule = schedules.find(schedule => {
+      return (startDate > schedule.startDate) && (!schedule.endDate || (endDate < schedule.endDate));
+    });
 
-    if (prevSchedule) endDate = prevSchedule.endDate;
+    if (prevSchedule) {
+      endDate = prevSchedule.endDate;
+    } else {
+      if (overlappedSchedule) {
+        endDate = overlappedSchedule.endDate;
+      }
+    }
+
+    this.setState({ reservationsToCancel: [], overlappedSchedule });
 
     if (JSON.stringify(this.props.prevSchedule) !== JSON.stringify(this.state.prevSchedule)) {
       return this.props.onNextReservationsRead({
@@ -110,7 +99,6 @@ class ScheduleRegister extends Component {
     this.props.navigation.goBack();
   }
 
-  // bien
   validateMinimumData = () => {
     const { cards, startDate, endDate } = this.props;
 
@@ -122,7 +110,7 @@ class ScheduleRegister extends Component {
 
       if (!firstShiftStart || !firstShiftEnd) return false;
       if (firstShiftStart >= firstShiftEnd) return false;
-      if ((secondShiftStart && !secondShiftEnd) || (!secondShiftStart && secondShiftEnd)) return false;
+      if (!!secondShiftStart !== !!secondShiftEnd) return false;
       if (secondShiftStart && (secondShiftStart >= secondShiftEnd)) return false;
       if (secondShiftStart && (secondShiftStart <= firstShiftEnd)) return false;
       if (!days.length) return false;
@@ -133,25 +121,23 @@ class ScheduleRegister extends Component {
 
   workShiftsValidate = () => {
     const { nextReservations } = this.props;
-    const { prevSchedule } = this.state;
 
     if (nextReservations) {
       // si hay reservas en el periodo de vigencia del horario que estamos modificando o creando
 
       // si estamos modificando horarios y cambiamos las fechas de inicio y fin de vigencia
       // de modo que estan quedando afuera resevas que antes eran cubiertas por este horario
-      if (prevSchedule && !this._validEndDate()) return;
+      if (!this.validEndDate()) return;
 
       // si no es compatible con reservas existentes dentro del periodo definido
-      if (!this._compatibleSchedule()) return;
+      if (!this.compatibleSchedule()) return;
     }
 
     // no hay reservas o si las hay, no entran en conflicto
     return this.onScheduleSave();
   }
 
-  // bien
-  _compatibleSchedule = () => {
+  compatibleSchedule = () => {
     const { nextReservations, cards, startDate, endDate } = this.props;
 
     let notCoveredReservations = nextReservations.filter(res => {
@@ -163,11 +149,11 @@ class ScheduleRegister extends Component {
       const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos proximos
-      notCoveredReservations = this._compatibleShift(firstShiftStart, firstShiftEnd, days, notCoveredReservations);
+      notCoveredReservations = this.compatibleShift(firstShiftStart, firstShiftEnd, days, notCoveredReservations);
 
       // si existen segundos horarios, se verifica lo mismo que los primeros horarios
       if (notCoveredReservations.length && secondShiftStart && secondShiftEnd) {
-        notCoveredReservations = this._compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredReservations);
+        notCoveredReservations = this.compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredReservations);
       }
 
       if (notCoveredReservations.length) {
@@ -182,8 +168,7 @@ class ScheduleRegister extends Component {
     return true;
   }
 
-  // bien
-  _compatibleShift = (shiftStart, shiftEnd, days, notCoveredReservations) => {
+  compatibleShift = (shiftStart, shiftEnd, days, notCoveredReservations) => {
     const { reservationMinLength } = this.props;
 
     notCoveredReservations = notCoveredReservations.filter(reservation => {
@@ -211,17 +196,11 @@ class ScheduleRegister extends Component {
     return notCoveredReservations;
   }
 
-  // bien
-  _validEndDate = () => {
+  validEndDate = () => {
     const { nextReservations } = this.props;
-    const newStartDate = this.props.startDate;
     const newEndDate = this.props.endDate;
-    const { startDate, endDate } = this.state.prevSchedule;
 
-    if (((!endDate && newEndDate) ||
-      (endDate && newEndDate && (newEndDate < endDate)))
-      && (startDate < newStartDate)) {
-
+    if (this.state.overlappedSchedule) {
       const reservationsAfterEndDate = nextReservations.filter(res => {
         return (res.startDate >= newEndDate);
       });
@@ -323,32 +302,34 @@ class ScheduleRegister extends Component {
       reservationDayPeriod,
       startDate,
       endDate,
-      schedules,
-      navigation
+      schedules
     } = this.props;
     const { reservationsToCancel } = this.state;
 
     if (startDate < formattedMoment()) startDate = formattedMoment();
 
     if (this.validateMinimumData()) {
-      await this.props.onScheduleUpdate(
-        {
-          commerceId,
-          scheduleId,
-          cards,
-          reservationMinLength,
-          reservationDayPeriod,
-          startDate,
-          endDate,
-          schedules,
-          reservationsToCancel
-        },
-        navigation
-      );
-    }
+      const success = await this.props.onScheduleUpdate({
+        commerceId,
+        scheduleId,
+        cards,
+        reservationMinLength,
+        reservationDayPeriod,
+        startDate,
+        endDate,
+        schedules,
+        reservationsToCancel
+      });
 
-    // aca no va el goback, pero si la consulta
-    // this.onBackPress();
+      if (success) {
+        this.props.onActiveSchedulesRead({
+          commerceId,
+          date: new Date()
+        })
+
+        this.props.navigation.goBack();
+      }
+    }
   }
 
   renderIncompatibleScheduleModal = () => {
@@ -461,7 +442,7 @@ class ScheduleRegister extends Component {
       value: formattedMoment(newEndDate).add(1, 'days')
     });
 
-    this.setState({ incompatibleEndDateVisible: false }, this._compatibleSchedule);
+    this.setState({ incompatibleEndDateVisible: false }, this.compatibleSchedule);
   }
 
   onIncompatibleEndDateSave = () => {
@@ -470,7 +451,7 @@ class ScheduleRegister extends Component {
     this.setState({
       reservationsToCancel: [...reservationsToCancel, reservationsAfterEndDate],
       incompatibleEndDateVisible: false
-    }, this._compatibleSchedule);
+    }, this.compatibleSchedule);
   }
 
   renderRow = ({ item }) => {
@@ -642,6 +623,7 @@ export default connect(
     onScheduleCreate,
     onScheduleRead,
     onScheduleUpdate,
-    onNextReservationsRead
+    onNextReservationsRead,
+    onActiveSchedulesRead
   }
 )(ScheduleRegister);
