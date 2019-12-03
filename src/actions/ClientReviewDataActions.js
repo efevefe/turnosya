@@ -74,6 +74,7 @@ export const readClientReview = ({ clientId, reviewId }) => dispatch => {
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
         if (!softDelete) {
+          // Sino se podría hacer un solo dispatch que actualice todos
           dispatch({
             type: ON_CLIENT_REVIEW_VALUE_CHANGE,
             payload: { prop: 'rating', value: rating }

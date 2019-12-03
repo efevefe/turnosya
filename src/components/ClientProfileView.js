@@ -1,26 +1,18 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  TouchableNativeFeedbackBase
-} from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Avatar, Text, Divider, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
 import { onUserRead } from '../actions';
-import { Spinner, Button } from './common';
+import { Spinner } from './common';
 
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class ClientProfileView extends React.Component {
   constructor(props) {
     super(props);
-
     const clientId = props.navigation.getParam('clientId');
-
     this.state = { clientId };
   }
 
@@ -66,7 +58,7 @@ class ClientProfileView extends React.Component {
         <Text h4>{`${firstName} ${lastName}`}</Text>
         <TouchableOpacity onPress={this.onReviewButtonPress}>
           <Rating
-            style={{ padding: 10 }}
+            style={ratingStyle}
             readonly
             imageSize={24}
             startingValue={this.getRatingValue()}
@@ -87,7 +79,8 @@ const {
   mainContainerStyle,
   avatarStyle,
   clientInfoStyle,
-  dividerStyle
+  dividerStyle,
+  ratingStyle
 } = StyleSheet.create({
   mainContainerStyle: {
     alignItems: 'center',
@@ -107,7 +100,8 @@ const {
     margin: 10,
     alignSelf: 'stretch',
     backgroundColor: 'grey'
-  }
+  },
+  ratingStyle: { padding: 10 }
 });
 
 const mapStateToProps = state => {
