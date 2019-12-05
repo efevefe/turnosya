@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList, ReviewItem } from './common';
 import { readCommerceReviews } from '../actions';
