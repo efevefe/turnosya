@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
+import moment from 'moment';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../../constants';
 import { stringFormatDays, stringFormatHours } from '../../utils';
@@ -29,22 +30,17 @@ class ScheduleRegisterConfiguration extends Component {
 
   onSavePressHandler() {
     const {
-      scheduleId,
       reservationDayPeriod,
       reservationMinCancelTime,
       commerceId
     } = this.props;
 
-    // resolucion provisoria hasta que veamos bien donde guardar este valor
-    if (scheduleId)
-      return this.props.onScheduleConfigSave({
-        scheduleId,
-        reservationDayPeriod,
-        reservationMinCancelTime,
-        commerceId
-      }, this.props.navigation);
-
-    this.props.navigation.goBack();
+    this.props.onScheduleConfigurationSave({
+      reservationDayPeriod,
+      reservationMinCancelTime,
+      commerceId,
+      date: moment()
+    }, this.props.navigation);
   }
 
   onDaySliderValueChange() {
@@ -131,7 +127,7 @@ const mapStateToProps = state => {
     reservationDayPeriod,
     reservationMinCancelTime
   } = state.commerceSchedule;
-  
+
   return {
     commerceId: state.commerceData.commerceId,
     loading,
@@ -142,5 +138,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onScheduleConfigurationSave, onScheduleValueChange, onScheduleRead }
+  { onScheduleConfigurationSave, onScheduleValueChange }
 )(ScheduleRegisterConfiguration);

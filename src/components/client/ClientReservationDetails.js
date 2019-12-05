@@ -16,7 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import moment from 'moment';
 import {
   onClientCancelReservation,
-  readCancellationTimeAllowed,
+  onScheduleRead,
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,
@@ -42,9 +42,11 @@ class ClientReservationDetails extends Component {
   // ** Lifecycle methods **
 
   componentDidMount() {
-    this.props.readCancellationTimeAllowed(
-      this.props.navigation.state.params.reservation.commerceId
-    );
+    // puse esta misma action para que traiga el tiempi minimo de cancelacion
+    this.props.onScheduleRead({
+      commerceId: this.state.reservation.commerceId,
+      selectedDate: this.state.reservation.startDate
+    })
 
     this.props.readCommerceReview({
       commerceId: this.state.reservation.commerceId,
@@ -181,34 +183,34 @@ class ClientReservationDetails extends Component {
   renderRatingAndComment = () => {
     return this.state.isOneWeekOld &&
       !this.state.reservation.reviewId ? null : (
-      <View>
-        <CardSection>
-          <AirbnbRating
-            onFinishRating={value =>
-              this.props.commerceReviewValueChange('rating', value)
-            }
-            showRating={false}
-            size={25}
-            defaultRating={this.props.rating}
-            isDisabled={this.state.isOneWeekOld}
-          />
-        </CardSection>
-        <View style={{ marginTop: 10 }}>
-          <Input
-            onChangeText={value =>
-              this.props.commerceReviewValueChange('comment', value)
-            }
-            editable={true}
-            multiline={true}
-            maxLength={128}
-            maxHeight={180}
-            placeholder="Deje un comentario sobre la atención..."
-            defaultValue={this.props.comment}
-            editable={!this.state.isOneWeekOld}
-          />
+        <View>
+          <CardSection>
+            <AirbnbRating
+              onFinishRating={value =>
+                this.props.commerceReviewValueChange('rating', value)
+              }
+              showRating={false}
+              size={25}
+              defaultRating={this.props.rating}
+              isDisabled={this.state.isOneWeekOld}
+            />
+          </CardSection>
+          <View style={{ marginTop: 10 }}>
+            <Input
+              onChangeText={value =>
+                this.props.commerceReviewValueChange('comment', value)
+              }
+              editable={true}
+              multiline={true}
+              maxLength={128}
+              maxHeight={180}
+              placeholder="Deje un comentario sobre la atención..."
+              defaultValue={this.props.comment}
+              editable={!this.state.isOneWeekOld}
+            />
+          </View>
         </View>
-      </View>
-    );
+      );
   };
 
   renderCommerceReview = () => {
@@ -343,7 +345,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onClientCancelReservation,
-  readCancellationTimeAllowed,
+  onScheduleRead,
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,

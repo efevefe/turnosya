@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import { Spinner, EmptyList, IconButton, Menu, MenuItem } from '../common';
 import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
 import { formattedMoment } from '../../utils';
@@ -41,7 +42,7 @@ class CommerceSchedulesList extends Component {
 
         this.props.onActiveSchedulesRead({
             commerceId: this.props.commerceId,
-            date: new Date()
+            date: moment()
         })
     }
 

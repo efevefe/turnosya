@@ -6,12 +6,16 @@ import { Spinner } from './common';
 import { DAYS } from '../constants';
 import { View } from 'native-base';
 import { Card } from 'react-native-elements';
+import moment from 'moment';
 
 class CommerceProfileInfo extends Component {
   state = { onDay: new Date().getDay() };
 
   componentDidMount() {
-    this.props.onScheduleRead(this.props.commerceId);
+    this.props.onScheduleRead({
+      commerceId: this.props.commerceId,
+      selectedDate: moment()
+    });
   }
 
   renderSchedule = () => {
@@ -36,7 +40,7 @@ class CommerceProfileInfo extends Component {
         });
       });
     });
-    
+
     hoursOnDay.sort((a, b) => a.id - b.id);
 
     return hoursOnDay;
@@ -64,14 +68,14 @@ class CommerceProfileInfo extends Component {
             style={
               item.id === onDay
                 ? {
-                    fontSize: 15,
-                    fontWeight: 'bold',
-                    width: 72
-                  }
+                  fontSize: 15,
+                  fontWeight: 'bold',
+                  width: 72
+                }
                 : {
-                    fontSize: 15,
-                    width: 72
-                  }
+                  fontSize: 15,
+                  width: 72
+                }
             }
           >
             {item.dayName}

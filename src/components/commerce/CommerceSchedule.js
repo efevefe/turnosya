@@ -155,7 +155,7 @@ class CommerceSchedule extends Component {
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
-            title="Tiempo límite y mínimo de turno"
+            title="Tiempos de reserva y cancelacion"
             icon="md-timer"
             onPress={this.onScheduleConfigurationPress}
           />

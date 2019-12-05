@@ -92,7 +92,7 @@ class ClientCommerceSchedule extends Component {
     if (!slot.available)
       if (moment().isSameOrAfter(slot.startDate.toString())) {
         return Toast.show({
-          text: 'Horario no disponible'
+          text: 'Ya no se puede reservar en este horario'
         });
       } else {
         return Toast.show({

@@ -106,7 +106,7 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 
   try {
     // reading active schedules
-    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date).orderBy('endDate').get();
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
     }
@@ -275,52 +275,36 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 }
 
 export const onScheduleConfigurationSave = ({
-  scheduleId,
   reservationDayPeriod,
   reservationMinCancelTime,
-  commerceId
+  commerceId,
+  date
 },
   navigation
-) => {
+) => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
+
   const db = firebase.firestore();
+  const batch = db.batch();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
+  const updateObj = { reservationDayPeriod, reservationMinCancelTime };
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
+  try {
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+    }
 
-    db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
-      .set({ reservationDayPeriod, reservationMinCancelTime }, { merge: true })
-      .then(() => {
-        navigation.navigate('calendar');
-        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
-      });
-  };
-};
+    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+    };
 
-export const readCancellationTimeAllowed = commerceId => {
-  // esto hay que ver como adaptarlo a mis cambio de diagramacion (nico)
-  const db = firebase.firestore();
+    await batch.commit();
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_READING });
-
-    db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .get()
-      .then(doc => {
-        if (doc.exists)
-          dispatch({
-            type: ON_SCHEDULE_READ,
-            payload: {
-              reservationMinCancelTime: doc.data().reservationMinCancelTime
-            }
-          });
-        else
-          dispatch({
-            type: ON_SCHEDULE_READ,
-            payload: {
-              reservationMinCancelTime: 2
-            }
-          });
-      })
-      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
-  };
+    dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
+    navigation.goBack();
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+  }
 };

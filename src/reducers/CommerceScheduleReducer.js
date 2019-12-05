@@ -91,7 +91,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SCHEDULE_CREATE_FAIL:
       Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
 
-      return { ...state, refreshing: false };
+      return { ...state, loading: false, refreshing: false };
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
     case ON_SCHEDULE_CONFIG_UPDATED:

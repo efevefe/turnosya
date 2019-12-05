@@ -14,20 +14,19 @@ import {
   Button,
   Rating
 } from 'react-native-elements';
-import { PictureView } from './common';
 import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { PictureView } from './common';
 import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onScheduleRead,
   commerceHitsUpdate,
   onLocationChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
-import { Ionicons } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -40,20 +39,14 @@ class CommerceProfileView extends Component {
   };
 
   componentDidMount() {
-    if (this.props.navigation.state.routeName === 'commerceProfileView') {
-      this.setState({
-        favorite: this.props.favoriteCommerces.includes(
-          this.props.commerce.objectID
-        )
-      });
-      this.props.onCommerceReadProfile(this.props.commerce.objectID);
-    } else {
-      this.setState({
-        favorite: this.props.favoriteCommerces.includes(this.props.commerceId)
-      });
-      this.props.onCommerceReadProfile(this.props.commerceId);
-    }
+    let { commerceId, favoriteCommerces } = this.props;
 
+    if (this.props.navigation.state.routeName === 'commerceProfileView')
+      commerceId = this.props.commerce.objectID;
+
+    this.setState({ favorite: favoriteCommerces.includes(commerceId) });
+
+    this.props.onCommerceReadProfile(commerceId);
     this.props.commerceHitsUpdate([]);
   }
 
@@ -141,7 +134,7 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={profilePicture ? { uri: headerPicture } : null}
+            source={headerPicture ? { uri: headerPicture } : null}
           />
 
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -163,8 +156,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -308,7 +301,6 @@ export default connect(mapStateToProps, {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onScheduleRead,
   commerceHitsUpdate,
   onLocationChange
 })(CommerceProfileView);

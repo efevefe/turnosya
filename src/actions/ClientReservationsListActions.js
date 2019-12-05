@@ -71,22 +71,19 @@ export const onClientCancelReservation = ({
         .doc(`ReservationStates/canceled`)
         .get()
         .then(stateDoc => {
-          const cancelationDate = new Date();
+          const cancelationData = {
+            state: { id: stateDoc.id, name: stateDoc.data().name },
+            cancellationDate: new Date()
+          }
+
           batch.update(
-            db.doc(
-              `Profiles/${currentUser.uid}/Reservations/${reservationId}`
-            ),
-            {
-              state: { id: stateDoc.id, name: stateDoc.data().name },
-              cancelationDate
-            }
+            db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`),
+            cancelationData
           );
+
           batch.update(
             db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
-            {
-              state: { id: stateDoc.id, name: stateDoc.data().name },
-              cancelationDate
-            }
+            cancelationData
           );
 
           batch

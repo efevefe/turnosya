@@ -182,12 +182,14 @@ export const onCommerceCancelReservation = ({
             name: stateDoc.data().name,
             cancelationReason
           },
-          cancelationDate: new Date()
+          cancellationDate: new Date()
         };
+
         batch.update(
           db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
           cancelationData
         );
+
         batch.update(
           db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
           cancelationData

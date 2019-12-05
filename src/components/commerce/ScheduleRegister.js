@@ -12,7 +12,6 @@ import { Spinner, IconButton, EmptyList, Menu, MenuItem, DatePicker, CardSection
 import {
   onScheduleValueChange,
   onScheduleCreate,
-  onScheduleRead,
   onScheduleUpdate,
   onNextReservationsRead,
   onActiveSchedulesRead
@@ -379,7 +378,7 @@ class ScheduleRegister extends Component {
         // si se guardo con exito, se recarga el listado de schedules y se vuelve
         this.props.onActiveSchedulesRead({
           commerceId,
-          date: new Date()
+          date: moment()
         })
 
         this.props.navigation.goBack();
@@ -688,7 +687,6 @@ export default connect(
   {
     onScheduleValueChange,
     onScheduleCreate,
-    onScheduleRead,
     onScheduleUpdate,
     onNextReservationsRead,
     onActiveSchedulesRead
