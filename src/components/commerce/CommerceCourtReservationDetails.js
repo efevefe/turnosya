@@ -247,7 +247,11 @@ class CommerceCourtReservationDetails extends Component {
       clientId
     } = this.state.reservation;
     return (
-      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle}>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        style={scrollViewStyle}
+        extraScrollHeight={60}
+      >
         <CourtReservationDetails
           client={client}
           court={court}

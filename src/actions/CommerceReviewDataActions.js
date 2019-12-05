@@ -44,6 +44,7 @@ export const createCommerceReview = ({
         comment,
         date: new Date(),
         clientId: currentUser.uid,
+        reservationId,
         softDelete: null
       });
 

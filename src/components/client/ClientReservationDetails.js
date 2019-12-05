@@ -247,7 +247,11 @@ class ClientReservationDetails extends Component {
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle}>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        style={scrollViewStyle}
+        extraScrollHeight={60}
+      >
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}

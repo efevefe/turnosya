@@ -47,6 +47,7 @@ export const createClientReview = ({
         comment,
         date: new Date(),
         commerceId,
+        reservationId,
         softDelete: null
       });
 
