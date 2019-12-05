@@ -42,60 +42,68 @@ class ScheduleRegister extends Component {
   componentDidUpdate(prevProps) {
     const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = this.props.card;
 
-    if (prevProps.card.firstShiftStart !== firstShiftStart)
+    if (
+      prevProps.card.firstShiftStart !== firstShiftStart ||
+      prevProps.card.firstShiftEnd !== firstShiftEnd ||
+      prevProps.card.secondShiftStart !== secondShiftStart ||
+      prevProps.card.secondShiftEnd !== secondShiftEnd
+    ) {
       this.firstShiftStartError();
-
-    if (prevProps.card.firstShiftEnd !== firstShiftEnd)
       this.firstShiftEndError();
-
-    if (prevProps.card.secondShiftStart !== secondShiftStart)
       this.secondShiftStartError();
-
-    if (prevProps.card.secondShiftEnd !== secondShiftEnd)
       this.secondShiftEndError();
+    }
   }
 
   firstShiftStartError = () => {
     const { firstShiftStart, firstShiftEnd } = this.props.card;
 
-    if (firstShiftEnd && firstShiftStart <= firstShiftEnd) {
-      this.setState({ firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre' });
-    } else {
-      this.setState({ firstShiftStartError: '' });
+    if (firstShiftEnd) {
+      if (firstShiftStart >= firstShiftEnd) {
+        this.setState({ firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre' });
+      } else {
+        this.setState({ firstShiftStartError: '' });
+      }
     }
   }
 
   firstShiftEndError = () => {
     const { firstShiftStart, firstShiftEnd, secondShiftStart } = this.props.card;
 
-    if (firstShiftEnd && firstShiftStart >= firstShiftEnd) {
-      this.setState({ firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
-    } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
-      this.setState({ firstShiftEndError: 'El primer turno debe finalzar antes del segundo' });
-    } else {
-      this.setState({ firstShiftEndError: '' });
+    if (firstShiftEnd) {
+      if (firstShiftStart >= firstShiftEnd) {
+        this.setState({ firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+      } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
+        this.setState({ firstShiftEndError: 'El primer turno debe finalzar antes del segundo' });
+      } else {
+        this.setState({ firstShiftEndError: '' });
+      }
     }
   };
 
   secondShiftStartError = () => {
     const { secondShiftStart, secondShiftEnd, firstShiftEnd } = this.props.card;
 
-    if (secondShiftStart && secondShiftStart <= firstShiftEnd) {
-      this.setState({ secondShiftStartError: 'El segundo turno debe arrancar despues del primero' });
-    } else if (secondShiftStart && secondShiftEnd && secondShiftStart > secondShiftEnd) {
-      this.setState({ secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre' });
-    } else {
-      this.setState({ secondShiftStartError: '' });
+    if (secondShiftStart) {
+      if (secondShiftStart <= firstShiftEnd) {
+        this.setState({ secondShiftStartError: 'El segundo turno debe arrancar despues del primero' });
+      } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
+        this.setState({ secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre' });
+      } else {
+        this.setState({ secondShiftStartError: '' });
+      }
     }
   }
 
   secondShiftEndError = () => {
     const { secondShiftStart, secondShiftEnd } = this.props.card;
 
-    if (secondShiftEnd && secondShiftEnd <= secondShiftStart) {
-      this.setState({ secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
-    } else {
-      this.setState({ secondShiftEndError: '' })
+    if (secondShiftEnd) {
+      if (secondShiftEnd <= secondShiftStart) {
+        this.setState({ secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+      } else {
+        this.setState({ secondShiftEndError: '' })
+      }
     }
   }
 
@@ -148,7 +156,7 @@ class ScheduleRegister extends Component {
       });
     }
 
-    onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
+    onScheduleCardValueChange({ id: card.id, days: [...selectedIndexes].sort((a, b) => a - b) });
   };
 
   renderSecondTurn() {

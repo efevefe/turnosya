@@ -67,15 +67,19 @@ class ScheduleRegister extends Component {
   };
 
   onSavePress = () => {
-    if (!this.validateMinimumData()) {
-      return Toast.show({ text: 'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.' });
-    }
+    if (!this.validateMinimumData()) return;
 
     let { startDate, endDate, commerceId, schedules } = this.props;
     const { prevSchedule } = this.state;
 
+    // el overlapped schedule es un schedule cuyo periodo de vigencia abarca el periodo de
+    // vigencia del schedule que estamos modificando o creando
     const overlappedSchedule = schedules.find(schedule => {
-      return (startDate > schedule.startDate) && (!schedule.endDate || (endDate < schedule.endDate));
+      return (
+        (startDate > schedule.startDate) &&
+        ((!schedule.endDate && endDate) ||
+          (schedule.endDate && endDate && endDate < schedule.endDate))
+      );
     });
 
     if (prevSchedule) {
@@ -88,7 +92,7 @@ class ScheduleRegister extends Component {
 
     this.setState({ reservationsToCancel: [], overlappedSchedule });
 
-    if (JSON.stringify(this.props.prevSchedule) !== JSON.stringify(this.state.prevSchedule)) {
+    if (!prevSchedule || this.didChanges()) {
       return this.props.onNextReservationsRead({
         commerceId,
         startDate,
@@ -99,24 +103,62 @@ class ScheduleRegister extends Component {
     this.props.navigation.goBack();
   }
 
-  validateMinimumData = () => {
-    const { cards, startDate, endDate } = this.props;
+  didChanges = () => {
+    // esta funcion verifica si se hizo algun cambio en los horarios de atencion
+    // el tiempo minimo de turno o las fechas de vigencia para que en caso de que no
+    // hubo cambios, no se ejcute lo mismo el update en la base de datos
 
-    if (endDate && (startDate >= endDate)) return false;
-    if (!cards.length) return false;
+    const oldStartDate = this.state.prevSchedule.startDate;
+    const oldEndDate = this.state.prevSchedule.endDate;
+    const prevSchedule = {
+      cards: this.state.prevSchedule.cards,
+      reservationMinLength: this.state.prevSchedule.reservationMinLength
+    };
+
+    const newStartDate = this.props.startDate;
+    const newEndDate = this.props.endDate;
+    const newSchedule = {
+      cards: this.props.cards,
+      reservationMinLength: this.props.reservationMinLength
+    }
+
+    if (JSON.stringify(prevSchedule) !== JSON.stringify(newSchedule)) return true;
+    if (!!oldEndDate !== !!newEndDate) return true;
+    if (oldEndDate && newEndDate && oldEndDate.diff(newEndDate, 'minutes')) return true;
+    if (oldStartDate <= formattedMoment() && newStartDate.diff(formattedMoment(), 'minutes')) return true;
+    if (oldStartDate >= formattedMoment() && newStartDate.diff(oldStartDate, 'minutes')) return true;
+  }
+
+  validateMinimumData = () => {
+    // esta funcion valida en conjunto que se hayan ingresado todos los datos requeridos
+    // y que los mismos sean correctos, antes de pasar a validar la compatibilidad de los horarios
+
+    const { cards, startDate, endDate } = this.props;
+    let error = false;
+
+    if ((endDate && (startDate >= endDate)) || (!cards.length)) error = true;
 
     for (i in cards) {
       const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
-      if (!firstShiftStart || !firstShiftEnd) return false;
-      if (firstShiftStart >= firstShiftEnd) return false;
-      if (!!secondShiftStart !== !!secondShiftEnd) return false;
-      if (secondShiftStart && (secondShiftStart >= secondShiftEnd)) return false;
-      if (secondShiftStart && (secondShiftStart <= firstShiftEnd)) return false;
-      if (!days.length) return false;
+      if (
+        (!firstShiftStart || !firstShiftEnd) ||
+        (firstShiftStart >= firstShiftEnd) ||
+        (!!secondShiftStart !== !!secondShiftEnd) ||
+        (secondShiftStart && (secondShiftStart >= secondShiftEnd)) ||
+        (secondShiftStart && (secondShiftStart <= firstShiftEnd)) ||
+        (!days.length)
+      ) {
+        error = true;
+        break;
+      }
     }
 
-    return true;
+    if (error) {
+      Toast.show({ text: 'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.' });
+    }
+
+    return !error;
   }
 
   workShiftsValidate = () => {
@@ -129,15 +171,18 @@ class ScheduleRegister extends Component {
       // de modo que estan quedando afuera resevas que antes eran cubiertas por este horario
       if (!this.validEndDate()) return;
 
-      // si no es compatible con reservas existentes dentro del periodo definido
-      if (!this.compatibleSchedule()) return;
+      // verifica si no es compatible con reservas existentes dentro del periodo definido
+      return this.compatibleSchedule()
     }
 
     // no hay reservas o si las hay, no entran en conflicto
-    return this.onScheduleSave();
+    this.onScheduleSave();
   }
 
   compatibleSchedule = () => {
+    // esta funcion toma las reservas existentes (en caso de que haya) que se encuentran 
+    // en el periodo del schedule que estamos creando o modificando para ver si hay algun conflicto
+
     const { nextReservations, cards, startDate, endDate } = this.props;
 
     let notCoveredReservations = nextReservations.filter(res => {
@@ -157,18 +202,22 @@ class ScheduleRegister extends Component {
       }
 
       if (notCoveredReservations.length) {
-        this.setState({
+        return this.setState({
           notCoveredReservations,
           incompatibleScheduleVisible: true
         });
-        return false;
       }
     }
 
-    return true;
+    // si no hay conflictos guarda
+    this.onScheduleSave();
   }
 
   compatibleShift = (shiftStart, shiftEnd, days, notCoveredReservations) => {
+    // esta funcion se ejecuta por cada card, y evalua en funcion de los horarios de atencion
+    // y la duracion de los turnos, si las reservas existentes aun son compatibles, devolviendo
+    // aquellas que no lo son
+
     const { reservationMinLength } = this.props;
 
     notCoveredReservations = notCoveredReservations.filter(reservation => {
@@ -197,6 +246,11 @@ class ScheduleRegister extends Component {
   }
 
   validEndDate = () => {
+    // en caso de que haya un overlapped schedule, la fecha de fin de vigencia de este, ahora sera
+    // igual a la fecha de inicio de vigencia del nuevo schedule o el que estamos modificando, por
+    // lo que aca se valida si hay reservas que esten quedando afuera del periodo de vigencia de
+    // este ultimo para en ese caso, comunicarselo al usuario
+
     const { nextReservations } = this.props;
     const newEndDate = this.props.endDate;
 
@@ -306,8 +360,6 @@ class ScheduleRegister extends Component {
     } = this.props;
     const { reservationsToCancel } = this.state;
 
-    if (startDate < formattedMoment()) startDate = formattedMoment();
-
     if (this.validateMinimumData()) {
       const success = await this.props.onScheduleUpdate({
         commerceId,
@@ -322,6 +374,7 @@ class ScheduleRegister extends Component {
       });
 
       if (success) {
+        // si se guardo con exito, se recarga el listado de schedules y se vuelve
         this.props.onActiveSchedulesRead({
           commerceId,
           date: new Date()
@@ -388,7 +441,7 @@ class ScheduleRegister extends Component {
     const { reservationsToCancel, notCoveredReservations } = this.state;
 
     this.setState({
-      reservationsToCancel: [...reservationsToCancel, notCoveredReservations],
+      reservationsToCancel: reservationsToCancel.concat(notCoveredReservations),
       incompatibleScheduleVisible: false
     }, this.onScheduleSave);
   }
@@ -449,24 +502,100 @@ class ScheduleRegister extends Component {
     const { reservationsToCancel, reservationsAfterEndDate } = this.state;
 
     this.setState({
-      reservationsToCancel: [...reservationsToCancel, reservationsAfterEndDate],
+      reservationsToCancel: reservationsToCancel.concat(reservationsAfterEndDate),
       incompatibleEndDateVisible: false
     }, this.compatibleSchedule);
   }
 
-  renderRow = ({ item }) => {
+  renderFirstItem = () => {
+    const { reservationMinFrom, reservationMinTo, reservationMinValue } = this.state.sliderValues;
+
     return (
-      <ScheduleRegisterItem card={item} navigation={this.props.navigation} />
+      <Card containerStyle={{ borderRadius: 10, padding: 5, paddingTop: 10 }}>
+        <CardSection
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-around'
+          }}
+        >
+          <DatePicker
+            date={this.props.startDate || formattedMoment()}
+            mode="date"
+            label="Inicio de vigencia:"
+            placeholder="Fecha de inicio"
+            errorMessage={this.state.startDateError}
+            onDateChange={this.onStartDateValueChange}
+          />
+          <DatePicker
+            date={this.props.endDate}
+            mode="date"
+            label="Fin de vigencia:"
+            placeholder="Opcional"
+            errorMessage={this.state.endDateError}
+            onDateChange={this.onEndDateValueChange}
+          />
+        </CardSection>
+        {this.props.endDate &&
+          <CardSection>
+            <CheckBox
+              title="Agregar fecha de fin de vigencia"
+              iconType="material"
+              checkedIcon="clear"
+              uncheckedIcon="add"
+              checkedColor={MAIN_COLOR}
+              uncheckedColor={MAIN_COLOR}
+              checkedTitle="Quitar fecha de fin de vigencia"
+              checked={!!this.props.endDate}
+              onPress={() => this.props.onScheduleValueChange({ prop: 'endDate', value: null })}
+            />
+          </CardSection>}
+        <CardSection style={{ paddingHorizontal: 20, paddingTop: 15 }}>
+          <Text>
+            {'Duración mínima de turnos: ' +
+              stringFormatMinutes(reservationMinValue)}
+          </Text>
+          <Slider
+            animationType="spring"
+            minimumTrackTintColor={MAIN_COLOR_OPACITY}
+            minimumValue={reservationMinFrom}
+            maximumValue={reservationMinTo}
+            step={reservationMinFrom}
+            thumbTouchSize={{ width: 60, height: 60 }}
+            thumbTintColor={MAIN_COLOR}
+            value={reservationMinValue}
+            onSlidingComplete={value => this.props.onScheduleValueChange({ prop: 'reservationMinLength', value })}
+            onValueChange={value => this.setState({
+              sliderValues: {
+                ...this.state.sliderValues,
+                reservationMinValue: value
+              }
+            })}
+          />
+        </CardSection>
+      </Card>
+    );
+  }
+
+  renderRow = ({ item }) => {
+    if (item.id === 'firstItem') {
+      // esto es para que el primer item que tiene las fechas de vigencia y la duracion del
+      // turno este en la FlatList, sino se quedaria anclada arriba y no scrollearia
+      return this.renderFirstItem();
+    }
+
+    return (
+      <ScheduleRegisterItem card={item} />
     );
   };
 
   renderList = () => {
     const { cards, refreshing, loadingReservations } = this.props;
 
-    if (cards.length > 0) {
+    if (cards.length) {
       return (
         <FlatList
-          data={cards}
+          data={[{ id: 'firstItem' }, ...cards]}
           renderItem={this.renderRow}
           keyExtractor={card => card.id.toString()}
           extraData={this.props}
@@ -486,76 +615,10 @@ class ScheduleRegister extends Component {
   };
 
   render() {
-    const { reservationMinFrom, reservationMinTo, reservationMinValue } = this.state.sliderValues;
-
     if (this.props.loading) return <Spinner />;
 
     return (
       <View style={{ flex: 1 }}>
-        <Card containerStyle={{ borderRadius: 10, padding: 5, paddingTop: 10 }}>
-          <CardSection
-            style={{
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              justifyContent: 'space-around'
-            }}
-          >
-            <DatePicker
-              date={this.props.startDate || formattedMoment()}
-              mode="date"
-              label="Inicio de vigencia:"
-              placeholder="Fecha de inicio"
-              errorMessage={this.state.startDateError}
-              onDateChange={this.onStartDateValueChange}
-            />
-            <DatePicker
-              date={this.props.endDate}
-              mode="date"
-              label="Fin de vigencia:"
-              placeholder="Opcional"
-              errorMessage={this.state.endDateError}
-              onDateChange={this.onEndDateValueChange}
-            />
-          </CardSection>
-          {this.props.endDate &&
-            <CardSection>
-              <CheckBox
-                title="Agregar fecha de fin de vigencia"
-                iconType="material"
-                checkedIcon="clear"
-                uncheckedIcon="add"
-                checkedColor={MAIN_COLOR}
-                uncheckedColor={MAIN_COLOR}
-                checkedTitle="Quitar fecha de fin de vigencia"
-                checked={!!this.props.endDate}
-                onPress={() => this.props.onScheduleValueChange({ prop: 'endDate', value: null })}
-              />
-            </CardSection>}
-          <CardSection style={{ paddingHorizontal: 20, paddingTop: 15 }}>
-            <Text>
-              {'Duración mínima de turnos: ' +
-                stringFormatMinutes(reservationMinValue)}
-            </Text>
-            <Slider
-              animationType="spring"
-              minimumTrackTintColor={MAIN_COLOR_OPACITY}
-              minimumValue={reservationMinFrom}
-              maximumValue={reservationMinTo}
-              step={reservationMinFrom}
-              thumbTouchSize={{ width: 60, height: 60 }}
-              thumbTintColor={MAIN_COLOR}
-              value={reservationMinValue}
-              onSlidingComplete={value => this.props.onScheduleValueChange({ prop: 'reservationMinLength', value })}
-              onValueChange={value => this.setState({
-                sliderValues: {
-                  ...this.state.sliderValues,
-                  reservationMinValue: value
-                }
-              })}
-            />
-          </CardSection>
-        </Card>
-
         {this.renderList()}
         {this.renderIncompatibleScheduleModal()}
         {this.renderIncompatibleEndDateModal()}

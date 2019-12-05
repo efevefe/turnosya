@@ -155,23 +155,27 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
 
   const db = firebase.firestore();
   const batch = db.batch();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
   schedules.forEach(schedule => {
-    const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
-
     if ((schedule.startDate < startDate) && (!schedule.endDate || (startDate < schedule.endDate))) {
-      // batch.update(scheduleRef, { endDate: startDate.toDate() });
-      console.log('endDate ==> startDate');
+      // si se superpone con un schedule que inicia antes, este ultimo termina donde inicia el nuevo
+      batch.update(schedulesRef.doc(schedule.id), { endDate: startDate.toDate() });
     }
 
     if ((schedule.startDate >= startDate) && (!endDate || (schedule.endDate && (schedule.endDate <= endDate)))) {
-      // revisar esto
       if (schedule.id === scheduleId) {
-        // batch.delete(scheduleRef);
-        console.log('delete old schedule');
+        // el schedule que se esta modificando se elimina porque despues se crea de nuevo
+        batch.delete(schedulesRef.doc(schedule.id));
+        // al eliminarlo hace falta tambien eliminar las subcolecciones
+        schedule.cards.forEach(card => {
+          const cardRef = schedulesRef.doc(`${schedule.id}/WorkShifts/${card.id}`);
+          batch.delete(cardRef);
+        })
       } else {
-        // batch.update(scheduleRef, { softDelete: new Date() });
-        console.log('softDelete');
+        // si un schedule anterior queda dentro del periodo de vigencia del nuevo,
+        // se le hace una baja logica
+        batch.update(schedulesRef.doc(schedule.id), { softDelete: new Date() });
       }
     }
 
@@ -179,28 +183,28 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       (!schedule.endDate || (endDate && endDate < schedule.endDate)) &&
       (schedule.startDate >= startDate)
     ) {
-      // batch.update(scheduleRef, { startDate: endDate.toDate() });
-      console.log('startDate ==> endDate');
+      // si se superpone con un schedule que esta despues, este ultimo inicia donde termina el nuevo
+      batch.update(schedulesRef.doc(schedule.id), { startDate: endDate.toDate() });
     }
   })
 
   try {
     // new schedule creation
-    // const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
-    //   .add({
-    //     startDate: startDate.toDate(),
-    //     endDate: endDate.toDate(),
-    //     softDelete: null,
-    //     reservationMinLength,
-    //     reservationDayPeriod
-    //   });
+    const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+      .add({
+        startDate: startDate.toDate(),
+        endDate: endDate ? endDate.toDate() : null,
+        softDelete: null,
+        reservationMinLength,
+        reservationDayPeriod
+      });
 
-    // cards.forEach(card => {
-    //   const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+    cards.forEach(card => {
+      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
 
-    //   const cardRef = db.doc(`Commerces/${commerceId}/Schedules/${newSchedule.id}/WorkShifts/${card.id}`);
-    //   batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-    // });
+      const cardRef = schedulesRef.doc(`${newSchedule.id}/WorkShifts/${card.id}`);
+      batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+    });
 
     // reservations cancel
     if (reservationsToCancel.length) {
@@ -213,12 +217,12 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       reservationsToCancel.forEach(res => {
         const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
         const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-        //batch.update(commerceResRef, updateObj);
-        //batch.update(clientResRef, updateObj);
+        batch.update(commerceResRef, updateObj);
+        batch.update(clientResRef, updateObj);
       });
     }
 
-    // await batch.commit();
+    await batch.commit();
 
     dispatch({ type: ON_SCHEDULE_CREATED });
     return true;
@@ -234,6 +238,17 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
   const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
 
   try {
+    if (endDate <= schedule.startDate) {
+      // si se esta elimiando un schedule que no estaba en vigencia todavia sin reservas o
+      // cancelando las reservas si es que tenia, se le hace una baja logica
+      batch.update(scheduleRef, { softDelete: new Date() });
+    } else {
+      // si se esta eliminando un schedule que ya estaba en vigencia o uno que tiene reservas
+      // sin cancelarlas, se le establece una fecha de fin de vigencia lo mas pronto posible
+      batch.update(scheduleRef, { endDate: endDate.toDate() });
+    }
+
+    // reservations cancel
     if (reservationsToCancel.length) {
       const state = await db.doc(`ReservationStates/canceled`).get();
       const updateObj = {
@@ -244,20 +259,12 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
       reservationsToCancel.forEach(res => {
         const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
         const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-        //batch.update(commerceResRef, updateObj);
-        //batch.update(clientResRef, updateObj);
+        batch.update(commerceResRef, updateObj);
+        batch.update(clientResRef, updateObj);
       });
     }
 
-    if (endDate <= schedule.startDate) {
-      // batch.update(scheduleRef, { softDelete: new Date() });
-      console.log('softDelete');
-    } else {
-      // batch.update(scheduleRef, { endDate: endDate.toDate() });
-      console.log('endDate ==> lastReservation')
-    }
-
-    // await batch.commit();
+    await batch.commit();
 
     dispatch({ type: ON_SCHEDULE_CREATED });
   } catch (error) {
