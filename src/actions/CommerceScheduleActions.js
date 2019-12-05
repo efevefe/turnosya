@@ -273,7 +273,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 }
 
 export const onScheduleConfigSave = ({
-  reservationMinLength,
+  scheduleId,
   reservationDayPeriod,
   commerceId
 },
@@ -284,8 +284,8 @@ export const onScheduleConfigSave = ({
   return dispatch => {
     dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
 
-    db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set({ reservationMinLength, reservationDayPeriod }, { merge: true })
+    db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
+      .set({ reservationDayPeriod }, { merge: true })
       .then(() => {
         navigation.navigate('calendar');
         dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED })
