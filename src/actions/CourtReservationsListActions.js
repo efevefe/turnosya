@@ -266,3 +266,54 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
       .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }
+
+export const cancellationDateScript = async () => {
+  // script para corregir el nombre del campo cancellationDate en la reserva
+  // cuando este publicada la version corregida, lo ejecutamos de nuevo por las
+  // dudas y despues lo borramos
+  const db = firebase.firestore();
+
+  try {
+    const commercesSnapshot = await db.collection('Commerces').where('softDelete', '==', null).get();
+    if (commercesSnapshot.empty) return;
+
+    commercesSnapshot.forEach(async commerce => {
+      const reservationsSnapshot = await db.collection(`Commerces/${commerce.id}/Reservations`).get();
+
+      if (!reservationsSnapshot.empty) {
+        // batch instance
+        const batch = db.batch();
+
+        reservationsSnapshot.forEach(reservation => {
+          // updating reservation in commerce
+          const { cancelationDate, cancellationDate, clientId } = reservation.data();
+          let newCancellationDate = null;
+
+          if (cancelationDate) {
+            newCancellationDate = cancelationDate;
+          } else if (cancellationDate) {
+            newCancellationDate = cancellationDate;
+          }
+
+          const updateObject = {
+            cancellationDate: newCancellationDate,
+            cancelationDate: firebase.firestore.FieldValue.delete()
+          };
+
+          batch.update(reservation.ref, updateObject);
+
+          // updating reservation in client
+          if (clientId) {
+            const clientReservationRef = db.doc(`Profiles/${clientId}/Reservations/${reservation.id}`);
+            batch.update(clientReservationRef, updateObject);
+          }
+        });
+
+        await batch.commit();
+        console.log(`${commerce.data().name} --> success`);
+      }
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+}
