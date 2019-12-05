@@ -274,7 +274,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
   }
 }
 
-export const onScheduleConfigSave = ({
+export const onScheduleConfigurationSave = ({
   scheduleId,
   reservationDayPeriod,
   reservationMinCancelTime,
