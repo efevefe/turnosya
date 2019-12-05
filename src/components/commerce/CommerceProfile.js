@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
-import { Avatar, Text, Divider, Icon } from 'react-native-elements';
+import { View, StyleSheet, RefreshControl, Dimensions } from 'react-native';
+import { Avatar, Text, Divider, Icon, Image } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';
+import { MAIN_COLOR } from '../../constants';
+import {
+  onCommerceRead,
+  onCommerceUpdate,
+  onCommerceValueChange,
+  onProvincesIdRead,
+  onAreasRead,
+  onLocationValueChange,
+  onLocationChange
+} from '../../actions';
 import {
   CardSection,
   Input,
@@ -17,42 +27,31 @@ import {
   IconButton,
   Button
 } from '../common';
-import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import {
-  onCommerceRead,
-  onCommerceUpdateWithPicture,
-  onCommerceUpdateNoPicture,
-  onCommerceValueChange,
-  onProvincesIdRead,
-  onAreasRead,
-  onLocationValueChange,
-  onLocationChange
-} from '../../actions';
+import { HeaderBackButton } from 'react-navigation-stack';
+
+const imageSizeWidth = Math.round(Dimensions.get('window').width);
+const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfile extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      editEnabled: false,
-      pictureOptionsVisible: false,
-      newProfilePicture: false,
-      stateBeforeChanges: null,
-      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-      nameError: '',
-      cuitError: '',
-      emailError: '',
-      phoneError: '',
-      addressError: '',
-      cityError: '',
-      provinceError: '',
-      areaError: '',
-      showMapOptions: false
-    };
-
-    props.navigation.setParams({ rightIcon: this.renderEditButton() });
-  }
+  state = {
+    pictureOptionsVisible: false,
+    profilePictureEdit: false,
+    headerPictureEdit: false,
+    newProfilePicture: false,
+    newHeaderPicture: false,
+    stateBeforeChanges: null,
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+    nameError: '',
+    cuitError: '',
+    emailError: '',
+    phoneError: '',
+    addressError: '',
+    cityError: '',
+    provinceError: '',
+    areaError: ''
+  };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -71,6 +70,7 @@ class CommerceProfile extends Component {
       longitude,
       country
     } = this.props.locationData;
+
     const location = {
       address,
       city,
@@ -80,16 +80,20 @@ class CommerceProfile extends Component {
       country
     };
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
+    this.props.navigation.setParams({
+      leftIcon: this.renderCancelButton(),
+      rightIcon: this.renderSaveButton()
+    });
   }
 
   onRefresh = () => {
     this.props.onCommerceRead();
   };
 
-  renderEditButton = () => {
-    return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  };
+  // renderEditButton = () => {
+  //   return <IconButton icon="md-create" onPress={this.onEditPress} />;
+  // };
 
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
@@ -97,6 +101,15 @@ class CommerceProfile extends Component {
 
   renderCancelButton = () => {
     return <IconButton icon="md-close" onPress={this.onCancelPress} />;
+  };
+
+  renderBackButton = () => {
+    return (
+      <HeaderBackButton
+        onPress={() => this.props.navigation.goBack(null)}
+        tintColor="white"
+      />
+    );
   };
 
   onEditPress = () => {
@@ -111,12 +124,13 @@ class CommerceProfile extends Component {
       description,
       province,
       area,
-      profilePicture
+      profilePicture,
+      headerPicture
     } = this.props;
-    const { address, city } = this.props.locationData;
+
+    const { address, city, latitude, longitude } = this.props.locationData;
 
     this.setState({
-      editEnabled: true,
       stateBeforeChanges: {
         name,
         cuit,
@@ -127,69 +141,67 @@ class CommerceProfile extends Component {
         city,
         province,
         area,
-        profilePicture
-      },
-      showMapOptions: true
+        profilePicture,
+        headerPicture,
+        latitude,
+        longitude
+      }
     });
-    this.props.navigation.setParams({
-      title: 'Modificar Datos',
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderCancelButton()
-    });
+
+    this.props.onLocationChange({ location });
+  };
+
+  onRefresh = () => {
+    this.props.onCommerceRead();
   };
 
   onSavePress = async () => {
-    if (this.validateMinimumData()) {
-      var {
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        province,
-        area,
-        profilePicture,
-        commerceId
-      } = this.props;
-      const { address, city, latitude, longitude } = this.props.locationData;
-      const { newProfilePicture } = this.state;
+    try {
+      if (this.validateMinimumData()) {
+        var {
+          name,
+          cuit,
+          email,
+          phone,
+          description,
+          province,
+          area,
+          profilePicture,
+          headerPicture,
+          commerceId
+        } = this.props;
 
-      if (newProfilePicture) {
-        var profilePicture = await imageToBlob(profilePicture);
-        this.props.onCommerceUpdateWithPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
-      } else {
-        this.props.onCommerceUpdateNoPicture({
-          name,
-          cuit,
-          email,
-          phone,
-          description,
-          address,
-          city,
-          province,
-          area,
-          profilePicture,
-          commerceId,
-          latitude,
-          longitude
-        });
+        const { address, city, latitude, longitude } = this.props.locationData;
+        const { newProfilePicture, newHeaderPicture } = this.state;
+
+        if (newProfilePicture)
+          var profilePicture = await imageToBlob(profilePicture);
+
+        if (newHeaderPicture)
+          var headerPicture = await imageToBlob(headerPicture);
+
+        this.props.onCommerceUpdate(
+          {
+            name,
+            cuit,
+            email,
+            phone,
+            description,
+            address,
+            city,
+            province,
+            area,
+            profilePicture,
+            headerPicture,
+            commerceId,
+            latitude,
+            longitude
+          },
+          this.props.navigation
+        );
       }
-
-      this.disableEdit();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -197,167 +209,222 @@ class CommerceProfile extends Component {
     const { stateBeforeChanges } = this.state;
 
     for (prop in stateBeforeChanges) {
+      if (prop === 'address' || prop === 'city') {
+        this.props.onCommerceValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
+      if (prop === 'latitude' || prop === 'longitude') {
+        this.props.onLocationValueChange({
+          prop,
+          value: stateBeforeChanges[prop]
+        });
+      }
+
       this.props.onCommerceValueChange({
         prop,
         value: stateBeforeChanges[prop]
       });
     }
-    this.props.onLocationValueChange({
-      prop: 'address',
-      value: stateBeforeChanges.address
-    });
-    this.props.onLocationValueChange({
-      prop: 'city',
-      value: stateBeforeChanges.city
-    });
 
     this.cleanErrors();
-    this.disableEdit();
+    this.props.navigation.goBack(null);
   };
 
-  disableEdit = () => {
-    this.setState({
-      editEnabled: false,
-      newProfilePicture: false,
-      stateBeforeChanges: null,
-      showMapOptions: false
-    });
-    this.props.navigation.setParams({
-      title: 'Perfil',
-      rightIcon: this.renderEditButton(),
-      leftIcon: null
-    });
-  };
+  // disableEdit = () => {
+  //   this.setState({
+  //     editEnabled: false,
+  //     newProfilePicture: false,
+  //     stateBeforeChanges: null
+  //   });
 
-  renderEditPictureButton = () => {
-    if (this.state.editEnabled) {
-      return (
-        <Icon
-          name="md-camera"
-          color={MAIN_COLOR}
-          type="ionicon"
-          size={20}
-          reverse
-          containerStyle={{ padding: 5, position: 'absolute' }}
-          onPress={this.onEditPicturePress}
-        />
-      );
-    }
-  };
+  //   this.props.navigation.setParams({
+  //     title: 'Perfil',
+  //     rightIcon: this.renderEditButton(),
+  //     leftIcon: this.renderBackButton()
+  //   });
+  // }
 
   onEditPicturePress = () => {
-    this.setState({ pictureOptionsVisible: !this.state.pictureOptionsVisible });
+    this.setState({
+      pictureOptionsVisible: false,
+      profilePictureEdit: false,
+      headerPictureEdit: false
+    });
+  };
+
+  onEditProfilePicturePress = () => {
+    this.setState({ profilePictureEdit: true, pictureOptionsVisible: true });
+  };
+
+  onEditHeaderPicturePress = () => {
+    this.setState({ headerPictureEdit: true, pictureOptionsVisible: true });
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
+    this.setState({ pictureOptionsVisible: false });
 
-    if (Constants.platform.ios) {
-      await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
+    try {
+      if (Constants.platform.ios) {
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      }
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
+      };
 
-    const response = await ImagePicker.launchImageLibraryAsync(options);
+      const response = await ImagePicker.launchImageLibraryAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        if (this.state.profilePictureEdit) {
+          this.props.onCommerceValueChange({
+            prop: 'profilePicture',
+            value: response.uri
+          });
+
+          this.setState({ newProfilePicture: true });
+        } else {
+          this.props.onCommerceValueChange({
+            prop: 'headerPicture',
+            value: response.uri
+          });
+
+          this.setState({ newHeaderPicture: true });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.onEditPicturePress();
     }
   };
 
   onTakePicturePress = async () => {
-    this.onEditPicturePress();
+    this.setState({ pictureOptionsVisible: false });
 
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+    try {
+      await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      await Permissions.askAsync(Permissions.CAMERA);
 
-    const options = {
-      mediaTypes: 'Images',
-      allowsEditing: true,
-      aspect: [1, 1]
-    };
+      const options = {
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
+      };
 
-    const response = await ImagePicker.launchCameraAsync(options);
+      const response = await ImagePicker.launchCameraAsync(options);
 
-    if (!response.cancelled) {
-      this.props.onCommerceValueChange({
-        prop: 'profilePicture',
-        value: response.uri
-      });
-      this.setState({ newProfilePicture: true });
+      if (!response.cancelled) {
+        if (this.state.profilePictureEdit) {
+          this.props.onCommerceValueChange({
+            prop: 'profilePicture',
+            value: response.uri
+          });
+
+          this.setState({ newProfilePicture: true });
+        } else {
+          this.props.onCommerceValueChange({
+            prop: 'headerPicture',
+            value: response.uri
+          });
+
+          this.setState({ newHeaderPicture: true });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.onEditPicturePress();
     }
   };
 
   onDeletePicturePress = () => {
-    this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
+    if (this.state.profilePictureEdit) {
+      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
+      this.setState({ newProfilePicture: false });
+    } else {
+      this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+      this.setState({ newHeaderPicture: false });
+    }
+
     this.onEditPicturePress();
   };
 
   renderName = () => {
     const { name } = this.props;
 
-    if (name) return <Text h4>{name}</Text>;
+    if (name)
+      return (
+        <Text h4 style={{ textAlign: 'center', marginHorizontal: 10 }}>
+          {name}
+        </Text>
+      );
   };
 
   renderLocation = () => {
     const { address, city } = this.props.locationData;
-    const { provinceId, name } = this.props.province;
+    const { name } = this.props.province;
 
-    if (address || city || provinceId) {
+    if (address || city || name) {
       const { locationContainerStyle } = styles;
 
       return (
         <View style={locationContainerStyle}>
-          <Icon
-            name="md-pin"
-            type="ionicon"
-            size={16}
-            containerStyle={{ marginRight: 5 }}
-          />
-          <Text>{`${address}, ${city}, ${name}`}</Text>
+          <Icon name="md-pin" type="ionicon" size={16} />
+          <Text
+            style={{ textAlign: 'center', paddingLeft: 5 }}
+          >{`${address}, ${city}, ${name}`}</Text>
         </View>
       );
     }
   };
 
   onProvincePickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.provincesList.find(
-        province => province.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.provincesList.find(
+          province => province.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'province',
+          value: { provinceId: value, name: label }
+        });
 
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: label
-      });
+        this.props.onLocationValueChange({
+          prop: 'provinceName',
+          value: label
+        });
+      }
+
+      this.renderProvinceError();
+    } catch (e) {
+      console.error(e);
     }
-
-    this.renderProvinceError();
   };
 
   onAreaPickerChange = async value => {
-    if (value) {
-      var { value, label } = this.props.areasList.find(
-        area => area.value == value
-      );
-      await this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
-      });
+    try {
+      if (value) {
+        var { value, label } = this.props.areasList.find(
+          area => area.value == value
+        );
+        await this.props.onCommerceValueChange({
+          prop: 'area',
+          value: { areaId: value, name: label }
+        });
 
-      this.renderAreaError();
+        this.renderAreaError();
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -483,55 +550,9 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    const {
-      address,
-      provinceName,
-      city,
-      latitude,
-      longitude
-    } = this.props.locationData;
-
     this.props.navigation.navigate('changeAddressMap', {
-      callback: this.onProvinceNameChangeOnMap,
-      markers: [
-        {
-          address,
-          provinceName,
-          city,
-          latitude,
-          longitude
-        }
-      ]
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
-  };
-
-  renderMapOption = () => {
-    if (this.state.showMapOptions) {
-      return (
-        <CardSection>
-          <Button
-            title="Buscar en el mapa"
-            titleStyle={{ color: MAIN_COLOR }}
-            buttonStyle={{
-              borderRadius: 30,
-              borderColor: MAIN_COLOR
-            }}
-            color="white"
-            type="outline"
-            iconRight={true}
-            onPress={() => this.onMapPress()}
-            icon={
-              <Ionicons
-                style={{ marginLeft: 10 }}
-                name="md-pin"
-                size={28}
-                color={MAIN_COLOR}
-              />
-            }
-          />
-        </CardSection>
-      );
-    }
   };
 
   cleanErrors = () => {
@@ -563,8 +584,10 @@ class CommerceProfile extends Component {
     const {
       containerStyle,
       headerContainerStyle,
+      headerPictureStyle,
       avatarContainerStyle,
       avatarStyle,
+      textContainerStyle,
       infoContainerStyle
     } = styles;
 
@@ -585,6 +608,23 @@ class CommerceProfile extends Component {
         }
       >
         <View style={headerContainerStyle}>
+          <Image
+            style={headerPictureStyle}
+            source={
+              this.props.headerPicture
+                ? { uri: this.props.headerPicture }
+                : null
+            }
+          >
+            <Icon
+              name="md-camera"
+              color={MAIN_COLOR}
+              type="ionicon"
+              size={20}
+              reverse
+              onPress={this.onEditHeaderPicturePress}
+            />
+          </Image>
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
@@ -593,13 +633,22 @@ class CommerceProfile extends Component {
                   ? { uri: this.props.profilePicture }
                   : null
               }
-              size="xlarge"
+              size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
             />
-
-            {this.renderEditPictureButton()}
+            <Icon
+              name="md-camera"
+              color={MAIN_COLOR}
+              type="ionicon"
+              size={20}
+              reverse
+              containerStyle={{ position: 'absolute' }}
+              onPress={this.onEditProfilePicturePress}
+            />
           </View>
+        </View>
+        <View style={textContainerStyle}>
           {this.renderName()}
           {this.renderLocation()}
         </View>
@@ -619,10 +668,10 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'name', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
+              maxLength={50}
             />
           </CardSection>
           <CardSection>
@@ -633,7 +682,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'cuit', value })
               }
               keyboardType="numeric"
-              editable={this.state.editEnabled}
               errorMessage={this.state.cuitError}
               onFocus={() => this.setState({ cuitError: '' })}
               onBlur={this.renderCuitError}
@@ -647,7 +695,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'phone', value })
               }
               keyboardType="numeric"
-              editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
@@ -661,7 +708,6 @@ class CommerceProfile extends Component {
                 this.props.onCommerceValueChange({ prop: 'email', value })
               }
               keyboardType="email-address"
-              editable={this.state.editEnabled}
               errorMessage={this.state.emailError}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
@@ -674,7 +720,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'description', value })
               }
-              editable={this.state.editEnabled}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -687,7 +732,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'address', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
               onBlur={this.renderAddressError}
@@ -700,7 +744,6 @@ class CommerceProfile extends Component {
               onChangeText={value =>
                 this.props.onLocationValueChange({ prop: 'city', value })
               }
-              editable={this.state.editEnabled}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -713,11 +756,32 @@ class CommerceProfile extends Component {
               items={this.props.provincesList}
               value={this.props.province.provinceId}
               onValueChange={value => this.onProvincePickerChange(value)}
-              disabled={!this.state.editEnabled}
               errorMessage={this.state.provinceError}
             />
           </CardSection>
-          {this.renderMapOption()}
+          <CardSection style={{ paddingTop: 0 }}>
+            <Button
+              title="Buscar en el Mapa"
+              titleStyle={{ color: MAIN_COLOR }}
+              buttonStyle={{
+                marginTop: 0,
+                borderRadius: 8,
+                borderColor: MAIN_COLOR
+              }}
+              color="white"
+              type="outline"
+              iconRight={true}
+              onPress={() => this.onMapPress()}
+              icon={
+                <Ionicons
+                  style={{ marginLeft: 10 }}
+                  name="md-pin"
+                  size={22}
+                  color={MAIN_COLOR}
+                />
+              }
+            />
+          </CardSection>
           <CardSection>
             <Picker
               title="Rubro:"
@@ -725,14 +789,15 @@ class CommerceProfile extends Component {
               items={this.props.areasList}
               value={this.props.area.areaId}
               onValueChange={value => this.onAreaPickerChange(value)}
-              disabled={!this.state.editEnabled}
               errorMessage={this.state.areaError}
             />
           </CardSection>
         </View>
 
         <Menu
-          title="Foto de Perfil"
+          title={
+            this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'
+          }
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
@@ -767,21 +832,37 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    padding: 20
+    height: imageSizeHeight * 1.5,
+    marginBottom: 15
+  },
+  headerPictureStyle: {
+    height: imageSizeHeight,
+    width: imageSizeWidth,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end'
   },
   avatarContainerStyle: {
+    position: 'absolute',
+    paddingTop: imageSizeHeight * 0.5,
     justifyContent: 'flex-end',
     alignItems: 'flex-end'
   },
   avatarStyle: {
+    margin: 5,
+    marginTop: 0,
     borderWidth: 4,
-    borderColor: MAIN_COLOR,
-    margin: 10
+    borderColor: MAIN_COLOR
+  },
+  textContainerStyle: {
+    alignSelf: 'stretch',
+    alignItems: 'center'
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center'
+    margin: 10,
+    marginLeft: 15,
+    marginRight: 15
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
@@ -803,6 +884,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -836,6 +918,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     profilePicture,
+    headerPicture,
     commerceId,
     loading,
     refreshing,
@@ -843,16 +926,12 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceRead,
-    onCommerceUpdateWithPicture,
-    onCommerceUpdateNoPicture,
-    onCommerceValueChange,
-    onProvincesIdRead,
-    onAreasRead,
-    onLocationValueChange,
-    onLocationChange
-  }
-)(CommerceProfile);
+export default connect(mapStateToProps, {
+  onCommerceRead,
+  onCommerceUpdate,
+  onCommerceValueChange,
+  onProvincesIdRead,
+  onAreasRead,
+  onLocationValueChange,
+  onLocationChange
+})(CommerceProfile);

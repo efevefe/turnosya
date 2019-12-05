@@ -147,6 +147,7 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
     cards,
     reservationMinLength,
     reservationDayPeriod,
+    reservationMinCancelTime,
     startDate,
     endDate,
     schedules,
@@ -196,7 +197,8 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
         endDate: endDate ? endDate.toDate() : null,
         softDelete: null,
         reservationMinLength,
-        reservationDayPeriod
+        reservationDayPeriod,
+        reservationMinCancelTime
       });
 
     cards.forEach(card => {
@@ -275,6 +277,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 export const onScheduleConfigSave = ({
   scheduleId,
   reservationDayPeriod,
+  reservationMinCancelTime,
   commerceId
 },
   navigation
@@ -285,10 +288,39 @@ export const onScheduleConfigSave = ({
     dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
 
     db.doc(`Commerces/${commerceId}/Schedules/${scheduleId}`)
-      .set({ reservationDayPeriod }, { merge: true })
+      .set({ reservationDayPeriod, reservationMinCancelTime }, { merge: true })
       .then(() => {
         navigation.navigate('calendar');
-        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED })
+        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
       });
+  };
+};
+
+export const readCancellationTimeAllowed = commerceId => {
+  // revisar
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_SCHEDULE_READING });
+
+    db.doc(`Commerces/${commerceId}/Schedules/0`)
+      .get()
+      .then(doc => {
+        if (doc.data().reservationMinCancelTime)
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: doc.data().reservationMinCancelTime
+            }
+          });
+        else
+          dispatch({
+            type: ON_SCHEDULE_READ,
+            payload: {
+              reservationMinCancelTime: 2
+            }
+          });
+      })
+      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
   };
 };

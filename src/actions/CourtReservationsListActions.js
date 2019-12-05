@@ -4,18 +4,22 @@ import moment from 'moment';
 import {
   ON_COMMERCE_COURT_RESERVATIONS_READ,
   ON_COMMERCE_COURT_RESERVATIONS_READING,
+  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
   ON_RESERVATION_CLIENT_READING,
   ON_RESERVATION_CLIENT_READ,
   ON_RESERVATION_CLIENT_READ_FAIL,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-  ON_COMMERCE_LAST_COURT_RESERVATION_READ,
-  ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL
+  ON_COMMERCE_RESERVATION_CANCELING,
+  ON_COMMERCE_RESERVATION_CANCELED,
+  ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 
 export const onCourtReservationsListValueChange = ({ prop, value }) => {
-  return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload: { prop, value } };
-}
+  return {
+    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+    payload: { prop, value }
+  };
+};
 
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
@@ -26,7 +30,8 @@ export const onCommerceCourtTypeReservationsRead = ({
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Reservations`)
+  return db
+    .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('courtType', '==', courtType)
     .where('startDate', '>=', selectedDate.toDate())
@@ -64,7 +69,8 @@ export const onCommerceCourtReservationsRead = ({
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Reservations`)
+  return db
+    .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
@@ -85,7 +91,7 @@ export const onCommerceCourtReservationsRead = ({
           endDate: moment(doc.data().endDate.toDate())
         });
       });
-      
+
       dispatch({
         type: ON_COMMERCE_COURT_RESERVATIONS_READ,
         payload: { reservations }
@@ -101,7 +107,8 @@ export const onCommerceDetailedCourtReservationsRead = ({
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Reservations`)
+  return db
+    .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
@@ -116,7 +123,10 @@ export const onCommerceDetailedCourtReservationsRead = ({
       const detailedReservations = [];
 
       if (snapshot.empty) {
-        return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { detailedReservations } });
+        return dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          payload: { detailedReservations }
+        });
       }
 
       snapshot.forEach(doc => {
@@ -131,9 +141,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
                   ...doc.data(),
                   startDate: moment(doc.data().startDate.toDate()),
                   endDate: moment(doc.data().endDate.toDate()),
-                  reservationDate: moment(
-                    doc.data().reservationDate.toDate()
-                  ),
+                  reservationDate: moment(doc.data().reservationDate.toDate()),
                   client: { id: client.id, ...client.data() },
                   court: { id: court.id, ...court.data() }
                 });
@@ -152,18 +160,74 @@ export const onCommerceDetailedCourtReservationsRead = ({
     });
 };
 
-export const onReservationClientRead = clientId => {
+export const onCommerceCancelReservation = ({
+  commerceId,
+  reservationId,
+  clientId,
+  cancelationReason,
+  navigation
+}) => {
   const db = firebase.firestore();
+  const batch = db.batch();
 
   return dispatch => {
-    dispatch({ type: ON_RESERVATION_CLIENT_READING });
+    dispatch({ type: ON_COMMERCE_RESERVATION_CANCELING });
 
-    db.doc(`Profiles/${clientId}`)
+    db.doc(`ReservationStates/canceled`)
       .get()
-      .then(doc => {
-        dispatch({ type: ON_RESERVATION_CLIENT_READ, payload: { id: doc.id, ...doc.data() } });
+      .then(stateDoc => {
+        const cancelationData = {
+          state: {
+            id: stateDoc.id,
+            name: stateDoc.data().name,
+            cancelationReason
+          },
+          cancelationDate: new Date()
+        };
+        batch.update(
+          db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
+          cancelationData
+        );
+        batch.update(
+          db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
+          cancelationData
+        );
+
+        batch
+          .commit()
+          .then(() => {
+            dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
+            navigation.goBack();
+          })
+          .catch(e => {
+            dispatch({
+              type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
+            });
+          });
       })
-      .catch(error => dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL }));
+      .catch(e => {
+        dispatch({
+          type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
+        });
+      });
+  };
+};
+
+export const onReservationClientRead = clientId => async dispatch => {
+  dispatch({ type: ON_RESERVATION_CLIENT_READING });
+
+  try {
+    const doc = await firebase
+      .firestore()
+      .doc(`Profiles/${clientId}`)
+      .get();
+
+    dispatch({
+      type: ON_RESERVATION_CLIENT_READ,
+      payload: { id: doc.id, ...doc.data() }
+    });
+  } catch (error) {
+    dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL });
   }
 }
 

@@ -14,18 +14,14 @@ import {
 } from '../../actions';
 
 class RegisterCommerceTwo extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' },
+    addressError: '',
+    cityError: '',
+    provinceError: ''
+  };
 
-    this.state = {
-      pickerPlaceholder: { value: '', label: 'Seleccionar...' },
-      addressError: '',
-      cityError: '',
-      provinceError: ''
-    };
-  }
-
-  componentWillMount() {
+  componentDidMount() {
     this.props.onProvincesIdRead();
   }
 
@@ -64,22 +60,26 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = async index => {
-    const { value, label } =
-      index > 0
-        ? this.props.provincesList[index - 1]
-        : this.state.pickerPlaceholder;
+    try {
+      const { value, label } =
+        index > 0
+          ? this.props.provincesList[index - 1]
+          : this.state.pickerPlaceholder;
 
-    await this.props.onCommerceValueChange({
-      prop: 'province',
-      value: { provinceId: value, name: label }
-    });
+      await this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: value, name: label }
+      });
 
-    this.props.onLocationValueChange({
-      prop: 'provinceName',
-      value: index > 0 ? label : ''
-    });
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: index > 0 ? label : ''
+      });
 
-    this.renderProvinceError();
+      this.renderProvinceError();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   renderAddressError = () => {
@@ -148,7 +148,7 @@ class RegisterCommerceTwo extends Component {
 
   onMapPress = () => {
     this.props.navigation.navigate('commerceRegisterMap', {
-      callback: this.onProvinceNameChangeOnMap
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 

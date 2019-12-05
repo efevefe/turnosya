@@ -47,7 +47,7 @@ export const COURT_UPDATE = 'court_update';
 export const COURT_READING_ONLY_AVAILABLE = 'court_reading_only_available';
 export const COURT_READ_ONLY_AVAILABLE = 'court_read_only_available';
 
-//Client Profile
+// Client Profile
 export const ON_USER_READING = 'on_user_reading';
 export const ON_USER_READ = 'on_user_read';
 export const ON_USER_READ_FAIL = 'on_user_read_fail';
@@ -55,7 +55,7 @@ export const ON_USER_UPDATING = 'on_user_updating';
 export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
 
-//Commerce Profile
+// Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
 export const ON_COMMERCE_OPEN = 'on_commerce_open';
 export const COMMERCE_FAIL = 'commerce_fail';
@@ -75,14 +75,15 @@ export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
 
-//Commerces List
+// Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
 export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
 export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
 export const ON_UPDATE_ALL_FILTERS = 'on_update_all_filters';
+export const ON_HITS_UPDATE = 'on_hits_update';
 
-//Schedule Register
+// Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
@@ -124,7 +125,9 @@ export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
 export const ON_LOCATION_CHANGE = 'on_location_change';
+export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
+export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 
 // Client Reservations List
 export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
@@ -136,15 +139,39 @@ export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
   'on_client_reservation_cancel_fail';
 
 // Commerce Reservations List
-export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE = 'on_court_reservations_list_value_change';
-export const ON_COMMERCE_COURT_RESERVATIONS_READING = 'on_commerce_reservations_reading';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ = 'on_commerce_reservations_read';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL = 'on_commerce_reservations_read_fail';
+export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE =
+  'on_court_reservations_list_value_change';
+export const ON_COMMERCE_COURT_RESERVATIONS_READING =
+  'on_commerce_reservations_reading';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ =
+  'on_commerce_reservations_read';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
+  'on_commerce_reservations_read_fail';
 export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
 export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
-export const ON_RESERVATION_CLIENT_READ_FAIL = 'on_reservation_client_read_fail';
-export const ON_COMMERCE_LAST_COURT_RESERVATION_READ = 'on_commerce_last_court_reservation_read';
-export const ON_COMMERCE_LAST_COURT_RESERVATION_READ_FAIL = 'on_commerce_last_court_reservation_read_fail';
+export const ON_RESERVATION_CLIENT_READ_FAIL =
+  'on_reservation_client_read_fail';
+export const ON_COMMERCE_RESERVATION_CANCELING =
+  'on_commerce_reservation_canceling';
+export const ON_COMMERCE_RESERVATION_CANCELED =
+  'on_commerce_reservation_canceled';
+export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
+  'on_commerce_reservation_cancel_fail';
 
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';
+
+// Review types
+export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
+  'on_commerce_review_value_change';
+export const ON_COMMERCE_REVIEW_SAVING = 'on_commerce_review_saving';
+export const ON_COMMERCE_REVIEW_SAVED = 'on_commerce_review_saved';
+export const ON_COMMERCE_REVIEW_SAVE_FAIL = 'on_commerce_review_save_fail';
+export const ON_COMMERCE_REVIEW_CLEAR = 'on_commerce_review_clear';
+export const ON_COMMERCE_REVIEW_CREATED = 'on_commerce_review_created';
+export const ON_COMMERCE_REVIEW_DELETING = 'on_commerce_review_deleting';
+export const ON_COMMERCE_REVIEW_DELETED = 'on_commerce_review_deleted';
+export const ON_COMMERCE_REVIEW_DELETE_FAIL = 'on_commerce_review_delete_fail';
+export const ON_COMMERCE_REVIEWS_READING = 'on_commerce_reviews_reading';
+export const ON_COMMERCE_REVIEWS_READ = 'on_commerce_reviews_read';
+export const ON_COMMERCE_REVIEWS_READ_FAIL = 'on_commerce_reviews_read_fail';

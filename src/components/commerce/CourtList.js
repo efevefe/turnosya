@@ -5,7 +5,7 @@ import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner, EmptyList } from '../common';
 import CourtListItem from './CourtListItem';
-import { courtsRead } from '../../actions';
+import { courtsRead, onCourtFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class CourtList extends Component {
@@ -28,6 +28,7 @@ class CourtList extends Component {
   }
 
   onAddPress = () => {
+    this.props.onCourtFormOpen();
     this.props.navigation.navigate('courtForm');
   };
 
@@ -43,8 +44,8 @@ class CourtList extends Component {
       );
     }
 
-    return <EmptyList title='No hay ninguna cancha' />;
-  }
+    return <EmptyList title="No hay ninguna cancha" />;
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -74,5 +75,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { courtsRead }
+  { courtsRead, onCourtFormOpen }
 )(CourtList);

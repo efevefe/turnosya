@@ -1,38 +1,36 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { connect } from 'react-redux';
-import { InstantSearch, Configure } from 'react-instantsearch/native';
-import { IconButton } from '../common';
-import getEnvVars from '../../../environment';
-import ConnectedHits from './CommercesList.SearchHits';
-import ConnectedSearchBox from './CommercesList.SearchBox';
-import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions';
+import React, { Component } from "react";
+import { View } from "react-native";
+import { connect } from "react-redux";
+import { InstantSearch, Configure } from "react-instantsearch/native";
+import { Fab } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
+import { MAIN_COLOR } from "../../constants";
+import { IconButton } from "../common";
+import getEnvVars from "../../../environment";
+import ConnectedHits from "./CommercesList.SearchHits";
+import ConnectedSearchBox from "./CommercesList.SearchBox";
+import ConnectedStateResults from "./CommercesList.StateResults";
+import { readFavoriteCommerces, onLocationChange } from "../../actions";
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      areaName: props.navigation.state.params.areaName,
-      searchVisible: false
-    };
-  }
+  state = {
+    areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
+    searchVisible: false
+  };
 
   componentDidMount() {
-    this.props.readFavoriteCommerces();
-
     this.props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
       header: undefined
     });
+
+    this.props.readFavoriteCommerces();
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: 'Buscar negocios',
       headerRight: navigation.getParam('rightIcons'),
       header: navigation.getParam('header')
     };
@@ -40,20 +38,24 @@ class CommercesList extends Component {
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton icon="md-search" onPress={this.onSearchPress} />
+      <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
+        <IconButton
+          icon="md-search"
+          containerStyle={{ paddingRight: 0 }}
+          onPress={this.onSearchPress}
+        />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
   };
 
-  onSearchPress = async () => {
+  onSearchPress = () => {
     this.props.navigation.setParams({ header: null });
     this.setState({ searchVisible: true });
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate('commercesFiltersScreen');
+    this.props.navigation.navigate("commercesFiltersScreen");
   };
 
   onCancelPress = () => {
@@ -73,27 +75,33 @@ class CommercesList extends Component {
     }
   };
 
-  enableAreaFilter = () => {
-    return this.state.areaName ? (
-      <Configure filters={`areaName:\'${this.state.areaName}\'`} />
-    ) : null;
+  obtainFacetProps = () => {
+    if (this.state.areaName && this.props.provinceNameFilter)
+      return {
+        filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
+      };
+    else if (this.state.areaName)
+      return { filters: `areaName:\'${this.state.areaName}\'` };
+    else if (this.props.provinceNameFilter)
+      return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
+    else return null;
   };
 
-  enableProvinceFilter = () => {
-    return this.props.provinceNameFilter ? (
-      <Configure
-        filters={`provinceName:\'${this.props.provinceNameFilter}\'`}
-      />
-    ) : null;
+  obtainGeolocationProps = () => {
+    return this.props.locationEnabled
+      ? {
+          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+        }
+      : null;
   };
 
-  enableCurrentLocationFilter = () => {
-    return this.props.locationEnabled ? (
-      <Configure
-        aroundLatLng={`${this.props.latitude}, ${this.props.longitude}`}
-        aroundRadius={Math.round(1000 * this.props.locationRadiusKms)}
-      />
-    ) : null;
+  onMapFabPress = () => {
+    if (!this.props.specificLocationEnabled) {
+      this.props.onLocationChange({ latitude: null, longitude: null });
+    }
+
+    this.props.navigation.navigate("commercesListMap");
   };
 
   render() {
@@ -109,11 +117,18 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        {this.enableAreaFilter()}
-        {this.enableProvinceFilter()}
-        {this.enableCurrentLocationFilter()}
+        <Configure
+          {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
+        />
         <ConnectedStateResults />
         <ConnectedHits />
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={this.onMapFabPress}
+        >
+          <Ionicons name="md-compass" />
+        </Fab>
       </InstantSearch>
     );
   }
@@ -127,7 +142,16 @@ const mapStateToProps = state => {
     locationEnabled,
     locationRadiusKms
   } = state.commercesList;
-  const { latitude, longitude } = state.locationData;
+
+  const {
+    specificLocationEnabled,
+    address,
+    city,
+    provinceName,
+    country,
+    latitude,
+    longitude
+  } = state.locationData;
 
   return {
     refinement,
@@ -135,12 +159,17 @@ const mapStateToProps = state => {
     provinceNameFilter,
     locationEnabled,
     locationRadiusKms,
+    specificLocationEnabled,
     latitude,
-    longitude
+    longitude,
+    address,
+    city,
+    provinceName,
+    country
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { readFavoriteCommerces }
-)(CommercesList);
+export default connect(mapStateToProps, {
+  readFavoriteCommerces,
+  onLocationChange
+})(CommercesList);

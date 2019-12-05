@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
 import { FlatList } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from '../common';
 import CommerceListItem from './CommerceListItem';
-import { getPermissionLocationStatus, getCurrentPosition } from '../../utils';
-import { LocationMessages, Button } from '../common';
-
-import { connect } from 'react-redux';
+import { commerceHitsUpdate } from '../../actions';
+import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
-  state = {
-    permissionStatus: null,
-    modal: true
-  };
-
-  callback = () => {
-    this.setState({ modal: false });
-  };
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      (prevProps.hits !== this.props.hits && this.props.hits.length > 0) ||
+      (this.props.isFocused && this.props.isFocused !== prevProps.isFocused)
+    ) {
+      this.props.commerceHitsUpdate(this.props.hits);
+    }
+  }
 
   renderItem({ item }) {
     return <CommerceListItem commerce={item} />;
@@ -30,6 +29,7 @@ class Hits extends Component {
         renderItem={this.renderItem}
         keyExtractor={item => item.objectID}
         initialNumToRender={20}
+        contentContainerStyle={{ paddingBottom: 95 }}
       />
     ) : this.props.searching ? (
       <Spinner style={{ position: 'relative' }} />
@@ -54,5 +54,5 @@ const ConnectedHits = connectInfiniteHits(Hits);
 
 export default connect(
   mapStateToProps,
-  {}
-)(ConnectedHits);
+  { commerceHitsUpdate }
+)(withNavigationFocus(ConnectedHits));

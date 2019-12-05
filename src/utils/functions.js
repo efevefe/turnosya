@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const formattedMoment = (date = moment()) => { // ver nombre de esta funcion
+export const formattedMoment = (date = moment()) => {
   // receives moment date and returns the same date at 00:00 in moment format
   // if not receive a date as param, returns the current date
   return moment([date.year(), date.month(), date.date()]);
@@ -19,22 +19,25 @@ export const hourToDate = (stringHour, date = moment()) => {
 }
 
 export const imageToBlob = async uri => {
-  // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
+  try {
+    // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
 
-  const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      resolve(xhr.response);
-    };
-    xhr.onerror = function () {
-      reject(new TypeError('Network request failed'));
-    };
-    xhr.responseType = 'blob';
-    xhr.open('GET', uri, true);
-    xhr.send(null);
-  });
-
-  return blob;
+    return blob;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 //Funcion para eliminar espacios vacios antes y despues de un string.
@@ -169,4 +172,31 @@ export const stringFormatDays = totalDays => {
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
   else return stringDays + '.';
+};
+
+/**
+ * Formats the input value (hours) into a String containing the hours and
+ * days that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalHours The amount of minutes to format
+ * @return {String}            String with the following format: 'XX day. XX hours.'
+ */
+export const stringFormatHours = totalHours => {
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+
+  const stringHours =
+    hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+
+  const stringDays =
+    days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+
+  if (hours && days) return stringDays + ' y ' + stringHours + '.';
+  else if (hours) return stringHours + '.';
+  else return stringDays + '.';
+};
+
+export const isOneWeekOld = date => {
+  return !moment()
+    .subtract(1, 'w')
+    .isBefore(date);
 };

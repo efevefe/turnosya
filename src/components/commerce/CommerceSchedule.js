@@ -83,18 +83,19 @@ class CommerceSchedule extends Component {
       let available = true;
 
       reservations.forEach(reservation => {
-        if (slot.startDate.toString() === reservation.startDate.toString()) reserved++;
+        if (slot.startDate.toString() === reservation.startDate.toString())
+          reserved++;
       });
 
       if (reserved >= courtsAvailable.length) available = false;
 
       return {
         ...slot,
-        free: (courtsAvailable.length - reserved),
+        free: courtsAvailable.length - reserved,
         total: courtsAvailable.length,
         available
       };
-    })
+    });
 
     this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
   };
@@ -137,7 +138,7 @@ class CommerceSchedule extends Component {
           selectedDate={selectedDate}
           reservationDayPeriod={reservationDayPeriod}
           reservationMinLength={reservationMinLength}
-          loading={(loadingSchedule || loadingReservations || loadingCourts)}
+          loading={loadingSchedule || loadingReservations || loadingCourts}
           onDateChanged={date => this.onDateChanged(date)}
           onSlotPress={slot => this.onSlotPress(slot)}
         />

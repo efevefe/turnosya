@@ -4,29 +4,45 @@ import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../../constants';
-import { stringFormatDays } from '../../utils';
-import { onScheduleConfigSave, onScheduleValueChange } from '../../actions';
+import { stringFormatDays, stringFormatHours } from '../../utils';
+import { onScheduleConfigurationSave, onScheduleValueChange } from '../../actions';
 
 class ScheduleRegisterConfiguration extends Component {
   state = {
     reservationDayFrom: 1,
     reservationDayTo: 180,
-    reservationDayValue: 1
+    reservationDayValue: 1,
+    reservationMinHoursCancelValue: 2
   };
 
   componentDidMount() {
-    const { reservationDayPeriod } = this.props;
+    const {
+      reservationDayPeriod,
+      reservationMinCancelTime
+    } = this.props;
+
     this.setState({
-      reservationDayValue: reservationDayPeriod
+      reservationDayValue: reservationDayPeriod,
+      reservationMinHoursCancelValue: reservationMinCancelTime
     });
   }
 
   onSavePressHandler() {
-    const { scheduleId, reservationDayPeriod, commerceId } = this.props;
+    const {
+      scheduleId,
+      reservationDayPeriod,
+      reservationMinCancelTime,
+      commerceId
+    } = this.props;
 
     // resolucion provisoria hasta que veamos bien donde guardar este valor
     if (scheduleId)
-      return this.props.onScheduleConfigSave({ scheduleId, reservationDayPeriod, commerceId }, this.props.navigation);
+      return this.props.onScheduleConfigSave({
+        scheduleId,
+        reservationDayPeriod,
+        reservationMinCancelTime,
+        commerceId
+      }, this.props.navigation);
 
     this.props.navigation.goBack();
   }
@@ -38,11 +54,19 @@ class ScheduleRegisterConfiguration extends Component {
     });
   }
 
+  onCancelTimeSliderValueChange() {
+    this.props.onScheduleValueChange({
+      prop: 'reservationMinCancelTime',
+      value: this.state.reservationMinHoursCancelValue
+    });
+  }
+
   render() {
     const {
       reservationDayFrom,
       reservationDayTo,
-      reservationDayValue
+      reservationDayValue,
+      reservationMinHoursCancelValue
     } = this.state;
 
     return (
@@ -50,7 +74,7 @@ class ScheduleRegisterConfiguration extends Component {
         <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
             <Text>
-              Límite previo a reservar: {stringFormatDays(reservationDayValue)}
+              {'Límite previo a reservar: ' + stringFormatDays(reservationDayValue)}
             </Text>
             <Slider
               animationType="spring"
@@ -65,9 +89,28 @@ class ScheduleRegisterConfiguration extends Component {
               onValueChange={val => this.setState({ reservationDayValue: val })}
             />
           </CardSection>
-
           <Divider style={{ marginTop: 15 }} />
-
+          <CardSection>
+            <Text>
+              {'Tiempo mínimo de cancelacion del turno: ' +
+                stringFormatHours(reservationMinHoursCancelValue)}
+            </Text>
+            <Slider
+              animationType="spring"
+              minimumTrackTintColor={MAIN_COLOR_OPACITY}
+              minimumValue={1}
+              maximumValue={168}
+              step={1}
+              thumbTouchSize={{ width: 60, height: 60 }}
+              thumbTintColor={MAIN_COLOR}
+              value={reservationMinHoursCancelValue}
+              onSlidingComplete={this.onCancelTimeSliderValueChange.bind(this)}
+              onValueChange={val =>
+                this.setState({ reservationMinHoursCancelValue: val })
+              }
+            />
+          </CardSection>
+          <Divider style={{ marginTop: 15 }} />
           <CardSection>
             <Button
               title="Guardar"
@@ -83,15 +126,21 @@ class ScheduleRegisterConfiguration extends Component {
 }
 
 const mapStateToProps = state => {
+  const {
+    loading,
+    reservationDayPeriod,
+    reservationMinCancelTime
+  } = state.commerceSchedule;
+  
   return {
     commerceId: state.commerceData.commerceId,
-    loading: state.commerceSchedule.loading,
-    reservationDayPeriod: state.commerceSchedule.reservationDayPeriod,
-    scheduleId: state.commerceSchedule.id
+    loading,
+    reservationDayPeriod,
+    reservationMinCancelTime
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onScheduleConfigSave, onScheduleValueChange }
+  { onScheduleConfigurationSave, onScheduleValueChange, onScheduleRead }
 )(ScheduleRegisterConfiguration);

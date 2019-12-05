@@ -16,6 +16,10 @@ import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateL
 import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
 import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
+import CommerceProfileView from '../components/CommerceProfileView';
+import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import CommerceReviewsList from '../components/CommerceReviewsList';
+import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -56,6 +60,12 @@ const calendarStack = createStackNavigator(
       screen: CommerceCourtsStateList,
       navigationOptions: {
         title: 'Canchas Disponibles'
+      }
+    },
+    reservationDetails: {
+      screen: CommerceCourtReservationDetails,
+      navigationOptions: {
+        title: 'Detalles del Turno'
       }
     }
   },
@@ -131,19 +141,51 @@ const courtsStack = createStackNavigator(
 const profileStack = createStackNavigator(
   {
     profile: {
-      screen: CommerceProfile,
+      screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
+        headerLeft: (
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        ),
+        headerRight: (
+          <IconButton
+            icon="md-create"
+            onPress={() => navigation.navigate('profileEdit')}
+          />
         )
       })
     },
+    profileEdit: {
+      screen: CommerceProfile,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Editar Perfil',
+        headerLeft: navigation.getParam('leftIcon'),
+        headerRight: navigation.getParam('rightIcon')
+      })
+    },
+    commerceProfileInfo: {
+      screen: CommerceProfileInfo,
+      navigationOptions: {
+        title: 'Información'
+      }
+    },
+    showMyAddressMap: {
+      screen: Map,
+      navigationOptions: {
+        title: 'Dirección'
+      }
+    },
     changeAddressMap: {
       screen: LocationMap,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: {
         title: 'Modificar mi Dirección'
-      })
+      }
+    },
+    commerceReviewsList: {
+      screen: CommerceReviewsList,
+      navigationOptions: {
+        title: 'Reseñas'
+      }
     }
   },
   stackNavigationOptions
