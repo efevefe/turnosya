@@ -297,7 +297,7 @@ export const onScheduleConfigurationSave = ({
 };
 
 export const readCancellationTimeAllowed = commerceId => {
-  // revisar
+  // esto hay que ver como adaptarlo a mis cambio de diagramacion (nico)
   const db = firebase.firestore();
 
   return dispatch => {
@@ -306,7 +306,7 @@ export const readCancellationTimeAllowed = commerceId => {
     db.doc(`Commerces/${commerceId}/Schedules/0`)
       .get()
       .then(doc => {
-        if (doc.data().reservationMinCancelTime)
+        if (doc.exists)
           dispatch({
             type: ON_SCHEDULE_READ,
             payload: {
