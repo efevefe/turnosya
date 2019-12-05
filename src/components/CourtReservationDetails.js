@@ -74,12 +74,7 @@ class CourtReservationDetails extends Component {
           size={90}
           icon={{ name: commerce ? 'store' : 'person' }}
           containerStyle={styles.avatarStyle}
-          onPress={() => {
-            if (this.props.client)
-              this.props.navigation.navigate('clientProfileView', {
-                clientId: this.props.client.id
-              });
-          }}
+          onPress={this.props.onProfilePicturePress}
         />
         <View style={styles.contentContainer}>
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>

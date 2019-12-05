@@ -25,11 +25,6 @@ class ClientProfileView extends React.Component {
     return total ? total / count : 0;
   };
 
-  renderClientEmail = () => {
-    const { email } = this.props;
-    return email ? <Text style={clientInfoStyle}>{email}</Text> : null;
-  };
-
   renderClientPhone = () => {
     const { phone } = this.props;
     return phone ? <Text style={clientInfoStyle}>{phone}</Text> : null;
@@ -42,7 +37,7 @@ class ClientProfileView extends React.Component {
   };
 
   render() {
-    const { firstName, lastName, profilePicture } = this.props;
+    const { firstName, lastName, profilePicture, email } = this.props;
 
     return this.props.loading ? (
       <Spinner />
@@ -68,7 +63,7 @@ class ClientProfileView extends React.Component {
           <Ionicons name="md-text" color={MAIN_COLOR} size={30} />
         </TouchableOpacity>
         <Divider style={dividerStyle} />
-        {this.renderClientEmail()}
+        <Text style={clientInfoStyle}>{email}</Text>
         {this.renderClientPhone()}
       </View>
     );

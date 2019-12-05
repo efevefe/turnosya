@@ -14,3 +14,4 @@ export * from './Drawer';
 export * from './EmptyList';
 export * from './IconButton';
 export * from './PictureView';
+export * from './ReviewItem';

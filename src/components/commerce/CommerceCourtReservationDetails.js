@@ -233,6 +233,11 @@ class CommerceCourtReservationDetails extends Component {
     }
   };
 
+  onUserProfilePicturePress = () => {
+    const { clientId } = this.state.reservation;
+    this.props.navigation.navigate('clientProfileView', { clientId });
+  };
+
   // *** Render method ***
 
   render() {
@@ -260,7 +265,7 @@ class CommerceCourtReservationDetails extends Component {
           price={price}
           light={light}
           showPrice={true}
-          navigation={this.props.navigation}
+          onProfilePicturePress={this.onUserProfilePicturePress}
         />
         <CardSection>{this.renderCancelButton()}</CardSection>
 

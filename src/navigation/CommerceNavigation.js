@@ -125,6 +125,12 @@ const reservationsStack = createStackNavigator(
       navigationOptions: {
         title: 'Perfil del Cliente'
       }
+    },
+    clientReviewsList: {
+      screen: ClientReviewsList,
+      navigationOptions: {
+        title: 'Reseñas del Cliente'
+      }
     }
   },
   stackNavigationOptions
