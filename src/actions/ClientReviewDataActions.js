@@ -74,22 +74,15 @@ export const readClientReview = ({ clientId, reviewId }) => dispatch => {
       .get()
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
-        if (!softDelete) {
-          // Sino se podría hacer un solo dispatch que actualice todos
-          dispatch({
-            type: ON_CLIENT_REVIEW_VALUE_CHANGE,
-            payload: { prop: 'rating', value: rating }
-          });
-          dispatch({
-            type: ON_CLIENT_REVIEW_VALUE_CHANGE,
-            payload: { prop: 'comment', value: comment }
-          });
-          dispatch({
-            type: ON_CLIENT_REVIEW_VALUE_CHANGE,
-            payload: { prop: 'reviewId', value: reviewId }
-          });
-        }
-        dispatch({ type: ON_CLIENT_REVIEW_READ });
+        softDelete
+          ? // Sino se podría hacer un solo dispatch que actualice todos
+            dispatch({
+              type: ON_CLIENT_REVIEW_READ
+            })
+          : dispatch({
+              type: ON_CLIENT_REVIEW_READ,
+              payload: { rating, comment, reviewId }
+            });
       })
       .catch(() => dispatch({ type: ON_CLIENT_REVIEW_READ_FAIL }));
   }

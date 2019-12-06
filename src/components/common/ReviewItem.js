@@ -4,28 +4,22 @@ import { Divider, Rating } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './CardSection';
 
-class ReviewItem extends Component {
-  render() {
-    return (
-      <View>
-        <CardSection>
-          <View style={topCardContainerStyle}>
-            <Rating readonly imageSize={20} startingValue={this.props.rating} />
-            <Text>{moment(this.props.date.toDate()).format('ll')}</Text>
-          </View>
-          {this.props.comment ? (
-            <Text style={commentStyle}>{this.props.comment}</Text>
-          ) : (
-            <Text style={placeholderStyle}>
-              Ésta reseña no posee comentarios.
-            </Text>
-          )}
-        </CardSection>
-        <Divider />
+const ReviewItem = props => (
+  <View>
+    <CardSection>
+      <View style={topCardContainerStyle}>
+        <Rating readonly imageSize={20} startingValue={props.rating} />
+        <Text>{moment(props.date.toDate()).format('ll')}</Text>
       </View>
-    );
-  }
-}
+      {props.comment ? (
+        <Text style={commentStyle}>{props.comment}</Text>
+      ) : (
+        <Text style={placeholderStyle}>Ésta reseña no posee comentarios.</Text>
+      )}
+    </CardSection>
+    <Divider />
+  </View>
+);
 
 const {
   topCardContainerStyle,

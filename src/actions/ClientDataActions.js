@@ -78,7 +78,12 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
 
     db.doc(`Profiles/${clientId}`)
       .get()
-      .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
+      .then(doc =>
+        dispatch({
+          type: ON_USER_READ,
+          payload: { ...doc.data(), clientId: doc.id }
+        })
+      )
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));
   };
 };

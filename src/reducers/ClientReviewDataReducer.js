@@ -45,7 +45,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_CLIENT_REVIEW_READ_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
     case ON_CLIENT_REVIEW_READ:
-      return { ...state, dataLoading: false };
+      return { ...state, dataLoading: false, ...action.payload };
     case ON_CLIENT_REVIEW_DELETING:
       return { ...state, deleteLoading: true };
     case ON_CLIENT_REVIEW_DELETED:

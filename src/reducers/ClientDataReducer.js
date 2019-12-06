@@ -18,6 +18,7 @@ import {
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
+  clientId: '',
   email: '',
   password: '',
   confirmPassword: '',
