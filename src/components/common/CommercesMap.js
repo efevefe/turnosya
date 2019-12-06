@@ -35,7 +35,7 @@ class CommercesMap extends React.Component {
   }
 
   setAddressString = () => {
-    const { address, city, provinceName } = this.props;
+    const { address, city, provinceName } = this.props.selectedLocation;
 
     /* 
     Se le agrega 'Calle' antes para que el mapa lo busque mejor. Sirve por mas que ya se le haya puesto 'Calle' 
@@ -154,8 +154,11 @@ class CommercesMap extends React.Component {
       region = { latitude, longitude };
     } else if (this.props.markers.length > 0) {
       return this.calculateMarkersRegion(this.props.markers);
-    } else if (this.props.latitude && this.props.longitude) {
-      const { latitude, longitude } = this.props;
+    } else if (
+      this.props.selectedLocation.latitude &&
+      this.props.selectedLocation.longitude
+    ) {
+      const { latitude, longitude } = this.props.selectedLocation;
 
       region = { latitude, longitude };
     }
@@ -356,26 +359,11 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation,
-    selectedLocation
-  } = state.locationData;
+  const { userLocation, selectedLocation } = state.locationData;
 
   const { markers } = state.commercesList;
 
   return {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
     userLocation,
     selectedLocation,
     markers
