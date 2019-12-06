@@ -6,8 +6,6 @@ import { IconButton } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import CommercesMap from '../common/CommercesMap';
 
-// llama al mapa (uno)
-
 class CommercesFiltersMap extends Component {
   render() {
     return (
@@ -26,7 +24,7 @@ class CommercesFiltersMap extends Component {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <CommercesMap searchBar={true} />
+          <CommercesMap searchBar={true} longPressAllowed={true} />
         </View>
       </View>
     );

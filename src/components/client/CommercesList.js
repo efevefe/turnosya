@@ -10,7 +10,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces, onLocationChange } from '../../actions';
+import { readFavoriteCommerces } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -88,19 +88,15 @@ class CommercesList extends Component {
   };
 
   obtainGeolocationProps = () => {
-    return this.props.locationEnabled
+    return this.props.selectedLocation.latitude
       ? {
-          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
           aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
         }
       : null;
   };
 
   onMapFabPress = () => {
-    if (!this.props.specificLocationEnabled) {
-      this.props.onLocationChange({ latitude: null, longitude: null });
-    }
-    // llama al mapa (dos)
     this.props.navigation.navigate('commercesListMap');
   };
 
@@ -139,37 +135,34 @@ const mapStateToProps = state => {
     refinement,
     favoriteCommerces,
     provinceNameFilter,
-    locationEnabled,
     locationRadiusKms
   } = state.commercesList;
 
   const {
-    specificLocationEnabled,
     address,
     city,
     provinceName,
     country,
     latitude,
-    longitude
+    longitude,
+    selectedLocation
   } = state.locationData;
 
   return {
     refinement,
     favoriteCommerces,
     provinceNameFilter,
-    locationEnabled,
     locationRadiusKms,
-    specificLocationEnabled,
     latitude,
     longitude,
     address,
     city,
     provinceName,
-    country
+    country,
+    selectedLocation
   };
 };
 
 export default connect(mapStateToProps, {
-  readFavoriteCommerces,
-  onLocationChange
+  readFavoriteCommerces
 })(CommercesList);

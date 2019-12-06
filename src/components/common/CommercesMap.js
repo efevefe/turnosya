@@ -22,12 +22,6 @@ class CommercesMap extends React.Component {
     userLocationChanged: false
   };
 
-  componentDidMount() {
-    if (this.props.markers.length < 1) {
-      this.onStringSearch(this.setAddressString());
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (
       this.state.locationAsked &&
@@ -114,7 +108,10 @@ class CommercesMap extends React.Component {
         userLocationChanged: false
       });
 
-      this.props.onLocationChange(location);
+      this.props.onLocationChange({
+        prop: 'selectedLocation',
+        value: location
+      });
     } catch (e) {
       console.error(e);
     }
@@ -189,8 +186,7 @@ class CommercesMap extends React.Component {
   };
 
   renderPointerMarker = () => {
-    const { latitude, longitude, address } = this.props;
-
+    const { latitude, longitude, address } = this.props.selectedLocation;
     if (latitude && longitude && address) {
       return (
         <MapView.Marker
@@ -278,7 +274,7 @@ class CommercesMap extends React.Component {
   };
 
   renderFabLocation = () => {
-    if (this.props.specificLocationEnabled) {
+    if (this.props.longPressAllowed) {
       return (
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -292,7 +288,7 @@ class CommercesMap extends React.Component {
   };
 
   onLongPressHandler = e => {
-    if (this.props.specificLocationEnabled)
+    if (this.props.selectedLocation.latitude || this.props.longPressAllowed)
       this.updateAddressFromLatAndLong({
         latitude: e.nativeEvent.coordinate.latitude,
         longitude: e.nativeEvent.coordinate.longitude
@@ -361,20 +357,6 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 
 const mapStateToProps = state => {
   const {
-    specificLocationEnabled,
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation
-  } = state.locationData;
-
-  const { markers } = state.commercesList;
-
-  return {
-    specificLocationEnabled,
     address,
     city,
     provinceName,
@@ -382,6 +364,20 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     userLocation,
+    selectedLocation
+  } = state.locationData;
+
+  const { markers } = state.commercesList;
+
+  return {
+    address,
+    city,
+    provinceName,
+    country,
+    latitude,
+    longitude,
+    userLocation,
+    selectedLocation,
     markers
   };
 };

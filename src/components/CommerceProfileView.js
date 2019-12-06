@@ -21,7 +21,6 @@ import {
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,
-  commerceHitsUpdate,
   onLocationChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -100,11 +99,7 @@ class CommerceProfileView extends Component {
   onMapPress = () => {
     const { address, city, province, latitude, longitude } = this.props;
     this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+      value: { address, city, provinceName: province.name, latitude, longitude }
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -307,6 +302,5 @@ export default connect(mapStateToProps, {
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,
-  commerceHitsUpdate,
   onLocationChange
 })(CommerceProfileView);

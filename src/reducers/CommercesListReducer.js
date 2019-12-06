@@ -19,7 +19,6 @@ const INITIAL_STATE = {
   searching: true,
   areas: [],
   provinceNameFilter: '',
-  locationEnabled: false,
   locationButtonIndex: 0,
   locationRadiusKms: 5,
   markers: []

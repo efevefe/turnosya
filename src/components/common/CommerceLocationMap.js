@@ -121,7 +121,7 @@ class CommerceLocationMap extends React.Component {
         userLocationChanged: false
       });
 
-      this.props.onLocationChange(location);
+      this.props.onLocationChange({ value: location });
     } catch (e) {
       console.error(e);
     }

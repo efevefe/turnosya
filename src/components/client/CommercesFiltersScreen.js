@@ -1,31 +1,24 @@
-import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Divider, Button, ButtonGroup, Slider } from "react-native-elements";
-import { connect } from "react-redux";
-import { IconButton, Picker } from "../common";
-import { MAIN_COLOR, MAIN_COLOR_DISABLED } from "../../constants";
+import React, { Component } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { IconButton, Picker } from '../common';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   updateAllFilters,
-  onLocationChange,
-  onSpecificLocationEnabled
-} from "../../actions";
-import LocationMessages from "../common/LocationMessages";
+  onLocationChange
+} from '../../actions';
+import LocationMessages from '../common/LocationMessages';
 
 class CommerceFiltersScreen extends Component {
   state = {
     provinceName: this.props.provinceNameFilter,
     locationButtonIndex: this.props.locationButtonIndex,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
-    locationEnabled: this.props.locationEnabled,
     oldData: {
-      specificLocationEnabled: this.props.specificLocationEnabled,
-      address: this.props.address,
-      city: this.props.city,
-      provinceName: this.props.provinceName,
-      country: this.props.country,
-      latitude: this.props.latitude,
-      longitude: this.props.longitude
+      selectedLocation: this.props.selectedLocation
+      //add userlocation: this.props.userLocation
     }
   };
 
@@ -34,20 +27,10 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress() {
-    this.props.onSpecificLocationEnabled(true);
-
     this.props.onLocationChange({
-      address: this.props.address,
-      city: this.props.city,
-      provinceName: this.props.provinceName,
-      country: this.props.country,
-      latitude: this.state.oldData.latitude,
-      longitude: this.state.oldData.longitude
+      prop: 'selectedLocation',
+      value: this.state.oldData.selectedLocation
     });
-
-    this.props.onSpecificLocationEnabled(
-      this.state.oldData.specificLocationEnabled
-    );
 
     this.props.navigation.goBack();
   }
@@ -55,7 +38,6 @@ class CommerceFiltersScreen extends Component {
   onApplyFiltersPress() {
     this.props.updateAllFilters({
       provinceNameFilter: this.state.provinceName,
-      locationEnabled: this.state.locationEnabled,
       locationButtonIndex: this.state.locationButtonIndex,
       locationRadiusKms: this.state.locationRadiusKms
     });
@@ -64,29 +46,24 @@ class CommerceFiltersScreen extends Component {
   }
 
   onLocationOptionPress(buttonIndex) {
-    this.props.onSpecificLocationEnabled(buttonIndex !== 1);
-
     this.setState({ locationButtonIndex: buttonIndex });
 
-    buttonIndex === 0
-      ? this.setState({ locationEnabled: false })
-      : this.setState({ locationEnabled: true });
+    if (buttonIndex === 0) {
+      this.props.onLocationChange({ prop: 'userLocation' });
+      this.props.onLocationChange({ prop: 'selectedLocation' });
+    }
 
     if (buttonIndex === 2) {
-      this.props.navigation.navigate("commercesFiltersMap");
+      this.props.navigation.navigate('commercesFiltersMap');
     }
   }
-
-  setLocationEstablishedOnMap = value => {
-    return this.props.navigation.state.params.locationEstablished(value);
-  };
 
   renderLocationMessage() {
     return this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
   }
 
   renderRadiusSlider = () =>
-    this.state.locationEnabled ? (
+    this.state.locationButtonIndex !== 0 ? (
       <View style={{ flex: 1 }}>
         <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
           this.state.locationRadiusKms
@@ -115,7 +92,7 @@ class CommerceFiltersScreen extends Component {
           <Button
             title="Aplicar Filtros"
             type="clear"
-            titleStyle={{ color: "white" }}
+            titleStyle={{ color: 'white' }}
             onPress={this.onApplyFiltersPress.bind(this)}
             style={applyFilterButtonStyle}
           />
@@ -131,7 +108,7 @@ class CommerceFiltersScreen extends Component {
 
           <View style={provinceContainerStyle}>
             <Picker
-              placeholder={{ value: "", label: "Todas" }}
+              placeholder={{ value: '', label: 'Todas' }}
               value={this.state.provinceName}
               items={this.props.provincesList}
               onValueChange={value => this.setState({ provinceName: value })}
@@ -153,12 +130,12 @@ class CommerceFiltersScreen extends Component {
               onPress={this.onLocationOptionPress.bind(this)}
               selectedIndex={this.state.locationButtonIndex}
               buttons={[
-                "Deshabilitada",
-                "Ubicación actual",
-                "Ubicación en mapa"
+                'Deshabilitada',
+                'Ubicación actual',
+                'Ubicación en mapa'
               ]}
               selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: "white" }}
+              selectedTextStyle={{ color: 'white' }}
               textStyle={locationBGTextStyle}
               containerStyle={locationBGContainerStyle}
               innerBorderStyle={{ color: MAIN_COLOR }}
@@ -188,42 +165,42 @@ const {
   locationSliderStyle
 } = StyleSheet.create({
   dividerStyle: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     flex: 1,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginHorizontal: 5
   },
-  dividerTextStyle: { color: "white", padding: 5 },
-  dividerContainerStyle: { flexDirection: "row", justifyContent: "center" },
+  dividerTextStyle: { color: 'white', padding: 5 },
+  dividerContainerStyle: { flexDirection: 'row', justifyContent: 'center' },
   windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
   windowTopContainerStyle: {
     paddingTop: 20,
     height: 70,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row"
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row'
   },
-  windowContentContainerStyle: { flex: 1, alignItems: "center" },
+  windowContentContainerStyle: { flex: 1, alignItems: 'center' },
   applyFilterButtonStyle: { marginRight: 10, padding: 5 },
   provinceContainerStyle: {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
     paddingBottom: 20,
     paddingHorizontal: 10
   },
   locationBGTextStyle: {
     color: MAIN_COLOR,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 12
   },
   locationBGContainerStyle: {
-    borderColor: "white",
+    borderColor: 'white',
     height: 35,
     marginTop: 15,
     borderRadius: 8
   },
-  locationContainerStyle: { padding: 5, alignSelf: "stretch", flex: 1 },
+  locationContainerStyle: { padding: 5, alignSelf: 'stretch', flex: 1 },
   locationTextStyle: {
-    color: "white",
+    color: 'white',
     marginTop: 15,
     marginLeft: 15,
     marginBottom: 5
@@ -236,42 +213,22 @@ const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
   const {
     provinceNameFilter,
-    locationEnabled,
     locationButtonIndex,
     locationRadiusKms
   } = state.commercesList;
-  const {
-    specificLocationEnabled,
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude
-  } = state.locationData;
+  const { selectedLocation } = state.locationData;
 
   return {
     provincesList,
     provinceNameFilter,
-    locationEnabled,
     locationButtonIndex,
     locationRadiusKms,
-    specificLocationEnabled,
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude
+    selectedLocation
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onProvincesNameRead,
-    updateAllFilters,
-    onLocationChange,
-    onSpecificLocationEnabled
-  }
-)(CommerceFiltersScreen);
+export default connect(mapStateToProps, {
+  onProvincesNameRead,
+  updateAllFilters,
+  onLocationChange
+})(CommerceFiltersScreen);
