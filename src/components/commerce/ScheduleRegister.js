@@ -121,11 +121,13 @@ class ScheduleRegister extends Component {
       reservationMinLength: this.props.reservationMinLength
     }
 
-    if (JSON.stringify(prevSchedule) !== JSON.stringify(newSchedule)) return true;
-    if (!!oldEndDate !== !!newEndDate) return true;
-    if (oldEndDate && newEndDate && oldEndDate.diff(newEndDate, 'minutes')) return true;
-    if (oldStartDate <= formattedMoment() && newStartDate.diff(formattedMoment(), 'minutes')) return true;
-    if (oldStartDate >= formattedMoment() && newStartDate.diff(oldStartDate, 'minutes')) return true;
+    if (
+      (JSON.stringify(prevSchedule) !== JSON.stringify(newSchedule)) ||
+      (!!oldEndDate !== !!newEndDate) ||
+      (oldEndDate && newEndDate && oldEndDate.diff(newEndDate, 'minutes')) ||
+      (oldStartDate <= formattedMoment() && newStartDate.diff(formattedMoment(), 'minutes')) ||
+      (oldStartDate >= formattedMoment() && newStartDate.diff(oldStartDate, 'minutes'))
+    ) return true;
   }
 
   validateMinimumData = () => {
@@ -420,7 +422,7 @@ class ScheduleRegister extends Component {
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
-            title="Cancelar"
+            title="Volver"
             icon="md-close"
             onPress={() => this.setState({ incompatibleScheduleVisible: false })}
           />

@@ -14,7 +14,6 @@ import {
     onScheduleValueChange,
     onScheduleDelete,
     onNextReservationsRead,
-    onScheduleDeleteWithReservations,
     onScheduleFormOpen,
     onScheduleRead
 } from '../../actions';
@@ -204,6 +203,13 @@ class CommerceSchedulesList extends Component {
         );
     }
 
+    onOptionsPress = selectedSchedule => {
+        this.setState({
+            selectedSchedule,
+            optionsVisible: true
+        })
+    }
+
     renderItem = ({ item }) => {
         const { startDate, endDate, cards } = item;
 
@@ -220,16 +226,10 @@ class CommerceSchedulesList extends Component {
                         color='grey'
                         iconSize={22}
                         iconStyle={{ marginLeft: 5, marginRight: 8 }}
-                        onPress={() => this.setState({
-                            selectedSchedule: item,
-                            optionsVisible: true
-                        })}
+                        onPress={() => this.onOptionsPress(item)}
                     />
                 }
-                onLongPress={() => this.setState({
-                    selectedSchedule: item,
-                    optionsVisible: true
-                })}
+                onLongPress={() => this.onOptionsPress(item)}
                 bottomDivider
             />
         )
@@ -316,7 +316,6 @@ export default connect(mapStateToProps, {
     onScheduleValueChange,
     onScheduleDelete,
     onNextReservationsRead,
-    onScheduleDeleteWithReservations,
     onScheduleFormOpen,
     onScheduleRead
 })(CommerceSchedulesList);
