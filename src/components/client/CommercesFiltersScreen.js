@@ -48,13 +48,18 @@ class CommerceFiltersScreen extends Component {
   onLocationOptionPress(buttonIndex) {
     this.setState({ locationButtonIndex: buttonIndex });
 
-    if (buttonIndex === 0) {
-      this.props.onLocationChange({ prop: 'userLocation' });
-      this.props.onLocationChange({ prop: 'selectedLocation' });
-    }
-
-    if (buttonIndex === 2) {
-      this.props.navigation.navigate('commercesFiltersMap');
+    switch (buttonIndex) {
+      case 0:
+        this.props.onLocationChange({ prop: 'userLocation' });
+        this.props.onLocationChange({ prop: 'selectedLocation' });
+        break;
+      case 1:
+        this.props.onLocationChange({ prop: 'selectedLocation' });
+        break;
+      case 2:
+        this.props.onLocationChange({ prop: 'userLocation' });
+        this.props.navigation.navigate('commercesFiltersMap');
+        break;
     }
   }
 

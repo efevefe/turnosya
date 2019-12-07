@@ -19,7 +19,6 @@ class CommerceLocationMap extends React.Component {
     defaultAddress: 'Córdoba, Argentina',
     completeAddress: '',
     locationAsked: false,
-    userLocationChanged: false,
     draggable: !this.props.navigation
   };
 
@@ -34,10 +33,7 @@ class CommerceLocationMap extends React.Component {
       this.state.locationAsked &&
       prevProps.userLocation !== this.props.userLocation
     ) {
-      this.setState({
-        locationAsked: false,
-        userLocationChanged: true
-      });
+      this.setState({ locationAsked: false });
     }
 
     if (this.props.onProvinceNameChange) {
@@ -93,8 +89,6 @@ class CommerceLocationMap extends React.Component {
     } catch (e) {
       console.error(e);
     }
-
-    this.setState({ userLocationChanged: false });
   };
 
   updateAddressFromLatAndLong = async ({ latitude, longitude }) => {
@@ -117,8 +111,7 @@ class CommerceLocationMap extends React.Component {
       };
 
       this.setState({
-        completeAddress: `${address}, ${city}, ${region}, ${country}`,
-        userLocationChanged: false
+        completeAddress: `${address}, ${city}, ${region}, ${country}`
       });
 
       this.props.onLocationChange({ value: location });
@@ -157,22 +150,28 @@ class CommerceLocationMap extends React.Component {
   };
 
   mapRegion = () => {
-    let region = {};
-    if (this.state.userLocationChanged) {
-      const { latitude, longitude, userLocation } = this.props;
-      const user = {
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude
+    const arrayOfMarkers = [];
+    if (this.props.userLocation.latitude) {
+      user = {
+        latitude: this.props.userLocation.latitude,
+        longitude: this.props.userLocation.longitude
       };
 
-      return this.calculateMarkersRegion([user, { latitude, longitude }]);
-    } else if (this.props.latitude && this.props.longitude) {
-      const { latitude, longitude } = this.props;
-
-      region = { latitude, longitude };
+      arrayOfMarkers.push(user);
     }
 
-    return { latitudeDelta: 0.01, longitudeDelta: 0.01, ...region };
+    if (this.props.latitude) {
+      selectedLocation = {
+        latitude: this.props.latitude,
+        longitude: this.props.longitude
+      };
+
+      arrayOfMarkers.push(selectedLocation);
+    }
+
+    return arrayOfMarkers !== []
+      ? this.calculateMarkersRegion(arrayOfMarkers)
+      : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
 
   renderUserMarker = () => {
