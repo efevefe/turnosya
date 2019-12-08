@@ -98,12 +98,6 @@ class ClientReservationDetails extends Component {
     }
   };
 
-  // ** Review methods **
-
-  onReviewBGPress = index => {
-    this.setState({ reviewBGIndex: index });
-  };
-
   // ** Commerce Review methods **
 
   onSaveReviewHandler = () => {
@@ -262,7 +256,7 @@ class ClientReservationDetails extends Component {
           <Input
             editable={false}
             multiline={true}
-            maxLength={128}
+            maxLength={254}
             maxHeight={180}
             placeholder="El negocio no realizó ningún comentario..."
             defaultValue={this.props.clientComment}
@@ -270,7 +264,7 @@ class ClientReservationDetails extends Component {
         </View>
       </View>
     ) : (
-      <View style={{ paddingTop: 10 }}>
+      <View style={{ paddingVertical: 10 }}>
         <CardSection>
           <Text style={reviewTitleStyle}>El negocio no te ha calificado</Text>
         </CardSection>
@@ -284,9 +278,9 @@ class ClientReservationDetails extends Component {
         <View>
           <Divider style={reviewDividerStyle} />
           <ButtonGroup
-            onPress={this.onReviewBGPress}
+            onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
-            buttons={['Calificar al negocio', 'Ver tu calificación']}
+            buttons={['Calificar al negocio', 'Ver su calificación']}
             selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
             selectedTextStyle={{ color: 'white' }}
             textStyle={locationBGTextStyle}

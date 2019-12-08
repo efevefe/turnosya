@@ -31,11 +31,11 @@ export const createClientReview = ({
   const db = firebase.firestore();
 
   const reviewRef = db.collection(`Profiles/${clientId}/Reviews`).doc();
-  const reservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
   const clientReservationRef = db
     .collection(`Profiles/${clientId}/Reservations`)
+    .doc(reservationId);
+  const commerceReservationRef = db
+    .collection(`Commerces/${commerceId}/Reservations`)
     .doc(reservationId);
   const clientRef = db.collection('Profiles').doc(clientId);
 
@@ -54,7 +54,7 @@ export const createClientReview = ({
         softDelete: null
       });
 
-      transaction.update(reservationRef, { reviewId: reviewRef.id });
+      transaction.update(commerceReservationRef, { reviewId: reviewRef.id });
       transaction.update(clientReservationRef, {
         receivedReviewId: reviewRef.id
       });
@@ -81,9 +81,7 @@ export const readClientReview = ({ clientId, reviewId }) => dispatch => {
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
         softDelete
-          ? dispatch({
-              type: ON_CLIENT_REVIEW_READ
-            })
+          ? dispatch({ type: ON_CLIENT_REVIEW_READ })
           : dispatch({
               type: ON_CLIENT_REVIEW_READ,
               payload: { rating, comment, reviewId }
