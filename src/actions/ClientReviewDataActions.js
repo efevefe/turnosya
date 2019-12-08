@@ -34,6 +34,9 @@ export const createClientReview = ({
   const reservationRef = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .doc(reservationId);
+  const clientReservationRef = db
+    .collection(`Profiles/${clientId}/Reservations`)
+    .doc(reservationId);
   const clientRef = db.collection('Profiles').doc(clientId);
 
   db.runTransaction(transaction => {
@@ -52,6 +55,9 @@ export const createClientReview = ({
       });
 
       transaction.update(reservationRef, { reviewId: reviewRef.id });
+      transaction.update(clientReservationRef, {
+        receivedReviewId: reviewRef.id
+      });
 
       transaction.update(clientRef, {
         rating: { total: ratingTotal + rating, count: ratingCount + 1 }
@@ -75,8 +81,7 @@ export const readClientReview = ({ clientId, reviewId }) => dispatch => {
       .then(doc => {
         const { rating, comment, softDelete } = doc.data();
         softDelete
-          ? // Sino se podría hacer un solo dispatch que actualice todos
-            dispatch({
+          ? dispatch({
               type: ON_CLIENT_REVIEW_READ
             })
           : dispatch({
@@ -138,6 +143,9 @@ export const deleteClientReview = ({
   const reservationRef = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .doc(reservationId);
+  const clientReservationRef = db
+    .collection(`Profiles/${clientId}/Reservations`)
+    .doc(reservationId);
 
   const oldReview = await reviewRef.get();
   const oldRating = oldReview.data().rating;
@@ -147,6 +155,7 @@ export const deleteClientReview = ({
       const { total, count } = client.data().rating;
 
       transaction.update(reservationRef, { reviewId: null });
+      transaction.update(clientReservationRef, { receivedReviewId: null });
 
       transaction.update(reviewRef, { softDelete: new Date() });
 

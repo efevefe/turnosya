@@ -199,7 +199,6 @@ class CommerceCourtReservationDetails extends Component {
             onChangeText={value =>
               this.props.clientReviewValueChange('comment', value)
             }
-            editable={true}
             multiline={true}
             maxLength={128}
             maxHeight={180}
@@ -212,7 +211,7 @@ class CommerceCourtReservationDetails extends Component {
     );
   };
 
-  renderCommerceReview = () => {
+  renderClientReview = () => {
     if (this.state.reservation.startDate < moment()) {
       return this.props.reviewDataLoading ? (
         <Spinner />
@@ -308,7 +307,7 @@ class CommerceCourtReservationDetails extends Component {
             onPress={() => this.onBackdropPress()}
           />
         </Menu>
-        {this.renderCommerceReview()}
+        {this.renderClientReview()}
         {this.renderConfirmReviewDelete()}
       </KeyboardAwareScrollView>
     );
