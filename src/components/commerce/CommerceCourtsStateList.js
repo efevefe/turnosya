@@ -4,7 +4,8 @@ import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList } from '../common';
 import {
   onReservationClientRead,
-  onCourtReservationsListValueChange
+  onCourtReservationsListValueChange,
+  onCourtReservationValueChange
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
@@ -49,8 +50,17 @@ class CommerceCourtsStateList extends Component {
       this.props.navigation.navigate('reservationDetails', {
         reservation
       });
-    } catch {}
+    } catch { }
   };
+
+  onAvailableCourtPress = court => {
+    this.props.onCourtReservationValueChange({
+      prop: 'court',
+      value: court
+    });
+
+    this.props.navigation.navigate('courtReservationRegister');
+  }
 
   renderRow({ item }) {
     const courtReservation = this.courtReservation(item);
@@ -63,7 +73,7 @@ class CommerceCourtsStateList extends Component {
         courtAvailable={!courtReservation}
         onPress={() =>
           !courtReservation
-            ? null
+            ? this.onAvailableCourtPress(item)
             : this.onReservedCourtPress(item, courtReservation)
         }
       />
@@ -118,5 +128,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onReservationClientRead,
-  onCourtReservationsListValueChange
+  onCourtReservationsListValueChange,
+  onCourtReservationValueChange
 })(CommerceCourtsStateList);

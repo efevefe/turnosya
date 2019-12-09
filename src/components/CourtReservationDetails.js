@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider, Avatar, Icon } from 'react-native-elements';
+import { Divider, Avatar } from 'react-native-elements';
 import moment from 'moment';
 import { CardSection } from './common';
 import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
@@ -13,8 +13,23 @@ class CourtReservationDetails extends Component {
 
         if (commerce) {
             this.setState({ name: commerce.name, profilePicture: commerce.profilePicture });
-        } else {
-            this.setState({ name: `${client.firstName} ${client.lastName}`, profilePicture: client.profilePicture });
+        }
+
+        if (client) {
+            const { firstName, lastName, profilePicture } = client;
+            this.setState({ name: `${firstName} ${lastName}`, profilePicture });
+        }
+    }
+
+    renderName = () => {
+        if (this.state.name) {
+            return (
+                <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+                    <Text style={styles.bigText}>
+                        {this.state.name}
+                    </Text>
+                </CardSection>
+            );
         }
     }
 
@@ -63,10 +78,8 @@ class CourtReservationDetails extends Component {
             startDate,
             endDate,
             light,
-            commerce
         } = this.props;
-
-        const { name, profilePicture } = this.state;
+        const { profilePicture } = this.state;
 
         return (
             <View style={styles.mainContainer}>
@@ -74,15 +87,11 @@ class CourtReservationDetails extends Component {
                     rounded
                     source={profilePicture ? { uri: profilePicture } : null}
                     size={90}
-                    icon={{ name: commerce ? 'store' : 'person' }}
+                    icon={{ name: this.props.commerce ? 'store' : 'person' }}
                     containerStyle={styles.avatarStyle}
                 />
                 <View style={styles.contentContainer}>
-                    <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-                        <Text style={styles.bigText}>
-                            {name}
-                        </Text>
-                    </CardSection>
+                    {this.renderName()}
                     {/*this.renderAddress()*/}
                     <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
                         <Text style={styles.mediumText}>

@@ -8,8 +8,7 @@ import { CardSection, Button } from "../common";
 import { MAIN_COLOR } from "../../constants";
 import {
   onCourtReservationValueChange,
-  onClientCourtReservationCreate,
-  onCourtReservationClear
+  onClientCourtReservationCreate
 } from "../../actions";
 import CourtReservationDetails from "../CourtReservationDetails";
 
@@ -75,7 +74,7 @@ class ConfirmCourtReservation extends Component {
     if (!this.props.saved) {
       return (
         <View>
-          <CardSection style={styles.cardSections}>
+          <CardSection>
             <ButtonGroup
               onPress={this.onPriceSelect}
               selectedIndex={this.state.selectedIndex}
@@ -195,9 +194,6 @@ class ConfirmCourtReservation extends Component {
 }
 
 const styles = StyleSheet.create({
-  cardSections: {
-    alignItems: "center"
-  },
   priceButtons: {
     borderColor: MAIN_COLOR,
     height: 60,
@@ -228,6 +224,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCourtReservationValueChange,
-  onClientCourtReservationCreate,
-  onCourtReservationClear
+  onClientCourtReservationCreate
 })(ConfirmCourtReservation);
