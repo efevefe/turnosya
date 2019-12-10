@@ -212,7 +212,7 @@ class CommerceCourtReservationDetails extends Component {
             multiline={true}
             maxLength={254}
             maxHeight={180}
-            placeholder="Comente sobre el comportamiento del cliente..."
+            placeholder="Comente sobre el cliente..."
             defaultValue={this.props.clientComment}
             editable={!this.state.isOneWeekOld}
           />
@@ -221,14 +221,18 @@ class CommerceCourtReservationDetails extends Component {
     );
   };
 
+  renderReviewTitle = title => {
+    return (
+      <CardSection>
+        <Text style={reviewTitleStyle}>{title}</Text>
+      </CardSection>
+    );
+  };
+
   renderCommerceReview = () => {
     return this.props.commerceRating ? (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>
-            Calificación realizada por el cliente
-          </Text>
-        </CardSection>
+        {this.renderReviewTitle('Calificación realizada por el cliente')}
         <CardSection>
           <AirbnbRating
             showRating={false}
@@ -250,25 +254,22 @@ class CommerceCourtReservationDetails extends Component {
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>El cliente no te ha calificado</Text>
-        </CardSection>
+        {this.renderReviewTitle('El cliente no te ha calificado')}
       </View>
     );
   };
 
   renderClientReview = () => {
+    const title =
+      this.state.isOneWeekOld && !this.props.clientRating
+        ? 'Ya pasó el período de calificación'
+        : 'Su calificación del cliente';
+
     return this.props.reviewDataLoading ? (
       <Spinner />
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>
-            {this.state.isOneWeekOld
-              ? 'Ya pasó el período de calificación'
-              : 'Calificación del Cliente'}
-          </Text>
-        </CardSection>
+        {this.renderReviewTitle(title)}
         {this.renderRatingAndComment()}
         {this.renderReviewButtons()}
       </View>

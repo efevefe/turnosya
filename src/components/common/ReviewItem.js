@@ -14,7 +14,7 @@ const ReviewItem = props => (
       {props.comment ? (
         <Text style={commentStyle}>{props.comment}</Text>
       ) : (
-        <Text style={placeholderStyle}>Ésta reseña no posee comentarios.</Text>
+        <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
       )}
     </CardSection>
     <Divider />

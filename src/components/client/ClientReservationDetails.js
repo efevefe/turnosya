@@ -220,16 +220,22 @@ class ClientReservationDetails extends Component {
     );
   };
 
+  renderReviewTitle = title => {
+    return (
+      <CardSection>
+        <Text style={reviewTitleStyle}>{title}</Text>
+      </CardSection>
+    );
+  };
+
   renderCommerceReview = () => {
+    const title =
+      this.state.isOneWeekOld && !this.props.commerceRating
+        ? 'Ya pasó el período de calificación'
+        : 'Calificación de la atención';
     return (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>
-            {this.state.isOneWeekOld
-              ? 'Ya pasó el período de calificación'
-              : 'Calificación de la atención'}
-          </Text>
-        </CardSection>
+        {this.renderReviewTitle(title)}
         {this.renderRatingAndComment()}
         {this.renderReviewButtons()}
       </View>
@@ -239,11 +245,7 @@ class ClientReservationDetails extends Component {
   renderClientReview = () => {
     return this.props.clientRating ? (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>
-            Calificación realizada por el negocio
-          </Text>
-        </CardSection>
+        {this.renderReviewTitle('Calificación realizada por el negocio')}
         <CardSection>
           <AirbnbRating
             showRating={false}
@@ -265,9 +267,7 @@ class ClientReservationDetails extends Component {
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        <CardSection>
-          <Text style={reviewTitleStyle}>El negocio no te ha calificado</Text>
-        </CardSection>
+        {this.renderReviewTitle('El negocio no te ha calificado')}
       </View>
     );
   };
