@@ -10,7 +10,8 @@ import {
   MenuItem,
   Spinner,
   Toast,
-  Input
+  Input,
+  ReviewCard
 } from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
@@ -68,7 +69,7 @@ class ClientReservationDetails extends Component {
 
   // ** Cancelation methods **
 
-  onPressCancelButton = () => {
+  onCancelButtonPress = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
     if (startDate.diff(moment(), 'hours', 'minutes') > reservationMinCancelTime)
@@ -90,7 +91,7 @@ class ClientReservationDetails extends Component {
             <Button
               title="Cancelar Reserva"
               type="solid"
-              onPress={this.onPressCancelButton}
+              onPress={this.onCancelButtonPress}
             />
           </CardSection>
         </View>
@@ -189,54 +190,32 @@ class ClientReservationDetails extends Component {
     );
   };
 
-  renderRatingAndComment = () => {
-    return this.state.isOneWeekOld && !this.props.commerceReviewId ? null : (
-      <View>
-        <CardSection>
-          <AirbnbRating
-            onFinishRating={value =>
-              this.props.commerceReviewValueChange('rating', value)
-            }
-            showRating={false}
-            size={25}
-            defaultRating={this.props.commerceRating}
-            isDisabled={this.state.isOneWeekOld}
-          />
-        </CardSection>
-        <View style={{ marginTop: 10 }}>
-          <Input
-            onChangeText={value =>
-              this.props.commerceReviewValueChange('comment', value)
-            }
-            multiline={true}
-            maxLength={128}
-            maxHeight={180}
-            placeholder="Deje un comentario sobre la atención..."
-            defaultValue={this.props.commerceComment}
-            editable={!this.state.isOneWeekOld}
-          />
-        </View>
-      </View>
-    );
-  };
-
-  renderReviewTitle = title => {
-    return (
-      <CardSection>
-        <Text style={reviewTitleStyle}>{title}</Text>
-      </CardSection>
-    );
-  };
-
   renderCommerceReview = () => {
     const title =
       this.state.isOneWeekOld && !this.props.commerceRating
         ? 'Ya pasó el período de calificación'
         : 'Calificación de la atención';
-    return (
+
+    return this.state.isOneWeekOld && !this.props.commerceReviewId ? (
       <View style={{ paddingVertical: 10 }}>
-        {this.renderReviewTitle(title)}
-        {this.renderRatingAndComment()}
+        <ReviewCard title={'Ya pasó el período de calificación'} />
+      </View>
+    ) : (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={value =>
+            this.props.commerceReviewValueChange('rating', value)
+          }
+          rating={this.props.commerceRating}
+          isDisabled={this.state.isOneWeekOld}
+          onChangeText={value =>
+            this.props.commerceReviewValueChange('comment', value)
+          }
+          commentPlaceholder={'Deje un comentario sobre la atención...'}
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
         {this.renderReviewButtons()}
       </View>
     );
@@ -245,29 +224,18 @@ class ClientReservationDetails extends Component {
   renderClientReview = () => {
     return this.props.clientRating ? (
       <View style={{ paddingVertical: 10 }}>
-        {this.renderReviewTitle('Calificación realizada por el negocio')}
-        <CardSection>
-          <AirbnbRating
-            showRating={false}
-            size={25}
-            defaultRating={this.props.clientRating}
-            isDisabled={true}
-          />
-        </CardSection>
-        <View style={{ marginTop: 10 }}>
-          <Input
-            editable={false}
-            multiline={true}
-            maxLength={254}
-            maxHeight={180}
-            placeholder="El negocio no realizó ningún comentario..."
-            defaultValue={this.props.clientComment}
-          />
-        </View>
+        <ReviewCard
+          title={'Calificación realizada por el negocio'}
+          rating={this.props.clientRating}
+          isDisabled
+          commentPlaceholder={'El negocio no realizó ningún comentario...'}
+          commentText={this.props.clientComment}
+          fieldsVisible
+        />
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        {this.renderReviewTitle('El negocio no te ha calificado')}
+        <ReviewCard title={'El negocio no te ha calificado'} />
       </View>
     );
   };
