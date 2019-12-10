@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
-import { Divider, AirbnbRating, ButtonGroup } from 'react-native-elements';
+import { Divider, ButtonGroup } from 'react-native-elements';
 import {
   CardSection,
   Button,
@@ -10,7 +10,6 @@ import {
   MenuItem,
   Spinner,
   Toast,
-  Input,
   ReviewCard
 } from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

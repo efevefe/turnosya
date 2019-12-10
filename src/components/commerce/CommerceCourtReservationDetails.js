@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Divider, AirbnbRating, ButtonGroup } from 'react-native-elements';
+import { Divider, ButtonGroup } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {
@@ -10,7 +10,6 @@ import {
   MenuItem,
   Input,
   CardSection,
-  Spinner,
   Toast,
   ReviewCard
 } from '../common';
