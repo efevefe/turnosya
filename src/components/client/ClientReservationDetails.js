@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
-import { Divider, AirbnbRating } from 'react-native-elements';
+import { Divider, ButtonGroup } from 'react-native-elements';
 import {
   CardSection,
   Button,
@@ -10,7 +10,7 @@ import {
   MenuItem,
   Spinner,
   Toast,
-  Input
+  ReviewCard
 } from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
@@ -22,9 +22,12 @@ import {
   updateCommerceReview,
   deleteCommerceReview,
   commerceReviewValueChange,
-  commerceReviewClear
+  commerceReviewClear,
+  clientReviewClear,
+  readClientReview
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
+import { MAIN_COLOR } from '../../constants';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -35,7 +38,8 @@ class ClientReservationDetails extends Component {
       reservation,
       optionsVisible: false,
       confirmDeleteVisible: false,
-      isOneWeekOld: isOneWeekOld(reservation.endDate)
+      isOneWeekOld: isOneWeekOld(reservation.endDate),
+      reviewBGIndex: 0
     };
   }
 
@@ -50,15 +54,21 @@ class ClientReservationDetails extends Component {
       commerceId: this.state.reservation.commerceId,
       reviewId: this.state.reservation.reviewId
     });
+
+    this.props.readClientReview({
+      clientId: this.props.clientId,
+      reviewId: this.state.reservation.receivedReviewId
+    });
   }
 
   componentWillUnmount() {
     this.props.commerceReviewClear();
+    this.props.clientReviewClear();
   }
 
   // ** Cancelation methods **
 
-  onPressCancelButton = () => {
+  onCancelButtonPress = () => {
     const { reservationMinCancelTime } = this.props;
     const { startDate } = this.state.reservation;
     if (startDate.diff(moment(), 'hours', 'minutes') > reservationMinCancelTime)
@@ -80,7 +90,7 @@ class ClientReservationDetails extends Component {
             <Button
               title="Cancelar Reserva"
               type="solid"
-              onPress={this.onPressCancelButton}
+              onPress={this.onCancelButtonPress}
             />
           </CardSection>
         </View>
@@ -91,22 +101,26 @@ class ClientReservationDetails extends Component {
   // ** Commerce Review methods **
 
   onSaveReviewHandler = () => {
-    if (this.state.reservation.reviewId || this.props.reviewId) {
-      // Si tenia calificacion actualizarla
-      this.props.updateCommerceReview({
-        commerceId: this.state.reservation.commerceId,
-        comment: this.props.comment,
-        rating: this.props.rating,
-        reviewId: this.state.reservation.reviewId || this.props.reviewId
-      });
+    if (this.props.commerceRating === 0) {
+      Toast.show({ text: 'Debe primero especificar una calificación.' });
     } else {
-      // Si la reserva no tiene calificacion, crearla
-      this.props.createCommerceReview({
-        commerceId: this.state.reservation.commerceId,
-        comment: this.props.comment,
-        rating: this.props.rating,
-        reservationId: this.state.reservation.id
-      });
+      if (this.props.commerceReviewId) {
+        // Si tenia calificacion actualizarla
+        this.props.updateCommerceReview({
+          commerceId: this.state.reservation.commerceId,
+          comment: this.props.commerceComment,
+          rating: this.props.commerceRating,
+          reviewId: this.props.commerceReviewId
+        });
+      } else {
+        // Si la reserva no tiene calificacion, crearla
+        this.props.createCommerceReview({
+          commerceId: this.state.reservation.commerceId,
+          comment: this.props.commerceComment,
+          rating: this.props.commerceRating,
+          reservationId: this.state.reservation.id
+        });
+      }
     }
   };
 
@@ -126,7 +140,7 @@ class ClientReservationDetails extends Component {
     this.props.deleteCommerceReview({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
-      reviewId: this.state.reservation.reviewId || this.props.reviewId
+      reviewId: this.props.commerceReviewId
     });
   };
 
@@ -161,10 +175,7 @@ class ClientReservationDetails extends Component {
           outerContainerStyle={{ flex: 1 }}
           onPress={this.onDeleteReviewHandler}
           loading={this.props.deleteReviewLoading}
-          disabled={
-            this.state.isOneWeekOld ||
-            !(this.state.reservation.reviewId || this.props.reviewId)
-          }
+          disabled={this.state.isOneWeekOld || !this.props.commerceReviewId}
         />
         <Button
           title="Guardar"
@@ -178,53 +189,75 @@ class ClientReservationDetails extends Component {
     );
   };
 
-  renderRatingAndComment = () => {
-    return this.state.isOneWeekOld &&
-      !this.state.reservation.reviewId ? null : (
-      <View>
-        <CardSection>
-          <AirbnbRating
-            onFinishRating={value =>
-              this.props.commerceReviewValueChange('rating', value)
-            }
-            showRating={false}
-            size={25}
-            defaultRating={this.props.rating}
-            isDisabled={this.state.isOneWeekOld}
-          />
-        </CardSection>
-        <View style={{ marginTop: 10 }}>
-          <Input
-            onChangeText={value =>
-              this.props.commerceReviewValueChange('comment', value)
-            }
-            editable={true}
-            multiline={true}
-            maxLength={128}
-            maxHeight={180}
-            placeholder="Deje un comentario sobre la atención..."
-            defaultValue={this.props.comment}
-            editable={!this.state.isOneWeekOld}
-          />
-        </View>
+  renderCommerceReview = () => {
+    const title =
+      this.state.isOneWeekOld && !this.props.commerceRating
+        ? 'Ya pasó el período de calificación'
+        : 'Calificación de la atención';
+
+    return this.state.isOneWeekOld && !this.props.commerceReviewId ? (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title={'Ya pasó el período de calificación'} />
+      </View>
+    ) : (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={value =>
+            this.props.commerceReviewValueChange('rating', value)
+          }
+          rating={this.props.commerceRating}
+          isDisabled={this.state.isOneWeekOld}
+          onChangeText={value =>
+            this.props.commerceReviewValueChange('comment', value)
+          }
+          commentPlaceholder={'Deje un comentario sobre la atención...'}
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
       </View>
     );
   };
 
-  renderCommerceReview = () => {
+  renderClientReview = () => {
+    return this.props.clientRating ? (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={'Calificación realizada por el negocio'}
+          rating={this.props.clientRating}
+          isDisabled
+          commentPlaceholder={'El negocio no realizó ningún comentario...'}
+          commentText={this.props.clientComment}
+          fieldsVisible
+        />
+      </View>
+    ) : (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title={'El negocio no te ha calificado'} />
+      </View>
+    );
+  };
+
+  renderReviewFields = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
         <View>
           <Divider style={reviewDividerStyle} />
-          <CardSection>
-            <Text style={reviewTitleStyle}>
-              {this.state.isOneWeekOld
-                ? 'Ya pasó el período de calificación'
-                : 'Calificación de la Atención'}
-            </Text>
-          </CardSection>
-          {this.renderRatingAndComment()}
-          {this.renderReviewButtons()}
+          <ButtonGroup
+            onPress={index => this.setState({ reviewBGIndex: index })}
+            selectedIndex={this.state.reviewBGIndex}
+            buttons={['Calificar al negocio', 'Ver su calificación']}
+            selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
+            selectedTextStyle={{ color: 'white' }}
+            textStyle={locationBGTextStyle}
+            containerStyle={locationBGContainerStyle}
+            innerBorderStyle={{ color: MAIN_COLOR }}
+          />
+          {this.state.reviewBGIndex === 0
+            ? this.renderCommerceReview()
+            : this.renderClientReview()}
+          {this.renderConfirmReviewDelete()}
         </View>
       );
     }
@@ -247,7 +280,11 @@ class ClientReservationDetails extends Component {
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle}>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        style={scrollViewStyle}
+        extraScrollHeight={60}
+      >
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
@@ -284,8 +321,7 @@ class ClientReservationDetails extends Component {
           light={light}
           showPrice={true}
         />
-        {this.renderCommerceReview()}
-        {this.renderConfirmReviewDelete()}
+        {this.renderReviewFields()}
         {this.renderCancelButton()}
       </KeyboardAwareScrollView>
     );
@@ -298,7 +334,9 @@ const {
   reviewTitleStyle,
   reviewButtonsContainerStyle,
   overlayDividerStyle,
-  scrollViewStyle
+  scrollViewStyle,
+  locationBGTextStyle,
+  locationBGContainerStyle
 } = StyleSheet.create({
   cancelButtonContainerStyle: { flex: 1, justifyContent: 'flex-end' },
   reviewDividerStyle: {
@@ -314,30 +352,38 @@ const {
     marginBottom: 10
   },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
+  locationBGTextStyle: {
+    color: MAIN_COLOR,
+    textAlign: 'center',
+    fontSize: 12
+  },
+  locationBGContainerStyle: {
+    borderColor: MAIN_COLOR,
+    height: 40,
+    borderRadius: 8
+  }
 });
 
 const mapStateToProps = state => {
   const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
-  const {
-    rating,
-    comment,
-    saveLoading,
-    deleteLoading,
-    reviewId
-  } = state.commerceReviewData;
+  const { saveLoading, deleteLoading } = state.commerceReviewData;
+  const { clientId } = state.clientData;
 
   return {
     loadingReservations,
     loadingCancel,
     reservationMinCancelTime,
-    rating,
-    comment,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,
-    reviewId
+    commerceRating: state.commerceReviewData.rating,
+    commerceComment: state.commerceReviewData.comment,
+    commerceReviewId: state.commerceReviewData.reviewId,
+    clientRating: state.clientReviewData.rating,
+    clientComment: state.clientReviewData.comment,
+    clientId
   };
 };
 
@@ -349,5 +395,7 @@ export default connect(mapStateToProps, {
   updateCommerceReview,
   deleteCommerceReview,
   commerceReviewValueChange,
-  commerceReviewClear
+  commerceReviewClear,
+  clientReviewClear,
+  readClientReview
 })(ClientReservationDetails);
