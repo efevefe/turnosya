@@ -269,8 +269,10 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
     await batch.commit();
 
     dispatch({ type: ON_SCHEDULE_CREATED });
+    return true;
   } catch (error) {
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+    return false;
   }
 }
 

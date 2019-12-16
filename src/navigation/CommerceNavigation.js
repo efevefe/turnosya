@@ -41,14 +41,11 @@ const calendarStack = createStackNavigator(
     schedulesList: {
       screen: CommerceSchedulesList,
       navigationOptions: {
-        title: 'Horarios de Atencion'
+        title: 'Horarios de Atención'
       }
     },
     scheduleRegister: {
-      screen: ScheduleRegister,
-      navigationOptions: {
-        title: 'Horarios de Atencion'
-      }
+      screen: ScheduleRegister
     },
     registerConfiguration: {
       screen: ScheduleRegisterConfiguration,

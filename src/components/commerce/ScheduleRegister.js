@@ -21,6 +21,7 @@ class ScheduleRegister extends Component {
   state = {
     incompatibleScheduleVisible: false,
     incompatibleEndDateVisible: false,
+    confirmationVisible: false,
     reservationsAfterEndDate: [],
     notCoveredReservations: [],
     reservationsToCancel: [],
@@ -37,13 +38,21 @@ class ScheduleRegister extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: navigation.getParam('rightIcon'),
+      title: navigation.getParam('title')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: this.renderSaveButton()
+    });
+
+    this.setState({
+      sliderValues: {
+        ...this.state.sliderValues,
+        reservationMinValue: this.props.reservationMinLength
+      }
     });
 
     const prevSchedule = this.props.navigation.getParam('schedule');
@@ -397,13 +406,14 @@ class ScheduleRegister extends Component {
       return (
         <Menu
           title={
-            'Los nuevos horarios de atencion entraran en vigencia luego del ' +
+            'Los nuevos horarios de atención entran en conflicto con una o mas ' +
+            'reservas existentes hasta el ' +
             DAYS[lastReservationDate.day()] + ' ' +
             lastReservationDate.format('D') + ' de ' +
-            MONTHS[lastReservationDate.month()] + ' ' +
-            'debido a que entran en conflicto con una o mas reservas existentes ' +
-            'hasta esa fecha. Seleccione "Aceptar" ' +
-            'para confirmar estos cambios o "Cancelar reservas y notificar" para ' +
+            MONTHS[lastReservationDate.month()] + '. ' +
+            '¿Desea establecer el inicio de vigencia luego de esta fecha?. ' +
+            'Seleccione "Aceptar" para confirmar estos cambios o ' +
+            '"Cancelar reservas y notificar" para cancelar dichas reservas e ' +
             'iniciar la vigencia en la fecha ingresada'
           }
           onBackdropPress={() => this.setState({ incompatibleScheduleVisible: false })}
@@ -461,11 +471,11 @@ class ScheduleRegister extends Component {
             'Tienes reservas hasta el ' +
             DAYS[lastReservationDate.day()] + ' ' +
             lastReservationDate.format('D') + ' de ' +
-            MONTHS[lastReservationDate.month()] + ' ' +
+            MONTHS[lastReservationDate.month()] + '. ' +
             '¿Desea establecer el fin de vigencia luego de esta fecha?. ' +
             'Seleccione "Aceptar" confirmar estos cambios o ' +
             '"Cancelar reservas y notificar" para cancelar dichas reservas ' +
-            'y establecer la fecha ingresada como fin de vigencia'
+            'y finalizar la vigencia en la fecha ingresada'
           }
           onBackdropPress={() => this.setState({ incompatibleEndDateVisible: false })}
           isVisible={incompatibleEndDateVisible}
@@ -614,7 +624,7 @@ class ScheduleRegister extends Component {
       );
     }
 
-    return <EmptyList title="No hay horarios de atencion" />;
+    return <EmptyList title="No hay horarios de atención" />;
   };
 
   render() {
@@ -633,6 +643,24 @@ class ScheduleRegister extends Component {
         >
           <Ionicons name="md-add" />
         </Fab>
+
+        <Menu
+          title={'¿Está seguro que desea confirmar esta acción?'}
+          onBackdropPress={() => this.setState({ confirmationVisible: false })}
+          isVisible={this.state.confirmationVisible}
+        >
+          <MenuItem
+            title="Aceptar"
+            icon="md-checkmark"
+            onPress={this.onConfirmPress}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Cancelar"
+            icon="md-close"
+            onPress={() => this.setState({ confirmationVisible: false })}
+          />
+        </Menu>
       </View>
     );
   }

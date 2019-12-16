@@ -42,7 +42,7 @@ class CommerceSchedulesList extends Component {
         this.props.onActiveSchedulesRead({
             commerceId: this.props.commerceId,
             date: moment()
-        })
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -67,7 +67,7 @@ class CommerceSchedulesList extends Component {
 
     onScheduleAddPress = () => {
         this.props.onScheduleFormOpen();
-        this.props.navigation.navigate('scheduleRegister');
+        this.props.navigation.navigate('scheduleRegister', { title: 'Nuevo horario' });
     }
 
     onScheduleEditPress = () => {
@@ -86,7 +86,10 @@ class CommerceSchedulesList extends Component {
             }
         }
 
-        this.props.navigation.navigate('scheduleRegister', { schedule: selectedSchedule });
+        this.props.navigation.navigate('scheduleRegister', { 
+            schedule: selectedSchedule,
+            title: 'Modificar horario' 
+        });
     }
 
     onScheduleDeletePress = () => {
@@ -129,12 +132,18 @@ class CommerceSchedulesList extends Component {
     onScheduleDeleteConfirm = async () => {
         const { lastReservationDate, selectedSchedule, reservationsToCancel } = this.state;
 
-        await this.props.onScheduleDelete({
+        const success = await this.props.onScheduleDelete({
             commerceId: this.props.commerceId,
             schedule: selectedSchedule,
             endDate: lastReservationDate,
             reservationsToCancel
         });
+
+        if (success)
+            this.props.onActiveSchedulesRead({
+                commerceId: this.props.commerceId,
+                date: moment()
+            });
 
         this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
     }
@@ -150,7 +159,7 @@ class CommerceSchedulesList extends Component {
                         DAYS[lastReservationDate.day()] + ' ' +
                         lastReservationDate.format('D') + ' de ' +
                         MONTHS[lastReservationDate.month()] + ' ' +
-                        'por lo que la baja de los horarios de atencion entrará en ' +
+                        'por lo que la baja de los horarios de atención entrará en ' +
                         'vigencia luego de esa fecha. Seleccione "Aceptar" para ' +
                         'confirmar estos cambios o "Cancelar reservas y notificar" ' +
                         'para que la baja entre en vigencia ahora mismo.'
@@ -159,7 +168,7 @@ class CommerceSchedulesList extends Component {
                     isVisible={this.state.deleteModalVisible}
                 >
                     <MenuItem
-                        title="Acepar"
+                        title="Aceptar"
                         icon="md-checkmark"
                         onPress={this.onScheduleDeleteConfirm}
                     />
@@ -171,7 +180,7 @@ class CommerceSchedulesList extends Component {
                     />
                     <Divider style={{ backgroundColor: 'grey' }} />
                     <MenuItem
-                        title="Cancelar"
+                        title="Volver"
                         icon="md-close"
                         onPress={() => this.setState({ deleteModalVisible: false })}
                     />
@@ -259,7 +268,7 @@ class CommerceSchedulesList extends Component {
                     </Fab>
 
                     <Menu
-                        title={'Horarios de Atencion'}
+                        title={'Horarios de Atención'}
                         onBackdropPress={() => this.setState({ optionsVisible: false })}
                         isVisible={this.state.optionsVisible}
                     >
@@ -277,7 +286,7 @@ class CommerceSchedulesList extends Component {
                     </Menu>
 
                     <Menu
-                        title={'¿Esta seguro que desea eliminar los horarios de atencion?'}
+                        title={'¿Está seguro que desea eliminar los horarios de atención?'}
                         onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
                         isVisible={this.state.deleteConfirmVisible}
                     >
@@ -299,7 +308,7 @@ class CommerceSchedulesList extends Component {
             )
         }
 
-        return <EmptyList title='No hay horarios de atencion vigentes' />
+        return <EmptyList title='No hay horarios de atención vigentes' />
     }
 }
 
