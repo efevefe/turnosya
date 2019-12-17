@@ -86,9 +86,9 @@ class CommerceSchedulesList extends Component {
             }
         }
 
-        this.props.navigation.navigate('scheduleRegister', { 
+        this.props.navigation.navigate('scheduleRegister', {
             schedule: selectedSchedule,
-            title: 'Modificar horario' 
+            title: 'Modificar horario'
         });
     }
 
@@ -111,7 +111,7 @@ class CommerceSchedulesList extends Component {
         if (nextReservations.length) {
             lastReservationDate = formattedMoment(
                 nextReservations[nextReservations.length - 1].startDate
-            );
+            ).add(1, 'day');
             this.setState({ deleteModalVisible: true, lastReservationDate });
         } else {
             lastReservationDate = formattedMoment();
@@ -125,8 +125,9 @@ class CommerceSchedulesList extends Component {
         this.setState({
             lastReservationDate: formattedMoment(),
             reservationsToCancel: nextReservations,
-            deleteModalVisible: false
-        }, this.onScheduleDeleteConfirm)
+            deleteModalVisible: false,
+            deleteConfirmVisible: true
+        });
     }
 
     onScheduleDeleteConfirm = async () => {
@@ -170,7 +171,7 @@ class CommerceSchedulesList extends Component {
                     <MenuItem
                         title="Aceptar"
                         icon="md-checkmark"
-                        onPress={this.onScheduleDeleteConfirm}
+                        onPress={() => this.setState({ deleteConfirmVisible: true, deleteModalVisible: false })}
                     />
                     <Divider style={{ backgroundColor: 'grey' }} />
                     <MenuItem
@@ -229,15 +230,12 @@ class CommerceSchedulesList extends Component {
                     `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
                 }
                 subtitleStyle={{ fontSize: 12 }}
-                rightElement={
-                    <IconButton
-                        icon='md-more'
-                        color='grey'
-                        iconSize={22}
-                        iconStyle={{ marginLeft: 5, marginRight: 8 }}
-                        onPress={() => this.onOptionsPress(item)}
-                    />
-                }
+                rightIcon={{
+                    name: 'md-more',
+                    type: 'ionicon',
+                    containerStyle: { height: 20, width: 10 },
+                    onPress: () => this.onOptionsPress(item)
+                }}
                 onLongPress={() => this.onOptionsPress(item)}
                 bottomDivider
             />
@@ -286,7 +284,7 @@ class CommerceSchedulesList extends Component {
                     </Menu>
 
                     <Menu
-                        title={'¿Está seguro que desea eliminar los horarios de atención?'}
+                        title={'¿Está seguro que desea confirmar esta acción?'}
                         onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
                         isVisible={this.state.deleteConfirmVisible}
                     >

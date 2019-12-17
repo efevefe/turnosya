@@ -18,23 +18,31 @@ import {
 } from '../../actions';
 
 class ScheduleRegister extends Component {
-  state = {
-    incompatibleScheduleVisible: false,
-    incompatibleEndDateVisible: false,
-    confirmationVisible: false,
-    reservationsAfterEndDate: [],
-    notCoveredReservations: [],
-    reservationsToCancel: [],
-    prevSchedule: null,
-    overlappedSchedule: null,
-    startDateError: '',
-    endDateError: '',
-    sliderValues: {
-      reservationMinFrom: 10,
-      reservationMinTo: 240,
-      reservationMinValue: 60
-    }
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      incompatibleScheduleVisible: false,
+      incompatibleEndDateVisible: false,
+      confirmationVisible: false,
+      reservationsAfterEndDate: [],
+      lastReservationDate: null,
+      notCoveredReservations: [],
+      lastIncompatibleDate: null,
+      reservationsToCancel: [],
+      prevSchedule: null,
+      overlappedSchedule: null,
+      startDateError: '',
+      endDateError: '',
+      sliderValues: {
+        reservationMinFrom: 10,
+        reservationMinTo: 240,
+        reservationMinValue: 60
+      }
+    };
+
+    this.onConfirmPress = null;
+  }
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -214,6 +222,7 @@ class ScheduleRegister extends Component {
       if (notCoveredReservations.length) {
         return this.setState({
           notCoveredReservations,
+          lastIncompatibleDate: notCoveredReservations[notCoveredReservations.length - 1].startDate,
           incompatibleScheduleVisible: true
         });
       }
@@ -272,6 +281,7 @@ class ScheduleRegister extends Component {
       if (reservationsAfterEndDate.length) {
         this.setState({
           reservationsAfterEndDate,
+          lastReservationDate: reservationsAfterEndDate[reservationsAfterEndDate.length - 1].startDate,
           incompatibleEndDateVisible: true
         });
 
@@ -398,19 +408,17 @@ class ScheduleRegister extends Component {
   }
 
   renderIncompatibleScheduleModal = () => {
-    const { notCoveredReservations, incompatibleScheduleVisible } = this.state;
-    const lastReservation = notCoveredReservations[notCoveredReservations.length - 1];
-    const lastReservationDate = lastReservation ? lastReservation.startDate : null;
+    const { lastIncompatibleDate, incompatibleScheduleVisible } = this.state;
 
-    if (lastReservationDate && incompatibleScheduleVisible) {
+    if (lastIncompatibleDate && incompatibleScheduleVisible) {
       return (
         <Menu
           title={
             'Los nuevos horarios de atención entran en conflicto con una o mas ' +
             'reservas existentes hasta el ' +
-            DAYS[lastReservationDate.day()] + ' ' +
-            lastReservationDate.format('D') + ' de ' +
-            MONTHS[lastReservationDate.month()] + '. ' +
+            DAYS[lastIncompatibleDate.day()] + ' ' +
+            lastIncompatibleDate.format('D') + ' de ' +
+            MONTHS[lastIncompatibleDate.month()] + '. ' +
             '¿Desea establecer el inicio de vigencia luego de esta fecha?. ' +
             'Seleccione "Aceptar" para confirmar estos cambios o ' +
             '"Cancelar reservas y notificar" para cancelar dichas reservas e ' +
@@ -422,13 +430,13 @@ class ScheduleRegister extends Component {
           <MenuItem
             title="Acepar"
             icon="md-checkmark"
-            onPress={() => this.onSetNewStartDate(lastReservationDate)}
+            onPress={() => this.onConfirmModalOpen(this.onSetNewStartDate)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cancelar reservas y notificar"
             icon="md-trash"
-            onPress={this.onIncompatibleScheduleSave}
+            onPress={() => this.onConfirmModalOpen(this.onIncompatibleScheduleSave)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -441,13 +449,15 @@ class ScheduleRegister extends Component {
     }
   }
 
-  onSetNewStartDate = newStartDate => {
+  onSetNewStartDate = () => {
+    const { lastIncompatibleDate } = this.state;
+
     this.props.onScheduleValueChange({
       prop: 'startDate',
-      value: formattedMoment(newStartDate).add(1, 'days')
+      value: formattedMoment(lastIncompatibleDate).add(1, 'days')
     });
 
-    this.setState({ incompatibleScheduleVisible: false }, this.onScheduleSave);
+    this.setState({ confirmationVisible: false }, this.onScheduleSave);
   }
 
   onIncompatibleScheduleSave = () => {
@@ -455,14 +465,12 @@ class ScheduleRegister extends Component {
 
     this.setState({
       reservationsToCancel: reservationsToCancel.concat(notCoveredReservations),
-      incompatibleScheduleVisible: false
+      confirmationVisible: false
     }, this.onScheduleSave);
   }
 
   renderIncompatibleEndDateModal = () => {
-    const { reservationsAfterEndDate, incompatibleEndDateVisible } = this.state;
-    const lastReservation = reservationsAfterEndDate[reservationsAfterEndDate.length - 1];
-    const lastReservationDate = lastReservation ? lastReservation.startDate : null;
+    const { lastReservationDate, incompatibleEndDateVisible } = this.state;
 
     if (lastReservationDate && incompatibleEndDateVisible) {
       return (
@@ -483,13 +491,13 @@ class ScheduleRegister extends Component {
           <MenuItem
             title="Aceptar"
             icon="md-checkmark"
-            onPress={() => this.onSetNewEndDate(lastReservationDate)}
+            onPress={() => this.onConfirmModalOpen(this.onSetNewEndDate)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cancelar reservas y notificar"
             icon="md-trash"
-            onPress={this.onIncompatibleEndDateSave}
+            onPress={() => this.onConfirmModalOpen(this.onIncompatibleEndDateSave)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -502,13 +510,15 @@ class ScheduleRegister extends Component {
     }
   }
 
-  onSetNewEndDate = newEndDate => {
+  onSetNewEndDate = () => {
+    const { lastReservationDate } = this.state;
+
     this.props.onScheduleValueChange({
       prop: 'endDate',
-      value: formattedMoment(newEndDate).add(1, 'days')
+      value: formattedMoment(lastReservationDate).add(1, 'days')
     });
 
-    this.setState({ incompatibleEndDateVisible: false }, this.compatibleSchedule);
+    this.setState({ confirmationVisible: false }, this.compatibleSchedule);
   }
 
   onIncompatibleEndDateSave = () => {
@@ -516,8 +526,18 @@ class ScheduleRegister extends Component {
 
     this.setState({
       reservationsToCancel: reservationsToCancel.concat(reservationsAfterEndDate),
-      incompatibleEndDateVisible: false
+      confirmationVisible: false
     }, this.compatibleSchedule);
+  }
+
+  onConfirmModalOpen = onConfirmPress => {
+    this.setState({
+      incompatibleEndDateVisible: false,
+      incompatibleScheduleVisible: false,
+      confirmationVisible: true
+    });
+
+    this.onConfirmPress = onConfirmPress;
   }
 
   renderFirstItem = () => {
