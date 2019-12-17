@@ -285,73 +285,79 @@ class CommerceSchedulesList extends Component {
     );
   };
 
-  render() {
-    const { schedules, loading } = this.props;
-
-    if (loading) return <Spinner />;
+  renderList = () => {
+    const { schedules } = this.props;
 
     if (schedules.length) {
       return (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={schedules}
-            renderItem={this.renderItem}
-            keyExtractor={schedule => schedule.id}
-            contentContainerStyle={{ paddingBottom: 95 }}
-          />
-
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={this.onScheduleAddPress}
-          >
-            <Ionicons name="md-add" />
-          </Fab>
-
-          <Menu
-            title={'Horarios de Atención'}
-            onBackdropPress={() => this.setState({ optionsVisible: false })}
-            isVisible={this.state.optionsVisible}
-          >
-            <MenuItem
-              title="Editar"
-              icon="md-create"
-              onPress={this.onScheduleEditPress}
-            />
-            <Divider style={{ backgroundColor: 'grey' }} />
-            <MenuItem
-              title="Eliminar"
-              icon="md-trash"
-              onPress={this.onScheduleDeletePress}
-            />
-          </Menu>
-
-          <Menu
-            title={'¿Está seguro que desea confirmar esta acción?'}
-            onBackdropPress={() =>
-              this.setState({ deleteConfirmVisible: false })
-            }
-            isVisible={this.state.deleteConfirmVisible}
-          >
-            <MenuItem
-              title="Aceptar"
-              icon="md-checkmark"
-              onPress={this.onScheduleDeleteConfirm}
-            />
-            <Divider style={{ backgroundColor: 'grey' }} />
-            <MenuItem
-              title="Cancelar"
-              icon="md-close"
-              onPress={() => this.setState({ deleteConfirmVisible: false })}
-            />
-          </Menu>
-
-          {this.renderDeleteScheduleModal()}
-        </View>
+        <FlatList
+          data={schedules}
+          renderItem={this.renderItem}
+          keyExtractor={schedule => schedule.id}
+          contentContainerStyle={{ paddingBottom: 95 }}
+        />
       );
     }
 
     return <EmptyList title="No hay horarios de atención vigentes" />;
+  };
+
+  render() {
+    const { loading } = this.props;
+
+    if (loading) return <Spinner />;
+
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderList()}
+
+        <Fab
+          style={{ backgroundColor: MAIN_COLOR }}
+          position="bottomRight"
+          onPress={this.onScheduleAddPress}
+        >
+          <Ionicons name="md-add" />
+        </Fab>
+
+        <Menu
+          title={'Horarios de Atención'}
+          onBackdropPress={() => this.setState({ optionsVisible: false })}
+          isVisible={this.state.optionsVisible}
+        >
+          <MenuItem
+            title="Editar"
+            icon="md-create"
+            onPress={this.onScheduleEditPress}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Eliminar"
+            icon="md-trash"
+            onPress={this.onScheduleDeletePress}
+          />
+        </Menu>
+
+        <Menu
+          title={'¿Está seguro que desea confirmar esta acción?'}
+          onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
+          isVisible={this.state.deleteConfirmVisible}
+        >
+          <MenuItem
+            title="Aceptar"
+            icon="md-checkmark"
+            onPress={this.onScheduleDeleteConfirm}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Cancelar"
+            icon="md-close"
+            onPress={() => this.setState({ deleteConfirmVisible: false })}
+          />
+        </Menu>
+
+        {this.renderDeleteScheduleModal()}
+      </View>
+    );
   }
 }
 
