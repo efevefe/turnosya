@@ -29,6 +29,18 @@ class DashBoard extends Component {
             >
               Cantidad de reservas por dia
             </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                textAlign: 'center',
+                marginTop: 5
+              }}
+            >
+              Visualize la cantidad de reservas que tiene su negocio por dia.
+              Esto lo ayuda a saber la demanda de cada dia y en base a eso poder
+              tomar decisiones.
+            </Text>
           </Card>
         </TouchableHighlight>
         <TouchableHighlight
@@ -50,6 +62,18 @@ class DashBoard extends Component {
               }}
             >
               Ingresos por mes
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                textAlign: 'center',
+                marginTop: 5
+              }}
+            >
+              Muestra la cantidad de ingresos percibidos en cada mes de un año.
+              De esta manera puede visualizar la diferencia de ingresos en los
+              diferentes meses o comparando con diferentes años.
             </Text>
           </Card>
         </TouchableHighlight>
@@ -74,22 +98,32 @@ class DashBoard extends Component {
                 textAlign: 'center'
               }}
             >
-              Cantidad de reservas por dia
+              Calificaciones por mes
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                textAlign: 'center',
+                marginTop: 5
+              }}
+            >
+              Haga un seguimiento de las calificaciones de sus clientes. Nos
+              ayuda a observar las fluctuaciones de las calificaciones a lo
+              largo del año.
             </Text>
           </Card>
         </TouchableHighlight>
         <TouchableHighlight
-          onPress={() =>
-            this.props.navigation.navigate('reportScreen', { number: 3 })
-          }
-          und
+          onPress={() => this.props.navigation.navigate('pieChartReport')}
           underlayColor="transparent"
         >
           <Card
             image={require('../../../../assets/pie-chart.png')}
             containerStyle={{
               borderRadius: 10,
-              overflow: 'hidden'
+              overflow: 'hidden',
+              marginBottom: 10
             }}
             imageProps={{ resizeMode: 'stretch' }}
           >
@@ -99,7 +133,18 @@ class DashBoard extends Component {
                 textAlign: 'center'
               }}
             >
-              Cantidad de reservas por dia
+              Cantidad de turnos cancelados y realizados
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '300',
+                textAlign: 'center',
+                marginTop: 5
+              }}
+            >
+              Haga una comparacion entre la cantidad de reservas realizadas y
+              las canceladas.
             </Text>
           </Card>
         </TouchableHighlight>

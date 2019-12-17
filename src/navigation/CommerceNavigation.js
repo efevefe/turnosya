@@ -30,6 +30,7 @@ import DashBoard from '../components/commerce/reports/DashBoard';
 import BarChartReport from '../components/commerce/reports/BarChartReport';
 import LineChartMoneyReport from '../components/commerce/reports/LineChartMoneyReport';
 import LineChartReviewsReport from '../components/commerce/reports/LineChartReviewsReport';
+import PieChartReport from '../components/commerce/reports/PieChartReport';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -242,6 +243,12 @@ const reportsStack = createStackNavigator(
     },
     lineChartReviewsReport: {
       screen: LineChartReviewsReport,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Reportes')
+      })
+    },
+    pieChartReport: {
+      screen: PieChartReport,
       navigationOptions: ({ navigation }) => ({
         title: navigation.getParam('title', 'Reportes')
       })

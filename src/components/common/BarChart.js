@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { BarChart as RNCBarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height * 0.8;
+const screenWidth = Dimensions.get('window').width - 10;
+const screenHeight = Dimensions.get('window').height * 0.7;
 
 class BarChart extends Component {
   render() {

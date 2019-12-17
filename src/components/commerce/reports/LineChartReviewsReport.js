@@ -5,44 +5,53 @@ import { readReviewsOnMonths } from '../../../actions/CommerceReportsActions';
 import { View, ScrollView } from 'react-native';
 
 class LineChartReviewsReport extends Component {
+  // Cambair los willMount en todos...
   componentWillMount() {
-    this.props.readReviewsOnMonths();
+    this.props.readReviewsOnMonths(this.props.commerceId);
   }
 
   render() {
-    const data = {
+    const { startDate, loading, data } = this.props;
+
+    const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
       datasets: [
         {
-          data: this.props.data
+          data: data
         }
       ]
     };
-
-    if (this.props.loading) return <Spinner />;
+    if (loading) return <Spinner />;
     return (
       <ScrollView style={{ flex: 1 }}>
-        <View
-          style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 10 }}
-        >
+        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10 }}>
           <DatePicker
             mode="date"
-            label="Desde:"
-            placeholder="Opcional"
-            //   onDateChange={}
+            label="Año"
+            format="YYYY"
+            date={startDate}
+            onDateChange={startDate =>
+              this.props.onCommerceReportValueChange({
+                prop: 'startDate',
+                value: moment(startDate)
+              })
+            }
           />
         </View>
-        <LineChart data={data} />
+        <LineChart data={dataLine} />
       </ScrollView>
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { data, loading } = state.commerceReports;
+  const { data, startDate, loading } = state.commerceReports;
+  const { commerceId } = state.commerceData;
 
   return {
     data,
+    startDate,
+    commerceId,
     loading
   };
 };

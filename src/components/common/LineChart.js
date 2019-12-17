@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { LineChart as RNCLineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get('window').width - 20;
 const screenHeight = Dimensions.get('window').height * 0.8;
 
 class LineChart extends Component {
