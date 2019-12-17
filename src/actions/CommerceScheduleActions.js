@@ -58,7 +58,7 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
     // reading schedule
     let snapshot = await schedulesRef
       .where('softDelete', '==', null)
-      .where('endDate', '>=', selectedDate.toDate())
+      .where('endDate', '>', selectedDate.toDate())
       .orderBy('endDate')
       .get();
 
