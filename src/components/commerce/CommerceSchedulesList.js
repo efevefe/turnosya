@@ -6,9 +6,9 @@ import { Fab } from 'native-base';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
-import { Spinner, EmptyList, IconButton, Menu, MenuItem } from '../common';
+import { Spinner, EmptyList, Menu, MenuItem } from '../common';
 import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
-import { formattedMoment } from '../../utils';
+import { formattedMoment, stringFormatMinutes } from '../../utils';
 import {
     onActiveSchedulesRead,
     onScheduleValueChange,
@@ -201,7 +201,7 @@ class CommerceSchedulesList extends Component {
         });
 
         const strShifts = `${firstShiftStart} a ${firstShiftEnd}` +
-            `${secondShiftStart ? ` - ${secondShiftStart} a ${secondShiftEnd}` : ''}`;
+            `${secondShiftStart ? ` / ${secondShiftStart} a ${secondShiftEnd}` : ''}`;
 
         return (
             <Text
@@ -221,11 +221,18 @@ class CommerceSchedulesList extends Component {
     }
 
     renderItem = ({ item }) => {
-        const { startDate, endDate, cards } = item;
+        const { startDate, endDate, cards, reservationMinLength } = item;
 
         return (
             <ListItem
-                title={<View>{cards.map(card => this.cardToText(card))}</View>}
+                title={
+                    <View>
+                        {cards.map(card => this.cardToText(card))}
+                        <Text style={{ fontSize: 13, marginBottom: 3 }}>
+                            {'Duración del turno: ' + stringFormatMinutes(reservationMinLength)}
+                        </Text>
+                    </View>
+                }
                 subtitle={`Del ${startDate.format('DD/MM/YYYY')} ` +
                     `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
                 }
