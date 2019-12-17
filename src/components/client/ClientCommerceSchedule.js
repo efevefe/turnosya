@@ -31,7 +31,11 @@ class ClientCommerceSchedule extends Component {
       leftButton: this.renderBackButton()
     });
 
-    this.props.onScheduleRead(this.props.commerce.objectID);
+    this.props.onScheduleRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: this.state.selectedDate
+    });
+
     this.unsubscribeCourtsRead = this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
       courtType: this.props.courtType
@@ -39,7 +43,8 @@ class ClientCommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
+    if (prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts) {
       this.reservationsOnSlots(this.props.slots);
     }
   }
@@ -64,23 +69,30 @@ class ClientCommerceSchedule extends Component {
   };
 
   onDateChanged = date => {
-    this.setState({ selectedDate: date });
+    const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead(
-      {
+    this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: date,
+      courtType: this.props.courtType
+    });
+
+    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+      this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
-        selectedDate: date,
-        courtType: this.props.courtType
-      }
-    );
-  };
+        selectedDate: date
+      });
+    }
+
+    this.setState({ selectedDate: date });
+  }
 
   onSlotPress = slot => {
     if (!slot.available)
       if (moment().isSameOrAfter(slot.startDate.toString())) {
         return Toast.show({
-          text: 'Horario no disponible'
+          text: 'Ya no se puede reservar en este horario'
         });
       } else {
         return Toast.show({
@@ -159,10 +171,13 @@ class ClientCommerceSchedule extends Component {
 
 const mapStateToProps = state => {
   const {
+    id,
     cards,
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    startDate,
+    endDate,
     refreshing
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
@@ -174,11 +189,15 @@ const mapStateToProps = state => {
   const loadingCourts = state.courtsList.loading;
 
   return {
+    scheduleId: id,
     commerce,
     cards,
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    scheduleStartDate: startDate,
+    scheduleEndDate: endDate,
+    endDate,
     refreshing,
     reservations,
     slot,

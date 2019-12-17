@@ -20,7 +20,7 @@ import {
   onScheduleCardValueChange,
   onScheduleCardDelete
 } from '../../actions';
-import { CardSection, DatePicker } from '../common';
+import { CardSection, DatePicker, Toast } from '../common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
 
@@ -39,62 +39,89 @@ class ScheduleRegister extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.card !== this.props.card) {
-      this.renderPickerFirstShiftEnd();
-      this.renderPickerSecondShiftStart();
-      this.renderPickerSecondShiftEnd();
+  componentDidUpdate(prevProps) {
+    const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = this.props.card;
+
+    if (
+      prevProps.card.firstShiftStart !== firstShiftStart ||
+      prevProps.card.firstShiftEnd !== firstShiftEnd ||
+      prevProps.card.secondShiftStart !== secondShiftStart ||
+      prevProps.card.secondShiftEnd !== secondShiftEnd
+    ) {
+      this.firstShiftStartError();
+      this.firstShiftEndError();
+      this.secondShiftStartError();
+      this.secondShiftEndError();
     }
   }
 
-  getDisabledCheckBox = () => {
-    return (
-      this.props.card.firstShiftEnd === '' ||
-      this.state.firstShiftEndError !== ''
-    );
-  };
-
-  getDisabledSecondPickerEnd = () => {
-    return (
-      !this.props.card.secondShiftStart ||
-      this.state.secondShiftStartError !== ''
-    );
-  };
-
-  renderPickerFirstShiftEnd = () => {
+  firstShiftStartError = () => {
     const { firstShiftStart, firstShiftEnd } = this.props.card;
 
-    if (firstShiftStart < firstShiftEnd || firstShiftEnd == '') {
-      this.setState({ firstShiftEndError: '' });
-    } else {
-      this.setState({
-        firstShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
-      });
-      this.onSecondTurnPress();
+    if (firstShiftEnd) {
+      if (firstShiftStart >= firstShiftEnd) {
+        this.setState({ firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre' });
+      } else {
+        this.setState({ firstShiftStartError: '' });
+      }
+    }
+  }
+
+  firstShiftEndError = () => {
+    const { firstShiftStart, firstShiftEnd, secondShiftStart } = this.props.card;
+
+    if (firstShiftEnd) {
+      if (firstShiftStart >= firstShiftEnd) {
+        this.setState({ firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+      } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
+        this.setState({ firstShiftEndError: 'El primer turno debe finalzar antes del segundo' });
+      } else {
+        this.setState({ firstShiftEndError: '' });
+      }
     }
   };
 
-  renderPickerSecondShiftStart = () => {
-    const { firstShiftEnd, secondShiftStart } = this.props.card;
-    secondShiftStart > firstShiftEnd ||
-    secondShiftStart === null ||
-    secondShiftStart === ''
-      ? this.setState({ secondShiftStartError: '' })
-      : this.setState({
-          secondShiftStartError: `Segundo turno debe \nser mayor al primero`
-        });
-  };
+  secondShiftStartError = () => {
+    const { secondShiftStart, secondShiftEnd, firstShiftEnd } = this.props.card;
 
-  renderPickerSecondShiftEnd = () => {
+    if (secondShiftStart) {
+      if (secondShiftStart <= firstShiftEnd) {
+        this.setState({ secondShiftStartError: 'El segundo turno debe arrancar despues del primero' });
+      } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
+        this.setState({ secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre' });
+      } else {
+        this.setState({ secondShiftStartError: '' });
+      }
+    }
+  }
+
+  secondShiftEndError = () => {
     const { secondShiftStart, secondShiftEnd } = this.props.card;
 
-    secondShiftStart < secondShiftEnd ||
-    secondShiftEnd === null ||
-    secondShiftEnd === ''
-      ? this.setState({ secondShiftEndError: '' })
-      : this.setState({
-          secondShiftEndError: `Hora de cierre debe ser \nmayor a la de apertura`
-        });
+    if (secondShiftEnd) {
+      if (secondShiftEnd <= secondShiftStart) {
+        this.setState({ secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+      } else {
+        this.setState({ secondShiftEndError: '' })
+      }
+    }
+  }
+
+  onSecondTurnPress = () => {
+    const { checked, firstShiftStartError, firstShiftEndError } = this.state;
+
+    if (this.props.card.firstShiftEnd && !firstShiftStartError && !firstShiftEndError) {
+      this.setState({ checked: !checked });
+
+      this.props.onScheduleCardValueChange({
+        id: this.props.card.id,
+        secondShiftStart: null,
+        secondShiftEnd: null
+      });
+    } else {
+      if (!checked) Toast.show({ text: 'Debe completar el primer turno para agregar un segundo' });
+      this.setState({ checked: false });
+    }
   };
 
   getDisabledDays = () => {
@@ -115,9 +142,7 @@ class ScheduleRegister extends Component {
       //On day Added
       onScheduleValueChange({
         prop: 'selectedDays',
-        value: selectedDays.concat([
-          selectedIndexes[selectedIndexes.length - 1]
-        ])
+        value: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
       });
     } else {
       //On day Deleted
@@ -131,60 +156,41 @@ class ScheduleRegister extends Component {
       });
     }
 
-    onScheduleCardValueChange({ id: card.id, days: selectedIndexes });
-  };
-
-  onSecondTurnPress = () => {
-    if (this.state.firstShiftEndError === '') {
-      this.setState({ checked: !this.state.checked });
-
-      this.props.onScheduleCardValueChange({
-        id: this.props.card.id,
-        secondShiftStart: null,
-        secondShiftEnd: null
-      });
-    } else {
-      this.setState({ checked: false });
-    }
+    onScheduleCardValueChange({ id: card.id, days: [...selectedIndexes].sort((a, b) => a - b) });
   };
 
   renderSecondTurn() {
-    try {
-      if (this.state.checked) {
-        return (
-          <CardSection style={styles.viewPickerDate}>
-            <DatePicker
-              date={this.props.card.secondShiftStart}
-              mode="time"
-              label="Desde las:"
-              placeholder="Hora de apertura"
-              onDateChange={value =>
-                this.props.onScheduleCardValueChange({
-                  id: this.props.card.id,
-                  secondShiftStart: value
-                })
-              }
-              errorMessage={this.state.secondShiftStartError}
-            />
+    if (this.state.checked) {
+      return (
+        <CardSection style={styles.viewPickerDate}>
+          <DatePicker
+            date={this.props.card.secondShiftStart}
+            label="Desde las:"
+            placeholder="Hora de apertura"
+            onDateChange={value => {
+              this.props.onScheduleCardValueChange({
+                id: this.props.card.id,
+                secondShiftStart: value
+              });
+            }}
+            errorMessage={this.state.secondShiftStartError}
+          />
 
-            <DatePicker
-              date={this.props.card.secondShiftEnd}
-              label="Hasta las:"
-              placeholder="Hora de cierre"
-              onDateChange={value =>
-                this.props.onScheduleCardValueChange({
-                  id: this.props.card.id,
-                  secondShiftEnd: value
-                })
-              }
-              disabled={this.getDisabledSecondPickerEnd()}
-              errorMessage={this.state.secondShiftEndError}
-            />
-          </CardSection>
-        );
-      }
-    } catch (e) {
-      console.error(e);
+          <DatePicker
+            date={this.props.card.secondShiftEnd}
+            label="Hasta las:"
+            placeholder="Hora de cierre"
+            onDateChange={value => {
+              this.props.onScheduleCardValueChange({
+                id: this.props.card.id,
+                secondShiftEnd: value
+              });
+            }}
+            disabled={!this.props.card.secondShiftStart}
+            errorMessage={this.state.secondShiftEndError}
+          />
+        </CardSection>
+      );
     }
   }
 
@@ -213,23 +219,24 @@ class ScheduleRegister extends Component {
               date={this.props.card.firstShiftStart}
               label="Desde las:"
               placeholder="Hora de apertura"
-              onDateChange={value =>
+              onDateChange={value => {
                 this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstShiftStart: value
-                })
-              }
+                });
+              }}
+              errorMessage={this.state.firstShiftStartError}
             />
             <DatePicker
               date={this.props.card.firstShiftEnd}
               label="Hasta las:"
               placeholder="Hora de cierre"
-              onDateChange={value =>
+              onDateChange={value => {
                 this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
                   firstShiftEnd: value
-                })
-              }
+                });
+              }}
               disabled={!this.props.card.firstShiftStart}
               errorMessage={this.state.firstShiftEndError}
             />
@@ -249,7 +256,6 @@ class ScheduleRegister extends Component {
               checkedTitle="Borrar segundo turno"
               checked={this.state.checked}
               onPress={this.onSecondTurnPress}
-              disabled={this.getDisabledCheckBox()}
             />
           </CardSection>
 

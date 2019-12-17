@@ -11,11 +11,14 @@ import {
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
-  ON_SCHEDULE_READ_EMPTY
-} from "../actions/types";
-import { Toast } from "../components/common";
+  ON_SCHEDULE_READ_EMPTY,
+  ON_ACTIVE_SCHEDULES_READ
+} from '../actions/types';
+import { Toast } from '../components/common';
+import { formattedMoment } from '../utils';
 
-const INITIAL_STATE = {
+const INITIAL_WORKSHIFTS = {
+  id: '',
   cards: [
     {
       id: 0,
@@ -27,18 +30,26 @@ const INITIAL_STATE = {
     }
   ],
   selectedDays: [],
-  reservationMinLength: 10,
+  startDate: null,
+  endDate: null,
+  reservationMinLength: 60
+}
+
+const INITIAL_STATE = {
+  ...INITIAL_WORKSHIFTS,
+  schedules: [],
   reservationDayPeriod: 14,
   reservationMinCancelTime: 2,
+  error: null,
   slots: [],
   loading: false,
-  refreshing: false
+  refreshing: false,
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_SCHEDULE_FORM_OPEN:
-      return INITIAL_STATE;
+      return { ...state, ...INITIAL_WORKSHIFTS, startDate: formattedMoment() };
     case ON_SCHEDULE_VALUE_CHANGE:
       const { prop, value } = action.payload;
 
@@ -64,6 +75,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ON_SCHEDULE_READ:
       return { ...state, ...action.payload, loading: false };
+    case ON_ACTIVE_SCHEDULES_READ: // este capaz ni hace falta, se podria usar la misma otra action
+      return { ...state, schedules: action.payload, loading: false };
     case ON_SCHEDULE_READ_EMPTY:
       Toast.show({ text: "Aún no hay horarios de atención" });
       return INITIAL_STATE;
@@ -76,9 +89,9 @@ export default (state = INITIAL_STATE, action) => {
 
       return { ...state, refreshing: false };
     case ON_SCHEDULE_CREATE_FAIL:
-      Toast.show({ text: "Se ha producido un error" });
+      Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
 
-      return { ...state, refreshing: false };
+      return { ...state, loading: false, refreshing: false };
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
     case ON_SCHEDULE_CONFIG_UPDATED:

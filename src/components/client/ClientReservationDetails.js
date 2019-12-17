@@ -16,7 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import moment from 'moment';
 import {
   onClientCancelReservation,
-  readCancellationTimeAllowed,
+  onScheduleRead,
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,
@@ -46,9 +46,11 @@ class ClientReservationDetails extends Component {
   // ** Lifecycle methods **
 
   componentDidMount() {
-    this.props.readCancellationTimeAllowed(
-      this.props.navigation.state.params.reservation.commerceId
-    );
+    // puse esta misma action para que traiga el tiempi minimo de cancelacion
+    this.props.onScheduleRead({
+      commerceId: this.state.reservation.commerceId,
+      selectedDate: this.state.reservation.startDate
+    })
 
     this.props.readCommerceReview({
       commerceId: this.state.reservation.commerceId,
@@ -389,7 +391,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onClientCancelReservation,
-  readCancellationTimeAllowed,
+  onScheduleRead,
   createCommerceReview,
   readCommerceReview,
   updateCommerceReview,

@@ -15,6 +15,7 @@ import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
@@ -39,11 +40,14 @@ const calendarStack = createStackNavigator(
         )
       })
     },
-    scheduleRegister: {
-      screen: ScheduleRegister,
+    schedulesList: {
+      screen: CommerceSchedulesList,
       navigationOptions: {
-        title: 'Generar calendario'
+        title: 'Horarios de Atención'
       }
+    },
+    scheduleRegister: {
+      screen: ScheduleRegister
     },
     registerConfiguration: {
       screen: ScheduleRegisterConfiguration,

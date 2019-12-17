@@ -3,6 +3,7 @@ import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -35,10 +36,10 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.cards !== this.props.cards ||
-      (prevProps.loadingSchedule && !this.props.loadingSchedule)
-    ) {
+    // se estarian generando los slots cada vez que se trae una nueva diagramacion y el schedule
+    // esta en primer plano, cosa que no se actualice cuando se esta en otra pantalla y se esta
+    // usando el mismo loading, como en la pantalla del listado de schedules
+    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.isFocused) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
@@ -47,9 +48,7 @@ class Schedule extends Component {
     selectedDate = moment([
       selectedDate.year(),
       selectedDate.month(),
-      selectedDate.date(),
-      0,
-      0
+      selectedDate.date()
     ]);
 
     //slots & shifts
@@ -241,4 +240,4 @@ const mapStateToProps = state => {
   return { slots, loadingSchedule: loading };
 }
 
-export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
+export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));

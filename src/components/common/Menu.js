@@ -43,13 +43,14 @@ const styles = StyleSheet.create({
   },
   titleContainerStyle: {
     alignSelf: 'stretch',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   titleStyle: {
     color: 'black',
     fontSize: 15,
-    margin: 16,
-    marginLeft: 18
+    margin: 18,
+    textAlign: 'justify',
+    lineHeight: 22
   },
   dividerStyle: {
     backgroundColor: 'grey'
