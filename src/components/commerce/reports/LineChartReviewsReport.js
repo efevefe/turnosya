@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import { LineChart, Spinner, Input, DatePicker } from '../../common';
 import { readReviewsOnMonths } from '../../../actions/CommerceReportsActions';
 import { View, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 class LineChartReviewsReport extends Component {
-  componentWilllMount() {
+  componentWillMount() {
     this.props.readReviewsOnMonths();
   }
 

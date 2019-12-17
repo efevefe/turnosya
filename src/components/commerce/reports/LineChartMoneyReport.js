@@ -18,8 +18,7 @@ class LineChartMoneyReport extends Component {
         }
       ]
     };
-    console.log('DAYS', this.props.data);
-    console.log(this.props.loading);
+
     if (this.props.loading) return <Spinner />;
     return (
       <ScrollView style={{ flex: 1 }}>

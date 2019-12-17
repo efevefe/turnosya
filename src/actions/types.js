@@ -174,3 +174,9 @@ export const ON_COMMERCE_REVIEW_DELETE_FAIL = 'on_commerce_review_delete_fail';
 export const ON_COMMERCE_REVIEWS_READING = 'on_commerce_reviews_reading';
 export const ON_COMMERCE_REVIEWS_READ = 'on_commerce_reviews_read';
 export const ON_COMMERCE_REVIEWS_READ_FAIL = 'on_commerce_reviews_read_fail';
+
+// Reports types
+export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
+export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
+export const ON_COMMERCE_REPORT_VALUE_CHANGE =
+  'on_commerce_report_value_change';

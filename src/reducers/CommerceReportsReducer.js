@@ -6,6 +6,7 @@ import {
 
 const INITIAL_STATE = {
   data: [0],
+  date: '',
   loading: false
 };
 

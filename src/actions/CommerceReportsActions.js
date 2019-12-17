@@ -206,10 +206,6 @@ export const readReviewsOnMonths = () => dispatch => {
           i++;
         });
 
-        console.log(reviews);
-        console.log(months);
-        console.log(count);
-        console.log(data);
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
           payload: data

@@ -23,6 +23,10 @@ import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
+import DashBoard from '../components/commerce/reports/DashBoard';
+import BarChartReport from '../components/commerce/reports/BarChartReport';
+import LineChartMoneyReport from '../components/commerce/reports/LineChartMoneyReport';
+import LineChartReviewsReport from '../components/commerce/reports/LineChartReviewsReport';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -183,12 +187,45 @@ const profileStack = createStackNavigator(
   },
   stackNavigationOptions
 );
+const reportsStack = createStackNavigator(
+  {
+    dashBoard: {
+      screen: DashBoard,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Reportes',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    barChartReport: {
+      screen: BarChartReport,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Reportes')
+      })
+    },
+    lineChartMoneyReport: {
+      screen: LineChartMoneyReport,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Reportes')
+      })
+    },
+    lineChartReviewsReport: {
+      screen: LineChartReviewsReport,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Reportes')
+      })
+    }
+  },
+  stackNavigationOptions
+);
 
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
 const commerceTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
+    reports: reportsStack,
     reservations: reservationsStack,
     calendar: calendarStack,
     profile: profileStack
