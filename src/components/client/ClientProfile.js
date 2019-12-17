@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
-import { Avatar, Text, Divider, Icon } from 'react-native-elements';
+import {
+  View,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity
+} from 'react-native';
+import { Avatar, Text, Divider, Icon, Rating } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -98,7 +103,7 @@ class ClientProfile extends Component {
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   onCancelPress = () => {
     const { stateBeforeChanges } = this.state;
@@ -216,6 +221,11 @@ class ClientProfile extends Component {
   onDeletePicturePress = () => {
     this.props.onClientDataValueChange({ prop: 'profilePicture', value: '' });
     this.onEditPicturePress();
+  };
+
+  getRatingValue = () => {
+    const { total, count } = this.props.rating;
+    return total ? total / count : 0;
   };
 
   renderFullName = () => {
@@ -336,6 +346,20 @@ class ClientProfile extends Component {
           </View>
           {this.renderFullName()}
           {this.renderLocation()}
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate('clientReviewsList', {
+                clientId: this.props.clientId
+              })
+            }
+          >
+            <Rating
+              style={ratingStyle}
+              readonly
+              imageSize={24}
+              startingValue={this.getRatingValue()}
+            />
+          </TouchableOpacity>
         </View>
         <Divider
           style={{
@@ -428,7 +452,8 @@ const {
   avatarContainerStyle,
   avatarStyle,
   locationContainerStyle,
-  infoContainerStyle
+  infoContainerStyle,
+  ratingStyle
 } = StyleSheet.create({
   containerStyle: {
     flex: 1,
@@ -457,16 +482,19 @@ const {
     alignSelf: 'stretch',
     padding: 10,
     paddingBottom: 22
-  }
+  },
+  ratingStyle: { paddingTop: 14 }
 });
 
 const mapStateToProps = state => {
   const {
+    clientId,
     firstName,
     lastName,
     phone,
     email,
     profilePicture,
+    rating,
     loading,
     refreshing
   } = state.clientData;
@@ -474,11 +502,13 @@ const mapStateToProps = state => {
   const { city, provinceName } = state.locationData.userLocation;
 
   return {
+    clientId,
     firstName,
     lastName,
     phone,
     email,
     profilePicture,
+    rating,
     loading,
     refreshing,
     city,
@@ -486,12 +516,9 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onUserRead,
-    onUserUpdate,
-    onClientDataValueChange,
-    onLocationValuesReset
-  }
-)(ClientProfile);
+export default connect(mapStateToProps, {
+  onUserRead,
+  onUserUpdate,
+  onClientDataValueChange,
+  onLocationValuesReset
+})(ClientProfile);
