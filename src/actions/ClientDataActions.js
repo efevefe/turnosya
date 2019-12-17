@@ -29,7 +29,13 @@ export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
+export const onUserRegister = ({
+  email,
+  password,
+  firstName,
+  lastName,
+  phone
+}) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -64,16 +70,20 @@ export const onUserRegister = ({ email, password, firstName, lastName, phone }) 
   };
 };
 
-export const onUserRead = () => {
-  const { currentUser } = firebase.auth();
+export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_USER_READING });
 
-    db.doc(`Profiles/${currentUser.uid}`)
+    db.doc(`Profiles/${clientId}`)
       .get()
-      .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
+      .then(doc =>
+        dispatch({
+          type: ON_USER_READ,
+          payload: { ...doc.data(), clientId: doc.id }
+        })
+      )
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));
   };
 };
@@ -95,7 +105,8 @@ export const onUserUpdate = ({
       const snapshot = await firebase
         .storage()
         .ref(`Users/${currentUser.uid}`)
-        .child(`${currentUser.uid}-ProfilePicture`).put(profilePicture);
+        .child(`${currentUser.uid}-ProfilePicture`)
+        .put(profilePicture);
 
       url = await snapshot.ref.getDownloadURL();
     }
@@ -108,11 +119,11 @@ export const onUserUpdate = ({
         lastName,
         phone,
         profilePicture: url ? url : profilePicture
-      })
+      });
 
-    dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture })
+    dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture });
   } catch (error) {
-    dispatch({ type: ON_USER_UPDATE_FAIL })
+    dispatch({ type: ON_USER_UPDATE_FAIL });
   } finally {
     profilePicture.close();
   }

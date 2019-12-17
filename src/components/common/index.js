@@ -16,3 +16,5 @@ export * from './IconButton';
 export * from './PictureView';
 export * from './BarChart';
 export * from './LineChart';
+export * from './ReviewItem';
+export * from './ReviewCard';

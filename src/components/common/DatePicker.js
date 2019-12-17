@@ -29,14 +29,21 @@ class DatePicker extends Component {
     const borderBottomWidth = enabled ? 1.5 : 1;
 
     return (
-      <View>
+      <View style={{ width: pickerWidth }}>
         {this.renderLabel(color)}
         <RNDatePicker
           {...this.props}
+          // pasar mode cada vez que se usa este componente
           mode={this.props.mode || 'time'}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
-          iconComponent={<Ionicons name="md-time" color={color} size={20} />}
+          iconComponent={
+            <Ionicons
+              name={this.props.mode ? 'md-calendar' : 'md-time'}
+              color={color}
+              size={20}
+            />
+          }
           customStyles={{
             dateInput: styles.dateInput,
             dateText: styles.dateText,
@@ -48,7 +55,7 @@ class DatePicker extends Component {
               paddingRight: 5
             }
           }}
-          style={{ marginLeft: 10, marginRight: 10, width: pickerWidth }}
+          style={{ width: pickerWidth }}
         />
         {this.renderErrorMessage()}
       </View>
@@ -59,14 +66,11 @@ class DatePicker extends Component {
 const styles = StyleSheet.create({
   labelStyle: {
     fontSize: 12,
-    fontWeight: 'normal',
-    marginRight: 10,
-    marginLeft: 10
+    fontWeight: 'normal'
   },
   errorMessageStyle: {
     margin: 5,
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 0,
     color: 'red',
     fontSize: 12
   },
