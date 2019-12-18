@@ -7,10 +7,7 @@ import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
 import CommerceCourtTypes from '../components/client/CommerceCourtTypes';
-import {
-  stackNavigationOptions,
-  tabNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
