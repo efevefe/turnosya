@@ -21,6 +21,7 @@ class ClientSettings extends Component {
       headerLeft: (
         <HeaderBackButton
           tintColor="white"
+          title='Back'
           onPress={() => navigation.goBack(null)}
         />
       )

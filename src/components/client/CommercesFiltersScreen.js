@@ -29,9 +29,50 @@ class CommerceFiltersScreen extends Component {
     }
   };
 
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: navigation.getParam('rightButton'),
+      headerLeft: navigation.getParam('leftButton')
+    };
+  };
+
   componentDidMount = () => {
+    this.props.navigation.setParams({
+      rightButton: this.renderApplyFiltersButton(),
+      leftButton: this.renderCloseButton()
+    });
+
     this.props.onProvincesNameRead();
   };
+
+  renderApplyFiltersButton = () => {
+    return (
+      <Button
+        title="Aplicar Filtros"
+        type="clear"
+        titleStyle={{ color: "white" }}
+        onPress={this.onApplyFiltersPress.bind(this)}
+        containerStyle={applyFilterButtonStyle}
+      />
+    );
+  }
+
+  renderCloseButton = () => {
+    return (
+      <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
+    );
+  }
+
+  onApplyFiltersPress() {
+    this.props.updateAllFilters({
+      provinceNameFilter: this.state.provinceName,
+      locationEnabled: this.state.locationEnabled,
+      locationButtonIndex: this.state.locationButtonIndex,
+      locationRadiusKms: this.state.locationRadiusKms
+    });
+
+    this.props.navigation.goBack(null);
+  }
 
   onClosePress() {
     this.props.onSpecificLocationEnabled(true);
@@ -49,18 +90,7 @@ class CommerceFiltersScreen extends Component {
       this.state.oldData.specificLocationEnabled
     );
 
-    this.props.navigation.goBack();
-  }
-
-  onApplyFiltersPress() {
-    this.props.updateAllFilters({
-      provinceNameFilter: this.state.provinceName,
-      locationEnabled: this.state.locationEnabled,
-      locationButtonIndex: this.state.locationButtonIndex,
-      locationRadiusKms: this.state.locationRadiusKms
-    });
-
-    this.props.navigation.goBack();
+    this.props.navigation.goBack(null);
   }
 
   onLocationOptionPress(buttonIndex) {
@@ -110,16 +140,6 @@ class CommerceFiltersScreen extends Component {
     return (
       <View style={windowContainerStyle}>
         {this.renderLocationMessage()}
-        <View style={windowTopContainerStyle}>
-          <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
-          <Button
-            title="Aplicar Filtros"
-            type="clear"
-            titleStyle={{ color: "white" }}
-            onPress={this.onApplyFiltersPress.bind(this)}
-            style={applyFilterButtonStyle}
-          />
-        </View>
         <View style={windowContentContainerStyle}>
           {/* Divisor */}
           <View style={dividerContainerStyle}>
@@ -171,13 +191,12 @@ class CommerceFiltersScreen extends Component {
   }
 }
 
-//#region Styles
+// region Styles
 const {
   dividerStyle,
   dividerTextStyle,
   dividerContainerStyle,
   windowContainerStyle,
-  windowTopContainerStyle,
   windowContentContainerStyle,
   applyFilterButtonStyle,
   provinceContainerStyle,
@@ -196,15 +215,8 @@ const {
   dividerTextStyle: { color: "white", padding: 5 },
   dividerContainerStyle: { flexDirection: "row", justifyContent: "center" },
   windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
-  windowTopContainerStyle: {
-    paddingTop: 20,
-    height: 70,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row"
-  },
   windowContentContainerStyle: { flex: 1, alignItems: "center" },
-  applyFilterButtonStyle: { marginRight: 10, padding: 5 },
+  applyFilterButtonStyle: { paddingRight: 10 },
   provinceContainerStyle: {
     alignSelf: "stretch",
     paddingBottom: 20,

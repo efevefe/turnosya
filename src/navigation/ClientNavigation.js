@@ -27,6 +27,35 @@ import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 // Aca hay un stack por cada tab que tiene el tab navigation
 
+const filtersStack = createStackNavigator(
+  {
+    commercesFiltersScreen: {
+      screen: CommercesFiltersScreen,
+      navigationOptions: {
+        headerStyle: {
+          ...stackNavigationOptions.defaultNavigationOptions.headerStyle,
+          borderBottomWidth: 0,
+          elevation: 0
+        }
+      }
+    },
+    commercesFiltersMap: {
+      screen: CommercesFiltersMap,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Seleccionar ubicación',
+        headerRight: (
+          <IconButton icon="md-checkmark" onPress={() => navigation.goBack(null)} />
+        )
+      })
+    }
+  },
+  {
+    ...stackNavigationOptions,
+    // necesito iOS para ver si funca esto (Nico)
+    mode: 'modal'
+  }
+);
+
 const mainSearchStack = createStackNavigator(
   {
     commercesAreas: {
@@ -97,37 +126,23 @@ const mainSearchStack = createStackNavigator(
       navigationOptions: {
         title: 'Reseñas del Comercio'
       }
+    },
+    filtersStack: {
+      screen: filtersStack,
+      navigationOptions: {
+        header: null
+      }
     }
   },
   stackNavigationOptions
 );
 
-const searchStack = createStackNavigator(
-  {
-    main: {
-      screen: mainSearchStack
-    },
-    commercesFiltersScreen: {
-      screen: CommercesFiltersScreen
-    },
-    commercesFiltersMap: {
-      screen: CommercesFiltersMap
-    }
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none'
-  }
-);
-
-searchStack.navigationOptions = ({ navigation }) => {
+mainSearchStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
+
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
-      if (
-        route.routeName === 'commercesFiltersScreen' ||
-        route.routeName === 'commercesFiltersMap'
-      ) {
+      if (route.routeName === 'filtersStack') {
         tabBarVisible = false;
       } else {
         tabBarVisible = true;
@@ -135,9 +150,7 @@ searchStack.navigationOptions = ({ navigation }) => {
     });
   }
 
-  return {
-    tabBarVisible
-  };
+  return { tabBarVisible };
 };
 
 const calendarStack = createStackNavigator(
@@ -201,7 +214,7 @@ const profileStack = createStackNavigator(
 
 const clientTabs = createBottomTabNavigator(
   {
-    search: searchStack,
+    search: mainSearchStack,
     calendar: calendarStack,
     favorites: favoritesStack,
     profile: profileStack

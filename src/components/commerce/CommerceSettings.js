@@ -19,6 +19,7 @@ class CommerceSettings extends Component {
       headerLeft: (
         <HeaderBackButton
           tintColor="white"
+          title='Back'
           onPress={() => navigation.goBack(null)}
         />
       )

@@ -108,6 +108,7 @@ class CommerceProfile extends Component {
       <HeaderBackButton
         onPress={() => this.props.navigation.goBack(null)}
         tintColor="white"
+        title='Back'
       />
     );
   };
