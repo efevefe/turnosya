@@ -204,9 +204,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-          prop: 'ground',
-          value
-        })
+        prop: 'ground',
+        value
+      })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 
@@ -298,7 +298,7 @@ class CourtForm extends Component {
                 label="Nombre:"
                 placeholder="Cancha 1"
                 value={this.props.name}
-                errorMessage={this.state.nameError}
+                errorMessage={this.state.nameError || this.props.existsError}
                 onChangeText={value =>
                   this.props.onCourtValueChange({
                     prop: 'name',
@@ -378,9 +378,6 @@ class CourtForm extends Component {
                 title="Guardar"
                 loading={this.props.loading}
                 onPress={this.onButtonPressHandler}
-                errorMessage={
-                  this.props.existedError ? 'Nombre de cancha existente' : ''
-                }
               />
             </CardSection>
           </Card>
@@ -412,10 +409,10 @@ const mapStateToProps = state => {
     price,
     lightPrice,
     loading,
-    existedError,
+    existsError,
     courtState
   } = state.courtForm;
-  
+
   const { commerceId } = state.commerceData;
 
   return {
@@ -427,7 +424,7 @@ const mapStateToProps = state => {
     price,
     lightPrice,
     loading,
-    existedError,
+    existsError,
     courtState,
     commerceId
   };
