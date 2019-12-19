@@ -87,13 +87,19 @@ class CommerceProfile extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.province.provinceId !== this.props.province.provinceId) {
+      this.renderProvinceError();
+    }
+
+    if (prevProps.area.areaId !== this.props.area.areaId) {
+      this.renderAreaError();
+    }
+  }
+
   onRefresh = () => {
     this.props.onCommerceRead();
   };
-
-  // renderEditButton = () => {
-  //   return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  // };
 
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
@@ -238,20 +244,6 @@ class CommerceProfile extends Component {
     this.props.navigation.goBack(null);
   };
 
-  // disableEdit = () => {
-  //   this.setState({
-  //     editEnabled: false,
-  //     newProfilePicture: false,
-  //     stateBeforeChanges: null
-  //   });
-
-  //   this.props.navigation.setParams({
-  //     title: 'Perfil',
-  //     rightIcon: this.renderEditButton(),
-  //     leftIcon: this.renderBackButton()
-  //   });
-  // }
-
   onEditPicturePress = () => {
     this.setState({
       pictureOptionsVisible: false,
@@ -388,44 +380,32 @@ class CommerceProfile extends Component {
     }
   };
 
-  onProvincePickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.provincesList.find(
-          province => province.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'province',
-          value: { provinceId: value, name: label }
-        });
+  onProvincePickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.provincesList.find(
+        province => province.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: value, name: label }
+      });
 
-        this.props.onLocationValueChange({
-          prop: 'provinceName',
-          value: label
-        });
-      }
-
-      this.renderProvinceError();
-    } catch (e) {
-      console.error(e);
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: label
+      });
     }
   };
 
-  onAreaPickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.areasList.find(
-          area => area.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'area',
-          value: { areaId: value, name: label }
-        });
-
-        this.renderAreaError();
-      }
-    } catch (e) {
-      console.error(e);
+  onAreaPickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.areasList.find(
+        area => area.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'area',
+        value: { areaId: value, name: label }
+      });
     }
   };
 

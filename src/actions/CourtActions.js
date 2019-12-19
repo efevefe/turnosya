@@ -186,6 +186,13 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
       .where('courtState', '==', true)
       .get()
       .then(snapshot => {
+        if (snapshot.empty) {
+          dispatch({
+            type: COMMERCE_COURT_TYPES_READ,
+            payload: []
+          });
+        }
+
         const courtTypes = [];
 
         snapshot.forEach(doc => {
