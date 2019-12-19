@@ -7,23 +7,21 @@ class MenuItem extends Component {
   renderIcon = color => {
     // el icono debe ser de ionicons
     if (this.props.icon) {
-      if (this.props.loadingWithText) {
-        return (
-          <View style={{ width: 25, alignItems: 'center' }}>
-            <ActivityIndicator
-              style={StyleSheet.flatten({ marginVertical: 2 })}
-              color={color}
-              size="small"
-            />
-          </View>
-        );
-      } else {
-        return (
-          <View style={{ width: 25, alignItems: 'center' }}>
-            <Ionicons name={this.props.icon} color={color} size={20} />
-          </View>
-        );
-      }
+      return (
+        <View style={{ width: 25, alignItems: 'center' }}>
+          {
+            this.props.loadingWithText ? (
+              <ActivityIndicator
+                style={StyleSheet.flatten({ marginVertical: 2 })}
+                color={color}
+                size="small"
+              />
+            ) : (
+                <Ionicons name={this.props.icon} color={color} size={20} />
+              )
+          }
+        </View>
+      );
     }
   };
 

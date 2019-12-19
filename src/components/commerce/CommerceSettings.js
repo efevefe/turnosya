@@ -9,7 +9,7 @@ import {
   onCommerceValueChange,
   onLoginValueChange
 } from '../../actions';
-import { MenuItem, Menu, Input, CardSection } from '../common';
+import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
 
 class CommerceSettings extends Component {
   state = { providerId: null };
@@ -107,16 +107,21 @@ class CommerceSettings extends Component {
   render() {
     return (
       <ScrollView style={styles.containerStyle}>
-        <MenuItem
-          title="Eliminar Negocio"
-          icon="md-trash"
-          loadingWithText={this.props.loadingCommerceDelete}
+        <SettingsItem
+          leftIcon={{
+            name: 'md-trash',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          title="Eliminar Mi Negocio"
           onPress={() =>
             this.props.onCommerceValueChange({
               prop: 'confirmDeleteVisible',
               value: true
             })
           }
+          loading={this.props.loadingCommerceDelete}
+          bottomDivider
         />
 
         {this.renderConfirmCommerceDelete()}
