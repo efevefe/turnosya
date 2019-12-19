@@ -7,7 +7,7 @@ import { onLoginValueChange, onClientDataValueChange, onUserPasswordUpdate } fro
 import { validateValueType } from '../../utils';
 
 class ChangeUserPassword extends Component {
-    state = { passwordError: '', newPassword: '', confirmPassword: '' };
+    state = { passwordError: '', newPasswordError: '', confirmPasswordError: '' };
 
     passwordError = () => {
         if (this.props.password === '') {
