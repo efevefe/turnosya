@@ -24,7 +24,7 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE,
   ON_PROVINCES_READ
 } from './types';
 import getEnvVars from '../../environment';
@@ -360,7 +360,7 @@ export const onCommerceDelete = (password, navigation = null) => {
               .then(() => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
-                  type: ON_REGISTER_VALUE_CHANGE,
+                  type: ON_CLIENT_DATA_VALUE_CHANGE,
                   payload: { prop: 'commerceId', value: null }
                 });
 

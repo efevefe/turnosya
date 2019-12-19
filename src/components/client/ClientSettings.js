@@ -203,6 +203,15 @@ class ClientSettings extends Component {
   render() {
     return (
       <ScrollView style={styles.containerStyle}>
+        {
+          // opcion de cambiar contraseña es solo para los que se autenticaron con email y password
+          this.state.providerId === 'password' &&
+          <MenuItem
+            title="Cambiar Contraseña"
+            icon="md-key"
+            onPress={() => this.props.navigation.navigate('changeUserPassword')}
+          />
+        }
         <MenuItem
           title="Eliminar Mi Negocio"
           icon="md-trash"
