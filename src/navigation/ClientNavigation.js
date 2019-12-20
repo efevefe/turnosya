@@ -22,6 +22,7 @@ import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 import CommercesMap from '../components/common/CommercesMap';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
 
+import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
@@ -95,7 +96,7 @@ const mainSearchStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas'
+        title: 'Reseñas del Comercio'
       }
     }
   },
@@ -186,6 +187,12 @@ const profileStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
+    },
+    clientReviewsList: {
+      screen: ClientReviewsList,
+      navigationOptions: {
+        title: 'Reseñas del Cliente'
+      }
     }
   },
   stackNavigationOptions

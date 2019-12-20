@@ -5,7 +5,7 @@ import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 
 class Calendar extends Component {
   shouldComponentUpdate(nextProps) {
-    return nextProps.selectedDate !== this.props.selectedDate;
+    return (nextProps.selectedDate !== this.props.selectedDate);
   }
 
   render() {
