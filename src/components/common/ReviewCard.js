@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AirbnbRating } from 'react-native-elements';
 import { CardSection, Input } from '../common';
-import { MAIN_COLOR } from '../../constants';
 
-class ReviewCard extends Component {
+export default class ReviewCard extends Component {
   renderReviewTitle = title => {
     return (
       <CardSection>
@@ -47,5 +46,3 @@ class ReviewCard extends Component {
 const { reviewTitleStyle } = StyleSheet.create({
   reviewTitleStyle: { fontSize: 16, textAlign: 'center' }
 });
-
-export { ReviewCard };

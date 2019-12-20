@@ -3,15 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
 import { Divider, ButtonGroup } from 'react-native-elements';
-import {
-  CardSection,
-  Button,
-  Menu,
-  MenuItem,
-  Spinner,
-  Toast,
-  ReviewCard
-} from '../common';
+import { CardSection, Button, Menu, MenuItem, Spinner, Toast } from '../common';
+import ReviewCard from '../common/ReviewCard';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {

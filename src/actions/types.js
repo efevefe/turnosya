@@ -194,3 +194,23 @@ export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_review_read_fail';
 export const ON_CLIENT_REVIEWS_READING = 'on_client_reviews_reading';
 export const ON_CLIENT_REVIEWS_READ = 'on_client_reviews_read';
 export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
+
+// Employee types
+export const ON_EMPLOYEES_READING = 'on_employees_reading';
+export const ON_EMPLOYEES_READ = 'on_employees_read';
+export const ON_EMPLOYEE_VALUE_CHANGE = 'on_employee_value_change';
+export const ON_EMPLOYEE_CLEAR = 'on_employee_clear';
+export const ON_EMPLOYEE_NAME_CLEAR = 'on_employee_name_clear';
+export const ON_USER_SEARCHING = 'on_user_searching';
+export const ON_USER_SEARCH_SUCCESS = 'on_user_search_success';
+export const ON_USER_SEARCH_FAIL = 'on_user_search_fail';
+export const ON_EMPLOYEE_SAVING = 'on_employee_saving';
+export const ON_EMPLOYEE_SAVE_FAIL = 'on_employee_save_fail';
+export const EMPLOYEE_VALIDATION_ERROR = 'empty_user_error';
+export const ON_EMPLOYEE_DELETED = 'on_employee_deleted';
+export const ON_EMPLOYEE_LOAD = 'on_employeee_load';
+export const ON_EMPLOYEE_UPDATED = 'on_employee_updated';
+export const ON_EMPLOYEE_CREATED = 'on_employee_created';
+
+// Roles types
+export const ON_ROLES_READ = 'on_roles_read';

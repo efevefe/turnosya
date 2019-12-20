@@ -4,15 +4,8 @@ import { connect } from 'react-redux';
 import { Divider, ButtonGroup } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Input,
-  CardSection,
-  Toast,
-  ReviewCard
-} from '../common';
+import { Button, Menu, MenuItem, Input, CardSection, Toast } from '../common';
+import ReviewCard from '../common/ReviewCard';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCommerceCancelReservation,
