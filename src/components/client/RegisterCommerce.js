@@ -279,7 +279,9 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onCommerceValueChange, onCommerceFormOpen, onAreasRead, validateCuit }
-)(RegisterCommerce);
+export default connect(mapStateToProps, {
+  onCommerceValueChange,
+  onCommerceFormOpen,
+  onAreasRead,
+  validateCuit
+})(RegisterCommerce);

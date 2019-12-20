@@ -92,6 +92,7 @@ export const ON_SCHEDULE_READ = 'on_schedule_shifts_read';
 export const ON_SCHEDULE_READING = 'on_schedule_shifts_reading';
 export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
 export const ON_SCHEDULE_READ_EMPTY = 'on_schedule_read_empty';
+export const ON_ACTIVE_SCHEDULES_READ = 'on_active_schedules_read';
 export const ON_SCHEDULE_CREATED = 'on_schedule_create';
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
@@ -124,6 +125,8 @@ export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
 export const ON_LOCATION_CHANGE = 'on_location_change';
+export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
+export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
 export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
 export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';

@@ -15,8 +15,10 @@ import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
 import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
 import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
@@ -39,11 +41,14 @@ const calendarStack = createStackNavigator(
         )
       })
     },
-    scheduleRegister: {
-      screen: ScheduleRegister,
+    schedulesList: {
+      screen: CommerceSchedulesList,
       navigationOptions: {
-        title: 'Generar calendario'
+        title: 'Horarios de Atención'
       }
+    },
+    scheduleRegister: {
+      screen: ScheduleRegister
     },
     registerConfiguration: {
       screen: ScheduleRegisterConfiguration,
@@ -188,13 +193,13 @@ const profileStack = createStackNavigator(
         title: 'Información'
       }
     },
-    showMyAddressMap: {
-      screen: Map,
+    commerceLocationMap: {
+      screen: CommerceLocationMap,
       navigationOptions: {
         title: 'Dirección'
       }
     },
-    changeAddressMap: {
+    changeCommerceLocationMap: {
       screen: LocationMap,
       navigationOptions: {
         title: 'Modificar mi Dirección'

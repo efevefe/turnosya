@@ -14,20 +14,19 @@ import {
   Button,
   Rating
 } from 'react-native-elements';
-import { PictureView } from './common';
 import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { PictureView } from './common';
 import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,
-  commerceHitsUpdate,
   onLocationChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
-import { Ionicons } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -40,21 +39,14 @@ class CommerceProfileView extends Component {
   };
 
   componentDidMount() {
-    if (this.props.navigation.state.routeName === 'commerceProfileView') {
-      this.setState({
-        favorite: this.props.favoriteCommerces.includes(
-          this.props.commerce.objectID
-        )
-      });
-      this.props.onCommerceReadProfile(this.props.commerce.objectID);
-    } else {
-      this.setState({
-        favorite: this.props.favoriteCommerces.includes(this.props.commerceId)
-      });
-      this.props.onCommerceReadProfile(this.props.commerceId);
-    }
+    let { commerceId, favoriteCommerces } = this.props;
 
-    this.props.commerceHitsUpdate([]);
+    if (this.props.navigation.state.routeName === 'commerceProfileView')
+      commerceId = this.props.commerce.objectID;
+
+    this.setState({ favorite: favoriteCommerces.includes(commerceId) });
+
+    this.props.onCommerceReadProfile(commerceId);
   }
 
   renderDescription = () => {
@@ -101,6 +93,7 @@ class CommerceProfileView extends Component {
 
   onMapPress = () => {
     const { address, city, province, latitude, longitude } = this.props;
+
     this.props.onLocationChange({
       address,
       city,
@@ -109,7 +102,7 @@ class CommerceProfileView extends Component {
       longitude
     });
 
-    this.props.navigation.navigate('showMyAddressMap');
+    this.props.navigation.navigate('commerceLocationMap');
   };
 
   onPicturePress = () => {
@@ -141,7 +134,7 @@ class CommerceProfileView extends Component {
               width: imageSizeWidth,
               position: 'absolute'
             }}
-            source={profilePicture ? { uri: headerPicture } : null}
+            source={headerPicture ? { uri: headerPicture } : null}
           />
 
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -309,6 +302,5 @@ export default connect(mapStateToProps, {
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,
-  commerceHitsUpdate,
   onLocationChange
 })(CommerceProfileView);

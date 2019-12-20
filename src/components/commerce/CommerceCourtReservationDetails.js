@@ -23,8 +23,6 @@ import { isOneWeekOld } from '../../utils/functions';
 import { MAIN_COLOR } from '../../constants';
 
 class CommerceCourtReservationDetails extends Component {
-  // pantalla de detalles del turno (alternativa al modal con los detalles por si tenemos que meter mas funciones u opciones)
-
   constructor(props) {
     super(props);
 
@@ -304,7 +302,7 @@ class CommerceCourtReservationDetails extends Component {
               style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
             >
               <Input
-                placeholder="Motivos de cancelación..."
+                placeholder="Motivo de cancelación..."
                 multiline={true}
                 color="black"
                 onChangeText={value => {
@@ -327,6 +325,7 @@ class CommerceCourtReservationDetails extends Component {
             loadingWithText={this.props.loading}
             onPress={() => this.onConfirmDelete(id, clientId)}
           />
+          <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cerrar"
             icon="md-close"
