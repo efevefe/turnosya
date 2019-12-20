@@ -11,9 +11,6 @@ export const onCommerceReportValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
 };
 
-// Se pueden mejorar un par de cosas aqui. Juntar las consultas que sean iguales hay dos que consulta la reserva
-// (readReservationOnDays, readEarnings...)y despues separar los for segun el informe,
-// pero bueno por ahora lo hice asi porque no tengo mucho tiempo
 
 export const readReservationsOnDays = (
   commerceId,

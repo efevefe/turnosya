@@ -121,7 +121,6 @@ class BarChartReport extends Component {
           title={'Generar Reporte'}
           onPress={() => {
             this.props.readReservationsOnDays(commerceId, startDate, endDate);
-            this.setState({ cardVisible: false });
           }}
         />
         <BarChart data={data} style={{ marginTop: 10 }} />

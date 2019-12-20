@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LineChart, Spinner, Input, DatePicker } from '../../common';
+import { LineChart, Spinner, Input, DatePicker, Button } from '../../common';
 import {
   readEarningsOnMonths,
   onCommerceReportValueChange
@@ -9,12 +9,12 @@ import { View, ScrollView } from 'react-native';
 import moment from 'moment';
 
 class LineChartMoneyReport extends Component {
-  componentWillMount() {
+  componentDidMount() {
     this.props.readEarningsOnMonths(this.props.commerceId);
   }
 
   render() {
-    const { startDate, loading, data } = this.props;
+    const { startDate, loading, data, commerceId } = this.props;
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
@@ -24,6 +24,7 @@ class LineChartMoneyReport extends Component {
         }
       ]
     };
+    console.log(startDate);
 
     if (loading) return <Spinner />;
     return (
@@ -31,7 +32,8 @@ class LineChartMoneyReport extends Component {
         <View
           style={{
             flexDirection: 'row',
-            alignSelf: 'flex-start',
+            alignSelf: 'auto',
+            alignItems: 'stretch',
             margin: 10
           }}
         >
@@ -46,6 +48,14 @@ class LineChartMoneyReport extends Component {
                 value: moment(startDate)
               })
             }
+            style={{ margin: 8 }}
+          />
+          <Button
+            title={'Generar Reporte'}
+            buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
+            onPress={() => {
+              this.props.readEarningsOnMonths(commerceId);
+            }}
           />
         </View>
         <LineChart data={dataLine} yAxisLabel={'$'} />

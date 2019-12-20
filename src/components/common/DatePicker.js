@@ -37,6 +37,7 @@ class DatePicker extends Component {
           mode={this.props.mode || 'time'}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
+          format={this.props.format || 'YYYY-MM-DD'}
           iconComponent={
             <Ionicons
               name={this.props.mode ? 'md-calendar' : 'md-time'}

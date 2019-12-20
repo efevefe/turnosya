@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LineChart, Spinner, Input, DatePicker } from '../../common';
+import { LineChart, Spinner, Button, DatePicker } from '../../common';
 import { readReviewsOnMonths } from '../../../actions/CommerceReportsActions';
 import { View, ScrollView } from 'react-native';
 
 class LineChartReviewsReport extends Component {
-  // Cambair los willMount en todos...
-  componentWillMount() {
+  componentDidMount() {
     this.props.readReviewsOnMonths(this.props.commerceId);
   }
 
   render() {
-    const { startDate, loading, data } = this.props;
+    const { startDate, loading, data, commerceId } = this.props;
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
@@ -24,7 +23,14 @@ class LineChartReviewsReport extends Component {
     if (loading) return <Spinner />;
     return (
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignSelf: 'auto',
+            alignItems: 'stretch',
+            margin: 10
+          }}
+        >
           <DatePicker
             mode="date"
             label="Año"
@@ -36,6 +42,14 @@ class LineChartReviewsReport extends Component {
                 value: moment(startDate)
               })
             }
+            style={{ margin: 8 }}
+          />
+          <Button
+            title={'Generar Reporte'}
+            buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
+            onPress={() => {
+              this.props.readReviewsOnMonths(commerceId);
+            }}
           />
         </View>
         <LineChart data={dataLine} />

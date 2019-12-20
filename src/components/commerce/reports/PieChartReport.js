@@ -9,7 +9,7 @@ import { View, ScrollView } from 'react-native';
 import moment from 'moment';
 
 class PieChartReport extends Component {
-  componentWillMount() {
+  componentDidMount() {
     const { commerceId, startDate, endDate } = this.props;
 
     this.props.readStateTurnsReservations(commerceId, startDate, endDate);
@@ -70,7 +70,6 @@ class PieChartReport extends Component {
               startDate,
               endDate
             );
-            this.setState({ cardVisible: false });
           }}
         />
         <PieChart data={dataPie} accesor="count" />
