@@ -12,7 +12,7 @@ class Hits extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.hits !== this.props.hits ||
-      (this.props.isFocused && this.props.isFocused !== prevProps.isFocused)
+      (this.props.isFocused && !prevProps.isFocused)
     ) {
       this.props.commerceHitsUpdate(this.props.hits);
     }

@@ -7,7 +7,8 @@ import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   updateAllFilters,
-  onLocationChange
+  onUserLocationChange,
+  onSelectedLocationChange
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -17,8 +18,8 @@ class CommerceFiltersScreen extends Component {
     locationButtonIndex: this.props.locationButtonIndex,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
     oldData: {
-      selectedLocation: this.props.selectedLocation
-      //add userlocation: this.props.userLocation
+      selectedLocation: this.props.selectedLocation,
+      userlocation: this.props.userLocation
     }
   };
 
@@ -27,10 +28,8 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress() {
-    this.props.onLocationChange({
-      prop: 'selectedLocation',
-      value: this.state.oldData.selectedLocation
-    });
+    this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
+    this.props.onUserLocationChange(this.state.oldData.userLocation);
 
     this.props.navigation.goBack();
   }
@@ -50,14 +49,14 @@ class CommerceFiltersScreen extends Component {
 
     switch (buttonIndex) {
       case 0:
-        this.props.onLocationChange({ prop: 'userLocation' });
-        this.props.onLocationChange({ prop: 'selectedLocation' });
+        this.props.onUserLocationChange();
+        this.props.onSelectedLocationChange();
         break;
       case 1:
-        this.props.onLocationChange({ prop: 'selectedLocation' });
+        this.props.onSelectedLocationChange();
         break;
       case 2:
-        this.props.onLocationChange({ prop: 'userLocation' });
+        this.props.onUserLocationChange();
         this.props.navigation.navigate('commercesFiltersMap');
         break;
     }
@@ -235,5 +234,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onProvincesNameRead,
   updateAllFilters,
-  onLocationChange
+  onUserLocationChange,
+  onSelectedLocationChange
 })(CommerceFiltersScreen);

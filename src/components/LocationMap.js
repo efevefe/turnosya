@@ -53,7 +53,7 @@ class LocationMap extends React.Component {
   );
 
   onBackPress = () => {
-    this.props.onLocationChange({ value: this.state.stateBeforeChanges });
+    this.props.onLocationChange(this.state.stateBeforeChanges);
 
     //se puede evitar este metodo
     this.props.navigation.state.params.onProvinceNameChange &&

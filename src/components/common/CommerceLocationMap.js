@@ -114,7 +114,7 @@ class CommerceLocationMap extends React.Component {
         completeAddress: `${address}, ${city}, ${region}, ${country}`
       });
 
-      this.props.onLocationChange({ value: location });
+      this.props.onLocationChange(location);
     } catch (e) {
       console.error(e);
     }

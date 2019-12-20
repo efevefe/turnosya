@@ -80,7 +80,8 @@ class CommerceProfile extends Component {
       country
     };
 
-    this.props.onLocationChange({ value: location });
+    this.props.onLocationChange(location);
+
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
       rightIcon: this.renderSaveButton()
@@ -144,7 +145,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange({ value: location });
+    this.props.onLocationChange(location);
   };
 
   onRefresh = () => {

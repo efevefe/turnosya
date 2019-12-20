@@ -1,6 +1,8 @@
 import {
   ON_LOCATION_VALUE_CHANGE,
   ON_LOCATION_CHANGE,
+  ON_USER_LOCATION_CHANGE,
+  ON_SELECTED_LOCATION_CHANGE,
   ON_LOCATION_VALUES_RESET
 } from '../actions/types';
 
@@ -34,17 +36,15 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOCATION_CHANGE:
-      if (!action.payload.prop) {
-        return { ...state, ...action.payload.value };
-      }
-      if (!action.payload.value) {
-        return {
-          ...state,
-          [action.payload.prop]: { ...INITIAL_STATE[action.payload.prop] }
-        };
-      }
-
-      return { ...state, [action.payload.prop]: { ...action.payload.value } };
+      return { ...state, ...action.payload };
+    case ON_USER_LOCATION_CHANGE:
+      return action.payload
+        ? { ...state, userLocation: { ...action.payload } }
+        : { ...state, userLocation: { ...INITIAL_STATE.userLocation } };
+    case ON_SELECTED_LOCATION_CHANGE:
+      return action.payload
+        ? { ...state, selectedLocation: { ...action.payload } }
+        : { ...state, selectedLocation: { ...INITIAL_STATE.selectedLocation } };
     case ON_LOCATION_VALUES_RESET:
       return { ...INITIAL_STATE };
     default:

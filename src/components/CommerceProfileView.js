@@ -98,8 +98,13 @@ class CommerceProfileView extends Component {
 
   onMapPress = () => {
     const { address, city, province, latitude, longitude } = this.props;
+
     this.props.onLocationChange({
-      value: { address, city, provinceName: province.name, latitude, longitude }
+      address,
+      city,
+      provinceName: province.name,
+      latitude,
+      longitude
     });
 
     this.props.navigation.navigate('commerceLocationMap');

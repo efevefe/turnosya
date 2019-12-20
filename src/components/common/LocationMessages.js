@@ -12,7 +12,7 @@ import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
 import * as Location from 'expo-location';
-import { onLocationChange } from '../../actions';
+import { onUserLocationChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -67,10 +67,8 @@ class LocationMessages extends Component {
       const {
         coords: { latitude, longitude }
       } = await Location.getCurrentPositionAsync();
-      this.props.onLocationChange({
-        prop: 'userLocation',
-        value: { latitude, longitude }
-      });
+
+      this.props.onUserLocationChange({ latitude, longitude });
     }
   }
 
@@ -105,10 +103,7 @@ class LocationMessages extends Component {
         longitude
       };
 
-      this.props.onLocationChange({
-        prop: 'userLocation',
-        value: location
-      });
+      this.props.onUserLocationChange(location);
     } catch (e) {
       console.error(e);
     }
@@ -251,4 +246,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(null, { onLocationChange })(LocationMessages);
+export default connect(null, { onUserLocationChange })(LocationMessages);
