@@ -23,9 +23,13 @@ export const commerceHitsUpdate = hits => {
   const normalizedHits = [];
   hits.forEach(hit => {
     if (hit._geoloc) {
-      normalizedHits.push({ ...hit, latitude: hit._geoloc.lat, longitude: hit._geoloc.lng })
+      normalizedHits.push({
+        ...hit,
+        latitude: hit._geoloc.lat,
+        longitude: hit._geoloc.lng
+      });
     }
-  })
+  });
   return { type: ON_HITS_UPDATE, payload: normalizedHits };
 };
 

@@ -81,6 +81,7 @@ class CommerceProfile extends Component {
     };
 
     this.props.onLocationChange(location);
+
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
       rightIcon: this.renderSaveButton()
@@ -90,10 +91,6 @@ class CommerceProfile extends Component {
   onRefresh = () => {
     this.props.onCommerceRead();
   };
-
-  // renderEditButton = () => {
-  //   return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  // };
 
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
@@ -148,7 +145,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
   };
 
   onRefresh = () => {
@@ -236,20 +233,6 @@ class CommerceProfile extends Component {
     this.cleanErrors();
     this.props.navigation.goBack(null);
   };
-
-  // disableEdit = () => {
-  //   this.setState({
-  //     editEnabled: false,
-  //     newProfilePicture: false,
-  //     stateBeforeChanges: null
-  //   });
-
-  //   this.props.navigation.setParams({
-  //     title: 'Perfil',
-  //     rightIcon: this.renderEditButton(),
-  //     leftIcon: this.renderBackButton()
-  //   });
-  // }
 
   onEditPicturePress = () => {
     this.setState({
@@ -550,7 +533,7 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    this.props.navigation.navigate('changeAddressMap', {
+    this.props.navigation.navigate('changeCommerceLocationMap', {
       onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
