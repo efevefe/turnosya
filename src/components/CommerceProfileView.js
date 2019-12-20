@@ -22,7 +22,7 @@ import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  commerceHitsUpdate,
+  onScheduleRead,
   onLocationChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -47,7 +47,6 @@ class CommerceProfileView extends Component {
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
     this.props.onCommerceReadProfile(commerceId);
-    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
@@ -94,6 +93,7 @@ class CommerceProfileView extends Component {
 
   onMapPress = () => {
     const { address, city, province, latitude, longitude } = this.props;
+
     this.props.onLocationChange({
       address,
       city,
@@ -102,7 +102,7 @@ class CommerceProfileView extends Component {
       longitude
     });
 
-    this.props.navigation.navigate('showMyAddressMap');
+    this.props.navigation.navigate('commerceLocationMap');
   };
 
   onPicturePress = () => {
@@ -156,8 +156,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -301,6 +301,6 @@ export default connect(mapStateToProps, {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  commerceHitsUpdate,
+  onScheduleRead,
   onLocationChange
 })(CommerceProfileView);

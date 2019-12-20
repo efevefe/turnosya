@@ -18,6 +18,7 @@ import CommerceCourtReservationDetails from '../components/commerce/CommerceCour
 import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
@@ -192,13 +193,13 @@ const profileStack = createStackNavigator(
         title: 'Información'
       }
     },
-    showMyAddressMap: {
-      screen: Map,
+    commerceLocationMap: {
+      screen: CommerceLocationMap,
       navigationOptions: {
         title: 'Dirección'
       }
     },
-    changeAddressMap: {
+    changeCommerceLocationMap: {
       screen: LocationMap,
       navigationOptions: {
         title: 'Modificar mi Dirección'

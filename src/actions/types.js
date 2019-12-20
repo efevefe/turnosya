@@ -126,6 +126,8 @@ export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
 export const ON_LOCATION_CHANGE = 'on_location_change';
 export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
+export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
+export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
 export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 
