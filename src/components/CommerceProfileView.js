@@ -17,13 +17,14 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { PictureView } from './common';
+import { PictureView, Spinner } from './common';
 import {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onScheduleRead,
-  onLocationChange
+  onLocationChange,
+  commerceHitsUpdate,
+  onCommerceCourtTypesRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -47,6 +48,13 @@ class CommerceProfileView extends Component {
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
     this.props.onCommerceReadProfile(commerceId);
+
+    this.props.onCommerceCourtTypesRead({
+      commerceId,
+      loadingType: 'loading'
+    });
+
+    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
@@ -122,11 +130,15 @@ class CommerceProfileView extends Component {
       headerPicture,
       name,
       commerceId,
-      navigation
+      navigation,
+      loadingProfile,
+      loadingCourtTypes
     } = this.props;
 
+    if (loadingProfile || loadingCourtTypes) return <Spinner />
+
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
         <View>
           <Image
             style={{
@@ -156,8 +168,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -209,8 +221,8 @@ class CommerceProfileView extends Component {
           <Divider
             style={{
               backgroundColor: 'grey',
-              marginTop: 10,
-              margin: 5,
+              marginTop: 15,
+              marginBottom: 0,
               marginLeft: 15,
               marginRight: 15
             }}
@@ -263,7 +275,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { commerce } = state.courtReservation;
   const { favoriteCommerces } = state.commercesList;
-
+  const loadingCourtTypes = state.commerceCourtTypes.loading;
+  const { cards } = state.commerceSchedule;
+  const loadingProfile = state.commerceData.loading;
   const {
     name,
     description,
@@ -277,7 +291,6 @@ const mapStateToProps = state => {
     longitude,
     rating
   } = state.commerceData;
-  const { cards } = state.commerceSchedule;
 
   return {
     name,
@@ -293,7 +306,9 @@ const mapStateToProps = state => {
     rating,
     commerce,
     favoriteCommerces,
-    cards
+    cards,
+    loadingCourtTypes,
+    loadingProfile
   };
 };
 
@@ -301,6 +316,7 @@ export default connect(mapStateToProps, {
   onCommerceReadProfile,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onScheduleRead,
-  onLocationChange
+  onLocationChange,
+  commerceHitsUpdate,
+  onCommerceCourtTypesRead
 })(CommerceProfileView);

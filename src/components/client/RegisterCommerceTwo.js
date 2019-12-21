@@ -25,6 +25,12 @@ class RegisterCommerceTwo extends Component {
     this.props.onProvincesIdRead();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.province.provinceId !== this.props.province.provinceId) {
+      this.renderProvinceError();
+    }
+  }
+
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
       const {
@@ -59,27 +65,21 @@ class RegisterCommerceTwo extends Component {
     }
   }
 
-  onProvincePickerChange = async index => {
-    try {
-      const { value, label } =
-        index > 0
-          ? this.props.provincesList[index - 1]
-          : this.state.pickerPlaceholder;
+  onProvincePickerChange = index => {
+    const { value, label } =
+      index > 0
+        ? this.props.provincesList[index - 1]
+        : this.state.pickerPlaceholder;
 
-      await this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
-      });
+    this.props.onCommerceValueChange({
+      prop: 'province',
+      value: { provinceId: value, name: label }
+    });
 
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: index > 0 ? label : ''
-      });
-
-      this.renderProvinceError();
-    } catch (e) {
-      console.error(e);
-    }
+    this.props.onLocationValueChange({
+      prop: 'provinceName',
+      value: index > 0 ? label : ''
+    });
   };
 
   renderAddressError = () => {
@@ -199,12 +199,13 @@ class RegisterCommerceTwo extends Component {
             />
           </CardSection>
 
-          <CardSection>
+          <CardSection style={{ paddingTop: 0 }}>
             <Button
               title="Buscar en el mapa"
               titleStyle={{ color: MAIN_COLOR }}
               buttonStyle={{
-                borderRadius: 30,
+                marginTop: 0,
+                borderRadius: 8,
                 borderColor: MAIN_COLOR
               }}
               color="white"
@@ -222,7 +223,7 @@ class RegisterCommerceTwo extends Component {
             />
           </CardSection>
 
-          <CardSection>
+          <CardSection style={{ paddingTop: 0 }}>
             <Button
               title="Registrar"
               loading={this.props.loading}

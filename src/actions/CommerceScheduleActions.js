@@ -92,7 +92,7 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
 
     dispatch({ type: ON_SCHEDULE_READ, payload: schedule });
   } catch (error) {
-    dispatch({ type: ON_SCHEDULE_READ_FAIL })
+    dispatch({ type: ON_SCHEDULE_READ_FAIL });
   }
 };
 

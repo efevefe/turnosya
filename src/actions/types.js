@@ -25,7 +25,7 @@ export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
 
 // Register types
-export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
+export const ON_CLIENT_DATA_VALUE_CHANGE = 'on_client_data_value_change';
 export const ON_USER_REGISTER = 'on_register';
 export const ON_REGISTER_FORM_OPEN = 'on_register_form_open';
 export const ON_USER_REGISTER_SUCCESS = 'on_register_success';
@@ -54,6 +54,7 @@ export const ON_USER_READ_FAIL = 'on_user_read_fail';
 export const ON_USER_UPDATING = 'on_user_updating';
 export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
+export const ON_USER_PASSWORD_UPDATE = 'on_user_password_update';
 
 // Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
