@@ -21,6 +21,7 @@ class CommercesFiltersMap extends Component {
             titleStyle={{ color: 'white' }}
             onPress={() => this.props.navigation.goBack()}
             style={applyFilterButtonStyle}
+            disabled={!this.props.latitude}
           />
         </View>
         <View style={{ flex: 1 }}>
@@ -48,9 +49,9 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { latitude, longitude } = state.locationData;
+  const { latitude } = state.locationData.selectedLocation;
 
-  return { latitude, longitude };
+  return { latitude };
 };
 
 export default connect(mapStateToProps, {})(CommercesFiltersMap);

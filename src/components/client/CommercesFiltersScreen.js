@@ -8,7 +8,8 @@ import {
   onProvincesNameRead,
   updateAllFilters,
   onUserLocationChange,
-  onSelectedLocationChange
+  onSelectedLocationChange,
+  commerceHitsUpdate
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -19,7 +20,8 @@ class CommerceFiltersScreen extends Component {
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
     oldData: {
       selectedLocation: this.props.selectedLocation,
-      userlocation: this.props.userLocation
+      userLocation: this.props.userLocation,
+      markers: this.props.markers
     }
   };
 
@@ -31,6 +33,7 @@ class CommerceFiltersScreen extends Component {
     this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
     this.props.onUserLocationChange(this.state.oldData.userLocation);
 
+    this.props.commerceHitsUpdate(this.state.oldData.markers);
     this.props.navigation.goBack();
   }
 
@@ -218,16 +221,19 @@ const mapStateToProps = state => {
   const {
     provinceNameFilter,
     locationButtonIndex,
-    locationRadiusKms
+    locationRadiusKms,
+    markers
   } = state.commercesList;
-  const { selectedLocation } = state.locationData;
+  const { selectedLocation, userLocation } = state.locationData;
 
   return {
     provincesList,
     provinceNameFilter,
     locationButtonIndex,
     locationRadiusKms,
-    selectedLocation
+    selectedLocation,
+    userLocation,
+    markers
   };
 };
 
@@ -235,5 +241,6 @@ export default connect(mapStateToProps, {
   onProvincesNameRead,
   updateAllFilters,
   onUserLocationChange,
-  onSelectedLocationChange
+  onSelectedLocationChange,
+  commerceHitsUpdate
 })(CommerceFiltersScreen);
