@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
-import { connect } from "react-redux";
-import { Button } from "react-native-elements";
-import { IconButton } from "../common";
-import { MAIN_COLOR } from "../../constants";
-import Map from "../common/Map";
+import React, { Component } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { Button } from 'react-native-elements';
+import { IconButton } from '../common';
+import { MAIN_COLOR } from '../../constants';
+import CommercesMap from '../common/CommercesMap';
 
 class CommercesFiltersMap extends Component {
   render() {
@@ -18,13 +18,14 @@ class CommercesFiltersMap extends Component {
           <Button
             title="Aceptar"
             type="clear"
-            titleStyle={{ color: "white" }}
+            titleStyle={{ color: 'white' }}
             onPress={() => this.props.navigation.goBack()}
             style={applyFilterButtonStyle}
+            disabled={!this.props.latitude}
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Map />
+          <CommercesMap searchBar={true} longPressAllowed={true} />
         </View>
       </View>
     );
@@ -40,20 +41,17 @@ const {
   windowTopContainerStyle: {
     paddingTop: 20,
     height: 70,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row"
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row'
   },
   applyFilterButtonStyle: { marginRight: 10, padding: 5 }
 });
 
 const mapStateToProps = state => {
-  const { latitude, longitude } = state.locationData;
+  const { latitude } = state.locationData.selectedLocation;
 
-  return { latitude, longitude };
+  return { latitude };
 };
 
-export default connect(
-  mapStateToProps,
-  {}
-)(CommercesFiltersMap);
+export default connect(mapStateToProps, {})(CommercesFiltersMap);

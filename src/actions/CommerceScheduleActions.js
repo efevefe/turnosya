@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import moment from 'moment';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
@@ -13,7 +14,8 @@ import {
   ON_SCHEDULE_CREATE_FAIL,
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
-  ON_SCHEDULE_READ_EMPTY
+  ON_SCHEDULE_READ_EMPTY,
+  ON_ACTIVE_SCHEDULES_READ
 } from './types';
 
 export const onScheduleValueChange = ({ prop, value }) => {
@@ -32,222 +34,279 @@ export const onScheduleFormOpen = () => {
   return { type: ON_SCHEDULE_FORM_OPEN };
 };
 
-export const onScheduleRead = commerceId => {
+const formatScheduleDoc = scheduleDoc => {
+  const { id, reservationDayPeriod, reservationMinLength, startDate, endDate } = scheduleDoc;
+
+  return {
+    id,
+    startDate: moment(startDate.toDate()),
+    endDate: endDate ? moment(endDate.toDate()) : null,
+    reservationDayPeriod,
+    reservationMinLength
+  }
+}
+
+export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_READING });
+
   const db = firebase.firestore();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_READING });
+  let schedule;
 
-    db.collection(`Commerces/${commerceId}/Schedules`)
-      .where('endDate', '==', null)
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+  try {
+    // reading schedule
+    let snapshot = await schedulesRef
+      .where('softDelete', '==', null)
+      .where('endDate', '>', selectedDate.toDate())
+      .orderBy('endDate')
+      .get();
+
+    if (snapshot.empty) {
+      snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    }
+
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => {
+        if (moment(doc.data().startDate.toDate()) <= selectedDate) {
+          schedule = formatScheduleDoc({ id: doc.id, ...doc.data() });
         }
+      });
+    }
 
-        snapshot.forEach(doc => {
-          const {
-            reservationDayPeriod,
-            reservationMinLength,
-            reservationMinCancelTime
-          } = doc.data();
+    if (snapshot.empty || !schedule) {
+      return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+    }
 
-          db.collection(
-            `Commerces/${commerceId}/Schedules/${doc.id}/WorkShifts`
-          )
-            .get()
-            .then(snapshot => {
-              if (snapshot.empty) {
-                return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
-              }
+    // reading schedule cards
+    snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`).get();
+    let cards = [];
+    let selectedDays = [];
 
-              const cards = [];
-              let selectedDays = [];
+    snapshot.forEach(doc => {
+      cards.push({ ...doc.data(), id: parseInt(doc.id) });
+      selectedDays = [...selectedDays, ...doc.data().days];
+    });
 
-              snapshot.forEach(doc => {
-                cards.push({ ...doc.data(), id: parseInt(doc.id) });
-                selectedDays = selectedDays.concat(doc.data().days);
-              });
+    schedule = { ...schedule, cards, selectedDays };
 
-              dispatch({
-                type: ON_SCHEDULE_READ,
-                payload: {
-                  cards,
-                  selectedDays,
-                  reservationDayPeriod,
-                  reservationMinLength,
-                  reservationMinCancelTime: reservationMinCancelTime ? reservationMinCancelTime : 2 // provisorio
-                }
-              });
-            })
-            .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
-        });
-      })
-      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
-  };
-};
-
-/*
-export const onScheduleCreate = cards => {
-  //ESTA FUNCION ES PARA UPDATEAR LOS SCHEDULES SIN TENER QUE BORRAR Y VOLVER A ESCRIBIR
-  const db = firebase.firestore();
-  const batch = db.batch();
-
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_CREATING });
-
-    //rutas hardcodeadas para probar
-    db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
-      .where('endDate', '==', null)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(oldSchedule => {
-          batch.update(oldSchedule.ref, { endDate: new Date() });
-
-          db.collection('Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/')
-            .add({ startDate: new Date(), endDate: null })
-            .then(scheduleRef => {
-              cards.forEach(card => {
-                const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
-                
-                const ref = db
-                  .collection(`Commerces/D0iAxKlOYbjSHwNqZqGY/Schedules/${scheduleRef.id}/WorkShifts`)
-                  .doc(`${card.id}`);
-                batch.set(ref, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
-              });
-
-              batch.commit()
-                .then(() => dispatch({ type: ON_SCHEDULE_CREATED }))
-                .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
-            })
-            .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
-        })
-      })
-      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
+    dispatch({ type: ON_SCHEDULE_READ, payload: schedule });
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_READ_FAIL })
   }
 };
-*/
 
-export const onScheduleCreate = (
-  { cards, commerceId, reservationMinLength, reservationDayPeriod, reservationMinCancelTime },
-  navigation
-) => {
-  //ESTE METODO BORRA LOS HORARIOS DE ATENCION Y LOS CARGA DE NUEVO, SINO UN VIAJE ACTUALIZAR CUANDO BORRAS UN CARD
+export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_READING });
+
   const db = firebase.firestore();
-  const batch = db.batch();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_CREATING });
+  const schedules = [];
 
-    db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set(
-        {
-          startDate: new Date(),
-          endDate: null,
-          reservationMinLength,
-          reservationDayPeriod,
-          reservationMinCancelTime
-        },
-        { merge: true }
-      )
-      .then(() => {
-        db.collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
-          .get()
-          .then(snapshot => {
-            snapshot.forEach(shift => {
-              batch.delete(shift.ref);
-            });
+  try {
+    // reading active schedules
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
+    }
 
-            cards.forEach(card => {
-              const {
-                days,
-                firstShiftStart,
-                firstShiftEnd,
-                secondShiftStart,
-                secondShiftEnd
-              } = card;
+    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
+    };
 
-              const ref = db
-                .collection(`Commerces/${commerceId}/Schedules/0/WorkShifts`)
-                .doc(`${card.id}`);
-              batch.set(ref, {
-                days,
-                firstShiftStart,
-                firstShiftEnd,
-                secondShiftStart,
-                secondShiftEnd
-              });
-            });
+    if (!schedules.length) return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
 
-            batch
-              .commit()
-              .then(() => {
-                navigation.navigate('calendar');
-                dispatch({ type: ON_SCHEDULE_CREATED });
-              })
-              .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
-          })
-          .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
-      })
-      .catch(error => dispatch({ type: ON_SCHEDULE_CREATE_FAIL }));
-  };
-};
+    // reading cards for each active schedule
+    for (i in schedules) {
+      snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedules[i].id}/WorkShifts`).get();
+      let cards = [];
+      let selectedDays = [];
 
-export const onScheduleConfigurationSave = (
-  {
+      snapshot.forEach(doc => {
+        cards.push({ ...doc.data(), id: parseInt(doc.id) });
+        selectedDays = [...selectedDays, ...doc.data().days];
+      });
+
+      schedules[i] = { ...schedules[i], cards, selectedDays };
+    }
+
+    dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_READ_FAIL })
+  }
+}
+
+export const onScheduleUpdate = scheduleData => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_CREATING });
+
+  const {
+    commerceId,
+    scheduleId,
+    cards,
     reservationMinLength,
     reservationDayPeriod,
     reservationMinCancelTime,
-    commerceId
-  },
-  navigation
-) => {
+    startDate,
+    endDate,
+    schedules,
+    reservationsToCancel
+  } = scheduleData;
+
   const db = firebase.firestore();
+  const batch = db.batch();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
+  schedules.forEach(schedule => {
+    if ((schedule.startDate < startDate) && (!schedule.endDate || (startDate < schedule.endDate))) {
+      // si se superpone con un schedule que inicia antes, este ultimo termina donde inicia el nuevo
+      batch.update(schedulesRef.doc(schedule.id), { endDate: startDate.toDate() });
+    }
 
-    db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .set(
-        {
-          reservationMinLength,
-          reservationDayPeriod,
-          reservationMinCancelTime
-        },
-        { merge: true }
-      )
-      .then(() => {
-        navigation.navigate('calendar');
-        dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
+    if ((schedule.startDate >= startDate) && (!endDate || (schedule.endDate && (schedule.endDate <= endDate)))) {
+      if (schedule.id === scheduleId) {
+        // el schedule que se esta modificando se elimina porque despues se crea de nuevo
+        batch.delete(schedulesRef.doc(schedule.id));
+        // al eliminarlo hace falta tambien eliminar las subcolecciones
+        schedule.cards.forEach(card => {
+          const cardRef = schedulesRef.doc(`${schedule.id}/WorkShifts/${card.id}`);
+          batch.delete(cardRef);
+        })
+      } else {
+        // si un schedule anterior queda dentro del periodo de vigencia del nuevo,
+        // se le hace una baja logica
+        batch.update(schedulesRef.doc(schedule.id), { softDelete: new Date() });
+      }
+    }
+
+    if ((endDate && (endDate > schedule.startDate)) &&
+      (!schedule.endDate || (endDate && endDate < schedule.endDate)) &&
+      (schedule.startDate >= startDate)
+    ) {
+      // si se superpone con un schedule que esta despues, este ultimo inicia donde termina el nuevo
+      batch.update(schedulesRef.doc(schedule.id), { startDate: endDate.toDate() });
+    }
+  })
+
+  try {
+    // new schedule creation
+    const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+      .add({
+        startDate: startDate.toDate(),
+        endDate: endDate ? endDate.toDate() : null,
+        softDelete: null,
+        reservationMinLength,
+        reservationDayPeriod,
+        reservationMinCancelTime
       });
-  };
+
+    cards.forEach(card => {
+      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+
+      const cardRef = schedulesRef.doc(`${newSchedule.id}/WorkShifts/${card.id}`);
+      batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+    });
+
+    // reservations cancel
+    if (reservationsToCancel.length) {
+      const state = await db.doc(`ReservationStates/canceled`).get();
+      const updateObj = {
+        cancellationDate: new Date(),
+        state: { id: state.id, name: state.data().name }
+      };
+
+      reservationsToCancel.forEach(res => {
+        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        batch.update(commerceResRef, updateObj);
+        batch.update(clientResRef, updateObj);
+      });
+    }
+
+    await batch.commit();
+
+    dispatch({ type: ON_SCHEDULE_CREATED });
+    return true;
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+    return false;
+  }
 };
 
-export const readCancellationTimeAllowed = commerceId => {
+export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
+  const batch = db.batch();
+  const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
 
-  return dispatch => {
-    dispatch({ type: ON_SCHEDULE_READING });
+  try {
+    if (endDate <= schedule.startDate) {
+      // si se esta elimiando un schedule que no estaba en vigencia todavia sin reservas o
+      // cancelando las reservas si es que tenia, se le hace una baja logica
+      batch.update(scheduleRef, { softDelete: new Date() });
+    } else {
+      // si se esta eliminando un schedule que ya estaba en vigencia o uno que tiene reservas
+      // sin cancelarlas, se le establece una fecha de fin de vigencia lo mas pronto posible
+      batch.update(scheduleRef, { endDate: endDate.toDate() });
+    }
 
-    db.doc(`Commerces/${commerceId}/Schedules/0`)
-      .get()
-      .then(doc => {
-        if (doc.data().reservationMinCancelTime)
-          dispatch({
-            type: ON_SCHEDULE_READ,
-            payload: {
-              reservationMinCancelTime: doc.data().reservationMinCancelTime
-            }
-          });
-        else
-          dispatch({
-            type: ON_SCHEDULE_READ,
-            payload: {
-              reservationMinCancelTime: 2
-            }
-          });
-      })
-      .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
-  };
+    // reservations cancel
+    if (reservationsToCancel.length) {
+      const state = await db.doc(`ReservationStates/canceled`).get();
+      const updateObj = {
+        cancellationDate: new Date(),
+        state: { id: state.id, name: state.data().name }
+      };
+
+      reservationsToCancel.forEach(res => {
+        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        batch.update(commerceResRef, updateObj);
+        batch.update(clientResRef, updateObj);
+      });
+    }
+
+    await batch.commit();
+
+    dispatch({ type: ON_SCHEDULE_CREATED });
+    return true;
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+    return false;
+  }
+}
+
+export const onScheduleConfigurationSave = ({
+  reservationDayPeriod,
+  reservationMinCancelTime,
+  commerceId,
+  date
+},
+  navigation
+) => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
+
+  const db = firebase.firestore();
+  const batch = db.batch();
+  const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
+  const updateObj = { reservationDayPeriod, reservationMinCancelTime };
+
+  try {
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+    }
+
+    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+    };
+
+    await batch.commit();
+
+    dispatch({ type: ON_SCHEDULE_CONFIG_UPDATED });
+    navigation.goBack();
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
+  }
 };
