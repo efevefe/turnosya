@@ -239,9 +239,6 @@ export const onCommerceUpdate = (
 
   const {
     name,
-    cuit,
-    email,
-    phone,
     description,
     address,
     city,

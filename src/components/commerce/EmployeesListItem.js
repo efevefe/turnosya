@@ -25,7 +25,8 @@ class CourtListItem extends Component {
     this.props.deleteEmployee({
       employeeId: employee.id,
       commerceId,
-      profileId: employee.profileId
+      profileId: employee.profileId,
+      email: employee.email
     });
     this.setState({ deleteVisible: false });
   };

@@ -15,6 +15,7 @@ import {
   ON_EMPLOYEE_LOAD,
   ON_EMPLOYEE_UPDATED
 } from './types';
+import { Toast } from '../components/common';
 
 export const employeeValueChange = (prop, value) => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -57,53 +58,64 @@ export const createEmployee = (
 };
 
 export const updateEmployee = (
-  { employeeId, commerceId, role },
+  { employeeId, commerceId, email, role },
   navigation
 ) => dispatch => {
-  dispatch({ type: ON_EMPLOYEE_SAVING });
+  if (firebase.auth().currentUser.email === email) {
+    Toast.show({ text: 'No puede editar su propio rol!' });
+  } else {
+    const db = firebase.firestore();
 
-  const db = firebase.firestore();
+    dispatch({ type: ON_EMPLOYEE_SAVING });
 
-  db.collection(`Commerces/${commerceId}/Employees`)
-    .doc(employeeId)
-    .update({ role })
-    .then(() => {
-      dispatch({ type: ON_EMPLOYEE_UPDATED });
-      navigation.goBack();
-    })
-    .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
+    db.collection(`Commerces/${commerceId}/Employees`)
+      .doc(employeeId)
+      .update({ role })
+      .then(() => {
+        dispatch({ type: ON_EMPLOYEE_UPDATED });
+        navigation.goBack();
+      })
+      .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
+  }
 };
 
 export const deleteEmployee = ({
   employeeId,
   commerceId,
-  profileId
+  profileId,
+  email
 }) => async dispatch => {
-  const db = firebase.firestore();
+  if (firebase.auth().currentUser.email === email) {
+    Toast.show({ text: 'No puede eliminarse usted mismo' });
+  } else {
+    const db = firebase.firestore();
 
-  const snapshot = await db
-    .collection(`Profiles/${profileId}/Workplaces`)
-    .where('commerceId', '==', commerceId)
-    .get();
+    const snapshot = await db
+      .collection(`Profiles/${profileId}/Workplaces`)
+      .where('commerceId', '==', commerceId)
+      .get();
 
-  const workplaceRef = db
-    .collection(`Profiles/${profileId}/Workplaces`)
-    .doc(snapshot.docs[0].id);
-  const employeeRef = db
-    .collection(`Commerces/${commerceId}/Employees`)
-    .doc(employeeId);
+    const workplaceRef = db
+      .collection(`Profiles/${profileId}/Workplaces`)
+      .doc(snapshot.docs[0].id);
+    const employeeRef = db
+      .collection(`Commerces/${commerceId}/Employees`)
+      .doc(employeeId);
 
-  const batch = db.batch();
+    const batch = db.batch();
 
-  batch.update(workplaceRef, { softDelete: new Date() });
-  batch.update(employeeRef, { softDelete: new Date() });
+    batch.update(workplaceRef, { softDelete: new Date() });
+    batch.update(employeeRef, { softDelete: new Date() });
 
-  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+    batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+  }
 };
 
 export const searchUserEmail = email => dispatch => {
   dispatch({ type: ON_USER_SEARCHING });
   const db = firebase.firestore();
+
+  // VERIFICAR QUE EL DUEÑO NO SE PUEDE AGREGAR
 
   db.collection('Profiles')
     .where('email', '==', email)

@@ -91,6 +91,7 @@ class EmployeeForm extends Component {
             {
               commerceId,
               employeeId,
+              email,
               role
             },
             navigation
