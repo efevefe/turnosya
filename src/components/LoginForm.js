@@ -37,7 +37,7 @@ class LoginForm extends Component {
   }
 
   renderEmailError = () => {
-    if (this.props.email == '') {
+    if (!this.props.email) {
       this.setState({ emailError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('email', this.props.email)) {
@@ -50,7 +50,7 @@ class LoginForm extends Component {
   };
 
   renderPasswordError = () => {
-    if (this.props.password == '') {
+    if (!this.props.password) {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
@@ -77,7 +77,7 @@ class LoginForm extends Component {
         isVisible={this.state.resetPasswordModal}
       >
         <CardSection
-          style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
+          style={styles.resetPasswordInputContainer}
         >
           <Input
             label='E-Mail'
@@ -196,8 +196,8 @@ class LoginForm extends Component {
             title="Olvidé mi contraseña"
             type="clear"
             color="white"
-            titleStyle={{ fontSize: 14, color: 'grey' }}
-            buttonStyle={{ margin: 0, padding: 0, alignSelf: 'center' }}
+            titleStyle={styles.resetPasswordTitleStyle}
+            buttonStyle={styles.resetPasswordButtonStyle}
             onPress={() => this.setState({ resetPasswordModal: true })}
           />
 
@@ -284,6 +284,20 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     marginVertical: 4
+  },
+  resetPasswordTitleStyle: {
+    fontSize: 14,
+    color: 'grey'
+  },
+  resetPasswordButtonStyle: {
+    margin: 0,
+    padding: 0,
+    alignSelf: 'center'
+  },
+  resetPasswordInputContainer: {
+    padding: 20,
+    paddingLeft: 10,
+    paddingRight: 10
   }
 });
 
