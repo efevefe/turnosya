@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Tooltip, CheckBox } from 'react-native-elements';
+import { Card, CheckBox, Divider } from 'react-native-elements';
 import { View, StyleSheet, Switch, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import moment from 'moment';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
   courtCreate,
   courtUpdate
 } from '../../actions';
-import { CardSection, Input, Picker, Button } from '../common';
+import { CardSection, Input, Picker, Button, DatePicker, Toast } from '../common';
 import { validateValueType, trimString } from '../../utils';
 import {
   MAIN_COLOR,
@@ -25,6 +25,8 @@ class CourtForm extends Component {
     groundTypeError: '',
     priceError: '',
     lightPriceError: '',
+    disabledFromError: '',
+    disabledToError: '',
     selectedGrounds: [],
     lightPriceOpen: false
   };
@@ -51,6 +53,11 @@ class CourtForm extends Component {
         }
         if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
       }
+    }
+
+    if (prevProps.disabledFrom !== this.props.disabledFrom ||
+      prevProps.disabledTo !== this.props.disabledTo) {
+      this.renderDisabledDatesError()
     }
   }
 
@@ -173,7 +180,8 @@ class CourtForm extends Component {
       this.renderCourtError() &&
       this.renderGroundTypeError() &&
       this.renderPriceError() &&
-      this.renderLightPriceError()
+      this.renderLightPriceError() &&
+      this.renderDisabledDatesError()
     );
   };
 
@@ -241,58 +249,84 @@ class CourtForm extends Component {
     }
   }
 
+  renderDisableCourtForm = () => {
+    if (!this.props.courtState) {
+      return (
+        <View>
+          <CardSection
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'space-around',
+              paddingBottom: 10
+            }}
+          >
+            <DatePicker
+              date={this.props.disabledFrom}
+              mode="datetime"
+              label="Desde:"
+              placeholder="Fecha desde"
+              format='DD/MM/YYYY'
+              errorMessage={this.state.disabledFromError}
+              onDateChange={this.onDisabledFromValueChange}
+            />
+            <DatePicker
+              value={this.props.disabledTo}
+              mode="datetime"
+              label="Hasta:"
+              placeholder="Opcional"
+              errorMessage={this.state.disabledToError}
+              onDateChange={this.onDisabledToValueChange}
+            />
+          </CardSection>
+        </View>
+      );
+    }
+  }
+
+  onDisabledFromValueChange = date => {
+    date = moment(date)
+
+    if (date < moment()) {
+      return Toast.show({ text: 'No puede ingresar una fecha anterior a la actual' })
+    }
+
+    this.props.onCourtValueChange({
+      prop: 'disabledFrom',
+      value: date
+    });
+  }
+
+  onDisabledToValueChange = date => {
+    this.props.onCourtValueChange({
+      prop: 'disabledTo',
+      value: moment(date)
+    });
+  }
+
+  renderDisabledDatesError = () => {
+    if (!this.props.courtState) {
+      if (!this.props.disabledFrom) {
+        this.setState({ disabledFromError: 'Dato requerido' });
+        return false;
+      } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
+        this.setState({
+          disabledFromError: 'Debe ser anterior a la fecha de habilitación',
+          disabledToError: 'Debe ser posterior a la fecha de deshabilitación'
+        });
+        return false;
+      }
+    }
+
+    this.setState({ disabledFromError: '', disabledToError: '' });
+    return true;
+  }
+
   render() {
     return (
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
         <View>
           <Card containerStyle={styles.cardStyle}>
-            <CardSection style={{ marginTop: 0 }}>
-              <View
-                style={{
-                  flexDirection: 'row-reverse',
-                  paddingLeft: 5
-                }}
-              >
-                <Switch
-                  style={{ alignSelf: 'flex-end' }}
-                  onValueChange={value =>
-                    this.props.onCourtValueChange({
-                      prop: 'courtState',
-                      value
-                    })
-                  }
-                  value={this.props.courtState}
-                  trackColor={{
-                    false: GREY_DISABLED,
-                    true: MAIN_COLOR_DISABLED
-                  }}
-                  thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
-                />
-                <Tooltip
-                  popover={
-                    <Text style={{ color: 'white', textAlign: 'justify' }}>
-                      {helpText}
-                    </Text>
-                  }
-                  height={120}
-                  width={250}
-                  backgroundColor={MAIN_COLOR}
-                  withOverlay={false}
-                >
-                  <Icon
-                    name="help"
-                    size={22}
-                    color={MAIN_COLOR}
-                    style={{
-                      marginRight: 6,
-                      marginTop: 3,
-                      padding: 0
-                    }}
-                  />
-                </Tooltip>
-              </View>
-            </CardSection>
-
             <CardSection>
               <Input
                 label="Nombre:"
@@ -373,6 +407,32 @@ class CourtForm extends Component {
               />
             </CardSection>
 
+            <Divider style={{ margin: 12 }} />
+
+            <CardSection style={{ paddingRight: 12, paddingLeft: 15, paddingVertical: 5, flexDirection: 'row' }}>
+              <View style={{ alignItems: 'flex-start', flexDirection: 'row', flex: 1 }}>
+                <Text>Deshabilitar cancha:</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Switch
+                  onValueChange={value =>
+                    this.props.onCourtValueChange({
+                      prop: 'courtState',
+                      value
+                    })
+                  }
+                  value={this.props.courtState}
+                  trackColor={{
+                    false: GREY_DISABLED,
+                    true: MAIN_COLOR_DISABLED
+                  }}
+                  thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
+                />
+              </View>
+            </CardSection>
+
+            {this.renderDisableCourtForm()}
+
             <CardSection>
               <Button
                 title="Guardar"
@@ -395,10 +455,6 @@ const styles = StyleSheet.create({
   }
 });
 
-const helpText =
-  'Encendido indica que el estado de la cancha es "Disponible", \
-en cambio, apagado indica que el estado de la cancha es "No Disponible"';
-
 const mapStateToProps = state => {
   const {
     name,
@@ -410,7 +466,9 @@ const mapStateToProps = state => {
     lightPrice,
     loading,
     existsError,
-    courtState
+    courtState,
+    disabledFrom,
+    disabledTo
   } = state.courtForm;
 
   const { commerceId } = state.commerceData;
@@ -426,7 +484,9 @@ const mapStateToProps = state => {
     loading,
     existsError,
     courtState,
-    commerceId
+    commerceId,
+    disabledFrom,
+    disabledTo
   };
 };
 
