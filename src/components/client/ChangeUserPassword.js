@@ -79,6 +79,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Contraseña actual:"
+                            placeholder='Ingresar contraseña actual'
                             password
                             value={this.props.password}
                             onChangeText={value =>
@@ -94,6 +95,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Nueva contraseña:"
+                            placeholder='Ingresar nueva contraseña'
                             password
                             value={this.props.newPassword}
                             onChangeText={value =>
@@ -107,6 +109,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Repetir contraseña:"
+                            placeholder='Confirmar nueva contraseña'
                             password
                             value={this.props.confirmPassword}
                             onChangeText={value =>
