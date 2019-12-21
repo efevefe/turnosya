@@ -22,7 +22,11 @@ class CourtListItem extends Component {
   onConfirmDeletePress = () => {
     const { commerceId, employee } = this.props;
 
-    this.props.deleteEmployee(employee.id, commerceId);
+    this.props.deleteEmployee({
+      employeeId: employee.id,
+      commerceId,
+      profileId: employee.profileId
+    });
     this.setState({ deleteVisible: false });
   };
 

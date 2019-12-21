@@ -22,7 +22,6 @@ import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
-import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions

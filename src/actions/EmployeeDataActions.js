@@ -28,19 +28,27 @@ export const createEmployee = (
   dispatch({ type: ON_EMPLOYEE_SAVING });
 
   const db = firebase.firestore();
+  const batch = db.batch();
 
-  db.collection(`Commerces/${commerceId}/Employees`)
-    .add({
-      email,
-      phone,
-      firstName,
-      lastName,
-      role,
-      softDelete: null,
-      inviteDate: new Date(),
-      startDate: null,
-      profileId
-    })
+  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc();
+  const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc();
+
+  batch.set(employeeRef, {
+    email,
+    phone,
+    firstName,
+    lastName,
+    role,
+    softDelete: null,
+    inviteDate: new Date(),
+    startDate: null,
+    profileId
+  });
+
+  batch.set(workplaceRef, { commerceId, softDelete: null });
+
+  batch
+    .commit()
     .then(() => {
       dispatch({ type: ON_EMPLOYEE_CREATED });
       navigation.goBack();
@@ -66,13 +74,31 @@ export const updateEmployee = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const deleteEmployee = (employeeId, commerceId) => dispatch => {
+export const deleteEmployee = ({
+  employeeId,
+  commerceId,
+  profileId
+}) => async dispatch => {
   const db = firebase.firestore();
 
-  db.collection(`Commerces/${commerceId}/Employees`)
-    .doc(employeeId)
-    .update({ softDelete: new Date() })
-    .then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+  const snapshot = await db
+    .collection(`Profiles/${profileId}/Workplaces`)
+    .where('commerceId', '==', commerceId)
+    .get();
+
+  const workplaceRef = db
+    .collection(`Profiles/${profileId}/Workplaces`)
+    .doc(snapshot.docs[0].id);
+  const employeeRef = db
+    .collection(`Commerces/${commerceId}/Employees`)
+    .doc(employeeId);
+
+  const batch = db.batch();
+
+  batch.update(workplaceRef, { softDelete: new Date() });
+  batch.update(employeeRef, { softDelete: new Date() });
+
+  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
 };
 
 export const searchUserEmail = email => dispatch => {
