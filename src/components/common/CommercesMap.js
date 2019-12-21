@@ -169,7 +169,7 @@ class CommercesMap extends React.Component {
       Array.prototype.push.apply(arrayOfMarkers, this.props.markers);
     }
 
-    return arrayOfMarkers !== []
+    return arrayOfMarkers.length > 0
       ? this.calculateMarkersRegion(arrayOfMarkers)
       : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
