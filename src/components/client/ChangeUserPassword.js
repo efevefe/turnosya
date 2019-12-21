@@ -7,10 +7,10 @@ import { onLoginValueChange, onClientDataValueChange, onUserPasswordUpdate } fro
 import { validateValueType } from '../../utils';
 
 class ChangeUserPassword extends Component {
-    state = { passwordError: '', newPassword: '', confirmPassword: '' };
+    state = { passwordError: '', newPasswordError: '', confirmPasswordError: '' };
 
     passwordError = () => {
-        if (this.props.password === '') {
+        if (!this.props.password) {
             this.setState({ passwordError: 'Dato requerido' });
             return false;
         }
@@ -20,7 +20,7 @@ class ChangeUserPassword extends Component {
     }
 
     newPasswordError = () => {
-        if (this.props.newPassword === '') {
+        if (!this.props.newPassword) {
             this.setState({ newPasswordError: 'Dato requerido' });
         } else if (!validateValueType('password', this.props.newPassword)) {
             this.setState({ newPasswordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres' });
@@ -35,7 +35,7 @@ class ChangeUserPassword extends Component {
     }
 
     confirmPasswordError = () => {
-        if (this.props.confirmPassword === '') {
+        if (!this.props.confirmPassword) {
             this.setState({ confirmPasswordError: 'Dato requerido' });
         } else if (this.props.confirmPassword !== this.props.newPassword) {
             this.setState({ confirmPasswordError: 'Las contraseñas no coinciden' });
@@ -79,6 +79,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Contraseña actual:"
+                            placeholder='Ingresar contraseña actual'
                             password
                             value={this.props.password}
                             onChangeText={value =>
@@ -94,6 +95,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Nueva contraseña:"
+                            placeholder='Ingresar nueva contraseña'
                             password
                             value={this.props.newPassword}
                             onChangeText={value =>
@@ -107,6 +109,7 @@ class ChangeUserPassword extends Component {
                     <CardSection>
                         <Input
                             label="Repetir contraseña:"
+                            placeholder='Confirmar nueva contraseña'
                             password
                             value={this.props.confirmPassword}
                             onChangeText={value =>
@@ -138,4 +141,11 @@ const mapStateToProps = state => {
     return { loading: refreshing, password, newPassword, confirmPassword, reauthError: error };
 }
 
-export default connect(mapStateToProps, { onLoginValueChange, onClientDataValueChange, onUserPasswordUpdate })(ChangeUserPassword);
+export default connect(
+    mapStateToProps,
+    {
+        onLoginValueChange,
+        onClientDataValueChange,
+        onUserPasswordUpdate
+    }
+)(ChangeUserPassword);

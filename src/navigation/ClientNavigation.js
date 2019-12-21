@@ -15,7 +15,8 @@ import ClientReservationsList from '../components/client/ClientReservationsList'
 import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
-import Map from '../components/common/Map';
+import CommercesMap from '../components/common/CommercesMap';
+import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
@@ -39,7 +40,7 @@ const reservationScreens = {
     }
   },
   showMyAddressMap: {
-    screen: Map,
+    screen: CommerceLocationMap,
     navigationOptions: {
       title: 'Dirección'
     }
@@ -84,12 +85,9 @@ const filtersStack = createStackNavigator(
     },
     commercesFiltersMap: {
       screen: CommercesFiltersMap,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Seleccionar ubicación',
-        headerRight: (
-          <IconButton icon="md-checkmark" onPress={() => navigation.goBack(null)} />
-        )
-      })
+      navigationOptions: {
+        title: 'Seleccionar ubicación'
+      }
     }
   },
   {
@@ -116,7 +114,7 @@ const searchStack = createStackNavigator(
       }
     },
     commercesListMap: {
-      screen: Map,
+      screen: CommercesMap,
       navigationOptions: {
         title: 'Buscar Negocios'
       }

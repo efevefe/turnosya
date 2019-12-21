@@ -81,6 +81,7 @@ class CommerceProfile extends Component {
     };
 
     this.props.onLocationChange(location);
+
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
       rightIcon: this.renderSaveButton()
@@ -155,7 +156,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
   };
 
   onRefresh = () => {
@@ -531,7 +532,7 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    this.props.navigation.navigate('changeAddressMap', {
+    this.props.navigation.navigate('changeCommerceLocationMap', {
       onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };

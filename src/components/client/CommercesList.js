@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import { View } from "react-native";
-import { connect } from "react-redux";
-import { InstantSearch, Configure } from "react-instantsearch/native";
-import { Fab } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import { MAIN_COLOR } from "../../constants";
-import { IconButton } from "../common";
-import getEnvVars from "../../../environment";
-import ConnectedHits from "./CommercesList.SearchHits";
-import ConnectedSearchBox from "./CommercesList.SearchBox";
-import ConnectedStateResults from "./CommercesList.StateResults";
-import { readFavoriteCommerces, onLocationChange } from "../../actions";
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
+import { InstantSearch, Configure } from 'react-instantsearch/native';
+import { Fab } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { MAIN_COLOR } from '../../constants';
+import { IconButton } from '../common';
+import getEnvVars from '../../../environment';
+import ConnectedHits from './CommercesList.SearchHits';
+import ConnectedSearchBox from './CommercesList.SearchBox';
+import ConnectedStateResults from './CommercesList.StateResults';
+import { readFavoriteCommerces } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -38,7 +38,7 @@ class CommercesList extends Component {
 
   renderRightButtons = () => {
     return (
-      <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
         <IconButton
           icon="md-search"
           containerStyle={{ paddingRight: 0 }}
@@ -55,7 +55,7 @@ class CommercesList extends Component {
   };
 
   onFiltersPress = () => {
-    this.props.navigation.navigate("commercesFiltersScreen");
+    this.props.navigation.navigate('commercesFiltersScreen');
   };
 
   onCancelPress = () => {
@@ -88,20 +88,21 @@ class CommercesList extends Component {
   };
 
   obtainGeolocationProps = () => {
-    return this.props.locationEnabled
+    return this.props.selectedLocation.latitude
       ? {
-          aroundLatLng: `${this.props.latitude}, ${this.props.longitude}`,
+          aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+        }
+      : this.props.userLocation.latitude
+      ? {
+          aroundLatLng: `${this.props.userLocation.latitude}, ${this.props.userLocation.longitude}`,
           aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
         }
       : null;
   };
 
   onMapFabPress = () => {
-    if (!this.props.specificLocationEnabled) {
-      this.props.onLocationChange({ latitude: null, longitude: null });
-    }
-
-    this.props.navigation.navigate("commercesListMap");
+    this.props.navigation.navigate('commercesListMap');
   };
 
   render() {
@@ -139,37 +140,36 @@ const mapStateToProps = state => {
     refinement,
     favoriteCommerces,
     provinceNameFilter,
-    locationEnabled,
     locationRadiusKms
   } = state.commercesList;
 
   const {
-    specificLocationEnabled,
     address,
     city,
     provinceName,
     country,
     latitude,
-    longitude
+    longitude,
+    userLocation,
+    selectedLocation
   } = state.locationData;
 
   return {
     refinement,
     favoriteCommerces,
     provinceNameFilter,
-    locationEnabled,
     locationRadiusKms,
-    specificLocationEnabled,
-    latitude,
-    longitude,
     address,
     city,
     provinceName,
-    country
+    country,
+    latitude,
+    longitude,
+    userLocation,
+    selectedLocation
   };
 };
 
 export default connect(mapStateToProps, {
-  readFavoriteCommerces,
-  onLocationChange
+  readFavoriteCommerces
 })(CommercesList);

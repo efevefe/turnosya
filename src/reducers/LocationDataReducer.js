@@ -2,12 +2,11 @@ import {
   ON_LOCATION_VALUE_CHANGE,
   ON_LOCATION_CHANGE,
   ON_USER_LOCATION_CHANGE,
-  ON_LOCATION_VALUES_RESET,
-  ON_SPECIFIC_LOCATION_ENABLED
-} from "../actions/types";
+  ON_SELECTED_LOCATION_CHANGE,
+  ON_LOCATION_VALUES_RESET
+} from '../actions/types';
 
 const INITIAL_STATE = {
-  specificLocationEnabled: null,
   address: '',
   city: '',
   provinceName: '',
@@ -15,6 +14,14 @@ const INITIAL_STATE = {
   latitude: null,
   longitude: null,
   userLocation: {
+    address: '',
+    city: '',
+    provinceName: '',
+    country: '',
+    latitude: null,
+    longitude: null
+  },
+  selectedLocation: {
     address: '',
     city: '',
     provinceName: '',
@@ -29,28 +36,17 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOCATION_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_LOCATION_CHANGE:
-      if (state.specificLocationEnabled === null) {
-        return { ...state, ...action.payload };
-      }
-
-      return state.specificLocationEnabled
-        ? { ...state, ...action.payload }
-        : { ...state };
+      return { ...state, ...action.payload };
     case ON_USER_LOCATION_CHANGE:
-      return state.specificLocationEnabled
-        ? {
-            ...state,
-            userLocation: { ...action.payload }
-          }
-        : {
-            specificLocationEnabled: state.specificLocationEnabled,
-            ...action.payload,
-            userLocation: { ...action.payload }
-          };
+      return action.payload
+        ? { ...state, userLocation: { ...action.payload } }
+        : { ...state, userLocation: { ...INITIAL_STATE.userLocation } };
+    case ON_SELECTED_LOCATION_CHANGE:
+      return action.payload
+        ? { ...state, selectedLocation: { ...action.payload } }
+        : { ...state, selectedLocation: { ...INITIAL_STATE.selectedLocation } };
     case ON_LOCATION_VALUES_RESET:
       return { ...INITIAL_STATE };
-    case ON_SPECIFIC_LOCATION_ENABLED:
-      return { ...state, specificLocationEnabled: action.payload };
     default:
       return state;
   }
