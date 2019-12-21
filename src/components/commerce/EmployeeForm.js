@@ -124,33 +124,6 @@ class EmployeeForm extends Component {
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
         <View>
           <Card containerStyle={styles.cardStyle}>
-            {/* <CardSection style={{ marginTop: 0 }}>
-              <View style={{ paddingLeft: 5 }}>
-                <Tooltip
-                  popover={
-                    <Text style={{ color: 'white', textAlign: 'justify' }}>
-                      {helpText}
-                    </Text>
-                  }
-                  height={120}
-                  width={250}
-                  backgroundColor={MAIN_COLOR}
-                  withOverlay={false}
-                >
-                  <Icon
-                    name="help"
-                    size={22}
-                    color={MAIN_COLOR}
-                    style={{
-                      marginRight: 6,
-                      marginTop: 3,
-                      padding: 0
-                    }}
-                  />
-                </Tooltip>
-              </View>
-            </CardSection> */}
-
             <View
               style={{
                 alignSelf: 'stretch',
@@ -162,6 +135,8 @@ class EmployeeForm extends Component {
               <Input
                 label="Email:"
                 placeholder="Busque por email..."
+                autoCapitalize="none"
+                keyboardType="email-address"
                 value={this.props.email}
                 errorMessage={this.props.emailError}
                 onChangeText={this.onEmailValueChange}
