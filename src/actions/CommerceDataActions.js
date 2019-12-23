@@ -24,10 +24,11 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_REGISTER_VALUE_CHANGE,
-  ON_PROVINCES_READ
+  ON_ROLE_ASSIGNED
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
+import { ROLES } from '../constants';
 
 const { algoliaConfig } = getEnvVars();
 const { appId, adminApiKey, commercesIndex } = algoliaConfig;
@@ -46,11 +47,34 @@ export const onCommerceFormOpen = () => {
   };
 };
 
-export const onCommerceOpen = (commerceId, navigation) => dispatch => {
+export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
   dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.Dueño });
   dispatch({ type: ON_LOCATION_VALUES_RESET });
 
   navigation.navigate('commerce');
+};
+
+export const onCommerceOpen = (commerceId, navigation) => dispatch => {
+  const db = firebase.firestore();
+  const profileId = firebase.auth().currentUser.uid;
+  let roleName;
+
+  // Agregar validaciones por fechas más adelante
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .where('softDelete', '==', null)
+    .where('profileId', '==', profileId)
+    .get()
+    .then(snapshot => {
+      roleName = snapshot.docs[0].data().role.name;
+
+      dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+      dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES[roleName] });
+      dispatch({ type: ON_LOCATION_VALUES_RESET });
+
+      navigation.navigate('commerce');
+    })
+    .catch(e => console.error(e));
 };
 
 export const onCreateCommerce = (
@@ -284,6 +308,7 @@ export const validateCuit = cuit => {
   };
 };
 
+// BORRAR TODOS LOS EMPLEADOS - RECORDAD!!!!
 export const onCommerceDelete = (password, navigation = null) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();

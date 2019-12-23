@@ -18,16 +18,6 @@ class CommerceDrawerContent extends Component {
         name={this.props.name}
       >
         <DrawerItem
-          title="Empleados"
-          icon="md-people"
-          onPress={() => this.props.navigation.navigate('commerceEmployees')}
-        />
-        <DrawerItem
-          title="Configuración"
-          icon="md-settings"
-          onPress={() => this.props.navigation.navigate('commerceSettings')}
-        />
-        <DrawerItem
           title="Ser Cliente"
           icon="md-person"
           onPress={() => {
@@ -37,6 +27,16 @@ class CommerceDrawerContent extends Component {
             });
             this.props.navigation.navigate('client');
           }}
+        />
+        <DrawerItem
+          title="Empleados"
+          icon="md-people"
+          onPress={() => this.props.navigation.navigate('commerceEmployees')}
+        />
+        <DrawerItem
+          title="Configuración"
+          icon="md-settings"
+          onPress={() => this.props.navigation.navigate('commerceSettings')}
         />
         <DrawerItem
           title="Cerrar Sesión"
