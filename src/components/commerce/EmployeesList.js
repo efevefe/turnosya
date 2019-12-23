@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { HeaderBackButton } from 'react-navigation-stack';
-import { NavigationEvents } from 'react-navigation';
 import { Spinner, EmptyList } from '../common';
 import EmployeesListItem from './EmployeesListItem';
 import { readEmployees } from '../../actions';
@@ -21,6 +20,12 @@ class EmployeesList extends Component {
     this.props.navigation.setParams({
       leftButton: this.renderBackButton()
     });
+
+    this.unsubEmployeesRead = this.props.readEmployees(this.props.commerceId);
+  }
+
+  componentWillUnmount() {
+    this.unsubEmployeesRead && this.unsubEmployeesRead();
   }
 
   renderBackButton = () => (
@@ -64,14 +69,6 @@ class EmployeesList extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <NavigationEvents
-          onDidFocus={() =>
-            (this.unsubEmployeesRead = this.props.readEmployees(
-              this.props.commerceId
-            ))
-          }
-          onDidBlur={() => this.unsubEmployeesRead && this.unsubEmployeesRead()}
-        />
         {this.renderList()}
 
         <Fab

@@ -7,7 +7,8 @@ export const readEmployees = commerceId => dispatch => {
 
   const db = firebase.firestore();
 
-  db.collection(`Commerces/${commerceId}/Employees`)
+  return db
+    .collection(`Commerces/${commerceId}/Employees`)
     .where('softDelete', '==', null)
     .onSnapshot(snapshot => {
       let employees = [];
