@@ -199,15 +199,11 @@ class RegisterCommerceTwo extends Component {
             />
           </CardSection>
 
-          <CardSection style={{ paddingTop: 0 }}>
+          <CardSection>
             <Button
               title="Buscar en el mapa"
               titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{
-                marginTop: 0,
-                borderRadius: 8,
-                borderColor: MAIN_COLOR
-              }}
+              buttonStyle={{ borderColor: MAIN_COLOR }}
               color="white"
               type="outline"
               iconRight={true}
