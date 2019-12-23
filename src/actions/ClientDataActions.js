@@ -17,7 +17,8 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_EMAIL_VERIFY_REMINDED,
-  ON_REGISTER_FORM_OPEN
+  ON_REGISTER_FORM_OPEN,
+  ON_WORKPLACES_READ
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
@@ -157,4 +158,24 @@ export const onUserDelete = password => {
         dispatch({ type: ON_USER_DELETE_FAIL });
       });
   };
+};
+
+export const readUserWorkplaces = () => dispatch => {
+  const db = firebase.firestore();
+  const clientId = firebase.auth().currentUser.uid;
+
+  let workplaces = [];
+
+  db.collection(`Profiles/${clientId}/Workplaces`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      snapshot.forEach(doc =>
+        workplaces.push({
+          commerceId: doc.data().commerceId,
+          name: doc.data().name
+        })
+      );
+      dispatch({ type: ON_WORKPLACES_READ, payload: workplaces });
+    });
 };

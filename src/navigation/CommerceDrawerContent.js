@@ -6,7 +6,7 @@ import { onCommerceRead, onScheduleValueChange } from '../actions';
 
 class CommerceDrawerContent extends Component {
   componentDidMount() {
-    this.props.onCommerceRead();
+    this.props.onCommerceRead(this.props.commerceId);
   }
 
   render() {
@@ -50,14 +50,15 @@ class CommerceDrawerContent extends Component {
 }
 
 const mapStateToProps = state => {
-  const { name, profilePicture } = state.commerceData;
+  const { name, profilePicture, commerceId } = state.commerceData;
   const { loading } = state.auth;
 
-  return { name, profilePicture, loading };
+  return { name, profilePicture, commerceId, loading };
 };
 
 export default connect(mapStateToProps, {
   onLogout,
+  onCommerceRead,
   onCommerceRead,
   onScheduleValueChange
 })(CommerceDrawerContent);

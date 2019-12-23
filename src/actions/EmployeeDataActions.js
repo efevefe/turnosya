@@ -23,7 +23,16 @@ export const employeeValueChange = (prop, value) => ({
 });
 
 export const createEmployee = (
-  { commerceId, email, firstName, lastName, phone, role, profileId },
+  {
+    commerceId,
+    commerceName,
+    email,
+    firstName,
+    lastName,
+    phone,
+    role,
+    profileId
+  },
   navigation
 ) => dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
@@ -46,7 +55,7 @@ export const createEmployee = (
     profileId
   });
 
-  batch.set(workplaceRef, { commerceId, softDelete: null });
+  batch.set(workplaceRef, { commerceId, name: commerceName, softDelete: null });
 
   batch
     .commit()

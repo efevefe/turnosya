@@ -19,7 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PictureView } from './common';
 import {
-  onCommerceReadProfile,
+  onCommerceRead,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,
@@ -46,7 +46,7 @@ class CommerceProfileView extends Component {
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
-    this.props.onCommerceReadProfile(commerceId);
+    this.props.onCommerceRead(commerceId);
   }
 
   renderDescription = () => {
@@ -298,7 +298,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceReadProfile,
+  onCommerceRead,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   onScheduleRead,

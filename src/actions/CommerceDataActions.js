@@ -46,24 +46,11 @@ export const onCommerceFormOpen = () => {
   };
 };
 
-export const onCommerceOpen = navigation => {
-  const { currentUser } = firebase.auth();
-  const db = firebase.firestore();
+export const onCommerceOpen = (commerceId, navigation) => dispatch => {
+  dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+  dispatch({ type: ON_LOCATION_VALUES_RESET });
 
-  return dispatch => {
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        if (doc.data().commerceId == null) {
-          navigation.navigate('commerceRegister');
-        } else {
-          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
-          dispatch({ type: ON_LOCATION_VALUES_RESET });
-
-          navigation.navigate('commerce');
-        }
-      });
-  };
+  navigation.navigate('commerce');
 };
 
 export const onCreateCommerce = (
@@ -137,52 +124,8 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = () => {
-  const { currentUser } = firebase.auth();
+export const onCommerceRead = commerceId => {
   const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING });
-
-    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO
-    //PRIMERO COMO CLIENTE ESTO NO HARIA
-    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL
-    //CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        db.doc(`Commerces/${doc.data().commerceId}`)
-          .get()
-          .then(doc => {
-            //province
-            var { name, provinceId } = doc.data().province;
-            const province = { value: provinceId, label: name };
-
-            //area
-            var { name, areaId } = doc.data().area;
-            const area = { value: areaId, label: name };
-
-            dispatch({
-              type: ON_COMMERCE_READ,
-              payload: {
-                ...doc.data(),
-                areasList: [area],
-                commerceId: doc.id
-              }
-            });
-            dispatch({
-              type: ON_PROVINCES_READ,
-              payload: [province]
-            });
-          })
-          .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-  };
-};
-
-export const onCommerceReadProfile = commerceId => {
-  var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_READING });

@@ -216,3 +216,6 @@ export const ON_EMPLOYEE_CREATED = 'on_employee_created';
 
 // Roles types
 export const ON_ROLES_READ = 'on_roles_read';
+
+// Workplaces types
+export const ON_WORKPLACES_READ = 'on_workplaces_read';

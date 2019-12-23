@@ -88,10 +88,6 @@ class CommerceProfile extends Component {
     });
   }
 
-  onRefresh = () => {
-    this.props.onCommerceRead();
-  };
-
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
   };
@@ -149,7 +145,7 @@ class CommerceProfile extends Component {
   };
 
   onRefresh = () => {
-    this.props.onCommerceRead();
+    this.props.onCommerceRead(this.props.commerceId);
   };
 
   onSavePress = async () => {

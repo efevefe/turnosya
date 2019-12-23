@@ -65,6 +65,7 @@ class EmployeeForm extends Component {
   onSavePressHandler = () => {
     const {
       commerceId,
+      commerceName,
       email,
       firstName,
       lastName,
@@ -100,6 +101,7 @@ class EmployeeForm extends Component {
           this.props.createEmployee(
             {
               commerceId,
+              commerceName,
               email,
               firstName,
               lastName,
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId } = state.commerceData;
+  const { commerceId, name } = state.commerceData;
   const {
     email,
     phone,
@@ -234,6 +236,7 @@ const mapStateToProps = state => {
 
   return {
     commerceId,
+    commerceName: name,
     email,
     phone,
     firstName,
