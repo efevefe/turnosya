@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LineChart, Spinner, Button, DatePicker } from '../../common';
-import { readReviewsOnMonths } from '../../../actions/CommerceReportsActions';
+import {
+  onCommerceReportValueChange,
+  readReviewsOnMonths
+} from '../../../actions/CommerceReportsActions';
 import { View, ScrollView } from 'react-native';
+import moment from 'moment';
 
 class LineChartReviewsReport extends Component {
-  componentDidMount() {
-    this.props.readReviewsOnMonths(this.props.commerceId);
+  constructor(props) {
+    super(props);
+    props.readReviewsOnMonths(props.commerceId, props.startDate);
   }
 
   render() {
@@ -48,7 +53,7 @@ class LineChartReviewsReport extends Component {
             title={'Generar Reporte'}
             buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
             onPress={() => {
-              this.props.readReviewsOnMonths(commerceId);
+              this.props.readReviewsOnMonths(commerceId, startDate);
             }}
           />
         </View>
@@ -70,6 +75,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { readReviewsOnMonths })(
-  LineChartReviewsReport
-);
+export default connect(mapStateToProps, {
+  onCommerceReportValueChange,
+  readReviewsOnMonths
+})(LineChartReviewsReport);

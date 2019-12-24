@@ -11,7 +11,6 @@ export const onCommerceReportValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
 };
 
-
 export const readReservationsOnDays = (
   commerceId,
   startDate,
@@ -61,6 +60,7 @@ export const readReservationsOnDays = (
           days.fill(days[6] + 1, 6, 7);
         }
       });
+
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
         payload: days
@@ -68,15 +68,28 @@ export const readReservationsOnDays = (
     });
 };
 
-export const readEarningsOnMonths = commerceId => dispatch => {
+export const readEarningsOnMonths = (commerceId, startDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reservations = [];
   const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
+    .where(
+      'startDate',
+      '>=',
+      moment(startDate)
+        .startOf('year')
+        .toDate()
+    )
+    .where(
+      'startDate',
+      '<=',
+      moment(startDate)
+        .endOf('year')
+        .toDate()
+    )
     .onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         reservations.push({
@@ -129,7 +142,7 @@ export const readEarningsOnMonths = commerceId => dispatch => {
     });
 };
 
-export const readReviewsOnMonths = commerceId => dispatch => {
+export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reviews = [];
@@ -138,8 +151,22 @@ export const readReviewsOnMonths = commerceId => dispatch => {
   const data = [];
 
   return db
-    .collection(`Commerces/${commerceId}/Reservations`)
+    .collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
+    .where(
+      'date',
+      '>=',
+      moment(startDate)
+        .startOf('year')
+        .toDate()
+    )
+    .where(
+      'date',
+      '<=',
+      moment(startDate)
+        .endOf('year')
+        .toDate()
+    )
     .onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         reviews.push({
@@ -194,7 +221,6 @@ export const readReviewsOnMonths = commerceId => dispatch => {
         month !== 0 ? data.push(month / count[i]) : data.push(0);
         i++;
       });
-
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
         payload: data
@@ -227,18 +253,15 @@ export const readStateTurnsReservations = (
       });
 
       reservations.forEach(reservation => {
-        if (reservation.cancelationDate === null) {
+        if (reservation.state === null) {
           // Hay que revisar esto despues porq en la BD hay negocios con el
-          // campo este como 'cancelationDate' y otros como 'cancellationDate'. Hay que corregir eso en la BD..
+          // campo este como 'cancelationDate' y otros como 'cancellationDate'. Hay que corregir eso en la BD.. Por eso lo hice con el state
           turns.fill(turns[0] + 1, 0, 1);
         } else {
           turns.fill(turns[1] + 1, 1, 2);
         }
       });
 
-      console.log(turns);
-
-      console.log(reservations.length);
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
         payload: turns

@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_REPORT_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_COMMERCE_REPORT_READING:
-      return { ...state, loading: true };
+      return { ...state, data: [0], loading: true };
     case ON_COMMERCE_REPORT_READ:
       return { ...state, data: action.payload, loading: false };
     default:

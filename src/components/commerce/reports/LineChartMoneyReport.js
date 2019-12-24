@@ -9,9 +9,16 @@ import { View, ScrollView } from 'react-native';
 import moment from 'moment';
 
 class LineChartMoneyReport extends Component {
-  componentDidMount() {
-    this.props.readEarningsOnMonths(this.props.commerceId);
+  constructor(props) {
+    super(props);
+    props.readEarningsOnMonths(props.commerceId, props.startDate);
   }
+  // componentWillMount() {
+  //   this.props.readEarningsOnMonths(
+  //     this.props.commerceId,
+  //     this.props.startDate
+  //   );
+  // }
 
   render() {
     const { startDate, loading, data, commerceId } = this.props;
@@ -24,7 +31,6 @@ class LineChartMoneyReport extends Component {
         }
       ]
     };
-    console.log(startDate);
 
     if (loading) return <Spinner />;
     return (
@@ -54,7 +60,7 @@ class LineChartMoneyReport extends Component {
             title={'Generar Reporte'}
             buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
             onPress={() => {
-              this.props.readEarningsOnMonths(commerceId);
+              this.props.readEarningsOnMonths(commerceId, startDate);
             }}
           />
         </View>

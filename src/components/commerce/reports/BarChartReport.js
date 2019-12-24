@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BarChart, Spinner, Input, DatePicker, Button } from '../../common';
+import { BarChart, Spinner, Toast, DatePicker, Button } from '../../common';
 import {
   readReservationsOnDays,
   onCommerceReportValueChange
@@ -10,13 +10,21 @@ import { Card } from 'react-native-elements';
 import { formattedMoment } from '../../../utils';
 import moment from 'moment';
 class BarChartReport extends Component {
-  state = {
-    cardVisible: false
-  };
-  componentDidMount() {
-    const { commerceId, startDate, endDate } = this.props;
-    this.props.readReservationsOnDays(commerceId, startDate, endDate);
+  constructor(props) {
+    super(props);
+    const { commerceId, startDate, endDate } = props;
+
+    props.readReservationsOnDays(commerceId, startDate, endDate);
+
+    state = {
+      cardVisible: false
+    };
   }
+
+  // componentWillMount() {
+  //   const { commerceId, startDate, endDate } = this.props;
+  //   this.props.readReservationsOnDays(commerceId, startDate, endDate);
+  // }
 
   renderCard = () => {
     // Esta es la otra opcion que muestre el bioton y se esconda el card
@@ -74,6 +82,21 @@ class BarChartReport extends Component {
     }
   };
 
+  onEndDateValueChange = endDate => {
+    endDate = moment(endDate);
+
+    if (endDate > formattedMoment()) {
+      return Toast.show({
+        text: 'No puede ingresar una fecha mayor a la actual'
+      });
+    }
+
+    this.props.onCommerceReportValueChange({
+      prop: 'endDate',
+      value: endDate
+    });
+  };
+
   render() {
     const data = {
       labels: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
@@ -84,7 +107,6 @@ class BarChartReport extends Component {
       ]
     };
     const { commerceId, startDate, endDate } = this.props;
-
     if (this.props.loading) return <Spinner />;
     return (
       <ScrollView style={{ flex: 1 }}>
@@ -109,12 +131,7 @@ class BarChartReport extends Component {
             label="Hasta:"
             placeholder="Fecha Hasta"
             date={endDate}
-            onDateChange={endDate =>
-              this.props.onCommerceReportValueChange({
-                prop: 'endDate',
-                value: moment(endDate)
-              })
-            }
+            onDateChange={endDate => this.onEndDateValueChange(endDate)}
           />
         </View>
         <Button

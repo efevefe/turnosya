@@ -9,10 +9,11 @@ import { View, ScrollView } from 'react-native';
 import moment from 'moment';
 
 class PieChartReport extends Component {
-  componentDidMount() {
-    const { commerceId, startDate, endDate } = this.props;
+  constructor(props) {
+    super(props);
+    const { commerceId, startDate, endDate } = props;
 
-    this.props.readStateTurnsReservations(commerceId, startDate, endDate);
+    props.readStateTurnsReservations(commerceId, startDate, endDate);
   }
   render() {
     const { data, loading } = this.props;
@@ -68,6 +69,7 @@ class PieChartReport extends Component {
             this.props.readStateTurnsReservations(
               commerceId,
               startDate,
+              endDate,
               endDate
             );
           }}
