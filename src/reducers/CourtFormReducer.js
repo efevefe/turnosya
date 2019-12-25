@@ -18,6 +18,7 @@ const INITIAL_STATE = {
   price: '',
   lightPrice: '',
   courtState: true,
+  disabled: false,
   disabledFrom: null,
   disabledTo: null,
   loading: false,

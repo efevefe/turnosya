@@ -103,8 +103,7 @@ export const formatCourt = doc => {
     ...doc.data(),
     id: doc.id,
     disabledFrom: doc.data().disabledFrom ? moment(doc.data().disabledFrom.toDate()) : null,
-    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null,
-    courtState: !doc.data().disabledFrom
+    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null
   }
 }
 

@@ -37,6 +37,7 @@ class CourtForm extends Component {
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
+    this.isCourtDisabled();
   }
 
   componentDidUpdate(prevProps) {
@@ -70,6 +71,19 @@ class CourtForm extends Component {
     }
   }
 
+  isCourtDisabled = () => {
+    if (this.props.navigation.state.params.court) {
+      const { court } = this.props.navigation.state.params;
+
+      if (court.disabledTo > moment()) {
+        this.props.onCourtValueChange({
+          prop: 'disabled',
+          value: true
+        })
+      }
+    }
+  }
+
   onCourtSave = () => {
     const {
       name,
@@ -77,7 +91,6 @@ class CourtForm extends Component {
       ground,
       price,
       lightPrice,
-      courtState,
       commerceId,
       navigation,
       disabledFrom,
@@ -104,36 +117,6 @@ class CourtForm extends Component {
         navigation
       );
     }
-
-    // if (params) { // probar if params.court
-    //   const { id } = this.props.navigation.state.params.court;
-    //   this.props.courtUpdate(
-    //     {
-    //       name,
-    //       court,
-    //       ground,
-    //       price,
-    //       lightPrice,
-    //       courtState,
-    //       id,
-    //       commerceId
-    //     },
-    //     navigation
-    //   );
-    // } else {
-    //   this.props.courtCreate(
-    //     {
-    //       name,
-    //       court,
-    //       ground,
-    //       price,
-    //       lightPrice,
-    //       courtState,
-    //       commerceId
-    //     },
-    //     navigation
-    //   );
-    // }
   };
 
   renderNameError = () => {
@@ -279,7 +262,7 @@ class CourtForm extends Component {
   }
 
   renderDisableCourtForm = () => {
-    if (!this.props.courtState) {
+    if (this.props.disabled) {
       return (
         <View>
           <CardSection
@@ -328,11 +311,11 @@ class CourtForm extends Component {
 
   onDisableSwitch = value => {
     this.props.onCourtValueChange({
-      prop: 'courtState',
+      prop: 'disabled',
       value
     });
 
-    if (value) {
+    if (!value) {
       this.props.onCourtValueChange({
         prop: 'disabledFrom',
         value: null
@@ -366,7 +349,7 @@ class CourtForm extends Component {
   }
 
   renderDisabledDatesError = () => {
-    if (!this.props.courtState) {
+    if (this.props.disabled) {
       if (!this.props.disabledFrom) {
         this.setState({ disabledFromError: 'Dato requerido' });
         return false;
@@ -387,7 +370,7 @@ class CourtForm extends Component {
     this.setState({ reservationsToCancel: [] });
 
     if (this.validateMinimumData()) {
-      if (!this.props.courtState && this.props.navigation.state.params.court) {
+      if (this.props.disabled && this.props.navigation.state.params.court) {
         this.props.onCourtNextReservationsRead({
           commerceId: this.props.commerceId,
           courtId: this.props.navigation.state.params.court.id,
@@ -546,12 +529,12 @@ class CourtForm extends Component {
             <View style={{ alignItems: 'flex-end' }}>
               <Switch
                 onValueChange={this.onDisableSwitch}
-                value={this.props.courtState}
+                value={this.props.disabled}
                 trackColor={{
                   false: GREY_DISABLED,
                   true: MAIN_COLOR_DISABLED
                 }}
-                thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
+                thumbColor={this.props.disabled ? MAIN_COLOR : 'grey'}
               />
             </View>
           </CardSection>
@@ -608,7 +591,7 @@ const mapStateToProps = state => {
     lightPrice,
     loading,
     existsError,
-    courtState,
+    disabled,
     disabledFrom,
     disabledTo
   } = state.courtForm;
@@ -626,7 +609,7 @@ const mapStateToProps = state => {
     lightPrice,
     loading,
     existsError,
-    courtState,
+    disabled,
     commerceId,
     disabledFrom,
     disabledTo,
