@@ -25,7 +25,7 @@ class CommerceCourtTypes extends Component {
     return (
       <TouchableHighlight
         onPress={this.props.navigation.state.routeName === 'commerceProfileView'
-          && (() => this.onCourtTypePress(item.name))}
+          ? (() => this.onCourtTypePress(item.name)) : null}
         underlayColor="transparent"
       >
         <Card

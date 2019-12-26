@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AirbnbRating } from 'react-native-elements';
-import { CardSection, Input } from '../common';
-import { MAIN_COLOR } from '../../constants';
+import { CardSection } from './CardSection';
+import { Input } from './Input';
 
 class ReviewCard extends Component {
   renderReviewTitle = title => {
@@ -39,8 +39,8 @@ class ReviewCard extends Component {
         </View>
       </View>
     ) : (
-      <View>{this.renderReviewTitle(this.props.title)}</View>
-    );
+        <View>{this.renderReviewTitle(this.props.title)}</View>
+      );
   }
 }
 

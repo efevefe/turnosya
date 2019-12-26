@@ -218,14 +218,14 @@ class ScheduleRegister extends Component {
       if (notCoveredReservations.length && secondShiftStart && secondShiftEnd) {
         notCoveredReservations = this.compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredReservations);
       }
+    }
 
-      if (notCoveredReservations.length) {
-        return this.setState({
-          notCoveredReservations,
-          lastIncompatibleDate: notCoveredReservations[notCoveredReservations.length - 1].startDate,
-          incompatibleScheduleVisible: true
-        });
-      }
+    if (notCoveredReservations.length) {
+      return this.setState({
+        notCoveredReservations,
+        lastIncompatibleDate: notCoveredReservations[notCoveredReservations.length - 1].startDate,
+        incompatibleScheduleVisible: true
+      });
     }
 
     // si no hay conflictos guarda
