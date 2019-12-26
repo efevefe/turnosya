@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import RNDatePicker from 'react-native-datepicker';
 import { Ionicons } from '@expo/vector-icons';
-import moment from 'moment';
 import { MAIN_COLOR } from '../../constants';
 
-const pickerWidth = Math.round(Dimensions.get('window').width) / 2.8;
+const pickerWidth = Math.round(Dimensions.get('window').width) / 2.7;
 
 class DatePicker extends Component {
   renderErrorMessage = () => {
@@ -46,7 +45,7 @@ class DatePicker extends Component {
         <RNDatePicker
           {...this.props}
           mode={this.props.mode || 'time'}
-          // format={this.displayFormat()} // ver esto
+          format={this.props.format || this.displayFormat()}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
           iconComponent={
