@@ -47,8 +47,6 @@ export const COURT_READING = 'court_reading';
 export const COURT_READ = 'court_read';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
-export const COURT_READING_ONLY_AVAILABLE = 'court_reading_only_available';
-export const COURT_READ_ONLY_AVAILABLE = 'court_read_only_available';
 
 // Client Profile
 export const ON_USER_READING = 'on_user_reading';

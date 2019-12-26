@@ -51,6 +51,7 @@ class CourtForm extends Component {
 
       const { params } = this.props.navigation.state;
 
+      // no se quien hizo esto pero no deberia ir en el didUpdate, le tengo que meter refactor
       if (params) {
         const { court } = params;
         for (prop in params.court) {
@@ -67,20 +68,18 @@ class CourtForm extends Component {
 
     // ver si hay reservas que esten en el periodo de deshabilitacion de la cancha
     if (prevProps.nextReservations !== this.props.nextReservations) {
-      this._disabledPeriodValidate();
+      this.disabledPeriodValidate();
     }
   }
 
   isCourtDisabled = () => {
-    if (this.props.navigation.state.params.court) {
-      const { court } = this.props.navigation.state.params;
+    const court = this.props.navigation.getParam('court');
 
-      if (court.disabledTo > moment()) {
-        this.props.onCourtValueChange({
-          prop: 'disabled',
-          value: true
-        })
-      }
+    if (court && court.disabledTo > moment()) {
+      this.props.onCourtValueChange({
+        prop: 'disabled',
+        value: true
+      })
     }
   }
 
@@ -97,10 +96,10 @@ class CourtForm extends Component {
       disabledTo
     } = this.props;
     const { reservationsToCancel } = this.state;
-    const { params } = this.props.navigation.state;
+    const paramCourt = navigation.getParam('court');
 
-    if (params.court) {
-      const { id } = this.props.navigation.state.params.court;
+    if (paramCourt) {
+      const { id } = paramCourt;
       this.props.courtUpdate(
         {
           id,
@@ -116,6 +115,19 @@ class CourtForm extends Component {
         },
         navigation
       );
+    } else {
+      this.props.courtCreate({
+        name,
+        court,
+        ground,
+        price,
+        lightPrice,
+        disabledFrom,
+        disabledTo,
+        commerceId
+      },
+        navigation
+      )
     }
   };
 
@@ -331,7 +343,7 @@ class CourtForm extends Component {
   onDisabledFromValueChange = date => {
     date = moment(date)
 
-    if (date < moment()) {
+    if (moment().diff(date, 'seconds') > 30) {
       return Toast.show({ text: 'No puede ingresar una fecha anterior a la actual' })
     }
 
@@ -355,8 +367,8 @@ class CourtForm extends Component {
         return false;
       } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
         this.setState({
-          disabledFromError: 'Debe ser anterior a la fecha de habilitación',
-          disabledToError: 'Debe ser posterior a la fecha de deshabilitación'
+          disabledFromError: 'Debe ser anterior a la fecha de deshabilitación',
+          disabledToError: 'Debe ser posterior a la fecha de habilitación'
         });
         return false;
       }
@@ -366,7 +378,7 @@ class CourtForm extends Component {
     return true;
   }
 
-  _onSavePress = () => {
+  onSavePress = () => {
     this.setState({ reservationsToCancel: [] });
 
     if (this.validateMinimumData()) {
@@ -383,7 +395,7 @@ class CourtForm extends Component {
     }
   }
 
-  _disabledPeriodValidate = () => {
+  disabledPeriodValidate = () => {
     if (this.props.nextReservations.length) {
       this.setState({ disabledPeriodModal: true });
     } else {
@@ -408,14 +420,14 @@ class CourtForm extends Component {
       return (
         <Menu
           title={
-            'Tienes ' + nextReservations.length.toString() + ' reservas' +
-            ' desde el ' + firstReservationDate.format('DD/MM/YYYY') +
+            'Tienes ' + nextReservations.length.toString() + ' reservas de esta cancha' +
+            ' entre el ' + firstReservationDate.format('DD/MM/YYYY') +
             ' a las ' + firstReservationDate.format('HH:mm') + ' hs.' +
-            ' hasta el ' + lastReservationDate.format('DD/MM/YYYY') +
+            ' y el ' + lastReservationDate.format('DD/MM/YYYY') +
             ' a las ' + lastReservationDate.format('HH:mm') + ' hs.' +
             ' Seleccione "Cancelar reservas y notificar" para cancelar dichas ' +
-            'reservas y guardar los cambios o "Volver" para cambiar el periodo ' +
-            'de deshabilitacion.'
+            'reservas y deshabilitar la cancha o "Volver" para cambiar el periodo ' +
+            'de deshabilitación.'
           }
           onBackdropPress={() => this.setState({ disabledPeriodModal: false })}
           isVisible={this.state.disabledPeriodModal}
@@ -543,7 +555,7 @@ class CourtForm extends Component {
             <Button
               title="Guardar"
               loading={this.props.loading || this.props.loadingReservations}
-              onPress={this._onSavePress}
+              onPress={this.onSavePress}
             />
           </CardSection>
         </Card>

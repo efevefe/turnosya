@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, IconButton } from '../common';
 import Schedule from '../Schedule';
+import { MONTHS } from '../../constants';
 import {
   onScheduleRead,
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  courtsReadOnlyAvailable
+  courtsRead,
+  isCourtDisabledOnSlot
 } from '../../actions';
 
 class CommerceSchedule extends Component {
@@ -28,7 +30,7 @@ class CommerceSchedule extends Component {
       selectedDate: this.state.selectedDate
     });
 
-    this.unsubscribeCourtsRead = this.props.courtsReadOnlyAvailable(this.props.commerceId);
+    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
 
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
@@ -37,7 +39,7 @@ class CommerceSchedule extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.reservations !== this.props.reservations ||
-      prevProps.courtsAvailable !== this.props.courtsAvailable) {
+      prevProps.courts !== this.props.courts) {
       this.reservationsOnSlots();
     }
   }
@@ -72,27 +74,41 @@ class CommerceSchedule extends Component {
       value: slot
     });
 
-    this.props.navigation.navigate('commerceCourtsList');
+    const { startDate } = slot;
+
+    this.props.navigation.navigate(
+      'commerceCourtsList',
+      {
+        title: startDate.format('DD') +
+          ' de ' + MONTHS[startDate.month()] +
+          ', ' + startDate.format('HH:mm') + ' hs.'
+      }
+    );
   };
 
   reservationsOnSlots = () => {
-    const { reservations, courtsAvailable, slots } = this.props;
+    const { reservations, courts, slots } = this.props;
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
       let available = true;
+      let courtsAvailable = 0;
 
       reservations.forEach(reservation => {
         if (slot.startDate.toString() === reservation.startDate.toString())
           reserved++;
       });
 
-      if (reserved >= courtsAvailable.length) available = false;
+      courts.forEach(court => {
+        !isCourtDisabledOnSlot(court, slot) && courtsAvailable++;
+      });
+
+      if (reserved >= courtsAvailable) available = false;
 
       return {
         ...slot,
-        free: courtsAvailable.length - reserved,
-        total: courtsAvailable.length,
+        free: courtsAvailable - reserved,
+        total: courts.length,
         available
       };
     });
@@ -180,7 +196,7 @@ const mapStateToProps = state => {
   const { reservations } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
-  const { courtsAvailable } = state.courtsList;
+  const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
   return {
@@ -194,7 +210,7 @@ const mapStateToProps = state => {
     commerceId,
     reservations,
     slot,
-    courtsAvailable,
+    courts,
     loadingSchedule,
     loadingReservations,
     loadingCourts
@@ -208,6 +224,6 @@ export default connect(
     onScheduleValueChange,
     onCommerceCourtReservationsRead,
     onCourtReservationValueChange,
-    courtsReadOnlyAvailable
+    courtsRead
   }
 )(CommerceSchedule);
