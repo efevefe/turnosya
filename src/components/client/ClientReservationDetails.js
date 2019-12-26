@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
 import { Divider, ButtonGroup } from 'react-native-elements';
+import { Notifications } from 'expo';
 import {
   CardSection,
   Button,
@@ -24,22 +25,23 @@ import {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview
+  readClientReview,
+  readTokenNotificationOfCommerce
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
-import { MAIN_COLOR } from '../../constants';
+import { MONTHS,MAIN_COLOR, DAYS } from '../../constants';
+
 
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-
     const reservation = props.navigation.getParam('reservation');
     this.state = {
       reservation,
       optionsVisible: false,
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0
+      reviewBGIndex: 0,
     };
   }
 
@@ -59,8 +61,22 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
-  }
 
+    this._notificationSubscription = Notifications.addListener(
+      this._handleNotification
+    );
+
+        
+    this.props.readTokenNotificationOfCommerce(
+      this.state.reservation.commerceId
+    );
+  }
+  
+  _handleNotification = notification => {
+    this.setState({ notification: notification });
+  };
+
+  
   componentWillUnmount() {
     this.props.commerceReviewClear();
     this.props.clientReviewClear();
@@ -262,7 +278,7 @@ class ClientReservationDetails extends Component {
       );
     }
   };
-
+ 
   // ** Render method **
 
   render() {
@@ -276,7 +292,8 @@ class ClientReservationDetails extends Component {
       id,
       commerceId
     } = this.state.reservation;
-
+    const body = `El Turno del dia ${DAYS[startDate.day()]} ${startDate.format('D')} de ${MONTHS[moment(startDate).month()]} a las ${moment(startDate).format('HH:mm')} fue cancelado` 
+    const title = 'Turno Cancelado'
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
@@ -297,11 +314,15 @@ class ClientReservationDetails extends Component {
             icon="md-checkmark"
             loadingWithText={this.props.loadingReservations}
             onPress={() => {
+              debugger;
               this.setState({ optionsVisible: false });
               this.props.onClientCancelReservation({
                 reservationId: id,
                 commerceId,
-                navigation: this.props.navigation
+                navigation: this.props.navigation,
+                title,
+                body,
+                token: this.props.tokens
               });
             }}
           />
@@ -331,7 +352,6 @@ class ClientReservationDetails extends Component {
 const {
   cancelButtonContainerStyle,
   reviewDividerStyle,
-  reviewTitleStyle,
   reviewButtonsContainerStyle,
   overlayDividerStyle,
   scrollViewStyle,
@@ -371,6 +391,7 @@ const mapStateToProps = state => {
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId } = state.clientData;
+  const {tokens} = state.notification;
 
   return {
     loadingReservations,
@@ -383,7 +404,8 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    tokens
   };
 };
 
@@ -397,5 +419,6 @@ export default connect(mapStateToProps, {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview
+  readClientReview,
+  readTokenNotificationOfCommerce,
 })(ClientReservationDetails);

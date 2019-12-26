@@ -18,6 +18,7 @@ import CommerceReviewDataReducer from './CommerceReviewDataReducer';
 import CommerceReviewsListReducer from './CommerceReviewsListReducer';
 import ClientReviewDataReducer from './ClientReviewDataReducer';
 import ClientReviewsListReducer from './ClientReviewsListReducer';
+import NotificationReducer from './NotificationReducer'
 
 export default combineReducers({
   auth: AuthReducer,
@@ -38,5 +39,6 @@ export default combineReducers({
   commerceReviewData: CommerceReviewDataReducer,
   commerceReviewsList: CommerceReviewsListReducer,
   clientReviewData: ClientReviewDataReducer,
-  clientReviewsList: ClientReviewsListReducer
+  clientReviewsList: ClientReviewsListReducer,
+  notification:NotificationReducer
 });

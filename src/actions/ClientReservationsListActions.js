@@ -1,13 +1,14 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
   ON_CLIENT_RESERVATION_CANCEL,
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
-} from "./types";
-import moment from "moment";
+} from './types';
+import moment from 'moment';
+import { sendPushNotification } from '../actions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -56,10 +57,18 @@ export const onClientReservationsListRead = () => dispatch => {
     });
 };
 
+const  sendNotification = (title, body, token) => {
+  debugger;
+   sendPushNotification(title, body, token);
+};
+
 export const onClientCancelReservation = ({
   reservationId,
   commerceId,
-  navigation
+  navigation,
+  title,
+  body,
+  token
 }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -73,9 +82,7 @@ export const onClientCancelReservation = ({
         .then(stateDoc => {
           const cancelationDate = new Date();
           batch.update(
-            db.doc(
-              `Profiles/${currentUser.uid}/Reservations/${reservationId}`
-            ),
+            db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`),
             {
               state: { id: stateDoc.id, name: stateDoc.data().name },
               cancelationDate
@@ -92,6 +99,7 @@ export const onClientCancelReservation = ({
           batch
             .commit()
             .then(() => {
+              sendPushNotification(title, body, token);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

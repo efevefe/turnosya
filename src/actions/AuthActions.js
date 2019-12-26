@@ -23,6 +23,7 @@ const {
   androidClientId,
   googleScopes
 } = getEnvVars();
+import {registerForPushNotifications } from '../actions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
