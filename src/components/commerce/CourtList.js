@@ -7,6 +7,8 @@ import { Spinner, EmptyList } from '../common';
 import CourtListItem from './CourtListItem';
 import { courtsRead, onCourtFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
 
 class CourtList extends Component {
   componentDidMount() {
@@ -54,13 +56,15 @@ class CourtList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.onAddPress()}
-        >
-          <Ionicons name="md-add" />
-        </Fab>
+        <PermissionsAssigner requiredRole={ROLES.Administrador}>
+          <Fab
+            style={{ backgroundColor: MAIN_COLOR }}
+            position="bottomRight"
+            onPress={() => this.onAddPress()}
+          >
+            <Ionicons name="md-add" />
+          </Fab>
+        </PermissionsAssigner>
       </View>
     );
   }
@@ -73,7 +77,6 @@ const mapStateToProps = state => {
   return { courts, loading, commerceId };
 };
 
-export default connect(
-  mapStateToProps,
-  { courtsRead, onCourtFormOpen }
-)(CourtList);
+export default connect(mapStateToProps, { courtsRead, onCourtFormOpen })(
+  CourtList
+);

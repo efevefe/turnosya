@@ -5,6 +5,7 @@ import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
 import { courtDelete, onCourtFormOpen } from '../../actions';
+import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -142,13 +143,19 @@ class CourtListItem extends Component {
               }
             >{`${court} - ${ground}`}</Text>
           }
-          onLongPress={this.onOptionsPress}
-          rightIcon={{
-            name: 'md-more',
-            type: 'ionicon',
-            containerStyle: { height: 20, width: 10 },
-            onPress: this.onOptionsPress
-          }}
+          onLongPress={
+            this.props.role >= ROLES.Administrador ? this.onOptionsPress : null
+          }
+          rightIcon={
+            this.props.role >= ROLES.Administrador
+              ? {
+                  name: 'md-more',
+                  type: 'ionicon',
+                  containerStyle: { height: 20, width: 10 },
+                  onPress: this.onOptionsPress
+                }
+              : null
+          }
           bottomDivider
         />
       </View>
@@ -156,7 +163,11 @@ class CourtListItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  { courtDelete, onCourtFormOpen }
-)(CourtListItem);
+const mapStateToProps = state => {
+  const { role } = state.roleData;
+  return { role };
+};
+
+export default connect(mapStateToProps, { courtDelete, onCourtFormOpen })(
+  CourtListItem
+);

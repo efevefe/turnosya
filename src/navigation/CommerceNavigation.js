@@ -26,6 +26,8 @@ import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
+import PermissionsAssigner from '../components/common/PermissionsAssigner';
+import { ROLES } from '../constants';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -171,10 +173,12 @@ const profileStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         ),
         headerRight: (
-          <IconButton
-            icon="md-create"
-            onPress={() => navigation.navigate('profileEdit')}
-          />
+          <PermissionsAssigner requiredRole={ROLES.Administrador}>
+            <IconButton
+              icon="md-create"
+              onPress={() => navigation.navigate('profileEdit')}
+            />
+          </PermissionsAssigner>
         )
       })
     },

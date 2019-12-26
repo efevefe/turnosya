@@ -40,5 +40,5 @@ export const DAYS = [
 export const ROLES = {
   Dueño: 2,
   Administrador: 1,
-  Empleado: 1
+  Empleado: 0
 };

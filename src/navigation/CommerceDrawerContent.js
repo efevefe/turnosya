@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { onLogout } from '../actions/AuthActions';
 import { Drawer, DrawerItem } from '../components/common';
 import { onCommerceRead, onScheduleValueChange } from '../actions';
+import PermissionsAssigner from '../components/common/PermissionsAssigner';
+import { ROLES } from '../constants';
 
 class CommerceDrawerContent extends Component {
   componentDidMount() {
@@ -33,11 +35,13 @@ class CommerceDrawerContent extends Component {
           icon="md-people"
           onPress={() => this.props.navigation.navigate('commerceEmployees')}
         />
-        <DrawerItem
-          title="Configuración"
-          icon="md-settings"
-          onPress={() => this.props.navigation.navigate('commerceSettings')}
-        />
+        <PermissionsAssigner requiredRole={ROLES.Dueño}>
+          <DrawerItem
+            title="Configuración"
+            icon="md-settings"
+            onPress={() => this.props.navigation.navigate('commerceSettings')}
+          />
+        </PermissionsAssigner>
         <DrawerItem
           title="Cerrar Sesión"
           icon="md-exit"

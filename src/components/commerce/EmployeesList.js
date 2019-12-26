@@ -8,6 +8,8 @@ import { Spinner, EmptyList } from '../common';
 import EmployeesListItem from './EmployeesListItem';
 import { readEmployees } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -71,13 +73,15 @@ class EmployeesList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.onAddPress()}
-        >
-          <Ionicons name="md-add" />
-        </Fab>
+        <PermissionsAssigner requiredRole={ROLES.Administrador}>
+          <Fab
+            style={{ backgroundColor: MAIN_COLOR }}
+            position="bottomRight"
+            onPress={() => this.onAddPress()}
+          >
+            <Ionicons name="md-add" />
+          </Fab>
+        </PermissionsAssigner>
       </View>
     );
   }
