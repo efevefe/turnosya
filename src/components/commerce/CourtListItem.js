@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { NavigationActions } from 'react-navigation';
-import { ListItem, Divider, Badge } from 'react-native-elements';
+import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen } from '../../actions';
-import { GREY_DISABLED } from '../../constants';
+import { courtDelete, onCourtFormOpen, onCourtValueChange } from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -30,15 +28,21 @@ class CourtListItem extends Component {
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'courtForm',
-      params: { court: this.props.court, title: 'Editar Cancha' }
-    });
+
+    const { court } = this.props;
+
+    for (prop in court) {
+      this.props.onCourtValueChange({ prop, value: court[prop] });
+    }
 
     this.setState({ optionsVisible: !this.state.optionsVisible });
 
-    //hay que ver la forma de que esto se haga en el .then() del update()
-    this.props.navigation.navigate(navigateAction);
+    this.props.navigation.navigate(
+      'courtForm',
+      {
+        title: 'Editar Cancha'
+      }
+    );
   };
 
   formatDisabledDates = () => {
@@ -156,5 +160,5 @@ class CourtListItem extends Component {
 
 export default connect(
   null,
-  { courtDelete, onCourtFormOpen }
+  { courtDelete, onCourtFormOpen, onCourtValueChange }
 )(CourtListItem);

@@ -37,6 +37,8 @@ class CourtForm extends Component {
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
+
+    if (this.props.lightPrice) this.setState({ lightPriceOpen: true });
     this.isCourtDisabled();
   }
 
@@ -48,17 +50,6 @@ class CourtForm extends Component {
 
       if (firstIndex > -1)
         this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
-
-      const { params } = this.props.navigation.state;
-
-      // no se quien hizo esto pero no deberia ir en el didUpdate, le tengo que meter refactor
-      if (params) {
-        const { court } = params;
-        for (prop in params.court) {
-          this.props.onCourtValueChange({ prop, value: court[prop] });
-        }
-        if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
-      }
     }
 
     if (prevProps.disabledFrom !== this.props.disabledFrom ||
@@ -73,9 +64,7 @@ class CourtForm extends Component {
   }
 
   isCourtDisabled = () => {
-    const court = this.props.navigation.getParam('court');
-
-    if (court && court.disabledTo > moment()) {
+    if (this.props.id && this.props.disabledTo > moment()) {
       this.props.onCourtValueChange({
         prop: 'disabled',
         value: true
@@ -85,6 +74,7 @@ class CourtForm extends Component {
 
   onCourtSave = () => {
     const {
+      id,
       name,
       court,
       ground,
@@ -96,10 +86,8 @@ class CourtForm extends Component {
       disabledTo
     } = this.props;
     const { reservationsToCancel } = this.state;
-    const paramCourt = navigation.getParam('court');
 
-    if (paramCourt) {
-      const { id } = paramCourt;
+    if (id) {
       this.props.courtUpdate(
         {
           id,
@@ -213,6 +201,7 @@ class CourtForm extends Component {
     this.setState({
       courtError: ''
     });
+
     if (key > 0) {
       if (this.props.grounds.length)
         this.setState({ selectedGrounds: this.props.grounds[key - 1] });
@@ -382,10 +371,10 @@ class CourtForm extends Component {
     this.setState({ reservationsToCancel: [] });
 
     if (this.validateMinimumData()) {
-      if (this.props.disabled && this.props.navigation.state.params.court) {
+      if (this.props.disabled && this.props.id) {
         this.props.onCourtNextReservationsRead({
           commerceId: this.props.commerceId,
-          courtId: this.props.navigation.state.params.court.id,
+          courtId: this.props.id,
           startDate: this.props.disabledFrom,
           endDate: this.props.disabledTo
         });
@@ -514,12 +503,6 @@ class CourtForm extends Component {
 
           <CardSection>
             <CheckBox
-              containerStyle={{
-                marginTop: 5,
-                marginLeft: 8,
-                marginRight: 8,
-                marginBottom: 0
-              }}
               title="Agregar precio con luz"
               iconType="material"
               checkedIcon="clear"
@@ -534,8 +517,8 @@ class CourtForm extends Component {
 
           <Divider style={{ margin: 12 }} />
 
-          <CardSection style={{ paddingRight: 12, paddingLeft: 15, paddingVertical: 5, flexDirection: 'row' }}>
-            <View style={{ alignItems: 'flex-start', flexDirection: 'row', flex: 1 }}>
+          <CardSection style={styles.disableCourtCardSection}>
+            <View style={styles.disableCourtText}>
               <Text>Deshabilitar cancha:</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
@@ -589,11 +572,23 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderRadius: 10,
     marginBottom: 20
+  },
+  disableCourtCardSection: {
+    paddingRight: 12,
+    paddingLeft: 15,
+    paddingVertical: 5,
+    flexDirection: 'row'
+  },
+  disableCourtText: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flex: 1
   }
 });
 
 const mapStateToProps = state => {
   const {
+    id,
     name,
     courts,
     court,
@@ -612,6 +607,7 @@ const mapStateToProps = state => {
   const loadingReservations = state.courtReservationsList.loading;
 
   return {
+    id,
     name,
     courts,
     court,
