@@ -1,15 +1,18 @@
 import { ON_TOKEN_NOTIFICATION_READ, ON_TOKEN_NOTIFICATION_READ_FAIL,ON_TOKEN_NOTIFICATION_SAVED,ON_TOKEN_NOTIFICATION_SAVED_FAIL } from './types';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 export const readTokenNotificationOfCommerce = commerceId  => {
   const db = firebase.firestore();
   return dispatch => { db
-    .collection(`Commerces/${commerceId}/Notification`)
+    .collection(`Commerces/${commerceId}/Token`)
     .get()
     .then(querySnapshot => {
       const tokens = [];
-      querySnapshot.forEach(doc => tokens.push(doc.id));
+      querySnapshot.forEach(doc =>tokens.push(doc.id));
       dispatch({ type: ON_TOKEN_NOTIFICATION_READ, payload: tokens });
     })
     .catch(() => dispatch({ type: ON_TOKEN_NOTIFICATION_READ_FAIL }));
@@ -19,21 +22,20 @@ export const readTokenNotificationOfCient = clientId => {
   const db = firebase.firestore();
 
   return dispatch => { db
-    .collection(`Profiles/${clientId}/Notification`)
+    .collection(`Profiles/${clientId}/Token`)
     .get()
     .then(querySnapshot => {  
       const  tokens = [];
-      querySnapshot.forEach(doc => tokens.push(doc.id));
+      querySnapshot.forEach(doc => tokens.push(doc.id ));
       dispatch({ type: ON_TOKEN_NOTIFICATION_READ, payload: tokens });
     })
     .catch(() => dispatch({ type: ON_TOKEN_NOTIFICATION_READ_FAIL }));
 }};
 
 export const sendPushNotification = async (title,body,token) => {
-  for (let i = 0; i < token.length; i++) {
-    debugger;
+      debugger;
   const message = {
-    to:token[i],
+    to:token,
     sound: 'default',
     title,
     body,
@@ -50,10 +52,13 @@ export const sendPushNotification = async (title,body,token) => {
     body: JSON.stringify(message)
   });
   const data = response._bodyInit;  
-  }
+  
 };
 
 export const registerForPushNotifications = async () => {
+
+  const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
   if (Constants.isDevice) {
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
@@ -67,12 +72,10 @@ export const registerForPushNotifications = async () => {
       alert('Failed to get push token for push notification!');
       return;
     }
-    const db = firebase.firestore();
     let token = await Notifications.getExpoPushTokenAsync();
-    db.doc(`Profiles/${clientId}/Notification/${token}`)
+
+    db.doc(`Profiles/${currentUser.uid}/Token/${token}`)
       .set({})
-      .then(dispatch({ type: ON_TOKEN_NOTIFICATION_SAVED }))
-      .catch(() => dispatch({ type: ON_TOKEN_NOTIFICATION_SAVED_FAIL }));
   } else {
     alert('Must use physical device for Push Notifications');
   }

@@ -57,11 +57,6 @@ export const onClientReservationsListRead = () => dispatch => {
     });
 };
 
-const  sendNotification = (title, body, token) => {
-  debugger;
-   sendPushNotification(title, body, token);
-};
-
 export const onClientCancelReservation = ({
   reservationId,
   commerceId,

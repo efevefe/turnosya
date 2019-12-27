@@ -23,7 +23,7 @@ const {
   androidClientId,
   googleScopes
 } = getEnvVars();
-import {registerForPushNotifications } from '../actions';
+import { registerForPushNotifications } from '../actions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
@@ -44,6 +44,7 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
+        registerForPushNotifications(),
         dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
@@ -73,6 +74,7 @@ export const onFacebookLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { first_name, last_name } = additionalUserInfo.profile;
+              registerForPushNotifications();
 
               const userData = {
                 firstName: first_name,
@@ -90,10 +92,13 @@ export const onFacebookLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(() =>
+                  .then(
+                    () => 
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              } else {
+                  dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              }
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
@@ -129,6 +134,7 @@ export const onGoogleLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { given_name, family_name } = additionalUserInfo.profile;
+              registerForPushNotifications();
 
               const userData = {
                 firstName: given_name,
@@ -146,10 +152,13 @@ export const onGoogleLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(() =>
+                  .then(
+                    () =>{
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
-                  );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  } )
+              } else {()=>
+                  dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              }
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
