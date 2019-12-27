@@ -23,36 +23,31 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({})
       .then(commerceReservationRef => {
-        const reservationDate = new Date();
         const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
         const batch = db.batch();
 
-        // reserva que se guarda en el negocio
-        batch.set(commerceReservationRef, {
-          clientId: currentUser.uid,
+        const reservationData = {
           courtId,
           courtType,
           startDate: slot.startDate.toDate(),
           endDate: slot.endDate.toDate(),
-          reservationDate,
-          cancelationDate: null,
+          reservationDate: new Date(),
+          cancellationDate: null,
           price,
           light,
           state: null
+        }
+
+        // reserva que se guarda en el negocio
+        batch.set(commerceReservationRef, {
+          ...reservationData,
+          clientId: currentUser.uid
         });
 
         // reserva que se guarda en el cliente
         batch.set(clientReservationRef, {
-          commerceId,
-          courtId,
-          courtType,
-          startDate: slot.startDate.toDate(),
-          endDate: slot.endDate.toDate(),
-          reservationDate,
-          cancelationDate: null,
-          price,
-          light,
-          state: null
+          ...reservationData,
+          commerceId
         });
 
         batch.commit()

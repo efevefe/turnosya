@@ -81,19 +81,26 @@ class CommerceProfile extends Component {
     };
 
     this.props.onLocationChange(location);
+
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
       rightIcon: this.renderSaveButton()
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.province.provinceId !== this.props.province.provinceId) {
+      this.renderProvinceError();
+    }
+
+    if (prevProps.area.areaId !== this.props.area.areaId) {
+      this.renderAreaError();
+    }
+  }
+
   onRefresh = () => {
     this.props.onCommerceRead();
   };
-
-  // renderEditButton = () => {
-  //   return <IconButton icon="md-create" onPress={this.onEditPress} />;
-  // };
 
   renderSaveButton = () => {
     return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
@@ -108,6 +115,7 @@ class CommerceProfile extends Component {
       <HeaderBackButton
         onPress={() => this.props.navigation.goBack(null)}
         tintColor="white"
+        title='Back'
       />
     );
   };
@@ -148,7 +156,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange({ location });
+    this.props.onLocationChange(location);
   };
 
   onRefresh = () => {
@@ -236,20 +244,6 @@ class CommerceProfile extends Component {
     this.cleanErrors();
     this.props.navigation.goBack(null);
   };
-
-  // disableEdit = () => {
-  //   this.setState({
-  //     editEnabled: false,
-  //     newProfilePicture: false,
-  //     stateBeforeChanges: null
-  //   });
-
-  //   this.props.navigation.setParams({
-  //     title: 'Perfil',
-  //     rightIcon: this.renderEditButton(),
-  //     leftIcon: this.renderBackButton()
-  //   });
-  // }
 
   onEditPicturePress = () => {
     this.setState({
@@ -387,44 +381,32 @@ class CommerceProfile extends Component {
     }
   };
 
-  onProvincePickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.provincesList.find(
-          province => province.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'province',
-          value: { provinceId: value, name: label }
-        });
+  onProvincePickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.provincesList.find(
+        province => province.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: value, name: label }
+      });
 
-        this.props.onLocationValueChange({
-          prop: 'provinceName',
-          value: label
-        });
-      }
-
-      this.renderProvinceError();
-    } catch (e) {
-      console.error(e);
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: label
+      });
     }
   };
 
-  onAreaPickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.areasList.find(
-          area => area.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'area',
-          value: { areaId: value, name: label }
-        });
-
-        this.renderAreaError();
-      }
-    } catch (e) {
-      console.error(e);
+  onAreaPickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.areasList.find(
+        area => area.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'area',
+        value: { areaId: value, name: label }
+      });
     }
   };
 
@@ -550,7 +532,7 @@ class CommerceProfile extends Component {
   };
 
   onMapPress = () => {
-    this.props.navigation.navigate('changeAddressMap', {
+    this.props.navigation.navigate('changeCommerceLocationMap', {
       onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
@@ -759,15 +741,11 @@ class CommerceProfile extends Component {
               errorMessage={this.state.provinceError}
             />
           </CardSection>
-          <CardSection style={{ paddingTop: 0 }}>
+          <CardSection>
             <Button
               title="Buscar en el Mapa"
               titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{
-                marginTop: 0,
-                borderRadius: 8,
-                borderColor: MAIN_COLOR
-              }}
+              buttonStyle={{ borderColor: MAIN_COLOR }}
               color="white"
               type="outline"
               iconRight={true}

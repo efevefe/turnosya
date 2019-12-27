@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from '../common';
 import { onCommerceDetailedCourtReservationsRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
+
 class CommerceCourtReservations extends Component {
   state = {
     selectedDate: moment(),
@@ -30,25 +31,16 @@ class CommerceCourtReservations extends Component {
   }
 
   onDateSelected = date => {
-    const selectedDate = moment([
-      date.year(),
-      date.month(),
-      date.date(),
-      0,
-      0,
-      0
-    ]);
+    const selectedDate = moment([date.year(), date.month(), date.date()]);
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead(
-      {
-        commerceId: this.props.commerceId,
-        selectedDate
-      }
-    );
+    this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate
+    });
 
     this.setState({ selectedDate });
-  };
+  }
 
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
@@ -136,8 +128,8 @@ class CommerceCourtReservations extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderItems()
-        )}
+            this.renderItems()
+          )}
       </View>
     );
   }

@@ -6,11 +6,7 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import CommerceCourtTypes from '../components/client/CommerceCourtTypes';
-import {
-  stackNavigationOptions,
-  tabNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -19,14 +15,88 @@ import ClientReservationsList from '../components/client/ClientReservationsList'
 import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
-import Map from '../components/common/Map';
-
+import CommercesMap from '../components/common/CommercesMap';
+import CommerceLocationMap from '../components/common/CommerceLocationMap';
+import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
+
 // Aca hay un stack por cada tab que tiene el tab navigation
 
-const mainSearchStack = createStackNavigator(
+// como estas pantallas pueden accederse desde la lupita y desde favoritos, las saque
+// a un objeto y luego las agregue a cada uno de los stacks para no tener que duplicarlas
+const reservationScreens = {
+  commerceProfileView: {
+    screen: CommerceProfileView,
+    navigationOptions: {
+      title: 'Perfil'
+    }
+  },
+  commerceProfileInfo: {
+    screen: CommerceProfileInfo,
+    navigationOptions: {
+      title: 'Información'
+    }
+  },
+  showMyAddressMap: {
+    screen: CommerceLocationMap,
+    navigationOptions: {
+      title: 'Dirección'
+    }
+  },
+  commerceSchedule: {
+    screen: ClientCommerceSchedule,
+    navigationOptions: {
+      title: 'Turnos Disponibles'
+    }
+  },
+  commerceCourtsList: {
+    screen: CommerceCourtsList,
+    navigationOptions: {
+      title: 'Canchas Disponibles'
+    }
+  },
+  confirmCourtReservation: {
+    screen: ConfirmCourtReservation,
+    navigationOptions: {
+      title: 'Turno'
+    }
+  },
+  commerceReviewsList: {
+    screen: CommerceReviewsList,
+    navigationOptions: {
+      title: 'Reseñas del Comercio'
+    }
+  }
+}
+
+const filtersStack = createStackNavigator(
+  {
+    commercesFiltersScreen: {
+      screen: CommercesFiltersScreen,
+      navigationOptions: {
+        headerStyle: {
+          ...stackNavigationOptions.defaultNavigationOptions.headerStyle,
+          borderBottomWidth: 0,
+          elevation: 0
+        }
+      }
+    },
+    commercesFiltersMap: {
+      screen: CommercesFiltersMap,
+      navigationOptions: {
+        title: 'Seleccionar ubicación'
+      }
+    }
+  },
+  {
+    ...stackNavigationOptions,
+    mode: 'modal' // necesito iOS para ver si funca esto (Nico)
+  }
+);
+
+const searchStack = createStackNavigator(
   {
     commercesAreas: {
       screen: CommercesAreas,
@@ -44,89 +114,28 @@ const mainSearchStack = createStackNavigator(
       }
     },
     commercesListMap: {
-      screen: Map,
+      screen: CommercesMap,
       navigationOptions: {
         title: 'Buscar Negocios'
       }
     },
-    commerceProfileView: {
-      screen: CommerceProfileView,
+    ...reservationScreens,
+    filtersStack: {
+      screen: filtersStack,
       navigationOptions: {
-        title: 'Perfil'
-      }
-    },
-    commerceProfileInfo: {
-      screen: CommerceProfileInfo,
-      navigationOptions: {
-        title: 'Información'
-      }
-    },
-    showMyAddressMap: {
-      screen: Map,
-      navigationOptions: {
-        title: 'Dirección'
-      }
-    },
-    commerceCourtTypes: {
-      screen: CommerceCourtTypes,
-      navigationOptions: {
-        title: 'Tipos de Cancha'
-      }
-    },
-    commerceSchedule: {
-      screen: ClientCommerceSchedule,
-      navigationOptions: {
-        title: 'Turnos Disponibles'
-      }
-    },
-    commerceCourtsList: {
-      screen: CommerceCourtsList,
-      navigationOptions: {
-        title: 'Canchas Disponibles'
-      }
-    },
-    confirmCourtReservation: {
-      screen: ConfirmCourtReservation,
-      navigationOptions: {
-        title: 'Turno'
-      }
-    },
-    commerceReviewsList: {
-      screen: CommerceReviewsList,
-      navigationOptions: {
-        title: 'Reseñas'
+        header: null
       }
     }
   },
   stackNavigationOptions
 );
 
-const searchStack = createStackNavigator(
-  {
-    main: {
-      screen: mainSearchStack
-    },
-    commercesFiltersScreen: {
-      screen: CommercesFiltersScreen
-    },
-    commercesFiltersMap: {
-      screen: CommercesFiltersMap
-    }
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none'
-  }
-);
-
 searchStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
+
   if (navigation.state.routes.length > 1) {
     navigation.state.routes.map(route => {
-      if (
-        route.routeName === 'commercesFiltersScreen' ||
-        route.routeName === 'commercesFiltersMap'
-      ) {
+      if (route.routeName === 'filtersStack') {
         tabBarVisible = false;
       } else {
         tabBarVisible = true;
@@ -134,9 +143,7 @@ searchStack.navigationOptions = ({ navigation }) => {
     });
   }
 
-  return {
-    tabBarVisible
-  };
+  return { tabBarVisible };
 };
 
 const calendarStack = createStackNavigator(
@@ -170,7 +177,8 @@ const favoritesStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
-    }
+    },
+    ...reservationScreens
   },
   stackNavigationOptions
 );
@@ -185,6 +193,12 @@ const profileStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         )
       })
+    },
+    clientReviewsList: {
+      screen: ClientReviewsList,
+      navigationOptions: {
+        title: 'Reseñas del Cliente'
+      }
     }
   },
   stackNavigationOptions

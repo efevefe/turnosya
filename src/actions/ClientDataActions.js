@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  ON_REGISTER_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE,
   ON_USER_REGISTER,
   ON_USER_REGISTER_SUCCESS,
   ON_USER_REGISTER_FAIL,
@@ -17,19 +17,26 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_EMAIL_VERIFY_REMINDED,
-  ON_REGISTER_FORM_OPEN
+  ON_REGISTER_FORM_OPEN,
+  ON_USER_PASSWORD_UPDATE
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
 export const onClientDataValueChange = ({ prop, value }) => {
-  return { type: ON_REGISTER_VALUE_CHANGE, payload: { prop, value } };
+  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
+export const onUserRegister = ({
+  email,
+  password,
+  firstName,
+  lastName,
+  phone
+}) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -64,16 +71,20 @@ export const onUserRegister = ({ email, password, firstName, lastName, phone }) 
   };
 };
 
-export const onUserRead = () => {
-  const { currentUser } = firebase.auth();
+export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_USER_READING });
 
-    db.doc(`Profiles/${currentUser.uid}`)
+    db.doc(`Profiles/${clientId}`)
       .get()
-      .then(doc => dispatch({ type: ON_USER_READ, payload: doc.data() }))
+      .then(doc =>
+        dispatch({
+          type: ON_USER_READ,
+          payload: { ...doc.data(), clientId: doc.id }
+        })
+      )
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));
   };
 };
@@ -95,7 +106,8 @@ export const onUserUpdate = ({
       const snapshot = await firebase
         .storage()
         .ref(`Users/${currentUser.uid}`)
-        .child(`${currentUser.uid}-ProfilePicture`).put(profilePicture);
+        .child(`${currentUser.uid}-ProfilePicture`)
+        .put(profilePicture);
 
       url = await snapshot.ref.getDownloadURL();
     }
@@ -108,11 +120,11 @@ export const onUserUpdate = ({
         lastName,
         phone,
         profilePicture: url ? url : profilePicture
-      })
+      });
 
-    dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture })
+    dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture });
   } catch (error) {
-    dispatch({ type: ON_USER_UPDATE_FAIL })
+    dispatch({ type: ON_USER_UPDATE_FAIL });
   } finally {
     profilePicture.close();
   }
@@ -147,3 +159,30 @@ export const onUserDelete = password => {
       });
   };
 };
+
+
+export const onUserPasswordUpdate = ({ password, newPassword }, navigation) => {
+  const { currentUser } = firebase.auth();
+
+  return dispatch => {
+    dispatch({ type: ON_USER_UPDATING });
+
+    userReauthenticate(password)
+      .then(() => {
+        currentUser.updatePassword(newPassword)
+          .then(() => {
+            dispatch({ type: ON_REAUTH_SUCCESS });
+            dispatch({ type: ON_USER_PASSWORD_UPDATE });
+            navigation.goBack();
+          })
+          .catch(error => {
+            dispatch({ type: ON_USER_UPDATE_FAIL });
+            dispatch({ type: ON_REAUTH_SUCCESS });
+          })
+      })
+      .catch(error => {
+        dispatch({ type: ON_REAUTH_FAIL });
+        dispatch({ type: ON_USER_UPDATE_FAIL });
+      });
+  };
+}
