@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ButtonGroup } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Input, Button, CardSection } from '../common';
+import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { onCourtReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 import { validateValueType } from '../../utils';
@@ -57,19 +56,14 @@ class CommerceCourtReservationRegister extends Component {
                             onPress={this.onPriceSelect}
                             selectedIndex={this.state.selectedIndex}
                             buttons={this.state.priceButtons}
-                            containerStyle={styles.priceButtons}
-                            selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-                            selectedTextStyle={{ color: "white" }}
-                            textStyle={{ color: "black" }}
-                            containerStyle={styles.priceButtons}
-                            innerBorderStyle={{ color: MAIN_COLOR }}
+                            textStyle={{ fontSize: 14 }}
                         />
                     </CardSection>
                     <CardSection style={styles.cardSection}>
                         <Input
                             label="Nombre:"
                             placeholder='Nombre del cliente'
-                            value={this.props.client.name}
+                            value={this.props.clientName}
                             onChangeText={this.onNameValueChange}
                             errorMessage={this.state.nameError}
                             onFocus={() => this.setState({ nameError: '' })}
@@ -80,7 +74,7 @@ class CommerceCourtReservationRegister extends Component {
                         <Input
                             label="Telefono:"
                             placeholder='Telefono del cliente (opcional)'
-                            value={this.props.client.phone}
+                            value={this.props.clientPhone}
                             onChangeText={this.onPhoneValueChange}
                             errorMessage={this.state.phoneError}
                             onFocus={() => this.setState({ phoneError: '' })}
@@ -93,42 +87,38 @@ class CommerceCourtReservationRegister extends Component {
     };
 
     onNameValueChange = name => {
-        const { client } = this.props;
-
         this.props.onCourtReservationValueChange({
-            prop: 'client',
-            value: { ...client, name }
+            prop: 'clientName',
+            value: name
         });
     }
 
     onPhoneValueChange = phone => {
-        const { client } = this.props;
-
         this.props.onCourtReservationValueChange({
-            prop: 'client',
-            value: { ...client, phone }
+            prop: 'clientPhone',
+            value: phone
         });
     }
 
     nameError = () => {
-        const { name } = this.props.client;
+        const { clientName } = this.props;
 
-        if (!name) {
+        if (!clientName) {
             this.setState({ nameError: 'Dato requerido' });
-            return true;
-        } else if (!validateValueType('name')) {
+        } else if (!validateValueType('name', clientName)) {
             this.setState({ nameError: 'Formato no valido' });
-            return true;
         } else {
             this.setState({ nameError: '' });
             return false;
         }
+
+        return true;
     }
 
     phoneError = () => {
-        const { phone } = this.props.client;
+        const { clientPhone } = this.props;
 
-        if (phone && !validateValueType('phone')) {
+        if (clientPhone && !validateValueType('phone', clientPhone)) {
             this.setState({ phoneError: 'Formato no valido' });
             return true;
         } else {
@@ -153,11 +143,12 @@ class CommerceCourtReservationRegister extends Component {
 
     onConfirmReservation = () => {
         if (!this.nameError() && !this.phoneError()) {
-            const { commerceId, client, court, slot, light, price } = this.props;
+            const { commerceId, clientName, clientPhone, court, slot, light, price } = this.props;
 
             this.props.onCommerceCourtReservationCreate({
                 commerceId,
-                client,
+                clientName,
+                clientPhone,
                 court,
                 slot,
                 light,
@@ -167,7 +158,7 @@ class CommerceCourtReservationRegister extends Component {
     }
 
     render() {
-        const { court, slot, light, price, saved } = this.props;
+        const { clientName, clientPhone, court, slot, light, price, saved } = this.props;
 
         return (
             <KeyboardAwareScrollView
@@ -176,6 +167,9 @@ class CommerceCourtReservationRegister extends Component {
                 contentContainerStyle={{ flexGrow: 1 }}
             >
                 <CourtReservationDetails
+                    name={saved && clientName}
+                    info={saved && clientPhone}
+                    infoIcon='ios-call'
                     court={court}
                     startDate={slot.startDate}
                     endDate={slot.endDate}
@@ -196,12 +190,6 @@ const styles = StyleSheet.create({
     cardSection: {
         paddingHorizontal: 10
     },
-    priceButtons: {
-        borderColor: MAIN_COLOR,
-        height: 60,
-        marginTop: 15,
-        borderRadius: 8
-    },
     confirmButtonContainer: {
         flex: 1,
         justifyContent: "flex-end",
@@ -211,9 +199,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     const { commerceId } = state.commerceData;
-    const { client, court, slot, light, price, saved, loading } = state.courtReservation;
+    const { clientName, clientPhone, court, slot, light, price, saved, loading } = state.courtReservation;
 
-    return { commerceId, client, court, slot, light, price, saved, loading };
+    return { commerceId, clientName, clientPhone, court, slot, light, price, saved, loading };
 }
 
 export default connect(mapStateToProps, {

@@ -2,95 +2,89 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Avatar } from 'react-native-elements';
 import moment from 'moment';
+import { Ionicons } from '@expo/vector-icons';
 import { CardSection } from './common';
 import { MONTHS, DAYS, MAIN_COLOR } from '../constants';
 
 class CourtReservationDetails extends Component {
-  state = { name: '', profilePicture: '' };
-
-  componentDidMount() {
-    const { commerce, client } = this.props;
-
-    if (commerce) {
-      this.setState({ name: commerce.name, profilePicture: commerce.profilePicture });
-    }
-
-    if (client) {
-      const { firstName, lastName, profilePicture } = client;
-      this.setState({ name: `${firstName} ${lastName}`, profilePicture });
-    }
-  }
-
   renderName = () => {
-    if (this.state.name) {
+    if (this.props.name) {
       return (
         <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
           <Text style={styles.bigText}>
-            {this.state.name}
+            {this.props.name}
           </Text>
         </CardSection>
       );
     }
   }
 
-  /*
-    Esto queda comentado por ahora ya que la propiedad provinceName se llama asi cuando el commerce viene desde Algolia
-    pero se llama province.name cuando la consulta viene directo desde la base de datos, entonces habria que solucionar eso
-  
-    renderAddress = () => {
-        if (this.props.commerce) {
-            const { address, city, provinceName } = this.props.commerce;
-  
-            return (
-                <CardSection style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}>
-                    <Icon
-                        name="md-pin"
-                        type="ionicon"
-                        size={16}
-                        containerStyle={{ marginRight: 5 }}
-                    />
-                    <Text style={styles.regularText}>
-                        {`${address}, ${city}, ${provinceName}`}
-                    </Text>
-                </CardSection>
-            );
-        }
+  renderInfo = () => {
+    if (this.props.info) {
+      return (
+        <CardSection style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}>
+          {this.props.infoIcon &&
+            <Ionicons
+              name={this.props.infoIcon}
+              size={14}
+              color='black'
+              style={{ marginRight: 5 }}
+            />
+          }
+          <Text style={styles.infoText}>
+            {this.props.info}
+          </Text>
+        </CardSection>
+      );
     }
-    */
+  }
 
   renderPrice = () => {
-    const { price, showPrice } = this.props;
-
-    if (showPrice) {
+    if (this.props.showPrice) {
       return (
-        <CardSection style={[styles.cardSections, { marginTop: 15 }]}>
-          <Text style={styles.bigText}>{`$${price}`}</Text>
+        <CardSection style={[styles.cardSections, { marginTop: 8 }]}>
+          <Text style={styles.bigText}>{`$${this.props.price}`}</Text>
         </CardSection>
       );
     }
   };
 
+  setPicturePlaceholder = () => {
+    switch (this.props.mode) {
+      case 'commerce':
+        return { name: 'store' };
+      case 'client':
+        return { name: 'person' };
+      default:
+        return {
+          name: 'md-calendar',
+          type: 'ionicon'
+        };
+    }
+  }
+
   render() {
     const {
+      picture,
       court,
       startDate,
       endDate,
       light,
     } = this.props;
-    const { profilePicture } = this.state;
 
     return (
       <View style={styles.mainContainer}>
         <Avatar
           rounded
-          source={profilePicture ? { uri: profilePicture } : null}
+          source={picture ? { uri: picture } : null}
           size={90}
-          icon={{ name: this.props.commerce ? 'store' : 'person' }}
+          icon={this.setPicturePlaceholder()}
           containerStyle={styles.avatarStyle}
+          onPress={this.props.onPicturePress}
         />
         <View style={styles.contentContainer}>
           {this.renderName()}
-          {/*this.renderAddress()*/}
+          {this.renderInfo()}
           <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
             <Text style={styles.mediumText}>
               {court.name}
@@ -150,6 +144,9 @@ const styles = StyleSheet.create({
   },
   regularText: {
     fontSize: 14
+  },
+  infoText: {
+    fontSize: 13
   },
   divider: {
     margin: 10,

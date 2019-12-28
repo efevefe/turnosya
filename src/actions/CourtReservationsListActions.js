@@ -190,10 +190,12 @@ export const onCommerceCancelReservation = ({
           cancellationData
         );
 
-        batch.update(
-          db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
-          cancellationData
-        );
+        if (clientId) {
+          batch.update(
+            db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
+            cancellationData
+          );
+        }
 
         batch
           .commit()
@@ -216,7 +218,10 @@ export const onCommerceCancelReservation = ({
 };
 
 export const onReservationClientRead = clientId => async dispatch => {
+  // provisoria
   dispatch({ type: ON_RESERVATION_CLIENT_READING });
+
+  let client = {};
 
   try {
     const doc = await firebase
@@ -224,12 +229,16 @@ export const onReservationClientRead = clientId => async dispatch => {
       .doc(`Profiles/${clientId}`)
       .get();
 
+    client = { id: doc.id, ...doc.data() };
+
     dispatch({
       type: ON_RESERVATION_CLIENT_READ,
-      payload: { id: doc.id, ...doc.data() }
+      payload: client
     });
   } catch (error) {
     dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL });
+  } finally {
+    return client;
   }
 }
 

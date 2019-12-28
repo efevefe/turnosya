@@ -4,8 +4,7 @@ import {
   ON_COURT_RESERVATION_VALUE_CHANGE,
   ON_COURT_RESERVATION_CREATING,
   ON_COURT_RESERVATION_CREATE,
-  ON_COURT_RESERVATION_CREATE_FAIL,
-  ON_COURT_RESERVATION_CLEAR
+  ON_COURT_RESERVATION_CREATE_FAIL
 } from "./types";
 
 export const onCourtReservationValueChange = ({ prop, value }) => {
@@ -58,15 +57,10 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           });
       })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
-
-    /*
-    Aca en los catch en un futuro vamos a tener que considerar los tipos de errores o lanzar una validacion antes
-    del guardado para ver si un turno no lo reservo otro mientras uno trataba de reservarlo, control de concurrencia perris
-    */
   }
 }
 
-export const onCommerceCourtReservationCreate = ({ commerceId, client, court, slot, light, price }) => {
+export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clientPhone, court, slot, light, price }) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -75,7 +69,8 @@ export const onCommerceCourtReservationCreate = ({ commerceId, client, court, sl
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({
         clientId: null,
-        client,
+        clientName,
+        clientPhone,
         courtId: court.id,
         courtType: court.court,
         startDate: slot.startDate.toDate(),

@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ButtonGroup, Button as RNEButton } from 'react-native-elements';
+import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { HeaderBackButton } from 'react-navigation-stack';
-import { CardSection, Button } from '../common';
+import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import {
   onCourtReservationValueChange,
-  onClientCourtReservationCreate,
-  onCourtReservationClear
+  onClientCourtReservationCreate
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
 
@@ -80,12 +79,7 @@ class ConfirmCourtReservation extends Component {
               onPress={this.onPriceSelect}
               selectedIndex={this.state.selectedIndex}
               buttons={this.state.priceButtons}
-              containerStyle={styles.priceButtons}
-              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: 'white' }}
-              textStyle={{ color: 'black' }}
-              containerStyle={styles.priceButtons}
-              innerBorderStyle={{ color: MAIN_COLOR }}
+              textStyle={{ fontSize: 14 }}
             />
           </CardSection>
         </View>
@@ -177,7 +171,15 @@ class ConfirmCourtReservation extends Component {
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
-          commerce={commerce}
+          mode='commerce'
+          name={commerce.name}
+          info={
+            commerce.address + ', ' +
+            commerce.city + ', ' +
+            commerce.provinceName
+          }
+          infoIcon='md-pin'
+          picture={commerce.profilePicture}
           court={court}
           startDate={slot.startDate}
           endDate={slot.endDate}
@@ -197,12 +199,6 @@ class ConfirmCourtReservation extends Component {
 const styles = StyleSheet.create({
   cardSections: {
     alignItems: 'center'
-  },
-  priceButtons: {
-    borderColor: MAIN_COLOR,
-    height: 60,
-    marginTop: 15,
-    borderRadius: 8
   },
   confirmButtonContainer: {
     flex: 1,
