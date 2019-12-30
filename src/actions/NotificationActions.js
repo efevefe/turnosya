@@ -42,9 +42,8 @@ export const readTokenNotificationOfCient = clientId => {
 };
 
 export const sendPushNotification = async (title, body, token) => {
-
   for (let i = 0; i < token.length; i++) {
-    if (token[i].activity === 1) {  
+    if (token[i].activity === 1) {
       debugger;
       const message = {
         to: token[i].token,
@@ -87,16 +86,31 @@ export const registerForClientPushNotifications = async () => {
     let token = await Notifications.getExpoPushTokenAsync();
 
     db.doc(`Profiles/${currentUser.uid}/Token/${token}`).set({ activity: 1 });
+    db.doc(`Profiles/${currentUser.uid}`)
+      .get()
+      .then(doc => {
+        if (doc.data().commerceId != null)
+          db.doc(
+            `Commerces/${
+              doc.data().commerceId
+            }/Token/${token}`
+          ).set({ activity: 1 });
+      });
   } else {
     alert('Must use physical device for Push Notifications');
   }
 };
 
-export const registerTokenOnLogout = (user, db ) => {
+export const registerTokenOnLogout = async (user, db, commerceId) => {
   debugger;
-  let  token = async () => getToken();
-  db.doc(`Profiles/${user}/Token/${token}`).set({ activity: 0 });
-  db.doc(`Commerces/${commerceId}/Token/${token}`).set({ activity: 0 });
+  // let token = await 
+  getToken().then(token => {
+    db.doc(`Profiles/${user}/Token/${token}`).set({ activity: 0 });
+  db.doc(
+    `Commerces/${commerceId}/Token/${token}`
+  ).set({ activity: 0 });
+  });
+  
 };
 
 export const getToken = async () => {
@@ -114,7 +128,7 @@ export const getToken = async () => {
       return;
     }
     let token = await Notifications.getExpoPushTokenAsync();
-    return token.toString();
+    return token;
   } else {
     alert('Must use physical device for Push Notifications');
   }

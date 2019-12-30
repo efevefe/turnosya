@@ -178,7 +178,7 @@ export const onLogout = (commerceId) => {
     dispatch({ type: ON_LOGOUT });
     const {currentUser} = firebase.auth();
     const db = firebase.firestore();
-    registerTokenOnLogout(currentUser.uid, db , commerceId)
+    registerTokenOnLogout(currentUser.uid, db, commerceId)
     firebase
       .auth()
       .signOut()
