@@ -70,7 +70,7 @@ class ClientDrawerContent extends Component {
             title="Cerrar Sesión"
             icon="md-exit"
             loadingWithText={this.props.loading}
-            onPress={() => this.props.onLogout()}
+            onPress={() => this.props.onLogout(this.props.commerceId)}
           />
         </Drawer>
         {this.renderModal()}
@@ -80,10 +80,10 @@ class ClientDrawerContent extends Component {
 }
 
 const mapStateToProps = state => {
-  const { profilePicture, firstName, lastName } = state.clientData;
+  const { profilePicture, firstName, lastName,commerceId } = state.clientData;
   const { loading } = state.auth;
 
-  return { profilePicture, firstName, lastName, loading };
+  return { profilePicture, firstName, lastName, loading, commerceId };
 };
 
 export default connect(

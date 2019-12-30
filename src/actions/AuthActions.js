@@ -23,7 +23,7 @@ const {
   androidClientId,
   googleScopes
 } = getEnvVars();
-import { registerForPushNotifications } from '../actions';
+import { registerForClientPushNotifications , registerTokenOnLogout} from '../actions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
@@ -44,7 +44,7 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        registerForPushNotifications(),
+        registerForClientPushNotifications(),
         dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
@@ -74,7 +74,7 @@ export const onFacebookLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { first_name, last_name } = additionalUserInfo.profile;
-              registerForPushNotifications();
+              registerForClientPushNotifications();
 
               const userData = {
                 firstName: first_name,
@@ -134,7 +134,7 @@ export const onGoogleLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { given_name, family_name } = additionalUserInfo.profile;
-              registerForPushNotifications();
+              registerForClientPushNotifications();
 
               const userData = {
                 firstName: given_name,
@@ -173,10 +173,12 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = () => {
+export const onLogout = (commerceId) => {
   return dispatch => {
     dispatch({ type: ON_LOGOUT });
-
+    const {currentUser} = firebase.auth();
+    const db = firebase.firestore();
+    registerTokenOnLogout(currentUser.uid, db , commerceId)
     firebase
       .auth()
       .signOut()
