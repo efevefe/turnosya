@@ -23,7 +23,11 @@ const {
   androidClientId,
   googleScopes
 } = getEnvVars();
-import { registerForClientPushNotifications , registerTokenOnLogout} from '../actions';
+import {
+  registerForClientPushNotifications,
+  registerTokenOnLogout,
+  getToken
+} from '../actions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
@@ -45,7 +49,7 @@ export const onLogin = ({ email, password }) => {
       .signInWithEmailAndPassword(email, password)
       .then(user => {
         registerForClientPushNotifications(),
-        dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+          dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
             type: ON_EMAIL_VERIFY_REMINDED
@@ -92,12 +96,11 @@ export const onFacebookLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(
-                    () => 
+                  .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
               } else {
-                  dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
               }
             })
             .catch(error =>
@@ -152,12 +155,11 @@ export const onGoogleLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(
-                    () =>{
-                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
-                  } )
-              } else {()=>
-                  dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  .then(() => {
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  });
+              } else {
+                () => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
               }
             })
             .catch(error =>
@@ -173,16 +175,22 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = (commerceId) => {
-  return dispatch => {
-    dispatch({ type: ON_LOGOUT });
-    const {currentUser} = firebase.auth();
+export const onLogout = commerceId => {
+  return async dispatch => {
     const db = firebase.firestore();
-    registerTokenOnLogout(currentUser.uid, db, commerceId)
+    const { currentUser } = firebase.auth();
+    await getToken().then(token => {
+      db.doc(`Profiles/${currentUser.uid}/Token/${token}`).set({ activity: 0 });
+      if (commerceId !== null)
+        db.doc(`Commerces/${commerceId}/Token/${token}`).set({ activity: 0 });
+    });
+    dispatch({ type: ON_LOGOUT });
     firebase
       .auth()
       .signOut()
-      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
+      .then(() => {
+        dispatch({ type: ON_LOGOUT_SUCCESS });
+      })
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   };
 };

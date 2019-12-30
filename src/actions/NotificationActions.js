@@ -90,28 +90,39 @@ export const registerForClientPushNotifications = async () => {
       .get()
       .then(doc => {
         if (doc.data().commerceId != null)
-          db.doc(
-            `Commerces/${
-              doc.data().commerceId
-            }/Token/${token}`
-          ).set({ activity: 1 });
+          db.doc(`Commerces/${doc.data().commerceId}/Token/${token}`).set({
+            activity: 1
+          });
       });
   } else {
     alert('Must use physical device for Push Notifications');
   }
 };
 
-export const registerTokenOnLogout = async (user, db, commerceId) => {
+/* export const registerTokenOnLogout = async (currentUser, commerceId) => {
   debugger;
-  // let token = await 
-  getToken().then(token => {
-    db.doc(`Profiles/${user}/Token/${token}`).set({ activity: 0 });
-  db.doc(
-    `Commerces/${commerceId}/Token/${token}`
-  ).set({ activity: 0 });
-  });
-  
-};
+  // let token = await
+  const db = firebase.firestore();
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    let token = await Notifications.getExpoPushTokenAsync();
+    db.doc(`Profiles/${currentUser}/Token/${token}`).set({ activity: 22 });
+    db.doc(`Commerces/${commerceId}/Token/${token}`).set({ activity: 0 });
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+}; */
 
 export const getToken = async () => {
   if (Constants.isDevice) {
