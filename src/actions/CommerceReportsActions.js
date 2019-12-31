@@ -147,8 +147,8 @@ export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reviews = [];
-  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  const count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
+  const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 count/month
   const data = [];
 
   return db
@@ -177,51 +177,18 @@ export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
       });
 
       reviews.forEach(review => {
-        if (moment(review.date).format('MMMM') === 'January') {
-          months.fill(months[0] + parseFloat(review.rating), 0, 1);
-          count.fill(count[0] + 1, 0, 1);
-        } else if (moment(review.date).format('MMMM') === 'February') {
-          months.fill(months[1] + parseFloat(review.rating), 1, 2);
-          count.fill(count[1] + 1, 1, 2);
-        } else if (moment(review.date).format('MMMM') === 'March') {
-          months.fill(months[2] + parseFloat(review.rating), 2, 3);
-          count.fill(count[2] + 1, 2, 3);
-        } else if (moment(review.date).format('MMMM') === 'April') {
-          months.fill(months[3] + parseFloat(review.rating), 3, 4);
-          count.fill(count[3] + 1, 3, 4);
-        } else if (moment(review.date).format('MMMM') === 'May') {
-          months.fill(months[4] + parseFloat(review.rating), 4, 5);
-          count.fill(count[4] + 1, 4, 5);
-        } else if (moment(review.date).format('MMMM') === 'June') {
-          months.fill(months[5] + parseFloat(review.rating), 5, 6);
-          count.fill(count[5] + 1, 5, 6);
-        } else if (moment(review.date).format('MMMM') === 'July') {
-          months.fill(months[6] + parseFloat(review.rating), 6, 7);
-          count.fill(count[6] + 1, 6, 7);
-        } else if (moment(review.date).format('MMMM') === 'August') {
-          months.fill(months[7] + parseFloat(review.rating), 7, 8);
-          count.fill(count[7] + 1, 7, 8);
-        } else if (moment(review.date).format('MMMM') === 'September') {
-          months.fill(months[8] + parseFloat(review.rating), 8, 9);
-          count.fill(count[8] + 1, 8, 9);
-        } else if (moment(review.date).format('MMMM') === 'October') {
-          months.fill(months[9] + parseFloat(review.rating), 9, 10);
-          count.fill(count[9] + 1, 9, 10);
-        } else if (moment(review.date).format('MMMM') === 'November') {
-          months.fill(months[10] + parseFloat(review.rating), 10, 11);
-          count.fill(count[10] + 1, 10, 11);
-        } else if (moment(review.date).format('MMMM') === 'December') {
-          months.fill(months[11] + parseFloat(review.rating), 11, 12);
-          count.fill(count[11] + 1, 11, 12);
-        }
+        const numberOfMonth = moment(review.date).format('M') - 1;
+
+        months[numberOfMonth] += parseFloat(review.rating);
+        counts[numberOfMonth] += 1;
       });
 
       let i = 0;
-
       months.forEach(month => {
-        month !== 0 ? data.push(month / count[i]) : data.push(0);
+        month !== 0 ? data.push(month / counts[i]) : data.push(0);
         i++;
       });
+
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
         payload: data
