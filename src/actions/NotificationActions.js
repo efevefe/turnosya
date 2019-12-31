@@ -10,8 +10,9 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
-export const readTokenNotificationOfCommerce = commerceId => {
+export const readCommerceTokenNotification = commerceId => {
   const db = firebase.firestore();
+
   return dispatch => {
     db.collection(`Commerces/${commerceId}/Token`)
       .get()
@@ -26,7 +27,7 @@ export const readTokenNotificationOfCommerce = commerceId => {
   };
 };
 
-export const readTokenNotificationOfCient = clientId => {
+export const readCientTokenNotification = clientId => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -41,29 +42,30 @@ export const readTokenNotificationOfCient = clientId => {
   };
 };
 
-export const sendPushNotification = async (title, body, token) => {
-  for (let i = 0; i < token.length; i++) {
-    if (token[i].activity === 1) {
-      debugger;
-      const message = {
-        to: token[i].token,
-        sound: 'default',
-        title,
-        body,
-        _displayInForeground: true,
-        data: { data: 'goes here' }
-      };
-      const response = await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Accept-encoding': 'gzip, deflate',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(message)
-      });
-      const data = response.status;
-    }
+export const sendPushNotification = ({ title, body, tokens }) => {
+  if (tokens.length > 0) {
+    tokens.forEach(async token => {
+      if (token.activity === 1) {
+        const message = {
+          to: token.token,
+          sound: 'default',
+          title,
+          body,
+          _displayInForeground: true,
+          data: { data: 'goes here' }
+        };
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(message)
+        });
+        const data = response.status;
+      }
+    });
   }
 };
 
@@ -100,7 +102,6 @@ export const registerForClientPushNotifications = async () => {
 };
 
 /* export const registerTokenOnLogout = async (currentUser, commerceId) => {
-  debugger;
   // let token = await
   const db = firebase.firestore();
   if (Constants.isDevice) {

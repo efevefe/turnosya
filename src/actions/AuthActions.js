@@ -27,7 +27,7 @@ import {
   registerForClientPushNotifications,
   registerTokenOnLogout,
   getToken
-} from '../actions';
+} from '../actions/NotificationActions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };

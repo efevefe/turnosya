@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AirbnbRating } from 'react-native-elements';
-import { CardSection, Input } from '../common';
+import { CardSection } from './CardSection';
+import { Input } from './Input';
 import { MAIN_COLOR } from '../../constants';
 
 class ReviewCard extends Component {

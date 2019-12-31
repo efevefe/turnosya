@@ -8,7 +8,7 @@ import {
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
 import moment from 'moment';
-import { sendPushNotification } from '../actions';
+import { sendPushNotification } from '../actions/NotificationActions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -16,8 +16,9 @@ export const onClientReservationsListRead = () => dispatch => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
-  return db.collection(`Profiles/${currentUser.uid}/Reservations`)
-    .where('state', "==", null)
+  return db
+    .collection(`Profiles/${currentUser.uid}/Reservations`)
+    .where('state', '==', null)
     .orderBy('startDate')
     .onSnapshot(snapshot => {
       const reservations = [];
@@ -33,7 +34,9 @@ export const onClientReservationsListRead = () => dispatch => {
         db.doc(`Commerces/${doc.data().commerceId}`)
           .get()
           .then(commerceData => {
-            db.doc(`Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`)
+            db.doc(
+              `Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`
+            )
               .get()
               .then(courtData => {
                 reservations.push({
@@ -48,7 +51,9 @@ export const onClientReservationsListRead = () => dispatch => {
                 if (snapshot.size === reservations.length) {
                   dispatch({
                     type: ON_CLIENT_RESERVATIONS_READ,
-                    payload: reservations.sort((a, b) => a.startDate - b.startDate)
+                    payload: reservations.sort(
+                      (a, b) => a.startDate - b.startDate
+                    )
                   });
                 }
               });
@@ -63,7 +68,7 @@ export const onClientCancelReservation = ({
   navigation,
   title,
   body,
-  token
+  tokens
 }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -94,7 +99,7 @@ export const onClientCancelReservation = ({
           batch
             .commit()
             .then(() => {
-              sendPushNotification(title, body, token);
+              sendPushNotification({ title, body, tokens });
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })
