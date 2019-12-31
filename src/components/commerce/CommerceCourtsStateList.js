@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList } from '../common';
 import {
-  onReservationClientRead,
   onCourtReservationsListValueChange,
   onCourtReservationValueChange
 } from '../../actions';
@@ -27,30 +26,10 @@ class CommerceCourtsStateList extends Component {
   };
 
   onReservedCourtPress = async (court, courtReservation) => {
-    // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
     let reservation = {
       ...courtReservation,
       court: { ...court }
     };
-
-    if (courtReservation.clientId) {
-      let client = {};
-
-      let res = this.props.detailedReservations.find(
-        res => res.id === courtReservation.id
-      );
-
-      if (res) {
-        client = res.client;
-      } else {
-        client = await this.props.onReservationClientRead(courtReservation.clientId);
-      }
-
-      reservation = {
-        ...reservation,
-        client: { ...client }
-      };
-    }
 
     this.props.navigation.navigate('reservationDetails', {
       reservation
@@ -100,8 +79,8 @@ class CommerceCourtsStateList extends Component {
   };
 
   render() {
-    const { loading, loadingClientData } = this.props;
-    if (loading || loadingClientData) return <Spinner />;
+    const { loading } = this.props;
+    if (loading) return <Spinner />;
 
     return this.renderList();
   }
@@ -114,9 +93,7 @@ const mapStateToProps = state => {
   const {
     loading,
     reservations,
-    loadingClientData,
-    detailedReservations,
-    reservationClient
+    detailedReservations
   } = state.courtReservationsList;
 
   return {
@@ -125,14 +102,11 @@ const mapStateToProps = state => {
     commerceId,
     slot,
     reservations,
-    detailedReservations,
-    loadingClientData,
-    reservationClient
+    detailedReservations
   };
 };
 
 export default connect(mapStateToProps, {
-  onReservationClientRead,
   onCourtReservationsListValueChange,
   onCourtReservationValueChange
 })(CommerceCourtsStateList);

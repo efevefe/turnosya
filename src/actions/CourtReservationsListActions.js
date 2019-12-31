@@ -5,9 +5,6 @@ import {
   ON_COMMERCE_COURT_RESERVATIONS_READ,
   ON_COMMERCE_COURT_RESERVATIONS_READING,
   ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_RESERVATION_CLIENT_READING,
-  ON_RESERVATION_CLIENT_READ,
-  ON_RESERVATION_CLIENT_READ_FAIL,
   ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
   ON_COMMERCE_RESERVATION_CANCELED,
@@ -20,6 +17,18 @@ export const onCourtReservationsListValueChange = ({ prop, value }) => {
     payload: { prop, value }
   };
 };
+
+const formatReservation = ({ res, court, client }) => {
+  return {
+    id: res.id,
+    ...res.data(),
+    startDate: moment(res.data().startDate.toDate()),
+    endDate: moment(res.data().endDate.toDate()),
+    reservationDate: moment(res.data().reservationDate.toDate()),
+    client: client ? { id: client.id, ...client.data() } : null,
+    court: court ? { id: court.id, ...court.data() } : null
+  };
+}
 
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
@@ -46,12 +55,7 @@ export const onCommerceCourtTypeReservationsRead = ({
       const reservations = [];
 
       snapshot.forEach(doc => {
-        reservations.push({
-          id: doc.id,
-          ...doc.data(),
-          startDate: moment(doc.data().startDate.toDate()),
-          endDate: moment(doc.data().endDate.toDate())
-        });
+        reservations.push(formatReservation({ res: doc }));
       });
 
       dispatch({
@@ -83,18 +87,29 @@ export const onCommerceCourtReservationsRead = ({
     .onSnapshot(snapshot => {
       const reservations = [];
 
-      snapshot.forEach(doc => {
-        reservations.push({
-          id: doc.id,
-          ...doc.data(),
-          startDate: moment(doc.data().startDate.toDate()),
-          endDate: moment(doc.data().endDate.toDate())
+      if (snapshot.empty) {
+        return dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          payload: { reservations }
         });
-      });
+      }
 
-      dispatch({
-        type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-        payload: { reservations }
+      snapshot.forEach(doc => {
+        db.doc(`Profiles/${doc.data().clientId}`)
+          .get()
+          .then(client => {
+            reservations.push(formatReservation({
+              res: doc,
+              client: client.exists && client
+            }));
+
+            if (reservations.length === snapshot.size) {
+              dispatch({
+                type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+                payload: { reservations }
+              });
+            }
+          })
       });
     });
 };
@@ -136,15 +151,11 @@ export const onCommerceDetailedCourtReservationsRead = ({
             db.doc(`Profiles/${doc.data().clientId}`)
               .get()
               .then(client => {
-                detailedReservations.push({
-                  id: doc.id,
-                  ...doc.data(),
-                  startDate: moment(doc.data().startDate.toDate()),
-                  endDate: moment(doc.data().endDate.toDate()),
-                  reservationDate: moment(doc.data().reservationDate.toDate()),
-                  client: { id: client.id, ...client.data() },
-                  court: { id: court.id, ...court.data() }
-                });
+                detailedReservations.push(formatReservation({
+                  res: doc,
+                  court,
+                  client: client.exists && client
+                }));
 
                 if (detailedReservations.length === snapshot.size) {
                   detailedReservations.sort((a, b) => a.startDate - b.startDate);
@@ -216,31 +227,6 @@ export const onCommerceCancelReservation = ({
       });
   };
 };
-
-export const onReservationClientRead = clientId => async dispatch => {
-  // provisoria
-  dispatch({ type: ON_RESERVATION_CLIENT_READING });
-
-  let client = {};
-
-  try {
-    const doc = await firebase
-      .firestore()
-      .doc(`Profiles/${clientId}`)
-      .get();
-
-    client = { id: doc.id, ...doc.data() };
-
-    dispatch({
-      type: ON_RESERVATION_CLIENT_READ,
-      payload: client
-    });
-  } catch (error) {
-    dispatch({ type: ON_RESERVATION_CLIENT_READ_FAIL });
-  } finally {
-    return client;
-  }
-}
 
 export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
   const db = firebase.firestore();

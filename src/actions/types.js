@@ -147,10 +147,6 @@ export const ON_COMMERCE_COURT_RESERVATIONS_READ =
   'on_commerce_reservations_read';
 export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
   'on_commerce_reservations_read_fail';
-export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
-export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
-export const ON_RESERVATION_CLIENT_READ_FAIL =
-  'on_reservation_client_read_fail';
 export const ON_COMMERCE_RESERVATION_CANCELING =
   'on_commerce_reservation_canceling';
 export const ON_COMMERCE_RESERVATION_CANCELED =
