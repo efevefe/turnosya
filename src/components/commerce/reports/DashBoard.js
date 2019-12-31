@@ -98,7 +98,7 @@ class DashBoard extends Component {
                 textAlign: 'center'
               }}
             >
-              Calificaciones por mes
+              Mis Calificaciones
             </Text>
             <Text
               style={{
@@ -143,7 +143,7 @@ class DashBoard extends Component {
                 marginTop: 5
               }}
             >
-              Haga una comparacion entre la cantidad de reservas realizadas y
+              Haga una comparación entre la cantidad de reservas realizadas y
               las canceladas.
             </Text>
           </Card>

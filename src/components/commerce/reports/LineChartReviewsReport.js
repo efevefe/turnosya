@@ -26,6 +26,7 @@ class LineChartReviewsReport extends Component {
       ]
     };
     if (loading) return <Spinner />;
+
     return (
       <ScrollView style={{ flex: 1 }}>
         <View
