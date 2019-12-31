@@ -72,8 +72,8 @@ class CommerceCourtReservationRegister extends Component {
                     </CardSection>
                     <CardSection style={styles.cardSection}>
                         <Input
-                            label="Telefono:"
-                            placeholder='Telefono del cliente (opcional)'
+                            label="Teléfono:"
+                            placeholder='Teléfono del cliente (opcional)'
                             value={this.props.clientPhone}
                             onChangeText={this.onPhoneValueChange}
                             errorMessage={this.state.phoneError}
