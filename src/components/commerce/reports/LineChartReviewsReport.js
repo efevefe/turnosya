@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LineChart, Spinner, Button, DatePicker } from '../../common';
+import {
+  LineChart,
+  Spinner,
+  Button,
+  DatePicker,
+  Picker,
+  CardSection
+} from '../../common';
 import {
   onCommerceReportValueChange,
-  readReviewsOnMonths
+  readReviewsOnMonths,
+  yearsWithReview
 } from '../../../actions/CommerceReportsActions';
 import { View, ScrollView } from 'react-native';
 import moment from 'moment';
@@ -11,19 +19,23 @@ import moment from 'moment';
 class LineChartReviewsReport extends Component {
   constructor(props) {
     super(props);
-    props.readReviewsOnMonths(props.commerceId, props.startDate);
+    props.yearsWithReview(props.commerceId);
+    props.readReviewsOnMonths(props.commerceId, moment().format('YYYY'));
   }
 
   render() {
-    const { startDate, loading, data, commerceId } = this.props;
+    const {
+      startDate,
+      loading,
+      data,
+      commerceId,
+      years,
+      selectedYear
+    } = this.props;
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [
-        {
-          data: data
-        }
-      ]
+      datasets: [{ data }]
     };
     if (loading) return <Spinner />;
 
@@ -37,7 +49,7 @@ class LineChartReviewsReport extends Component {
             margin: 10
           }}
         >
-          <DatePicker
+          {/* <DatePicker
             mode="date"
             label="Año"
             format="YYYY"
@@ -45,18 +57,34 @@ class LineChartReviewsReport extends Component {
             onDateChange={startDate =>
               this.props.onCommerceReportValueChange({
                 prop: 'startDate',
-                value: moment(startDate)
+                value: startDate
               })
             }
             style={{ margin: 8 }}
-          />
-          <Button
+          /> */}
+          {/* {console.log('start: ', moment(startDate).format('YYYY'))} */}
+          <CardSection>
+            <Picker
+              title={'Año:'}
+              value={selectedYear}
+              items={years}
+              onValueChange={selectedYear => {
+                console.log('starttt: ', selectedYear);
+                this.props.onCommerceReportValueChange({
+                  prop: 'selectedYear',
+                  value: selectedYear
+                });
+                this.props.readReviewsOnMonths(commerceId, selectedYear);
+              }}
+            />
+          </CardSection>
+          {/* <Button
             title={'Generar Reporte'}
             buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
             onPress={() => {
               this.props.readReviewsOnMonths(commerceId, startDate);
             }}
-          />
+          /> */}
         </View>
         <LineChart data={dataLine} />
       </ScrollView>
@@ -65,12 +93,20 @@ class LineChartReviewsReport extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, loading } = state.commerceReports;
+  const {
+    data,
+    startDate,
+    years,
+    selectedYear,
+    loading
+  } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
     data,
     startDate,
+    years,
+    selectedYear,
     commerceId,
     loading
   };
@@ -78,5 +114,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
-  readReviewsOnMonths
+  readReviewsOnMonths,
+  yearsWithReview
 })(LineChartReviewsReport);

@@ -7,9 +7,11 @@ import moment from 'moment';
 
 const INITIAL_STATE = {
   data: [0],
-  startDate: moment().subtract(1, 'month'),
+  startDate: moment(),
   endDate: moment(),
-  loading: false
+  loading: false,
+  selectedYear: moment().format('YYYY'),
+  years: []
 };
 
 export default (state = INITIAL_STATE, action) => {

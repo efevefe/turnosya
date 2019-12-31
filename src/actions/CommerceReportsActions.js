@@ -143,7 +143,45 @@ export const readEarningsOnMonths = (commerceId, startDate) => dispatch => {
 };
 
 // Review Reports
-export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
+export const yearsWithReview = commerceId => dispatch => {
+  const db = firebase.firestore();
+
+  const years = [];
+  let firstYear;
+  const currentYear = moment().format('YYYY');
+
+  db.collection(`Commerces/${commerceId}/Reviews`)
+    .where('softDelete', '==', null)
+    .orderBy('date', 'asc')
+    .get()
+    .then(querySnapshot => {
+      firstYear = moment(querySnapshot['docs'][0].data().date.toDate()).format(
+        'YYYY'
+      );
+
+      if (currentYear === firstYear) {
+        years.push({
+          label: currentYear.toString(),
+          value: currentYear.toString()
+        });
+      } else {
+        for (i = firstYear; i <= currentYear; i++) {
+          years.push({ label: i.toString(), value: i.toString() });
+        }
+      }
+
+      dispatch({
+        type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+        payload: { prop: 'years', value: years }
+      });
+      dispatch({
+        type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+        payload: { prop: 'selectedYear', value: currentYear }
+      });
+    });
+};
+
+export const readReviewsOnMonths = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reviews = [];
@@ -157,14 +195,14 @@ export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
     .where(
       'date',
       '>=',
-      moment(startDate)
+      moment(new Date(year, 0, 1))
         .startOf('year')
         .toDate()
     )
     .where(
       'date',
       '<=',
-      moment(startDate)
+      moment(new Date(year, 11, 31))
         .endOf('year')
         .toDate()
     )
