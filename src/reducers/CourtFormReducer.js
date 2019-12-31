@@ -10,6 +10,7 @@ import {
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
+  id: '',
   name: '',
   courts: [],
   court: '',
@@ -18,6 +19,9 @@ const INITIAL_STATE = {
   price: '',
   lightPrice: '',
   courtState: true,
+  disabled: false,
+  disabledFrom: null,
+  disabledTo: null,
   loading: false,
   existsError: ''
 };

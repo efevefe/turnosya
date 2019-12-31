@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import { Spinner, EmptyList } from '../common';
 import CourtListItem from './CourtListItem';
 import { courtsRead, onCourtFormOpen } from '../../actions';
@@ -17,20 +18,28 @@ class CourtList extends Component {
     this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
   }
 
+  onAddPress = () => {
+    this.props.onCourtFormOpen();
+    this.props.navigation.navigate('courtForm');
+  };
+
+  isCourtDisabled = court => {
+    const { disabledTo, disabledFrom } = court;
+    return disabledFrom && (!disabledTo || disabledTo >= moment());
+  }
+
   renderRow({ item }) {
     return (
       <CourtListItem
-        court={item}
+        court={{
+          ...item,
+          disabled: this.isCourtDisabled(item)
+        }}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
       />
     );
   }
-
-  onAddPress = () => {
-    this.props.onCourtFormOpen();
-    this.props.navigation.navigate('courtForm');
-  };
 
   renderList = () => {
     if (this.props.courts.length > 0) {

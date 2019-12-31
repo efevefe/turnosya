@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { Spinner, EmptyList } from '../common';
 import {
   onCourtReservationsListValueChange,
-  onCourtReservationValueChange
+  onCourtReservationValueChange,
+  isCourtDisabledOnSlot
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
@@ -13,6 +14,10 @@ class CommerceCourtsStateList extends Component {
     selectedReservation: {},
     selectedCourt: {}
   };
+
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('title')
+  });
 
   courtReservation = court => {
     const { reservations, slot } = this.props;
@@ -54,6 +59,7 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
+        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
         onPress={() =>
           !courtReservation
             ? this.onAvailableCourtPress(item)
@@ -64,10 +70,10 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courtsAvailable.length > 0) {
+    if (this.props.courts.length > 0) {
       return (
         <FlatList
-          data={this.props.courtsAvailable}
+          data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           extraData={this.props.reservations}
@@ -87,7 +93,7 @@ class CommerceCourtsStateList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { courtsAvailable } = state.courtsList;
+  const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
   const {
@@ -97,7 +103,7 @@ const mapStateToProps = state => {
   } = state.courtReservationsList;
 
   return {
-    courtsAvailable,
+    courts,
     loading,
     commerceId,
     slot,

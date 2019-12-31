@@ -52,10 +52,7 @@ const reservationScreens = {
     }
   },
   commerceCourtsList: {
-    screen: CommerceCourtsList,
-    navigationOptions: {
-      title: 'Canchas Disponibles'
-    }
+    screen: CommerceCourtsList
   },
   confirmCourtReservation: {
     screen: ConfirmCourtReservation,

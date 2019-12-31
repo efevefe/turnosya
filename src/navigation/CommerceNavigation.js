@@ -81,10 +81,7 @@ const calendarStack = createStackNavigator(
       }
     },
     commerceCourtsList: {
-      screen: CommerceCourtsStateList,
-      navigationOptions: {
-        title: 'Canchas Disponibles'
-      }
+      screen: CommerceCourtsStateList
     },
     courtReservationRegister: {
       screen: CommerceCourtReservationRegister,
