@@ -4,7 +4,8 @@ import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList } from '../common';
 import {
   onReservationClientRead,
-  onCourtReservationsListValueChange
+  onCourtReservationsListValueChange,
+  isCourtDisabledOnSlot
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
@@ -13,6 +14,10 @@ class CommerceCourtsStateList extends Component {
     selectedReservation: {},
     selectedCourt: {}
   };
+
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('title')
+  });
 
   courtReservation = court => {
     const { reservations, slot } = this.props;
@@ -32,7 +37,7 @@ class CommerceCourtsStateList extends Component {
         res => res.id === courtReservation.id
       );
       if (res) {
-        await this.props.onCourtReservationsListValueChange({
+        this.props.onCourtReservationsListValueChange({
           prop: 'reservationClient',
           value: res.client
         });
@@ -49,7 +54,7 @@ class CommerceCourtsStateList extends Component {
       this.props.navigation.navigate('reservationDetails', {
         reservation
       });
-    } catch {}
+    } catch { }
   };
 
   renderRow({ item }) {
@@ -61,20 +66,20 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
-        onPress={() =>
-          !courtReservation
-            ? null
-            : this.onReservedCourtPress(item, courtReservation)
+        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
+        onPress={!courtReservation
+          ? null
+          : () => this.onReservedCourtPress(item, courtReservation)
         }
       />
     );
   }
 
   renderList = () => {
-    if (this.props.courtsAvailable.length > 0) {
+    if (this.props.courts.length > 0) {
       return (
         <FlatList
-          data={this.props.courtsAvailable}
+          data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           extraData={this.props.reservations}
@@ -93,7 +98,7 @@ class CommerceCourtsStateList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { courtsAvailable } = state.courtsList;
+  const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
   const {
@@ -105,7 +110,7 @@ const mapStateToProps = state => {
   } = state.courtReservationsList;
 
   return {
-    courtsAvailable,
+    courts,
     loading,
     commerceId,
     slot,

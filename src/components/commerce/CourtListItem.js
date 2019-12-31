@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen } from '../../actions';
+import { courtDelete, onCourtFormOpen, onCourtValueChange } from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -29,16 +28,41 @@ class CourtListItem extends Component {
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'courtForm',
-      params: { court: this.props.court, title: 'Editar Cancha' }
-    });
+
+    const { court } = this.props;
+
+    for (prop in court) {
+      this.props.onCourtValueChange({ prop, value: court[prop] });
+    }
 
     this.setState({ optionsVisible: !this.state.optionsVisible });
 
-    //hay que ver la forma de que esto se haga en el .then() del update()
-    this.props.navigation.navigate(navigateAction);
+    this.props.navigation.navigate(
+      'courtForm',
+      {
+        title: 'Editar Cancha'
+      }
+    );
   };
+
+  formatDisabledDates = () => {
+    const { disabledFrom, disabledTo } = this.props.court;
+    let text = '';
+
+    if (disabledFrom) {
+      text = 'Desde: ' +
+        disabledFrom.format('DD/MM/YYYY') + ' a las ' +
+        disabledFrom.format('HH:mm');
+
+      if (disabledTo) {
+        text += '\nHasta: ' +
+          disabledTo.format('DD/MM/YYYY') + ' a las ' +
+          disabledTo.format('HH:mm');
+      }
+    }
+
+    return text;
+  }
 
   render() {
     const {
@@ -47,7 +71,6 @@ class CourtListItem extends Component {
       ground,
       price,
       lightPrice,
-      courtState,
       id
     } = this.props.court;
 
@@ -86,61 +109,40 @@ class CourtListItem extends Component {
         </Menu>
 
         <ListItem
-          containerStyle={
-            !courtState && { backgroundColor: 'rgb(242, 242, 242)' }
-          }
           title={name}
-          titleStyle={
-            courtState
-              ? { textAlign: 'left', display: 'flex' }
-              : {
-                  textAlign: 'left',
-                  display: 'flex',
-                  color: 'grey',
-                  fontStyle: 'italic'
-                }
-          }
+          titleStyle={{ textAlign: 'left', display: 'flex' }}
           rightTitle={
-            lightPrice !== '' ? (
-              <View style={{ justifyContent: 'space-between' }}>
-                <Text
-                  style={
-                    courtState
-                      ? { textAlign: 'right', color: 'black' }
-                      : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
-                  }
-                >{`Sin luz: $${price}`}</Text>
-                <Text
-                  style={
-                    courtState
-                      ? { textAlign: 'right', color: 'black' }
-                      : {
-                          textAlign: 'right',
-                          color: 'grey',
-                          fontStyle: 'italic'
-                        }
-                  }
-                >{`Con luz: $${lightPrice}`}</Text>
-              </View>
-            ) : (
+            <View style={{ justifyContent: 'flex-start', width: 120, flex: 1, paddingTop: 2 }}>
               <Text
-                style={courtState ? {} : { color: 'grey', fontStyle: 'italic' }}
-              >{`Sin luz: $${price}`}</Text>
-            )
+                style={{
+                  textAlign: 'right',
+                  lineHeight: 20
+                }}
+              >
+                {
+                  lightPrice
+                    ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
+                    : `Sin Luz: $${price}`
+                }
+              </Text>
+            </View>
           }
           key={id}
           subtitle={
-            <Text
-              style={
-                courtState
-                  ? { color: 'grey' }
-                  : { color: 'grey', fontStyle: 'italic' }
-              }
-            >{`${court} - ${ground}`}</Text>
+            <View style={{ alignItems: 'flex-start' }}>
+              <Text
+                style={{ color: 'grey' }}
+              >
+                {`${court} - ${ground}`}
+              </Text>
+              {this.props.court.disabled ? (
+                <Text
+                  style={{ color: 'grey', fontSize: 12, marginTop: 3 }}
+                >
+                  {'Deshabilitada\n' + this.formatDisabledDates()}
+                </Text>
+              ) : null}
+            </View>
           }
           onLongPress={this.onOptionsPress}
           rightIcon={{
@@ -158,5 +160,5 @@ class CourtListItem extends Component {
 
 export default connect(
   null,
-  { courtDelete, onCourtFormOpen }
+  { courtDelete, onCourtFormOpen, onCourtValueChange }
 )(CourtListItem);

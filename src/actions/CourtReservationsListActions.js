@@ -267,6 +267,62 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
   }
 }
 
+export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => {
+  // revisar el de arriba
+  const db = firebase.firestore();
+
+  return dispatch => {
+    db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('courtId', '==', courtId)
+      .where('state', '==', null)
+      .where('endDate', '>', startDate.toDate())
+      .orderBy('endDate')
+      .get()
+      .then(snapshot => {
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+
+        const nextReservations = [];
+
+        if (snapshot.empty) {
+          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        }
+
+        snapshot.forEach(doc => {
+          if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
+            nextReservations.push({
+              id: doc.id,
+              clientId: doc.data().clientId,
+              startDate: moment(doc.data().startDate.toDate()),
+              endDate: moment(doc.data().endDate.toDate())
+            });
+        });
+
+        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+      })
+      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+  }
+}
+
+export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
+  // reservations cancel
+  try {
+    const state = await db.doc(`ReservationStates/canceled`).get();
+    const updateObj = {
+      cancellationDate: new Date(),
+      state: { id: state.id, name: state.data().name }
+    };
+
+    reservations.forEach(res => {
+      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+      batch.update(commerceResRef, updateObj);
+      batch.update(clientResRef, updateObj);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export const cancellationDateScript = async () => {
   // script para corregir el nombre del campo cancellationDate en la reserva
   // cuando este publicada la version corregida, lo ejecutamos de nuevo por las
