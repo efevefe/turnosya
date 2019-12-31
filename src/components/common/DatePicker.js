@@ -23,17 +23,6 @@ class DatePicker extends Component {
     }
   }
 
-  displayFormat = () => {
-    switch (this.props.mode) {
-      case 'datetime':
-        return 'DD/MM/YYYY HH:mm';
-      case 'date':
-        return 'DD/MM/YYYY';
-      default:
-        return 'HH:mm';
-    }
-  }
-
   render() {
     const enabled = this.props.disabled ? false : true;
     const color = enabled ? MAIN_COLOR : '#c4c4c4';
@@ -45,7 +34,6 @@ class DatePicker extends Component {
         <RNDatePicker
           {...this.props}
           mode={this.props.mode || 'time'}
-          format={this.props.format || this.displayFormat()}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
           iconComponent={
