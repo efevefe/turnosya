@@ -55,7 +55,7 @@ class ClientCommerceSchedule extends Component {
   }
 
   renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" title='Back' />;
   };
 
   onBackPress = () => {

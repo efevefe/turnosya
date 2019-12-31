@@ -142,6 +142,7 @@ export const readEarningsOnMonths = (commerceId, startDate) => dispatch => {
     });
 };
 
+// Review Reports
 export const readReviewsOnMonths = (commerceId, startDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();

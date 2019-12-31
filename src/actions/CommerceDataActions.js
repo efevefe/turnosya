@@ -16,7 +16,6 @@ import {
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
-  ON_HITS_UPDATE,
   CUIT_NOT_EXISTS,
   CUIT_EXISTS,
   ON_COMMERCE_DELETING,
@@ -24,7 +23,7 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE,
   ON_PROVINCES_READ
 } from './types';
 import getEnvVars from '../../environment';
@@ -44,7 +43,6 @@ export const onCommerceFormOpen = () => {
   return dispatch => {
     dispatch({ type: ON_COMMERCE_CREATING });
     dispatch({ type: ON_LOCATION_VALUES_RESET });
-    dispatch({ type: ON_HITS_UPDATE, payload: [] });
   };
 };
 
@@ -61,7 +59,6 @@ export const onCommerceOpen = navigation => {
         } else {
           dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
           dispatch({ type: ON_LOCATION_VALUES_RESET });
-          dispatch({ type: ON_HITS_UPDATE, payload: [] });
 
           navigation.navigate('commerce');
         }
@@ -218,7 +215,10 @@ export const onCommerceReadProfile = commerceId => {
 };
 
 onPictureUpdate = async (commerceId, picture, type) => {
-  const ref = firebase.storage().ref(`Commerces/${commerceId}`).child(`${commerceId}-${type}`);
+  const ref = firebase
+    .storage()
+    .ref(`Commerces/${commerceId}`)
+    .child(`${commerceId}-${type}`);
 
   try {
     const snapshot = await ref.put(picture);
@@ -229,9 +229,12 @@ onPictureUpdate = async (commerceId, picture, type) => {
   } finally {
     picture.close();
   }
-}
+};
 
-export const onCommerceUpdate = (commerceData, navigation) => async dispatch => {
+export const onCommerceUpdate = (
+  commerceData,
+  navigation
+) => async dispatch => {
   dispatch({ type: ON_COMMERCE_UPDATING });
 
   const {
@@ -256,16 +259,27 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
 
   try {
     if (profilePicture instanceof Blob)
-      profilePictureURL = await onPictureUpdate(commerceId, profilePicture, 'ProfilePicture');
+      profilePictureURL = await onPictureUpdate(
+        commerceId,
+        profilePicture,
+        'ProfilePicture'
+      );
 
     if (headerPicture instanceof Blob)
-      headerPictureURL = await onPictureUpdate(commerceId, headerPicture, 'HeaderPicture');
+      headerPictureURL = await onPictureUpdate(
+        commerceId,
+        headerPicture,
+        'HeaderPicture'
+      );
 
-    await firebase.firestore().doc(`Commerces/${commerceId}`).update({
-      ...commerceData,
-      profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
-      headerPicture: headerPictureURL ? headerPictureURL : headerPicture
-    });
+    await firebase
+      .firestore()
+      .doc(`Commerces/${commerceId}`)
+      .update({
+        ...commerceData,
+        profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
+      });
 
     await index.saveObject({
       address,
@@ -288,7 +302,7 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
         headerPicture: headerPictureURL ? headerPictureURL : headerPicture
       }
     });
-    
+
     navigation.goBack();
   } catch (error) {
     dispatch({ type: ON_COMMERCE_UPDATE_FAIL });
@@ -320,7 +334,7 @@ export const validateCuit = cuit => {
       .where('cuit', '==', cuit)
       .where('softDelete', '==', null)
       .get()
-      .then(function (querySnapshot) {
+      .then(function(querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: CUIT_EXISTS });
         } else {
@@ -360,7 +374,7 @@ export const onCommerceDelete = (password, navigation = null) => {
               .then(() => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
-                  type: ON_REGISTER_VALUE_CHANGE,
+                  type: ON_CLIENT_DATA_VALUE_CHANGE,
                   payload: { prop: 'commerceId', value: null }
                 });
 

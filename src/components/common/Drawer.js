@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
   nameStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4
+    marginBottom: 4,
+    textAlign: 'center'
   },
   avatarStyle: {
     borderWidth: 3,

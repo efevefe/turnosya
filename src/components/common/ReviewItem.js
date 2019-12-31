@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Rating } from 'react-native-elements';
 import moment from 'moment';
@@ -14,8 +14,8 @@ const ReviewItem = props => (
       {props.comment ? (
         <Text style={commentStyle}>{props.comment}</Text>
       ) : (
-        <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
-      )}
+          <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
+        )}
     </CardSection>
     <Divider />
   </View>

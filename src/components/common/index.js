@@ -19,3 +19,4 @@ export * from './ReviewCard';
 export * from './BarChart';
 export * from './LineChart';
 export * from './PieChart';
+export * from './SettingsItem';

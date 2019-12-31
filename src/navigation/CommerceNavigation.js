@@ -18,10 +18,11 @@ import CommerceCourtReservationDetails from '../components/commerce/CommerceCour
 import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
+import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
-import Map from '../components/common/Map';
+// import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions
@@ -33,6 +34,29 @@ import LineChartReviewsReport from '../components/commerce/reports/LineChartRevi
 import PieChartReport from '../components/commerce/reports/PieChartReport';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
+
+// como estas pantallas pueden accederse desde el calendar y desde reservas, las saque
+// a un objeto y luego las agregue a cada uno de los stacks para no tener que duplicarlas
+const reservationDetailsScreens = {
+  reservationDetails: {
+    screen: CommerceCourtReservationDetails,
+    navigationOptions: {
+      title: 'Detalles del Turno'
+    }
+  },
+  clientProfileView: {
+    screen: ClientProfileView,
+    navigationOptions: {
+      title: 'Perfil del Cliente'
+    }
+  },
+  clientReviewsList: {
+    screen: ClientReviewsList,
+    navigationOptions: {
+      title: 'Reseñas del Cliente'
+    }
+  }
+}
 
 const calendarStack = createStackNavigator(
   {
@@ -66,24 +90,7 @@ const calendarStack = createStackNavigator(
         title: 'Canchas Disponibles'
       }
     },
-    reservationDetails: {
-      screen: CommerceCourtReservationDetails,
-      navigationOptions: {
-        title: 'Detalles del Turno'
-      }
-    },
-    clientProfileView: {
-      screen: ClientProfileView,
-      navigationOptions: {
-        title: 'Perfil del Cliente'
-      }
-    },
-    clientReviewsList: {
-      screen: ClientReviewsList,
-      navigationOptions: {
-        title: 'Reseñas del Cliente'
-      }
-    }
+    ...reservationDetailsScreens
   },
   stackNavigationOptions
 );
@@ -122,25 +129,7 @@ const reservationsStack = createStackNavigator(
         )
       })
     },
-    reservationDetails: {
-      // la pantalla de detalles del turno que es alternativa al modal
-      screen: CommerceCourtReservationDetails,
-      navigationOptions: {
-        title: 'Detalles del Turno'
-      }
-    },
-    clientProfileView: {
-      screen: ClientProfileView,
-      navigationOptions: {
-        title: 'Perfil del Cliente'
-      }
-    },
-    clientReviewsList: {
-      screen: ClientReviewsList,
-      navigationOptions: {
-        title: 'Reseñas del Cliente'
-      }
-    }
+    ...reservationDetailsScreens
   },
   stackNavigationOptions
 );
@@ -197,13 +186,13 @@ const profileStack = createStackNavigator(
         title: 'Información'
       }
     },
-    showMyAddressMap: {
-      screen: Map,
+    commerceLocationMap: {
+      screen: CommerceLocationMap,
       navigationOptions: {
         title: 'Dirección'
       }
     },
-    changeAddressMap: {
+    changeCommerceLocationMap: {
       screen: LocationMap,
       navigationOptions: {
         title: 'Modificar mi Dirección'

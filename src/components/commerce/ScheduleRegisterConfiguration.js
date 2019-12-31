@@ -85,7 +85,7 @@ class ScheduleRegisterConfiguration extends Component {
               onValueChange={val => this.setState({ reservationDayValue: val })}
             />
           </CardSection>
-          <Divider style={{ marginTop: 15 }} />
+          <Divider style={{ marginVertical: 12 }} />
           <CardSection>
             <Text>
               {'Tiempo mínimo de cancelacion del turno: ' +
@@ -106,7 +106,7 @@ class ScheduleRegisterConfiguration extends Component {
               }
             />
           </CardSection>
-          <Divider style={{ marginTop: 15 }} />
+          <Divider style={{ marginVertical: 12 }} />
           <CardSection>
             <Button
               title="Guardar"

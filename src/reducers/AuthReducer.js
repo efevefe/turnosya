@@ -11,7 +11,10 @@ import {
   ON_REAUTH_SUCCESS,
   ON_REAUTH_FAIL,
   ON_EMAIL_VERIFY_ASKED,
-  ON_EMAIL_VERIFY_REMINDED
+  ON_EMAIL_VERIFY_REMINDED,
+  ON_PASSWORD_RESET_EMAIL_SENDING,
+  ON_PASSWORD_RESET_EMAIL_SENT,
+  ON_PASSWORD_RESET_EMAIL_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -21,6 +24,7 @@ const INITIAL_STATE = {
   loadingLogin: false,
   loadingFacebook: false,
   loadingGoogle: false,
+  sendingEmail: false,
   error: ''
 };
 
@@ -62,6 +66,12 @@ export default (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
     case ON_REAUTH_FAIL:
       return { ...state, error: 'Contraseña incorrecta' };
+    case ON_PASSWORD_RESET_EMAIL_SENDING:
+      return { ...state, sendingEmail: true, error: '' };
+    case ON_PASSWORD_RESET_EMAIL_SENT:
+      return { ...state, sendingEmail: false };
+    case ON_PASSWORD_RESET_EMAIL_FAIL:
+      return { ...state, sendingEmail: false, error: 'Usuario inexistente' };
     default:
       return state;
   }

@@ -8,6 +8,7 @@ import RegisterCommerce from '../components/client/RegisterCommerce';
 import RegisterCommerceTwo from '../components/client/RegisterCommerceTwo';
 import LocationMap from '../components/LocationMap';
 import ClientSettings from '../components/client/ClientSettings';
+import ChangeUserPassword from '../components/client/ChangeUserPassword';
 import {
   stackNavigationOptions,
   drawerNavigationOptions
@@ -49,6 +50,12 @@ const ClientSettingsStack = createStackNavigator(
       screen: ClientSettings,
       navigationOptions: {
         title: 'Configuración'
+      }
+    },
+    changeUserPassword: {
+      screen: ChangeUserPassword,
+      navigationOptions: {
+        title: 'Cambiar contraseña'
       }
     }
   },

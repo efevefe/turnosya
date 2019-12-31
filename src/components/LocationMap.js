@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { HeaderBackButton } from 'react-navigation-stack';
 import { onLocationChange } from '../actions';
-import Map from './common/Map';
+import CommerceLocationMap from './common/CommerceLocationMap';
 import { IconButton } from './common';
 
 class LocationMap extends React.Component {
@@ -49,12 +49,13 @@ class LocationMap extends React.Component {
   );
 
   renderBackButton = () => (
-    <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" />
+    <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" title='Back' />
   );
 
   onBackPress = () => {
     this.props.onLocationChange(this.state.stateBeforeChanges);
 
+    //se puede evitar este metodo
     this.props.navigation.state.params.onProvinceNameChange &&
       this.props.navigation.state.params.onProvinceNameChange(
         this.state.stateBeforeChanges.provinceName
@@ -65,11 +66,12 @@ class LocationMap extends React.Component {
 
   render() {
     return (
-      <Map
+      <CommerceLocationMap
         searchBar={true}
         onProvinceNameChange={
           this.props.navigation.state.params.onProvinceNameChange
         }
+        findAddress={true}
       />
     );
   }
@@ -88,7 +90,4 @@ const mapStateToProps = state => {
   return { address, city, provinceName, country, latitude, longitude };
 };
 
-export default connect(
-  mapStateToProps,
-  { onLocationChange }
-)(LocationMap);
+export default connect(mapStateToProps, { onLocationChange })(LocationMap);
