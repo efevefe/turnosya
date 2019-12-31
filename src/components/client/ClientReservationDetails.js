@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
 import { Divider, ButtonGroup } from 'react-native-elements';
-import { Notifications } from 'expo';
 import {
   CardSection,
   Button,

@@ -1,8 +1,6 @@
 import {
   ON_TOKEN_NOTIFICATION_READ,
-  ON_TOKEN_NOTIFICATION_READ_FAIL,
-  ON_TOKEN_NOTIFICATION_SAVED,
-  ON_TOKEN_NOTIFICATION_SAVED_FAIL
+  ON_TOKEN_NOTIFICATION_READ_FAIL
 } from './types';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
