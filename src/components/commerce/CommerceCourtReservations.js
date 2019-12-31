@@ -65,6 +65,10 @@ class CommerceCourtReservations extends Component {
   };
 
   renderList = ({ item }) => {
+    const clientName = item.clientId
+      ? `${item.client.firstName} ${item.client.lastName}`
+      : item.clientName;
+
     return (
       <ListItem
         rightIcon={{
@@ -75,7 +79,7 @@ class CommerceCourtReservations extends Component {
         title={`${item.startDate.format('HH:mm')} a ${item.endDate.format(
           'HH:mm'
         )}`}
-        subtitle={`${item.client.firstName} ${item.client.lastName}\n${item.court.name}`}
+        subtitle={`${clientName}\n${item.court.name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
         rightSubtitle={item.light ? 'Con Luz' : 'Sin Luz'}

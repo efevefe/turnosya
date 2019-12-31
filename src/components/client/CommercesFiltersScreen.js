@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
+import { Divider, Button, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { IconButton, Picker } from '../common';
+import { IconButton, Picker, ButtonGroup } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
@@ -63,7 +63,7 @@ class CommerceFiltersScreen extends Component {
     this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
     this.props.onUserLocationChange(this.state.oldData.userLocation);
     this.props.commerceHitsUpdate(this.state.oldData.markers);
-    
+
     this.props.navigation.goBack(null);
   }
 
@@ -161,11 +161,7 @@ class CommerceFiltersScreen extends Component {
                 'Ubicación actual',
                 'Ubicación en mapa'
               ]}
-              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: 'white' }}
-              textStyle={locationBGTextStyle}
               containerStyle={locationBGContainerStyle}
-              innerBorderStyle={{ color: MAIN_COLOR }}
             />
             {this.renderRadiusSlider()}
           </View>
@@ -184,7 +180,6 @@ const {
   windowContentContainerStyle,
   applyFilterButtonStyle,
   provinceContainerStyle,
-  locationBGTextStyle,
   locationBGContainerStyle,
   locationContainerStyle,
   locationTextStyle,
@@ -206,16 +201,10 @@ const {
     paddingBottom: 20,
     paddingHorizontal: 10
   },
-  locationBGTextStyle: {
-    color: MAIN_COLOR,
-    textAlign: 'center',
-    fontSize: 12
-  },
   locationBGContainerStyle: {
     borderColor: 'white',
-    height: 35,
     marginTop: 15,
-    borderRadius: 8
+    height: 35
   },
   locationContainerStyle: { padding: 5, alignSelf: 'stretch', flex: 1 },
   locationTextStyle: {
