@@ -1,8 +1,8 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { stackNavigationOptions } from './NavigationOptions';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/client/RegisterForm';
-import { stackNavigationOptions } from './NavigationOptions';
 
 const guestScreenStack = createStackNavigator(
   {

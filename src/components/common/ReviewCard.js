@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AirbnbRating } from 'react-native-elements';
 import { CardSection } from './CardSection';
 import { Input } from './Input';
-import { MAIN_COLOR } from '../../constants';
 
 class ReviewCard extends Component {
   renderReviewTitle = title => {
@@ -27,26 +26,40 @@ class ReviewCard extends Component {
             isDisabled={this.props.isDisabled}
           />
         </CardSection>
-        <View style={{ marginTop: 10 }}>
-          <Input
-            onChangeText={this.props.onChangeText}
-            multiline={true}
-            maxLength={254}
-            maxHeight={180}
-            placeholder={this.props.commentPlaceholder}
-            defaultValue={this.props.commentText}
-            editable={!this.props.isDisabled}
-          />
-        </View>
+        <CardSection>
+          {this.props.readOnly
+            ? <Text style={readOnlyReviewStyle}>
+              {this.props.commentText}
+            </Text>
+            : <Input
+              onChangeText={this.props.onChangeText}
+              multiline={true}
+              maxLength={254}
+              maxHeight={180}
+              placeholder={this.props.commentPlaceholder}
+              defaultValue={this.props.commentText}
+            />
+          }
+
+        </CardSection>
       </View>
     ) : (
-      <View>{this.renderReviewTitle(this.props.title)}</View>
-    );
+        <View>{this.renderReviewTitle(this.props.title)}</View>
+      );
   }
 }
 
-const { reviewTitleStyle } = StyleSheet.create({
-  reviewTitleStyle: { fontSize: 16, textAlign: 'center' }
+const { reviewTitleStyle, readOnlyReviewStyle } = StyleSheet.create({
+  reviewTitleStyle: {
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  readOnlyReviewStyle: {
+    fontSize: 15,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: 'grey'
+  }
 });
 
 export { ReviewCard };

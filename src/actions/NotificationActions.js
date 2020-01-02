@@ -40,7 +40,7 @@ export const readCientTokenNotification = clientId => {
   };
 };
 
-export const sendPushNotification = ({ title, body, tokens }) => {
+export const sendPushNotification = ({ title, body, tokens, connection }) => {
   if (tokens.length > 0) {
     tokens.forEach(async token => {
       if (token.activity === 1) {
@@ -64,6 +64,8 @@ export const sendPushNotification = ({ title, body, tokens }) => {
         const data = response.status;
       }
     });
+    const db = firebase.firestore();
+    db.collection(connection).add({ title, body, date: new Date() });
   }
 };
 

@@ -40,5 +40,5 @@ export default combineReducers({
   commerceReviewsList: CommerceReviewsListReducer,
   clientReviewData: ClientReviewDataReducer,
   clientReviewsList: ClientReviewsListReducer,
-  notification:NotificationReducer
+  notificationToken:NotificationReducer
 });

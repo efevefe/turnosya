@@ -1,9 +1,26 @@
 import moment from 'moment';
 
+export const formattedMoment = (date = moment()) => {
+  // receives moment date and returns the same date at 00:00 in moment format
+  // if not receive a date as param, returns the current date
+  return moment([date.year(), date.month(), date.date()]);
+}
+
+export const getHourAndMinutes = hour => {
+  // receives string hour (HH:mm) and returns and object that contains 2 props, the hour and the minutes
+  hour = hour.split(':').map(num => parseInt(num));
+  return { hour: hour[0], minutes: hour[1] };
+};
+
+export const hourToDate = (stringHour, date = moment()) => {
+  // receives string hour (HH:mm) and returns the current date at that hour in moment format
+  const { hour, minutes } = getHourAndMinutes(stringHour);
+  return moment([date.year(), date.month(), date.date(), hour, minutes]);
+}
+
 export const imageToBlob = async uri => {
   try {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
-
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -182,9 +199,4 @@ export const isOneWeekOld = date => {
   return !moment()
     .subtract(1, 'w')
     .isBefore(date);
-};
-
-export const getHourAndMinutes = hour => {
-  hour = hour.split(':').map(num => parseInt(num));
-  return { hour: hour[0], minutes: hour[1] };
 };

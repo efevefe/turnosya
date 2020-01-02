@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, IconButton } from '../common';
 import Schedule from '../Schedule';
+import { MONTHS } from '../../constants';
 import {
   onScheduleRead,
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  courtsReadOnlyAvailable
+  courtsRead,
+  isCourtDisabledOnSlot
 } from '../../actions';
 
 class CommerceSchedule extends Component {
@@ -23,23 +25,22 @@ class CommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    this.props.onScheduleValueChange({
-      prop: 'selectedDate',
-      value: moment()
+    this.props.onScheduleRead({
+      commerceId: this.props.commerceId,
+      selectedDate: this.state.selectedDate
     });
 
-    this.props.onScheduleRead(this.props.commerceId);
-    this.unsubscribeCourtsRead = this.props.courtsReadOnlyAvailable(
-      this.props.commerceId
-    );
+    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
     });
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
-      this.reservationsOnSlots(this.props.slots);
+    if (prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts) {
+      this.reservationsOnSlots();
     }
   }
 
@@ -49,15 +50,22 @@ class CommerceSchedule extends Component {
   }
 
   onDateChanged = date => {
-    this.setState({ selectedDate: date });
+    const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead(
-      {
+    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead({
+      commerceId: this.props.commerceId,
+      selectedDate: date
+    });
+
+    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+      this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date
-      }
-    );
+      });
+    }
+
+    this.setState({ selectedDate: date });
   };
 
   onSlotPress = slot => {
@@ -66,27 +74,41 @@ class CommerceSchedule extends Component {
       value: slot
     });
 
-    this.props.navigation.navigate('commerceCourtsList');
+    const { startDate } = slot;
+
+    this.props.navigation.navigate(
+      'commerceCourtsList',
+      {
+        title: startDate.format('DD') +
+          ' de ' + MONTHS[startDate.month()] +
+          ', ' + startDate.format('HH:mm') + ' hs.'
+      }
+    );
   };
 
-  reservationsOnSlots = slots => {
-    const { reservations, courtsAvailable } = this.props;
+  reservationsOnSlots = () => {
+    const { reservations, courts, slots } = this.props;
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
       let available = true;
+      let courtsAvailable = 0;
 
       reservations.forEach(reservation => {
         if (slot.startDate.toString() === reservation.startDate.toString())
           reserved++;
       });
 
-      if (reserved >= courtsAvailable.length) available = false;
+      courts.forEach(court => {
+        !isCourtDisabledOnSlot(court, slot) && courtsAvailable++;
+      });
+
+      if (reserved >= courtsAvailable) available = false;
 
       return {
         ...slot,
-        free: courtsAvailable.length - reserved,
-        total: courtsAvailable.length,
+        free: courtsAvailable - reserved,
+        total: courts.length,
         available
       };
     });
@@ -105,15 +127,11 @@ class CommerceSchedule extends Component {
 
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
-
-    //hay que ver la forma de que esto se haga en el .then() del update()
-    this.props.navigation.navigate('scheduleRegister');
+    this.props.navigation.navigate('schedulesList', { selectedDate: this.state.selectedDate });
   };
 
   onScheduleConfigurationPress = () => {
     this.setState({ modal: false });
-
-    //hay que ver la forma de que esto se haga en el .then() del update()
     this.props.navigation.navigate('registerConfiguration');
   };
 
@@ -153,7 +171,7 @@ class CommerceSchedule extends Component {
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
-            title="Tiempo límite y mínimo de turno"
+            title="Tiempos de reserva y cancelacion"
             icon="md-timer"
             onPress={this.onScheduleConfigurationPress}
           />
@@ -165,28 +183,34 @@ class CommerceSchedule extends Component {
 
 const mapStateToProps = state => {
   const {
+    id,
     cards,
     slots,
     reservationDayPeriod,
-    reservationMinLength
+    reservationMinLength,
+    startDate,
+    endDate
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
   const { commerceId } = state.commerceData;
   const { reservations } = state.courtReservationsList;
   const loadingReservations = state.courtReservationsList.loading;
   const { slot } = state.courtReservation;
-  const { courtsAvailable } = state.courtsList;
+  const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
   return {
+    scheduleId: id,
     cards,
     slots,
     reservationDayPeriod,
     reservationMinLength,
+    scheduleStartDate: startDate,
+    scheduleEndDate: endDate,
     commerceId,
     reservations,
     slot,
-    courtsAvailable,
+    courts,
     loadingSchedule,
     loadingReservations,
     loadingCourts
@@ -200,6 +224,6 @@ export default connect(
     onScheduleValueChange,
     onCommerceCourtReservationsRead,
     onCourtReservationValueChange,
-    courtsReadOnlyAvailable
+    courtsRead
   }
 )(CommerceSchedule);

@@ -12,7 +12,10 @@ import {
   ON_LOGIN_FACEBOOK,
   ON_LOGIN_GOOGLE,
   ON_EMAIL_VERIFY_ASKED,
-  ON_EMAIL_VERIFY_REMINDED
+  ON_EMAIL_VERIFY_REMINDED,
+  ON_PASSWORD_RESET_EMAIL_SENDING,
+  ON_PASSWORD_RESET_EMAIL_SENT,
+  ON_PASSWORD_RESET_EMAIL_FAIL
 } from './types';
 
 import getEnvVars from '../../environment';
@@ -194,6 +197,19 @@ export const onLogout = commerceId => {
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   };
 };
+
+export const onSendPasswordResetEmail = email => async dispatch => {
+  dispatch({ type: ON_PASSWORD_RESET_EMAIL_SENDING });
+
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    dispatch({ type: ON_PASSWORD_RESET_EMAIL_SENT });
+    return true;
+  } catch (error) {
+    dispatch({ type: ON_PASSWORD_RESET_EMAIL_FAIL, payload: error.message });
+    return false;
+  }
+}
 
 export const userReauthenticate = async (password = null) => {
   try {

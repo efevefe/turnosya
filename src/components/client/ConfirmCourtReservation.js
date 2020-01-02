@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ButtonGroup, Button as RNEButton } from 'react-native-elements';
+import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { HeaderBackButton } from 'react-navigation-stack';
-import { CardSection, Button } from '../common';
-import { MAIN_COLOR } from '../../constants';
+import { CardSection, Button, ButtonGroup } from '../common';
+import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
 import {
   onCourtReservationValueChange,
   onClientCourtReservationCreate,
-  onCourtReservationClear
+  readCommerceTokenNotification
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
+import moment from 'moment';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -28,10 +29,17 @@ class ConfirmCourtReservation extends Component {
     });
 
     this.priceButtons();
+    this.props.readCommerceTokenNotification(this.props.commerceId);
   }
 
   renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
+    return (
+      <HeaderBackButton
+        onPress={this.onBackPress}
+        tintColor="white"
+        title="Back"
+      />
+    );
   };
 
   onBackPress = () => {
@@ -75,17 +83,12 @@ class ConfirmCourtReservation extends Component {
     if (!this.props.saved) {
       return (
         <View>
-          <CardSection style={styles.cardSections}>
+          <CardSection>
             <ButtonGroup
               onPress={this.onPriceSelect}
               selectedIndex={this.state.selectedIndex}
               buttons={this.state.priceButtons}
-              containerStyle={styles.priceButtons}
-              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: 'white' }}
-              textStyle={{ color: 'black' }}
-              containerStyle={styles.priceButtons}
-              innerBorderStyle={{ color: MAIN_COLOR }}
+              textStyle={{ fontSize: 14 }}
             />
           </CardSection>
         </View>
@@ -95,14 +98,24 @@ class ConfirmCourtReservation extends Component {
 
   onConfirmReservation = () => {
     const { commerce, court, courtType, slot, price, light } = this.props;
-
+    const body = `El Turno del día ${
+      DAYS[slot.startDate.day()]
+    } ${slot.startDate.format('D')} de ${
+      MONTHS[moment(slot.startDate).month()]
+    } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
+    const title = 'Turno Reservado';
+    const connection = `Commerces/${commerce.objectID}/Notifications`
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       courtId: court.id,
       courtType,
       slot,
       price,
-      light
+      light,
+      title,
+      body,
+      tokens: this.props.tokens,
+      connection
     });
   };
 
@@ -177,7 +190,17 @@ class ConfirmCourtReservation extends Component {
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
-          commerce={commerce}
+          mode="commerce"
+          name={commerce.name}
+          info={
+            commerce.address +
+            ', ' +
+            commerce.city +
+            ', ' +
+            commerce.provinceName
+          }
+          infoIcon="md-pin"
+          picture={commerce.profilePicture}
           court={court}
           startDate={slot.startDate}
           endDate={slot.endDate}
@@ -198,12 +221,6 @@ const styles = StyleSheet.create({
   cardSections: {
     alignItems: 'center'
   },
-  priceButtons: {
-    borderColor: MAIN_COLOR,
-    height: 60,
-    marginTop: 15,
-    borderRadius: 8
-  },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -222,12 +239,25 @@ const mapStateToProps = state => {
     saved,
     loading
   } = state.courtReservation;
+  const { tokens } = state.notificationToken;
+  const { commerceId } = state.commerceData;
 
-  return { commerce, courtType, court, slot, price, light, saved, loading };
+  return {
+    commerce,
+    courtType,
+    court,
+    slot,
+    price,
+    light,
+    saved,
+    loading,
+    tokens,
+    commerceId
+  };
 };
 
 export default connect(mapStateToProps, {
   onCourtReservationValueChange,
   onClientCourtReservationCreate,
-  onCourtReservationClear
+  readCommerceTokenNotification
 })(ConfirmCourtReservation);

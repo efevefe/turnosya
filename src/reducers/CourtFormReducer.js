@@ -10,6 +10,7 @@ import {
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
+  id: '',
   name: '',
   courts: [],
   court: '',
@@ -18,8 +19,11 @@ const INITIAL_STATE = {
   price: '',
   lightPrice: '',
   courtState: true,
+  disabled: false,
+  disabledFrom: null,
+  disabledTo: null,
   loading: false,
-  existedError: false
+  existsError: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -28,23 +32,23 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         [action.payload.prop]: action.payload.value,
-        existedError: false
+        existsError: ''
       };
     case ON_COURT_FORM_OPEN:
       return INITIAL_STATE;
     case COURT_FORM_SUBMIT:
-      return { ...state, loading: true, existedError: false };
+      return { ...state, loading: true, existsError: '' };
     case COURT_CREATE:
-        Toast.show({ text: 'Cancha guardada' });
+      Toast.show({ text: 'Cancha guardada' });
       return INITIAL_STATE;
     case COURT_UPDATE:
-        Toast.show({ text: 'Cambios guardados' });
+      Toast.show({ text: 'Cambios guardados' });
       return INITIAL_STATE;
     case COURT_DELETE:
-        Toast.show({ text: 'La cancha se ha eliminado' });
+      Toast.show({ text: 'La cancha se ha eliminado' });
       return INITIAL_STATE;
     case COURT_EXISTS:
-      return { ...state, loading: false, existedError: true };
+      return { ...state, loading: false, existsError: 'Nombre de cancha existente' };
     default:
       return state;
   }

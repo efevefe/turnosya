@@ -23,9 +23,12 @@ export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
 export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
+export const ON_PASSWORD_RESET_EMAIL_SENDING = 'on_password_reset_email_sending';
+export const ON_PASSWORD_RESET_EMAIL_SENT = 'on_password_reset_email_sent';
+export const ON_PASSWORD_RESET_EMAIL_FAIL = 'on_password_reset_email_fail';
 
 // Register types
-export const ON_REGISTER_VALUE_CHANGE = 'on_register_value_change';
+export const ON_CLIENT_DATA_VALUE_CHANGE = 'on_client_data_value_change';
 export const ON_USER_REGISTER = 'on_register';
 export const ON_REGISTER_FORM_OPEN = 'on_register_form_open';
 export const ON_USER_REGISTER_SUCCESS = 'on_register_success';
@@ -44,8 +47,6 @@ export const COURT_READING = 'court_reading';
 export const COURT_READ = 'court_read';
 export const COURT_DELETE = 'court_delete';
 export const COURT_UPDATE = 'court_update';
-export const COURT_READING_ONLY_AVAILABLE = 'court_reading_only_available';
-export const COURT_READ_ONLY_AVAILABLE = 'court_read_only_available';
 
 // Client Profile
 export const ON_USER_READING = 'on_user_reading';
@@ -54,6 +55,7 @@ export const ON_USER_READ_FAIL = 'on_user_read_fail';
 export const ON_USER_UPDATING = 'on_user_updating';
 export const ON_USER_UPDATED = 'on_user_updated';
 export const ON_USER_UPDATE_FAIL = 'on_user_update_fail';
+export const ON_USER_PASSWORD_UPDATE = 'on_user_password_update';
 
 // Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
@@ -92,6 +94,7 @@ export const ON_SCHEDULE_READ = 'on_schedule_shifts_read';
 export const ON_SCHEDULE_READING = 'on_schedule_shifts_reading';
 export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
 export const ON_SCHEDULE_READ_EMPTY = 'on_schedule_read_empty';
+export const ON_ACTIVE_SCHEDULES_READ = 'on_active_schedules_read';
 export const ON_SCHEDULE_CREATED = 'on_schedule_create';
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
@@ -111,20 +114,16 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE =
-  'on_court_reservation_value_change';
-export const ON_CLIENT_COURT_RESERVATION_CREATING =
-  'on_client_court_reservation_creating';
-export const ON_CLIENT_COURT_RESERVATION_CREATE =
-  'on_client_court_reservation_create';
-export const ON_CLIENT_COURT_RESERVATION_CREATE_FAIL =
-  'on_client_court_reservation_create_fail';
-export const ON_COURT_RESERVATION_CLEAR = 'on_court_reservation_state_clear';
+export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
+export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
+export const ON_COURT_RESERVATION_CREATE_FAIL = 'on_court_reservation_create_fail';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
 export const ON_LOCATION_CHANGE = 'on_location_change';
 export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
+export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
 export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 
@@ -146,10 +145,6 @@ export const ON_COMMERCE_COURT_RESERVATIONS_READ =
   'on_commerce_reservations_read';
 export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
   'on_commerce_reservations_read_fail';
-export const ON_RESERVATION_CLIENT_READING = 'on_reservation_client_reading';
-export const ON_RESERVATION_CLIENT_READ = 'on_reservation_client_read';
-export const ON_RESERVATION_CLIENT_READ_FAIL =
-  'on_reservation_client_read_fail';
 export const ON_COMMERCE_RESERVATION_CANCELING =
   'on_commerce_reservation_canceling';
 export const ON_COMMERCE_RESERVATION_CANCELED =
