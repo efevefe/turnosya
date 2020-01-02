@@ -180,13 +180,7 @@ export const onGoogleLogin = () => {
 
 export const onLogout = commerceId => {
   return async dispatch => {
-    const db = firebase.firestore();
-    const { currentUser } = firebase.auth();
-    await getToken().then(token => {
-      db.doc(`Profiles/${currentUser.uid}/Token/${token}`).set({ activity: 0 });
-      if (commerceId !== null)
-        db.doc(`Commerces/${commerceId}/Token/${token}`).set({ activity: 0 });
-    });
+    await getToken(commerceId);
     dispatch({ type: ON_LOGOUT });
     firebase
       .auth()
@@ -209,7 +203,7 @@ export const onSendPasswordResetEmail = email => async dispatch => {
     dispatch({ type: ON_PASSWORD_RESET_EMAIL_FAIL, payload: error.message });
     return false;
   }
-}
+};
 
 export const userReauthenticate = async (password = null) => {
   try {

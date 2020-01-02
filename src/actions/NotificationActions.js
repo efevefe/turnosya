@@ -61,6 +61,7 @@ export const sendPushNotification = ({ title, body, tokens, connection }) => {
           },
           body: JSON.stringify(message)
         });
+        debugger;
         const data = response.status;
       }
     });
@@ -125,7 +126,9 @@ export const registerForClientPushNotifications = async () => {
   }
 }; */
 
-export const getToken = async () => {
+export const getToken = async commerceId => {
+  const db = firebase.firestore();
+  const { currentUser } = firebase.auth();
   if (Constants.isDevice) {
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
@@ -140,7 +143,13 @@ export const getToken = async () => {
       return;
     }
     let token = await Notifications.getExpoPushTokenAsync();
-    return token;
+    await db
+      .doc(`Profiles/${currentUser.uid}/Token/${token}`)
+      .set({ activity: 0 });
+    if (commerceId !== null)
+      await db
+        .doc(`Commerces/${commerceId}/Token/${token}`)
+        .set({ activity: 0 });
   } else {
     alert('Must use physical device for Push Notifications');
   }
