@@ -50,7 +50,18 @@ class CommerceCourtsStateList extends Component {
     this.props.navigation.navigate('courtReservationRegister');
   }
 
+  isCourtTypeSelected = courtType => {
+    const selectedCourtTypes = this.props.navigation.getParam('selectedCourtTypes');
+
+    return (
+      selectedCourtTypes.includes('Todas') ||
+      selectedCourtTypes.includes(courtType)
+    );
+  }
+
   renderRow({ item }) {
+    if (!this.isCourtTypeSelected(item.court)) return;
+
     const courtReservation = this.courtReservation(item);
 
     return (
