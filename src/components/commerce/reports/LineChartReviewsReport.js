@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Text, ScrollView } from 'react-native';
 import {
   LineChart,
   Spinner,
+  IconButton,
   Button,
-  DatePicker,
   Picker,
-  CardSection
+  Menu
 } from '../../common';
 import {
   onCommerceReportValueChange,
   readReviewsOnMonths,
   yearsWithReview
 } from '../../../actions/CommerceReportsActions';
-import { View, ScrollView } from 'react-native';
 import moment from 'moment';
 
 class LineChartReviewsReport extends Component {
@@ -21,17 +21,27 @@ class LineChartReviewsReport extends Component {
     super(props);
     props.yearsWithReview(props.commerceId);
     props.readReviewsOnMonths(props.commerceId, moment().format('YYYY'));
+
+    this.state = { modal: false, modalYears: false };
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return { headerRight: navigation.getParam('rightIcon') };
+  };
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      rightIcon: (
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
+      )
+    });
   }
 
   render() {
-    const {
-      startDate,
-      loading,
-      data,
-      commerceId,
-      years,
-      selectedYear
-    } = this.props;
+    const { loading, data, commerceId, years, selectedYear } = this.props;
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
@@ -41,51 +51,36 @@ class LineChartReviewsReport extends Component {
 
     return (
       <ScrollView style={{ flex: 1 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignSelf: 'auto',
-            alignItems: 'stretch',
-            margin: 10
-          }}
+        <Menu
+          title="Seleccione el año a diagramar"
+          onBackdropPress={() =>
+            this.setState({ modal: false, modalYears: selectedYear })
+          }
+          isVisible={this.state.modal}
+          overlayStyle={{ alignItems: 'center' }}
+          titleStyle={{ alignSelf: 'center' }}
         >
-          {/* <DatePicker
-            mode="date"
-            label="Año"
-            format="YYYY"
-            date={startDate}
-            onDateChange={startDate =>
-              this.props.onCommerceReportValueChange({
-                prop: 'startDate',
-                value: startDate
-              })
-            }
-            style={{ margin: 8 }}
-          /> */}
-          {/* {console.log('start: ', moment(startDate).format('YYYY'))} */}
-          <CardSection>
-            <Picker
-              title={'Año:'}
-              value={selectedYear}
-              items={years}
-              onValueChange={selectedYear => {
-                console.log('starttt: ', selectedYear);
-                this.props.onCommerceReportValueChange({
-                  prop: 'selectedYear',
-                  value: selectedYear
-                });
-                this.props.readReviewsOnMonths(commerceId, selectedYear);
-              }}
-            />
-          </CardSection>
-          {/* <Button
+          <Picker
+            value={this.state.modalYears || selectedYear}
+            items={years}
+            onValueChange={modalYears => this.setState({ modalYears })}
+          />
+          <Button
             title={'Generar Reporte'}
-            buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
+            buttonStyle={{ marginVertical: 20 }}
             onPress={() => {
-              this.props.readReviewsOnMonths(commerceId, startDate);
+              this.props.readReviewsOnMonths(commerceId, this.state.modalYears);
+              this.props.onCommerceReportValueChange({
+                prop: 'selectedYear',
+                value: this.state.modalYears
+              });
+              this.setState({ modal: false });
             }}
-          /> */}
-        </View>
+          />
+        </Menu>
+        <Text style={{ fontSize: 30 }}>
+          Evolución de mis Calificaciones en {selectedYear}
+        </Text>
         <LineChart data={dataLine} />
       </ScrollView>
     );

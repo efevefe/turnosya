@@ -56,7 +56,7 @@ const reservationDetailsScreens = {
       title: 'Reseñas del Cliente'
     }
   }
-}
+};
 
 const calendarStack = createStackNavigator(
   {
@@ -233,7 +233,8 @@ const reportsStack = createStackNavigator(
     lineChartReviewsReport: {
       screen: LineChartReviewsReport,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes')
+        title: navigation.getParam('title', 'Reportes'),
+        headerRight: navigation.getParam('rightIcon')
       })
     },
     pieChartReport: {
