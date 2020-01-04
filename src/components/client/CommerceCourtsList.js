@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList, Toast } from '../common';
 import CommerceCourtsStateListItem from '../commerce/CommerceCourtsStateListItem';
-import { onCourtReservationValueChange } from '../../actions';
+import { onCourtReservationValueChange, isCourtDisabledOnSlot } from '../../actions';
 
 class CommerceCourtsList extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('title')
+  });
+
   courtReservation = court => {
     const { reservations, slot } = this.props;
 
@@ -34,6 +38,7 @@ class CommerceCourtsList extends Component {
         court={item}
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
+        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
         courtAvailable={courtAvailable}
         onPress={() =>
           courtAvailable

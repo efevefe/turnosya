@@ -4,7 +4,7 @@ import RNDatePicker from 'react-native-datepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
 
-const pickerWidth = Math.round(Dimensions.get('window').width) / 2.8;
+const pickerWidth = Math.round(Dimensions.get('window').width) / 2.7;
 
 class DatePicker extends Component {
   renderErrorMessage = () => {
@@ -33,11 +33,9 @@ class DatePicker extends Component {
         {this.renderLabel(color)}
         <RNDatePicker
           {...this.props}
-          // pasar mode cada vez que se usa este componente
           mode={this.props.mode || 'time'}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
-          format={this.props.format || 'YYYY-MM-DD'}
           iconComponent={
             <Ionicons
               name={this.props.mode ? 'md-calendar' : 'md-time'}
