@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import {
-  FlatList,
-  View,
-  Text,
-  TouchableHighlight,
-  ScrollView
-} from 'react-native';
+import { connect } from 'react-redux';
+import { withNavigationFocus } from 'react-navigation';
+import { Text, TouchableHighlight, ScrollView } from 'react-native';
 import { Card } from 'react-native-elements';
+import { onCommerceReportValueReset } from '../../../actions';
 
 class DashBoard extends Component {
+  componentDidUpdate(prevProps) {
+    if (this.props.isFocused && !prevProps.isFocused)
+      this.props.onCommerceReportValueReset();
+  }
+
   render() {
     return (
       <ScrollView>
@@ -153,4 +155,6 @@ class DashBoard extends Component {
   }
 }
 
-export default DashBoard;
+export default connect(null, { onCommerceReportValueReset })(
+  withNavigationFocus(DashBoard)
+);

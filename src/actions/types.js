@@ -23,7 +23,8 @@ export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
 export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
-export const ON_PASSWORD_RESET_EMAIL_SENDING = 'on_password_reset_email_sending';
+export const ON_PASSWORD_RESET_EMAIL_SENDING =
+  'on_password_reset_email_sending';
 export const ON_PASSWORD_RESET_EMAIL_SENT = 'on_password_reset_email_sent';
 export const ON_PASSWORD_RESET_EMAIL_FAIL = 'on_password_reset_email_fail';
 
@@ -206,3 +207,4 @@ export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
 export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
 export const ON_COMMERCE_REPORT_VALUE_CHANGE =
   'on_commerce_report_value_change';
+export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';

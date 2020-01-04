@@ -1,69 +1,89 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LineChart, Spinner, Input, DatePicker, Button } from '../../common';
+import { Text, ScrollView } from 'react-native';
 import {
-  readEarningsOnMonths,
-  onCommerceReportValueChange
-} from '../../../actions/CommerceReportsActions';
-import { View, ScrollView } from 'react-native';
-import moment from 'moment';
+  LineChart,
+  Spinner,
+  Menu,
+  Picker,
+  Button,
+  IconButton
+} from '../../common';
+import {
+  onCommerceReportValueChange,
+  readEarningsPerMonths,
+  yearsOfActivity
+} from '../../../actions';
 
 class LineChartMoneyReport extends Component {
   constructor(props) {
     super(props);
-    props.readEarningsOnMonths(props.commerceId, props.startDate);
+    props.yearsOfActivity(props.commerceId);
+    props.readEarningsPerMonths(props.commerceId, props.selectedYear);
+
+    this.state = { modal: false, modalYear: false };
   }
-  // componentWillMount() {
-  //   this.props.readEarningsOnMonths(
-  //     this.props.commerceId,
-  //     this.props.startDate
-  //   );
-  // }
+
+  static navigationOptions = ({ navigation }) => {
+    return { headerRight: navigation.getParam('rightIcon') };
+  };
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      rightIcon: (
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
+      )
+    });
+  }
 
   render() {
-    const { startDate, loading, data, commerceId } = this.props;
+    const { loading, data, commerceId, years, selectedYear } = this.props;
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [
-        {
-          data: data
-        }
-      ]
+      datasets: [{ data }]
     };
 
     if (loading) return <Spinner />;
+
     return (
       <ScrollView style={{ flex: 1 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignSelf: 'auto',
-            alignItems: 'stretch',
-            margin: 10
-          }}
+        <Menu
+          title="Seleccione el año a diagramar"
+          onBackdropPress={() =>
+            this.setState({ modal: false, modalYear: selectedYear })
+          }
+          isVisible={this.state.modal}
+          overlayStyle={{ alignItems: 'center' }}
+          titleStyle={{ alignSelf: 'center' }}
         >
-          <DatePicker
-            mode="date"
-            label="Año"
-            format="YYYY"
-            date={startDate}
-            onDateChange={startDate =>
-              this.props.onCommerceReportValueChange({
-                prop: 'startDate',
-                value: moment(startDate)
-              })
-            }
-            style={{ margin: 8 }}
+          <Picker
+            value={this.state.modalYear || selectedYear}
+            items={years}
+            onValueChange={modalYear => this.setState({ modalYear })}
           />
           <Button
             title={'Generar Reporte'}
-            buttonStyle={{ width: 225, margin: 0, marginHorizontal: 20 }}
+            buttonStyle={{ marginVertical: 20 }}
             onPress={() => {
-              this.props.readEarningsOnMonths(commerceId, startDate);
+              this.props.readEarningsPerMonths(
+                commerceId,
+                this.state.modalYear
+              );
+              this.props.onCommerceReportValueChange({
+                prop: 'selectedYear',
+                value: this.state.modalYear
+              });
+              this.setState({ modal: false });
             }}
           />
-        </View>
+        </Menu>
+        <Text style={{ fontSize: 30 }}>
+          Evolución de mis Ganancias en {selectedYear}
+        </Text>
         <LineChart data={dataLine} yAxisLabel={'$'} />
       </ScrollView>
     );
@@ -71,18 +91,20 @@ class LineChartMoneyReport extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, loading } = state.commerceReports;
+  const { data, years, selectedYear, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
     data,
-    startDate,
+    years,
+    selectedYear,
     commerceId,
     loading
   };
 };
 
 export default connect(mapStateToProps, {
-  readEarningsOnMonths,
-  onCommerceReportValueChange
+  onCommerceReportValueChange,
+  readEarningsPerMonths,
+  yearsOfActivity
 })(LineChartMoneyReport);

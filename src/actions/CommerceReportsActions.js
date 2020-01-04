@@ -3,12 +3,17 @@ import 'firebase/firestore';
 import {
   ON_COMMERCE_REPORT_READING,
   ON_COMMERCE_REPORT_READ,
-  ON_COMMERCE_REPORT_VALUE_CHANGE
+  ON_COMMERCE_REPORT_VALUE_CHANGE,
+  ON_COMMERCE_REPORT_VALUE_RESET
 } from './types';
 import moment from 'moment';
 
 export const onCommerceReportValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
+};
+
+export const onCommerceReportValueReset = () => {
+  return { type: ON_COMMERCE_REPORT_VALUE_RESET };
 };
 
 export const readReservationsOnDays = (
@@ -68,77 +73,93 @@ export const readReservationsOnDays = (
     });
 };
 
-export const readEarningsOnMonths = (commerceId, startDate) => dispatch => {
+// Earnings reports
+export const yearsOfActivity = commerceId => dispatch => {
+  const db = firebase.firestore();
+
+  const years = [];
+  let firstYear;
+  const currentYear = moment().format('YYYY');
+
+  db.collection(`Commerces/${commerceId}/Reservations`)
+    .where('state', '==', null) // TODO: state should be something that is already paid
+    .orderBy('startDate', 'asc')
+    .limit(1)
+    .get()
+    .then(querySnapshot => {
+      if (!querySnapshot.empty) {
+        firstYear = moment(
+          querySnapshot.docs[0].data().startDate.toDate()
+        ).format('YYYY');
+
+        if (currentYear === firstYear) {
+          years.push({
+            label: currentYear.toString(),
+            value: currentYear.toString()
+          });
+        } else {
+          for (i = firstYear; i <= currentYear; i++) {
+            years.push({ label: i.toString(), value: i.toString() });
+          }
+        }
+
+        dispatch({
+          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+          payload: { prop: 'years', value: years }
+        });
+        dispatch({
+          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+          payload: { prop: 'selectedYear', value: currentYear }
+        });
+      }
+    });
+};
+
+export const readEarningsPerMonths = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reservations = [];
-  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
+
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('state', '==', null) // TODO: state should be something that is already paid
     .where(
-      'startDate',
+      'startDate', // should be from 'startDate' or 'endDate' ??
       '>=',
-      moment(startDate)
+      moment(year, 'YYYY')
         .startOf('year')
         .toDate()
     )
     .where(
       'startDate',
       '<=',
-      moment(startDate)
+      moment(year, 'YYYY')
         .endOf('year')
         .toDate()
     )
     .onSnapshot(snapshot => {
-      snapshot.forEach(doc => {
-        reservations.push({
-          id: doc.id,
-          ...doc.data(),
-          startDate: moment(doc.data().startDate.toDate()),
-          endDate: moment(doc.data().endDate.toDate())
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          reservations.push({
+            id: doc.id,
+            ...doc.data(),
+            startDate: moment(doc.data().startDate.toDate()),
+            endDate: moment(doc.data().endDate.toDate())
+          });
         });
-      });
 
-      reservations.forEach(reservation => {
-        if (moment(reservation.startDate).format('MMMM') === 'January') {
-          months.fill(months[0] + parseFloat(reservation.price), 0, 1);
-        } else if (
-          moment(reservation.startDate).format('MMMM') === 'February'
-        ) {
-          months.fill(months[1] + parseFloat(reservation.price), 1, 2);
-        } else if (moment(reservation.startDate).format('MMMM') === 'March') {
-          months.fill(months[2] + parseFloat(reservation.price), 2, 3);
-        } else if (moment(reservation.startDate).format('MMMM') === 'April') {
-          months.fill(months[3] + parseFloat(reservation.price), 3, 4);
-        } else if (moment(reservation.startDate).format('MMMM') === 'May') {
-          months.fill(months[4] + parseFloat(reservation.price), 4, 5);
-        } else if (moment(reservation.startDate).format('MMMM') === 'June') {
-          months.fill(months[5] + parseFloat(reservation.price), 5, 6);
-        } else if (moment(reservation.startDate).format('MMMM') === 'July') {
-          months.fill(months[6] + parseFloat(reservation.price), 6, 7);
-        } else if (moment(reservation.startDate).format('MMMM') === 'August') {
-          months.fill(months[7] + parseFloat(reservation.price), 7, 8);
-        } else if (
-          moment(reservation.startDate).format('MMMM') === 'September'
-        ) {
-          months.fill(months[8] + parseFloat(reservation.price), 8, 9);
-        } else if (moment(reservation.startDate).format('MMMM') === 'October') {
-          months.fill(months[9] + parseFloat(reservation.price), 9, 10);
-        } else if (
-          moment(reservation.startDate).format('MMMM') === 'November'
-        ) {
-          months.fill(months[10] + parseFloat(reservation.price), 10, 11);
-        } else if (
-          moment(reservation.startDate).format('MMMM') === 'December'
-        ) {
-          months.fill(months[11] + parseFloat(reservation.price), 11, 12);
-        }
-      });
-      dispatch({
-        type: ON_COMMERCE_REPORT_READ,
-        payload: months
-      });
+        reservations.forEach(reservation => {
+          const numberOfMonth = moment(reservation.startDate).month();
+
+          months[numberOfMonth] += parseFloat(reservation.price);
+        });
+
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: months
+        });
+      }
     });
 };
 
@@ -153,35 +174,38 @@ export const yearsWithReview = commerceId => dispatch => {
   db.collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
     .orderBy('date', 'asc')
+    .limit(1)
     .get()
     .then(querySnapshot => {
-      firstYear = moment(querySnapshot['docs'][0].data().date.toDate()).format(
-        'YYYY'
-      );
+      if (!querySnapshot.empty) {
+        firstYear = moment(querySnapshot.docs[0].data().date.toDate()).format(
+          'YYYY'
+        );
 
-      if (currentYear === firstYear) {
-        years.push({
-          label: currentYear.toString(),
-          value: currentYear.toString()
-        });
-      } else {
-        for (i = firstYear; i <= currentYear; i++) {
-          years.push({ label: i.toString(), value: i.toString() });
+        if (currentYear === firstYear) {
+          years.push({
+            label: currentYear.toString(),
+            value: currentYear.toString()
+          });
+        } else {
+          for (i = firstYear; i <= currentYear; i++) {
+            years.push({ label: i.toString(), value: i.toString() });
+          }
         }
-      }
 
-      dispatch({
-        type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-        payload: { prop: 'years', value: years }
-      });
-      dispatch({
-        type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-        payload: { prop: 'selectedYear', value: currentYear }
-      });
+        dispatch({
+          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+          payload: { prop: 'years', value: years }
+        });
+        dispatch({
+          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+          payload: { prop: 'selectedYear', value: currentYear }
+        });
+      }
     });
 };
 
-export const readReviewsOnMonths = (commerceId, year) => dispatch => {
+export const readReviewsPerMonths = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
   const db = firebase.firestore();
   const reviews = [];
@@ -195,42 +219,44 @@ export const readReviewsOnMonths = (commerceId, year) => dispatch => {
     .where(
       'date',
       '>=',
-      moment(new Date(year, 0, 1))
+      moment(year, 'YYYY')
         .startOf('year')
         .toDate()
     )
     .where(
       'date',
       '<=',
-      moment(new Date(year, 11, 31))
+      moment(year, 'YYYY')
         .endOf('year')
         .toDate()
     )
     .onSnapshot(snapshot => {
-      snapshot.forEach(doc => {
-        reviews.push({
-          ...doc.data(),
-          date: moment(doc.data().date.toDate())
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          reviews.push({
+            ...doc.data(),
+            date: moment(doc.data().date.toDate())
+          });
         });
-      });
 
-      reviews.forEach(review => {
-        const numberOfMonth = moment(review.date).format('M') - 1;
+        reviews.forEach(review => {
+          const numberOfMonth = moment(review.date).month();
 
-        months[numberOfMonth] += parseFloat(review.rating);
-        counts[numberOfMonth] += 1;
-      });
+          months[numberOfMonth] += parseFloat(review.rating);
+          counts[numberOfMonth] += 1;
+        });
 
-      let i = 0;
-      months.forEach(month => {
-        month !== 0 ? data.push(month / counts[i]) : data.push(0);
-        i++;
-      });
+        let i = 0;
+        months.forEach(month => {
+          month !== 0 ? data.push(month / counts[i]) : data.push(0);
+          i++;
+        });
 
-      dispatch({
-        type: ON_COMMERCE_REPORT_READ,
-        payload: data
-      });
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: data
+        });
+      }
     });
 };
 
