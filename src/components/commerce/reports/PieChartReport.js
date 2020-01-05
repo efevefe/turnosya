@@ -44,10 +44,11 @@ class PieChartReport extends Component {
     });
   }
 
+  // onDataEmpty = () => {};
+
   render() {
     if (this.props.loading) return <Spinner />;
-
-    const { modal, modalStartDate, modalEndDate } = this.state;
+    // if (isDataEmpty) return this.onDataEmpty();
 
     const dataPie = this.props.data[1]
       ? [
@@ -79,7 +80,7 @@ class PieChartReport extends Component {
               modalEndDate: this.props.endDate
             })
           }
-          isVisible={modal}
+          isVisible={this.state.modal}
           overlayStyle={{ alignItems: 'center' }}
           titleStyle={{ alignSelf: 'center' }}
         >
@@ -92,14 +93,14 @@ class PieChartReport extends Component {
             }}
           >
             <DatePicker
-              date={modalStartDate}
+              date={this.state.modalStartDate}
               mode="date"
               label="Desde:"
               placeholder="Fecha desde"
               onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
-              date={modalEndDate}
+              date={this.state.modalEndDate}
               mode="date"
               label="Hasta:"
               placeholder="Opcional"
@@ -111,17 +112,17 @@ class PieChartReport extends Component {
             onPress={() => {
               this.props.readStateTurnsReservations(
                 this.props.commerceId,
-                moment(modalStartDate),
-                moment(modalEndDate)
+                moment(this.state.modalStartDate),
+                moment(this.state.modalEndDate)
               );
 
               this.props.onCommerceReportValueChange({
                 prop: 'startDate',
-                value: moment(modalStartDate)
+                value: moment(this.state.modalStartDate)
               });
               this.props.onCommerceReportValueChange({
                 prop: 'endDate',
-                value: moment(modalEndDate)
+                value: moment(this.state.modalEndDate)
               });
               this.setState({ modal: false });
             }}
@@ -138,7 +139,13 @@ class PieChartReport extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, endDate, loading } = state.commerceReports;
+  const {
+    data,
+    startDate,
+    endDate,
+    loading
+    // isDataEmpty
+  } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -147,6 +154,7 @@ const mapStateToProps = state => {
     endDate,
     commerceId,
     loading
+    // isDataEmpty
   };
 };
 

@@ -32,7 +32,7 @@ export const readReservationsOnDays = (
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', startDate.toDate())
-    .where('startDate', '<', endDate.toDate())
+    .where('startDate', '<=', endDate.toDate())
     .onSnapshot(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
@@ -235,10 +235,11 @@ export const readStateTurnsReservations = (
 
   const db = firebase.firestore();
   const turns = [0, 0];
+
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('startDate', '>=', startDate.toDate())
-    .where('startDate', '<', endDate.toDate())
+    .where('startDate', '<=', endDate.toDate())
     .onSnapshot(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {

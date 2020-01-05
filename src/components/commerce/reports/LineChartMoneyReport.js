@@ -21,7 +21,7 @@ class LineChartMoneyReport extends Component {
     props.yearsOfActivity(props.commerceId);
     props.readEarningsPerMonths(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: false };
+    this.state = { modal: false, modalYear: this.props.selectedYear };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -39,30 +39,31 @@ class LineChartMoneyReport extends Component {
     });
   }
 
+  // onDataEmpty = () => {};
+
   render() {
-    const { loading, data, commerceId, years, selectedYear } = this.props;
+    if (this.props.loading) return <Spinner />;
+    // if (this.props.isDataEmpty) return this.onDataEmpty();
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [{ data }]
+      datasets: [{ data: this.props.data }]
     };
-
-    if (loading) return <Spinner />;
 
     return (
       <ScrollView style={{ flex: 1 }}>
         <Menu
           title="Seleccione el año a diagramar"
           onBackdropPress={() =>
-            this.setState({ modal: false, modalYear: selectedYear })
+            this.setState({ modal: false, modalYear: this.props.selectedYear })
           }
           isVisible={this.state.modal}
           overlayStyle={{ alignItems: 'center' }}
           titleStyle={{ alignSelf: 'center' }}
         >
           <Picker
-            value={this.state.modalYear || selectedYear}
-            items={years}
+            value={this.state.modalYear}
+            items={this.props.years}
             onValueChange={modalYear => this.setState({ modalYear })}
           />
           <Button
@@ -70,7 +71,7 @@ class LineChartMoneyReport extends Component {
             buttonStyle={{ marginVertical: 20 }}
             onPress={() => {
               this.props.readEarningsPerMonths(
-                commerceId,
+                this.props.commerceId,
                 this.state.modalYear
               );
               this.props.onCommerceReportValueChange({
@@ -82,7 +83,7 @@ class LineChartMoneyReport extends Component {
           />
         </Menu>
         <Text style={{ fontSize: 30 }}>
-          Evolución de mis Ganancias en {selectedYear}
+          Evolución de mis Ganancias en {this.props.selectedYear}
         </Text>
         <LineChart data={dataLine} yAxisLabel={'$'} />
       </ScrollView>
@@ -91,7 +92,13 @@ class LineChartMoneyReport extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, years, selectedYear, loading } = state.commerceReports;
+  const {
+    data,
+    years,
+    selectedYear,
+    loading
+    // isDataEmpty
+  } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -100,6 +107,7 @@ const mapStateToProps = state => {
     selectedYear,
     commerceId,
     loading
+    // isDataEmpty
   };
 };
 

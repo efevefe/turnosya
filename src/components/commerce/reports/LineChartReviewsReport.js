@@ -21,13 +21,12 @@ class LineChartReviewsReport extends Component {
     props.yearsWithReview(props.commerceId);
     props.readReviewsPerMonths(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: false };
+    this.state = { modal: false, modalYear: props.selectedYear };
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon')
+      headerRight: navigation.getParam('rightIcon')
     };
   };
 
@@ -42,37 +41,41 @@ class LineChartReviewsReport extends Component {
     });
   }
 
+  // onDataEmpty = () => {};
+
   render() {
-    const { loading, data, commerceId, years, selectedYear } = this.props;
+    if (this.props.loading) return <Spinner />;
+    // if (this.props.isDataEmpty) return this.onDataEmpty();
 
     const dataLine = {
       labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [{ data }]
+      datasets: [{ data: this.props.data }]
     };
-
-    if (loading) return <Spinner />;
 
     return (
       <ScrollView style={{ flex: 1 }}>
         <Menu
           title="Seleccione el año a diagramar"
           onBackdropPress={() =>
-            this.setState({ modal: false, modalYear: selectedYear })
+            this.setState({ modal: false, modalYear: this.props.selectedYear })
           }
           isVisible={this.state.modal}
           overlayStyle={{ alignItems: 'center' }}
           titleStyle={{ alignSelf: 'center' }}
         >
           <Picker
-            value={this.state.modalYear || selectedYear}
-            items={years}
+            value={this.state.modalYear}
+            items={this.props.years}
             onValueChange={modalYear => this.setState({ modalYear })}
           />
           <Button
             title={'Generar Reporte'}
             buttonStyle={{ marginVertical: 20 }}
             onPress={() => {
-              this.props.readReviewsPerMonths(commerceId, this.state.modalYear);
+              this.props.readReviewsPerMonths(
+                this.props.commerceId,
+                this.state.modalYear
+              );
               this.props.onCommerceReportValueChange({
                 prop: 'selectedYear',
                 value: this.state.modalYear
@@ -82,7 +85,7 @@ class LineChartReviewsReport extends Component {
           />
         </Menu>
         <Text style={{ fontSize: 30 }}>
-          Evolución de mis Calificaciones en {selectedYear}
+          Evolución de mis Calificaciones en {this.props.selectedYear}
         </Text>
         <LineChart data={dataLine} />
       </ScrollView>
@@ -91,7 +94,13 @@ class LineChartReviewsReport extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, years, selectedYear, loading } = state.commerceReports;
+  const {
+    data,
+    years,
+    selectedYear,
+    loading
+    // isDataEmpty
+  } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -100,6 +109,7 @@ const mapStateToProps = state => {
     selectedYear,
     commerceId,
     loading
+    // isDataEmpty
   };
 };
 

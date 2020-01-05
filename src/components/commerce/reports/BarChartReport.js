@@ -49,32 +49,14 @@ class BarChartReport extends Component {
 
   // onDataEmpty = () => {};
 
-  onEndDateValueChange = endDate => {
-    endDate = moment(endDate);
-
-    if (endDate > formattedMoment()) {
-      return Toast.show({
-        text: 'No puede ingresar una fecha mayor a la actual'
-      });
-    }
-
-    this.props.onCommerceReportValueChange({
-      prop: 'endDate',
-      value: endDate
-    });
-  };
-
   render() {
-    const { modal, modalStartDate, modalEndDate } = this.state;
+    if (this.props.loading) return <Spinner />;
+    // if (isDataEmpty) return this.onDataEmpty();
 
     const dataBar = {
       labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
       datasets: [{ data: this.props.data }]
     };
-
-    if (this.props.loading) return <Spinner />;
-
-    // if (isDataEmpty) return this.onDataEmpty();
 
     return (
       <ScrollView style={{ flex: 1 }}>
@@ -87,7 +69,7 @@ class BarChartReport extends Component {
               modalEndDate: this.props.endDate
             })
           }
-          isVisible={modal}
+          isVisible={this.state.modal}
           overlayStyle={{ alignItems: 'center' }}
           titleStyle={{ alignSelf: 'center' }}
         >
@@ -100,14 +82,14 @@ class BarChartReport extends Component {
             }}
           >
             <DatePicker
-              date={modalStartDate}
+              date={this.state.modalStartDate}
               mode="date"
               label="Desde:"
               placeholder="Fecha desde"
               onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
-              date={modalEndDate}
+              date={this.state.modalEndDate}
               mode="date"
               label="Hasta:"
               placeholder="Opcional"
@@ -119,17 +101,17 @@ class BarChartReport extends Component {
             onPress={() => {
               this.props.readReservationsOnDays(
                 this.props.commerceId,
-                moment(modalStartDate),
-                moment(modalEndDate)
+                moment(this.state.modalStartDate),
+                moment(this.state.modalEndDate)
               );
 
               this.props.onCommerceReportValueChange({
                 prop: 'startDate',
-                value: moment(modalStartDate)
+                value: moment(this.state.modalStartDate)
               });
               this.props.onCommerceReportValueChange({
                 prop: 'endDate',
-                value: moment(modalEndDate)
+                value: moment(this.state.modalEndDate)
               });
               this.setState({ modal: false });
             }}
