@@ -49,7 +49,7 @@ class LocationMap extends React.Component {
   );
 
   renderBackButton = () => (
-    <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" />
+    <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" title='Back' />
   );
 
   onBackPress = () => {

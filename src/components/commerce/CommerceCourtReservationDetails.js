@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Divider, ButtonGroup } from 'react-native-elements';
+import { Divider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
-import { Button, Menu, MenuItem, Input, CardSection, Toast } from '../common';
-import ReviewCard from '../common/ReviewCard';
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Input,
+  CardSection,
+  Toast,
+  ReviewCard,
+  ButtonGroup
+} from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCommerceCancelReservation,
@@ -20,7 +28,6 @@ import {
   commerceReviewClear
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
-import { MAIN_COLOR } from '../../constants';
 
 class CommerceCourtReservationDetails extends Component {
   constructor(props) {
@@ -58,12 +65,14 @@ class CommerceCourtReservationDetails extends Component {
   renderCancelButton = () => {
     if (this.state.reservation.startDate > moment()) {
       return (
-        <Button
-          title="Cancelar Reserva"
-          onPress={() =>
-            this.setState({ optionsVisible: !this.state.optionsVisible })
-          }
-        />
+        <CardSection>
+          <Button
+            title="Cancelar Reserva"
+            onPress={() =>
+              this.setState({ optionsVisible: !this.state.optionsVisible })
+            }
+          />
+        </CardSection>
       );
     }
   };
@@ -160,10 +169,9 @@ class CommerceCourtReservationDetails extends Component {
 
   renderReviewButtons = () => {
     return this.state.isOneWeekOld ? null : (
-      <View style={reviewButtonsContainerStyle}>
+      <CardSection style={{ flexDirection: 'row' }}>
         <Button
           title="Borrar"
-          type="solid"
           outerContainerStyle={{ flex: 1 }}
           onPress={() => this.setState({ confirmDeleteVisible: true })}
           loading={this.props.deleteReviewLoading}
@@ -171,13 +179,12 @@ class CommerceCourtReservationDetails extends Component {
         />
         <Button
           title="Guardar"
-          type="solid"
           outerContainerStyle={{ flex: 1 }}
           onPress={this.onSaveReviewHandler}
           loading={this.props.saveReviewLoading}
           disabled={this.state.isOneWeekOld}
         />
-      </View>
+      </CardSection>
     );
   };
 
@@ -185,17 +192,17 @@ class CommerceCourtReservationDetails extends Component {
     return this.props.commerceRating ? (
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
-          title={'Calificación realizada por el cliente'}
+          title="Calificación realizada por el cliente"
           rating={this.props.commerceRating}
-          isDisabled
-          commentPlaceholder={'El cliente no realizó ningún comentario...'}
+          commentPlaceholder="El cliente no realizó ningún comentario..."
           commentText={this.props.commerceComment}
+          readOnly
           fieldsVisible
         />
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title={'El cliente no te ha calificado'} />
+        <ReviewCard title="El cliente no te ha calificado" />
       </View>
     );
   };
@@ -208,7 +215,7 @@ class CommerceCourtReservationDetails extends Component {
 
     return this.state.isOneWeekOld && !this.props.clientReviewId ? (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title={'Ya pasó el período de calificación'} />
+        <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
@@ -218,11 +225,11 @@ class CommerceCourtReservationDetails extends Component {
             this.props.clientReviewValueChange('rating', value)
           }
           rating={this.props.clientRating}
-          isDisabled={this.state.isOneWeekOld}
+          readOnly={this.state.isOneWeekOld}
           onChangeText={value =>
             this.props.clientReviewValueChange('comment', value)
           }
-          commentPlaceholder={'Comente sobre el cliente...'}
+          commentPlaceholder="Comente sobre el cliente..."
           commentText={this.props.clientComment}
           fieldsVisible
         />
@@ -232,25 +239,23 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   renderReviewFields = () => {
-    if (this.state.reservation.startDate < moment()) {
+    if (
+      this.state.reservation.clientId &&
+      this.state.reservation.startDate < moment()
+    ) {
       return (
-        <View>
+        <CardSection>
           <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
             buttons={['Calificar al cliente', 'Ver su calificación']}
-            selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-            selectedTextStyle={{ color: 'white' }}
-            textStyle={locationBGTextStyle}
-            containerStyle={locationBGContainerStyle}
-            innerBorderStyle={{ color: MAIN_COLOR }}
           />
           {this.state.reviewBGIndex === 0
             ? this.renderClientReview()
             : this.renderCommerceReview()}
           {this.renderConfirmReviewDelete()}
-        </View>
+        </CardSection>
       );
     }
   };
@@ -264,6 +269,7 @@ class CommerceCourtReservationDetails extends Component {
 
   render() {
     const {
+      clientId,
       client,
       court,
       startDate,
@@ -271,7 +277,8 @@ class CommerceCourtReservationDetails extends Component {
       price,
       light,
       id,
-      clientId
+      clientName,
+      clientPhone
     } = this.state.reservation;
 
     return (
@@ -280,18 +287,6 @@ class CommerceCourtReservationDetails extends Component {
         style={scrollViewStyle}
         extraScrollHeight={60}
       >
-        <CourtReservationDetails
-          client={client}
-          court={court}
-          startDate={startDate}
-          endDate={endDate}
-          price={price}
-          light={light}
-          showPrice={true}
-          onProfilePicturePress={this.onUserProfilePicturePress}
-        />
-        <CardSection>{this.renderCancelButton()}</CardSection>
-
         <Menu
           title="Informar el motivo de la cancelación"
           onBackdropPress={() => this.onBackdropPress()}
@@ -332,7 +327,26 @@ class CommerceCourtReservationDetails extends Component {
             onPress={() => this.onBackdropPress()}
           />
         </Menu>
+
+        <CourtReservationDetails
+          mode={clientId && 'client'}
+          name={
+            clientId ? `${client.firstName} ${client.lastName}` : clientName
+          }
+          info={clientId ? client.phone : clientPhone}
+          infoIcon="ios-call"
+          picture={clientId && client.profilePicture}
+          court={court}
+          startDate={startDate}
+          endDate={endDate}
+          price={price}
+          light={light}
+          showPrice={true}
+          onPicturePress={this.onUserProfilePicturePress}
+        />
+
         {this.renderReviewFields()}
+        {this.renderCancelButton()}
       </KeyboardAwareScrollView>
     );
   }
@@ -340,12 +354,8 @@ class CommerceCourtReservationDetails extends Component {
 
 const {
   reviewDividerStyle,
-  reviewTitleStyle,
-  reviewButtonsContainerStyle,
   overlayDividerStyle,
-  scrollViewStyle,
-  locationBGTextStyle,
-  locationBGContainerStyle
+  scrollViewStyle
 } = StyleSheet.create({
   reviewDividerStyle: {
     margin: 10,
@@ -353,24 +363,8 @@ const {
     marginRight: 40,
     backgroundColor: 'grey'
   },
-  reviewTitleStyle: { fontSize: 16, textAlign: 'center' },
-  reviewButtonsContainerStyle: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    marginBottom: 10
-  },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
-  locationBGTextStyle: {
-    color: MAIN_COLOR,
-    textAlign: 'center',
-    fontSize: 12
-  },
-  locationBGContainerStyle: {
-    borderColor: MAIN_COLOR,
-    height: 40,
-    borderRadius: 8
-  }
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
 
 const mapStateToProps = state => {

@@ -2,9 +2,17 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
-import { Divider, ButtonGroup } from 'react-native-elements';
-import { CardSection, Button, Menu, MenuItem, Spinner, Toast } from '../common';
-import ReviewCard from '../common/ReviewCard';
+import { Divider } from 'react-native-elements';
+import {
+  CardSection,
+  Button,
+  Menu,
+  MenuItem,
+  Spinner,
+  Toast,
+  ReviewCard,
+  ButtonGroup
+} from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {
@@ -20,7 +28,6 @@ import {
   readClientReview
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
-import { MAIN_COLOR } from '../../constants';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -43,7 +50,7 @@ class ClientReservationDetails extends Component {
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
       selectedDate: this.state.reservation.startDate
-    })
+    });
 
     this.props.readCommerceReview({
       commerceId: this.state.reservation.commerceId,
@@ -80,15 +87,13 @@ class ClientReservationDetails extends Component {
     const { startDate } = this.state.reservation;
     if (startDate > moment()) {
       return (
-        <View style={cancelButtonContainerStyle}>
-          <CardSection>
-            <Button
-              title="Cancelar Reserva"
-              type="solid"
-              onPress={this.onCancelButtonPress}
-            />
-          </CardSection>
-        </View>
+        <CardSection>
+          <Button
+            title="Cancelar Reserva"
+            type="solid"
+            onPress={this.onCancelButtonPress}
+          />
+        </CardSection>
       );
     }
   };
@@ -163,10 +168,9 @@ class ClientReservationDetails extends Component {
 
   renderReviewButtons = () => {
     return this.state.isOneWeekOld ? null : (
-      <View style={reviewButtonsContainerStyle}>
+      <CardSection style={{ flexDirection: 'row' }}>
         <Button
           title="Borrar"
-          type="solid"
           outerContainerStyle={{ flex: 1 }}
           onPress={this.onDeleteReviewHandler}
           loading={this.props.deleteReviewLoading}
@@ -174,13 +178,12 @@ class ClientReservationDetails extends Component {
         />
         <Button
           title="Guardar"
-          type="solid"
           outerContainerStyle={{ flex: 1 }}
           onPress={this.onSaveReviewHandler}
           loading={this.props.saveReviewLoading}
           disabled={this.state.isOneWeekOld}
         />
-      </View>
+      </CardSection>
     );
   };
 
@@ -192,7 +195,7 @@ class ClientReservationDetails extends Component {
 
     return this.state.isOneWeekOld && !this.props.commerceReviewId ? (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title={'Ya pasó el período de calificación'} />
+        <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
@@ -202,11 +205,11 @@ class ClientReservationDetails extends Component {
             this.props.commerceReviewValueChange('rating', value)
           }
           rating={this.props.commerceRating}
-          isDisabled={this.state.isOneWeekOld}
+          readOnly={this.state.isOneWeekOld}
           onChangeText={value =>
             this.props.commerceReviewValueChange('comment', value)
           }
-          commentPlaceholder={'Deje un comentario sobre la atención...'}
+          commentPlaceholder="Deje un comentario sobre la atención..."
           commentText={this.props.commerceComment}
           fieldsVisible
         />
@@ -219,17 +222,17 @@ class ClientReservationDetails extends Component {
     return this.props.clientRating ? (
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
-          title={'Calificación realizada por el negocio'}
+          title="Calificación realizada por el negocio"
           rating={this.props.clientRating}
-          isDisabled
-          commentPlaceholder={'El negocio no realizó ningún comentario...'}
+          commentPlaceholder="El negocio no realizó ningún comentario..."
           commentText={this.props.clientComment}
+          readOnly
           fieldsVisible
         />
       </View>
     ) : (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title={'El negocio no te ha calificado'} />
+        <ReviewCard title="El negocio no te ha calificado" />
       </View>
     );
   };
@@ -237,23 +240,18 @@ class ClientReservationDetails extends Component {
   renderReviewFields = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
-        <View>
+        <CardSection>
           <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
             buttons={['Calificar al negocio', 'Ver su calificación']}
-            selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-            selectedTextStyle={{ color: 'white' }}
-            textStyle={locationBGTextStyle}
-            containerStyle={locationBGContainerStyle}
-            innerBorderStyle={{ color: MAIN_COLOR }}
           />
           {this.state.reviewBGIndex === 0
             ? this.renderCommerceReview()
             : this.renderClientReview()}
           {this.renderConfirmReviewDelete()}
-        </View>
+        </CardSection>
       );
     }
   };
@@ -307,8 +305,19 @@ class ClientReservationDetails extends Component {
             onPress={() => this.setState({ optionsVisible: false })}
           />
         </Menu>
+
         <CourtReservationDetails
-          commerce={commerce}
+          mode="commerce"
+          name={commerce.name}
+          picture={commerce.profilePicture}
+          info={
+            commerce.address +
+            ', ' +
+            commerce.city +
+            ', ' +
+            commerce.province.name
+          }
+          infoIcon="md-pin"
           court={court}
           startDate={startDate}
           endDate={endDate}
@@ -316,6 +325,7 @@ class ClientReservationDetails extends Component {
           light={light}
           showPrice={true}
         />
+
         {this.renderReviewFields()}
         {this.renderCancelButton()}
       </KeyboardAwareScrollView>
@@ -324,40 +334,17 @@ class ClientReservationDetails extends Component {
 }
 
 const {
-  cancelButtonContainerStyle,
   reviewDividerStyle,
-  reviewTitleStyle,
-  reviewButtonsContainerStyle,
   overlayDividerStyle,
-  scrollViewStyle,
-  locationBGTextStyle,
-  locationBGContainerStyle
+  scrollViewStyle
 } = StyleSheet.create({
-  cancelButtonContainerStyle: { flex: 1, justifyContent: 'flex-end' },
   reviewDividerStyle: {
-    margin: 10,
-    marginLeft: 40,
-    marginRight: 40,
+    marginBottom: 10,
+    marginHorizontal: 40,
     backgroundColor: 'grey'
   },
-  reviewTitleStyle: { fontSize: 16, textAlign: 'center' },
-  reviewButtonsContainerStyle: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    marginBottom: 10
-  },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
-  locationBGTextStyle: {
-    color: MAIN_COLOR,
-    textAlign: 'center',
-    fontSize: 12
-  },
-  locationBGContainerStyle: {
-    borderColor: MAIN_COLOR,
-    height: 40,
-    borderRadius: 8
-  }
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
 
 const mapStateToProps = state => {

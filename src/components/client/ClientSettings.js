@@ -4,23 +4,26 @@ import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
-import { MenuItem, Menu, Input, CardSection } from '../common';
+import { MenuItem, Menu, Input, CardSection, SettingsItem, Toast } from '../common';
+import { isEmailVerified } from '../../utils';
 import {
   onUserDelete,
   onCommerceDelete,
   onLoginValueChange,
   onCommerceValueChange,
-  onClientDataValueChange
+  onClientDataValueChange,
+  sendEmailVefification
 } from '../../actions';
 
 class ClientSettings extends Component {
-  state = { cantDeleteUser: false, dontHaveCommerce: false, providerId: null };
+  state = { providerId: null };
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerLeft: (
         <HeaderBackButton
           tintColor="white"
+          title='Back'
           onPress={() => navigation.goBack(null)}
         />
       )
@@ -35,7 +38,7 @@ class ClientSettings extends Component {
 
   renderPasswordInput = () => {
     // muestra el input de contraseña para confirmar eliminacion de cuenta o negocio si ese es el metodo de autenticacion
-    if (this.state.providerId == 'password') {
+    if (this.state.providerId === 'password') {
       return (
         <View style={{ alignSelf: 'stretch' }}>
           <CardSection
@@ -63,8 +66,7 @@ class ClientSettings extends Component {
 
   onUserDeletePress = () => {
     if (this.props.commerceId) {
-      // ESTO SE DEBERIA REEMPLAZAR POR UN TOAST
-      this.setState({ cantDeleteUser: true });
+      Toast.show({ text: 'No podés eliminar tu cuenta porque tenés un negocio' });
     } else {
       this.props.onClientDataValueChange({
         prop: 'confirmDeleteVisible',
@@ -99,27 +101,11 @@ class ClientSettings extends Component {
   };
 
   onConfirmUserDelete = () => {
-    if (this.state.providerId != 'password') {
+    if (this.state.providerId !== 'password') {
       this.onBackdropPress();
     }
 
     this.props.onUserDelete(this.props.password);
-  };
-
-  renderCantDeleteUser = () => {
-    return (
-      <Menu
-        title="No puedes eliminar tu cuenta porque tienes un negocio"
-        onBackdropPress={() => this.setState({ cantDeleteUser: false })}
-        isVisible={this.state.cantDeleteUser}
-      >
-        <MenuItem
-          title="Cerrar"
-          icon="md-close"
-          onPress={() => this.setState({ cantDeleteUser: false })}
-        />
-      </Menu>
-    );
   };
 
   onCommerceDeletePress = () => {
@@ -129,8 +115,7 @@ class ClientSettings extends Component {
         value: true
       });
     } else {
-      // ESTO SE DEBERIA REEMPLAZAR CON UN TOAST
-      this.setState({ dontHaveCommerce: true });
+      Toast.show({ text: 'No tienes ningún negocio' });
     }
   };
 
@@ -160,27 +145,11 @@ class ClientSettings extends Component {
   };
 
   onConfirmCommerceDelete = () => {
-    if (this.state.providerId != 'password') {
+    if (this.state.providerId !== 'password') {
       this.onBackdropPress();
     }
 
     this.props.onCommerceDelete(this.props.password);
-  };
-
-  renderDontHaveCommerce = () => {
-    return (
-      <Menu
-        title="No tienes ningun negocio"
-        onBackdropPress={() => this.setState({ dontHaveCommerce: false })}
-        isVisible={this.state.dontHaveCommerce}
-      >
-        <MenuItem
-          title="Cerrar"
-          icon="md-close"
-          onPress={() => this.setState({ dontHaveCommerce: false })}
-        />
-      </Menu>
-    );
   };
 
   onBackdropPress = () => {
@@ -199,32 +168,72 @@ class ClientSettings extends Component {
     });
   };
 
+  onEmailVerifyPress = async () => {
+    const emailVerified = await isEmailVerified();
+
+    if (emailVerified) {
+      Toast.show({ text: 'Su cuenta ya está verificada' });
+    } else {
+      this.props.sendEmailVefification();
+    }
+  }
+
   render() {
     return (
       <ScrollView style={styles.containerStyle}>
-        <MenuItem
+        {
+          // opcion de cambiar contraseña es solo para los que se autenticaron con email y password
+          this.state.providerId === 'password' &&
+          <SettingsItem
+            leftIcon={{
+              name: 'md-key',
+              type: 'ionicon',
+              color: 'black'
+            }}
+            title='Cambiar Contraseña'
+            onPress={() => this.props.navigation.navigate('changeUserPassword')}
+            bottomDivider
+          />
+        }
+        {
+          // opcion de validar mail es solo para los que se autenticaron con email y password
+          this.state.providerId === 'password' &&
+          <SettingsItem
+            title="Verificar mi Cuenta"
+            leftIcon={{
+              name: 'md-mail-open',
+              type: 'ionicon',
+              color: 'black'
+            }}
+            onPress={this.onEmailVerifyPress}
+            bottomDivider
+          />
+        }
+        <SettingsItem
+          leftIcon={{
+            name: 'md-trash',
+            type: 'ionicon',
+            color: 'black'
+          }}
           title="Eliminar Mi Negocio"
-          icon="md-trash"
-          loadingWithText={this.props.loadingCommerceDelete}
           onPress={this.onCommerceDeletePress}
+          loading={this.props.loadingCommerceDelete}
+          bottomDivider
         />
-        <MenuItem
+        <SettingsItem
+          leftIcon={{
+            name: 'md-trash',
+            type: 'ionicon',
+            color: 'black'
+          }}
           title="Eliminar Cuenta"
-          icon="md-trash"
-          loadingWithText={this.props.loadingUserDelete}
           onPress={this.onUserDeletePress}
+          loading={this.props.loadingUserDelete}
+          bottomDivider
         />
-        {/* Opción en configuraciones para explicar y permitir mandar mail de configuracion*/}
-        {/* <MenuItem
-          title="Verificar mi Cuenta"
-          icon="md-mail-open"
-          onPress={}
-        /> */}
 
         {this.renderConfirmUserDelete()}
-        {this.renderCantDeleteUser()}
         {this.renderConfirmCommerceDelete()}
-        {this.renderDontHaveCommerce()}
       </ScrollView>
     );
   }
@@ -266,6 +275,7 @@ export default connect(
     onCommerceDelete,
     onLoginValueChange,
     onCommerceValueChange,
-    onClientDataValueChange
+    onClientDataValueChange,
+    sendEmailVefification
   }
 )(ClientSettings);

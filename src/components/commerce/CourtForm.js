@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Tooltip, CheckBox } from 'react-native-elements';
+import { Card, CheckBox, Divider } from 'react-native-elements';
 import { View, StyleSheet, Switch, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import moment from 'moment';
 import {
   onCourtValueChange,
   getCourtAndGroundTypes,
   courtCreate,
-  courtUpdate
+  courtUpdate,
+  onCourtNextReservationsRead
 } from '../../actions';
-import { CardSection, Input, Picker, Button } from '../common';
+import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
 import { validateValueType, trimString } from '../../utils';
 import {
   MAIN_COLOR,
@@ -25,12 +26,20 @@ class CourtForm extends Component {
     groundTypeError: '',
     priceError: '',
     lightPriceError: '',
+    disabledFromError: '',
+    disabledToError: '',
     selectedGrounds: [],
-    lightPriceOpen: false
+    lightPriceOpen: false,
+    disabledPeriodModal: false,
+    confirmationModal: false,
+    reservationsToCancel: []
   };
 
   componentDidMount() {
     this.props.getCourtAndGroundTypes();
+
+    if (this.props.lightPrice) this.setState({ lightPriceOpen: true });
+    this.isCourtDisabled();
   }
 
   componentDidUpdate(prevProps) {
@@ -41,62 +50,72 @@ class CourtForm extends Component {
 
       if (firstIndex > -1)
         this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
+    }
 
-      const { params } = this.props.navigation.state;
+    if (prevProps.disabledFrom !== this.props.disabledFrom ||
+      prevProps.disabledTo !== this.props.disabledTo) {
+      this.renderDisabledDatesError()
+    }
 
-      if (params) {
-        const { court } = params;
-        for (prop in params.court) {
-          this.props.onCourtValueChange({ prop, value: court[prop] });
-        }
-        if (court.lightPrice !== '') this.setState({ lightPriceOpen: true });
-      }
+    // ver si hay reservas que esten en el periodo de deshabilitacion de la cancha
+    if (prevProps.nextReservations !== this.props.nextReservations) {
+      this.disabledPeriodValidate();
     }
   }
 
-  onButtonPressHandler = () => {
-    if (this.validateMinimumData()) {
-      const {
+  isCourtDisabled = () => {
+    if (this.props.id && this.props.disabledTo > moment()) {
+      this.props.onCourtValueChange({
+        prop: 'disabled',
+        value: true
+      })
+    }
+  }
+
+  onCourtSave = () => {
+    const {
+      id,
+      name,
+      court,
+      ground,
+      price,
+      lightPrice,
+      commerceId,
+      navigation,
+      disabledFrom,
+      disabledTo
+    } = this.props;
+    const { reservationsToCancel } = this.state;
+
+    if (id) {
+      this.props.courtUpdate(
+        {
+          id,
+          name,
+          court,
+          ground,
+          price,
+          lightPrice,
+          commerceId,
+          disabledFrom,
+          disabledTo,
+          reservationsToCancel
+        },
+        navigation
+      );
+    } else {
+      this.props.courtCreate({
         name,
         court,
         ground,
         price,
         lightPrice,
-        courtState,
-        commerceId,
+        disabledFrom,
+        disabledTo,
+        commerceId
+      },
         navigation
-      } = this.props;
-
-      const { params } = this.props.navigation.state;
-      if (params) {
-        const { id } = this.props.navigation.state.params.court;
-        this.props.courtUpdate(
-          {
-            name,
-            court,
-            ground,
-            price,
-            lightPrice,
-            courtState,
-            id,
-            commerceId
-          },
-          navigation
-        );
-      } else {
-        this.props.courtCreate(
-          {
-            name,
-            court,
-            ground,
-            price,
-            lightPrice,
-            courtState,
-            commerceId
-          },
-          navigation
-        );
-      }
+      )
     }
   };
 
@@ -173,7 +192,8 @@ class CourtForm extends Component {
       this.renderCourtError() &&
       this.renderGroundTypeError() &&
       this.renderPriceError() &&
-      this.renderLightPriceError()
+      this.renderLightPriceError() &&
+      this.renderDisabledDatesError()
     );
   };
 
@@ -181,6 +201,7 @@ class CourtForm extends Component {
     this.setState({
       courtError: ''
     });
+
     if (key > 0) {
       if (this.props.grounds.length)
         this.setState({ selectedGrounds: this.props.grounds[key - 1] });
@@ -204,9 +225,9 @@ class CourtForm extends Component {
 
     grounds !== null && key > 0
       ? onCourtValueChange({
-          prop: 'ground',
-          value
-        })
+        prop: 'ground',
+        value
+      })
       : onCourtValueChange({ prop: 'ground', value: '' });
   };
 
@@ -241,150 +262,305 @@ class CourtForm extends Component {
     }
   }
 
-  render() {
-    return (
-      <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
+  renderDisableCourtForm = () => {
+    if (this.props.disabled) {
+      return (
         <View>
-          <Card containerStyle={styles.cardStyle}>
-            <CardSection style={{ marginTop: 0 }}>
-              <View
-                style={{
-                  flexDirection: 'row-reverse',
-                  paddingLeft: 5
-                }}
-              >
-                <Switch
-                  style={{ alignSelf: 'flex-end' }}
-                  onValueChange={value =>
-                    this.props.onCourtValueChange({
-                      prop: 'courtState',
-                      value
-                    })
-                  }
-                  value={this.props.courtState}
-                  trackColor={{
-                    false: GREY_DISABLED,
-                    true: MAIN_COLOR_DISABLED
-                  }}
-                  thumbColor={this.props.courtState ? MAIN_COLOR : 'grey'}
-                />
-                <Tooltip
-                  popover={
-                    <Text style={{ color: 'white', textAlign: 'justify' }}>
-                      {helpText}
-                    </Text>
-                  }
-                  height={120}
-                  width={250}
-                  backgroundColor={MAIN_COLOR}
-                  withOverlay={false}
-                >
-                  <Icon
-                    name="help"
-                    size={22}
-                    color={MAIN_COLOR}
-                    style={{
-                      marginRight: 6,
-                      marginTop: 3,
-                      padding: 0
-                    }}
-                  />
-                </Tooltip>
-              </View>
-            </CardSection>
-
-            <CardSection>
-              <Input
-                label="Nombre:"
-                placeholder="Cancha 1"
-                value={this.props.name}
-                errorMessage={this.state.nameError}
-                onChangeText={value =>
-                  this.props.onCourtValueChange({
-                    prop: 'name',
-                    value
-                  })
-                }
-                onFocus={() => this.setState({ nameError: '' })}
-                onBlur={this.renderNameError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Picker
-                title={'Tipo de cancha:'}
-                placeholder={{ value: null, label: 'Elija una opción...' }}
-                value={this.props.court}
-                items={this.props.courts}
-                onValueChange={this.onCourtTypeChangeHandle}
-                errorMessage={this.state.courtError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Picker
-                title={'Tipo de suelo:'}
-                placeholder={{ value: null, label: 'Elija una opción...' }}
-                value={this.props.ground}
-                items={this.state.selectedGrounds}
-                onValueChange={this.onGroundTypeChangeHandle}
-                disabled={this.state.selectedGrounds.length === 0}
-                errorMessage={this.state.groundTypeError}
-              />
-            </CardSection>
-
-            <CardSection>
-              <Input
-                label="Precio por turno (sin luz):"
-                placeholder="Precio de la cancha"
-                keyboardType="numeric"
-                value={this.props.price}
-                errorMessage={this.state.priceError}
-                onChangeText={value =>
-                  this.props.onCourtValueChange({
-                    prop: 'price',
-                    value
-                  })
-                }
-                onFocus={() => this.setState({ priceError: '' })}
-                onBlur={this.renderPriceError}
-              />
-            </CardSection>
-
-            {this.renderLightPriceInput()}
-
+          <CardSection
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'space-around',
+              paddingBottom: 10
+            }}
+          >
+            <DatePicker
+              date={this.props.disabledFrom}
+              mode="datetime"
+              label="Desde:"
+              placeholder="Fecha desde"
+              errorMessage={this.state.disabledFromError}
+              onDateChange={this.onDisabledFromValueChange}
+            />
+            <DatePicker
+              date={this.props.disabledTo}
+              mode="datetime"
+              label="Hasta:"
+              placeholder="Opcional"
+              errorMessage={this.state.disabledToError}
+              onDateChange={this.onDisabledToValueChange}
+            />
+          </CardSection>
+          {this.props.disabledTo &&
             <CardSection>
               <CheckBox
-                containerStyle={{
-                  marginTop: 5,
-                  marginLeft: 8,
-                  marginRight: 8,
-                  marginBottom: 0
-                }}
-                title="Agregar precio con luz"
+                title="Agregar fecha de fin de hasta"
                 iconType="material"
                 checkedIcon="clear"
                 uncheckedIcon="add"
-                uncheckedColor={MAIN_COLOR}
                 checkedColor={MAIN_COLOR}
-                checkedTitle="Borrar precio con luz"
-                checked={this.state.lightPriceOpen}
-                onPress={this.onCheckBoxPress}
+                uncheckedColor={MAIN_COLOR}
+                checkedTitle="Quitar fecha de hasta"
+                checked={!!this.props.disabledTo}
+                onPress={() => this.props.onCourtValueChange({ prop: 'disabledTo', value: null })}
               />
-            </CardSection>
-
-            <CardSection>
-              <Button
-                title="Guardar"
-                loading={this.props.loading}
-                onPress={this.onButtonPressHandler}
-                errorMessage={
-                  this.props.existedError ? 'Nombre de cancha existente' : ''
-                }
-              />
-            </CardSection>
-          </Card>
+            </CardSection>}
         </View>
+      );
+    }
+  }
+
+  onDisableSwitch = value => {
+    this.props.onCourtValueChange({
+      prop: 'disabled',
+      value
+    });
+
+    if (!value) {
+      this.props.onCourtValueChange({
+        prop: 'disabledFrom',
+        value: null
+      });
+
+      this.props.onCourtValueChange({
+        prop: 'disabledTo',
+        value: null
+      });
+    }
+  }
+
+  onDisabledFromValueChange = date => {
+    date = moment(date)
+
+    if (moment().diff(date, 'seconds') > 30) {
+      return Toast.show({ text: 'No puede ingresar una fecha anterior a la actual' })
+    }
+
+    this.props.onCourtValueChange({
+      prop: 'disabledFrom',
+      value: date
+    });
+  }
+
+  onDisabledToValueChange = date => {
+    this.props.onCourtValueChange({
+      prop: 'disabledTo',
+      value: moment(date)
+    });
+  }
+
+  renderDisabledDatesError = () => {
+    if (this.props.disabled) {
+      if (!this.props.disabledFrom) {
+        this.setState({ disabledFromError: 'Dato requerido' });
+        return false;
+      } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
+        this.setState({
+          disabledFromError: 'Debe ser anterior a la fecha de deshabilitación',
+          disabledToError: 'Debe ser posterior a la fecha de habilitación'
+        });
+        return false;
+      }
+    }
+
+    this.setState({ disabledFromError: '', disabledToError: '' });
+    return true;
+  }
+
+  onSavePress = () => {
+    this.setState({ reservationsToCancel: [] });
+
+    if (this.validateMinimumData()) {
+      if (this.props.disabled && this.props.id) {
+        this.props.onCourtNextReservationsRead({
+          commerceId: this.props.commerceId,
+          courtId: this.props.id,
+          startDate: this.props.disabledFrom,
+          endDate: this.props.disabledTo
+        });
+      } else {
+        this.onCourtSave();
+      }
+    }
+  }
+
+  disabledPeriodValidate = () => {
+    if (this.props.nextReservations.length) {
+      this.setState({ disabledPeriodModal: true });
+    } else {
+      this.onCourtSave();
+    }
+  }
+
+  onSaveAndCancelReservations = () => {
+    this.setState({
+      reservationsToCancel: this.props.nextReservations,
+      confirmationModal: false
+    }, this.onCourtSave);
+  }
+
+  renderDisabledPeriodModal = () => {
+    const { nextReservations } = this.props;
+
+    if (nextReservations.length) {
+      const firstReservationDate = nextReservations[0].startDate;
+      const lastReservationDate = nextReservations[nextReservations.length - 1].endDate;
+
+      return (
+        <Menu
+          title={
+            'Tienes ' + nextReservations.length.toString() + ' reservas de esta cancha' +
+            ' entre el ' + firstReservationDate.format('DD/MM/YYYY') +
+            ' a las ' + firstReservationDate.format('HH:mm') + ' hs.' +
+            ' y el ' + lastReservationDate.format('DD/MM/YYYY') +
+            ' a las ' + lastReservationDate.format('HH:mm') + ' hs.' +
+            ' Seleccione "Cancelar reservas y notificar" para cancelar dichas ' +
+            'reservas y deshabilitar la cancha o "Volver" para cambiar el periodo ' +
+            'de deshabilitación.'
+          }
+          onBackdropPress={() => this.setState({ disabledPeriodModal: false })}
+          isVisible={this.state.disabledPeriodModal}
+        >
+          <MenuItem
+            title="Cancelar reservas y notificar"
+            icon="md-trash"
+            onPress={() => this.setState({ confirmationModal: true, disabledPeriodModal: false })}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Volver"
+            icon="md-close"
+            onPress={() => this.setState({ disabledPeriodModal: false })}
+          />
+        </Menu>
+      );
+    }
+  }
+
+  render() {
+    return (
+      <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
+        <Card containerStyle={styles.cardStyle}>
+          <CardSection>
+            <Input
+              label="Nombre:"
+              placeholder="Cancha 1"
+              value={this.props.name}
+              errorMessage={this.state.nameError || this.props.existsError}
+              onChangeText={value =>
+                this.props.onCourtValueChange({
+                  prop: 'name',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ nameError: '' })}
+              onBlur={this.renderNameError}
+            />
+          </CardSection>
+
+          <CardSection>
+            <Picker
+              title={'Tipo de cancha:'}
+              placeholder={{ value: null, label: 'Seleccionar...' }}
+              value={this.props.court}
+              items={this.props.courts}
+              onValueChange={this.onCourtTypeChangeHandle}
+              errorMessage={this.state.courtError}
+            />
+          </CardSection>
+
+          <CardSection>
+            <Picker
+              title={'Tipo de suelo:'}
+              placeholder={{ value: null, label: 'Seleccionar...' }}
+              value={this.props.ground}
+              items={this.state.selectedGrounds}
+              onValueChange={this.onGroundTypeChangeHandle}
+              disabled={this.state.selectedGrounds.length === 0}
+              errorMessage={this.state.groundTypeError}
+            />
+          </CardSection>
+
+          <CardSection>
+            <Input
+              label="Precio por turno (sin luz):"
+              placeholder="Precio de la cancha"
+              keyboardType="numeric"
+              value={this.props.price}
+              errorMessage={this.state.priceError}
+              onChangeText={value =>
+                this.props.onCourtValueChange({
+                  prop: 'price',
+                  value
+                })
+              }
+              onFocus={() => this.setState({ priceError: '' })}
+              onBlur={this.renderPriceError}
+            />
+          </CardSection>
+
+          {this.renderLightPriceInput()}
+
+          <CardSection>
+            <CheckBox
+              title="Agregar precio con luz"
+              iconType="material"
+              checkedIcon="clear"
+              uncheckedIcon="add"
+              uncheckedColor={MAIN_COLOR}
+              checkedColor={MAIN_COLOR}
+              checkedTitle="Borrar precio con luz"
+              checked={this.state.lightPriceOpen}
+              onPress={this.onCheckBoxPress}
+            />
+          </CardSection>
+
+          <Divider style={{ margin: 12 }} />
+
+          <CardSection style={styles.disableCourtCardSection}>
+            <View style={styles.disableCourtText}>
+              <Text>Deshabilitar cancha:</Text>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Switch
+                onValueChange={this.onDisableSwitch}
+                value={this.props.disabled}
+                trackColor={{
+                  false: GREY_DISABLED,
+                  true: MAIN_COLOR_DISABLED
+                }}
+                thumbColor={this.props.disabled ? MAIN_COLOR : 'grey'}
+              />
+            </View>
+          </CardSection>
+          {this.renderDisableCourtForm()}
+          <CardSection>
+            <Button
+              title="Guardar"
+              loading={this.props.loading || this.props.loadingReservations}
+              onPress={this.onSavePress}
+            />
+          </CardSection>
+        </Card>
+
+        {this.renderDisabledPeriodModal()}
+        <Menu
+          title='¿Está serguro que desea cancelar las reservas y guardar?'
+          onBackdropPress={() => this.setState({ confirmationModal: false })}
+          isVisible={this.state.confirmationModal}
+        >
+          <MenuItem
+            title="Aceptar"
+            icon="md-checkmark"
+            onPress={this.onSaveAndCancelReservations}
+          />
+          <Divider style={{ backgroundColor: 'grey' }} />
+          <MenuItem
+            title="Cancelar"
+            icon="md-close"
+            onPress={() => this.setState({ confirmationModal: false })}
+          />
+        </Menu>
       </KeyboardAwareScrollView>
     );
   }
@@ -394,16 +570,25 @@ const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
     paddingTop: 10,
-    borderRadius: 10
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  disableCourtCardSection: {
+    paddingRight: 12,
+    paddingLeft: 15,
+    paddingVertical: 5,
+    flexDirection: 'row'
+  },
+  disableCourtText: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flex: 1
   }
 });
 
-const helpText =
-  'Encendido indica que el estado de la cancha es "Disponible", \
-en cambio, apagado indica que el estado de la cancha es "No Disponible"';
-
 const mapStateToProps = state => {
   const {
+    id,
     name,
     courts,
     court,
@@ -412,13 +597,17 @@ const mapStateToProps = state => {
     price,
     lightPrice,
     loading,
-    existedError,
-    courtState
+    existsError,
+    disabled,
+    disabledFrom,
+    disabledTo
   } = state.courtForm;
-  
   const { commerceId } = state.commerceData;
+  const { nextReservations } = state.courtReservationsList;
+  const loadingReservations = state.courtReservationsList.loading;
 
   return {
+    id,
     name,
     courts,
     court,
@@ -427,9 +616,13 @@ const mapStateToProps = state => {
     price,
     lightPrice,
     loading,
-    existedError,
-    courtState,
-    commerceId
+    existsError,
+    disabled,
+    commerceId,
+    disabledFrom,
+    disabledTo,
+    nextReservations,
+    loadingReservations
   };
 };
 
@@ -439,6 +632,7 @@ export default connect(
     onCourtValueChange,
     getCourtAndGroundTypes,
     courtCreate,
-    courtUpdate
+    courtUpdate,
+    onCourtNextReservationsRead
   }
 )(CourtForm);

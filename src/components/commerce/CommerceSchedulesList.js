@@ -53,7 +53,7 @@ class CommerceSchedulesList extends Component {
     }
 
     renderBackButton = () => {
-        return <HeaderBackButton tintColor='white' title='Volver' onPress={this.onBackPress} />
+        return <HeaderBackButton tintColor='white' title='Back' onPress={this.onBackPress} />
     }
 
     onBackPress = () => {

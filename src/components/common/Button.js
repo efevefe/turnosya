@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { MAIN_COLOR } from '../../constants';
 
@@ -9,7 +9,6 @@ class Button extends Component {
 
     return (
       <View style={this.props.outerContainerStyle}>
-        <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
         <RNEButton
           {...this.props}
           buttonStyle={[
@@ -35,10 +34,6 @@ const styles = StyleSheet.create({
   containerStyle: {
     borderRadius,
     overflow: 'hidden'
-  },
-  errorMessageStyle: {
-    color: 'red',
-    marginLeft: 8
   }
 });
 

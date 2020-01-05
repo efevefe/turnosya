@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  ON_REGISTER_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE,
   ON_USER_REGISTER,
   ON_USER_REGISTER_SUCCESS,
   ON_USER_REGISTER_FAIL,
@@ -18,12 +18,13 @@ import {
   ON_REAUTH_SUCCESS,
   ON_EMAIL_VERIFY_REMINDED,
   ON_REGISTER_FORM_OPEN,
-  ON_WORKPLACES_READ
+  ON_WORKPLACES_READ,
+  ON_USER_PASSWORD_UPDATE
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
 export const onClientDataValueChange = ({ prop, value }) => {
-  return { type: ON_REGISTER_VALUE_CHANGE, payload: { prop, value } };
+  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload: { prop, value } };
 };
 
 export const onRegisterFormOpen = () => {
@@ -178,4 +179,31 @@ export const readUserWorkplaces = () => dispatch => {
       );
       dispatch({ type: ON_WORKPLACES_READ, payload: workplaces });
     });
+};
+
+export const onUserPasswordUpdate = ({ password, newPassword }, navigation) => {
+  const { currentUser } = firebase.auth();
+
+  return dispatch => {
+    dispatch({ type: ON_USER_UPDATING });
+
+    userReauthenticate(password)
+      .then(() => {
+        currentUser
+          .updatePassword(newPassword)
+          .then(() => {
+            dispatch({ type: ON_REAUTH_SUCCESS });
+            dispatch({ type: ON_USER_PASSWORD_UPDATE });
+            navigation.goBack();
+          })
+          .catch(error => {
+            dispatch({ type: ON_USER_UPDATE_FAIL });
+            dispatch({ type: ON_REAUTH_SUCCESS });
+          });
+      })
+      .catch(error => {
+        dispatch({ type: ON_REAUTH_FAIL });
+        dispatch({ type: ON_USER_UPDATE_FAIL });
+      });
+  };
 };

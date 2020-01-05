@@ -15,3 +15,6 @@ export * from './EmptyList';
 export * from './IconButton';
 export * from './PictureView';
 export * from './ReviewItem';
+export * from './ReviewCard';
+export * from './SettingsItem';
+export * from './ButtonGroup';

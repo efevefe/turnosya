@@ -2,30 +2,46 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Button } from 'react-native-elements';
-import { IconButton } from '../common';
-import { MAIN_COLOR } from '../../constants';
 import CommercesMap from '../common/CommercesMap';
+import { Toast } from "../common";
 
 class CommercesFiltersMap extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: navigation.getParam('rightButton')
+    }
+  };
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      rightButton: this.renderApplyFiltersButton()
+    });
+  }
+
+  renderApplyFiltersButton = () => {
+    return (
+      <Button
+        title="Aceptar"
+        type="clear"
+        titleStyle={{ color: "white" }}
+        onPress={this.onApplyFiltersPress}
+        containerStyle={applyFilterButtonStyle}
+      />
+    );
+  }
+
+  onApplyFiltersPress = () => {
+    if (this.props.latitude) {
+      this.props.navigation.goBack()
+    } else {
+      Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' })
+    }
+  }
+
   render() {
     return (
       <View style={windowContainerStyle}>
-        <View style={windowTopContainerStyle}>
-          <IconButton
-            icon="md-close"
-            onPress={() => this.props.navigation.goBack()}
-          />
-          <Button
-            title="Aceptar"
-            type="clear"
-            titleStyle={{ color: 'white' }}
-            onPress={() => this.props.navigation.goBack()}
-            style={applyFilterButtonStyle}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <CommercesMap searchBar={true} longPressAllowed={true} />
-        </View>
+        <CommercesMap searchBar={true} longPressAllowed={true} />
       </View>
     );
   }
@@ -33,24 +49,15 @@ class CommercesFiltersMap extends Component {
 
 const {
   windowContainerStyle,
-  windowTopContainerStyle,
   applyFilterButtonStyle
 } = StyleSheet.create({
-  windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
-  windowTopContainerStyle: {
-    paddingTop: 20,
-    height: 70,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row'
-  },
-  applyFilterButtonStyle: { marginRight: 10, padding: 5 }
+  windowContainerStyle: { flex: 1 },
+  applyFilterButtonStyle: { paddingRight: 10 }
 });
 
 const mapStateToProps = state => {
-  const { latitude, longitude } = state.locationData;
-
-  return { latitude, longitude };
+  const { latitude } = state.locationData.selectedLocation;
+  return { latitude };
 };
 
 export default connect(mapStateToProps, {})(CommercesFiltersMap);

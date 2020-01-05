@@ -1,5 +1,5 @@
 import {
-  ON_REGISTER_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE,
   ON_USER_REGISTER,
   ON_REGISTER_FORM_OPEN,
   ON_USER_REGISTER_SUCCESS,
@@ -14,7 +14,8 @@ import {
   ON_USER_DELETED,
   ON_USER_DELETE_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_WORKPLACES_READ
+  ON_WORKPLACES_READ,
+  ON_USER_PASSWORD_UPDATE
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -38,7 +39,7 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_REGISTER_VALUE_CHANGE:
+    case ON_CLIENT_DATA_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_USER_REGISTER:
       return { ...state, loading: true, error: '' };
@@ -59,6 +60,14 @@ export default (state = INITIAL_STATE, action) => {
     case ON_USER_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
       return { ...state, profilePicture: action.payload, refreshing: false };
+    case ON_USER_PASSWORD_UPDATE:
+      Toast.show({ text: 'Cambios guardados' });
+      return {
+        ...state,
+        password: '',
+        confirmPassword: '',
+        refreshing: false
+      };
     case ON_USER_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };

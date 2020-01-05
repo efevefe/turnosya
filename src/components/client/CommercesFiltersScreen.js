@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider, Button, ButtonGroup, Slider } from 'react-native-elements';
+import { Divider, Button, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { IconButton, Picker } from '../common';
+import { IconButton, Picker, ButtonGroup } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   updateAllFilters,
   onUserLocationChange,
-  onSelectedLocationChange
+  onSelectedLocationChange,
+  commerceHitsUpdate
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -19,19 +20,51 @@ class CommerceFiltersScreen extends Component {
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
     oldData: {
       selectedLocation: this.props.selectedLocation,
-      userlocation: this.props.userLocation
+      userLocation: this.props.userLocation,
+      markers: this.props.markers
     }
   };
 
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: navigation.getParam('rightButton'),
+      headerLeft: navigation.getParam('leftButton')
+    };
+  };
+
   componentDidMount = () => {
+    this.props.navigation.setParams({
+      rightButton: this.renderApplyFiltersButton(),
+      leftButton: this.renderCloseButton()
+    });
+
     this.props.onProvincesNameRead();
   };
+
+  renderApplyFiltersButton = () => {
+    return (
+      <Button
+        title="Aplicar Filtros"
+        type="clear"
+        titleStyle={{ color: "white" }}
+        onPress={this.onApplyFiltersPress.bind(this)}
+        containerStyle={applyFilterButtonStyle}
+      />
+    );
+  }
+
+  renderCloseButton = () => {
+    return (
+      <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
+    );
+  }
 
   onClosePress() {
     this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
     this.props.onUserLocationChange(this.state.oldData.userLocation);
+    this.props.commerceHitsUpdate(this.state.oldData.markers);
 
-    this.props.navigation.goBack();
+    this.props.navigation.goBack(null);
   }
 
   onApplyFiltersPress() {
@@ -41,7 +74,7 @@ class CommerceFiltersScreen extends Component {
       locationRadiusKms: this.state.locationRadiusKms
     });
 
-    this.props.navigation.goBack();
+    this.props.navigation.goBack(null);
   }
 
   onLocationOptionPress(buttonIndex) {
@@ -91,16 +124,6 @@ class CommerceFiltersScreen extends Component {
     return (
       <View style={windowContainerStyle}>
         {this.renderLocationMessage()}
-        <View style={windowTopContainerStyle}>
-          <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
-          <Button
-            title="Aplicar Filtros"
-            type="clear"
-            titleStyle={{ color: 'white' }}
-            onPress={this.onApplyFiltersPress.bind(this)}
-            style={applyFilterButtonStyle}
-          />
-        </View>
         <View style={windowContentContainerStyle}>
           {/* Divisor */}
           <View style={dividerContainerStyle}>
@@ -138,11 +161,7 @@ class CommerceFiltersScreen extends Component {
                 'Ubicación actual',
                 'Ubicación en mapa'
               ]}
-              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: 'white' }}
-              textStyle={locationBGTextStyle}
               containerStyle={locationBGContainerStyle}
-              innerBorderStyle={{ color: MAIN_COLOR }}
             />
             {this.renderRadiusSlider()}
           </View>
@@ -152,17 +171,15 @@ class CommerceFiltersScreen extends Component {
   }
 }
 
-//#region Styles
+// region Styles
 const {
   dividerStyle,
   dividerTextStyle,
   dividerContainerStyle,
   windowContainerStyle,
-  windowTopContainerStyle,
   windowContentContainerStyle,
   applyFilterButtonStyle,
   provinceContainerStyle,
-  locationBGTextStyle,
   locationBGContainerStyle,
   locationContainerStyle,
   locationTextStyle,
@@ -177,30 +194,17 @@ const {
   dividerTextStyle: { color: 'white', padding: 5 },
   dividerContainerStyle: { flexDirection: 'row', justifyContent: 'center' },
   windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
-  windowTopContainerStyle: {
-    paddingTop: 20,
-    height: 70,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row'
-  },
-  windowContentContainerStyle: { flex: 1, alignItems: 'center' },
-  applyFilterButtonStyle: { marginRight: 10, padding: 5 },
+  windowContentContainerStyle: { flex: 1, alignItems: "center" },
+  applyFilterButtonStyle: { paddingRight: 10 },
   provinceContainerStyle: {
     alignSelf: 'stretch',
     paddingBottom: 20,
     paddingHorizontal: 10
   },
-  locationBGTextStyle: {
-    color: MAIN_COLOR,
-    textAlign: 'center',
-    fontSize: 12
-  },
   locationBGContainerStyle: {
     borderColor: 'white',
-    height: 35,
     marginTop: 15,
-    borderRadius: 8
+    height: 35
   },
   locationContainerStyle: { padding: 5, alignSelf: 'stretch', flex: 1 },
   locationTextStyle: {
@@ -218,16 +222,19 @@ const mapStateToProps = state => {
   const {
     provinceNameFilter,
     locationButtonIndex,
-    locationRadiusKms
+    locationRadiusKms,
+    markers
   } = state.commercesList;
-  const { selectedLocation } = state.locationData;
+  const { selectedLocation, userLocation } = state.locationData;
 
   return {
     provincesList,
     provinceNameFilter,
     locationButtonIndex,
     locationRadiusKms,
-    selectedLocation
+    selectedLocation,
+    userLocation,
+    markers
   };
 };
 
@@ -235,5 +242,6 @@ export default connect(mapStateToProps, {
   onProvincesNameRead,
   updateAllFilters,
   onUserLocationChange,
-  onSelectedLocationChange
+  onSelectedLocationChange,
+  commerceHitsUpdate
 })(CommerceFiltersScreen);
