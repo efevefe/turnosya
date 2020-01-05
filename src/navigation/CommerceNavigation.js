@@ -246,7 +246,8 @@ const reportsStack = createStackNavigator(
     pieChartReport: {
       screen: PieChartReport,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes')
+        title: navigation.getParam('title', 'Reportes'),
+        headerRight: navigation.getParam('rightIcon')
       })
     }
   },

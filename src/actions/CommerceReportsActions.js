@@ -225,43 +225,36 @@ export const readReviewsPerMonths = (commerceId, year) => dispatch => {
     });
 };
 
+// State turns reservation report
 export const readStateTurnsReservations = (
   commerceId,
   startDate,
   endDate
 ) => dispatch => {
-  // Tengo que revisar esto bien, lo hace mal ya me voy a fijar que onda despues
   dispatch({ type: ON_COMMERCE_REPORT_READING });
+
   const db = firebase.firestore();
-  const reservations = [];
   const turns = [0, 0];
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('startDate', '>=', startDate.toDate())
     .where('startDate', '<', endDate.toDate())
     .onSnapshot(snapshot => {
-      snapshot.forEach(doc => {
-        reservations.push({
-          id: doc.id,
-          ...doc.data(),
-          startDate: moment(doc.data().startDate.toDate()),
-          endDate: moment(doc.data().endDate.toDate())
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          const state = doc.data().state;
+          state ? (turns[1] += 1) : (turns[0] += 1);
+
+          // TODO: el día de mañana, esto se debería hacer:
+          // if (state) turns[state.id] += 1;
         });
-      });
 
-      reservations.forEach(reservation => {
-        if (reservation.state === null) {
-          // Hay que revisar esto despues porq en la BD hay negocios con el
-          // campo este como 'cancelationDate' y otros como 'cancellationDate'. Hay que corregir eso en la BD.. Por eso lo hice con el state
-          turns.fill(turns[0] + 1, 0, 1);
-        } else {
-          turns.fill(turns[1] + 1, 1, 2);
-        }
-      });
-
-      dispatch({
-        type: ON_COMMERCE_REPORT_READ,
-        payload: turns
-      });
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: turns
+        });
+      } else {
+        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
+      }
     });
 };
