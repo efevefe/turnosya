@@ -60,7 +60,7 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
   const profileId = firebase.auth().currentUser.uid;
   let roleName;
 
-  // Agregar validaciones por fechas más adelante
+  // Agregar validaciones por fecha de aceptación (post-Notificaciones)
   db.collection(`Commerces/${commerceId}/Employees`)
     .where('softDelete', '==', null)
     .where('profileId', '==', profileId)
@@ -308,7 +308,6 @@ export const validateCuit = cuit => {
   };
 };
 
-// BORRAR TODOS LOS EMPLEADOS - RECORDAD!!!!
 export const onCommerceDelete = (password, navigation = null) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();

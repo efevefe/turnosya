@@ -53,7 +53,6 @@ class EmployeesList extends Component {
   };
 
   renderList = () => {
-    // CAMBIAR EL ID DEL KEY
     return this.props.employees.length > 0 ? (
       <FlatList
         data={this.props.employees}

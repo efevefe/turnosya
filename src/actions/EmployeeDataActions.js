@@ -16,6 +16,7 @@ import {
   ON_EMPLOYEE_UPDATED
 } from './types';
 import { Toast } from '../components/common';
+import { ROLES } from '../constants';
 
 export const employeeValueChange = (prop, value) => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -120,27 +121,35 @@ export const deleteEmployee = ({
   }
 };
 
-export const searchUserEmail = email => dispatch => {
+export const searchUserEmail = (email, commerceId) => async dispatch => {
   dispatch({ type: ON_USER_SEARCHING });
   const db = firebase.firestore();
-
-  // VERIFICAR QUE EL DUEÑO NO SE PUEDE AGREGAR
 
   db.collection('Profiles')
     .where('email', '==', email)
     .get()
     .then(snapshot => {
       if (snapshot.empty) {
-        dispatch({ type: ON_USER_SEARCH_FAIL });
+        dispatch({
+          type: ON_USER_SEARCH_FAIL,
+          payload: 'No se encontró ningún usuario'
+        });
       } else {
         const doc = snapshot.docs[0];
-        dispatch({
-          type: ON_USER_SEARCH_SUCCESS,
-          payload: {
-            ...doc.data(),
-            profileId: doc.id
-          }
-        });
+
+        if (doc.data().commerceId === commerceId)
+          dispatch({
+            type: ON_USER_SEARCH_FAIL,
+            payload: 'El dueño no puede ser empleado'
+          });
+        else
+          dispatch({
+            type: ON_USER_SEARCH_SUCCESS,
+            payload: {
+              ...doc.data(),
+              profileId: doc.id
+            }
+          });
       }
     });
 };

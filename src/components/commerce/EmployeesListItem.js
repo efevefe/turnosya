@@ -80,22 +80,23 @@ class CourtListItem extends Component {
         <ListItem
           title={`${firstName} ${lastName}`}
           titleStyle={
-            true // temporary... don't panic
-              ? { textAlign: 'left', display: 'flex' }
-              : {
-                  textAlign: 'left',
-                  display: 'flex',
-                  color: 'grey',
-                  fontStyle: 'italic'
-                }
+            { textAlign: 'left', display: 'flex' }
+            // true // agregar cuando estén las notificaciones
+            //   ? { textAlign: 'left', display: 'flex' }
+            //   : {
+            //       textAlign: 'left',
+            //       display: 'flex',
+            //       color: 'grey',
+            //       fontStyle: 'italic'
+            //     }
           }
           rightTitle={
             <Text
-              style={
-                true // temporary
-                  ? {}
-                  : { color: 'grey', fontStyle: 'italic' }
-              }
+            // style={
+            //   true // agregar cuando estén las notificaciones
+            //     ? {}
+            //     : { color: 'grey', fontStyle: 'italic' }
+            // }
             >
               {role.name}
             </Text>
@@ -104,9 +105,10 @@ class CourtListItem extends Component {
           subtitle={
             <Text
               style={
-                true // temporary
-                  ? { color: 'grey' }
-                  : { color: 'grey', fontStyle: 'italic' }
+                { color: 'grey' }
+                // true // agregar cuando estén las notificaciones
+                //   ? { color: 'grey' }
+                //   : { color: 'grey', fontStyle: 'italic' }
               }
             >
               {email}

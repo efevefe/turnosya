@@ -33,7 +33,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_EMPLOYEE_VALUE_CHANGE:
       return { ...state, [action.payload.prop]: action.payload.value };
     case ON_EMPLOYEE_NAME_CLEAR:
-      return { ...state, firstName: '', lastName: '', phone: '' }; // chequear estos casos
+      return { ...state, firstName: '', lastName: '', phone: '' };
     case ON_USER_SEARCHING:
       return { ...state, emailLoading: true, emailError: '' };
     case ON_USER_SEARCH_SUCCESS:
@@ -46,7 +46,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         emailLoading: false,
-        emailError: 'No se encontró ningún usuario'
+        emailError: action.payload
       };
     case ON_EMPLOYEE_SAVING:
       return { ...state, saveLoading: true };

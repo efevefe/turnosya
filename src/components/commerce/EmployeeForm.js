@@ -50,7 +50,9 @@ class EmployeeForm extends Component {
     ) : (
       <TouchableOpacity
         style={{ flex: 1, padding: 5 }}
-        onPress={() => this.props.searchUserEmail(this.props.email)}
+        onPress={() =>
+          this.props.searchUserEmail(this.props.email, this.props.commerceId)
+        }
       >
         <Icon name="search" color={MAIN_COLOR} size={24} />
       </TouchableOpacity>
