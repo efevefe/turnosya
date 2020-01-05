@@ -225,7 +225,8 @@ const reportsStack = createStackNavigator(
     barChartReport: {
       screen: BarChartReport,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes')
+        title: navigation.getParam('title', 'Reportes'),
+        headerRight: navigation.getParam('rightIcon')
       })
     },
     lineChartMoneyReport: {

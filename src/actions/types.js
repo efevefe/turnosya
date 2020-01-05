@@ -115,10 +115,12 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_COURT_RESERVATION_VALUE_CHANGE =
+  'on_court_reservation_value_change';
 export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
-export const ON_COURT_RESERVATION_CREATE_FAIL = 'on_court_reservation_create_fail';
+export const ON_COURT_RESERVATION_CREATE_FAIL =
+  'on_court_reservation_create_fail';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
@@ -197,3 +199,4 @@ export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
 export const ON_COMMERCE_REPORT_VALUE_CHANGE =
   'on_commerce_report_value_change';
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
+export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
