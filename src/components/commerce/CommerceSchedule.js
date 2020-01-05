@@ -15,8 +15,10 @@ import {
   isCourtDisabledOnSlot
 } from '../../actions';
 
+import CourtTypesFilter from './CourtTypesFilter';
+
 class CommerceSchedule extends Component {
-  state = { selectedDate: moment(), modal: false };
+  state = { selectedDate: moment(), modal: false, selectedCourtTypes: [] };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -79,6 +81,7 @@ class CommerceSchedule extends Component {
     this.props.navigation.navigate(
       'commerceCourtsList',
       {
+        selectedCourtTypes: this.state.selectedCourtTypes,
         title: startDate.format('DD') +
           ' de ' + MONTHS[startDate.month()] +
           ', ' + startDate.format('HH:mm') + ' hs.'
@@ -86,8 +89,22 @@ class CommerceSchedule extends Component {
     );
   };
 
+  isCourtTypeSelected = courtType => {
+    const { selectedCourtTypes } = this.state;
+
+    return (
+      selectedCourtTypes.includes('Todas') ||
+      selectedCourtTypes.includes(courtType)
+    );
+  }
+
   reservationsOnSlots = () => {
-    const { reservations, courts, slots } = this.props;
+    const { reservations, slots } = this.props;
+
+    // se filtran los courts segun los courtTypes seleccionados
+    const courts = this.props.courts.filter(court => {
+      return this.isCourtTypeSelected(court.court);
+    });
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
@@ -95,7 +112,10 @@ class CommerceSchedule extends Component {
       let courtsAvailable = 0;
 
       reservations.forEach(reservation => {
-        if (slot.startDate.toString() === reservation.startDate.toString())
+        if (
+          slot.startDate.toString() === reservation.startDate.toString() &&
+          this.isCourtTypeSelected(reservation.courtType)
+        )
           reserved++;
       });
 
@@ -115,6 +135,10 @@ class CommerceSchedule extends Component {
 
     this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
   };
+
+  onCourtTypesFilterValueChange = selectedCourtTypes => {
+    this.setState({ selectedCourtTypes }, this.reservationsOnSlots);
+  }
 
   renderConfigurationButton = () => {
     return (
@@ -149,6 +173,10 @@ class CommerceSchedule extends Component {
 
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
+        <CourtTypesFilter
+          onValueChange={this.onCourtTypesFilterValueChange}
+        />
+
         <Schedule
           cards={cards}
           selectedDate={selectedDate}
