@@ -211,6 +211,7 @@ const profileStack = createStackNavigator(
   },
   stackNavigationOptions
 );
+
 const reportsStack = createStackNavigator(
   {
     dashBoard: {
@@ -224,31 +225,27 @@ const reportsStack = createStackNavigator(
     },
     barChartReport: {
       screen: BarChartReport,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+      navigationOptions: {
+        title: 'Reservas por día'
+      }
     },
     lineChartMoneyReport: {
       screen: LineChartMoneyReport,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+      navigationOptions: {
+        title: 'Ingresos por mes'
+      }
     },
     lineChartReviewsReport: {
       screen: LineChartReviewsReport,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+      navigationOptions: {
+        title: 'Calificación por mes'
+      }
     },
     pieChartReport: {
       screen: PieChartReport,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Reportes'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+      navigationOptions: {
+        title: 'Turnos realizados y cancelados'
+      }
     }
   },
   stackNavigationOptions
@@ -266,7 +263,7 @@ const commerceTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'calendar'
+    initialRouteName: 'reports'
   }
 );
 

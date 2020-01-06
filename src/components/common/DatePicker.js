@@ -27,9 +27,10 @@ class DatePicker extends Component {
     const enabled = this.props.disabled ? false : true;
     const color = enabled ? MAIN_COLOR : '#c4c4c4';
     const borderBottomWidth = enabled ? 1.5 : 1;
+    const width = this.props.pickerWidth || pickerWidth;
 
     return (
-      <View style={{ width: pickerWidth }}>
+      <View style={{ width }}>
         {this.renderLabel(color)}
         <RNDatePicker
           {...this.props}
@@ -54,7 +55,7 @@ class DatePicker extends Component {
               paddingRight: 5
             }
           }}
-          style={{ width: pickerWidth }}
+          style={{ width }}
         />
         {this.renderErrorMessage()}
       </View>

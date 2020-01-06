@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Text, ScrollView } from 'react-native';
+import { Overlay, Card } from 'react-native-elements';
 import {
   LineChart,
   Spinner,
   Menu,
   Picker,
   Button,
-  IconButton
+  IconButton,
+  CardSection
 } from '../../common';
 import {
   onCommerceReportValueChange,
@@ -39,6 +41,20 @@ class LineChartMoneyReport extends Component {
     });
   }
 
+  onGenerateReportPress = () => {
+    this.props.readEarningsPerMonths(
+      this.props.commerceId,
+      this.state.modalYear
+    );
+
+    this.props.onCommerceReportValueChange({
+      prop: 'selectedYear',
+      value: this.state.modalYear
+    });
+
+    this.setState({ modal: false });
+  }
+
   // onDataEmpty = () => {};
 
   render() {
@@ -53,39 +69,32 @@ class LineChartMoneyReport extends Component {
     return (
       <ScrollView style={{ flex: 1 }}>
         <Menu
-          title="Seleccione el año a diagramar"
+          title='Seleccionar Año'
+          isVisible={this.state.modal}
           onBackdropPress={() =>
             this.setState({ modal: false, modalYear: this.props.selectedYear })
           }
-          isVisible={this.state.modal}
-          overlayStyle={{ alignItems: 'center' }}
-          titleStyle={{ alignSelf: 'center' }}
         >
-          <Picker
-            value={this.state.modalYear}
-            items={this.props.years}
-            onValueChange={modalYear => this.setState({ modalYear })}
-          />
-          <Button
-            title={'Generar Reporte'}
-            buttonStyle={{ marginVertical: 20 }}
-            onPress={() => {
-              this.props.readEarningsPerMonths(
-                this.props.commerceId,
-                this.state.modalYear
-              );
-              this.props.onCommerceReportValueChange({
-                prop: 'selectedYear',
-                value: this.state.modalYear
-              });
-              this.setState({ modal: false });
-            }}
-          />
+          <CardSection>
+            <Picker
+              value={this.state.modalYear}
+              items={this.props.years}
+              onValueChange={modalYear => this.setState({ modalYear })}
+            />
+          </CardSection>
+          <CardSection>
+            <Button
+              title={'Generar Reporte'}
+              onPress={this.onGenerateReportPress}
+            />
+          </CardSection>
         </Menu>
-        <Text style={{ fontSize: 30 }}>
-          Evolución de mis Ganancias en {this.props.selectedYear}
-        </Text>
-        <LineChart data={dataLine} yAxisLabel={'$'} />
+
+        <LineChart
+          data={dataLine}
+          title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
+          yAxisLabel={'$ '}
+        />
       </ScrollView>
     );
   }

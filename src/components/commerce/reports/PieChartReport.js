@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { ScrollView, Dimensions } from 'react-native';
 import {
   PieChart,
   Spinner,
@@ -13,8 +15,9 @@ import {
   readStateTurnsReservations,
   onCommerceReportValueChange
 } from '../../../actions/CommerceReportsActions';
-import { Text, ScrollView } from 'react-native';
-import moment from 'moment';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
+
+const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
 class PieChartReport extends Component {
   constructor(props) {
@@ -29,6 +32,7 @@ class PieChartReport extends Component {
       modalEndDate: endDate
     };
   }
+  
   static navigationOptions = ({ navigation }) => {
     return { headerRight: navigation.getParam('rightIcon') };
   };
@@ -46,33 +50,54 @@ class PieChartReport extends Component {
 
   // onDataEmpty = () => {};
 
+  onGenerateReportPress = () => {
+    this.props.readStateTurnsReservations(
+      this.props.commerceId,
+      moment(this.state.modalStartDate),
+      moment(this.state.modalEndDate)
+    );
+
+    this.props.onCommerceReportValueChange({
+      prop: 'startDate',
+      value: moment(this.state.modalStartDate)
+    });
+
+    this.props.onCommerceReportValueChange({
+      prop: 'endDate',
+      value: moment(this.state.modalEndDate)
+    });
+
+    this.setState({ modal: false });
+  }
+
   render() {
     if (this.props.loading) return <Spinner />;
     // if (isDataEmpty) return this.onDataEmpty();
 
     const dataPie = this.props.data[1]
       ? [
-          {
-            name: 'Realizados',
-            count: this.props.data[0],
-            color: 'rgba(199, 44, 65, 1)',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15
-          },
-          {
-            name: 'Cancelados',
-            count: this.props.data[1],
-            color: 'rgba(199, 44, 65, 0.5)',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15
-          }
-        ]
+        {
+          name: 'Realizados',
+          count: this.props.data[0],
+          color: MAIN_COLOR,
+          legendFontColor: 'black',
+          legendFontSize: 15
+        },
+        {
+          name: 'Cancelados',
+          count: this.props.data[1],
+          color: MAIN_COLOR_DISABLED,
+          legendFontColor: 'black',
+          legendFontSize: 15
+        }
+      ]
       : [];
 
     return (
       <ScrollView>
         <Menu
-          title="Seleccione el periodo a diagramar"
+          title="Seleccionar Periodo"
+          isVisible={this.state.modal}
           onBackdropPress={() =>
             this.setState({
               modal: false,
@@ -80,16 +105,12 @@ class PieChartReport extends Component {
               modalEndDate: this.props.endDate
             })
           }
-          isVisible={this.state.modal}
-          overlayStyle={{ alignItems: 'center' }}
-          titleStyle={{ alignSelf: 'center' }}
         >
           <CardSection
             style={{
               flexDirection: 'row',
-              alignItems: 'flex-start',
               justifyContent: 'space-around',
-              paddingBottom: 10
+              paddingTop: 10
             }}
           >
             <DatePicker
@@ -97,6 +118,7 @@ class PieChartReport extends Component {
               mode="date"
               label="Desde:"
               placeholder="Fecha desde"
+              pickerWidth={pickerWidth}
               onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
@@ -104,35 +126,24 @@ class PieChartReport extends Component {
               mode="date"
               label="Hasta:"
               placeholder="Opcional"
+              pickerWidth={pickerWidth}
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
-          <Button
-            title={'Generar Reporte'}
-            onPress={() => {
-              this.props.readStateTurnsReservations(
-                this.props.commerceId,
-                moment(this.state.modalStartDate),
-                moment(this.state.modalEndDate)
-              );
-
-              this.props.onCommerceReportValueChange({
-                prop: 'startDate',
-                value: moment(this.state.modalStartDate)
-              });
-              this.props.onCommerceReportValueChange({
-                prop: 'endDate',
-                value: moment(this.state.modalEndDate)
-              });
-              this.setState({ modal: false });
-            }}
-          />
+          <CardSection>
+            <Button
+              title={'Generar Reporte'}
+              onPress={this.onGenerateReportPress}
+            />
+          </CardSection>
         </Menu>
-        <Text style={{ fontSize: 30 }}>
-          Reservas por día entre el {moment(this.props.startDate).format('L')} y{' '}
-          {moment(this.props.endDate).format('L')}
-        </Text>
-        <PieChart data={dataPie} />
+
+        <PieChart
+          title={'TURNOS RESERVADOS Y CANCELADOS ENTRE EL ' +
+            this.props.startDate.format('DD/MM/YYYY') + ' Y EL ' +
+            this.props.endDate.format('DD/MM/YYYY')}
+          data={dataPie}
+        />
       </ScrollView>
     );
   }

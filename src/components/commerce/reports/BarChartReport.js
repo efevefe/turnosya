@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { ScrollView, Text, Dimensions, View } from 'react-native';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import {
   BarChart,
   Spinner,
-  Toast,
   DatePicker,
   Button,
   CardSection,
@@ -14,9 +15,8 @@ import {
   readReservationsOnDays,
   onCommerceReportValueChange
 } from '../../../actions/CommerceReportsActions';
-import { ScrollView, Text } from 'react-native';
-import { formattedMoment } from '../../../utils';
-import moment from 'moment';
+
+const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
 class BarChartReport extends Component {
   constructor(props) {
@@ -49,6 +49,26 @@ class BarChartReport extends Component {
 
   // onDataEmpty = () => {};
 
+  onGenerateReportPress = () => {
+    this.props.readReservationsOnDays(
+      this.props.commerceId,
+      moment(this.state.modalStartDate),
+      moment(this.state.modalEndDate)
+    );
+
+    this.props.onCommerceReportValueChange({
+      prop: 'startDate',
+      value: moment(this.state.modalStartDate)
+    });
+
+    this.props.onCommerceReportValueChange({
+      prop: 'endDate',
+      value: moment(this.state.modalEndDate)
+    });
+
+    this.setState({ modal: false });
+  }
+
   render() {
     if (this.props.loading) return <Spinner />;
     // if (isDataEmpty) return this.onDataEmpty();
@@ -59,9 +79,10 @@ class BarChartReport extends Component {
     };
 
     return (
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView>
         <Menu
-          title="Seleccione el periodo a diagramar"
+          title="Seleccionar Periodo"
+          isVisible={this.state.modal}
           onBackdropPress={() =>
             this.setState({
               modal: false,
@@ -69,16 +90,12 @@ class BarChartReport extends Component {
               modalEndDate: this.props.endDate
             })
           }
-          isVisible={this.state.modal}
-          overlayStyle={{ alignItems: 'center' }}
-          titleStyle={{ alignSelf: 'center' }}
         >
           <CardSection
             style={{
               flexDirection: 'row',
-              alignItems: 'flex-start',
               justifyContent: 'space-around',
-              paddingBottom: 10
+              paddingTop: 10
             }}
           >
             <DatePicker
@@ -86,6 +103,7 @@ class BarChartReport extends Component {
               mode="date"
               label="Desde:"
               placeholder="Fecha desde"
+              pickerWidth={pickerWidth}
               onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
@@ -93,35 +111,24 @@ class BarChartReport extends Component {
               mode="date"
               label="Hasta:"
               placeholder="Opcional"
+              pickerWidth={pickerWidth}
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
-          <Button
-            title={'Generar Reporte'}
-            onPress={() => {
-              this.props.readReservationsOnDays(
-                this.props.commerceId,
-                moment(this.state.modalStartDate),
-                moment(this.state.modalEndDate)
-              );
-
-              this.props.onCommerceReportValueChange({
-                prop: 'startDate',
-                value: moment(this.state.modalStartDate)
-              });
-              this.props.onCommerceReportValueChange({
-                prop: 'endDate',
-                value: moment(this.state.modalEndDate)
-              });
-              this.setState({ modal: false });
-            }}
-          />
+          <CardSection>
+            <Button
+              title={'Generar Reporte'}
+              onPress={this.onGenerateReportPress}
+            />
+          </CardSection>
         </Menu>
-        <Text style={{ fontSize: 30 }}>
-          Reservas por día entre el {moment(this.props.startDate).format('L')} y{' '}
-          {moment(this.props.endDate).format('L')}
-        </Text>
-        <BarChart data={dataBar} style={{ marginTop: 10 }} />
+
+        <BarChart
+          title={'CANTIDAD DE RESERVAS POR DIA ENTRE EL ' +
+            this.props.startDate.format('DD/MM/YYYY') + ' Y EL ' +
+            this.props.endDate.format('DD/MM/YYYY')}
+          data={dataBar}
+        />
       </ScrollView>
     );
   }
