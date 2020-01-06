@@ -75,7 +75,8 @@ class BarChartReport extends Component {
 
     const dataBar = {
       labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-      datasets: [{ data: this.props.data }]
+      // datasets: [{ data: this.props.data }]
+      datasets: [{ data: [13, 14, 17, 15, 18, 25, 23] }]
     };
 
     return (

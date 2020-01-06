@@ -7,18 +7,19 @@ const chartWidth = Dimensions.get('window').width - 10;
 const chartHeight = Dimensions.get('window').height * 0.7;
 
 class LineChart extends Component {
-  state = { selectedPoint: null };
+  state = { selectedPoint: null, chartPosition: null };
 
   renderToolTip = () => {
-    const { selectedPoint } = this.state;
+    // beta
+    const { selectedPoint, chartPosition } = this.state;
 
-    if (selectedPoint)
+    if (selectedPoint && chartPosition)
       return (
         <View
           style={StyleSheet.flatten([
             styles.toolTipContainer, {
-              top: selectedPoint.y + (this.props.title ? 25 : -25),
-              left: selectedPoint.x - 2,
+              top: selectedPoint.y + chartPosition.y - 28,
+              left: selectedPoint.x + chartPosition.x - 8,
             }])
           }>
           <Text style={styles.toolTipText}>
@@ -45,14 +46,25 @@ class LineChart extends Component {
     return (
       <View style={{ alignItems: 'center' }}>
         {this.renderTitle()}
-        <RNCLineChart
-          {...this.props}
-          width={chartWidth}
-          height={chartHeight}
-          chartConfig={chartConfig}
-          onDataPointClick={p => this.setState({ selectedPoint: p })}
-          bezier
-        />
+        <View
+          onLayout={({ nativeEvent }) => {
+            this.setState({
+              chartPosition: {
+                x: nativeEvent.layout.x,
+                y: nativeEvent.layout.y
+              }
+            })
+          }}
+        >
+          <RNCLineChart
+            {...this.props}
+            width={chartWidth}
+            height={chartHeight}
+            chartConfig={chartConfig}
+            onDataPointClick={p => this.setState({ selectedPoint: p })}
+            bezier
+          />
+        </View>
         {this.renderToolTip()}
       </View>
     );
@@ -64,7 +76,6 @@ const chartConfig = {
   backgroundGradientFrom: 'white',
   backgroundGradientTo: 'white',
   color: (opacity = 1) => `rgba(199, 44, 65, ${opacity})`,
-  barPercentage: 0.5,
   fillShadowGradient: MAIN_COLOR,
   decimalPlaces: 1,
   strokeWidth: 1,

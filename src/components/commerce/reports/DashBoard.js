@@ -10,7 +10,7 @@ const chartsData = [
   {
     id: 1,
     title: 'Cantidad de reservas por día',
-    image: require(imagesRoute + 'bar-chart.png'),
+    image: require(imagesRoute + 'res-per-day-chart.png'),
     screen: 'barChartReport',
     description: 'Visualize la cantidad de reservas que tiene su negocio por dia. ' +
       'Esto lo ayuda a saber la demanda de cada dia y en base a eso poder ' +
