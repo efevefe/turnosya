@@ -18,12 +18,12 @@ class LineChart extends Component {
           style={StyleSheet.flatten([
             styles.toolTipContainer, {
               top: selectedPoint.y + (this.props.title ? 25 : -25),
-              left: selectedPoint.x + 1,
+              left: selectedPoint.x - 2,
             }])
           }>
           <Text style={styles.toolTipText}>
-            {this.props.yAxisLabel ?
-              this.props.yAxisLabel : ''
+            {(this.props.yAxisLabel ?
+              this.props.yAxisLabel : '')
               + selectedPoint.value.toString()}
           </Text>
         </View>
