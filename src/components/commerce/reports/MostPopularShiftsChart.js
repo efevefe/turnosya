@@ -9,11 +9,13 @@ import {
   Button,
   CardSection,
   Menu,
-  IconButton
+  IconButton,
+  EmptyList
 } from '../../common';
 import {
-  readMostPopularShiftsByRange,
-  onCommerceReportValueChange
+  onCommerceReportValueChange,
+  onCommerceReportValueReset,
+  readMostPopularShiftsByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -39,15 +41,15 @@ class MostPopularShiftsChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
+        <IconButton icon="md-create" onPress={() => this.onEditPress()} />
       )
     });
   }
 
-  // onDataEmpty = () => {};
+  onEditPress = () => {
+    this.setState({ modal: true });
+    if (!this.props.data.length) this.props.onCommerceReportValueReset();
+  };
 
   onGenerateReportPress = () => {
     this.props.readMostPopularShiftsByRange(
@@ -71,81 +73,87 @@ class MostPopularShiftsChart extends Component {
 
   render() {
     if (this.props.loading) return <Spinner />;
-    // if (isDataEmpty) return this.onDataEmpty();
 
-    const dataBar = {
-      labels: this.props.labels,
-      datasets: [{ data: this.props.data }]
-    };
+    if (this.props.data.length) {
+      const dataBar = {
+        labels: this.props.labels,
+        datasets: [{ data: this.props.data }]
+      };
 
-    return (
-      <ScrollView>
-        <Menu
-          title="Seleccionar Periodo"
-          isVisible={this.state.modal}
-          onBackdropPress={() =>
-            this.setState({
-              modal: false,
-              modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate
-            })
-          }
-        >
-          <CardSection
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: 10
-            }}
+      return (
+        <ScrollView>
+          <Menu
+            title="Seleccionar Periodo"
+            isVisible={this.state.modal}
+            onBackdropPress={() =>
+              this.setState({
+                modal: false,
+                modalStartDate: this.props.startDate,
+                modalEndDate: this.props.endDate
+              })
+            }
           >
-            <DatePicker
-              date={this.state.modalStartDate}
-              mode="date"
-              label="Desde:"
-              placeholder="Fecha desde"
-              pickerWidth={pickerWidth}
-              onDateChange={modalStartDate => this.setState({ modalStartDate })}
-            />
-            <DatePicker
-              date={this.state.modalEndDate}
-              mode="date"
-              label="Hasta:"
-              placeholder="Opcional"
-              pickerWidth={pickerWidth}
-              onDateChange={modalEndDate => this.setState({ modalEndDate })}
-            />
-          </CardSection>
-          <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
-          </CardSection>
-        </Menu>
+            <CardSection
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                paddingTop: 10
+              }}
+            >
+              <DatePicker
+                date={this.state.modalStartDate}
+                mode="date"
+                label="Desde:"
+                placeholder="Fecha desde"
+                pickerWidth={pickerWidth}
+                onDateChange={modalStartDate =>
+                  this.setState({ modalStartDate })
+                }
+              />
+              <DatePicker
+                date={this.state.modalEndDate}
+                mode="date"
+                label="Hasta:"
+                placeholder="Opcional"
+                pickerWidth={pickerWidth}
+                onDateChange={modalEndDate => this.setState({ modalEndDate })}
+              />
+            </CardSection>
+            <CardSection>
+              <Button
+                title={'Generar Reporte'}
+                onPress={this.onGenerateReportPress}
+              />
+            </CardSection>
+          </Menu>
 
-        <BarChart
-          title={
-            'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
-          data={dataBar}
-        />
-      </ScrollView>
+          <BarChart
+            title={
+              'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
+              this.props.startDate.format('DD/MM/YYYY') +
+              ' Y EL ' +
+              this.props.endDate.format('DD/MM/YYYY')
+            }
+            data={dataBar}
+          />
+        </ScrollView>
+      );
+    }
+    return (
+      <EmptyList
+        title={
+          'PARECE QUE NO EXISTEN TURNOS ENTRE EL ' +
+          this.props.startDate.format('DD/MM/YYYY') +
+          ' Y EL ' +
+          this.props.endDate.format('DD/MM/YYYY')
+        }
+      />
     );
   }
 }
 
 const mapStateToProps = state => {
-  const {
-    labels,
-    data,
-    startDate,
-    endDate,
-    loading
-    // isDataEmpty
-  } = state.commerceReports;
+  const { labels, data, startDate, endDate, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -155,11 +163,11 @@ const mapStateToProps = state => {
     endDate,
     commerceId,
     loading
-    // isDataEmpty
   };
 };
 
 export default connect(mapStateToProps, {
-  readMostPopularShiftsByRange,
-  onCommerceReportValueChange
+  onCommerceReportValueChange,
+  onCommerceReportValueReset,
+  readMostPopularShiftsByRange
 })(MostPopularShiftsChart);

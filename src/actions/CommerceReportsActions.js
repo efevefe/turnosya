@@ -5,7 +5,8 @@ import {
   ON_COMMERCE_REPORT_READ,
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
-  ON_COMMERCE_REPORT_DATA_EMPTY
+  ON_COMMERCE_REPORT_DATA_EMPTY,
+  ON_COMMERCE_REPORT_DATA_ERROR
 } from './types';
 import moment from 'moment';
 
@@ -26,7 +27,7 @@ export const readDailyReservationsByRange = (
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
-  const days = [0, 0, 0, 0, 0, 0, 0]; //7 days
+  const data = [0, 0, 0, 0, 0, 0, 0]; //7 days
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -37,12 +38,12 @@ export const readDailyReservationsByRange = (
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const numberOfDay = moment(doc.data().startDate.toDate()).day();
-          days[numberOfDay] += 1;
+          data[numberOfDay] += 1;
         });
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: days
+          payload: data
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -95,6 +96,8 @@ export const yearsOfActivity = commerceId => dispatch => {
 
 export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
+
+  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
 
   const db = firebase.firestore();
   const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
@@ -178,6 +181,8 @@ export const yearsWithReview = commerceId => dispatch => {
 
 export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
+
+  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
 
   const db = firebase.firestore();
   const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months

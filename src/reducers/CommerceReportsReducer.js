@@ -3,7 +3,8 @@ import {
   ON_COMMERCE_REPORT_READ,
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
-  ON_COMMERCE_REPORT_DATA_EMPTY
+  ON_COMMERCE_REPORT_DATA_EMPTY,
+  ON_COMMERCE_REPORT_DATA_ERROR
 } from '../actions/types';
 import moment from 'moment';
 
@@ -15,7 +16,7 @@ const INITIAL_STATE = {
   loading: false,
   selectedYear: moment().format('YYYY'),
   years: [],
-  isDataEmpty: false
+  error: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -29,7 +30,13 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_REPORT_READ:
       return { ...state, data: action.payload, loading: false };
     case ON_COMMERCE_REPORT_DATA_EMPTY:
-      return { ...INITIAL_STATE, isDataEmpty: true };
+      return { ...state, data: [], loading: false };
+    case ON_COMMERCE_REPORT_DATA_ERROR:
+      return {
+        ...state,
+        error: 'EL DATO SELECCIONADO NO ES VÁLIDO',
+        loading: false
+      };
     default:
       return state;
   }

@@ -9,11 +9,13 @@ import {
   Button,
   CardSection,
   Menu,
-  IconButton
+  IconButton,
+  EmptyList
 } from '../../common';
 import {
-  readDailyReservationsByRange,
-  onCommerceReportValueChange
+  onCommerceReportValueChange,
+  onCommerceReportValueReset,
+  readDailyReservationsByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -39,15 +41,16 @@ class DailyReservationsChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
+        <IconButton icon="md-create" onPress={() => this.onEditPress()} />
       )
     });
   }
 
-  // onDataEmpty = () => {};
+  onEditPress = () => {
+    this.setState({ modal: true });
+
+    if (!this.props.data.length) this.props.onCommerceReportValueReset();
+  };
 
   onGenerateReportPress = () => {
     this.props.readDailyReservationsByRange(
@@ -71,80 +74,88 @@ class DailyReservationsChart extends Component {
 
   render() {
     if (this.props.loading) return <Spinner />;
-    // if (isDataEmpty) return this.onDataEmpty();
 
-    const dataBar = {
-      labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-      datasets: [{ data: this.props.data }]
-    };
+    if (this.props.data.length) {
+      const dataBar = {
+        labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+        datasets: [{ data: this.props.data }]
+      };
+
+      return (
+        <ScrollView>
+          <Menu
+            title="Seleccionar Periodo"
+            isVisible={this.state.modal}
+            onBackdropPress={() =>
+              this.setState({
+                modal: false,
+                modalStartDate: this.props.startDate,
+                modalEndDate: this.props.endDate
+              })
+            }
+          >
+            <CardSection
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                paddingTop: 10
+              }}
+            >
+              <DatePicker
+                date={this.state.modalStartDate}
+                mode="date"
+                label="Desde:"
+                placeholder="Fecha desde"
+                pickerWidth={pickerWidth}
+                onDateChange={modalStartDate =>
+                  this.setState({ modalStartDate })
+                }
+              />
+              <DatePicker
+                date={this.state.modalEndDate}
+                mode="date"
+                label="Hasta:"
+                placeholder="Opcional"
+                pickerWidth={pickerWidth}
+                onDateChange={modalEndDate => this.setState({ modalEndDate })}
+              />
+            </CardSection>
+            <CardSection>
+              <Button
+                title={'Generar Reporte'}
+                onPress={this.onGenerateReportPress}
+              />
+            </CardSection>
+          </Menu>
+
+          <BarChart
+            title={
+              'CANTIDAD DE RESERVAS POR DÍA ENTRE EL ' +
+              this.props.startDate.format('DD/MM/YYYY') +
+              ' Y EL ' +
+              this.props.endDate.format('DD/MM/YYYY')
+            }
+            data={dataBar}
+          />
+        </ScrollView>
+      );
+    }
 
     return (
-      <ScrollView>
-        <Menu
-          title="Seleccionar Periodo"
-          isVisible={this.state.modal}
-          onBackdropPress={() =>
-            this.setState({
-              modal: false,
-              modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate
-            })
-          }
-        >
-          <CardSection
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: 10
-            }}
-          >
-            <DatePicker
-              date={this.state.modalStartDate}
-              mode="date"
-              label="Desde:"
-              placeholder="Fecha desde"
-              pickerWidth={pickerWidth}
-              onDateChange={modalStartDate => this.setState({ modalStartDate })}
-            />
-            <DatePicker
-              date={this.state.modalEndDate}
-              mode="date"
-              label="Hasta:"
-              placeholder="Opcional"
-              pickerWidth={pickerWidth}
-              onDateChange={modalEndDate => this.setState({ modalEndDate })}
-            />
-          </CardSection>
-          <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
-          </CardSection>
-        </Menu>
-
-        <BarChart
-          title={
-            'CANTIDAD DE RESERVAS POR DÍA ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
-          data={dataBar}
-        />
-      </ScrollView>
+      <EmptyList
+        title={
+          'PARECE QUE NO EXISTEN RESERVAS ENTRE EL ' +
+          this.props.startDate.format('DD/MM/YYYY') +
+          ' Y EL ' +
+          this.props.endDate.format('DD/MM/YYYY')
+        }
+      />
     );
   }
 }
 
 const mapStateToProps = state => {
-  const {
-    data,
-    startDate,
-    endDate,
-    loading
-    // isDataEmpty
-  } = state.commerceReports;
+  const { data, startDate, endDate, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -153,11 +164,11 @@ const mapStateToProps = state => {
     endDate,
     commerceId,
     loading
-    // isDataEmpty
   };
 };
 
 export default connect(mapStateToProps, {
-  readDailyReservationsByRange,
-  onCommerceReportValueChange
+  onCommerceReportValueChange,
+  onCommerceReportValueReset,
+  readDailyReservationsByRange
 })(DailyReservationsChart);
