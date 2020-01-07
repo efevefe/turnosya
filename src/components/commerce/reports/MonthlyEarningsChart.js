@@ -1,34 +1,33 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Text, ScrollView } from 'react-native';
+import { Overlay, Card } from 'react-native-elements';
 import {
   LineChart,
   Spinner,
-  IconButton,
-  Button,
-  Picker,
   Menu,
+  Picker,
+  Button,
+  IconButton,
   CardSection
 } from '../../common';
 import {
   onCommerceReportValueChange,
-  readReviewsPerMonths,
-  yearsWithReview
+  readMonthlyEarningsByYear,
+  yearsOfActivity
 } from '../../../actions';
 
-class LineChartReviewsReport extends Component {
+class MonthlyEarningsChart extends Component {
   constructor(props) {
     super(props);
-    props.yearsWithReview(props.commerceId);
-    props.readReviewsPerMonths(props.commerceId, props.selectedYear);
+    props.yearsOfActivity(props.commerceId);
+    props.readMonthlyEarningsByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: props.selectedYear };
+    this.state = { modal: false, modalYear: this.props.selectedYear };
   }
 
   static navigationOptions = ({ navigation }) => {
-    return {
-      headerRight: navigation.getParam('rightIcon')
-    };
+    return { headerRight: navigation.getParam('rightIcon') };
   };
 
   componentDidMount() {
@@ -42,10 +41,8 @@ class LineChartReviewsReport extends Component {
     });
   }
 
-  // onDataEmpty = () => {};
-
   onGenerateReportPress = () => {
-    this.props.readReviewsPerMonths(
+    this.props.readMonthlyEarningsByYear(
       this.props.commerceId,
       this.state.modalYear
     );
@@ -56,7 +53,9 @@ class LineChartReviewsReport extends Component {
     });
 
     this.setState({ modal: false });
-  }
+  };
+
+  // onDataEmpty = () => {};
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -86,7 +85,6 @@ class LineChartReviewsReport extends Component {
           <CardSection>
             <Button
               title={'Generar Reporte'}
-              buttonStyle={{ marginVertical: 20 }}
               onPress={this.onGenerateReportPress}
             />
           </CardSection>
@@ -94,7 +92,8 @@ class LineChartReviewsReport extends Component {
 
         <LineChart
           data={dataLine}
-          title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
+          title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
+          yAxisLabel={'$ '}
         />
       </ScrollView>
     );
@@ -123,6 +122,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
-  readReviewsPerMonths,
-  yearsWithReview
-})(LineChartReviewsReport);
+  readMonthlyEarningsByYear,
+  yearsOfActivity
+})(MonthlyEarningsChart);

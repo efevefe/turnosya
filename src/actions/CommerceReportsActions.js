@@ -17,8 +17,8 @@ export const onCommerceReportValueReset = () => {
   return { type: ON_COMMERCE_REPORT_VALUE_RESET };
 };
 
-// Reservations per day report
-export const readReservationsOnDays = (
+// Daily Reservations report
+export const readDailyReservationsByRange = (
   commerceId,
   startDate,
   endDate
@@ -50,10 +50,9 @@ export const readReservationsOnDays = (
     });
 };
 
-// Earnings report
+// Monthly Earnings Report
 export const yearsOfActivity = commerceId => dispatch => {
   const db = firebase.firestore();
-
   const years = [];
   let firstYear;
   const currentYear = moment().format('YYYY');
@@ -94,8 +93,9 @@ export const yearsOfActivity = commerceId => dispatch => {
     });
 };
 
-export const readEarningsPerMonths = (commerceId, year) => dispatch => {
+export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
+
   const db = firebase.firestore();
   const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
 
@@ -133,10 +133,9 @@ export const readEarningsPerMonths = (commerceId, year) => dispatch => {
     });
 };
 
-// Review Report
+// Monthly Reviews Report
 export const yearsWithReview = commerceId => dispatch => {
   const db = firebase.firestore();
-
   const years = [];
   let firstYear;
   const currentYear = moment().format('YYYY');
@@ -177,8 +176,9 @@ export const yearsWithReview = commerceId => dispatch => {
     });
 };
 
-export const readReviewsPerMonths = (commerceId, year) => dispatch => {
+export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
+
   const db = firebase.firestore();
   const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
   const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 count/month
@@ -225,8 +225,8 @@ export const readReviewsPerMonths = (commerceId, year) => dispatch => {
     });
 };
 
-// State turns reservation report
-export const readStateTurnsReservations = (
+// Reserved and Cancelled Shift Report
+export const readReservedAndCancelledShiftByRange = (
   commerceId,
   startDate,
   endDate
@@ -234,7 +234,7 @@ export const readStateTurnsReservations = (
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
-  const turns = [0, 0];
+  const shifts = [0, 0];
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -244,7 +244,7 @@ export const readStateTurnsReservations = (
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const state = doc.data().state;
-          state ? (turns[1] += 1) : (turns[0] += 1);
+          state ? (shifts[1] += 1) : (shifts[0] += 1);
 
           // TODO: el día de mañana, esto se debería hacer:
           // if (state) turns[state.id] += 1;
@@ -252,7 +252,58 @@ export const readStateTurnsReservations = (
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: turns
+          payload: shifts
+        });
+      } else {
+        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
+      }
+    });
+};
+
+// Most Popular Shifts Report
+export const readMostPopularShiftsByRange = (
+  commerceId,
+  startDate,
+  endDate
+) => dispatch => {
+  dispatch({ type: ON_COMMERCE_REPORT_READING });
+
+  const db = firebase.firestore();
+  const shifts = {};
+
+  return db
+    .collection(`Commerces/${commerceId}/Reservations`)
+    .where('startDate', '>=', startDate.toDate())
+    .where('startDate', '<=', endDate.toDate())
+    .onSnapshot(snapshot => {
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          const shift = moment(doc.data().startDate.toDate())
+            .format('HH:mm')
+            .toString();
+          shifts[shift] ? (shifts[shift] += 1) : (shifts[shift] = 1);
+        });
+
+        let sortedShif = Object.keys(shifts).sort(
+          (a, b) => shifts[b] - shifts[a]
+        );
+
+        let data = [];
+        sortedShif.forEach(val => data.push(shifts[val]));
+
+        if (data.length > 7) {
+          data = data.slice(0, 7);
+          sortedShif = sortedShif.slice(0, 7);
+        }
+
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: data
+        });
+
+        dispatch({
+          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
+          payload: { prop: 'labels', value: sortedShif }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });

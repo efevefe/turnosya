@@ -29,10 +29,11 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import DashBoard from '../components/commerce/reports/DashBoard';
-import BarChartReport from '../components/commerce/reports/BarChartReport';
-import LineChartMoneyReport from '../components/commerce/reports/LineChartMoneyReport';
-import LineChartReviewsReport from '../components/commerce/reports/LineChartReviewsReport';
-import PieChartReport from '../components/commerce/reports/PieChartReport';
+import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
+import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';
+import MonthlyReviewsChart from '../components/commerce/reports/MonthlyReviewsChart';
+import ReservedAndCancelledShiftChart from '../components/commerce/reports/ReservedAndCancelledShiftChart';
+import MostPopularShiftsChart from '../components/commerce/reports/MostPopularShiftsChart';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -223,28 +224,34 @@ const reportsStack = createStackNavigator(
         )
       })
     },
-    barChartReport: {
-      screen: BarChartReport,
+    dailyReservationsChart: {
+      screen: DailyReservationsChart,
       navigationOptions: {
-        title: 'Reservas por día'
+        title: 'Reservas por Día'
       }
     },
-    lineChartMoneyReport: {
-      screen: LineChartMoneyReport,
+    monthlyEarningsChart: {
+      screen: MonthlyEarningsChart,
       navigationOptions: {
-        title: 'Ingresos por mes'
+        title: 'Ingresos Mensuales'
       }
     },
-    lineChartReviewsReport: {
-      screen: LineChartReviewsReport,
+    monthlyReviewsChart: {
+      screen: MonthlyReviewsChart,
       navigationOptions: {
-        title: 'Calificación por mes'
+        title: 'Mis Calificaciones'
       }
     },
-    pieChartReport: {
-      screen: PieChartReport,
+    reservedAndCancelledShiftChart: {
+      screen: ReservedAndCancelledShiftChart,
       navigationOptions: {
-        title: 'Turnos realizados y cancelados'
+        title: 'Cancelados/Realizados'
+      }
+    },
+    mostPopularShiftsChart: {
+      screen: MostPopularShiftsChart,
+      navigationOptions: {
+        title: 'Horarios más populares'
       }
     }
   },

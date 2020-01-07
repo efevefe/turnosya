@@ -1,33 +1,34 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Text, ScrollView } from 'react-native';
-import { Overlay, Card } from 'react-native-elements';
 import {
   LineChart,
   Spinner,
-  Menu,
-  Picker,
-  Button,
   IconButton,
+  Button,
+  Picker,
+  Menu,
   CardSection
 } from '../../common';
 import {
   onCommerceReportValueChange,
-  readEarningsPerMonths,
-  yearsOfActivity
+  readMonthlyReviewsByYear,
+  yearsWithReview
 } from '../../../actions';
 
-class LineChartMoneyReport extends Component {
+class MonthlyReviewsChart extends Component {
   constructor(props) {
     super(props);
-    props.yearsOfActivity(props.commerceId);
-    props.readEarningsPerMonths(props.commerceId, props.selectedYear);
+    props.yearsWithReview(props.commerceId);
+    props.readMonthlyReviewsByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: this.props.selectedYear };
+    this.state = { modal: false, modalYear: props.selectedYear };
   }
 
   static navigationOptions = ({ navigation }) => {
-    return { headerRight: navigation.getParam('rightIcon') };
+    return {
+      headerRight: navigation.getParam('rightIcon')
+    };
   };
 
   componentDidMount() {
@@ -41,8 +42,10 @@ class LineChartMoneyReport extends Component {
     });
   }
 
+  // onDataEmpty = () => {};
+
   onGenerateReportPress = () => {
-    this.props.readEarningsPerMonths(
+    this.props.readMonthlyReviewsByYear(
       this.props.commerceId,
       this.state.modalYear
     );
@@ -53,9 +56,7 @@ class LineChartMoneyReport extends Component {
     });
 
     this.setState({ modal: false });
-  }
-
-  // onDataEmpty = () => {};
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -69,7 +70,7 @@ class LineChartMoneyReport extends Component {
     return (
       <ScrollView style={{ flex: 1 }}>
         <Menu
-          title='Seleccionar Año'
+          title="Seleccionar Año"
           isVisible={this.state.modal}
           onBackdropPress={() =>
             this.setState({ modal: false, modalYear: this.props.selectedYear })
@@ -85,6 +86,7 @@ class LineChartMoneyReport extends Component {
           <CardSection>
             <Button
               title={'Generar Reporte'}
+              buttonStyle={{ marginVertical: 20 }}
               onPress={this.onGenerateReportPress}
             />
           </CardSection>
@@ -92,8 +94,7 @@ class LineChartMoneyReport extends Component {
 
         <LineChart
           data={dataLine}
-          title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
-          yAxisLabel={'$ '}
+          title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
         />
       </ScrollView>
     );
@@ -122,6 +123,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
-  readEarningsPerMonths,
-  yearsOfActivity
-})(LineChartMoneyReport);
+  readMonthlyReviewsByYear,
+  yearsWithReview
+})(MonthlyReviewsChart);

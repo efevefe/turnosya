@@ -8,6 +8,7 @@ import {
 import moment from 'moment';
 
 const INITIAL_STATE = {
+  labels: ['A'],
   data: [0],
   startDate: moment().subtract(7, 'd'),
   endDate: moment(),

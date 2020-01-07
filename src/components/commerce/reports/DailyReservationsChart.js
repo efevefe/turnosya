@@ -1,30 +1,29 @@
 import React, { Component } from 'react';
+import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { ScrollView, Dimensions } from 'react-native';
 import {
-  PieChart,
+  BarChart,
   Spinner,
-  Button,
   DatePicker,
-  IconButton,
+  Button,
+  CardSection,
   Menu,
-  CardSection
+  IconButton
 } from '../../common';
 import {
-  readStateTurnsReservations,
+  readDailyReservationsByRange,
   onCommerceReportValueChange
 } from '../../../actions/CommerceReportsActions';
-import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
-class PieChartReport extends Component {
+class DailyReservationsChart extends Component {
   constructor(props) {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.readStateTurnsReservations(commerceId, startDate, endDate);
+    props.readDailyReservationsByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
@@ -32,7 +31,7 @@ class PieChartReport extends Component {
       modalEndDate: endDate
     };
   }
-  
+
   static navigationOptions = ({ navigation }) => {
     return { headerRight: navigation.getParam('rightIcon') };
   };
@@ -51,7 +50,7 @@ class PieChartReport extends Component {
   // onDataEmpty = () => {};
 
   onGenerateReportPress = () => {
-    this.props.readStateTurnsReservations(
+    this.props.readDailyReservationsByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
       moment(this.state.modalEndDate)
@@ -68,30 +67,16 @@ class PieChartReport extends Component {
     });
 
     this.setState({ modal: false });
-  }
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;
     // if (isDataEmpty) return this.onDataEmpty();
 
-    const dataPie = this.props.data[1]
-      ? [
-        {
-          name: 'Realizados',
-          count: this.props.data[0],
-          color: MAIN_COLOR,
-          legendFontColor: 'black',
-          legendFontSize: 15
-        },
-        {
-          name: 'Cancelados',
-          count: this.props.data[1],
-          color: MAIN_COLOR_DISABLED,
-          legendFontColor: 'black',
-          legendFontSize: 15
-        }
-      ]
-      : [];
+    const dataBar = {
+      labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+      datasets: [{ data: this.props.data }]
+    };
 
     return (
       <ScrollView>
@@ -138,11 +123,14 @@ class PieChartReport extends Component {
           </CardSection>
         </Menu>
 
-        <PieChart
-          title={'TURNOS RESERVADOS Y CANCELADOS ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') + ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')}
-          data={dataPie}
+        <BarChart
+          title={
+            'CANTIDAD DE RESERVAS POR DÍA ENTRE EL ' +
+            this.props.startDate.format('DD/MM/YYYY') +
+            ' Y EL ' +
+            this.props.endDate.format('DD/MM/YYYY')
+          }
+          data={dataBar}
         />
       </ScrollView>
     );
@@ -170,6 +158,6 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  readStateTurnsReservations,
+  readDailyReservationsByRange,
   onCommerceReportValueChange
-})(PieChartReport);
+})(DailyReservationsChart);
