@@ -5,7 +5,7 @@ import { Card } from 'react-native-elements';
 import { withNavigationFocus } from 'react-navigation';
 import { onCommerceReportValueReset } from '../../../actions';
 
-const imagesRoute = '../../../../assets/';
+const imagesRoute = '../../../../assets/charts-placeholders/';
 
 const chartsData = [
   {
@@ -51,7 +51,7 @@ const chartsData = [
   {
     id: 5,
     title: 'Mis Horarios más Populares',
-    image: require(imagesRoute + 'daily-reserv-chart.png'),
+    image: require(imagesRoute + 'popular-shifts-chart.png'),
     screen: 'mostPopularShiftsChart',
     description:
       'Determine en qué horario recibe la mayor cantidad de demanda de ' +

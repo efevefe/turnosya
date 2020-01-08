@@ -100,7 +100,7 @@ export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
 
   const db = firebase.firestore();
-  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
+  const months = Array(12).fill(0); // 12 months
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -125,14 +125,12 @@ export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
           const numberOfMonth = moment(doc.data().startDate.toDate()).month();
           months[numberOfMonth] += parseFloat(doc.data().price);
         });
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: months
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
       }
+
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: months
+      });
     });
 };
 
@@ -185,9 +183,9 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
 
   const db = firebase.firestore();
-  const months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 months
-  const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 12 count/month
-  const data = [];
+  const months = Array(12).fill(0); // total rating per month
+  const counts = Array(12).fill(0); // ratings quantity per month
+  const data = Array(12).fill(0); // avg rating per month
 
   return db
     .collection(`Commerces/${commerceId}/Reviews`)
@@ -211,22 +209,18 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
         snapshot.forEach(doc => {
           const numberOfMonth = moment(doc.data().date.toDate()).month();
           months[numberOfMonth] += parseFloat(doc.data().rating);
-          counts[numberOfMonth] += 1;
+          counts[numberOfMonth]++;
         });
 
-        let i = 0;
-        months.forEach(month => {
-          month !== 0 ? data.push(month / counts[i]) : data.push(0);
-          i++;
+        months.forEach((month, i) => {
+          data[i] = month ? (month / counts[i]) : 0
         });
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: data
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
       }
+
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: data
+      });
     });
 };
 
@@ -239,7 +233,7 @@ export const readReservedAndCancelledShiftByRange = (
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
-  const shifts = [0, 0];
+  const counts = [0, 0]; // [realizados, cancelados]
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -248,16 +242,16 @@ export const readReservedAndCancelledShiftByRange = (
     .onSnapshot(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
-          const state = doc.data().state;
-          state ? (shifts[1] += 1) : (shifts[0] += 1);
+          const state = doc.data().state ? 1 : 0;
+          counts[state]++;
 
           // TODO: el día de mañana, esto se debería hacer:
-          // if (state) turns[state.id] += 1;
+          // if (state) counts[state.id] += 1;
         });
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: shifts
+          payload: counts
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -289,16 +283,16 @@ export const readMostPopularShiftsByRange = (
           shifts[shift] ? (shifts[shift] += 1) : (shifts[shift] = 1);
         });
 
-        let sortedShif = Object.keys(shifts).sort(
+        let sortedShifts = Object.keys(shifts).sort(
           (a, b) => shifts[b] - shifts[a]
         );
 
         let data = [];
-        sortedShif.forEach(val => data.push(shifts[val]));
+        sortedShifts.forEach(val => data.push(shifts[val]));
 
         if (data.length > 7) {
           data = data.slice(0, 7);
-          sortedShif = sortedShif.slice(0, 7);
+          sortedShifts = sortedShifts.slice(0, 7);
         }
 
         dispatch({
@@ -308,7 +302,7 @@ export const readMostPopularShiftsByRange = (
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'labels', value: sortedShif }
+          payload: { prop: 'labels', value: sortedShifts }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });

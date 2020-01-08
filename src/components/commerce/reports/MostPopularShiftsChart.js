@@ -71,9 +71,7 @@ class MostPopularShiftsChart extends Component {
     this.setState({ modal: false });
   };
 
-  render() {
-    if (this.props.loading) return <Spinner />;
-
+  renderChart = () => {
     if (this.props.data.length) {
       const dataBar = {
         labels: this.props.labels,
@@ -81,73 +79,83 @@ class MostPopularShiftsChart extends Component {
       };
 
       return (
-        <ScrollView>
-          <Menu
-            title="Seleccionar Periodo"
-            isVisible={this.state.modal}
-            onBackdropPress={() =>
-              this.setState({
-                modal: false,
-                modalStartDate: this.props.startDate,
-                modalEndDate: this.props.endDate
-              })
-            }
-          >
-            <CardSection
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                paddingTop: 10
-              }}
-            >
-              <DatePicker
-                date={this.state.modalStartDate}
-                mode="date"
-                label="Desde:"
-                placeholder="Fecha desde"
-                pickerWidth={pickerWidth}
-                onDateChange={modalStartDate =>
-                  this.setState({ modalStartDate })
-                }
-              />
-              <DatePicker
-                date={this.state.modalEndDate}
-                mode="date"
-                label="Hasta:"
-                placeholder="Opcional"
-                pickerWidth={pickerWidth}
-                onDateChange={modalEndDate => this.setState({ modalEndDate })}
-              />
-            </CardSection>
-            <CardSection>
-              <Button
-                title={'Generar Reporte'}
-                onPress={this.onGenerateReportPress}
-              />
-            </CardSection>
-          </Menu>
-
-          <BarChart
-            title={
-              'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
-              this.props.startDate.format('DD/MM/YYYY') +
-              ' Y EL ' +
-              this.props.endDate.format('DD/MM/YYYY')
-            }
-            data={dataBar}
-          />
-        </ScrollView>
+        <BarChart
+          title={
+            'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
+            this.props.startDate.format('DD/MM/YYYY') +
+            ' Y EL ' +
+            this.props.endDate.format('DD/MM/YYYY')
+          }
+          xlabel='HORARIOS'
+          data={dataBar}
+        />
       );
     }
+
     return (
       <EmptyList
         title={
-          'PARECE QUE NO EXISTEN TURNOS ENTRE EL ' +
+          'Parece que no hay reservas entre el ' +
           this.props.startDate.format('DD/MM/YYYY') +
-          ' Y EL ' +
+          ' y el ' +
           this.props.endDate.format('DD/MM/YYYY')
         }
       />
+    );
+  }
+
+  render() {
+    if (this.props.loading) return <Spinner />;
+
+    return (
+      <ScrollView>
+        <Menu
+          title="Seleccionar Periodo"
+          isVisible={this.state.modal}
+          onBackdropPress={() =>
+            this.setState({
+              modal: false,
+              modalStartDate: this.props.startDate,
+              modalEndDate: this.props.endDate
+            })
+          }
+        >
+          <CardSection
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingTop: 10
+            }}
+          >
+            <DatePicker
+              date={this.state.modalStartDate}
+              mode="date"
+              label="Desde:"
+              placeholder="Fecha desde"
+              pickerWidth={pickerWidth}
+              onDateChange={modalStartDate =>
+                this.setState({ modalStartDate })
+              }
+            />
+            <DatePicker
+              date={this.state.modalEndDate}
+              mode="date"
+              label="Hasta:"
+              placeholder="Opcional"
+              pickerWidth={pickerWidth}
+              onDateChange={modalEndDate => this.setState({ modalEndDate })}
+            />
+          </CardSection>
+          <CardSection>
+            <Button
+              title={'Generar Reporte'}
+              onPress={this.onGenerateReportPress}
+            />
+          </CardSection>
+        </Menu>
+
+        {this.renderChart()}
+      </ScrollView>
     );
   }
 }

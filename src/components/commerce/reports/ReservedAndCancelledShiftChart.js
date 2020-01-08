@@ -42,16 +42,10 @@ class ReservedAndCancelledShiftChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.onEditPress()} />
+        <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
       )
     });
   }
-
-  onEditPress = () => {
-    this.setState({ modal: true });
-
-    if (!this.props.data.length) this.props.onCommerceReportValueReset();
-  };
 
   onGenerateReportPress = () => {
     this.props.readReservedAndCancelledShiftByRange(
@@ -73,97 +67,104 @@ class ReservedAndCancelledShiftChart extends Component {
     this.setState({ modal: false });
   };
 
-  render() {
-    if (this.props.loading) return <Spinner />;
-
+  renderChart = () => {
     if (this.props.data.length) {
       const dataPie = this.props.data[1]
         ? [
-            {
-              name: 'Realizados',
-              count: this.props.data[0],
-              color: MAIN_COLOR,
-              legendFontColor: 'black',
-              legendFontSize: 15
-            },
-            {
-              name: 'Cancelados',
-              count: this.props.data[1],
-              color: MAIN_COLOR_DISABLED,
-              legendFontColor: 'black',
-              legendFontSize: 15
-            }
-          ]
+          {
+            name: 'Realizados',
+            count: this.props.data[0],
+            color: MAIN_COLOR,
+            legendFontColor: 'black',
+            legendFontSize: 15
+          },
+          {
+            name: 'Cancelados',
+            count: this.props.data[1],
+            color: MAIN_COLOR_DISABLED,
+            legendFontColor: 'black',
+            legendFontSize: 15
+          }
+        ]
         : [];
 
       return (
-        <ScrollView>
-          <Menu
-            title="Seleccionar Periodo"
-            isVisible={this.state.modal}
-            onBackdropPress={() =>
-              this.setState({
-                modal: false,
-                modalStartDate: this.props.startDate,
-                modalEndDate: this.props.endDate
-              })
-            }
-          >
-            <CardSection
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                paddingTop: 10
-              }}
-            >
-              <DatePicker
-                date={this.state.modalStartDate}
-                mode="date"
-                label="Desde:"
-                placeholder="Fecha desde"
-                pickerWidth={pickerWidth}
-                onDateChange={modalStartDate =>
-                  this.setState({ modalStartDate })
-                }
-              />
-              <DatePicker
-                date={this.state.modalEndDate}
-                mode="date"
-                label="Hasta:"
-                placeholder="Opcional"
-                pickerWidth={pickerWidth}
-                onDateChange={modalEndDate => this.setState({ modalEndDate })}
-              />
-            </CardSection>
-            <CardSection>
-              <Button
-                title={'Generar Reporte'}
-                onPress={this.onGenerateReportPress}
-              />
-            </CardSection>
-          </Menu>
-
-          <PieChart
-            title={
-              'TURNOS RESERVADOS Y CANCELADOS ENTRE EL ' +
-              this.props.startDate.format('DD/MM/YYYY') +
-              ' Y EL ' +
-              this.props.endDate.format('DD/MM/YYYY')
-            }
-            data={dataPie}
-          />
-        </ScrollView>
-      );
+        <PieChart
+          title={
+            'TURNOS RESERVADOS Y CANCELADOS ENTRE EL ' +
+            this.props.startDate.format('DD/MM/YYYY') +
+            ' Y EL ' +
+            this.props.endDate.format('DD/MM/YYYY')
+          }
+          data={dataPie}
+        />
+      )
     }
+
     return (
       <EmptyList
         title={
-          'PARECE QUE NO HAY TURNOS RESERVADOS NI CANCELADOS ENTRE EL ' +
+          'Parece que no hay reservas entre el ' +
           this.props.startDate.format('DD/MM/YYYY') +
-          ' Y EL ' +
+          ' y el ' +
           this.props.endDate.format('DD/MM/YYYY')
         }
       />
+    );
+  }
+
+  render() {
+    if (this.props.loading) return <Spinner />;
+
+    return (
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <Menu
+          title="Seleccionar Periodo"
+          isVisible={this.state.modal}
+          onBackdropPress={() =>
+            this.setState({
+              modal: false,
+              modalStartDate: this.props.startDate,
+              modalEndDate: this.props.endDate
+            })
+          }
+        >
+          <CardSection
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingTop: 10
+            }}
+          >
+            <DatePicker
+              date={this.state.modalStartDate}
+              mode="date"
+              label="Desde:"
+              placeholder="Fecha desde"
+              pickerWidth={pickerWidth}
+              onDateChange={modalStartDate =>
+                this.setState({ modalStartDate })
+              }
+            />
+            <DatePicker
+              date={this.state.modalEndDate}
+              mode="date"
+              label="Hasta:"
+              placeholder="Opcional"
+              pickerWidth={pickerWidth}
+              onDateChange={modalEndDate => this.setState({ modalEndDate })}
+            />
+          </CardSection>
+          <CardSection>
+            <Button
+              title={'Generar Reporte'}
+              onPress={this.onGenerateReportPress}
+            />
+          </CardSection>
+        </Menu>
+
+        {this.renderChart()}
+      </ScrollView>
     );
   }
 }

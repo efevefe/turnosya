@@ -28,13 +28,13 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_REPORT_READING:
       return { ...state, data: INITIAL_STATE.data, loading: true };
     case ON_COMMERCE_REPORT_READ:
-      return { ...state, data: action.payload, loading: false };
+      return { ...state, data: action.payload, loading: false, error: '' };
     case ON_COMMERCE_REPORT_DATA_EMPTY:
       return { ...state, data: [], loading: false };
     case ON_COMMERCE_REPORT_DATA_ERROR:
       return {
         ...state,
-        error: 'EL DATO SELECCIONADO NO ES VÁLIDO',
+        error: 'El dato seleccionado no es válido',
         loading: false
       };
     default:

@@ -10,7 +10,6 @@ class LineChart extends Component {
   state = { selectedPoint: null, chartPosition: null };
 
   renderToolTip = () => {
-    // beta
     const { selectedPoint, chartPosition } = this.state;
 
     if (selectedPoint && chartPosition)
@@ -42,6 +41,52 @@ class LineChart extends Component {
       )
   }
 
+  renderXLabel = () => {
+    const { chartPosition } = this.state;
+
+    if (this.props.xlabel && chartPosition) {
+      return (
+        <View
+          style={{
+            ...styles.chartTextContainer,
+            fontSize: 12,
+            top: chartPosition.y + (chartHeight * 0.9),
+            left: chartPosition.x + (chartWidth / 11),
+            width: chartWidth - (chartWidth / 11)
+          }}
+        >
+          <Text style={{
+            ...styles.chartText, fontSize: 12
+          }}>
+            {this.props.xlabel}
+          </Text>
+        </View >
+      );
+    }
+  }
+
+  renderEmptyDataMessage = () => {
+    const { chartPosition } = this.state;
+
+    const dataSum = this.props.data.datasets[0].data.reduce((a, b) => a + b);
+
+    if (!dataSum && chartPosition) {
+      return (
+        <View style={{
+          ...styles.chartTextContainer,
+          top: chartPosition.y + (chartHeight / 3),
+          left: chartPosition.x + (chartWidth / 10),
+          width: chartWidth - (chartWidth / 10),
+          paddingHorizontal: chartWidth / 6.5
+        }}>
+          <Text style={styles.chartText}>
+            {this.props.emptyDataMessage}
+          </Text>
+        </View>
+      );
+    }
+  }
+
   render() {
     return (
       <View style={{ alignItems: 'center' }}>
@@ -66,6 +111,8 @@ class LineChart extends Component {
           />
         </View>
         {this.renderToolTip()}
+        {this.renderEmptyDataMessage()}
+        {this.renderXLabel()}
       </View>
     );
   }
@@ -104,6 +151,15 @@ const styles = StyleSheet.create({
     padding: 15,
     color: 'black',
     textAlign: 'center'
+  },
+  chartText: {
+    fontSize: 14,
+    color: MAIN_COLOR,
+    textAlign: 'center'
+  },
+  chartTextContainer: {
+    position: 'absolute',
+    alignItems: 'center'
   }
 })
 
