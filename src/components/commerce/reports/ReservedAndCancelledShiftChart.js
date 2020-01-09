@@ -20,6 +20,7 @@ import {
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
+const colors = [MAIN_COLOR, MAIN_COLOR_DISABLED];
 
 class ReservedAndCancelledShiftChart extends Component {
   constructor(props) {
@@ -42,7 +43,10 @@ class ReservedAndCancelledShiftChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
       )
     });
   }
@@ -68,25 +72,17 @@ class ReservedAndCancelledShiftChart extends Component {
   };
 
   renderChart = () => {
-    if (this.props.data.length) {
-      const dataPie = this.props.data[1]
-        ? [
-          {
-            name: 'Realizados',
-            count: this.props.data[0],
-            color: MAIN_COLOR,
-            legendFontColor: 'black',
-            legendFontSize: 15
-          },
-          {
-            name: 'Cancelados',
-            count: this.props.data[1],
-            color: MAIN_COLOR_DISABLED,
-            legendFontColor: 'black',
-            legendFontSize: 15
-          }
-        ]
-        : [];
+    if (this.props.data.data.length) {
+      let dataPie = [];
+      for (let i = 0; i < this.props.data.data.length; i++) {
+        dataPie.push({
+          name: this.props.data.labels[i],
+          count: this.props.data.data[i],
+          color: colors[i],
+          legendFontColor: 'black',
+          legendFontSize: 15
+        });
+      }
 
       return (
         <PieChart
@@ -98,7 +94,7 @@ class ReservedAndCancelledShiftChart extends Component {
           }
           data={dataPie}
         />
-      )
+      );
     }
 
     return (
@@ -111,7 +107,7 @@ class ReservedAndCancelledShiftChart extends Component {
         }
       />
     );
-  }
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -142,9 +138,7 @@ class ReservedAndCancelledShiftChart extends Component {
               label="Desde:"
               placeholder="Fecha desde"
               pickerWidth={pickerWidth}
-              onDateChange={modalStartDate =>
-                this.setState({ modalStartDate })
-              }
+              onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
               date={this.state.modalEndDate}

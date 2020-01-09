@@ -8,8 +8,7 @@ import {
   Button,
   Picker,
   Menu,
-  CardSection,
-  EmptyList
+  CardSection
 } from '../../common';
 import {
   onCommerceReportValueChange,
@@ -36,7 +35,10 @@ class MonthlyReviewsChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
       )
     });
   }
@@ -57,10 +59,10 @@ class MonthlyReviewsChart extends Component {
 
   render() {
     if (this.props.loading) return <Spinner />;
-    
+
     const dataLine = {
-      labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [{ data: this.props.data }]
+      labels: this.props.data.labels,
+      datasets: [{ data: this.props.data.data }]
     };
 
     return (
@@ -95,9 +97,10 @@ class MonthlyReviewsChart extends Component {
           data={dataLine}
           title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
           emptyDataMessage={
-            this.props.error || `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`
+            this.props.error ||
+            `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`
           }
-          xlabel='MESES DEL AÑO'
+          xlabel="MESES DEL AÑO"
         />
       </ScrollView>
     );

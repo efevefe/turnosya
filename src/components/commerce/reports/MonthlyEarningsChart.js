@@ -8,8 +8,7 @@ import {
   Picker,
   Button,
   IconButton,
-  CardSection,
-  EmptyList
+  CardSection
 } from '../../common';
 import {
   onCommerceReportValueChange,
@@ -34,7 +33,10 @@ class MonthlyEarningsChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
       )
     });
   }
@@ -57,8 +59,8 @@ class MonthlyEarningsChart extends Component {
     if (this.props.loading) return <Spinner />;
 
     const dataLine = {
-      labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      datasets: [{ data: this.props.data }]
+      labels: this.props.data.labels,
+      datasets: [{ data: this.props.data.data }]
     };
 
     return (
@@ -92,9 +94,10 @@ class MonthlyEarningsChart extends Component {
           data={dataLine}
           title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
           emptyDataMessage={
-            this.props.error || `Parace que aún no tenes ganancias en ${this.props.selectedYear}`
+            this.props.error ||
+            `Parace que aún no tenes ganancias en ${this.props.selectedYear}`
           }
-          xlabel='MESES DEL AÑO'
+          xlabel="MESES DEL AÑO"
           yAxisLabel={'$ '}
         />
       </ScrollView>

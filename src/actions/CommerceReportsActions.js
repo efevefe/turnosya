@@ -10,6 +10,22 @@ import {
 } from './types';
 import moment from 'moment';
 
+const arrayOfMonths = [
+  'E',
+  'F',
+  'M',
+  'A',
+  'M',
+  'J',
+  'J',
+  'A',
+  'S',
+  'O',
+  'N',
+  'D'
+]; // Months of year
+const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
+
 export const onCommerceReportValueChange = ({ prop, value }) => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
 };
@@ -27,7 +43,8 @@ export const readDailyReservationsByRange = (
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
-  const data = [0, 0, 0, 0, 0, 0, 0]; //7 days
+  const data = [0, 0, 0, 0, 0, 0, 0]; // 7 days
+  const labels = arrayOfDays;
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -43,7 +60,7 @@ export const readDailyReservationsByRange = (
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: data
+          payload: { labels, data }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -101,6 +118,7 @@ export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
 
   const db = firebase.firestore();
   const months = Array(12).fill(0); // 12 months
+  const labels = arrayOfMonths;
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -129,7 +147,7 @@ export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
 
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
-        payload: months
+        payload: { labels, data: months }
       });
     });
 };
@@ -186,6 +204,7 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
   const months = Array(12).fill(0); // total rating per month
   const counts = Array(12).fill(0); // ratings quantity per month
   const data = Array(12).fill(0); // avg rating per month
+  const labels = arrayOfMonths;
 
   return db
     .collection(`Commerces/${commerceId}/Reviews`)
@@ -213,13 +232,13 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
         });
 
         months.forEach((month, i) => {
-          data[i] = month ? (month / counts[i]) : 0
+          data[i] = month ? month / counts[i] : 0;
         });
       }
 
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
-        payload: data
+        payload: { labels, data }
       });
     });
 };
@@ -234,6 +253,7 @@ export const readReservedAndCancelledShiftByRange = (
 
   const db = firebase.firestore();
   const counts = [0, 0]; // [realizados, cancelados]
+  const labels = ['Realizados', 'Cancelados'];
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
@@ -251,7 +271,7 @@ export const readReservedAndCancelledShiftByRange = (
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: counts
+          payload: { labels, data: counts }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -297,12 +317,7 @@ export const readMostPopularShiftsByRange = (
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: data
-        });
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'labels', value: sortedShifts }
+          payload: { labels: sortedShifts, data }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });

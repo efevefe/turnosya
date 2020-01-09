@@ -9,8 +9,7 @@ import {
   Button,
   CardSection,
   Menu,
-  IconButton,
-  EmptyList
+  IconButton
 } from '../../common';
 import {
   onCommerceReportValueChange,
@@ -41,7 +40,10 @@ class DailyReservationsChart extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
+        <IconButton
+          icon="md-create"
+          onPress={() => this.setState({ modal: true })}
+        />
       )
     });
   }
@@ -70,8 +72,8 @@ class DailyReservationsChart extends Component {
     if (this.props.loading) return <Spinner />;
 
     const dataBar = {
-      labels: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-      datasets: [{ data: this.props.data }]
+      labels: this.props.data.labels,
+      datasets: [{ data: this.props.data.data }]
     };
 
     return (
@@ -100,9 +102,7 @@ class DailyReservationsChart extends Component {
               label="Desde:"
               placeholder="Fecha desde"
               pickerWidth={pickerWidth}
-              onDateChange={modalStartDate =>
-                this.setState({ modalStartDate })
-              }
+              onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
               date={this.state.modalEndDate}
@@ -128,8 +128,8 @@ class DailyReservationsChart extends Component {
             ' Y EL ' +
             this.props.endDate.format('DD/MM/YYYY')
           }
-          emptyDataMessage='Parece que no hay reservas en el periodo ingresado'
-          xlabel='DÍAS DE LA SEMANA'
+          emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
+          xlabel="DÍAS DE LA SEMANA"
           data={dataBar}
         />
       </ScrollView>

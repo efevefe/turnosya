@@ -72,10 +72,10 @@ class MostPopularShiftsChart extends Component {
   };
 
   renderChart = () => {
-    if (this.props.data.length) {
+    if (this.props.data.data.length) {
       const dataBar = {
-        labels: this.props.labels,
-        datasets: [{ data: this.props.data }]
+        labels: this.props.data.labels,
+        datasets: [{ data: this.props.data.data }]
       };
 
       return (
@@ -86,7 +86,7 @@ class MostPopularShiftsChart extends Component {
             ' Y EL ' +
             this.props.endDate.format('DD/MM/YYYY')
           }
-          xlabel='HORARIOS'
+          xlabel="HORARIOS"
           data={dataBar}
         />
       );
@@ -102,7 +102,7 @@ class MostPopularShiftsChart extends Component {
         }
       />
     );
-  }
+  };
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -133,9 +133,7 @@ class MostPopularShiftsChart extends Component {
               label="Desde:"
               placeholder="Fecha desde"
               pickerWidth={pickerWidth}
-              onDateChange={modalStartDate =>
-                this.setState({ modalStartDate })
-              }
+              onDateChange={modalStartDate => this.setState({ modalStartDate })}
             />
             <DatePicker
               date={this.state.modalEndDate}

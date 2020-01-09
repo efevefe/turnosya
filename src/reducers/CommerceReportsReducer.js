@@ -9,8 +9,7 @@ import {
 import moment from 'moment';
 
 const INITIAL_STATE = {
-  labels: ['A'],
-  data: [0],
+  data: { labels: ['A'], data: [0] },
   startDate: moment().subtract(7, 'd'),
   endDate: moment(),
   loading: false,
@@ -30,7 +29,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_REPORT_READ:
       return { ...state, data: action.payload, loading: false, error: '' };
     case ON_COMMERCE_REPORT_DATA_EMPTY:
-      return { ...state, data: [], loading: false };
+      return { ...state, data: { labels: [], data: [] }, loading: false };
     case ON_COMMERCE_REPORT_DATA_ERROR:
       return {
         ...state,
