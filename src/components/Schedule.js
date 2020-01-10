@@ -74,7 +74,8 @@ class Schedule extends Component {
         selectedDate,
         firstShiftStart,
         firstShiftEnd,
-        slots
+        slots,
+        1
       );
 
       if (secondShiftStart && secondShiftEnd) {
@@ -82,7 +83,8 @@ class Schedule extends Component {
           selectedDate,
           secondShiftStart,
           secondShiftEnd,
-          slots
+          slots,
+          2
         );
       }
     }
@@ -91,7 +93,7 @@ class Schedule extends Component {
     this.props.onDateChanged(selectedDate);
   };
 
-  generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
+  generateSlots = (selectedDate, shiftStart, shiftEnd, slots, shiftId) => {
     // selected date params
     const year = selectedDate.year();
     const month = selectedDate.month();
@@ -125,6 +127,7 @@ class Schedule extends Component {
     ) {
       slots.push({
         id: slotId++,
+        shiftId,
         startDate: moment(slotStartDate),
         endDate: moment(shiftStartDate),
         available: true,

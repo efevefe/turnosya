@@ -62,6 +62,7 @@ class CommerceCourtReservationRegister extends Component {
                         <Input
                             label="Nombre:"
                             placeholder='Nombre del cliente'
+                            autoCapitalize='words'
                             value={this.props.clientName}
                             onChangeText={this.onNameValueChange}
                             errorMessage={this.state.nameError}
