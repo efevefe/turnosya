@@ -116,12 +116,14 @@ export const readOnlyFavoriteCommerces = () => dispatch => {
           .get()
           .then(commerce => {
             if (commerce.data().softDelete == null) {
-              const { profilePicture, name, area, address } = commerce.data();
+              const { profilePicture, name, area, address, province, city } = commerce.data();
 
               onlyFavoriteCommerces.push({
                 profilePicture,
                 name,
                 address,
+                city,
+                provinceName: province.name,
                 areaName: area.name,
                 objectID: commerce.id
               });

@@ -19,7 +19,7 @@ class CommerceDrawerContent extends Component {
       >
         <DrawerItem
           title="Ser Cliente"
-          icon="md-person"
+          icon={{ name: "md-person" }}
           onPress={() => {
             this.props.onScheduleValueChange({
               prop: 'slots',
@@ -31,12 +31,12 @@ class CommerceDrawerContent extends Component {
         />
         <DrawerItem
           title="Configuración"
-          icon="md-settings"
+          icon={{ name: "md-settings" }}
           onPress={() => this.props.navigation.navigate('commerceSettings')}
         />
         <DrawerItem
           title="Cerrar Sesión"
-          icon="md-exit"
+          icon={{ name: "md-exit" }}
           loadingWithText={this.props.loading}
           onPress={() => this.props.onLogout()}
         />
