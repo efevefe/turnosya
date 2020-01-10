@@ -25,6 +25,7 @@ import { onScheduleValueChange } from '../actions';
 
     slot: {
       id: identificador unico,
+      shiftId: si pertenece al primer o segundo turno
       startDate: fecha y hora de inicio del turno,
       endDate: fecha y hora de fin del turno,
       available: indica si tiene turnos libres o no,
@@ -58,6 +59,7 @@ class Schedule extends Component {
 
     //slots & shifts
     let slots = [];
+    const shifts = []
     const { cards } = this.props;
     const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atencion ese dia de la semana
 
@@ -70,73 +72,71 @@ class Schedule extends Component {
         secondShiftEnd
       } = dayShifts;
 
-      slots = this.generateSlots(
-        selectedDate,
-        firstShiftStart,
-        firstShiftEnd,
-        slots,
-        1
-      );
+      shifts.push({ shiftStart: firstShiftStart, shiftEnd: firstShiftEnd });
 
       if (secondShiftStart && secondShiftEnd) {
-        slots = this.generateSlots(
-          selectedDate,
-          secondShiftStart,
-          secondShiftEnd,
-          slots,
-          2
-        );
+        shifts.push({ shiftStart: secondShiftStart, shiftEnd: secondShiftEnd });
       }
+
+      slots = this.generateSlots(selectedDate, shifts);
     }
 
     this.props.onScheduleValueChange({ prop: 'slots', value: slots });
     this.props.onDateChanged(selectedDate);
   };
 
-  generateSlots = (selectedDate, shiftStart, shiftEnd, slots, shiftId) => {
+  generateSlots = (selectedDate, shifts) => {
     // selected date params
     const year = selectedDate.year();
     const month = selectedDate.month();
     const date = selectedDate.date(); // dia del mes
 
-    let slotId = slots.length;
-    shiftStart = getHourAndMinutes(shiftStart);
-    shiftEnd = getHourAndMinutes(shiftEnd);
     const { reservationMinLength } = this.props;
+    const slots = [];
 
-    const shiftStartDate = moment([
-      year,
-      month,
-      date,
-      shiftStart.hour,
-      shiftStart.minutes
-    ]);
-    const shiftEndDate = moment([
-      year,
-      month,
-      date,
-      shiftEnd.hour,
-      shiftEnd.minutes
-    ]);
-    const slotStartDate = moment(shiftStartDate);
+    shifts.forEach((shift, index) => {
+      let { shiftStart, shiftEnd } = shift;
+      shiftStart = getHourAndMinutes(shiftStart);
+      shiftEnd = getHourAndMinutes(shiftEnd);
 
-    for (
-      let j = 0;
-      shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate;
-      j++
-    ) {
-      slots.push({
-        id: slotId++,
-        shiftId,
-        startDate: moment(slotStartDate),
-        endDate: moment(shiftStartDate),
-        available: true,
-        disabled: false,
-        free: 0,
-        total: 0
-      });
-      slotStartDate.add(reservationMinLength, 'minutes');
-    }
+      const shiftStartDate = moment([
+        year,
+        month,
+        date,
+        shiftStart.hour,
+        shiftStart.minutes
+      ]);
+
+      const shiftEndDate = moment([
+        year,
+        month,
+        date,
+        shiftEnd.hour,
+        shiftEnd.minutes
+      ]);
+
+      const slotStartDate = moment(shiftStartDate);
+
+      for (
+        let j = 0;
+        (shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
+          shiftStartDate.format('HH:mm') === '00:00' && shiftEndDate.format('HH:mm') === '23:59');
+        j++
+      ) {
+        slots.push({
+          id: slots.length,
+          shiftId: index,
+          startDate: moment(slotStartDate),
+          endDate: moment(shiftStartDate),
+          available: true,
+          disabled: false,
+          free: 0,
+          total: 0
+        });
+
+        slotStartDate.add(reservationMinLength, 'minutes');
+      }
+    });
 
     return slots;
   };
