@@ -1,10 +1,9 @@
 import React from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 const PermissionsAssigner = props => {
   const { requiredRole, sessionRole, children } = props;
-  return sessionRole >= requiredRole ? children : <View />;
+  return sessionRole.value >= requiredRole.value ? children : null;
 };
 
 const mapStateToProps = state => {

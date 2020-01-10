@@ -1,6 +1,7 @@
+import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
@@ -27,9 +28,15 @@ const CommerceEmployeesStack = createStackNavigator(
   {
     employeesList: {
       screen: EmployeesList,
-      navigationOptions: {
-        title: 'Empleados'
-      }
+      navigationOptions: ({ navigation }) => ({
+        title: 'Empleados',
+        headerLeft: (
+          <HeaderBackButton
+            onPress={() => navigation.goBack(null)}
+            tintColor="white"
+          />
+        )
+      })
     },
     employeeForm: {
       screen: EmployeeForm,

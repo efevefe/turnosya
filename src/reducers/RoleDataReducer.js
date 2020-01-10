@@ -2,7 +2,7 @@ import { ON_ROLES_READ, ON_ROLE_ASSIGNED } from '../actions/types';
 
 const INITIAL_STATE = {
   roles: [],
-  role: -1
+  role: null
 };
 
 export default (state = INITIAL_STATE, action) => {

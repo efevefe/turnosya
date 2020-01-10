@@ -28,7 +28,7 @@ class CourtList extends Component {
   isCourtDisabled = court => {
     const { disabledTo, disabledFrom } = court;
     return disabledFrom && (!disabledTo || disabledTo >= moment());
-  }
+  };
 
   renderRow({ item }) {
     return (
@@ -65,7 +65,7 @@ class CourtList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <PermissionsAssigner requiredRole={ROLES.Administrador}>
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
           <Fab
             style={{ backgroundColor: MAIN_COLOR }}
             position="bottomRight"

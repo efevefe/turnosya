@@ -153,7 +153,7 @@ class CommerceSchedule extends Component {
 
   renderConfigurationButton = () => {
     return (
-      <PermissionsAssigner requiredRole={ROLES.Administrador}>
+      <PermissionsAssigner requiredRole={ROLES.ADMIN}>
         <IconButton
           icon="md-options"
           onPress={() => this.setState({ modal: true })}

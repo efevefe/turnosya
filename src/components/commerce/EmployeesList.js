@@ -12,31 +12,13 @@ import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: navigation.getParam('leftButton')
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
-    });
-
     this.unsubEmployeesRead = this.props.readEmployees(this.props.commerceId);
   }
 
   componentWillUnmount() {
     this.unsubEmployeesRead && this.unsubEmployeesRead();
   }
-
-  renderBackButton = () => (
-    <HeaderBackButton onPress={this.onBackButtonPress} tintColor="white" />
-  );
-
-  onBackButtonPress = () => {
-    this.props.navigation.goBack(null);
-  };
 
   renderRow({ item }) {
     return (
@@ -53,7 +35,7 @@ class EmployeesList extends Component {
   };
 
   renderList = () => {
-    return this.props.employees.length > 0 ? (
+    return this.props.employees.length ? (
       <FlatList
         data={this.props.employees}
         renderItem={this.renderRow.bind(this)}
@@ -72,7 +54,7 @@ class EmployeesList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <PermissionsAssigner requiredRole={ROLES.Administrador}>
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
           <Fab
             style={{ backgroundColor: MAIN_COLOR }}
             position="bottomRight"

@@ -143,10 +143,12 @@ class CourtListItem extends Component {
             </View>
           }
           onLongPress={
-            this.props.role >= ROLES.Administrador ? this.onOptionsPress : null
+            this.props.role.value >= ROLES.ADMIN.value
+              ? this.onOptionsPress
+              : null
           }
           rightIcon={
-            this.props.role >= ROLES.Administrador
+            this.props.role.value >= ROLES.ADMIN.value
               ? {
                   name: 'md-more',
                   type: 'ionicon',

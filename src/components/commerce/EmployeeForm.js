@@ -9,7 +9,7 @@ import {
   employeeNameClear,
   employeeClear,
   readRoles,
-  searchUserEmail,
+  searchUserByEmail,
   createEmployee,
   employeeValidationError,
   loadEmployee,
@@ -51,7 +51,7 @@ class EmployeeForm extends Component {
       <TouchableOpacity
         style={{ flex: 1, padding: 5 }}
         onPress={() =>
-          this.props.searchUserEmail(this.props.email, this.props.commerceId)
+          this.props.searchUserByEmail(this.props.email, this.props.commerceId)
         }
       >
         <Icon name="search" color={MAIN_COLOR} size={24} />
@@ -155,9 +155,6 @@ class EmployeeForm extends Component {
               <Input
                 label="Nombre:"
                 value={this.props.firstName}
-                onChangeText={value =>
-                  this.props.employeeValueChange('firstName', value)
-                }
                 editable={false}
               />
             </CardSection>
@@ -166,9 +163,6 @@ class EmployeeForm extends Component {
               <Input
                 label="Apellido:"
                 value={this.props.lastName}
-                onChangeText={value =>
-                  this.props.employeeValueChange('lastName', value)
-                }
                 editable={false}
               />
             </CardSection>
@@ -177,9 +171,6 @@ class EmployeeForm extends Component {
               <Input
                 label="Teléfono:"
                 value={this.props.phone}
-                onChangeText={value =>
-                  this.props.employeeValueChange('phone', value)
-                }
                 editable={false}
               />
             </CardSection>
@@ -259,7 +250,7 @@ export default connect(mapStateToProps, {
   employeeNameClear,
   employeeClear,
   readRoles,
-  searchUserEmail,
+  searchUserByEmail,
   createEmployee,
   employeeValidationError,
   loadEmployee,

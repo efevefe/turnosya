@@ -165,7 +165,7 @@ const profileStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         ),
         headerRight: (
-          <PermissionsAssigner requiredRole={ROLES.Administrador}>
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
             <IconButton
               icon="md-create"
               onPress={() => navigation.navigate('profileEdit')}

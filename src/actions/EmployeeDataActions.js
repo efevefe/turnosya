@@ -16,7 +16,6 @@ import {
   ON_EMPLOYEE_UPDATED
 } from './types';
 import { Toast } from '../components/common';
-import { ROLES } from '../constants';
 
 export const employeeValueChange = (prop, value) => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -121,7 +120,7 @@ export const deleteEmployee = ({
   }
 };
 
-export const searchUserEmail = (email, commerceId) => async dispatch => {
+export const searchUserByEmail = (email, commerceId) => async dispatch => {
   dispatch({ type: ON_USER_SEARCHING });
   const db = firebase.firestore();
 

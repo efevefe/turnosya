@@ -49,7 +49,7 @@ export const onCommerceFormOpen = () => {
 
 export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
   dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
-  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.Dueño });
+  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
   dispatch({ type: ON_LOCATION_VALUES_RESET });
 
   navigation.navigate('commerce');
@@ -68,8 +68,16 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
     .then(snapshot => {
       roleName = snapshot.docs[0].data().role.name;
 
+      let roleToAssign; // provisional
+      for (const prop in ROLES) {
+        if (ROLES[prop].name === roleName) {
+          roleToAssign = ROLES[prop];
+          break;
+        }
+      }
+
       dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
-      dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES[roleName] });
+      dispatch({ type: ON_ROLE_ASSIGNED, payload: roleToAssign });
       dispatch({ type: ON_LOCATION_VALUES_RESET });
 
       navigation.navigate('commerce');

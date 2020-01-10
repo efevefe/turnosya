@@ -64,7 +64,7 @@ class CourtListItem extends Component {
         </Menu>
 
         <Menu
-          title={`¿Seguro que desea eliminar el empleado?`}
+          title={`¿Seguro que desea eliminar el empleado '${firstName} ${lastName}'?`}
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
@@ -115,10 +115,12 @@ class CourtListItem extends Component {
             </Text>
           }
           onLongPress={
-            this.props.role >= ROLES.Administrador ? this.onOptionsPress : null
+            this.props.role.value >= ROLES.ADMIN.value
+              ? this.onOptionsPress
+              : null
           }
           rightIcon={
-            this.props.role >= ROLES.Administrador
+            this.props.role.value >= ROLES.ADMIN.value
               ? {
                   name: 'md-more',
                   type: 'ionicon',
