@@ -58,7 +58,6 @@ export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
 export const onCommerceOpen = (commerceId, navigation) => dispatch => {
   const db = firebase.firestore();
   const profileId = firebase.auth().currentUser.uid;
-  let roleName;
 
   // Agregar validaciones por fecha de aceptación (post-Notificaciones)
   db.collection(`Commerces/${commerceId}/Employees`)
@@ -66,18 +65,11 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
     .where('profileId', '==', profileId)
     .get()
     .then(snapshot => {
-      roleName = snapshot.docs[0].data().role.name;
-
-      let roleToAssign; // provisional
-      for (const prop in ROLES) {
-        if (ROLES[prop].name === roleName) {
-          roleToAssign = ROLES[prop];
-          break;
-        }
-      }
-
       dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
-      dispatch({ type: ON_ROLE_ASSIGNED, payload: roleToAssign });
+      dispatch({
+        type: ON_ROLE_ASSIGNED,
+        payload: ROLES[snapshot.docs[0].data().role.roleId]
+      });
       dispatch({ type: ON_LOCATION_VALUES_RESET });
 
       navigation.navigate('commerce');

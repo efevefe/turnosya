@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { Spinner, EmptyList } from '../common';
 import EmployeesListItem from './EmployeesListItem';
 import { readEmployees } from '../../actions';
