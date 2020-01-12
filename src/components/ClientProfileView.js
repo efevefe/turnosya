@@ -2,10 +2,9 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Avatar, Text, Divider, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../constants';
 import { onUserRead } from '../actions';
-import { Spinner } from './common';
+import { Spinner, IconButton } from './common';
 
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
@@ -42,31 +41,34 @@ class ClientProfileView extends React.Component {
     return this.props.loading ? (
       <Spinner />
     ) : (
-      <View style={mainContainerStyle}>
-        <Avatar
-          rounded
-          source={profilePicture ? { uri: profilePicture } : null}
-          size={avatarSize}
-          icon={{ name: 'person' }}
-          containerStyle={avatarStyle}
-        />
-        <Text h4>{`${firstName} ${lastName}`}</Text>
-        <TouchableOpacity onPress={this.onReviewButtonPress}>
-          <Rating
-            style={ratingStyle}
-            readonly
-            imageSize={24}
-            startingValue={this.getRatingValue()}
+        <View style={mainContainerStyle}>
+          <Avatar
+            rounded
+            source={profilePicture ? { uri: profilePicture } : null}
+            size={avatarSize}
+            icon={{ name: 'person' }}
+            containerStyle={avatarStyle}
           />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.onReviewButtonPress}>
-          <Ionicons name="md-text" color={MAIN_COLOR} size={30} />
-        </TouchableOpacity>
-        <Divider style={dividerStyle} />
-        <Text style={clientInfoStyle}>{email}</Text>
-        {this.renderClientPhone()}
-      </View>
-    );
+          <Text h4>{`${firstName} ${lastName}`}</Text>
+          <TouchableOpacity onPress={this.onReviewButtonPress}>
+            <Rating
+              style={ratingStyle}
+              readonly
+              imageSize={24}
+              startingValue={this.getRatingValue()}
+            />
+          </TouchableOpacity>
+          <Divider style={dividerStyle} />
+          <Text style={clientInfoStyle}>{email}</Text>
+          {this.renderClientPhone()}
+          <IconButton
+            icon='md-text'
+            color={MAIN_COLOR}
+            iconSize={30}
+            onPress={this.onReviewButtonPress}
+          />
+        </View>
+      );
   }
 }
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList, Toast } from '../common';
 import CommerceCourtsStateListItem from '../commerce/CommerceCourtsStateListItem';
-import { onCourtReservationValueChange, isCourtDisabledOnSlot } from '../../actions';
+import { onCourtReservationValueChange, isCourtDisabledOnSlot, onNewCourtReservation } from '../../actions';
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -22,11 +22,7 @@ class CommerceCourtsList extends Component {
   };
 
   onCourtPress = court => {
-    this.props.onCourtReservationValueChange({
-      prop: 'court',
-      value: court
-    });
-
+    this.props.onNewCourtReservation(court);
     this.props.navigation.navigate('confirmCourtReservation');
   };
 
@@ -81,5 +77,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { onCourtReservationValueChange }
+  { onCourtReservationValueChange, onNewCourtReservation }
 )(CommerceCourtsList);

@@ -647,6 +647,7 @@ class CommerceProfile extends Component {
             <Input
               label="Razón Social:"
               value={this.props.name}
+              autoCapitalize="words"
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'name', value })
               }
@@ -686,6 +687,7 @@ class CommerceProfile extends Component {
             <Input
               label="E-Mail:"
               value={this.props.email}
+              autoCapitalize='none'
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'email', value })
               }

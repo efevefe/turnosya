@@ -139,6 +139,7 @@ class RegisterCommerce extends Component {
             <Input
               label="Razón Social"
               placeholder="Razón Social"
+              autoCapitalize="words"
               value={this.props.name}
               errorMessage={this.state.nameError}
               onChangeText={value =>

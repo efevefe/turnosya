@@ -60,7 +60,7 @@ class ClientDrawerContent extends Component {
       <DrawerItem
         key={workplace.commerceId}
         title={workplace.name}
-        icon="ios-briefcase"
+        icon={{ name="store", type="material" }}
         onPress={() => this.onCommercePress(workplace.commerceId)}
       />
     ));
@@ -79,18 +79,18 @@ class ClientDrawerContent extends Component {
         >
           <DrawerItem
             title="Mi Negocio"
-            icon="ios-briefcase"
+            icon={{ name: "ios-briefcase" }}
             onPress={() => this.onMyCommercePress()}
           />
           {this.renderWorkplaces()}
           <DrawerItem
             title="Configuración"
-            icon="md-settings"
+            icon={{ name: "md-settings" }}
             onPress={() => this.props.navigation.navigate('clientSettings')}
           />
           <DrawerItem
             title="Cerrar Sesión"
-            icon="md-exit"
+            icon={{ name: "md-exit" }}
             loadingWithText={this.props.loading}
             onPress={() => this.props.onLogout()}
           />

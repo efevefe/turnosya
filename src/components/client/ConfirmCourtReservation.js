@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import {
@@ -15,28 +14,9 @@ import CourtReservationDetails from '../CourtReservationDetails';
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: navigation.getParam('leftButton')
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
-    });
-
     this.priceButtons();
   }
-
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" title='Back' />;
-  };
-
-  onBackPress = () => {
-    this.onNewReservation();
-    this.props.navigation.goBack(null);
-  };
 
   priceButtons = () => {
     const { court } = this.props;
@@ -100,13 +80,6 @@ class ConfirmCourtReservation extends Component {
     });
   };
 
-  onNewReservation = () => {
-    this.props.onCourtReservationValueChange({
-      prop: 'saved',
-      value: false
-    });
-  };
-
   renderButtons = () => {
     if (this.props.saved) {
       return (
@@ -124,10 +97,7 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commerceProfileView');
-              }}
+              onPress={() => this.props.navigation.navigate('commerceProfileView')}
             />
           </View>
           <View style={{ alignItems: 'flex-end' }}>
@@ -144,10 +114,7 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginLeft: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commercesAreas');
-              }}
+              onPress={() => this.props.navigation.navigate('commercesAreas')}
             />
           </View>
         </CardSection>

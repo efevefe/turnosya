@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ListItem, Button } from 'react-native-elements';
+import { Text, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
@@ -49,6 +50,17 @@ class CommerceListItem extends Component {
     this.props.navigation.navigate('commerceProfileView');
   };
 
+  renderSubtitle = () => {
+    const { areaName, address, city, provinceName } = this.props.commerce;
+
+    return (
+      <View>
+        <Text style={{ color: 'grey', fontSize: 14 }}>{areaName}</Text>
+        <Text style={{ color: 'grey', fontSize: 12 }}>{`${address}, ${city}, ${provinceName}`}</Text>
+      </View>
+    );
+  }
+
   render() {
     const {
       name,
@@ -66,7 +78,7 @@ class CommerceListItem extends Component {
           size: 'medium'
         }}
         title={name}
-        subtitle={`${areaName}\n${address}`}
+        subtitle={this.renderSubtitle()}
         rightIcon={
           <Button
             type="clear"

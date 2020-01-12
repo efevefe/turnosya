@@ -5,7 +5,8 @@ import { Spinner, EmptyList } from '../common';
 import {
   onCourtReservationsListValueChange,
   onCourtReservationValueChange,
-  isCourtDisabledOnSlot
+  isCourtDisabledOnSlot,
+  onNewCourtReservation
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
@@ -42,11 +43,7 @@ class CommerceCourtsStateList extends Component {
   };
 
   onAvailableCourtPress = court => {
-    this.props.onCourtReservationValueChange({
-      prop: 'court',
-      value: court
-    });
-
+    this.props.onNewCourtReservation(court);
     this.props.navigation.navigate('courtReservationRegister');
   }
 
@@ -125,5 +122,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCourtReservationsListValueChange,
-  onCourtReservationValueChange
+  onCourtReservationValueChange,
+  onNewCourtReservation
 })(CommerceCourtsStateList);

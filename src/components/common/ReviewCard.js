@@ -56,7 +56,8 @@ const { reviewTitleStyle, readOnlyReviewStyle } = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     alignSelf: 'center',
-    color: 'grey'
+    color: 'grey',
+    marginHorizontal: 10
   }
 });
 
