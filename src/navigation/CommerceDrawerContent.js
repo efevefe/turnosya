@@ -32,13 +32,13 @@ class CommerceDrawerContent extends Component {
         />
         <DrawerItem
           title="Empleados"
-          icon="md-people"
+          icon={{ name: 'md-people' }}
           onPress={() => this.props.navigation.navigate('commerceEmployees')}
         />
         <PermissionsAssigner requiredRole={ROLES.OWNER}>
           <DrawerItem
             title="Configuración"
-            icon="md-settings"
+            icon={{ name: 'md-settings' }}
             onPress={() => this.props.navigation.navigate('commerceSettings')}
           />
         </PermissionsAssigner>
