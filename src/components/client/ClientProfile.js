@@ -374,6 +374,7 @@ class ClientProfile extends Component {
             <Input
               label="Nombre:"
               value={this.props.firstName}
+              autoCapitalize="words"
               onChangeText={value =>
                 this.props.onClientDataValueChange({
                   prop: 'firstName',
@@ -390,6 +391,7 @@ class ClientProfile extends Component {
             <Input
               label="Apellido:"
               value={this.props.lastName}
+              autoCapitalize="words"
               onChangeText={value =>
                 this.props.onClientDataValueChange({ prop: 'lastName', value })
               }

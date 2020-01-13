@@ -119,8 +119,8 @@ export const ON_COURT_RESERVATION_VALUE_CHANGE =
   'on_court_reservation_value_change';
 export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
-export const ON_COURT_RESERVATION_CREATE_FAIL =
-  'on_court_reservation_create_fail';
+export const ON_COURT_RESERVATION_CREATE_FAIL = 'on_court_reservation_create_fail';
+export const ON_NEW_COURT_RESERVATION = 'on_new_court_reservation';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';

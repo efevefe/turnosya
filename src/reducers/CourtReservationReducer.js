@@ -2,7 +2,8 @@ import {
     ON_COURT_RESERVATION_VALUE_CHANGE,
     ON_COURT_RESERVATION_CREATING,
     ON_COURT_RESERVATION_CREATE,
-    ON_COURT_RESERVATION_CREATE_FAIL
+    ON_COURT_RESERVATION_CREATE_FAIL,
+    ON_NEW_COURT_RESERVATION
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -28,6 +29,8 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, loading: false, saved: true };
         case ON_COURT_RESERVATION_CREATE_FAIL:
             return { ...state, loading: false };
+        case ON_NEW_COURT_RESERVATION:
+            return { ...state, saved: false, clientName: '', clientPhone: '', court: action.payload };
         default:
             return state;
     }

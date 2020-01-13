@@ -58,17 +58,17 @@ class ClientDrawerContent extends Component {
         >
           <DrawerItem
             title="Mi Negocio"
-            icon="ios-briefcase"
+            icon={{ name: "ios-briefcase" }}
             onPress={() => this.onMyCommercePress()}
           />
           <DrawerItem
             title="Configuración"
-            icon="md-settings"
+            icon={{ name: "md-settings" }}
             onPress={() => this.props.navigation.navigate('clientSettings')}
           />
           <DrawerItem
             title="Cerrar Sesión"
-            icon="md-exit"
+            icon={{ name: "md-exit" }}
             loadingWithText={this.props.loading}
             onPress={() => this.props.onLogout()}
           />

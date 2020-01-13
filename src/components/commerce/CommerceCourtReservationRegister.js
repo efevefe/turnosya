@@ -6,7 +6,6 @@ import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { onCourtReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 import { validateValueType } from '../../utils';
-import { MAIN_COLOR } from '../../constants';
 
 class CommerceCourtReservationRegister extends Component {
     state = { selectedIndex: 0, priceButtons: [], prices: [], nameError: '', phoneError: '' };
@@ -63,6 +62,7 @@ class CommerceCourtReservationRegister extends Component {
                         <Input
                             label="Nombre:"
                             placeholder='Nombre del cliente'
+                            autoCapitalize='words'
                             value={this.props.clientName}
                             onChangeText={this.onNameValueChange}
                             errorMessage={this.state.nameError}
