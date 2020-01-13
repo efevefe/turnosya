@@ -273,7 +273,7 @@ const commerceTabs = createBottomTabNavigator(
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'reports'
+    initialRouteName: 'calendar'
   }
 );
 
