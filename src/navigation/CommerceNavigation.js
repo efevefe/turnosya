@@ -28,6 +28,12 @@ import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
+import DashBoard from '../components/commerce/reports/DashBoard';
+import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
+import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';
+import MonthlyReviewsChart from '../components/commerce/reports/MonthlyReviewsChart';
+import ReservedAndCancelledShiftChart from '../components/commerce/reports/ReservedAndCancelledShiftChart';
+import MostPopularShiftsChart from '../components/commerce/reports/MostPopularShiftsChart';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -52,7 +58,7 @@ const reservationDetailsScreens = {
       title: 'Reseñas del Cliente'
     }
   }
-}
+};
 
 const calendarStack = createStackNavigator(
   {
@@ -207,18 +213,64 @@ const profileStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const reportsStack = createStackNavigator(
+  {
+    dashBoard: {
+      screen: DashBoard,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Reportes',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    dailyReservationsChart: {
+      screen: DailyReservationsChart,
+      navigationOptions: {
+        title: 'Reservas por Día'
+      }
+    },
+    monthlyEarningsChart: {
+      screen: MonthlyEarningsChart,
+      navigationOptions: {
+        title: 'Ingresos Mensuales'
+      }
+    },
+    monthlyReviewsChart: {
+      screen: MonthlyReviewsChart,
+      navigationOptions: {
+        title: 'Mis Calificaciones'
+      }
+    },
+    reservedAndCancelledShiftChart: {
+      screen: ReservedAndCancelledShiftChart,
+      navigationOptions: {
+        title: 'Cancelados/Realizados'
+      }
+    },
+    mostPopularShiftsChart: {
+      screen: MostPopularShiftsChart,
+      navigationOptions: {
+        title: 'Horarios más populares'
+      }
+    }
+  },
+  stackNavigationOptions
+);
+
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
 const commerceTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
+    reports: reportsStack,
     reservations: reservationsStack,
     calendar: calendarStack,
     profile: profileStack
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'calendar'
+    initialRouteName: 'reports'
   }
 );
 

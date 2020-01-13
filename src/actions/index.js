@@ -12,5 +12,7 @@ export * from './CourtReservationsListActions';
 export * from './ProvinceDataActions';
 export * from './CommerceReviewDataActions';
 export * from './CommerceReviewsListActions';
+export * from './CommerceReportsActions';
 export * from './ClientReviewDataActions';
 export * from './ClientReviewsListActions';
+export * from './CommerceReportsActions';

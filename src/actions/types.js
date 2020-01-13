@@ -23,7 +23,8 @@ export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
 export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
-export const ON_PASSWORD_RESET_EMAIL_SENDING = 'on_password_reset_email_sending';
+export const ON_PASSWORD_RESET_EMAIL_SENDING =
+  'on_password_reset_email_sending';
 export const ON_PASSWORD_RESET_EMAIL_SENT = 'on_password_reset_email_sent';
 export const ON_PASSWORD_RESET_EMAIL_FAIL = 'on_password_reset_email_fail';
 
@@ -114,7 +115,8 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
+export const ON_COURT_RESERVATION_VALUE_CHANGE =
+  'on_court_reservation_value_change';
 export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
 export const ON_COURT_RESERVATION_CREATE_FAIL = 'on_court_reservation_create_fail';
@@ -190,3 +192,12 @@ export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_review_read_fail';
 export const ON_CLIENT_REVIEWS_READING = 'on_client_reviews_reading';
 export const ON_CLIENT_REVIEWS_READ = 'on_client_reviews_read';
 export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
+
+// Reports types
+export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
+export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
+export const ON_COMMERCE_REPORT_VALUE_CHANGE =
+  'on_commerce_report_value_change';
+export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
+export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
+export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
