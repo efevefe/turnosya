@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card } from 'react-native-elements';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Card, Button as RNEButton } from 'react-native-elements';
+import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   employeeValueChange,
@@ -15,7 +14,7 @@ import {
   loadEmployee,
   updateEmployee
 } from '../../actions';
-import { CardSection, Input, Picker, Button, Spinner } from '../common';
+import { CardSection, Input, Picker, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 
 class EmployeeForm extends Component {
@@ -35,29 +34,6 @@ class EmployeeForm extends Component {
   componentWillUnmount() {
     this.props.employeeClear();
   }
-
-  renderEmailButton = () => {
-    return this.state.editing ? null : this.props.emailLoading ? (
-      <Spinner
-        style={{
-          position: 'relative',
-          height: 0,
-          width: 0,
-          padding: 5
-        }}
-        size="small"
-      />
-    ) : (
-      <TouchableOpacity
-        style={{ flex: 1, padding: 5 }}
-        onPress={() =>
-          this.props.searchUserByEmail(this.props.email, this.props.commerceId)
-        }
-      >
-        <Icon name="search" color={MAIN_COLOR} size={24} />
-      </TouchableOpacity>
-    );
-  };
 
   onEmailValueChange = value => {
     if (this.props.firstName) this.props.employeeNameClear();
@@ -129,12 +105,10 @@ class EmployeeForm extends Component {
       <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={20}>
         <View>
           <Card containerStyle={styles.cardStyle}>
-            <View
+            <CardSection
               style={{
-                alignSelf: 'stretch',
-                padding: 5,
                 flexDirection: 'row',
-                alignItems: 'center'
+                alignItems: 'flex-start'
               }}
             >
               <Input
@@ -147,9 +121,17 @@ class EmployeeForm extends Component {
                 onChangeText={this.onEmailValueChange}
                 containerStyle={{ flex: 10 }}
                 editable={!this.state.editing} // No se puede modificar la persona, porque se debe enviar invitación y eso
+                rightIcon={
+                  <RNEButton
+                    type='clear'
+                    icon={{ name: 'md-search', type: 'ionicon', color: MAIN_COLOR }}
+                    loading={this.props.emailLoading}
+                    onPress={() => this.props.searchUserByEmail(this.props.email, this.props.commerceId)}
+                    loadingProps={{ color: MAIN_COLOR }}
+                  />
+                }
               />
-              {this.renderEmailButton()}
-            </View>
+            </CardSection>
 
             <CardSection>
               <Input
