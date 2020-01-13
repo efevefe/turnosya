@@ -14,6 +14,8 @@ import {
   courtsRead,
   isCourtDisabledOnSlot
 } from '../../actions';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
 
 import CourtTypesFilter from './CourtTypesFilter';
 
@@ -40,8 +42,10 @@ class CommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations ||
-      prevProps.courts !== this.props.courts) {
+    if (
+      prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts
+    ) {
       this.reservationsOnSlots();
     }
   }
@@ -55,12 +59,18 @@ class CommerceSchedule extends Component {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead({
-      commerceId: this.props.commerceId,
-      selectedDate: date
-    });
+    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead(
+      {
+        commerceId: this.props.commerceId,
+        selectedDate: date
+      }
+    );
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (
+      !scheduleId ||
+      (scheduleEndDate && date >= scheduleEndDate) ||
+      date < scheduleStartDate
+    ) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date
@@ -78,15 +88,16 @@ class CommerceSchedule extends Component {
 
     const { startDate } = slot;
 
-    this.props.navigation.navigate(
-      'commerceCourtsList',
-      {
-        selectedCourtTypes: this.state.selectedCourtTypes,
-        title: startDate.format('DD') +
-          ' de ' + MONTHS[startDate.month()] +
-          ', ' + startDate.format('HH:mm') + ' hs.'
-      }
-    );
+    this.props.navigation.navigate('commerceCourtsList', {
+      selectedCourtTypes: this.state.selectedCourtTypes,
+      title:
+        startDate.format('DD') +
+        ' de ' +
+        MONTHS[startDate.month()] +
+        ', ' +
+        startDate.format('HH:mm') +
+        ' hs.'
+    });
   };
 
   isCourtTypeSelected = courtType => {
@@ -96,7 +107,7 @@ class CommerceSchedule extends Component {
       selectedCourtTypes.includes('Todas') ||
       selectedCourtTypes.includes(courtType)
     );
-  }
+  };
 
   reservationsOnSlots = () => {
     const { reservations, slots } = this.props;
@@ -138,20 +149,24 @@ class CommerceSchedule extends Component {
 
   onCourtTypesFilterValueChange = selectedCourtTypes => {
     this.setState({ selectedCourtTypes }, this.reservationsOnSlots);
-  }
+  };
 
   renderConfigurationButton = () => {
     return (
-      <IconButton
-        icon="md-options"
-        onPress={() => this.setState({ modal: true })}
-      />
+      <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+        <IconButton
+          icon="md-options"
+          onPress={() => this.setState({ modal: true })}
+        />
+      </PermissionsAssigner>
     );
   };
 
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
-    this.props.navigation.navigate('schedulesList', { selectedDate: this.state.selectedDate });
+    this.props.navigation.navigate('schedulesList', {
+      selectedDate: this.state.selectedDate
+    });
   };
 
   onScheduleConfigurationPress = () => {
@@ -173,9 +188,7 @@ class CommerceSchedule extends Component {
 
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
-        <CourtTypesFilter
-          onValueChange={this.onCourtTypesFilterValueChange}
-        />
+        <CourtTypesFilter onValueChange={this.onCourtTypesFilterValueChange} />
 
         <Schedule
           cards={cards}
@@ -245,13 +258,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onScheduleRead,
-    onScheduleValueChange,
-    onCommerceCourtReservationsRead,
-    onCourtReservationValueChange,
-    courtsRead
-  }
-)(CommerceSchedule);
+export default connect(mapStateToProps, {
+  onScheduleRead,
+  onScheduleValueChange,
+  onCommerceCourtReservationsRead,
+  onCourtReservationValueChange,
+  courtsRead
+})(CommerceSchedule);

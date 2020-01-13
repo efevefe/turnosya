@@ -14,6 +14,7 @@ import {
   ON_USER_DELETED,
   ON_USER_DELETE_FAIL,
   ON_REAUTH_SUCCESS,
+  ON_WORKPLACES_READ,
   ON_USER_PASSWORD_UPDATE
 } from '../actions/types';
 import { Toast } from '../components/common';
@@ -32,7 +33,8 @@ const INITIAL_STATE = {
   loading: false,
   refreshing: false,
   error: '',
-  confirmDeleteVisible: false
+  confirmDeleteVisible: false,
+  workplaces: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -78,6 +80,8 @@ export default (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
     case ON_USER_DELETE_FAIL:
       return { ...state, loading: false };
+    case ON_WORKPLACES_READ:
+      return { ...state, workplaces: action.payload };
     default:
       return state;
   }

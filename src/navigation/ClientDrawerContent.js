@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import {
+  onMyCommerceOpen,
   onCommerceOpen,
   onLogout,
   onUserRead,
-  onScheduleValueChange
+  onScheduleValueChange,
+  readUserWorkplaces
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
@@ -16,16 +18,24 @@ class ClientDrawerContent extends Component {
 
   componentDidMount() {
     this.props.onUserRead();
+    this.props.readUserWorkplaces();
   }
 
   onMyCommercePress = async () => {
     try {
       (await isEmailVerified())
-        ? this.props.onCommerceOpen(this.props.navigation)
+        ? this.props.onMyCommerceOpen(
+            this.props.commerceId,
+            this.props.navigation
+          )
         : this.setState({ modal: true });
     } catch (e) {
       console.error(e);
     }
+  };
+
+  onCommercePress = commerceId => {
+    this.props.onCommerceOpen(commerceId, this.props.navigation);
   };
 
   onModalClose = () => {
@@ -45,6 +55,17 @@ class ClientDrawerContent extends Component {
     }
   };
 
+  renderWorkplaces = () => {
+    return this.props.workplaces.map(workplace => (
+      <DrawerItem
+        key={workplace.commerceId}
+        title={workplace.name}
+        icon={{ name: 'store', type: 'material' }}
+        onPress={() => this.onCommercePress(workplace.commerceId)}
+      />
+    ));
+  };
+
   render() {
     return (
       <View>
@@ -58,17 +79,18 @@ class ClientDrawerContent extends Component {
         >
           <DrawerItem
             title="Mi Negocio"
-            icon={{ name: "ios-briefcase" }}
+            icon={{ name: 'ios-briefcase' }}
             onPress={() => this.onMyCommercePress()}
           />
+          {this.renderWorkplaces()}
           <DrawerItem
             title="Configuración"
-            icon={{ name: "md-settings" }}
+            icon={{ name: 'md-settings' }}
             onPress={() => this.props.navigation.navigate('clientSettings')}
           />
           <DrawerItem
             title="Cerrar Sesión"
-            icon={{ name: "md-exit" }}
+            icon={{ name: 'md-exit' }}
             loadingWithText={this.props.loading}
             onPress={() => this.props.onLogout()}
           />
@@ -80,13 +102,30 @@ class ClientDrawerContent extends Component {
 }
 
 const mapStateToProps = state => {
-  const { profilePicture, firstName, lastName } = state.clientData;
+  const {
+    profilePicture,
+    firstName,
+    lastName,
+    workplaces,
+    commerceId
+  } = state.clientData;
   const { loading } = state.auth;
 
-  return { profilePicture, firstName, lastName, loading };
+  return {
+    profilePicture,
+    firstName,
+    lastName,
+    loading,
+    workplaces,
+    commerceId
+  };
 };
 
-export default connect(
-  mapStateToProps,
-  { onCommerceOpen, onLogout, onUserRead, onScheduleValueChange }
-)(ClientDrawerContent);
+export default connect(mapStateToProps, {
+  onMyCommerceOpen,
+  onCommerceOpen,
+  onLogout,
+  onUserRead,
+  onScheduleValueChange,
+  readUserWorkplaces
+})(ClientDrawerContent);

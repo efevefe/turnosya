@@ -3,7 +3,12 @@ import { View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen, onCourtValueChange } from '../../actions';
+import { ROLES } from '../../constants';
+import {
+  courtDelete,
+  onCourtFormOpen,
+  onCourtValueChange
+} from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -37,12 +42,9 @@ class CourtListItem extends Component {
 
     this.setState({ optionsVisible: !this.state.optionsVisible });
 
-    this.props.navigation.navigate(
-      'courtForm',
-      {
-        title: 'Editar Cancha'
-      }
-    );
+    this.props.navigation.navigate('courtForm', {
+      title: 'Editar Cancha'
+    });
   };
 
   formatDisabledDates = () => {
@@ -50,29 +52,26 @@ class CourtListItem extends Component {
     let text = '';
 
     if (disabledFrom) {
-      text = 'Desde: ' +
-        disabledFrom.format('DD/MM/YYYY') + ' a las ' +
+      text =
+        'Desde: ' +
+        disabledFrom.format('DD/MM/YYYY') +
+        ' a las ' +
         disabledFrom.format('HH:mm');
 
       if (disabledTo) {
-        text += '\nHasta: ' +
-          disabledTo.format('DD/MM/YYYY') + ' a las ' +
+        text +=
+          '\nHasta: ' +
+          disabledTo.format('DD/MM/YYYY') +
+          ' a las ' +
           disabledTo.format('HH:mm');
       }
     }
 
     return text;
-  }
+  };
 
   render() {
-    const {
-      name,
-      court,
-      ground,
-      price,
-      lightPrice,
-      id
-    } = this.props.court;
+    const { name, court, ground, price, lightPrice, id } = this.props.court;
 
     return (
       <View style={{ flex: 1 }}>
@@ -112,45 +111,52 @@ class CourtListItem extends Component {
           title={name}
           titleStyle={{ textAlign: 'left', display: 'flex' }}
           rightTitle={
-            <View style={{ justifyContent: 'flex-start', width: 120, flex: 1, paddingTop: 2 }}>
+            <View
+              style={{
+                justifyContent: 'flex-start',
+                width: 120,
+                flex: 1,
+                paddingTop: 2
+              }}
+            >
               <Text
                 style={{
                   textAlign: 'right',
                   lineHeight: 20
                 }}
               >
-                {
-                  lightPrice
-                    ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
-                    : `Sin Luz: $${price}`
-                }
+                {lightPrice
+                  ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
+                  : `Sin Luz: $${price}`}
               </Text>
             </View>
           }
           key={id}
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
-              <Text
-                style={{ color: 'grey' }}
-              >
-                {`${court} - ${ground}`}
-              </Text>
+              <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
               {this.props.court.disabled ? (
-                <Text
-                  style={{ color: 'grey', fontSize: 12, marginTop: 3 }}
-                >
+                <Text style={{ color: 'grey', fontSize: 12, marginTop: 3 }}>
                   {'Deshabilitada\n' + this.formatDisabledDates()}
                 </Text>
               ) : null}
             </View>
           }
-          onLongPress={this.onOptionsPress}
-          rightIcon={{
-            name: 'md-more',
-            type: 'ionicon',
-            containerStyle: { height: 20, width: 10 },
-            onPress: this.onOptionsPress
-          }}
+          onLongPress={
+            this.props.role.value >= ROLES.ADMIN.value
+              ? this.onOptionsPress
+              : null
+          }
+          rightIcon={
+            this.props.role.value >= ROLES.ADMIN.value
+              ? {
+                  name: 'md-more',
+                  type: 'ionicon',
+                  containerStyle: { height: 20, width: 10 },
+                  onPress: this.onOptionsPress
+                }
+              : null
+          }
           bottomDivider
         />
       </View>
@@ -158,7 +164,13 @@ class CourtListItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  { courtDelete, onCourtFormOpen, onCourtValueChange }
-)(CourtListItem);
+const mapStateToProps = state => {
+  const { role } = state.roleData;
+  return { role };
+};
+
+export default connect(mapStateToProps, {
+  courtDelete,
+  onCourtFormOpen,
+  onCourtValueChange
+})(CourtListItem);

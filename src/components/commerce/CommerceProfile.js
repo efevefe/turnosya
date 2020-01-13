@@ -115,7 +115,7 @@ class CommerceProfile extends Component {
       <HeaderBackButton
         onPress={() => this.props.navigation.goBack(null)}
         tintColor="white"
-        title='Back'
+        title="Back"
       />
     );
   };
@@ -160,7 +160,7 @@ class CommerceProfile extends Component {
   };
 
   onRefresh = () => {
-    this.props.onCommerceRead();
+    this.props.onCommerceRead(this.props.commerceId);
   };
 
   onSavePress = async () => {

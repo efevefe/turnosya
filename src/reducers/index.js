@@ -18,6 +18,9 @@ import CommerceReviewDataReducer from './CommerceReviewDataReducer';
 import CommerceReviewsListReducer from './CommerceReviewsListReducer';
 import ClientReviewDataReducer from './ClientReviewDataReducer';
 import ClientReviewsListReducer from './ClientReviewsListReducer';
+import EmployeesListReducer from './EmployeesListReducer';
+import EmployeeDataReducer from './EmployeeDataReducer';
+import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
 
 export default combineReducers({
@@ -40,5 +43,8 @@ export default combineReducers({
   commerceReviewsList: CommerceReviewsListReducer,
   clientReviewData: ClientReviewDataReducer,
   clientReviewsList: ClientReviewsListReducer,
+  employeesList: EmployeesListReducer,
+  employeeData: EmployeeDataReducer,
+  roleData: RoleDataReducer,
   commerceReports: CommerceReportsReducer
 });

@@ -50,7 +50,7 @@ class ClientReservationDetails extends Component {
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
       selectedDate: this.state.reservation.startDate
-    })
+    });
 
     this.props.readCommerceReview({
       commerceId: this.state.reservation.commerceId,
@@ -195,46 +195,46 @@ class ClientReservationDetails extends Component {
 
     return this.state.isOneWeekOld && !this.props.commerceReviewId ? (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title='Ya pasó el período de calificación' />
+        <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={value =>
-              this.props.commerceReviewValueChange('rating', value)
-            }
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={value =>
-              this.props.commerceReviewValueChange('comment', value)
-            }
-            commentPlaceholder='Deje un comentario sobre la atención...'
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={value =>
+            this.props.commerceReviewValueChange('rating', value)
+          }
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={value =>
+            this.props.commerceReviewValueChange('comment', value)
+          }
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderClientReview = () => {
     return this.props.clientRating ? (
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
-          title='Calificación realizada por el negocio'
+          title="Calificación realizada por el negocio"
           rating={this.props.clientRating}
-          commentPlaceholder='El negocio no realizó ningún comentario...'
+          commentPlaceholder="El negocio no realizó ningún comentario..."
           commentText={this.props.clientComment}
           readOnly
           fieldsVisible
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title='El negocio no te ha calificado' />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El negocio no te ha calificado" />
+      </View>
+    );
   };
 
   renderReviewFields = () => {
@@ -307,15 +307,17 @@ class ClientReservationDetails extends Component {
         </Menu>
 
         <CourtReservationDetails
-          mode='commerce'
+          mode="commerce"
           name={commerce.name}
           picture={commerce.profilePicture}
           info={
-            commerce.address + ', ' +
-            commerce.city + ', ' +
+            commerce.address +
+            ', ' +
+            commerce.city +
+            ', ' +
             commerce.province.name
           }
-          infoIcon='md-pin'
+          infoIcon="md-pin"
           court={court}
           startDate={startDate}
           endDate={endDate}

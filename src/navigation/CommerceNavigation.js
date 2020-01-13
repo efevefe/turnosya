@@ -23,11 +23,12 @@ import CommerceReviewsList from '../components/CommerceReviewsList';
 import CommerceCourtReservationRegister from '../components/commerce/CommerceCourtReservationRegister';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
-// import Map from '../components/common/Map';
 import {
   stackNavigationOptions,
   tabNavigationOptions
 } from './NavigationOptions';
+import PermissionsAssigner from '../components/common/PermissionsAssigner';
+import { ROLES } from '../constants';
 import DashBoard from '../components/commerce/reports/DashBoard';
 import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
 import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';
@@ -170,10 +171,12 @@ const profileStack = createStackNavigator(
           <IconButton icon="md-menu" onPress={navigation.openDrawer} />
         ),
         headerRight: (
-          <IconButton
-            icon="md-create"
-            onPress={() => navigation.navigate('profileEdit')}
-          />
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+            <IconButton
+              icon="md-create"
+              onPress={() => navigation.navigate('profileEdit')}
+            />
+          </PermissionsAssigner>
         )
       })
     },
