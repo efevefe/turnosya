@@ -152,24 +152,13 @@ class ClientProfile extends Component {
     this.setState({ pictureOptionsVisible: !this.state.pictureOptionsVisible });
   };
 
-  getPermissionAsync = async () => {
+  onChoosePicturePress = async () => {
+    this.onEditPicturePress();
+
     try {
       if (Constants.platform.ios) {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  onChoosePicturePress = async () => {
-    try {
-      this.onEditPicturePress();
-
-      await this.getPermissionAsync();
 
       const options = {
         mediaTypes: 'Images',
@@ -177,17 +166,18 @@ class ClientProfile extends Component {
         aspect: [1, 1]
       };
 
-      let response = await ImagePicker.launchImageLibraryAsync(options);
+      const response = await ImagePicker.launchImageLibraryAsync(options);
 
       if (!response.cancelled) {
         this.props.onClientDataValueChange({
           prop: 'profilePicture',
           value: response.uri
         });
+
         this.setState({ newProfilePicture: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -327,7 +317,6 @@ class ClientProfile extends Component {
           />
         }
       >
-        <LocationMessages />
         <View style={headerContainerStyle}>
           <View style={avatarContainerStyle}>
             <Avatar
@@ -346,6 +335,7 @@ class ClientProfile extends Component {
           </View>
           {this.renderFullName()}
           {this.renderLocation()}
+          <LocationMessages /> {/* Este componente hace que la app crashee al querer cambiar la foto */}
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('clientReviewsList', {
