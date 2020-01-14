@@ -22,6 +22,7 @@ import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import CommerceServicesList from '../components/client/CommerceServicesList';
+import CommerceEmployeesList from '../components/client/CommerceEmployeesList';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -50,6 +51,12 @@ const reservationScreens = {
     screen: CommerceServicesList,
     navigationOptions: {
       title: 'Servicios'
+    }
+  },
+  commerceEmployeesList: {
+    screen: CommerceEmployeesList,
+    navigationOptions: {
+      title: 'Estilistas'
     }
   },
   commerceSchedule: {

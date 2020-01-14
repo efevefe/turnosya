@@ -3,7 +3,8 @@ import {
     ON_COURT_RESERVATION_CREATING,
     ON_COURT_RESERVATION_CREATE,
     ON_COURT_RESERVATION_CREATE_FAIL,
-    ON_NEW_COURT_RESERVATION
+    ON_NEW_RESERVATION,
+    ON_NEW_SERVICE_RESERVATION
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -31,11 +32,12 @@ const INITIAL_STATE_NEW = {
     saved: false,
     loading: false,
     // COURT RESERVATION ONLY
-    courtType: '',
     court: null,
+    courtType: '',
     light: false,
     // SERVICE RESERVATION ONLY
-    service: null
+    service: null,
+    employee: null
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -48,8 +50,10 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, loading: false, saved: true };
         case ON_COURT_RESERVATION_CREATE_FAIL:
             return { ...state, loading: false };
-        case ON_NEW_COURT_RESERVATION:
-            return { ...state, saved: false, clientName: '', clientPhone: '', court: action.payload };
+        case ON_NEW_RESERVATION:
+            return { ...state, saved: false, clientName: '', clientPhone: '' };
+        case ON_NEW_SERVICE_RESERVATION:
+            return { ...state, employee: null, service: null };
         default:
             return state;
     }

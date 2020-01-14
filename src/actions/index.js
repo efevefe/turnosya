@@ -1,4 +1,4 @@
-export * from './ServiceActions';
+export * from './ServicesActions';
 export * from './AuthActions';
 export * from './ClientDataActions';
 export * from './CourtActions';

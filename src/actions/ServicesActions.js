@@ -49,6 +49,23 @@ export const servicesRead = commerceId => dispatch => {
     });
 };
 
+// despues que agregue lo de los servicios del lado del negocio
+export const servicesReadByEmployee = ({ commerceId, employeeId }) => dispatch => {
+  dispatch({ type: SERVICES_READING });
+
+  const db = firebase.firestore();
+
+  return db.collection(`Commerces/${commerceId}/Services`)
+    .where('softDelete', '==', null)
+    .where('employeesIds', 'array-contains', employeeId)
+    .orderBy('name', 'asc')
+    .onSnapshot(snapshot => {
+      const services = [];
+      snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
+      dispatch({ type: SERVICES_READ, payload: services });
+    });
+}
+
 export const serviceDelete = ({ id, commerceId }) => {
   const db = firebase.firestore();
 

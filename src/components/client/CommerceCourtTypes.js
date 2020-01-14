@@ -13,19 +13,20 @@ import {
 
 class CommerceCourtTypes extends Component {
   onCourtTypePress = courtType => {
-    this.props.onReservationValueChange({
-      prop: 'courtType',
-      value: courtType
-    });
+    if (this.props.navigation.state.routeName === 'commerceProfileView') {
+      this.props.onReservationValueChange({
+        prop: 'courtType',
+        value: courtType
+      });
 
-    this.props.navigation.navigate('commerceSchedule');
+      this.props.navigation.navigate('commerceSchedule');
+    }
   };
 
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
-        onPress={this.props.navigation.state.routeName === 'commerceProfileView'
-          ? (() => this.onCourtTypePress(item.name)) : null}
+        onPress={() => this.onCourtTypePress(item.name)}
         underlayColor="transparent"
       >
         <Card

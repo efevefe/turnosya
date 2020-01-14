@@ -5,14 +5,29 @@ import {
     View,
     StyleSheet
 } from 'react-native';
+import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
+import { onNewServiceReservation } from '../../actions';
 
 const CommerceCourtTypes = props => {
+    onServicesPress = () => {
+        if (props.navigation.state.routeName === 'commerceProfileView') {
+            props.onNewServiceReservation();
+            props.navigation.navigate('commerceServicesList');
+        }
+    }
+
+    onEmployeesPress = () => {
+        if (props.navigation.state.routeName === 'commerceProfileView') {
+            props.onNewServiceReservation();
+            props.navigation.navigate('commerceEmployeesList');
+        }
+    }
+
     return (
         <View style={styles.mainContainer}>
             <TouchableHighlight
-                onPress={props.navigation.state.routeName === 'commerceProfileView'
-                    ? (() => props.navigation.navigate('commerceServicesList')) : null}
+                onPress={onServicesPress}
                 underlayColor="transparent"
             >
                 <Card
@@ -24,8 +39,7 @@ const CommerceCourtTypes = props => {
                 </Card>
             </TouchableHighlight>
             <TouchableHighlight
-                onPress={props.navigation.state.routeName === 'commerceProfileView'
-                    ? (() => alert('empleados')) : null}
+                onPress={onEmployeesPress}
                 underlayColor="transparent"
             >
                 <Card
@@ -53,4 +67,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CommerceCourtTypes;
+export default connect(null, { onNewServiceReservation })(CommerceCourtTypes);

@@ -3,16 +3,33 @@ import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList, Spinner } from '../common';
-import { servicesRead, onReservationValueChange } from '../../actions';
+import { servicesRead, onReservationValueChange, servicesReadByEmployee } from '../../actions';
 
 class CommerceServicesList extends Component {
     componentDidMount() {
-        // aca se debe filtrar por empleado si se selecciona o sino no
-        this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
+        if (this.props.employee) {
+            alert('descomentar cuando este listo los servicios por empleado del lado del negocio');
+            // this.unsubscribeServices = this.props.servicesReadByEmployee({
+            //     commerceId: this.props.commerce.objectID,
+            //     employeeId: this.props.employee.id
+            // });
+        } else {
+            this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
+        }
     }
 
     componentWillUnmount() {
         this.unsubscribeServices && this.unsubscribeServices();
+    }
+
+    onServicePress = service => {
+        this.props.onReservationValueChange({ prop: 'service', value: service });
+
+        if (this.props.employee) {
+            this.props.navigation.navigate('commerceSchedule');
+        } else {
+            this.props.navigation.navigate('commerceEmployeesList');
+        }
     }
 
     renderItem = ({ item }) => {
@@ -28,7 +45,7 @@ class CommerceServicesList extends Component {
                     color: 'black'
                 }}
                 bottomDivider
-                onPress={() => this.props.onReservationValueChange({ prop: 'service', value: item })}
+                onPress={() => this.onServicePress(item)}
             />
         )
     }
@@ -52,10 +69,14 @@ class CommerceServicesList extends Component {
 }
 
 const mapStateToProps = state => {
-    const { commerce } = state.reservation;
+    const { commerce, employee } = state.reservation;
     const { services, loading } = state.servicesList;
 
-    return { commerce, services, loading };
+    return { commerce, services, loading, employee };
 };
 
-export default connect(mapStateToProps, { servicesRead, onReservationValueChange })(CommerceServicesList);
+export default connect(mapStateToProps, {
+    servicesRead,
+    onReservationValueChange,
+    servicesReadByEmployee
+})(CommerceServicesList);

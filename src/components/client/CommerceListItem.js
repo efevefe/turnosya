@@ -64,9 +64,7 @@ class CommerceListItem extends Component {
   render() {
     const {
       name,
-      address,
       profilePicture,
-      areaName,
       objectID
     } = this.props.commerce;
 
