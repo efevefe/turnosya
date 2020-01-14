@@ -3,16 +3,32 @@ import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList, Spinner } from '../common';
-import { servicesRead, onReservationValueChange } from '../../actions';
+import { servicesRead, onReservationValueChange, servicesReadByEmployee } from '../../actions';
 
 class CommerceServicesList extends Component {
     componentDidMount() {
-        // aca se debe filtrar por empleado si se selecciona o sino no
-        this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
+        if (this.props.employee) {
+            this.unsubscribeServices = this.props.servicesReadByEmployee({
+                commerceId: this.props.commerce.objectID,
+                employeeId: this.props.employee.id
+            });
+        } else {
+            this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
+        }
     }
 
     componentWillUnmount() {
         this.unsubscribeServices && this.unsubscribeServices();
+    }
+
+    onServicePress = service => {
+        this.props.onReservationValueChange({ prop: 'service', value: service });
+
+        if (this.props.employee) {
+            this.props.navigation.navigate('commerceSchedule');
+        } else {
+            this.props.navigation.navigate('commerceEmployeesList');
+        }
     }
 
     renderItem = ({ item }) => {
@@ -58,4 +74,8 @@ const mapStateToProps = state => {
     return { commerce, services, loading };
 };
 
-export default connect(mapStateToProps, { servicesRead, onReservationValueChange })(CommerceServicesList);
+export default connect(mapStateToProps, {
+    servicesRead,
+    onReservationValueChange,
+    servicesReadByEmployee
+})(CommerceServicesList);
