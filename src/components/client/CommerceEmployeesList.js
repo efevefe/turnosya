@@ -8,11 +8,10 @@ import { onReservationValueChange, readEmployees, readEmployeesByService } from 
 class CommerceEmployeesList extends Component {
     componentDidMount() {
         if (this.props.service) {
-            alert('descomentar cuando este listo los servicios por empleado del lado del negocio');
-            // this.props.readEmployeesByService({
-            //     commerceId: this.props.commerceId.objectId,
-            //     employeesIds: this.props.service.employeesIds
-            // });
+            this.props.readEmployeesByService({
+                commerceId: this.props.commerceId.objectId,
+                employeesIds: this.props.service.employeesIds
+            });
         } else {
             this.props.readEmployees(this.props.commerce.objectId);
         }
