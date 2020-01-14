@@ -9,11 +9,11 @@ class CommerceEmployeesList extends Component {
     componentDidMount() {
         if (this.props.service) {
             this.props.readEmployeesByService({
-                commerceId: this.props.commerceId.objectId,
+                commerceId: this.props.commerce.objectID,
                 employeesIds: this.props.service.employeesIds
             });
         } else {
-            this.props.readEmployees(this.props.commerce.objectId);
+            this.props.readEmployees(this.props.commerce.objectID);
         }
     }
 
@@ -21,7 +21,8 @@ class CommerceEmployeesList extends Component {
         this.props.onReservationValueChange({ prop: 'employee', value: employee });
 
         if (this.props.service) {
-            this.props.navigation.navigate('commerceSchedule');
+            // this.props.navigation.navigate('commerceSchedule');
+            alert('work in progress');
         } else {
             this.props.navigation.navigate('commerceServicesList');
         }

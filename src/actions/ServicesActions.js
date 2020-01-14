@@ -49,10 +49,6 @@ export const servicesRead = commerceId => dispatch => {
     });
 };
 
-<<<<<<< HEAD:src/actions/ServicesActions.js
-// despues que agregue lo de los servicios del lado del negocio
-=======
->>>>>>> s10-201-ConsultarServicios:src/actions/ServiceActions.js
 export const servicesReadByEmployee = ({ commerceId, employeeId }) => dispatch => {
   dispatch({ type: SERVICES_READING });
 
