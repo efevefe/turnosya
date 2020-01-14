@@ -76,17 +76,24 @@ export const serviceDelete = ({ id, commerceId }) => {
   };
 };
 
-export const serviceUpdate = ({ id, name, duration, price, description, commerceId }, navigation) => {
+export const serviceUpdate = ({ id, name, duration, price, description, employeesIds, commerceId }, navigation = null) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
     db.doc(`Commerces/${commerceId}/Services/${id}`)
-      .update({ name, duration, price, description })
+      .update({ name, duration, price, description, employeesIds })
       .then(() => {
         dispatch({ type: SERVICE_UPDATE });
-        navigation.goBack();
+        navigation && navigation.goBack();
       });
   };
+};
+
+export const offeringServiceUpdate = ({ id, employeesIds, commerceId }) => {
+  const db = firebase.firestore();
+
+  db.doc(`Commerces/${commerceId}/Services/${id}`)
+    .update({ employeesIds });
 };

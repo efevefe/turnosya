@@ -7,7 +7,8 @@ import {
   onLogout,
   onUserRead,
   onScheduleValueChange,
-  readUserWorkplaces
+  readUserWorkplaces,
+  onCommerceRead
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
@@ -21,21 +22,22 @@ class ClientDrawerContent extends Component {
     this.props.readUserWorkplaces();
   }
 
-  onMyCommercePress = async () => {
+  onCommercePress = async commerceId => {
     try {
-      (await isEmailVerified())
-        ? this.props.onMyCommerceOpen(
-            this.props.commerceId,
-            this.props.navigation
-          )
-        : this.setState({ modal: true });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+      if (await isEmailVerified()) {
+        this.props.onCommerceOpen(commerceId);
 
-  onCommercePress = commerceId => {
-    this.props.onCommerceOpen(commerceId, this.props.navigation);
+        const success = await this.props.onCommerceRead(commerceId);
+
+        if (success && this.props.areaId) {
+          this.props.navigation.navigate(`${this.props.areaId}Navigation`);
+        }
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   onModalClose = () => {
@@ -80,7 +82,8 @@ class ClientDrawerContent extends Component {
           <DrawerItem
             title="Mi Negocio"
             icon={{ name: 'ios-briefcase' }}
-            onPress={() => this.onMyCommercePress()}
+            loadingWithText={this.props.loadingCommerce}
+            onPress={() => this.onCommercePress(this.props.commerceId)}
           />
           {this.renderWorkplaces()}
           <DrawerItem
@@ -109,6 +112,7 @@ const mapStateToProps = state => {
     workplaces,
     commerceId
   } = state.clientData;
+  const { area: { areaId }, refreshing: loadingCommerce } = state.commerceData;
   const { loading } = state.auth;
 
   return {
@@ -117,7 +121,9 @@ const mapStateToProps = state => {
     lastName,
     loading,
     workplaces,
-    commerceId
+    commerceId,
+    areaId,
+    loadingCommerce
   };
 };
 
@@ -127,5 +133,6 @@ export default connect(mapStateToProps, {
   onLogout,
   onUserRead,
   onScheduleValueChange,
-  readUserWorkplaces
+  readUserWorkplaces,
+  onCommerceRead
 })(ClientDrawerContent);

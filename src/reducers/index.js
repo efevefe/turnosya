@@ -1,4 +1,5 @@
-import { combineReducers } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
 import AuthReducer from './AuthReducer';
@@ -23,7 +24,7 @@ import EmployeeDataReducer from './EmployeeDataReducer';
 import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
 
-export default combineReducers({
+const reducers = combineReducers({
   auth: AuthReducer,
   clientData: ClientDataReducer,
   serviceForm: ServiceFormReducer,
@@ -48,3 +49,6 @@ export default combineReducers({
   roleData: RoleDataReducer,
   commerceReports: CommerceReportsReducer
 });
+
+
+export default createStore(reducers, {}, applyMiddleware(ReduxThunk));

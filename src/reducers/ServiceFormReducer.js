@@ -13,6 +13,7 @@ const INITIAL_STATE = {
     duration: '',
     price: '',
     description: '',
+    employeesIds: [],
     loading: false
 };
 

@@ -25,6 +25,7 @@ class ServicesList extends Component {
         service={item}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
+        employeeId={this.props.employeeId}
       />
     );
   }
@@ -85,8 +86,9 @@ class ServicesList extends Component {
 const mapStateToProps = state => {
   const { services, loading } = state.servicesList;
   const { commerceId } = state.commerceData;
+  const { employeeId } = state.roleData;
 
-  return { services, loading, commerceId };
+  return { services, loading, commerceId, employeeId };
 };
 
 export default connect(

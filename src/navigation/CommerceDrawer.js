@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
-import CommerceNavigation from './CommerceNavigation';
+import { SportsNavigation, HairdressersNavigation } from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
 import EmployeesList from '../components/commerce/EmployeesList';
@@ -50,7 +50,8 @@ const CommerceEmployeesStack = createStackNavigator(
 
 const commerceDrawer = createDrawerNavigator(
   {
-    tabs: CommerceNavigation,
+    sportsNavigation: SportsNavigation,
+    hairdressersNavigation: HairdressersNavigation,
     commerceSettings: CommerceSettingsStack,
     commerceEmployees: CommerceEmployeesStack
   },

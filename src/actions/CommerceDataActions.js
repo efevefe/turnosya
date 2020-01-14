@@ -47,15 +47,7 @@ export const onCommerceFormOpen = () => {
   };
 };
 
-export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
-  dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
-  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
-  dispatch({ type: ON_LOCATION_VALUES_RESET });
-
-  navigation.navigate('commerce');
-};
-
-export const onCommerceOpen = (commerceId, navigation) => dispatch => {
+export const onCommerceOpen = commerceId => dispatch => {
   const db = firebase.firestore();
   const profileId = firebase.auth().currentUser.uid;
 
@@ -65,14 +57,16 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
     .where('profileId', '==', profileId)
     .get()
     .then(snapshot => {
-      dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
-      dispatch({
-        type: ON_ROLE_ASSIGNED,
-        payload: ROLES[snapshot.docs[0].data().role.roleId]
-      });
-      dispatch({ type: ON_LOCATION_VALUES_RESET });
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
 
-      navigation.navigate('commerce');
+        dispatch({
+          type: ON_ROLE_ASSIGNED,
+          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id }
+        });
+      }
+
+      dispatch({ type: ON_LOCATION_VALUES_RESET });
     })
     .catch(e => console.error(e));
 };
@@ -148,37 +142,37 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = commerceId => {
+export const onCommerceRead = commerceId => async dispatch => {
+  dispatch({ type: ON_COMMERCE_READING });
+
   const db = firebase.firestore();
 
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING });
+  try {
+    const doc = await db.doc(`Commerces/${commerceId}`).get();
 
-    db.doc(`Commerces/${commerceId}`)
-      .get()
-      .then(doc => {
-        //province
-        var { name, provinceId } = doc.data().province;
-        const province = { value: provinceId, label: name };
+    //province
+    var { name, provinceId } = doc.data().province;
+    const province = { value: provinceId, label: name };
 
-        //area
-        var { name, areaId } = doc.data().area;
-        const area = { value: areaId, label: name };
+    //area
+    var { name, areaId } = doc.data().area;
+    const area = { value: areaId, label: name };
 
-        dispatch({
-          type: ON_COMMERCE_READ,
-          payload: {
-            ...doc.data(),
-            provincesList: [province],
-            areasList: [area],
-            commerceId: doc.id
-          }
-        });
-      })
-      .catch(error => {
-        dispatch({ type: ON_COMMERCE_READ_FAIL });
-      });
-  };
+    dispatch({
+      type: ON_COMMERCE_READ,
+      payload: {
+        ...doc.data(),
+        provincesList: [province],
+        areasList: [area],
+        commerceId: doc.id
+      }
+    });
+
+    return true;
+  } catch (error) {
+    dispatch({ type: ON_COMMERCE_READ_FAIL });
+    return false;
+  }
 };
 
 onPictureUpdate = async (commerceId, picture, type) => {
@@ -298,7 +292,7 @@ export const validateCuit = cuit => {
       .where('cuit', '==', cuit)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: CUIT_EXISTS });
         } else {
