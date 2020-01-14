@@ -8,11 +8,10 @@ import { servicesRead, onReservationValueChange, servicesReadByEmployee } from '
 class CommerceServicesList extends Component {
     componentDidMount() {
         if (this.props.employee) {
-            alert('descomentar cuando este listo los servicios por empleado del lado del negocio');
-            // this.unsubscribeServices = this.props.servicesReadByEmployee({
-            //     commerceId: this.props.commerce.objectID,
-            //     employeeId: this.props.employee.id
-            // });
+            this.unsubscribeServices = this.props.servicesReadByEmployee({
+                commerceId: this.props.commerce.objectID,
+                employeeId: this.props.employee.id
+            });
         } else {
             this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
         }
