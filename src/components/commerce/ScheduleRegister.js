@@ -709,8 +709,8 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.commerceSchedule;
-  const { nextReservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
+  const { nextReservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
   const { commerceId } = state.commerceData;
 
   return {

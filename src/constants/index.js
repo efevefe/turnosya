@@ -42,3 +42,10 @@ export const ROLES = {
   ADMIN: { value: 1, name: 'Administrador' },
   EMPLOYEE: { value: 0, name: 'Empleado' }
 };
+
+// AREAS
+
+export const AREAS = {
+  sports: 'sports',
+  hairdressers: 'hairdressers'
+};

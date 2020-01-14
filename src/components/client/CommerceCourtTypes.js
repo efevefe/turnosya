@@ -8,12 +8,12 @@ import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList } from '../common';
 import {
-  onCourtReservationValueChange
+  onReservationValueChange
 } from '../../actions';
 
 class CommerceCourtTypes extends Component {
   onCourtTypePress = courtType => {
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'courtType',
       value: courtType
     });
@@ -72,6 +72,6 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    onCourtReservationValueChange
+    onReservationValueChange
   }
 )(CommerceCourtTypes);

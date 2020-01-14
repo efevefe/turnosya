@@ -431,7 +431,7 @@ class CommerceSchedulesList extends Component {
 
 const mapStateToProps = state => {
   const { schedules, loading } = state.commerceSchedule;
-  const { nextReservations } = state.courtReservationsList;
+  const { nextReservations } = state.reservationsList;
   const { commerceId } = state.commerceData;
 
   return { schedules, commerceId, loading, nextReservations };

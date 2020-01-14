@@ -8,7 +8,7 @@ import { MONTHS } from '../../constants';
 import {
   onScheduleRead,
   onScheduleValueChange,
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onCommerceCourtTypeReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead,
@@ -104,7 +104,7 @@ class ClientCommerceSchedule extends Component {
       });
     }
 
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'slot',
       value: slot
     });
@@ -195,10 +195,10 @@ const mapStateToProps = state => {
     refreshing
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
-  const { commerce, courtType } = state.courtReservation;
-  const { reservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
-  const { slot } = state.courtReservation;
+  const { commerce, courtType } = state.reservation;
+  const { reservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
+  const { slot } = state.reservation;
   const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
@@ -226,7 +226,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onScheduleValueChange,
   onScheduleRead,
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onCommerceCourtTypeReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead

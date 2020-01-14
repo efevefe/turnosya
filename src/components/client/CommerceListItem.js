@@ -8,7 +8,7 @@ import {
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
   readFavoriteCommerces,
-  onCourtReservationValueChange
+  onReservationValueChange
 } from '../../actions';
 
 class CommerceListItem extends Component {
@@ -42,7 +42,7 @@ class CommerceListItem extends Component {
   };
 
   onCommercePress = () => {
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'commerce',
       value: this.props.commerce
     });
@@ -116,7 +116,7 @@ export default withNavigation(
       registerFavoriteCommerce,
       deleteFavoriteCommerce,
       readFavoriteCommerces,
-      onCourtReservationValueChange
+      onReservationValueChange
     }
   )(CommerceListItem)
 );

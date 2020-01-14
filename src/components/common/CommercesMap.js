@@ -7,7 +7,7 @@ import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
 import {
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
@@ -244,7 +244,7 @@ class CommercesMap extends React.Component {
   };
 
   onMarkerTitlePress = marker => {
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'commerce',
       value: marker
     });
@@ -380,5 +380,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 })(CommercesMap);

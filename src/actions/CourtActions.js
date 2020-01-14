@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import moment from 'moment';
-import { onReservationsCancel } from './CourtReservationsListActions';
+import { onReservationsCancel } from './ReservationsListActions';
 import {
   ON_COURT_VALUE_CHANGE,
   ON_COURT_FORM_OPEN,

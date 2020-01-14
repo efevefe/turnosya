@@ -17,7 +17,7 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { PictureView, Spinner } from './common';
+import { PictureView, Spinner, AreaComponentRenderer } from './common';
 import {
   onCommerceRead,
   registerFavoriteCommerce,
@@ -28,6 +28,7 @@ import {
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
+import CommerceServicesEmployees from './client/CommerceServicesEmployees';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -168,8 +169,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -228,7 +229,13 @@ class CommerceProfileView extends Component {
             }}
           />
         </View>
-        <CommerceCourtTypes navigation={navigation} />
+
+        <AreaComponentRenderer
+          area={this.props.areaId}
+          sports={<CommerceCourtTypes navigation={navigation} />}
+          hairdressers={<CommerceServicesEmployees navigation={navigation} />}
+        />
+
         <PictureView
           isVisible={this.state.pictureVisible}
           onClosePress={this.onPicturePress}
@@ -273,7 +280,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerce } = state.courtReservation;
+  const { commerce } = state.reservation;
   const { favoriteCommerces } = state.commercesList;
   const loadingCourtTypes = state.commerceCourtTypes.loading;
   const { cards } = state.commerceSchedule;
@@ -289,7 +296,8 @@ const mapStateToProps = state => {
     commerceId,
     latitude,
     longitude,
-    rating
+    rating,
+    area
   } = state.commerceData;
 
   return {
@@ -308,7 +316,8 @@ const mapStateToProps = state => {
     favoriteCommerces,
     cards,
     loadingCourtTypes,
-    loadingProfile
+    loadingProfile,
+    areaId: area.areaId
   };
 };
 

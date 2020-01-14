@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { commerceId } = state.commerceData;
-  const { detailedReservations, loading } = state.courtReservationsList;
+  const { detailedReservations, loading } = state.reservationsList;
 
   return { commerceId, reservations: detailedReservations, loading };
 };

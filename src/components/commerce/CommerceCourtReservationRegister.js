@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
-import { onCourtReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
+import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 import { validateValueType } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
@@ -35,12 +35,12 @@ class CommerceCourtReservationRegister extends Component {
     onPriceSelect = selectedIndex => {
         this.setState({ selectedIndex });
 
-        this.props.onCourtReservationValueChange({
+        this.props.onReservationValueChange({
             prop: "price",
             value: this.state.prices[selectedIndex]
         });
 
-        this.props.onCourtReservationValueChange({
+        this.props.onReservationValueChange({
             prop: "light",
             value: !!selectedIndex // 0 = false = no light // 1 = true = light
         });
@@ -87,14 +87,14 @@ class CommerceCourtReservationRegister extends Component {
     };
 
     onNameValueChange = name => {
-        this.props.onCourtReservationValueChange({
+        this.props.onReservationValueChange({
             prop: 'clientName',
             value: name
         });
     }
 
     onPhoneValueChange = phone => {
-        this.props.onCourtReservationValueChange({
+        this.props.onReservationValueChange({
             prop: 'clientPhone',
             value: phone
         });
@@ -199,12 +199,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     const { commerceId } = state.commerceData;
-    const { clientName, clientPhone, court, slot, light, price, saved, loading } = state.courtReservation;
+    const { clientName, clientPhone, court, slot, light, price, saved, loading } = state.reservation;
 
     return { commerceId, clientName, clientPhone, court, slot, light, price, saved, loading };
 }
 
 export default connect(mapStateToProps, {
-    onCourtReservationValueChange,
+    onReservationValueChange,
     onCommerceCourtReservationCreate
 })(CommerceCourtReservationRegister);

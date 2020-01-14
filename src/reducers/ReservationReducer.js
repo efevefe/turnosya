@@ -1,5 +1,5 @@
 import {
-    ON_COURT_RESERVATION_VALUE_CHANGE,
+    ON_RESERVATION_VALUE_CHANGE,
     ON_COURT_RESERVATION_CREATING,
     ON_COURT_RESERVATION_CREATE,
     ON_COURT_RESERVATION_CREATE_FAIL,
@@ -19,9 +19,28 @@ const INITIAL_STATE = {
     saved: false
 };
 
+const INITIAL_STATE_NEW = {
+    // RESERVATION
+    clientName: '',
+    clientPhone: '',
+    commerce: null,
+    areaId: null,
+    startDate: null,
+    endDate: null,
+    price: 0,
+    saved: false,
+    loading: false,
+    // COURT RESERVATION ONLY
+    courtType: '',
+    court: null,
+    light: false,
+    // SERVICE RESERVATION ONLY
+    service: null
+};
+
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case ON_COURT_RESERVATION_VALUE_CHANGE:
+        case ON_RESERVATION_VALUE_CHANGE:
             return { ...state, [action.payload.prop]: action.payload.value };
         case ON_COURT_RESERVATION_CREATING:
             return { ...state, loading: true };

@@ -17,7 +17,7 @@ import {
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCommerceCancelReservation,
-  onCourtReservationsListValueChange,
+  onReservationsListValueChange,
   clientReviewValueChange,
   createClientReview,
   readClientReview,
@@ -89,7 +89,7 @@ class CommerceCourtReservationDetails extends Component {
 
   onBackdropPress = () => {
     this.setState({ optionsVisible: false, error: '' });
-    this.props.onCourtReservationsListValueChange({
+    this.props.onReservationsListValueChange({
       prop: 'cancelationReason',
       value: ''
     });
@@ -301,7 +301,7 @@ class CommerceCourtReservationDetails extends Component {
                 multiline={true}
                 color="black"
                 onChangeText={value => {
-                  this.props.onCourtReservationsListValueChange({
+                  this.props.onReservationsListValueChange({
                     prop: 'cancelationReason',
                     value
                   });
@@ -368,7 +368,7 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { loading, cancelationReason } = state.courtReservationsList;
+  const { loading, cancelationReason } = state.reservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
@@ -389,7 +389,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceCancelReservation,
-  onCourtReservationsListValueChange,
+  onReservationsListValueChange,
   clientReviewValueChange,
   createClientReview,
   readClientReview,

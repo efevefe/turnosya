@@ -21,3 +21,4 @@ export * from './LineChart';
 export * from './PieChart';
 export * from './SettingsItem';
 export * from './ButtonGroup';
+export * from './AreaComponentRenderer';

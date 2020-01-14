@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import {
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onClientCourtReservationCreate
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
@@ -39,12 +39,12 @@ class ConfirmCourtReservation extends Component {
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
 
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'price',
       value: this.state.prices[selectedIndex]
     });
 
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       prop: 'light',
       value: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
@@ -184,12 +184,12 @@ const mapStateToProps = state => {
     light,
     saved,
     loading
-  } = state.courtReservation;
+  } = state.reservation;
 
   return { commerce, courtType, court, slot, price, light, saved, loading };
 };
 
 export default connect(mapStateToProps, {
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onClientCourtReservationCreate
 })(ConfirmCourtReservation);

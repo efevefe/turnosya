@@ -115,7 +115,7 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE =
+export const ON_RESERVATION_VALUE_CHANGE =
   'on_court_reservation_value_change';
 export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
@@ -141,13 +141,13 @@ export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
   'on_client_reservation_cancel_fail';
 
 // Commerce Reservations List
-export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE =
-  'on_court_reservations_list_value_change';
-export const ON_COMMERCE_COURT_RESERVATIONS_READING =
+export const ON_RESERVATIONS_LIST_VALUE_CHANGE =
+  'on_reservations_list_value_change';
+export const ON_COMMERCE_RESERVATIONS_READING =
   'on_commerce_reservations_reading';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ =
+export const ON_COMMERCE_RESERVATIONS_READ =
   'on_commerce_reservations_read';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
+export const ON_COMMERCE_RESERVATIONS_READ_FAIL =
   'on_commerce_reservations_read_fail';
 export const ON_COMMERCE_RESERVATION_CANCELING =
   'on_commerce_reservation_canceling';

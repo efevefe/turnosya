@@ -1,15 +1,15 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  ON_COURT_RESERVATION_VALUE_CHANGE,
+  ON_RESERVATION_VALUE_CHANGE,
   ON_COURT_RESERVATION_CREATING,
   ON_COURT_RESERVATION_CREATE,
   ON_COURT_RESERVATION_CREATE_FAIL,
   ON_NEW_COURT_RESERVATION
 } from "./types";
 
-export const onCourtReservationValueChange = ({ prop, value }) => {
-  return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
+export const onReservationValueChange = ({ prop, value }) => {
+  return { type: ON_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
 }
 
 export const onNewCourtReservation = court => {

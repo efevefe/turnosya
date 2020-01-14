@@ -2,18 +2,18 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import moment from 'moment';
 import {
-  ON_COMMERCE_COURT_RESERVATIONS_READ,
-  ON_COMMERCE_COURT_RESERVATIONS_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+  ON_COMMERCE_RESERVATIONS_READ,
+  ON_COMMERCE_RESERVATIONS_READING,
+  ON_COMMERCE_RESERVATIONS_READ_FAIL,
+  ON_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 
-export const onCourtReservationsListValueChange = ({ prop, value }) => {
+export const onReservationsListValueChange = ({ prop, value }) => {
   return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+    type: ON_RESERVATIONS_LIST_VALUE_CHANGE,
     payload: { prop, value }
   };
 };
@@ -35,7 +35,7 @@ export const onCommerceCourtTypeReservationsRead = ({
   selectedDate,
   courtType
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
@@ -59,17 +59,17 @@ export const onCommerceCourtTypeReservationsRead = ({
       });
 
       dispatch({
-        type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+        type: ON_COMMERCE_RESERVATIONS_READ,
         payload: { reservations }
       });
     });
 };
 
-export const onCommerceCourtReservationsRead = ({
+export const onCommerceReservationsRead = ({
   commerceId,
   selectedDate
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
@@ -89,7 +89,7 @@ export const onCommerceCourtReservationsRead = ({
 
       if (snapshot.empty) {
         return dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { reservations }
         });
       }
@@ -105,7 +105,7 @@ export const onCommerceCourtReservationsRead = ({
 
             if (reservations.length === snapshot.size) {
               dispatch({
-                type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+                type: ON_COMMERCE_RESERVATIONS_READ,
                 payload: { reservations }
               });
             }
@@ -118,7 +118,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
   commerceId,
   selectedDate
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
@@ -139,7 +139,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
 
       if (snapshot.empty) {
         return dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { detailedReservations }
         });
       }
@@ -161,7 +161,7 @@ export const onCommerceDetailedCourtReservationsRead = ({
                   detailedReservations.sort((a, b) => a.startDate - b.startDate);
 
                   dispatch({
-                    type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+                    type: ON_COMMERCE_RESERVATIONS_READ,
                     payload: { detailedReservations }
                   });
                 }
@@ -238,12 +238,12 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
       .orderBy('startDate')
       .get()
       .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
         }
 
         snapshot.forEach(doc => {
@@ -256,9 +256,9 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }
 
@@ -274,12 +274,12 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
       .orderBy('endDate')
       .get()
       .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
         }
 
         snapshot.forEach(doc => {
@@ -292,9 +292,9 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }
 
