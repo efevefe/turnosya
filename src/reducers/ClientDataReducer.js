@@ -46,7 +46,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_REGISTER_FORM_OPEN:
       return { ...INITIAL_STATE };
     case ON_USER_REGISTER_SUCCESS:
-      return INITIAL_STATE;
+      return { ...state, password: '', confirmPassword: '', loading: false };
     case ON_USER_REGISTER_FAIL:
       return { ...state, loading: false, error: 'Usuario existente' };
     case ON_USER_READING:

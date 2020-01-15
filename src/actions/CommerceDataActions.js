@@ -71,8 +71,10 @@ export const onCommerceOpen = commerceId => dispatch => {
     .catch(e => console.error(e));
 };
 
-export const onCreateCommerce = (
-  {
+export const onCreateCommerce = (commerceData, navigation) => dispatch => {
+  dispatch({ type: ON_REGISTER_COMMERCE });
+
+  const {
     name,
     cuit,
     email,
@@ -84,62 +86,78 @@ export const onCreateCommerce = (
     province,
     latitude,
     longitude
-  },
-  navigation
-) => {
+  } = commerceData;
+
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
+  let docId;
 
-  return dispatch => {
-    dispatch({ type: ON_REGISTER_COMMERCE });
+  db.collection(`Commerces`)
+    .add({
+      name,
+      cuit,
+      email,
+      phone,
+      description,
+      area,
+      address,
+      city,
+      province,
+      latitude,
+      longitude,
+      softDelete: null,
+      creationDate: new Date()
+    })
+    .then(reference => {
+      docId = reference.id;
+      const profileRef = db.doc(`Profiles/${currentUser.uid}`);
+      const employeesRef = db.collection(`Commerces/${docId}/Employees`);
 
-    let docId;
+      profileRef
+        .get()
+        .then(profile => {
+          const { firstName, lastName, email, phone } = profile.data();
 
-    db.collection(`Commerces`)
-      .add({
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        area,
-        address,
-        city,
-        province,
-        latitude,
-        longitude,
-        softDelete: null
-      })
-      .then(reference => {
-        docId = reference.id;
-        db.doc(`Profiles/${currentUser.uid}`)
-          .update({ commerceId: docId })
-          .then(() => {
-            index
-              .addObject({
-                objectID: docId,
-                name,
-                description,
-                areaName: area.name,
-                address,
-                city,
-                provinceName: province.name,
-                ...(latitude && longitude
-                  ? { _geoloc: { lat: latitude, lng: longitude } }
-                  : {})
-              })
-              .then(() => {
-                dispatch({ type: COMMERCE_PROFILE_CREATE });
-                navigation.navigate('commerce');
-              })
-              .catch(error =>
-                dispatch({ type: COMMERCE_FAIL, payload: error })
-              );
+          employeesRef.add({
+            profileId: profile.id,
+            email,
+            firstName,
+            lastName,
+            phone,
+            softDelete: null,
+            role: { name: 'Dueño', roleId: 'OWNER' },
+            inviteDate: new Date(),
+            startDate: new Date()
           })
-          .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-      })
-      .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
-  };
+        });
+
+      profileRef
+        .update({ commerceId: docId })
+        .then(() => {
+          index
+            .addObject({
+              objectID: docId,
+              name,
+              description,
+              areaName: area.name,
+              address,
+              city,
+              provinceName: province.name,
+              ...(latitude && longitude
+                ? { _geoloc: { lat: latitude, lng: longitude } }
+                : {})
+            })
+            .then(() => {
+              dispatch({ type: COMMERCE_PROFILE_CREATE });
+              navigation.navigate('commerce');
+            })
+            .catch(error =>
+              dispatch({ type: COMMERCE_FAIL, payload: error })
+            );
+        })
+        .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+    })
+    .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
 };
 
 export const onCommerceRead = commerceId => async dispatch => {
