@@ -60,7 +60,6 @@ export const ON_USER_PASSWORD_UPDATE = 'on_user_password_update';
 
 // Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
-export const ON_COMMERCE_OPEN = 'on_commerce_open';
 export const COMMERCE_FAIL = 'commerce_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';

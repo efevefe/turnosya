@@ -10,7 +10,6 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_AREAS_READ,
-  ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   CUIT_EXISTS,
   CUIT_NOT_EXISTS,
@@ -47,8 +46,6 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_COMMERCE_OPEN:
-      return { ...state, commerceId: action.payload };
     case ON_COMMERCE_CREATING:
       return { ...INITIAL_STATE };
     case ON_COMMERCE_VALUE_CHANGE:
