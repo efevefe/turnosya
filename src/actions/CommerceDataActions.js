@@ -124,10 +124,16 @@ export const onCreateCommerce = (commerceData, navigation) => dispatch => {
             lastName,
             phone,
             softDelete: null,
-            role: { name: 'Dueño', roleId: 'OWNER' },
+            role: { name: ROLES['OWNER'].name, roleId: ROLES['OWNER'].roleId },
             inviteDate: new Date(),
             startDate: new Date()
           })
+            .then(employeeRef => {
+              dispatch({
+                type: ON_ROLE_ASSIGNED,
+                payload: { role: ROLES['OWNER'], employeeId: employeeRef.id }
+              });
+            })
         });
 
       profileRef
@@ -148,7 +154,7 @@ export const onCreateCommerce = (commerceData, navigation) => dispatch => {
             })
             .then(() => {
               dispatch({ type: COMMERCE_PROFILE_CREATE });
-              navigation.navigate('commerce');
+              navigation.navigate(`${area.areaId}Navigation`);
             })
             .catch(error =>
               dispatch({ type: COMMERCE_FAIL, payload: error })

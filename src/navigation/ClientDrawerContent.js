@@ -83,7 +83,11 @@ class ClientDrawerContent extends Component {
             title="Mi Negocio"
             icon={{ name: 'ios-briefcase' }}
             loadingWithText={this.props.loadingCommerce}
-            onPress={() => this.onCommercePress(this.props.commerceId)}
+            onPress={() => {
+              this.props.commerceId
+                ? this.onCommercePress(this.props.commerceId)
+                : this.props.navigation.navigate('commerceRegister')
+            }}
           />
           {this.renderWorkplaces()}
           <DrawerItem
