@@ -27,7 +27,9 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_AREAS_READING:
+    case ONLY_FAVORITE_COMMERCES_READING:
       return { ...state, loading: true };
+
     case FAVORITE_COMMERCE_DELETED:
       const favoritesUpdate = state.favoriteCommerces.filter(element => {
         if (element !== action.payload) {
@@ -35,29 +37,32 @@ export default (state = INITIAL_STATE, action) => {
         }
       });
       return { ...state, favoriteCommerces: favoritesUpdate };
+
     case FAVORITE_COMMERCE_ADDED:
       const favorites = state.favoriteCommerces.concat(action.payload);
       return { ...state, favoriteCommerces: favorites };
-    case ONLY_FAVORITE_COMMERCES_READING:
-      return { ...state, loading: true };
+
     case FAVORITE_COMMERCES_READ:
       return { ...state, favoriteCommerces: action.payload };
+
     case ONLY_FAVORITE_COMMERCES_READ:
-      return {
-        ...state,
-        ...action.payload,
-        loading: false
-      };
+      return { ...state, ...action.payload, loading: false };
+
     case ON_AREAS_SEARCH_READ:
       return { ...state, areas: action.payload, loading: false };
+
     case ON_COMMERCE_SEARCHING:
       return { ...state, searching: action.payload };
+
     case ON_PROVINCE_FILTER_UPDATE:
       return { ...state, provinceNameFilter: action.payload };
+
     case ON_UPDATE_ALL_FILTERS:
       return { ...state, ...action.payload };
+
     case ON_HITS_UPDATE:
       return { ...state, markers: action.payload };
+
     default:
       return state;
   }

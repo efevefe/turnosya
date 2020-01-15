@@ -59,13 +59,8 @@ class ReservedAndCancelledShiftChart extends Component {
     );
 
     this.props.onCommerceReportValueChange({
-      prop: 'startDate',
-      value: moment(this.state.modalStartDate)
-    });
-
-    this.props.onCommerceReportValueChange({
-      prop: 'endDate',
-      value: moment(this.state.modalEndDate)
+      startDate: moment(this.state.modalStartDate),
+      endDate: moment(this.state.modalEndDate)
     });
 
     this.setState({ modal: false });

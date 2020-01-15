@@ -11,15 +11,18 @@ import {
   SERVICE_UPDATE
 } from './types';
 
-export const onServiceValueChange = ({ prop, value }) => {
-  return { type: ON_SERVICE_VALUE_CHANGE, payload: { prop, value } };
+export const onServiceValueChange = payload => {
+  return { type: ON_SERVICE_VALUE_CHANGE, payload };
 };
 
 export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
 };
 
-export const serviceCreate = ({ name, duration, price, description, commerceId }, navigation) => {
+export const serviceCreate = (
+  { name, duration, price, description, commerceId },
+  navigation
+) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -39,7 +42,8 @@ export const servicesRead = commerceId => dispatch => {
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Services`)
+  return db
+    .collection(`Commerces/${commerceId}/Services`)
     .where('softDelete', '==', null)
     .orderBy('name', 'asc')
     .onSnapshot(snapshot => {
@@ -59,7 +63,10 @@ export const serviceDelete = ({ id, commerceId }) => {
   };
 };
 
-export const serviceUpdate = ({ id, name, duration, price, description, commerceId }, navigation) => {
+export const serviceUpdate = (
+  { id, name, duration, price, description, commerceId },
+  navigation
+) => {
   const db = firebase.firestore();
 
   return dispatch => {

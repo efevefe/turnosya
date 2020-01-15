@@ -50,8 +50,7 @@ class MonthlyReviewsChart extends Component {
     );
 
     this.props.onCommerceReportValueChange({
-      prop: 'selectedYear',
-      value: this.state.modalYear
+      selectedYear: this.state.modalYear
     });
 
     this.setState({ modal: false });

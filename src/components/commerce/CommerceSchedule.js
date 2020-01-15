@@ -81,10 +81,7 @@ class CommerceSchedule extends Component {
   };
 
   onSlotPress = slot => {
-    this.props.onCourtReservationValueChange({
-      prop: 'slot',
-      value: slot
-    });
+    this.props.onCourtReservationValueChange({ slot });
 
     const { startDate } = slot;
 
@@ -144,7 +141,7 @@ class CommerceSchedule extends Component {
       };
     });
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+    this.props.onScheduleValueChange({ slots: newSlots });
   };
 
   onCourtTypesFilterValueChange = selectedCourtTypes => {

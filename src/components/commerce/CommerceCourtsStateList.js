@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import { Spinner, EmptyList } from '../common';
-import {
-  onCourtReservationsListValueChange,
-  onCourtReservationValueChange,
-  isCourtDisabledOnSlot,
-  onNewCourtReservation
-} from '../../actions';
+import { isCourtDisabledOnSlot, onNewCourtReservation } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
 class CommerceCourtsStateList extends Component {
@@ -45,16 +40,18 @@ class CommerceCourtsStateList extends Component {
   onAvailableCourtPress = court => {
     this.props.onNewCourtReservation(court);
     this.props.navigation.navigate('courtReservationRegister');
-  }
+  };
 
   isCourtTypeSelected = courtType => {
-    const selectedCourtTypes = this.props.navigation.getParam('selectedCourtTypes');
+    const selectedCourtTypes = this.props.navigation.getParam(
+      'selectedCourtTypes'
+    );
 
     return (
       selectedCourtTypes.includes('Todas') ||
       selectedCourtTypes.includes(courtType)
     );
-  }
+  };
 
   renderRow({ item }) {
     if (!this.isCourtTypeSelected(item.court)) return;
@@ -121,7 +118,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCourtReservationsListValueChange,
-  onCourtReservationValueChange,
   onNewCourtReservation
 })(CommerceCourtsStateList);

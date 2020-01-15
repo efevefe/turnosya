@@ -33,15 +33,8 @@ class CourtListItem extends Component {
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
-
-    const { court } = this.props;
-
-    for (prop in court) {
-      this.props.onCourtValueChange({ prop, value: court[prop] });
-    }
-
+    this.props.onCourtValueChange(this.props.court);
     this.setState({ optionsVisible: !this.state.optionsVisible });
-
     this.props.navigation.navigate('courtForm', {
       title: 'Editar Cancha'
     });

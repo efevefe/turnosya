@@ -22,7 +22,7 @@ import {
   onCommerceRead,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onLocationChange,
+  onLocationValueChange,
   commerceHitsUpdate,
   onCommerceCourtTypesRead
 } from '../actions';
@@ -100,14 +100,12 @@ class CommerceProfileView extends Component {
   };
 
   onMapPress = () => {
-    const { address, city, province, latitude, longitude } = this.props;
-
-    this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+    this.props.onLocationValueChange({
+      address: this.props.address,
+      city: this.props.city,
+      provinceName: this.props.province.name,
+      latitude: this.props.latitude,
+      longitude: this.props.longitude
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -316,7 +314,7 @@ export default connect(mapStateToProps, {
   onCommerceRead,
   registerFavoriteCommerce,
   deleteFavoriteCommerce,
-  onLocationChange,
+  onLocationValueChange,
   commerceHitsUpdate,
   onCommerceCourtTypesRead
 })(CommerceProfileView);

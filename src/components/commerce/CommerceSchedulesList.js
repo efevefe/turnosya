@@ -88,12 +88,9 @@ class CommerceSchedulesList extends Component {
         // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
         // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
 
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
+        this.props.onScheduleValueChange({ prop: formattedMoment() });
       } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
+        this.props.onScheduleValueChange({ prop: selectedSchedule[prop] });
       }
     }
 
@@ -156,12 +153,9 @@ class CommerceSchedulesList extends Component {
         // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
         // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
 
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
+        this.props.onScheduleValueChange({ prop: formattedMoment() });
       } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
+        this.props.onScheduleValueChange({ prop: selectedSchedule[prop] });
       }
     }
 

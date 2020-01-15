@@ -49,45 +49,55 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COMMERCE_OPEN:
       return { ...state, commerceId: action.payload };
+
+    case ON_COMMERCE_DELETED:
+      Toast.show({ text: 'Su negocio se ha eliminado' });
     case ON_COMMERCE_CREATING:
-      return { ...INITIAL_STATE };
-    case ON_COMMERCE_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
-    case COMMERCE_FAIL:
-      return { ...state, error: action.payload, loading: false };
-    case ON_REGISTER_COMMERCE:
-      return { ...state, loading: true };
-    case COMMERCE_PROFILE_CREATE:
-      return { ...state, loading: false };
-    case ON_COMMERCE_READING:
-      return { ...state, refreshing: true };
-    case ON_COMMERCE_READ:
-      return { ...INITIAL_STATE, ...action.payload };
+    case ON_COMMERCE_READ_FAIL:
     case ON_COMMERCE_READ_FAIL:
       return { ...INITIAL_STATE };
+
+    case ON_COMMERCE_VALUE_CHANGE:
+      return { ...state, ...action.payload };
+
+    case COMMERCE_FAIL:
+      return { ...state, error: action.payload, loading: false };
+
+    case ON_REGISTER_COMMERCE:
+    case ON_COMMERCE_DELETING:
+      return { ...state, loading: true };
+
+    case COMMERCE_PROFILE_CREATE:
+    case ON_COMMERCE_DELETE_FAIL:
+      return { ...state, loading: false };
+
+    case ON_COMMERCE_READING:
     case ON_COMMERCE_UPDATING:
       return { ...state, refreshing: true };
+
+    case ON_COMMERCE_READ:
+      return { ...INITIAL_STATE, ...action.payload };
+
     case ON_COMMERCE_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
       return { ...state, ...action.payload, refreshing: false };
+
     case ON_COMMERCE_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
+
     case ON_AREAS_READ:
       return { ...state, areasList: action.payload };
+
     case CUIT_EXISTS:
       return { ...state, cuitExists: true };
+
     case CUIT_NOT_EXISTS:
       return { ...state, cuitExists: false };
-    case ON_COMMERCE_DELETING:
-      return { ...state, loading: true };
+
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
-    case ON_COMMERCE_DELETED:
-      Toast.show({ text: 'Su negocio se ha eliminado' });
-      return INITIAL_STATE;
-    case ON_COMMERCE_DELETE_FAIL:
-      return { ...state, loading: false };
+
     default:
       return state;
   }

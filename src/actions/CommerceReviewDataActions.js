@@ -15,8 +15,8 @@ import {
   ON_COMMERCE_REVIEW_READ_FAIL
 } from './types';
 
-export const commerceReviewValueChange = (prop, value) => {
-  return { type: ON_COMMERCE_REVIEW_VALUE_CHANGE, payload: { prop, value } };
+export const commerceReviewValueChange = payload => {
+  return { type: ON_COMMERCE_REVIEW_VALUE_CHANGE, payload };
 };
 
 export const createCommerceReview = ({

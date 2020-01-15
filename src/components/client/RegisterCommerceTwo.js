@@ -72,39 +72,33 @@ class RegisterCommerceTwo extends Component {
         : this.state.pickerPlaceholder;
 
     this.props.onCommerceValueChange({
-      prop: 'province',
-      value: { provinceId: value, name: label }
+      province: { provinceId: value, name: label }
     });
 
-    this.props.onLocationValueChange({
-      prop: 'provinceName',
-      value: index > 0 ? label : ''
-    });
+    this.props.onLocationValueChange({ provinceName: index > 0 ? label : '' });
   };
 
   renderAddressError = () => {
-    const { address, onCommerceValueChange } = this.props;
-    const value = trimString(address);
+    const address = trimString(this.props.address);
 
-    if (value === '') {
+    if (address === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
-      onCommerceValueChange({ prop: 'address', value });
+      this.props.onCommerceValueChange({ address });
       this.setState({ addressError: '' });
       return true;
     }
   };
 
   renderCityError = () => {
-    const { city, onCommerceValueChange } = this.props;
-    const value = trimString(city);
+    const city = trimString(this.props.city);
 
     if (value === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
-      onCommerceValueChange({ prop: 'city', value });
+      this.props.onCommerceValueChange({ city });
       this.setState({ cityError: '' });
       return true;
     }
@@ -135,13 +129,11 @@ class RegisterCommerceTwo extends Component {
 
     if (province) {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: province.value, name }
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: '', name: '' }
+        province: { provinceId: '', name: '' }
       });
     }
   };
@@ -161,11 +153,8 @@ class RegisterCommerceTwo extends Component {
               label="Calle"
               placeholder="San Martín 30"
               value={this.props.address}
-              onChangeText={value =>
-                this.props.onLocationValueChange({
-                  prop: 'address',
-                  value
-                })
+              onChangeText={address =>
+                this.props.onLocationValueChange({ address })
               }
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
@@ -178,9 +167,7 @@ class RegisterCommerceTwo extends Component {
               label="Ciudad:"
               placeholder="Córdoba"
               value={this.props.city}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'city', value })
-              }
+              onChangeText={city => this.props.onLocationValueChange({ city })}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -273,12 +260,9 @@ const mapStateToProps = state => {
     longitude
   };
 };
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceValueChange,
-    onCreateCommerce,
-    onProvincesIdRead,
-    onLocationValueChange
-  }
-)(RegisterCommerceTwo);
+export default connect(mapStateToProps, {
+  onCommerceValueChange,
+  onCreateCommerce,
+  onProvincesIdRead,
+  onLocationValueChange
+})(RegisterCommerceTwo);

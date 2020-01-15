@@ -87,7 +87,7 @@ export const ON_UPDATE_ALL_FILTERS = 'on_update_all_filters';
 export const ON_HITS_UPDATE = 'on_hits_update';
 
 // Schedule Register
-export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
+export const ON_SCHEDULE_VALUE_CHANGE = 'on_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
 export const ON_SCHEDULE_CARD_DELETE = 'on_schedule_card_delete';
@@ -125,7 +125,6 @@ export const ON_NEW_COURT_RESERVATION = 'on_new_court_reservation';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
-export const ON_LOCATION_CHANGE = 'on_location_change';
 export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
@@ -207,7 +206,6 @@ export const ON_EMPLOYEE_SAVING = 'on_employee_saving';
 export const ON_EMPLOYEE_SAVE_FAIL = 'on_employee_save_fail';
 export const EMPLOYEE_VALIDATION_ERROR = 'empty_user_error';
 export const ON_EMPLOYEE_DELETED = 'on_employee_deleted';
-export const ON_EMPLOYEE_LOAD = 'on_employeee_load';
 export const ON_EMPLOYEE_UPDATED = 'on_employee_updated';
 export const ON_EMPLOYEE_CREATED = 'on_employee_created';
 

@@ -11,7 +11,6 @@ import {
   searchUserByEmail,
   createEmployee,
   employeeValidationError,
-  loadEmployee,
   updateEmployee
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
@@ -27,7 +26,7 @@ class EmployeeForm extends Component {
 
     if (employee) {
       this.setState({ editing: true });
-      this.props.loadEmployee(employee);
+      this.props.employeeValueChange(employee);
     }
   }
 
@@ -35,9 +34,9 @@ class EmployeeForm extends Component {
     this.props.employeeClear();
   }
 
-  onEmailValueChange = value => {
+  onEmailValueChange = email => {
     if (this.props.firstName) this.props.employeeNameClear();
-    this.props.employeeValueChange('email', value);
+    this.props.employeeValueChange({ email });
   };
 
   onSavePressHandler = () => {
@@ -123,10 +122,19 @@ class EmployeeForm extends Component {
                 editable={!this.state.editing} // No se puede modificar la persona, porque se debe enviar invitación y eso
                 rightIcon={
                   <RNEButton
-                    type='clear'
-                    icon={{ name: 'md-search', type: 'ionicon', color: MAIN_COLOR }}
+                    type="clear"
+                    icon={{
+                      name: 'md-search',
+                      type: 'ionicon',
+                      color: MAIN_COLOR
+                    }}
                     loading={this.props.emailLoading}
-                    onPress={() => this.props.searchUserByEmail(this.props.email, this.props.commerceId)}
+                    onPress={() =>
+                      this.props.searchUserByEmail(
+                        this.props.email,
+                        this.props.commerceId
+                      )
+                    }
                     loadingProps={{ color: MAIN_COLOR }}
                   />
                 }
@@ -163,8 +171,8 @@ class EmployeeForm extends Component {
                 placeholder={{ value: null, label: 'Elija una opción...' }}
                 value={this.props.role}
                 items={this.props.roles}
-                onValueChange={value =>
-                  this.props.employeeValueChange('role', value || {})
+                onValueChange={role =>
+                  this.props.employeeValueChange({ role: role || {} })
                 }
                 errorMessage={this.state.roleError}
               />
@@ -235,6 +243,5 @@ export default connect(mapStateToProps, {
   searchUserByEmail,
   createEmployee,
   employeeValidationError,
-  loadEmployee,
   updateEmployee
 })(EmployeeForm);

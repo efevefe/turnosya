@@ -6,7 +6,6 @@ import {
   onCommerceOpen,
   onLogout,
   onUserRead,
-  onScheduleValueChange,
   readUserWorkplaces
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
@@ -126,6 +125,5 @@ export default connect(mapStateToProps, {
   onCommerceOpen,
   onLogout,
   onUserRead,
-  onScheduleValueChange,
   readUserWorkplaces
 })(ClientDrawerContent);

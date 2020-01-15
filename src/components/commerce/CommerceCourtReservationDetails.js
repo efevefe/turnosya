@@ -89,10 +89,7 @@ class CommerceCourtReservationDetails extends Component {
 
   onBackdropPress = () => {
     this.setState({ optionsVisible: false, error: '' });
-    this.props.onCourtReservationsListValueChange({
-      prop: 'cancelationReason',
-      value: ''
-    });
+    this.props.onCourtReservationsListValueChange({ cancelationReason: '' });
   };
 
   onConfirmDelete = (id, clientId) => {
@@ -115,7 +112,7 @@ class CommerceCourtReservationDetails extends Component {
       Toast.show({ text: 'Debe primero especificar una calificación.' });
     } else {
       if (this.props.clientReviewId) {
-        // Si tenia calificacion actualizarla
+        // Si tenia calificación actualizarla
         this.props.updateClientReview({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
@@ -123,7 +120,7 @@ class CommerceCourtReservationDetails extends Component {
           reviewId: this.props.clientReviewId
         });
       } else {
-        // Si la reserva no tiene calificacion, crearla
+        // Si la reserva no tiene calificación, crearla
         this.props.createClientReview({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
@@ -221,13 +218,13 @@ class CommerceCourtReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
           title={title}
-          onFinishRating={value =>
-            this.props.clientReviewValueChange('rating', value)
+          onFinishRating={rating =>
+            this.props.clientReviewValueChange({ rating })
           }
           rating={this.props.clientRating}
           readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.clientReviewValueChange('comment', value)
+          onChangeText={comment =>
+            this.props.clientReviewValueChange({ comment })
           }
           commentPlaceholder="Comente sobre el cliente..."
           commentText={this.props.clientComment}
@@ -300,10 +297,9 @@ class CommerceCourtReservationDetails extends Component {
                 placeholder="Motivo de cancelación..."
                 multiline={true}
                 color="black"
-                onChangeText={value => {
+                onChangeText={cancelationReason => {
                   this.props.onCourtReservationsListValueChange({
-                    prop: 'cancelationReason',
-                    value
+                    cancelationReason
                   });
                   this.setState({ error: '' });
                 }}

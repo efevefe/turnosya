@@ -201,13 +201,13 @@ class ClientReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
           title={title}
-          onFinishRating={value =>
-            this.props.commerceReviewValueChange('rating', value)
+          onFinishRating={rating =>
+            this.props.commerceReviewValueChange({ rating })
           }
           rating={this.props.commerceRating}
           readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.commerceReviewValueChange('comment', value)
+          onChangeText={comment =>
+            this.props.commerceReviewValueChange({ comment })
           }
           commentPlaceholder="Deje un comentario sobre la atención..."
           commentText={this.props.commerceComment}

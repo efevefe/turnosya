@@ -11,7 +11,16 @@ import {
   courtUpdate,
   onCourtNextReservationsRead
 } from '../../actions';
-import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
+import {
+  CardSection,
+  Input,
+  Picker,
+  Button,
+  DatePicker,
+  Toast,
+  Menu,
+  MenuItem
+} from '../common';
 import { validateValueType, trimString } from '../../utils';
 import {
   MAIN_COLOR,
@@ -52,12 +61,14 @@ class CourtForm extends Component {
         this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
     }
 
-    if (prevProps.disabledFrom !== this.props.disabledFrom ||
-      prevProps.disabledTo !== this.props.disabledTo) {
-      this.renderDisabledDatesError()
+    if (
+      prevProps.disabledFrom !== this.props.disabledFrom ||
+      prevProps.disabledTo !== this.props.disabledTo
+    ) {
+      this.renderDisabledDatesError();
     }
 
-    // ver si hay reservas que esten en el periodo de deshabilitacion de la cancha
+    // ver si hay reservas que estén en el periodo de deshabilitación de la cancha
     if (prevProps.nextReservations !== this.props.nextReservations) {
       this.disabledPeriodValidate();
     }
@@ -65,12 +76,9 @@ class CourtForm extends Component {
 
   isCourtDisabled = () => {
     if (this.props.id && this.props.disabledTo > moment()) {
-      this.props.onCourtValueChange({
-        prop: 'disabled',
-        value: true
-      })
+      this.props.onCourtValueChange({ disabled: true });
     }
-  }
+  };
 
   onCourtSave = () => {
     const {
@@ -104,27 +112,27 @@ class CourtForm extends Component {
         navigation
       );
     } else {
-      this.props.courtCreate({
-        name,
-        court,
-        ground,
-        price,
-        lightPrice,
-        disabledFrom,
-        disabledTo,
-        commerceId
-      },
+      this.props.courtCreate(
+        {
+          name,
+          court,
+          ground,
+          price,
+          lightPrice,
+          disabledFrom,
+          disabledTo,
+          commerceId
+        },
         navigation
-      )
+      );
     }
   };
 
   renderNameError = () => {
-    const { name, onCourtValueChange } = this.props;
-    const value = trimString(name);
-    onCourtValueChange({ prop: 'name', value });
+    const name = trimString(this.props.name);
 
-    if (value === '') {
+    this.props.onCourtValueChange({ name });
+    if (name === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -154,12 +162,13 @@ class CourtForm extends Component {
   };
 
   renderPriceError = () => {
-    const { price, onCourtValueChange } = this.props;
-    onCourtValueChange({ prop: 'price', value: price.trim() });
-    if (price.trim() === '') {
+    const price = this.props.price.trim();
+
+    this.props.onCourtValueChange({ price });
+    if (price === '') {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', price.trim())) {
+    } else if (!validateValueType('number', price)) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -170,13 +179,13 @@ class CourtForm extends Component {
 
   renderLightPriceError = () => {
     if (this.state.lightPriceOpen) {
-      const { lightPrice, onCourtValueChange } = this.props;
-      onCourtValueChange({ prop: 'lightPrice', value: lightPrice.trim() });
+      const lightPrice = this.props.lightPrice.trim();
 
-      if (lightPrice.trim() === '') {
+      this.props.onCourtValueChange({ lightPrice });
+      if (lightPrice === '') {
         this.setState({ lightPriceError: 'Dato requerido' });
         return false;
-      } else if (!validateValueType('number', lightPrice.trim())) {
+      } else if (!validateValueType('number', lightPrice)) {
         this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
         return false;
       }
@@ -197,44 +206,33 @@ class CourtForm extends Component {
     );
   };
 
-  onCourtTypeChangeHandle = (value, key) => {
-    this.setState({
-      courtError: ''
-    });
+  onCourtTypeChangeHandle = (court, key) => {
+    this.setState({ courtError: '' });
 
     if (key > 0) {
       if (this.props.grounds.length)
         this.setState({ selectedGrounds: this.props.grounds[key - 1] });
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value
-      });
+      this.props.onCourtValueChange({ court });
     } else {
       this.setState({ selectedGrounds: [] });
-      this.props.onCourtValueChange({
-        prop: 'court',
-        value: ''
-      });
+      this.props.onCourtValueChange({ court: '' });
     }
   };
 
-  onGroundTypeChangeHandle = (value, key) => {
+  onGroundTypeChangeHandle = (ground, key) => {
     const { grounds, onCourtValueChange } = this.props;
 
     this.setState({ groundTypeError: '' });
 
     grounds !== null && key > 0
-      ? onCourtValueChange({
-        prop: 'ground',
-        value
-      })
-      : onCourtValueChange({ prop: 'ground', value: '' });
+      ? onCourtValueChange({ ground })
+      : onCourtValueChange({ ground: '' });
   };
 
   onCheckBoxPress = () => {
-    if (this.state.lightPriceOpen)
-      this.props.onCourtValueChange({ prop: 'lightPrice', value: '' });
-
+    if (this.state.lightPriceOpen) {
+      this.props.onCourtValueChange({ lightPrice: '' });
+    }
     this.setState({ lightPriceOpen: !this.state.lightPriceOpen });
   };
 
@@ -248,11 +246,8 @@ class CourtForm extends Component {
             keyboardType="numeric"
             value={this.props.lightPrice}
             errorMessage={this.state.lightPriceError}
-            onChangeText={value =>
-              this.props.onCourtValueChange({
-                prop: 'lightPrice',
-                value
-              })
+            onChangeText={lightPrice =>
+              this.props.onCourtValueChange({ lightPrice })
             }
             onFocus={() => this.setState({ lightPriceError: '' })}
             onBlur={this.renderLightPriceError}
@@ -291,7 +286,7 @@ class CourtForm extends Component {
               onDateChange={this.onDisabledToValueChange}
             />
           </CardSection>
-          {this.props.disabledTo &&
+          {this.props.disabledTo && (
             <CardSection>
               <CheckBox
                 title="Agregar fecha de fin de hasta"
@@ -302,59 +297,50 @@ class CourtForm extends Component {
                 uncheckedColor={MAIN_COLOR}
                 checkedTitle="Quitar fecha de hasta"
                 checked={!!this.props.disabledTo}
-                onPress={() => this.props.onCourtValueChange({ prop: 'disabledTo', value: null })}
+                onPress={() =>
+                  this.props.onCourtValueChange({ disabledTo: null })
+                }
               />
-            </CardSection>}
+            </CardSection>
+          )}
         </View>
       );
     }
-  }
+  };
 
-  onDisableSwitch = value => {
-    this.props.onCourtValueChange({
-      prop: 'disabled',
-      value
-    });
+  onDisableSwitch = disabled => {
+    this.props.onCourtValueChange({ disabled });
 
-    if (!value) {
-      this.props.onCourtValueChange({
-        prop: 'disabledFrom',
-        value: null
-      });
-
-      this.props.onCourtValueChange({
-        prop: 'disabledTo',
-        value: null
-      });
+    if (!disabled) {
+      this.props.onCourtValueChange({ disabledFrom: null, disabledTo: null });
     }
-  }
+  };
 
   onDisabledFromValueChange = date => {
-    date = moment(date)
+    date = moment(date);
 
     if (moment().diff(date, 'seconds') > 30) {
-      return Toast.show({ text: 'No puede ingresar una fecha anterior a la actual' })
+      return Toast.show({
+        text: 'No puede ingresar una fecha anterior a la actual'
+      });
     }
 
-    this.props.onCourtValueChange({
-      prop: 'disabledFrom',
-      value: date
-    });
-  }
+    this.props.onCourtValueChange({ disabledFrom: date });
+  };
 
   onDisabledToValueChange = date => {
-    this.props.onCourtValueChange({
-      prop: 'disabledTo',
-      value: moment(date)
-    });
-  }
+    this.props.onCourtValueChange({ disabledTo: moment(date) });
+  };
 
   renderDisabledDatesError = () => {
     if (this.props.disabled) {
       if (!this.props.disabledFrom) {
         this.setState({ disabledFromError: 'Dato requerido' });
         return false;
-      } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
+      } else if (
+        this.props.disabledTo &&
+        this.props.disabledFrom >= this.props.disabledTo
+      ) {
         this.setState({
           disabledFromError: 'Debe ser anterior a la fecha de deshabilitación',
           disabledToError: 'Debe ser posterior a la fecha de habilitación'
@@ -365,7 +351,7 @@ class CourtForm extends Component {
 
     this.setState({ disabledFromError: '', disabledToError: '' });
     return true;
-  }
+  };
 
   onSavePress = () => {
     this.setState({ reservationsToCancel: [] });
@@ -382,7 +368,7 @@ class CourtForm extends Component {
         this.onCourtSave();
       }
     }
-  }
+  };
 
   disabledPeriodValidate = () => {
     if (this.props.nextReservations.length) {
@@ -390,30 +376,42 @@ class CourtForm extends Component {
     } else {
       this.onCourtSave();
     }
-  }
+  };
 
   onSaveAndCancelReservations = () => {
-    this.setState({
-      reservationsToCancel: this.props.nextReservations,
-      confirmationModal: false
-    }, this.onCourtSave);
-  }
+    this.setState(
+      {
+        reservationsToCancel: this.props.nextReservations,
+        confirmationModal: false
+      },
+      this.onCourtSave
+    );
+  };
 
   renderDisabledPeriodModal = () => {
     const { nextReservations } = this.props;
 
     if (nextReservations.length) {
       const firstReservationDate = nextReservations[0].startDate;
-      const lastReservationDate = nextReservations[nextReservations.length - 1].endDate;
+      const lastReservationDate =
+        nextReservations[nextReservations.length - 1].endDate;
 
       return (
         <Menu
           title={
-            'Tienes ' + nextReservations.length.toString() + ' reservas de esta cancha' +
-            ' entre el ' + firstReservationDate.format('DD/MM/YYYY') +
-            ' a las ' + firstReservationDate.format('HH:mm') + ' hs.' +
-            ' y el ' + lastReservationDate.format('DD/MM/YYYY') +
-            ' a las ' + lastReservationDate.format('HH:mm') + ' hs.' +
+            'Tienes ' +
+            nextReservations.length.toString() +
+            ' reservas de esta cancha' +
+            ' entre el ' +
+            firstReservationDate.format('DD/MM/YYYY') +
+            ' a las ' +
+            firstReservationDate.format('HH:mm') +
+            ' hs.' +
+            ' y el ' +
+            lastReservationDate.format('DD/MM/YYYY') +
+            ' a las ' +
+            lastReservationDate.format('HH:mm') +
+            ' hs.' +
             ' Seleccione "Cancelar reservas y notificar" para cancelar dichas ' +
             'reservas y deshabilitar la cancha o "Volver" para cambiar el periodo ' +
             'de deshabilitación.'
@@ -424,7 +422,12 @@ class CourtForm extends Component {
           <MenuItem
             title="Cancelar reservas y notificar"
             icon="md-trash"
-            onPress={() => this.setState({ confirmationModal: true, disabledPeriodModal: false })}
+            onPress={() =>
+              this.setState({
+                confirmationModal: true,
+                disabledPeriodModal: false
+              })
+            }
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -435,7 +438,7 @@ class CourtForm extends Component {
         </Menu>
       );
     }
-  }
+  };
 
   render() {
     return (
@@ -447,12 +450,7 @@ class CourtForm extends Component {
               placeholder="Cancha 1"
               value={this.props.name}
               errorMessage={this.state.nameError || this.props.existsError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'name',
-                  value
-                })
-              }
+              onChangeText={name => this.props.onCourtValueChange({ name })}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
             />
@@ -488,12 +486,7 @@ class CourtForm extends Component {
               keyboardType="numeric"
               value={this.props.price}
               errorMessage={this.state.priceError}
-              onChangeText={value =>
-                this.props.onCourtValueChange({
-                  prop: 'price',
-                  value
-                })
-              }
+              onChangeText={price => this.props.onCourtValueChange({ price })}
               onFocus={() => this.setState({ priceError: '' })}
               onBlur={this.renderPriceError}
             />
@@ -545,7 +538,7 @@ class CourtForm extends Component {
 
         {this.renderDisabledPeriodModal()}
         <Menu
-          title='¿Está serguro que desea cancelar las reservas y guardar?'
+          title="¿Está serguro que desea cancelar las reservas y guardar?"
           onBackdropPress={() => this.setState({ confirmationModal: false })}
           isVisible={this.state.confirmationModal}
         >
@@ -626,13 +619,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCourtValueChange,
-    getCourtAndGroundTypes,
-    courtCreate,
-    courtUpdate,
-    onCourtNextReservationsRead
-  }
-)(CourtForm);
+export default connect(mapStateToProps, {
+  onCourtValueChange,
+  getCourtAndGroundTypes,
+  courtCreate,
+  courtUpdate,
+  onCourtNextReservationsRead
+})(CourtForm);

@@ -15,8 +15,8 @@ import {
   ON_CLIENT_REVIEW_READ_FAIL
 } from './types';
 
-export const clientReviewValueChange = (prop, value) => {
-  return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload: { prop, value } };
+export const clientReviewValueChange = payload => {
+  return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload };
 };
 
 export const createClientReview = ({

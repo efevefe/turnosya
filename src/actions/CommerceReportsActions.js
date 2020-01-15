@@ -26,8 +26,8 @@ const arrayOfMonths = [
 ]; // Months of year
 const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
 
-export const onCommerceReportValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
+export const onCommerceReportValueChange = payload => {
+  return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload };
 };
 
 export const onCommerceReportValueReset = () => {
@@ -99,11 +99,7 @@ export const yearsOfActivity = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'years', value: years }
-        });
-        dispatch({
-          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'selectedYear', value: currentYear }
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -183,11 +179,7 @@ export const yearsWithReview = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'years', value: years }
-        });
-        dispatch({
-          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'selectedYear', value: currentYear }
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });

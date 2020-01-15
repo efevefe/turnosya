@@ -243,12 +243,8 @@ class CommercesMap extends React.Component {
     }
   };
 
-  onMarkerTitlePress = marker => {
-    this.props.onCourtReservationValueChange({
-      prop: 'commerce',
-      value: marker
-    });
-
+  onMarkerTitlePress = commerce => {
+    this.props.onCourtReservationValueChange({ commerce });
     this.props.navigation.navigate('commerceProfileView');
   };
 

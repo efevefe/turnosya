@@ -48,10 +48,7 @@ class RegisterCommerce extends Component {
         ? this.props.areasList[index - 1]
         : this.state.pickerPlaceholder;
 
-    this.props.onCommerceValueChange({
-      prop: 'area',
-      value: { areaId: value, name: label }
-    });
+    this.props.onCommerceValueChange({ area: { areaId: value, name: label } });
   };
 
   validateMinimumData = () => {
@@ -78,10 +75,10 @@ class RegisterCommerce extends Component {
   };
 
   renderNameError = () => {
-    const { name, onCommerceValueChange } = this.props;
+    const name = trimString(this.props.name);
 
-    onCommerceValueChange({ prop: 'name', value: trimString(name) });
-    if (trimString(name) === '') {
+    this.props.onCommerceValueChange({ name });
+    if (name === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -142,12 +139,7 @@ class RegisterCommerce extends Component {
               autoCapitalize="words"
               value={this.props.name}
               errorMessage={this.state.nameError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'name',
-                  value
-                })
-              }
+              onChangeText={name => this.props.onCommerceValueChange({ name })}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
             />
@@ -159,12 +151,7 @@ class RegisterCommerce extends Component {
               placeholder="Cuit"
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'cuit',
-                  value
-                })
-              }
+              onChangeText={cuit => this.props.onCommerceValueChange({ cuit })}
               onFocus={() => this.setState({ cuitError: '' })}
               onBlur={this.renderCuitError}
             />
@@ -176,11 +163,8 @@ class RegisterCommerce extends Component {
               placeholder="Teléfono"
               keyboardType="phone-pad"
               errorMessage={this.state.phoneError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'phone',
-                  value
-                })
+              onChangeText={phone =>
+                this.props.onCommerceValueChange({ phone })
               }
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
@@ -195,11 +179,8 @@ class RegisterCommerce extends Component {
               autoCapitalize="none"
               keyboardType="email-address"
               errorMessage={this.state.emailError}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'email',
-                  value: value.trim()
-                })
+              onChangeText={email =>
+                this.props.onCommerceValueChange({ email: email.trim() })
               }
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
@@ -225,16 +206,12 @@ class RegisterCommerce extends Component {
               multiline={true}
               maxLength={250}
               maxHeight={180}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({
-                  prop: 'description',
-                  value
-                })
+              onChangeText={description =>
+                this.props.onCommerceValueChange({ description })
               }
               onBlur={() =>
                 this.props.onCommerceValueChange({
-                  prop: 'description',
-                  value: trimString(this.props.description)
+                  description: trimString(this.props.description)
                 })
               }
             />

@@ -18,8 +18,8 @@ import {
   ON_ACTIVE_SCHEDULES_READ
 } from './types';
 
-export const onScheduleValueChange = ({ prop, value }) => {
-  return { type: ON_SCHEDULE_VALUE_CHANGE, payload: { prop, value } };
+export const onScheduleValueChange = payload => {
+  return { type: ON_SCHEDULE_VALUE_CHANGE, payload };
 };
 
 export const onScheduleCardValueChange = card => {
@@ -35,7 +35,13 @@ export const onScheduleFormOpen = () => {
 };
 
 const formatScheduleDoc = scheduleDoc => {
-  const { id, reservationDayPeriod, reservationMinLength, startDate, endDate } = scheduleDoc;
+  const {
+    id,
+    reservationDayPeriod,
+    reservationMinLength,
+    startDate,
+    endDate
+  } = scheduleDoc;
 
   return {
     id,
@@ -43,10 +49,13 @@ const formatScheduleDoc = scheduleDoc => {
     endDate: endDate ? moment(endDate.toDate()) : null,
     reservationDayPeriod,
     reservationMinLength
-  }
-}
+  };
+};
 
-export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch => {
+export const onScheduleRead = ({
+  commerceId,
+  selectedDate
+}) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
   const db = firebase.firestore();
@@ -63,7 +72,10 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
       .get();
 
     if (snapshot.empty) {
-      snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+      snapshot = await schedulesRef
+        .where('softDelete', '==', null)
+        .where('endDate', '==', null)
+        .get();
     }
 
     if (!snapshot.empty) {
@@ -79,7 +91,9 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
     }
 
     // reading schedule cards
-    snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`).get();
+    snapshot = await db
+      .collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`)
+      .get();
     let cards = [];
     let selectedDays = [];
 
@@ -96,7 +110,10 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
   }
 };
 
-export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch => {
+export const onActiveSchedulesRead = ({
+  commerceId,
+  date
+}) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
   const db = firebase.firestore();
@@ -106,21 +123,36 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 
   try {
     // reading active schedules
-    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+    let snapshot = await schedulesRef
+      .where('softDelete', '==', null)
+      .where('endDate', '>=', date.toDate())
+      .orderBy('endDate')
+      .get();
     if (!snapshot.empty) {
-      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
+      snapshot.forEach(doc =>
+        schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      );
     }
 
-    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    snapshot = await schedulesRef
+      .where('softDelete', '==', null)
+      .where('endDate', '==', null)
+      .get();
     if (!snapshot.empty) {
-      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
-    };
+      snapshot.forEach(doc =>
+        schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      );
+    }
 
     if (!schedules.length) return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
 
     // reading cards for each active schedule
     for (i in schedules) {
-      snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedules[i].id}/WorkShifts`).get();
+      snapshot = await db
+        .collection(
+          `Commerces/${commerceId}/Schedules/${schedules[i].id}/WorkShifts`
+        )
+        .get();
       let cards = [];
       let selectedDays = [];
 
@@ -134,9 +166,9 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
 
     dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
   } catch (error) {
-    dispatch({ type: ON_SCHEDULE_READ_FAIL })
+    dispatch({ type: ON_SCHEDULE_READ_FAIL });
   }
-}
+};
 
 export const onScheduleUpdate = scheduleData => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CREATING });
@@ -159,20 +191,30 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
   const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
   schedules.forEach(schedule => {
-    if ((schedule.startDate < startDate) && (!schedule.endDate || (startDate < schedule.endDate))) {
+    if (
+      schedule.startDate < startDate &&
+      (!schedule.endDate || startDate < schedule.endDate)
+    ) {
       // si se superpone con un schedule que inicia antes, este ultimo termina donde inicia el nuevo
-      batch.update(schedulesRef.doc(schedule.id), { endDate: startDate.toDate() });
+      batch.update(schedulesRef.doc(schedule.id), {
+        endDate: startDate.toDate()
+      });
     }
 
-    if ((schedule.startDate >= startDate) && (!endDate || (schedule.endDate && (schedule.endDate <= endDate)))) {
+    if (
+      schedule.startDate >= startDate &&
+      (!endDate || (schedule.endDate && schedule.endDate <= endDate))
+    ) {
       if (schedule.id === scheduleId) {
         // el schedule que se esta modificando se elimina porque despues se crea de nuevo
         batch.delete(schedulesRef.doc(schedule.id));
         // al eliminarlo hace falta tambien eliminar las subcolecciones
         schedule.cards.forEach(card => {
-          const cardRef = schedulesRef.doc(`${schedule.id}/WorkShifts/${card.id}`);
+          const cardRef = schedulesRef.doc(
+            `${schedule.id}/WorkShifts/${card.id}`
+          );
           batch.delete(cardRef);
-        })
+        });
       } else {
         // si un schedule anterior queda dentro del periodo de vigencia del nuevo,
         // se le hace una baja logica
@@ -180,18 +222,23 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       }
     }
 
-    if ((endDate && (endDate > schedule.startDate)) &&
+    if (
+      endDate &&
+      endDate > schedule.startDate &&
       (!schedule.endDate || (endDate && endDate < schedule.endDate)) &&
-      (schedule.startDate >= startDate)
+      schedule.startDate >= startDate
     ) {
       // si se superpone con un schedule que esta despues, este ultimo inicia donde termina el nuevo
-      batch.update(schedulesRef.doc(schedule.id), { startDate: endDate.toDate() });
+      batch.update(schedulesRef.doc(schedule.id), {
+        startDate: endDate.toDate()
+      });
     }
-  })
+  });
 
   try {
     // new schedule creation
-    const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+    const newSchedule = await db
+      .collection(`Commerces/${commerceId}/Schedules/`)
       .add({
         startDate: startDate.toDate(),
         endDate: endDate ? endDate.toDate() : null,
@@ -202,10 +249,24 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       });
 
     cards.forEach(card => {
-      const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+      const {
+        days,
+        firstShiftStart,
+        firstShiftEnd,
+        secondShiftStart,
+        secondShiftEnd
+      } = card;
 
-      const cardRef = schedulesRef.doc(`${newSchedule.id}/WorkShifts/${card.id}`);
-      batch.set(cardRef, { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd });
+      const cardRef = schedulesRef.doc(
+        `${newSchedule.id}/WorkShifts/${card.id}`
+      );
+      batch.set(cardRef, {
+        days,
+        firstShiftStart,
+        firstShiftEnd,
+        secondShiftStart,
+        secondShiftEnd
+      });
     });
 
     // reservations cancel
@@ -217,8 +278,12 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       };
 
       reservationsToCancel.forEach(res => {
-        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        const commerceResRef = db.doc(
+          `Commerces/${commerceId}/Reservations/${res.id}`
+        );
+        const clientResRef = db.doc(
+          `Profiles/${res.clientId}/Reservations/${res.id}`
+        );
         batch.update(commerceResRef, updateObj);
         batch.update(clientResRef, updateObj);
       });
@@ -234,10 +299,17 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
   }
 };
 
-export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsToCancel }) => async dispatch => {
+export const onScheduleDelete = ({
+  commerceId,
+  schedule,
+  endDate,
+  reservationsToCancel
+}) => async dispatch => {
   const db = firebase.firestore();
   const batch = db.batch();
-  const scheduleRef = db.doc(`Commerces/${commerceId}/Schedules/${schedule.id}`);
+  const scheduleRef = db.doc(
+    `Commerces/${commerceId}/Schedules/${schedule.id}`
+  );
 
   try {
     if (endDate <= schedule.startDate) {
@@ -259,8 +331,12 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
       };
 
       reservationsToCancel.forEach(res => {
-        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        const commerceResRef = db.doc(
+          `Commerces/${commerceId}/Reservations/${res.id}`
+        );
+        const clientResRef = db.doc(
+          `Profiles/${res.clientId}/Reservations/${res.id}`
+        );
         batch.update(commerceResRef, updateObj);
         batch.update(clientResRef, updateObj);
       });
@@ -274,14 +350,10 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
     dispatch({ type: ON_SCHEDULE_CREATE_FAIL });
     return false;
   }
-}
+};
 
-export const onScheduleConfigurationSave = ({
-  reservationDayPeriod,
-  reservationMinCancelTime,
-  commerceId,
-  date
-},
+export const onScheduleConfigurationSave = (
+  { reservationDayPeriod, reservationMinCancelTime, commerceId, date },
   navigation
 ) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
@@ -292,15 +364,22 @@ export const onScheduleConfigurationSave = ({
   const updateObj = { reservationDayPeriod, reservationMinCancelTime };
 
   try {
-    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+    let snapshot = await schedulesRef
+      .where('softDelete', '==', null)
+      .where('endDate', '>=', date.toDate())
+      .orderBy('endDate')
+      .get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => batch.update(doc.ref, updateObj));
     }
 
-    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+    snapshot = await schedulesRef
+      .where('softDelete', '==', null)
+      .where('endDate', '==', null)
+      .get();
     if (!snapshot.empty) {
       snapshot.forEach(doc => batch.update(doc.ref, updateObj));
-    };
+    }
 
     await batch.commit();
 

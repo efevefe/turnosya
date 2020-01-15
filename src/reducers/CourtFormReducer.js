@@ -29,26 +29,33 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COURT_VALUE_CHANGE:
-      return {
-        ...state,
-        [action.payload.prop]: action.payload.value,
-        existsError: ''
-      };
+      return { ...state, ...action.payload, existsError: '' };
+
     case ON_COURT_FORM_OPEN:
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE };
+
     case COURT_FORM_SUBMIT:
       return { ...state, loading: true, existsError: '' };
+
     case COURT_CREATE:
       Toast.show({ text: 'Cancha guardada' });
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE };
+
     case COURT_UPDATE:
       Toast.show({ text: 'Cambios guardados' });
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE };
+
     case COURT_DELETE:
       Toast.show({ text: 'La cancha se ha eliminado' });
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE };
+
     case COURT_EXISTS:
-      return { ...state, loading: false, existsError: 'Nombre de cancha existente' };
+      return {
+        ...state,
+        loading: false,
+        existsError: 'Nombre de cancha existente'
+      };
+
     default:
       return state;
   }

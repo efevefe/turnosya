@@ -30,14 +30,13 @@ import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
 import { ROLES } from '../constants';
 
-const { algoliaConfig } = getEnvVars();
-const { appId, adminApiKey, commercesIndex } = algoliaConfig;
+const { appId, adminApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 const client = algoliasearch(appId, adminApiKey);
 const index = client.initIndex(commercesIndex);
 
-export const onCommerceValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
+export const onCommerceValueChange = payload => {
+  return { type: ON_COMMERCE_VALUE_CHANGE, payload };
 };
 
 export const onCommerceFormOpen = () => {
@@ -339,7 +338,7 @@ export const onCommerceDelete = (password, navigation = null) => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
                   type: ON_CLIENT_DATA_VALUE_CHANGE,
-                  payload: { prop: 'commerceId', value: null }
+                  payload: { commerceId: null }
                 });
 
                 if (navigation) {

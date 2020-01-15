@@ -20,21 +20,25 @@ INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      return { ...state, ...action.payload };
+
     case ON_COMMERCE_COURT_RESERVATIONS_READING:
-      return { ...state, loading: true };
-    case ON_COMMERCE_COURT_RESERVATIONS_READ:
-      return { ...state, ...action.payload, loading: false };
-    case ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL:
-      return { ...state, loading: false };
+    case ON_COMMERCE_RESERVATION_CANCELING:
     case ON_COMMERCE_RESERVATION_CANCELING:
       return { ...state, loading: true };
+
+    case ON_COMMERCE_COURT_RESERVATIONS_READ:
+      return { ...state, ...action.payload, loading: false };
+
+    case ON_COMMERCE_RESERVATION_CANCEL_FAIL:
+      Toast.show({ text: 'Error al intentar cancelar el turno' });
+    case ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL:
+      return { ...state, loading: false };
+
     case ON_COMMERCE_RESERVATION_CANCELED:
       Toast.show({ text: 'El turno ha sido cancelado' });
       return { ...state, loading: false, cancelationReason: '' };
-    case ON_COMMERCE_RESERVATION_CANCEL_FAIL:
-      Toast.show({ text: 'Error al intentar cancelar el turno' });
-      return { ...state, loading: false };
+
     default:
       return state;
   }

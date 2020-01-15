@@ -12,14 +12,13 @@ import {
   ON_EMPLOYEE_SAVE_FAIL,
   EMPLOYEE_VALIDATION_ERROR,
   ON_EMPLOYEE_DELETED,
-  ON_EMPLOYEE_LOAD,
   ON_EMPLOYEE_UPDATED
 } from './types';
 import { Toast } from '../components/common';
 
-export const employeeValueChange = (prop, value) => ({
+export const employeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
-  payload: { prop, value }
+  payload
 });
 
 export const createEmployee = (
@@ -161,8 +160,3 @@ export const employeeValidationError = errorText => ({
 export const employeeClear = () => ({ type: ON_EMPLOYEE_CLEAR });
 
 export const employeeNameClear = () => ({ type: ON_EMPLOYEE_NAME_CLEAR });
-
-export const loadEmployee = employee => ({
-  type: ON_EMPLOYEE_LOAD,
-  payload: employee
-});

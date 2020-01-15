@@ -17,8 +17,8 @@ import {
   COMMERCE_COURT_TYPES_READ_FAIL
 } from './types';
 
-export const onCourtValueChange = ({ prop, value }) => {
-  return { type: ON_COURT_VALUE_CHANGE, payload: { prop, value } };
+export const onCourtValueChange = payload => {
+  return { type: ON_COURT_VALUE_CHANGE, payload };
 };
 
 export const onCourtFormOpen = () => {
@@ -48,20 +48,22 @@ export const getCourtAndGroundTypes = () => {
           i++;
         });
 
-        dispatch({
-          type: ON_COURT_VALUE_CHANGE,
-          payload: { prop: 'courts', value: courts }
-        });
-        dispatch({
-          type: ON_COURT_VALUE_CHANGE,
-          payload: { prop: 'grounds', value: grounds }
-        });
+        dispatch({ type: ON_COURT_VALUE_CHANGE, payload: { courts, grounds } });
       });
   };
 };
 
 export const courtCreate = (
-  { name, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
+  {
+    name,
+    court,
+    ground,
+    price,
+    lightPrice,
+    disabledFrom,
+    disabledTo,
+    commerceId
+  },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -72,7 +74,7 @@ export const courtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function (querySnapshot) {
+      .then(function(querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: COURT_EXISTS });
         } else {
@@ -114,33 +116,40 @@ export const isCourtDisabledOnSlot = (court, slot) => {
   }
 
   return false;
-}
+};
 
 const formatCourt = doc => {
   return {
     ...doc.data(),
     id: doc.id,
-    disabledFrom: doc.data().disabledFrom ? moment(doc.data().disabledFrom.toDate()) : null,
-    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null
-  }
-}
+    disabledFrom: doc.data().disabledFrom
+      ? moment(doc.data().disabledFrom.toDate())
+      : null,
+    disabledTo: doc.data().disabledTo
+      ? moment(doc.data().disabledTo.toDate())
+      : null
+  };
+};
 
 export const courtsRead = commerceId => dispatch => {
   dispatch({ type: COURT_READING });
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Courts`)
-    .where('softDelete', '==', null)
-    // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
-    .orderBy('courtState', 'desc') // despues se borra este campo
-    .orderBy('court', 'asc')
-    .orderBy('name', 'asc')
-    .onSnapshot(snapshot => {
-      const courts = [];
-      snapshot.forEach(doc => courts.push(formatCourt(doc)));
-      dispatch({ type: COURT_READ, payload: courts });
-    });
+  return (
+    db
+      .collection(`Commerces/${commerceId}/Courts`)
+      .where('softDelete', '==', null)
+      // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
+      .orderBy('courtState', 'desc') // despues se borra este campo
+      .orderBy('court', 'asc')
+      .orderBy('name', 'asc')
+      .onSnapshot(snapshot => {
+        const courts = [];
+        snapshot.forEach(doc => courts.push(formatCourt(doc)));
+        dispatch({ type: COURT_READ, payload: courts });
+      })
+  );
 };
 
 export const courtDelete = ({ id, commerceId }) => {
@@ -174,7 +183,10 @@ export const courtUpdate = (courtData, navigation) => async dispatch => {
   const courtsRef = db.collection(`Commerces/${commerceId}/Courts`);
 
   try {
-    const snapshot = await courtsRef.where('name', '==', name).where('softDelete', '==', null).get();
+    const snapshot = await courtsRef
+      .where('name', '==', name)
+      .where('softDelete', '==', null)
+      .get();
 
     if (!snapshot.empty && snapshot.docs[0].id !== id) {
       return dispatch({ type: COURT_EXISTS });
@@ -243,19 +255,25 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => dispatch => {
+export const onCommerceCourtsReadByType = ({
+  commerceId,
+  courtType
+}) => dispatch => {
   dispatch({ type: COURT_READING, payload: 'loading' });
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Courts`)
-    .where('softDelete', '==', null)
-    .where('court', '==', courtType)
-    // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
-    .orderBy('name', 'asc')
-    .onSnapshot(snapshot => {
-      const courts = [];
-      snapshot.forEach(doc => courts.push(formatCourt(doc)));
-      dispatch({ type: COURT_READ, payload: courts });
-    });
+  return (
+    db
+      .collection(`Commerces/${commerceId}/Courts`)
+      .where('softDelete', '==', null)
+      .where('court', '==', courtType)
+      // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
+      .orderBy('name', 'asc')
+      .onSnapshot(snapshot => {
+        const courts = [];
+        snapshot.forEach(doc => courts.push(formatCourt(doc)));
+        dispatch({ type: COURT_READ, payload: courts });
+      })
+  );
 };
