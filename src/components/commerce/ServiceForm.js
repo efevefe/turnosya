@@ -34,7 +34,8 @@ class ServiceForm extends Component {
         price,
         description,
         navigation,
-        commerceId
+        commerceId,
+        employeeId
       } = this.props;
       const { params } = this.props.navigation.state;
 
@@ -59,7 +60,8 @@ class ServiceForm extends Component {
             duration,
             price,
             description,
-            commerceId
+            commerceId,
+            employeesIds: [employeeId]
           },
           navigation
         );
@@ -216,8 +218,9 @@ const mapStateToProps = state => {
     loading
   } = state.serviceForm;
   const { commerceId } = state.commerceData;
+  const { employeeId } = state.roleData;
 
-  return { name, duration, price, description, error, loading, commerceId };
+  return { name, duration, price, description, error, loading, commerceId, employeeId };
 };
 
 export default connect(

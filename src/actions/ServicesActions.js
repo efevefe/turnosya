@@ -19,14 +19,14 @@ export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
 };
 
-export const serviceCreate = ({ name, duration, price, description, commerceId }, navigation) => {
+export const serviceCreate = ({ name, duration, price, description, commerceId, employeesIds }, navigation) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: SERVICE_FORM_SUBMIT });
 
     db.collection(`Commerces/${commerceId}/Services`)
-      .add({ name, duration, price, description, softDelete: null })
+      .add({ name, duration, price, description, employeesIds, softDelete: null })
       .then(() => {
         dispatch({ type: SERVICE_CREATE });
         navigation.goBack();
