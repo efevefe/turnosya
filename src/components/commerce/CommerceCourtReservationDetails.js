@@ -18,12 +18,12 @@ import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCommerceCancelReservation,
   onCourtReservationsListValueChange,
-  clientReviewValueChange,
-  createClientReview,
+  onClientReviewValueChange,
+  onCreateClientReview,
   readClientReview,
-  updateClientReview,
-  deleteClientReview,
-  clientReviewClear,
+  onClientReviewUpdate,
+  onClientReviewDelete,
+  onClientReviewValuesReset,
   readCommerceReview,
   commerceReviewClear
 } from '../../actions';
@@ -58,7 +58,7 @@ class CommerceCourtReservationDetails extends Component {
   }
 
   componentWillUnmount() {
-    this.props.clientReviewClear();
+    this.props.onClientReviewValuesReset();
     this.props.commerceReviewClear();
   }
 
@@ -78,7 +78,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   renderError = () => {
-    if (this.props.cancelationReason === '') {
+    if (this.props.cancellationReason === '') {
       this.setState({ error: 'Debe informar el motivo' });
       return false;
     } else {
@@ -89,7 +89,7 @@ class CommerceCourtReservationDetails extends Component {
 
   onBackdropPress = () => {
     this.setState({ optionsVisible: false, error: '' });
-    this.props.onCourtReservationsListValueChange({ cancelationReason: '' });
+    this.props.onCourtReservationsListValueChange({ cancellationReason: '' });
   };
 
   onConfirmDelete = (id, clientId) => {
@@ -99,7 +99,7 @@ class CommerceCourtReservationDetails extends Component {
         commerceId: this.props.commerceId,
         reservationId: id,
         clientId,
-        cancelationReason: this.props.cancelationReason,
+        cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation
       });
     }
@@ -113,7 +113,7 @@ class CommerceCourtReservationDetails extends Component {
     } else {
       if (this.props.clientReviewId) {
         // Si tenia calificación actualizarla
-        this.props.updateClientReview({
+        this.props.onClientReviewUpdate({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
@@ -121,7 +121,7 @@ class CommerceCourtReservationDetails extends Component {
         });
       } else {
         // Si la reserva no tiene calificación, crearla
-        this.props.createClientReview({
+        this.props.onCreateClientReview({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
@@ -133,7 +133,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   onDeleteReviewHandler = () => {
-    this.props.deleteClientReview({
+    this.props.onClientReviewDelete({
       clientId: this.state.reservation.clientId,
       reviewId: this.props.clientReviewId,
       reservationId: this.state.reservation.id,
@@ -219,12 +219,12 @@ class CommerceCourtReservationDetails extends Component {
         <ReviewCard
           title={title}
           onFinishRating={rating =>
-            this.props.clientReviewValueChange({ rating })
+            this.props.onClientReviewValueChange({ rating })
           }
           rating={this.props.clientRating}
           readOnly={this.state.isOneWeekOld}
           onChangeText={comment =>
-            this.props.clientReviewValueChange({ comment })
+            this.props.onClientReviewValueChange({ comment })
           }
           commentPlaceholder="Comente sobre el cliente..."
           commentText={this.props.clientComment}
@@ -297,13 +297,13 @@ class CommerceCourtReservationDetails extends Component {
                 placeholder="Motivo de cancelación..."
                 multiline={true}
                 color="black"
-                onChangeText={cancelationReason => {
+                onChangeText={cancellationReason => {
                   this.props.onCourtReservationsListValueChange({
-                    cancelationReason
+                    cancellationReason
                   });
                   this.setState({ error: '' });
                 }}
-                value={this.props.cancelationReason}
+                value={this.props.cancellationReason}
                 errorMessage={this.state.error}
                 onFocus={() => this.setState({ error: '' })}
               />
@@ -364,14 +364,14 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { loading, cancelationReason } = state.courtReservationsList;
+  const { loading, cancellationReason } = state.courtReservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
   return {
     loading,
     commerceId,
-    cancelationReason,
+    cancellationReason,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
     clientReviewId: state.clientReviewData.reviewId,
@@ -386,12 +386,12 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceCancelReservation,
   onCourtReservationsListValueChange,
-  clientReviewValueChange,
-  createClientReview,
+  onClientReviewValueChange,
+  onCreateClientReview,
   readClientReview,
-  updateClientReview,
-  deleteClientReview,
-  clientReviewClear,
+  onClientReviewUpdate,
+  onClientReviewDelete,
+  onClientReviewValuesReset,
   readCommerceReview,
   commerceReviewClear
 })(CommerceCourtReservationDetails);

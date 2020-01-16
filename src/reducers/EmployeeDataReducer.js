@@ -1,6 +1,6 @@
 import {
   ON_EMPLOYEE_VALUE_CHANGE,
-  ON_EMPLOYEE_CLEAR,
+  ON_EMPLOYEE_VALUES_RESET,
   ON_EMPLOYEE_NAME_CLEAR,
   ON_USER_SEARCHING,
   ON_USER_SEARCH_SUCCESS,
@@ -63,7 +63,7 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_EMPLOYEE_DELETED:
       Toast.show({ text: 'Empleado eliminado exitosamente.' });
-    case ON_EMPLOYEE_CLEAR:
+    case ON_EMPLOYEE_VALUES_RESET:
       return { ...INITIAL_STATE };
 
     default:

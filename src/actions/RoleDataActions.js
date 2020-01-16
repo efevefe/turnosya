@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { ON_ROLES_READ } from './types';
 
-export const readRoles = () => dispatch => {
+export const onRolesRead = () => dispatch => {
   const db = firebase.firestore();
   let roles = [];
 

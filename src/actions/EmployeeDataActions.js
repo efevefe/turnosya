@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
   ON_EMPLOYEE_VALUE_CHANGE,
-  ON_EMPLOYEE_CLEAR,
+  ON_EMPLOYEE_VALUES_RESET,
   ON_EMPLOYEE_NAME_CLEAR,
   ON_USER_SEARCHING,
   ON_USER_SEARCH_SUCCESS,
@@ -16,12 +16,12 @@ import {
 } from './types';
 import { Toast } from '../components/common';
 
-export const employeeValueChange = payload => ({
+export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
   payload
 });
 
-export const createEmployee = (
+export const onCreateEmployee = (
   {
     commerceId,
     commerceName,
@@ -65,7 +65,7 @@ export const createEmployee = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const updateEmployee = (
+export const onEmployeeUpdate = (
   { employeeId, commerceId, email, role },
   navigation
 ) => dispatch => {
@@ -87,7 +87,7 @@ export const updateEmployee = (
   }
 };
 
-export const deleteEmployee = ({
+export const onEmployeeDelete = ({
   employeeId,
   commerceId,
   profileId,
@@ -157,6 +157,6 @@ export const employeeValidationError = errorText => ({
   payload: errorText
 });
 
-export const employeeClear = () => ({ type: ON_EMPLOYEE_CLEAR });
+export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
 
-export const employeeNameClear = () => ({ type: ON_EMPLOYEE_NAME_CLEAR });
+export const onEmployeeNameClear = () => ({ type: ON_EMPLOYEE_NAME_CLEAR });

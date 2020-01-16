@@ -4,14 +4,14 @@ import { Card, Button as RNEButton } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
+  onEmployeeValueChange,
+  onEmployeeNameClear,
+  onEmployeeValuesReset,
+  onRolesRead,
   searchUserByEmail,
-  createEmployee,
+  onCreateEmployee,
   employeeValidationError,
-  updateEmployee
+  onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
@@ -20,23 +20,23 @@ class EmployeeForm extends Component {
   state = { roleError: '', editing: false };
 
   componentDidMount() {
-    this.props.readRoles();
+    this.props.onRolesRead();
 
     const employee = this.props.navigation.getParam('employee', null);
 
     if (employee) {
       this.setState({ editing: true });
-      this.props.employeeValueChange(employee);
+      this.props.onEmployeeValueChange(employee);
     }
   }
 
   componentWillUnmount() {
-    this.props.employeeClear();
+    this.props.onEmployeeValuesReset();
   }
 
   onEmailValueChange = email => {
-    if (this.props.firstName) this.props.employeeNameClear();
-    this.props.employeeValueChange({ email });
+    if (this.props.firstName) this.props.onEmployeeNameClear();
+    this.props.onEmployeeValueChange({ email });
   };
 
   onSavePressHandler = () => {
@@ -65,7 +65,7 @@ class EmployeeForm extends Component {
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.updateEmployee(
+          this.props.onEmployeeUpdate(
             {
               commerceId,
               employeeId,
@@ -75,7 +75,7 @@ class EmployeeForm extends Component {
             navigation
           );
         else
-          this.props.createEmployee(
+          this.props.onCreateEmployee(
             {
               commerceId,
               commerceName,
@@ -172,7 +172,7 @@ class EmployeeForm extends Component {
                 value={this.props.role}
                 items={this.props.roles}
                 onValueChange={role =>
-                  this.props.employeeValueChange({ role: role || {} })
+                  this.props.onEmployeeValueChange({ role: role || {} })
                 }
                 errorMessage={this.state.roleError}
               />
@@ -236,12 +236,12 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
+  onEmployeeValueChange,
+  onEmployeeNameClear,
+  onEmployeeValuesReset,
+  onRolesRead,
   searchUserByEmail,
-  createEmployee,
+  onCreateEmployee,
   employeeValidationError,
-  updateEmployee
+  onEmployeeUpdate
 })(EmployeeForm);

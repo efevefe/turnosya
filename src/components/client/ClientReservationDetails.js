@@ -24,7 +24,7 @@ import {
   deleteCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear,
-  clientReviewClear,
+  onClientReviewValuesReset,
   readClientReview
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
@@ -65,10 +65,10 @@ class ClientReservationDetails extends Component {
 
   componentWillUnmount() {
     this.props.commerceReviewClear();
-    this.props.clientReviewClear();
+    this.props.onClientReviewValuesReset();
   }
 
-  // ** Cancelation methods **
+  // ** cancellationReason methods **
 
   onCancelButtonPress = () => {
     const { reservationMinCancelTime } = this.props;
@@ -378,6 +378,6 @@ export default connect(mapStateToProps, {
   deleteCommerceReview,
   commerceReviewValueChange,
   commerceReviewClear,
-  clientReviewClear,
+  onClientReviewValuesReset,
   readClientReview
 })(ClientReservationDetails);

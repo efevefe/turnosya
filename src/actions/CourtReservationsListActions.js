@@ -178,7 +178,7 @@ export const onCommerceCancelReservation = ({
   commerceId,
   reservationId,
   clientId,
-  cancelationReason,
+  cancellationReason,
   navigation
 }) => {
   const db = firebase.firestore();
@@ -194,7 +194,7 @@ export const onCommerceCancelReservation = ({
           state: {
             id: stateDoc.id,
             name: stateDoc.data().name,
-            cancelationReason
+            cancellationReason
           },
           cancellationDate: new Date()
         };
