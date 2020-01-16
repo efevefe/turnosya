@@ -24,7 +24,8 @@ import {
   deleteFavoriteCommerce,
   onLocationChange,
   commerceHitsUpdate,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onReservationValueChange
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -56,6 +57,13 @@ class CommerceProfileView extends Component {
     });
 
     this.props.commerceHitsUpdate([]);
+  }
+
+  componentDidUpdate(prevProps) {
+    // para evitar esto se deberia guardar el areaId en Algolia
+    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
+      this.props.onReservationValueChange({ prop: 'areaId', value: this.props.areaId });
+    }
   }
 
   renderDescription = () => {
@@ -297,7 +305,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     rating,
-    area
+    area: { areaId }
   } = state.commerceData;
 
   return {
@@ -317,7 +325,7 @@ const mapStateToProps = state => {
     cards,
     loadingCourtTypes,
     loadingProfile,
-    areaId: area.areaId
+    areaId
   };
 };
 
@@ -327,5 +335,6 @@ export default connect(mapStateToProps, {
   deleteFavoriteCommerce,
   onLocationChange,
   commerceHitsUpdate,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onReservationValueChange
 })(CommerceProfileView);

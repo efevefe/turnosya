@@ -35,28 +35,30 @@ export const onScheduleFormOpen = () => {
 };
 
 const formatScheduleDoc = scheduleDoc => {
-  const { id, reservationDayPeriod, reservationMinLength, startDate, endDate } = scheduleDoc;
+  const { id, reservationDayPeriod, reservationMinLength, startDate, endDate, employeeId } = scheduleDoc;
 
   return {
     id,
     startDate: moment(startDate.toDate()),
     endDate: endDate ? moment(endDate.toDate()) : null,
     reservationDayPeriod,
-    reservationMinLength
+    reservationMinLength,
+    employeeId: employeeId || null
   }
 }
 
-export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch => {
+export const onScheduleRead = ({ commerceId, selectedDate, employeeId }) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
   const db = firebase.firestore();
   const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
   let schedule;
+  let snapshot;
 
   try {
     // reading schedule
-    let snapshot = await schedulesRef
+    snapshot = await schedulesRef
       .where('softDelete', '==', null)
       .where('endDate', '>', selectedDate.toDate())
       .orderBy('endDate')
@@ -68,7 +70,8 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
 
     if (!snapshot.empty) {
       snapshot.forEach(doc => {
-        if (moment(doc.data().startDate.toDate()) <= selectedDate) {
+        if ((moment(doc.data().startDate.toDate()) <= selectedDate) &&
+          (!employeeId || doc.data().employeeId === employeeId)) {
           schedule = formatScheduleDoc({ id: doc.id, ...doc.data() });
         }
       });
@@ -96,7 +99,7 @@ export const onScheduleRead = ({ commerceId, selectedDate }) => async dispatch =
   }
 };
 
-export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch => {
+export const onActiveSchedulesRead = ({ commerceId, date, employeeId }) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
   const db = firebase.firestore();
@@ -108,12 +111,18 @@ export const onActiveSchedulesRead = ({ commerceId, date }) => async dispatch =>
     // reading active schedules
     let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
     if (!snapshot.empty) {
-      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
+      snapshot.forEach(doc => {
+        if (!employeeId || doc.data().employeeId === employeeId)
+          schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      });
     }
 
     snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
     if (!snapshot.empty) {
-      snapshot.forEach(doc => schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() })));
+      snapshot.forEach(doc => {
+        if (!employeeId || doc.data().employeeId === employeeId)
+          schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      });
     };
 
     if (!schedules.length) return dispatch({ type: ON_SCHEDULE_READ_EMPTY });

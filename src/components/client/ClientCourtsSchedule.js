@@ -15,7 +15,7 @@ import {
   isCourtDisabledOnSlot
 } from '../../actions';
 
-class ClientCommerceSchedule extends Component {
+class ClientCourtsSchedule extends Component {
   state = { selectedDate: moment() };
 
   static navigationOptions = ({ navigation }) => {
@@ -25,11 +25,6 @@ class ClientCommerceSchedule extends Component {
   };
 
   componentDidMount() {
-    this.props.onScheduleValueChange({
-      prop: 'selectedDate',
-      value: moment()
-    });
-    
     this.props.navigation.setParams({
       leftButton: this.renderBackButton()
     });
@@ -48,7 +43,7 @@ class ClientCommerceSchedule extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.reservations !== this.props.reservations ||
       prevProps.courts !== this.props.courts) {
-      this.reservationsOnSlots(this.props.slots);
+      this.reservationsOnSlots();
     }
   }
 
@@ -104,12 +99,17 @@ class ClientCommerceSchedule extends Component {
       });
     }
 
+    const { startDate, endDate } = slot;
+
     this.props.onReservationValueChange({
-      prop: 'slot',
-      value: slot
+      prop: 'startDate',
+      value: moment(startDate)
     });
 
-    const { startDate } = slot;
+    this.props.onReservationValueChange({
+      prop: 'endDate',
+      value: moment(endDate)
+    });
 
     this.props.navigation.navigate(
       'commerceCourtsList',
@@ -121,8 +121,8 @@ class ClientCommerceSchedule extends Component {
     );
   };
 
-  reservationsOnSlots = slots => {
-    const { reservations, courts } = this.props;
+  reservationsOnSlots = () => {
+    const { reservations, courts, slots } = this.props;
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
@@ -165,6 +165,7 @@ class ClientCommerceSchedule extends Component {
 
     return (
       <Schedule
+        mode='courts'
         cards={cards}
         selectedDate={selectedDate}
         reservationMinLength={reservationMinLength}
@@ -198,7 +199,6 @@ const mapStateToProps = state => {
   const { commerce, courtType } = state.reservation;
   const { reservations } = state.reservationsList;
   const loadingReservations = state.reservationsList.loading;
-  const { slot } = state.reservation;
   const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
@@ -211,10 +211,8 @@ const mapStateToProps = state => {
     reservationMinLength,
     scheduleStartDate: startDate,
     scheduleEndDate: endDate,
-    endDate,
     refreshing,
     reservations,
-    slot,
     courts,
     courtType,
     loadingSchedule,
@@ -230,4 +228,4 @@ export default connect(mapStateToProps, {
   onCommerceCourtTypeReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
-})(ClientCommerceSchedule);
+})(ClientCourtsSchedule);

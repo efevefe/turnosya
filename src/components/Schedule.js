@@ -130,6 +130,7 @@ class Schedule extends Component {
           endDate: moment(shiftStartDate),
           available: true,
           disabled: false,
+          visible: true,
           free: 0,
           total: 0
         });
@@ -142,7 +143,7 @@ class Schedule extends Component {
   };
 
   badgeColor = (free, total) => {
-    if (free == 0) {
+    if (!free) {
       return MAIN_COLOR;
     } else if (free <= (total / 2)) {
       return WARNING_COLOR;
@@ -151,28 +152,44 @@ class Schedule extends Component {
     }
   }
 
+  badgeTitle = (free, total) => {
+    switch (this.props.mode) {
+      case 'courts':
+        return free
+          ? `Disponibles: ${free.toString()} / ${total.toString()}`
+          : 'Ocupadas';
+      case 'services':
+        return free
+          ? `Disponible`
+          : 'Ocupado';
+      default:
+        return null;
+    }
+  }
+
   renderList = ({ item }) => {
-    return (
-      <ListItem
-        leftIcon={{
-          name: 'md-time',
-          type: 'ionicon',
-          color: 'black'
-        }}
-        rightElement={
-          <Badge
-            value={item.free ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}` : 'Ocupadas'}
-            badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
-          />
-        }
-        title={`${item.startDate.format('HH:mm')}`}
-        containerStyle={styles.slotContainerStyle}
-        rightSubtitleStyle={styles.slotRightSubtitleStyle}
-        onPress={() => this.props.onSlotPress(item)}
-        disabled={item.disabled}
-        bottomDivider
-      />
-    );
+    if (item.visible)
+      return (
+        <ListItem
+          leftIcon={{
+            name: 'md-time',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          rightElement={
+            <Badge
+              value={this.badgeTitle(item.free, item.total)}
+              badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+            />
+          }
+          title={`${item.startDate.format('HH:mm')}`}
+          containerStyle={styles.slotContainerStyle}
+          rightSubtitleStyle={styles.slotRightSubtitleStyle}
+          onPress={() => this.props.onSlotPress(item)}
+          disabled={item.disabled}
+          bottomDivider
+        />
+      );
   };
 
   onRefresh = () => {

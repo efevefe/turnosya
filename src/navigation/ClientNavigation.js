@@ -8,7 +8,7 @@ import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
-import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
+import ClientCourtsSchedule from '../components/client/ClientCourtsSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
 import ClientReservationsList from '../components/client/ClientReservationsList';
@@ -23,6 +23,8 @@ import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import CommerceServicesList from '../components/client/CommerceServicesList';
 import CommerceEmployeesList from '../components/client/CommerceEmployeesList';
+import ClientServicesSchedule from '../components/client/ClientServicesSchedule';
+import ConfirmServiceReservation from '../components/client/ConfirmServiceReservation';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -60,7 +62,13 @@ const reservationScreens = {
     }
   },
   commerceSchedule: {
-    screen: ClientCommerceSchedule,
+    screen: ClientCourtsSchedule,
+    navigationOptions: {
+      title: 'Turnos Disponibles'
+    }
+  },
+  commerceServicesSchedule: {
+    screen: ClientServicesSchedule,
     navigationOptions: {
       title: 'Turnos Disponibles'
     }
@@ -70,6 +78,12 @@ const reservationScreens = {
   },
   confirmCourtReservation: {
     screen: ConfirmCourtReservation,
+    navigationOptions: {
+      title: 'Turno'
+    }
+  },
+  confirmServiceReservation: {
+    screen: ConfirmServiceReservation,
     navigationOptions: {
       title: 'Turno'
     }

@@ -21,8 +21,7 @@ class CommerceEmployeesList extends Component {
         this.props.onReservationValueChange({ prop: 'employee', value: employee });
 
         if (this.props.service) {
-            // this.props.navigation.navigate('commerceSchedule');
-            alert('work in progress');
+            this.props.navigation.navigate('commerceServicesSchedule');
         } else {
             this.props.navigation.navigate('commerceServicesList');
         }

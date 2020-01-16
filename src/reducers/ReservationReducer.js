@@ -1,8 +1,8 @@
 import {
     ON_RESERVATION_VALUE_CHANGE,
-    ON_COURT_RESERVATION_CREATING,
-    ON_COURT_RESERVATION_CREATE,
-    ON_COURT_RESERVATION_CREATE_FAIL,
+    ON_RESERVATION_CREATING,
+    ON_RESERVATION_CREATE,
+    ON_RESERVATION_CREATE_FAIL,
     ON_NEW_RESERVATION,
     ON_NEW_SERVICE_RESERVATION
 } from "../actions/types";
@@ -32,6 +32,7 @@ const INITIAL_STATE_NEW = {
     saved: false,
     loading: false,
     // COURT RESERVATION ONLY
+    slot: null, // este capaz no haga falta usarlo mas
     court: null,
     courtType: '',
     light: false,
@@ -44,11 +45,11 @@ export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ON_RESERVATION_VALUE_CHANGE:
             return { ...state, [action.payload.prop]: action.payload.value };
-        case ON_COURT_RESERVATION_CREATING:
+        case ON_RESERVATION_CREATING:
             return { ...state, loading: true };
-        case ON_COURT_RESERVATION_CREATE:
+        case ON_RESERVATION_CREATE:
             return { ...state, loading: false, saved: true };
-        case ON_COURT_RESERVATION_CREATE_FAIL:
+        case ON_RESERVATION_CREATE_FAIL:
             return { ...state, loading: false };
         case ON_NEW_RESERVATION:
             return { ...state, saved: false, clientName: '', clientPhone: '' };

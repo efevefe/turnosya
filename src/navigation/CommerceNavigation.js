@@ -4,13 +4,13 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import { ROLES } from '../constants';
 import ServicesList from '../components/commerce/ServicesList';
 import ServiceForm from '../components/commerce/ServiceForm';
 import CourtList from '../components/commerce/CourtList';
 import CourtForm from '../components/commerce/CourtForm';
 import ScheduleRegister from '../components/commerce/ScheduleRegister';
 import CommerceProfile from '../components/commerce/CommerceProfile';
-import CommerceSchedule from '../components/commerce/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/commerce/ScheduleRegisterConfiguration';
 import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
@@ -25,13 +25,16 @@ import CommerceCourtReservationRegister from '../components/commerce/CommerceCou
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
 import PermissionsAssigner from '../components/common/PermissionsAssigner';
-import { ROLES } from '../constants';
 import DashBoard from '../components/commerce/reports/DashBoard';
 import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
 import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';
 import MonthlyReviewsChart from '../components/commerce/reports/MonthlyReviewsChart';
 import ReservedAndCancelledShiftChart from '../components/commerce/reports/ReservedAndCancelledShiftChart';
 import MostPopularShiftsChart from '../components/commerce/reports/MostPopularShiftsChart';
+
+import CommerceSchedule from '../components/commerce/CommerceSchedule';
+import CommerceCourtsSchedule from '../components/commerce/CommerceCourtsSchedule';
+import CommerceServicesSchedule from '../components/commerce/CommerceServicesSchedule';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -60,8 +63,18 @@ const reservationDetailsScreens = {
 
 const calendarStack = createStackNavigator(
   {
-    calendar: {
-      screen: CommerceSchedule,
+    calendarRedirect: CommerceSchedule,
+    courtsCalendar: {
+      screen: CommerceCourtsSchedule,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Calendario',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    servicesCalendar: {
+      screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
         headerLeft: (

@@ -68,13 +68,15 @@ class ConfirmCourtReservation extends Component {
   };
 
   onConfirmReservation = () => {
-    const { commerce, court, courtType, slot, price, light } = this.props;
+    const { commerce, court, courtType, startDate, endDate, areaId, price, light } = this.props;
 
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
+      areaId,
       courtId: court.id,
       courtType,
-      slot,
+      startDate,
+      endDate,
       price,
       light
     });
@@ -133,7 +135,7 @@ class ConfirmCourtReservation extends Component {
   };
 
   render() {
-    const { commerce, court, slot, light, price, saved } = this.props;
+    const { commerce, court, startDate, endDate, light, price, saved } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -148,8 +150,8 @@ class ConfirmCourtReservation extends Component {
           infoIcon='md-pin'
           picture={commerce.profilePicture}
           court={court}
-          startDate={slot.startDate}
-          endDate={slot.endDate}
+          startDate={startDate}
+          endDate={endDate}
           price={price}
           light={light}
           showPrice={saved}
@@ -179,14 +181,16 @@ const mapStateToProps = state => {
     commerce,
     courtType,
     court,
-    slot,
+    startDate,
+    endDate,
     price,
     light,
+    areaId,
     saved,
     loading
   } = state.reservation;
 
-  return { commerce, courtType, court, slot, price, light, saved, loading };
+  return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, loading };
 };
 
 export default connect(mapStateToProps, {

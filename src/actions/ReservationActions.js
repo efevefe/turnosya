@@ -2,9 +2,9 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
   ON_RESERVATION_VALUE_CHANGE,
-  ON_COURT_RESERVATION_CREATING,
-  ON_COURT_RESERVATION_CREATE,
-  ON_COURT_RESERVATION_CREATE_FAIL,
+  ON_RESERVATION_CREATING,
+  ON_RESERVATION_CREATE,
+  ON_RESERVATION_CREATE_FAIL,
   ON_NEW_RESERVATION,
   ON_NEW_SERVICE_RESERVATION
 } from "./types";
@@ -21,13 +21,35 @@ export const onNewServiceReservation = () => {
   return { type: ON_NEW_SERVICE_RESERVATION };
 }
 
-export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType, slot, price, light }) => {
-  // using batched writes
+export const onClientCourtReservationCreate = ({ commerceId, areaId, courtId, courtType, startDate, endDate, price, light }) => {
+  return onClientReservationCreate({
+    areaId,
+    courtId,
+    courtType,
+    startDate: startDate.toDate(),
+    endDate: endDate.toDate(),
+    price,
+    light
+  }, commerceId);
+}
+
+export const onClientServiceReservationCreate = ({ commerceId, areaId, serviceId, employeeId, startDate, endDate, price }) => {
+  return onClientReservationCreate({
+    areaId,
+    serviceId,
+    employeeId,
+    startDate: startDate.toDate(),
+    endDate: endDate.toDate(),
+    price
+  }, commerceId);
+}
+
+const onClientReservationCreate = (reservationObject, commerceId) => {
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
   return dispatch => {
-    dispatch({ type: ON_COURT_RESERVATION_CREATING });
+    dispatch({ type: ON_RESERVATION_CREATING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({})
@@ -36,14 +58,9 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
         const batch = db.batch();
 
         const reservationData = {
-          courtId,
-          courtType,
-          startDate: slot.startDate.toDate(),
-          endDate: slot.endDate.toDate(),
+          ...reservationObject,
           reservationDate: new Date(),
           cancellationDate: null,
-          price,
-          light,
           state: null
         }
 
@@ -60,13 +77,13 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
         });
 
         batch.commit()
-          .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
+          .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
           .catch(error => {
             db.doc(`Commerces/${commerceId}/Reservations/${commerceReservationRef.id}`).delete();
-            dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL });
+            dispatch({ type: ON_RESERVATION_CREATE_FAIL });
           });
       })
-      .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
+      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
   }
 }
 
@@ -74,7 +91,7 @@ export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clien
   const db = firebase.firestore();
 
   return dispatch => {
-    dispatch({ type: ON_COURT_RESERVATION_CREATING });
+    dispatch({ type: ON_RESERVATION_CREATING });
 
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({
@@ -91,7 +108,7 @@ export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clien
         light,
         state: null
       })
-      .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
-      .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
+      .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
+      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
   }
 }
