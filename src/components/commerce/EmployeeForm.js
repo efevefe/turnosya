@@ -170,7 +170,6 @@ class EmployeeForm extends Component {
                   this.props.employeeValueChange('role', value || {})
                 }
                 errorMessage={this.state.roleError}
-                disabled={this.props.currentRole.value === ROLES.OWNER.value}
               />
             </CardSection>
 
