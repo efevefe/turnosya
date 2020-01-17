@@ -11,26 +11,34 @@ export const NAVIGATION_HEIGHT = 50;
 
 // VALUES
 export const MONTHS = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre'
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
 ];
 
 export const DAYS = [
-    'Domingo',
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado'
+  'Domingo',
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado'
 ];
+
+// ROLES
+
+export const ROLES = {
+  OWNER: { value: 2, name: 'Dueño' },
+  ADMIN: { value: 1, name: 'Administrador' },
+  EMPLOYEE: { value: 0, name: 'Empleado' }
+};

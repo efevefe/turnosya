@@ -8,11 +8,8 @@ import { Root } from 'native-base';
 import MainNavigation from './src/navigation/MainNavigation';
 import reducers from './src/reducers';
 import { MAIN_COLOR } from './src/constants';
-
-// script import
-import { cancellationDateScript } from './src/actions';
-
 import getEnvVars from './environment';
+
 const { firebaseConfig } = getEnvVars();
 
 if (!firebase.apps.length) {
@@ -24,12 +21,6 @@ console.disableYellowBox = true;
 const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
 class App extends React.Component {
-
-  // script execution
-  componentDidMount() {
-    // cancellationDateScript();
-  }
-
   render() {
     return (
       <Provider store={store}>

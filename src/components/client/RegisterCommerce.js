@@ -30,6 +30,10 @@ class RegisterCommerce extends Component {
     if (prevProps.cuitExists !== this.props.cuitExists) {
       this.renderCuitError();
     }
+
+    if (prevProps.area.areaId !== this.props.area.areaId) {
+      this.renderAreaError();
+    }
   }
 
   onContinueButtonPress() {
@@ -38,22 +42,16 @@ class RegisterCommerce extends Component {
     }
   }
 
-  onAreaPickerChange = async index => {
-    try {
-      const { value, label } =
-        index > 0
-          ? this.props.areasList[index - 1]
-          : this.state.pickerPlaceholder;
+  onAreaPickerChange = index => {
+    const { value, label } =
+      index > 0
+        ? this.props.areasList[index - 1]
+        : this.state.pickerPlaceholder;
 
-      await this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
-      });
-
-      this.renderAreaError();
-    } catch (e) {
-      console.error(e);
-    }
+    this.props.onCommerceValueChange({
+      prop: 'area',
+      value: { areaId: value, name: label }
+    });
   };
 
   validateMinimumData = () => {
@@ -141,6 +139,7 @@ class RegisterCommerce extends Component {
             <Input
               label="Razón Social"
               placeholder="Razón Social"
+              autoCapitalize="words"
               value={this.props.name}
               errorMessage={this.state.nameError}
               onChangeText={value =>

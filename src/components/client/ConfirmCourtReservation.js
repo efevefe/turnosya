@@ -1,43 +1,22 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ButtonGroup, Button as RNEButton } from 'react-native-elements';
+import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBackButton } from 'react-navigation-stack';
-import { CardSection, Button } from '../common';
+import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import {
   onCourtReservationValueChange,
-  onClientCourtReservationCreate,
-  onCourtReservationClear
+  onClientCourtReservationCreate
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: navigation.getParam('leftButton')
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
-    });
-
     this.priceButtons();
   }
-
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" />;
-  };
-
-  onBackPress = () => {
-    this.onNewReservation();
-    this.props.navigation.goBack(null);
-  };
 
   priceButtons = () => {
     const { court } = this.props;
@@ -75,17 +54,12 @@ class ConfirmCourtReservation extends Component {
     if (!this.props.saved) {
       return (
         <View>
-          <CardSection style={styles.cardSections}>
+          <CardSection>
             <ButtonGroup
               onPress={this.onPriceSelect}
               selectedIndex={this.state.selectedIndex}
               buttons={this.state.priceButtons}
-              containerStyle={styles.priceButtons}
-              selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
-              selectedTextStyle={{ color: 'white' }}
-              textStyle={{ color: 'black' }}
-              containerStyle={styles.priceButtons}
-              innerBorderStyle={{ color: MAIN_COLOR }}
+              textStyle={{ fontSize: 14 }}
             />
           </CardSection>
         </View>
@@ -106,13 +80,6 @@ class ConfirmCourtReservation extends Component {
     });
   };
 
-  onNewReservation = () => {
-    this.props.onCourtReservationValueChange({
-      prop: 'saved',
-      value: false
-    });
-  };
-
   renderButtons = () => {
     if (this.props.saved) {
       return (
@@ -130,10 +97,7 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commerceProfileView');
-              }}
+              onPress={() => this.props.navigation.navigate('commerceProfileView')}
             />
           </View>
           <View style={{ alignItems: 'flex-end' }}>
@@ -150,10 +114,7 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginLeft: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commercesAreas');
-              }}
+              onPress={() => this.props.navigation.navigate('commercesAreas')}
             />
           </View>
         </CardSection>
@@ -177,7 +138,15 @@ class ConfirmCourtReservation extends Component {
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
-          commerce={commerce}
+          mode='commerce'
+          name={commerce.name}
+          info={
+            commerce.address + ', ' +
+            commerce.city + ', ' +
+            commerce.provinceName
+          }
+          infoIcon='md-pin'
+          picture={commerce.profilePicture}
           court={court}
           startDate={slot.startDate}
           endDate={slot.endDate}
@@ -197,12 +166,6 @@ class ConfirmCourtReservation extends Component {
 const styles = StyleSheet.create({
   cardSections: {
     alignItems: 'center'
-  },
-  priceButtons: {
-    borderColor: MAIN_COLOR,
-    height: 60,
-    marginTop: 15,
-    borderRadius: 8
   },
   confirmButtonContainer: {
     flex: 1,
@@ -228,6 +191,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCourtReservationValueChange,
-  onClientCourtReservationCreate,
-  onCourtReservationClear
+  onClientCourtReservationCreate
 })(ConfirmCourtReservation);

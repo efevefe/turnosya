@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { Spinner, EmptyList } from '../common';
 import {
-  onReservationClientRead,
-  onCourtReservationsListValueChange
+  onCourtReservationsListValueChange,
+  onCourtReservationValueChange,
+  isCourtDisabledOnSlot,
+  onNewCourtReservation
 } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
@@ -13,6 +15,10 @@ class CommerceCourtsStateList extends Component {
     selectedReservation: {},
     selectedCourt: {}
   };
+
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('title')
+  });
 
   courtReservation = court => {
     const { reservations, slot } = this.props;
@@ -26,33 +32,33 @@ class CommerceCourtsStateList extends Component {
   };
 
   onReservedCourtPress = async (court, courtReservation) => {
-    // aca si la reserva ya esta tambien en la lista detallada, trae el cliente directamente desde ahi
-    try {
-      const res = this.props.detailedReservations.find(
-        res => res.id === courtReservation.id
-      );
-      if (res) {
-        await this.props.onCourtReservationsListValueChange({
-          prop: 'reservationClient',
-          value: res.client
-        });
-      } else {
-        await this.props.onReservationClientRead(courtReservation.clientId);
-      }
+    let reservation = {
+      ...courtReservation,
+      court: { ...court }
+    };
 
-      const reservation = {
-        client: { ...this.props.reservationClient },
-        court: { ...court },
-        ...courtReservation
-      };
-
-      this.props.navigation.navigate('reservationDetails', {
-        reservation
-      });
-    } catch {}
+    this.props.navigation.navigate('reservationDetails', {
+      reservation
+    });
   };
 
+  onAvailableCourtPress = court => {
+    this.props.onNewCourtReservation(court);
+    this.props.navigation.navigate('courtReservationRegister');
+  }
+
+  isCourtTypeSelected = courtType => {
+    const selectedCourtTypes = this.props.navigation.getParam('selectedCourtTypes');
+
+    return (
+      selectedCourtTypes.includes('Todas') ||
+      selectedCourtTypes.includes(courtType)
+    );
+  }
+
   renderRow({ item }) {
+    if (!this.isCourtTypeSelected(item.court)) return;
+
     const courtReservation = this.courtReservation(item);
 
     return (
@@ -61,9 +67,10 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
+        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
         onPress={() =>
           !courtReservation
-            ? null
+            ? this.onAvailableCourtPress(item)
             : this.onReservedCourtPress(item, courtReservation)
         }
       />
@@ -71,10 +78,10 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courtsAvailable.length > 0) {
+    if (this.props.courts.length > 0) {
       return (
         <FlatList
-          data={this.props.courtsAvailable}
+          data={this.props.courts}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           extraData={this.props.reservations}
@@ -86,37 +93,35 @@ class CommerceCourtsStateList extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
+    const { loading } = this.props;
+    if (loading) return <Spinner />;
 
     return this.renderList();
   }
 }
 
 const mapStateToProps = state => {
-  const { courtsAvailable } = state.courtsList;
+  const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { slot } = state.courtReservation;
   const {
     loading,
     reservations,
-    loadingClientData,
-    detailedReservations,
-    reservationClient
+    detailedReservations
   } = state.courtReservationsList;
 
   return {
-    courtsAvailable,
+    courts,
     loading,
     commerceId,
     slot,
     reservations,
-    detailedReservations,
-    loadingClientData,
-    reservationClient
+    detailedReservations
   };
 };
 
 export default connect(mapStateToProps, {
-  onReservationClientRead,
-  onCourtReservationsListValueChange
+  onCourtReservationsListValueChange,
+  onCourtReservationValueChange,
+  onNewCourtReservation
 })(CommerceCourtsStateList);

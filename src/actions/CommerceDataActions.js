@@ -23,11 +23,12 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_REGISTER_VALUE_CHANGE,
-  ON_PROVINCES_READ
+  ON_ROLE_ASSIGNED,
+  ON_CLIENT_DATA_VALUE_CHANGE
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
+import { ROLES } from '../constants';
 
 const { algoliaConfig } = getEnvVars();
 const { appId, adminApiKey, commercesIndex } = algoliaConfig;
@@ -46,24 +47,34 @@ export const onCommerceFormOpen = () => {
   };
 };
 
-export const onCommerceOpen = navigation => {
-  const { currentUser } = firebase.auth();
+export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
+  dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
+  dispatch({ type: ON_LOCATION_VALUES_RESET });
+
+  navigation.navigate('commerce');
+};
+
+export const onCommerceOpen = (commerceId, navigation) => dispatch => {
   const db = firebase.firestore();
+  const profileId = firebase.auth().currentUser.uid;
 
-  return dispatch => {
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        if (doc.data().commerceId == null) {
-          navigation.navigate('commerceRegister');
-        } else {
-          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
-          dispatch({ type: ON_LOCATION_VALUES_RESET });
-
-          navigation.navigate('commerce');
-        }
+  // Agregar validaciones por fecha de aceptación (post-Notificaciones)
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .where('softDelete', '==', null)
+    .where('profileId', '==', profileId)
+    .get()
+    .then(snapshot => {
+      dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+      dispatch({
+        type: ON_ROLE_ASSIGNED,
+        payload: ROLES[snapshot.docs[0].data().role.roleId]
       });
-  };
+      dispatch({ type: ON_LOCATION_VALUES_RESET });
+
+      navigation.navigate('commerce');
+    })
+    .catch(e => console.error(e));
 };
 
 export const onCreateCommerce = (
@@ -137,52 +148,8 @@ export const onCreateCommerce = (
   };
 };
 
-export const onCommerceRead = () => {
-  const { currentUser } = firebase.auth();
+export const onCommerceRead = commerceId => {
   const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING });
-
-    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO
-    //PRIMERO COMO CLIENTE ESTO NO HARIA
-    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL
-    //CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        db.doc(`Commerces/${doc.data().commerceId}`)
-          .get()
-          .then(doc => {
-            //province
-            var { name, provinceId } = doc.data().province;
-            const province = { value: provinceId, label: name };
-
-            //area
-            var { name, areaId } = doc.data().area;
-            const area = { value: areaId, label: name };
-
-            dispatch({
-              type: ON_COMMERCE_READ,
-              payload: {
-                ...doc.data(),
-                areasList: [area],
-                commerceId: doc.id
-              }
-            });
-            dispatch({
-              type: ON_PROVINCES_READ,
-              payload: [province]
-            });
-          })
-          .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-  };
-};
-
-export const onCommerceReadProfile = commerceId => {
-  var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_READING });
@@ -239,9 +206,6 @@ export const onCommerceUpdate = (
 
   const {
     name,
-    cuit,
-    email,
-    phone,
     description,
     address,
     city,
@@ -374,7 +338,7 @@ export const onCommerceDelete = (password, navigation = null) => {
               .then(() => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
-                  type: ON_REGISTER_VALUE_CHANGE,
+                  type: ON_CLIENT_DATA_VALUE_CHANGE,
                   payload: { prop: 'commerceId', value: null }
                 });
 

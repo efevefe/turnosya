@@ -9,7 +9,7 @@ import { commerceHitsUpdate } from '../../actions';
 import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       prevProps.hits !== this.props.hits ||
       (this.props.isFocused && !prevProps.isFocused)
@@ -23,7 +23,7 @@ class Hits extends Component {
   }
 
   render() {
-    return this.props.hits.length > 0 ? (
+    return this.props.hits.length ? (
       <FlatList
         data={this.props.hits}
         renderItem={this.renderItem}
@@ -34,8 +34,8 @@ class Hits extends Component {
     ) : this.props.searching ? (
       <Spinner style={{ position: 'relative' }} />
     ) : (
-      <EmptyList title="No se encontraron negocios" />
-    );
+          <EmptyList title="No se encontraron negocios" />
+        );
   }
 }
 

@@ -88,6 +88,16 @@ class CommerceProfile extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.province.provinceId !== this.props.province.provinceId) {
+      this.renderProvinceError();
+    }
+
+    if (prevProps.area.areaId !== this.props.area.areaId) {
+      this.renderAreaError();
+    }
+  }
+
   onRefresh = () => {
     this.props.onCommerceRead();
   };
@@ -105,6 +115,7 @@ class CommerceProfile extends Component {
       <HeaderBackButton
         onPress={() => this.props.navigation.goBack(null)}
         tintColor="white"
+        title="Back"
       />
     );
   };
@@ -149,7 +160,7 @@ class CommerceProfile extends Component {
   };
 
   onRefresh = () => {
-    this.props.onCommerceRead();
+    this.props.onCommerceRead(this.props.commerceId);
   };
 
   onSavePress = async () => {
@@ -370,44 +381,32 @@ class CommerceProfile extends Component {
     }
   };
 
-  onProvincePickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.provincesList.find(
-          province => province.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'province',
-          value: { provinceId: value, name: label }
-        });
+  onProvincePickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.provincesList.find(
+        province => province.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'province',
+        value: { provinceId: value, name: label }
+      });
 
-        this.props.onLocationValueChange({
-          prop: 'provinceName',
-          value: label
-        });
-      }
-
-      this.renderProvinceError();
-    } catch (e) {
-      console.error(e);
+      this.props.onLocationValueChange({
+        prop: 'provinceName',
+        value: label
+      });
     }
   };
 
-  onAreaPickerChange = async value => {
-    try {
-      if (value) {
-        var { value, label } = this.props.areasList.find(
-          area => area.value == value
-        );
-        await this.props.onCommerceValueChange({
-          prop: 'area',
-          value: { areaId: value, name: label }
-        });
-
-        this.renderAreaError();
-      }
-    } catch (e) {
-      console.error(e);
+  onAreaPickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.areasList.find(
+        area => area.value == value
+      );
+      this.props.onCommerceValueChange({
+        prop: 'area',
+        value: { areaId: value, name: label }
+      });
     }
   };
 
@@ -648,6 +647,7 @@ class CommerceProfile extends Component {
             <Input
               label="Razón Social:"
               value={this.props.name}
+              autoCapitalize="words"
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'name', value })
               }
@@ -687,6 +687,7 @@ class CommerceProfile extends Component {
             <Input
               label="E-Mail:"
               value={this.props.email}
+              autoCapitalize='none'
               onChangeText={value =>
                 this.props.onCommerceValueChange({ prop: 'email', value })
               }
@@ -742,15 +743,11 @@ class CommerceProfile extends Component {
               errorMessage={this.state.provinceError}
             />
           </CardSection>
-          <CardSection style={{ paddingTop: 0 }}>
+          <CardSection>
             <Button
               title="Buscar en el Mapa"
               titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{
-                marginTop: 0,
-                borderRadius: 8,
-                borderColor: MAIN_COLOR
-              }}
+              buttonStyle={{ borderColor: MAIN_COLOR }}
               color="white"
               type="outline"
               iconRight={true}

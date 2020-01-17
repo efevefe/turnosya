@@ -4,19 +4,20 @@ import { View, StyleSheet, Image, Dimensions, StatusBar } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { CardSection, Button, Input } from './common';
+import { CardSection, Button, Input, Menu, MenuItem, Toast } from './common';
 import { validateValueType } from '../utils';
 import {
   onLogin,
   onLoginValueChange,
   onFacebookLogin,
-  onGoogleLogin
+  onGoogleLogin,
+  onSendPasswordResetEmail
 } from '../actions';
 
 const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
 class LoginForm extends Component {
-  state = { emailError: '', passwordError: '' };
+  state = { emailError: '', passwordError: '', resetPasswordModal: false };
 
   onButonPressHandler() {
     if (this.validateMinimumData()) {
@@ -36,7 +37,7 @@ class LoginForm extends Component {
   }
 
   renderEmailError = () => {
-    if (this.props.email == '') {
+    if (!this.props.email) {
       this.setState({ emailError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('email', this.props.email)) {
@@ -49,7 +50,7 @@ class LoginForm extends Component {
   };
 
   renderPasswordError = () => {
-    if (this.props.password == '') {
+    if (!this.props.password) {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
@@ -66,6 +67,68 @@ class LoginForm extends Component {
   validateMinimumData = () => {
     return this.renderEmailError() && this.renderPasswordError();
   };
+
+  renderResetUserPasswordModal = () => {
+    // ventana de recuperacion de contraseña
+    return (
+      <Menu
+        title="Enviar correo de recuperación:"
+        onBackdropPress={() => this.setState({ resetPasswordModal: false })}
+        isVisible={this.state.resetPasswordModal}
+      >
+        <CardSection
+          style={styles.resetPasswordInputContainer}
+        >
+          <Input
+            label='E-Mail'
+            placeholder="E-mail de la cuenta"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            color='black'
+            value={this.props.email}
+            errorMessage={this.props.error || this.state.emailError}
+            onChangeText={value =>
+              this.props.onLoginValueChange({
+                prop: 'email',
+                value
+              })
+            }
+            onFocus={() => {
+              this.setState({ emailError: '' });
+              this.props.onLoginValueChange({
+                prop: 'error',
+                value: ''
+              });
+            }}
+          />
+        </CardSection>
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem
+          title="Enviar correo"
+          icon="md-mail-open"
+          loadingWithText={this.props.sendingEmail}
+          onPress={this.onSendPasswordResetEmailPress}
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem
+          title="Cancelar"
+          icon="md-close"
+          onPress={() => this.setState({ resetPasswordModal: false })}
+        />
+      </Menu>
+    );
+  };
+
+  onSendPasswordResetEmailPress = async () => {
+    if (this.renderEmailError()) {
+      const success = await this.props.onSendPasswordResetEmail(this.props.email);
+
+      if (success) {
+        Toast.show({ text: 'El correo de recuperacion se envió correctamente' });
+        this.setState({ resetPasswordModal: false });
+      }
+    }
+  }
 
   render() {
     const {
@@ -125,17 +188,25 @@ class LoginForm extends Component {
             <Button
               title="Iniciar Sesión"
               loading={this.props.loadingLogin}
-              buttonStyle={styles.buttonStyle}
               onPress={this.onButonPressHandler.bind(this)}
             />
           </CardSection>
+
+          <Button
+            title="Olvidé mi contraseña"
+            type="clear"
+            color="white"
+            titleStyle={styles.resetPasswordTitleStyle}
+            buttonStyle={styles.resetPasswordButtonStyle}
+            onPress={() => this.setState({ resetPasswordModal: true })}
+          />
 
           <Divider
             style={{
               backgroundColor: 'grey',
               margin: 10,
-              marginTop: 20,
-              marginBottom: 0
+              marginTop: 12,
+              marginBottom: 12
             }}
           />
 
@@ -155,6 +226,9 @@ class LoginForm extends Component {
                 />
               }
             />
+          </CardSection>
+
+          <CardSection>
             <Button
               title="Conectar con Facebook"
               color="#4267b2"
@@ -173,16 +247,16 @@ class LoginForm extends Component {
           </CardSection>
         </View>
         <View style={createAccountContainerStyle}>
-          <CardSection style={{ paddingTop: 0 }}>
-            <Button
-              title="Crear Cuenta"
-              type="clear"
-              color="white"
-              buttonStyle={styles.buttonStyle}
-              onPress={this.onCreateAcount.bind(this)}
-            />
-          </CardSection>
+          <Button
+            title="Crear Cuenta"
+            type="clear"
+            color="white"
+            buttonStyle={styles.buttonStyle}
+            onPress={this.onCreateAcount.bind(this)}
+          />
         </View>
+
+        {this.renderResetUserPasswordModal()}
       </View>
     );
   }
@@ -209,8 +283,21 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   buttonStyle: {
-    marginBottom: 0,
-    marginTop: 0
+    marginVertical: 4
+  },
+  resetPasswordTitleStyle: {
+    fontSize: 14,
+    color: 'grey'
+  },
+  resetPasswordButtonStyle: {
+    margin: 0,
+    padding: 0,
+    alignSelf: 'center'
+  },
+  resetPasswordInputContainer: {
+    padding: 20,
+    paddingLeft: 10,
+    paddingRight: 10
   }
 });
 
@@ -221,7 +308,8 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle
+    loadingGoogle,
+    sendingEmail
   } = state.auth;
 
   return {
@@ -230,11 +318,12 @@ const mapStateToProps = state => {
     error,
     loadingLogin,
     loadingFacebook,
-    loadingGoogle
+    loadingGoogle,
+    sendingEmail
   };
 };
 
 export default connect(
   mapStateToProps,
-  { onLogin, onGoogleLogin, onFacebookLogin, onLoginValueChange }
+  { onLogin, onGoogleLogin, onFacebookLogin, onLoginValueChange, onSendPasswordResetEmail }
 )(LoginForm);

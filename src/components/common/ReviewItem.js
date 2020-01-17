@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Rating } from 'react-native-elements';
 import moment from 'moment';
@@ -9,13 +9,13 @@ const ReviewItem = props => (
     <CardSection>
       <View style={topCardContainerStyle}>
         <Rating readonly imageSize={20} startingValue={props.rating} />
-        <Text>{moment(props.date.toDate()).format('ll')}</Text>
+        <Text>{moment(props.date.toDate()).format('DD/MM/YYYY')}</Text>
       </View>
       {props.comment ? (
         <Text style={commentStyle}>{props.comment}</Text>
       ) : (
-        <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
-      )}
+          <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
+        )}
     </CardSection>
     <Divider />
   </View>
@@ -30,20 +30,17 @@ const {
     flexDirection: 'row',
     justifyContent: 'space-between',
     margin: 8,
+    marginBottom: 0,
     alignItems: 'center'
   },
   commentStyle: {
-    fontSize: 16,
-    marginTop: 7,
-    marginBottom: 9,
-    marginLeft: 10
+    fontSize: 15,
+    margin: 10
   },
   placeholderStyle: {
     color: 'gray',
-    fontSize: 16,
-    marginTop: 7,
-    marginBottom: 9,
-    marginLeft: 10
+    fontSize: 15,
+    margin: 10
   }
 });
 
