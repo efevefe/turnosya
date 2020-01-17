@@ -60,31 +60,38 @@ class EmployeeServicesList extends Component {
     }
 
     renderItem = ({ item }) => {
-        const { employeeId } = this.props;
+        return (
+            <ListItem
+                title={item.name}
+                subtitle={`Duración: ${item.duration} min.`}
+                rightTitle={`$${item.price}`}
+                rightTitleStyle={{ fontWeight: 'bold', color: 'black' }}
+                rightIcon={{
+                    name: 'ios-arrow-forward',
+                    type: 'ionicon',
+                    color: 'black'
+                }}
+                bottomDivider
+                onPress={() => this.onServicePress(item)}
+            />
+        );
+    }
 
-        if (item.employeesIds.includes(employeeId) && this.enoughTime(item))
-            return (
-                <ListItem
-                    title={item.name}
-                    subtitle={`Duración: ${item.duration} min.`}
-                    rightTitle={`$${item.price}`}
-                    rightTitleStyle={{ fontWeight: 'bold', color: 'black' }}
-                    rightIcon={{
-                        name: 'ios-arrow-forward',
-                        type: 'ionicon',
-                        color: 'black'
-                    }}
-                    bottomDivider
-                    onPress={() => this.onServicePress(item)}
-                />
-            );
+    getAvailableServices = () => {
+        const { employeeId, services } = this.props;
+
+        return services.filter(service =>
+            service.employeesIds.includes(employeeId) && this.enoughTime(service)
+        );
     }
 
     render() {
-        if (this.props.services.length) {
+        const services = this.getAvailableServices();
+
+        if (services.length) {
             return (
                 <FlatList
-                    data={this.props.services}
+                    data={services}
                     renderItem={this.renderItem}
                     keyExtractor={service => service.id}
                     contentContainerStyle={{ paddingBottom: 15 }}

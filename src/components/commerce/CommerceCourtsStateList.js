@@ -20,11 +20,11 @@ class CommerceCourtsStateList extends Component {
   });
 
   courtReservation = court => {
-    const { reservations, slot } = this.props;
+    const { reservations, startDate } = this.props;
 
     return reservations.find(reservation => {
       return (
-        reservation.startDate.toString() === slot.startDate.toString() &&
+        reservation.startDate.toString() === startDate.toString() &&
         reservation.courtId === court.id
       );
     });
@@ -59,6 +59,7 @@ class CommerceCourtsStateList extends Component {
   renderRow({ item }) {
     if (!this.isCourtTypeSelected(item.court)) return;
 
+    const { startDate, endDate } = this.props;
     const courtReservation = this.courtReservation(item);
 
     return (
@@ -67,7 +68,7 @@ class CommerceCourtsStateList extends Component {
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
         courtAvailable={!courtReservation}
-        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
+        disabled={isCourtDisabledOnSlot(item, { startDate, endDate })}
         onPress={() =>
           !courtReservation
             ? this.onAvailableCourtPress(item)
@@ -103,7 +104,7 @@ class CommerceCourtsStateList extends Component {
 const mapStateToProps = state => {
   const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
-  const { slot } = state.reservation;
+  const { startDate, endDate } = state.reservation;
   const {
     loading,
     reservations,
@@ -114,7 +115,8 @@ const mapStateToProps = state => {
     courts,
     loading,
     commerceId,
-    slot,
+    startDate,
+    endDate,
     reservations,
     detailedReservations
   };

@@ -23,13 +23,12 @@ class CommerceProfileInfo extends Component {
     const hoursOnDay = [];
 
     cards.forEach(card => {
+      const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+
       card.days.forEach(day => {
-        const firstShiftStart = card.firstShiftStart;
-        const firstShiftEnd = card.firstShiftEnd;
-        const secondShiftStart = card.secondShiftStart;
-        const secondShiftEnd = card.secondShiftEnd;
         const dayName = DAYS[day];
         const id = day;
+
         hoursOnDay.push({
           id,
           dayName,
@@ -41,9 +40,7 @@ class CommerceProfileInfo extends Component {
       });
     });
 
-    hoursOnDay.sort((a, b) => a.id - b.id);
-
-    return hoursOnDay;
+    return hoursOnDay.sort((a, b) => a.id - b.id);
   };
 
   renderRow = ({ item }) => {
@@ -105,9 +102,7 @@ class CommerceProfileInfo extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
-    {
-      var hoursOnDay = this.renderSchedule();
-    }
+    const hoursOnDay = this.renderSchedule();
 
     return (
       <View>

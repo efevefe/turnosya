@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
 import { MenuItem, Menu, Input, CardSection, SettingsItem, Toast } from '../common';
 import { isEmailVerified } from '../../utils';
@@ -17,18 +16,6 @@ import {
 
 class ClientSettings extends Component {
   state = { providerId: null };
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: (
-        <HeaderBackButton
-          tintColor="white"
-          title='Back'
-          onPress={() => navigation.goBack(null)}
-        />
-      )
-    };
-  };
 
   componentDidMount() {
     this.setState({

@@ -11,7 +11,7 @@ const AreaComponentRenderer = connect(
             case AREAS.hairdressers:
                 return props.hairdressers;
             default:
-                return null
+                return props.sports;
         }
     }
 );

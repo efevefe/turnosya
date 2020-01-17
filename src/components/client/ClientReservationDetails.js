@@ -51,7 +51,8 @@ class ClientReservationDetails extends Component {
     // puse esta misma action para que traiga el tiempi minimo de cancelacion
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
-      selectedDate: this.state.reservation.startDate
+      selectedDate: this.state.reservation.startDate,
+      employeeId: this.state.reservation.employeeId || null
     });
 
     this.props.readCommerceReview({

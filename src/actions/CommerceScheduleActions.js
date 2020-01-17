@@ -83,6 +83,7 @@ export const onScheduleRead = ({ commerceId, selectedDate, employeeId }) => asyn
 
     // reading schedule cards
     snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`).get();
+    
     let cards = [];
     let selectedDays = [];
 
