@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   roleStyle: {
     fontSize: 13,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   avatarStyle: {
     borderWidth: 3,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   dividerStyle: {
     backgroundColor: 'grey',
-    marginTop: 0,
+    marginTop: 4,
     marginBottom: 5,
     marginLeft: 15,
     marginRight: 15

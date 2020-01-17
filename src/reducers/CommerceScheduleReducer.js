@@ -32,7 +32,8 @@ const INITIAL_WORKSHIFTS = {
   selectedDays: [],
   startDate: null,
   endDate: null,
-  reservationMinLength: 60
+  reservationMinLength: 60,
+  employeeId: null
 }
 
 const INITIAL_STATE = {

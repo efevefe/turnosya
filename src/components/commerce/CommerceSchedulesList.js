@@ -35,17 +35,14 @@ class CommerceSchedulesList extends Component {
   };
 
   componentDidMount() {
-    const { areaId, employeeId } = this.props;
-
     this.props.navigation.setParams({
       leftIcon: this.renderBackButton()
     });
 
-
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
       date: moment(),
-      employeeId: (areaId === AREAS.hairdressers) ? employeeId : null
+      employeeId: this.props.employeeId
     });
   }
 
@@ -66,12 +63,10 @@ class CommerceSchedulesList extends Component {
   };
 
   onBackPress = () => {
-    const { areaId, employeeId } = this.props;
-
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.props.navigation.getParam('selectedDate'),
-      employeeId: (areaId === AREAS.hairdressers) ? employeeId : null
+      employeeId: this.props.employeeId
     });
 
     this.props.navigation.goBack();
@@ -110,7 +105,7 @@ class CommerceSchedulesList extends Component {
   };
 
   onScheduleDeletePress = () => {
-    const { commerceId, employeeId, areaId } = this.props;
+    const { commerceId, employeeId } = this.props;
     const { selectedSchedule } = this.state;
 
     let startDate = formattedMoment();
@@ -122,7 +117,7 @@ class CommerceSchedulesList extends Component {
       commerceId,
       startDate,
       endDate: selectedSchedule.endDate,
-      employeeId: (areaId === AREAS.hairdressers) ? employeeId : null
+      employeeId
     });
 
     this.setState({ optionsVisible: false, reservationsToCancel: [] });
@@ -171,7 +166,8 @@ class CommerceSchedulesList extends Component {
     if (success)
       this.props.onActiveSchedulesRead({
         commerceId: this.props.commerceId,
-        date: moment()
+        date: moment(),
+        employeeId: this.props.employeeId
       });
 
     this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
@@ -373,9 +369,9 @@ const mapStateToProps = state => {
   const { schedules, loading } = state.commerceSchedule;
   const { nextReservations } = state.reservationsList;
   const { commerceId, area: { areaId } } = state.commerceData;
-  const { employeeId } = state.roleData;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { schedules, commerceId, loading, nextReservations, areaId, employeeId };
+  return { schedules, commerceId, loading, nextReservations, employeeId };
 };
 
 export default connect(mapStateToProps, {

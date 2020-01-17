@@ -8,19 +8,6 @@ import {
 } from "../actions/types";
 
 const INITIAL_STATE = {
-    clientName: '',
-    clientPhone: '',
-    commerce: null,
-    courtType: '',
-    slot: null,
-    court: null,
-    price: 0,
-    light: false,
-    loading: false,
-    saved: false
-};
-
-const INITIAL_STATE_NEW = {
     // RESERVATION
     clientName: '',
     clientPhone: '',

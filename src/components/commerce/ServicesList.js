@@ -5,20 +5,10 @@ import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Spinner, EmptyList } from '../common';
 import ServicesListItem from './ServicesListItem';
-import { servicesRead, onFormOpen } from '../../actions';
+import { onFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class ServicesList extends Component {
-  componentDidMount() {
-    this.unsubscribeServicesRead = this.props.servicesRead(
-      this.props.commerceId
-    );
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeServicesRead && this.unsubscribeServicesRead();
-  }
-
   renderRow({ item }) {
     return (
       <ServicesListItem
@@ -93,5 +83,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { servicesRead, onFormOpen }
+  { onFormOpen }
 )(ServicesList);

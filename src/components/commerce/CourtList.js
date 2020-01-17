@@ -6,20 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList } from '../common';
 import CourtListItem from './CourtListItem';
-import { courtsRead, onCourtFormOpen } from '../../actions';
+import { onCourtFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class CourtList extends Component {
-  componentDidMount() {
-    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
-  }
-
   onAddPress = () => {
     this.props.onCourtFormOpen();
     this.props.navigation.navigate('courtForm');
@@ -86,6 +78,6 @@ const mapStateToProps = state => {
   return { courts, loading, commerceId };
 };
 
-export default connect(mapStateToProps, { courtsRead, onCourtFormOpen })(
+export default connect(mapStateToProps, { onCourtFormOpen })(
   CourtList
 );

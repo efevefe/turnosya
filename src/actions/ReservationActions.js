@@ -87,7 +87,18 @@ const onClientReservationCreate = (reservationObject, commerceId) => {
   }
 }
 
-export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clientPhone, court, slot, light, price }) => {
+export const onCommerceCourtReservationCreate = ({
+  commerceId,
+  areaId,
+  courtId,
+  courtType,
+  clientName,
+  clientPhone,
+  startDate,
+  endDate,
+  light,
+  price
+}) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -95,17 +106,54 @@ export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clien
 
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({
+        areaId,
         clientId: null,
+        courtId,
+        courtType,
         clientName,
         clientPhone,
-        courtId: court.id,
-        courtType: court.court,
-        startDate: slot.startDate.toDate(),
-        endDate: slot.endDate.toDate(),
+        startDate: startDate.toDate(),
+        endDate: endDate.toDate(),
         reservationDate: new Date(),
         cancellationDate: null,
         price,
         light,
+        state: null
+      })
+      .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
+      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
+  }
+}
+
+export const onCommerceServiceReservationCreate = ({
+  areaId,
+  commerceId,
+  serviceId,
+  employeeId,
+  clientName,
+  clientPhone,
+  startDate,
+  endDate,
+  price
+}) => {
+  const db = firebase.firestore();
+
+  return dispatch => {
+    dispatch({ type: ON_RESERVATION_CREATING });
+
+    db.collection(`Commerces/${commerceId}/Reservations`)
+      .add({
+        areaId,
+        serviceId,
+        employeeId,
+        clientId: null,
+        clientName,
+        clientPhone,
+        startDate: startDate.toDate(),
+        endDate: endDate.toDate(),
+        reservationDate: new Date(),
+        cancellationDate: null,
+        price,
         state: null
       })
       .then(() => dispatch({ type: ON_RESERVATION_CREATE }))

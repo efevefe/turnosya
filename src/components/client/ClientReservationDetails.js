@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import CourtReservationDetails from '../CourtReservationDetails';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import CourtReservationDetails from '../CourtReservationDetails';
+import ServiceReservationDetails from '../ServiceReservationDetails';
+import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 import {
   CardSection,
   Button,
@@ -11,10 +15,9 @@ import {
   Spinner,
   Toast,
   ReviewCard,
-  ButtonGroup
+  ButtonGroup,
+  AreaComponentRenderer
 } from '../common';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import moment from 'moment';
 import {
   onClientCancelReservation,
   onScheduleRead,
@@ -27,7 +30,6 @@ import {
   clientReviewClear,
   readClientReview
 } from '../../actions';
-import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
@@ -198,24 +200,24 @@ class ClientReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={value =>
-            this.props.commerceReviewValueChange('rating', value)
-          }
-          rating={this.props.commerceRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.commerceReviewValueChange('comment', value)
-          }
-          commentPlaceholder="Deje un comentario sobre la atención..."
-          commentText={this.props.commerceComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={value =>
+              this.props.commerceReviewValueChange('rating', value)
+            }
+            rating={this.props.commerceRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={value =>
+              this.props.commerceReviewValueChange('comment', value)
+            }
+            commentPlaceholder="Deje un comentario sobre la atención..."
+            commentText={this.props.commerceComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderClientReview = () => {
@@ -231,10 +233,10 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El negocio no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El negocio no te ha calificado" />
+        </View>
+      );
   };
 
   renderReviewFields = () => {
@@ -260,14 +262,17 @@ class ClientReservationDetails extends Component {
 
   render() {
     const {
+      id,
+      commerceId,
+      areaId,
       commerce,
+      service,
+      employee,
       court,
       endDate,
       startDate,
       light,
-      price,
-      id,
-      commerceId
+      price
     } = this.state.reservation;
 
     if (this.props.loadingCancel) return <Spinner />;
@@ -306,24 +311,49 @@ class ClientReservationDetails extends Component {
           />
         </Menu>
 
-        <CourtReservationDetails
-          mode="commerce"
-          name={commerce.name}
-          picture={commerce.profilePicture}
-          info={
-            commerce.address +
-            ', ' +
-            commerce.city +
-            ', ' +
-            commerce.province.name
+        <AreaComponentRenderer
+          area={areaId}
+          sports={
+            <CourtReservationDetails
+              mode="commerce"
+              name={commerce.name}
+              picture={commerce.profilePicture}
+              info={
+                commerce.address +
+                ', ' +
+                commerce.city +
+                ', ' +
+                commerce.province.name
+              }
+              infoIcon="md-pin"
+              court={court}
+              startDate={startDate}
+              endDate={endDate}
+              price={price}
+              light={light}
+              showPrice={true}
+            />
           }
-          infoIcon="md-pin"
-          court={court}
-          startDate={startDate}
-          endDate={endDate}
-          price={price}
-          light={light}
-          showPrice={true}
+          hairdressers={
+            <ServiceReservationDetails
+              mode="commerce"
+              name={commerce.name}
+              picture={commerce.profilePicture}
+              info={
+                commerce.address +
+                ', ' +
+                commerce.city +
+                ', ' +
+                commerce.province.name
+              }
+              infoIcon="md-pin"
+              service={service}
+              employee={employee}
+              startDate={startDate}
+              endDate={endDate}
+              price={price}
+            />
+          }
         />
 
         {this.renderReviewFields()}

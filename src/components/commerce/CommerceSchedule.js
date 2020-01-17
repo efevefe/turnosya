@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { AREAS } from '../../constants';
 
 const CommerceSchedule = props => {
-    // esto no es definitivo
+    // solucion provisoria
 
     switch (props.areaId) {
         case AREAS.sports:

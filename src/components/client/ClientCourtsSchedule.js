@@ -9,7 +9,7 @@ import {
   onScheduleRead,
   onScheduleValueChange,
   onReservationValueChange,
-  onCommerceCourtTypeReservationsRead,
+  onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead,
   isCourtDisabledOnSlot
@@ -70,7 +70,7 @@ class ClientCourtsSchedule extends Component {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead({
+    this.unsubscribeReservationsRead = this.props.onClientCommerceReservationsRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: date,
       courtType: this.props.courtType
@@ -225,7 +225,7 @@ export default connect(mapStateToProps, {
   onScheduleValueChange,
   onScheduleRead,
   onReservationValueChange,
-  onCommerceCourtTypeReservationsRead,
+  onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
 })(ClientCourtsSchedule);

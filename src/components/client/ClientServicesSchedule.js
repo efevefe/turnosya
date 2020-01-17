@@ -7,7 +7,7 @@ import {
     onScheduleRead,
     onScheduleValueChange,
     onReservationValueChange,
-    onCommerceEmployeeReservationsRead,
+    onClientCommerceReservationsRead,
     onNewReservation
 } from '../../actions';
 
@@ -36,7 +36,7 @@ class ClientServicesSchedule extends Component {
         const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
         this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-        this.unsubscribeReservationsRead = this.props.onCommerceEmployeeReservationsRead({
+        this.unsubscribeReservationsRead = this.props.onClientCommerceReservationsRead({
             commerceId: this.props.commerce.objectID,
             selectedDate: date,
             employeeId: this.props.employee.id
@@ -221,6 +221,6 @@ export default connect(mapStateToProps, {
     onScheduleValueChange,
     onScheduleRead,
     onReservationValueChange,
-    onCommerceEmployeeReservationsRead,
+    onClientCommerceReservationsRead,
     onNewReservation
 })(ClientServicesSchedule);

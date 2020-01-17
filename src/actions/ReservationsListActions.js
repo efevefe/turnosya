@@ -18,7 +18,7 @@ export const onReservationsListValueChange = ({ prop, value }) => {
   };
 };
 
-const formatReservation = ({ res, court, client, employee, service }) => {
+export const formatReservation = ({ res, court, client, commerce, employee, service }) => {
   return {
     id: res.id,
     ...res.data(),
@@ -29,10 +29,51 @@ const formatReservation = ({ res, court, client, employee, service }) => {
     court: court ? { id: court.id, ...court.data() } : null,
     employee: employee ? { id: employee.id, ...employee.data() } : null,
     service: service ? { id: service.id, ...service.data() } : null,
+    commerce: commerce ? { id: commerce.id, ...commerce.data() } : null,
   };
 }
 
-export const onCommerceEmployeeReservationsRead = ({
+export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, employeeId, courtType }) => dispatch => {
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
+
+  const db = firebase.firestore();
+
+  let query = db
+    .collection(`Commerces/${commerceId}/Reservations`)
+    .where('state', '==', null)
+    .where('startDate', '>=', selectedDate.toDate())
+    .where(
+      'startDate',
+      '<',
+      moment(selectedDate)
+        .add(1, 'days')
+        .toDate()
+    );
+
+  if (employeeId) {
+    query = query.where('employeeId', '==', employeeId);
+  }
+
+  if (courtType) {
+    query = query.where('courtType', '==', courtType);
+  }
+
+  return query
+    .onSnapshot(snapshot => {
+      const reservations = [];
+
+      snapshot.forEach(doc => {
+        reservations.push(formatReservation({ res: doc }));
+      });
+
+      dispatch({
+        type: ON_COMMERCE_RESERVATIONS_READ,
+        payload: { reservations }
+      });
+    });
+}
+
+export const onCommerceReservationsRead = ({
   commerceId,
   selectedDate,
   employeeId
@@ -41,76 +82,7 @@ export const onCommerceEmployeeReservationsRead = ({
 
   const db = firebase.firestore();
 
-  return db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
-    .where('employeeId', '==', employeeId)
-    .where('startDate', '>=', selectedDate.toDate())
-    .where(
-      'startDate',
-      '<',
-      moment(selectedDate)
-        .add(1, 'days')
-        .toDate()
-    )
-    .onSnapshot(snapshot => {
-      const reservations = [];
-
-      snapshot.forEach(doc => {
-        reservations.push(formatReservation({ res: doc }));
-      });
-
-      dispatch({
-        type: ON_COMMERCE_RESERVATIONS_READ,
-        payload: { reservations }
-      });
-    });
-};
-
-export const onCommerceCourtTypeReservationsRead = ({
-  commerceId,
-  selectedDate,
-  courtType
-}) => dispatch => {
-  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
-
-  const db = firebase.firestore();
-
-  return db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
-    .where('courtType', '==', courtType)
-    .where('startDate', '>=', selectedDate.toDate())
-    .where(
-      'startDate',
-      '<',
-      moment(selectedDate)
-        .add(1, 'days')
-        .toDate()
-    )
-    .onSnapshot(snapshot => {
-      const reservations = [];
-
-      snapshot.forEach(doc => {
-        reservations.push(formatReservation({ res: doc }));
-      });
-
-      dispatch({
-        type: ON_COMMERCE_RESERVATIONS_READ,
-        payload: { reservations }
-      });
-    });
-};
-
-export const onCommerceReservationsRead = ({
-  commerceId,
-  selectedDate
-}) => dispatch => {
-  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
-
-  const db = firebase.firestore();
-
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
@@ -120,7 +92,13 @@ export const onCommerceReservationsRead = ({
       moment(selectedDate)
         .add(1, 'days')
         .toDate()
-    )
+    );
+
+  if (employeeId) {
+    query = query.where('employeeId', '==', employeeId);
+  }
+
+  return query
     .onSnapshot(snapshot => {
       const reservations = [];
 
@@ -151,15 +129,16 @@ export const onCommerceReservationsRead = ({
     });
 };
 
-export const onCommerceDetailedCourtReservationsRead = ({
+export const onCommerceDetailedReservationsRead = ({
   commerceId,
-  selectedDate
+  selectedDate,
+  employeeId
 }) => dispatch => {
   dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
@@ -169,7 +148,13 @@ export const onCommerceDetailedCourtReservationsRead = ({
       moment(selectedDate)
         .add(1, 'days')
         .toDate()
-    )
+    );
+
+  if (employeeId) {
+    query = query.where('employeeId', '==', employeeId);
+  }
+
+  return query
     .orderBy('startDate')
     .onSnapshot(snapshot => {
       const detailedReservations = [];
@@ -182,27 +167,22 @@ export const onCommerceDetailedCourtReservationsRead = ({
       }
 
       snapshot.forEach(doc => {
-        db.doc(`Commerces/${commerceId}/Courts/${doc.data().courtId}`)
+        db.doc(`Profiles/${doc.data().clientId}`)
           .get()
-          .then(court => {
-            db.doc(`Profiles/${doc.data().clientId}`)
-              .get()
-              .then(client => {
-                detailedReservations.push(formatReservation({
-                  res: doc,
-                  court,
-                  client: client.exists && client
-                }));
+          .then(client => {
+            detailedReservations.push(formatReservation({
+              res: doc,
+              client: client.exists && client
+            }));
 
-                if (detailedReservations.length === snapshot.size) {
-                  detailedReservations.sort((a, b) => a.startDate - b.startDate);
+            if (detailedReservations.length === snapshot.size) {
+              detailedReservations.sort((a, b) => a.startDate - b.startDate);
 
-                  dispatch({
-                    type: ON_COMMERCE_RESERVATIONS_READ,
-                    payload: { detailedReservations }
-                  });
-                }
+              dispatch({
+                type: ON_COMMERCE_RESERVATIONS_READ,
+                payload: { detailedReservations }
               });
+            }
           });
       });
     });
@@ -269,22 +249,16 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
   const db = firebase.firestore();
 
   return dispatch => {
-    let query;
+    let query = db.collection(`Commerces/${commerceId}/Reservations`)
+      .where('state', '==', null)
+      .where('startDate', '>=', startDate.toDate());
 
     if (employeeId) {
-      query = db.collection(`Commerces/${commerceId}/Reservations`)
-        .where('state', '==', null)
-        .where('employeeId', '==', employeeId)
-        .where('startDate', '>=', startDate.toDate())
-        .orderBy('startDate')
-    } else {
-      query = db.collection(`Commerces/${commerceId}/Reservations`)
-        .where('state', '==', null)
-        .where('startDate', '>=', startDate.toDate())
-        .orderBy('startDate')
+      query = query.where('employeeId', '==', employeeId);
     }
 
     query
+      .orderBy('startDate')
       .get()
       .then(snapshot => {
         dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });

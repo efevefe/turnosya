@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import { ListItem, ButtonGroup, Overlay } from 'react-native-elements';
+import { ListItem, ButtonGroup } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList } from '../common';
-import { onCommerceDetailedCourtReservationsRead } from '../../actions';
-import { MAIN_COLOR } from '../../constants';
+import { onCommerceDetailedReservationsRead } from '../../actions';
+import { MAIN_COLOR, AREAS } from '../../constants';
 
-class CommerceCourtReservations extends Component {
+class CommerceReservationsList extends Component {
   state = {
     selectedDate: moment(),
     selectedIndex: 1,
@@ -34,9 +34,10 @@ class CommerceCourtReservations extends Component {
     const selectedDate = moment([date.year(), date.month(), date.date()]);
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({
+    this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
-      selectedDate
+      selectedDate,
+      employeeId: this.props.employeeId
     });
 
     this.setState({ selectedDate });
@@ -64,10 +65,22 @@ class CommerceCourtReservations extends Component {
     this.setState({ filteredList, selectedIndex });
   };
 
-  renderList = ({ item }) => {
+  renderItem = ({ item }) => {
     const clientName = item.clientId
       ? `${item.client.firstName} ${item.client.lastName}`
       : item.clientName;
+
+    let name;
+    let service;
+    let court;
+
+    if (this.props.areaId === AREAS.hairdressers) {
+      service = this.props.services.find(service => service.id === item.serviceId);
+      name = service.name;
+    } else if (this.props.areaId === AREAS.sports) {
+      court = this.props.courts.find(court => court.id === item.courtId);
+      name = court.name;
+    }
 
     return (
       <ListItem
@@ -79,14 +92,14 @@ class CommerceCourtReservations extends Component {
         title={`${item.startDate.format('HH:mm')} a ${item.endDate.format(
           'HH:mm'
         )}`}
-        subtitle={`${clientName}\n${item.court.name}`}
+        subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={item.light ? 'Con Luz' : 'Sin Luz'}
+        rightSubtitle={(item.light !== undefined) ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: item
+            reservation: { ...item, court, service }
           })
         }
         bottomDivider
@@ -94,14 +107,14 @@ class CommerceCourtReservations extends Component {
     );
   };
 
-  renderItems = () => {
+  renderList = () => {
     const { filteredList } = this.state;
 
     if (filteredList.length) {
       return (
         <FlatList
           data={filteredList}
-          renderItem={this.renderList.bind(this)}
+          renderItem={this.renderItem.bind(this)}
           keyExtractor={reservation => reservation.id}
         />
       );
@@ -132,7 +145,7 @@ class CommerceCourtReservations extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-            this.renderItems()
+            this.renderList()
           )}
       </View>
     );
@@ -175,12 +188,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId } = state.commerceData;
+  const { commerceId, area: { areaId } } = state.commerceData;
   const { detailedReservations, loading } = state.reservationsList;
+  const { services } = state.servicesList;
+  const { courts } = state.courtsList;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { commerceId, reservations: detailedReservations, loading };
+  return { commerceId, areaId, employeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {
-  onCommerceDetailedCourtReservationsRead
-})(CommerceCourtReservations);
+  onCommerceDetailedReservationsRead
+})(CommerceReservationsList);

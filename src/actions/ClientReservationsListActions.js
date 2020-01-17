@@ -1,5 +1,8 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import moment from "moment";
+import { formatReservation } from './ReservationsListActions';
+import { AREAS } from '../constants';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
@@ -7,7 +10,6 @@ import {
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
 } from "./types";
-import moment from "moment";
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -18,6 +20,7 @@ export const onClientReservationsListRead = () => dispatch => {
   return db.collection(`Profiles/${currentUser.uid}/Reservations`)
     .where('state', "==", null)
     .orderBy('startDate')
+    .limit(50) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
     .onSnapshot(snapshot => {
       const reservations = [];
 
@@ -28,30 +31,31 @@ export const onClientReservationsListRead = () => dispatch => {
         });
       }
 
-      snapshot.forEach(doc => {
-        db.doc(`Commerces/${doc.data().commerceId}`)
-          .get()
-          .then(commerceData => {
-            db.doc(`Commerces/${doc.data().commerceId}/Courts/${doc.data().courtId}`)
-              .get()
-              .then(courtData => {
-                reservations.push({
-                  ...doc.data(),
-                  court: courtData.data(),
-                  commerce: commerceData.data(),
-                  id: doc.id,
-                  startDate: moment(doc.data().startDate.toDate()),
-                  endDate: moment(doc.data().endDate.toDate())
-                });
+      snapshot.forEach(async res => {
+        const { commerceId, areaId, serviceId, employeeId, courtId } = res.data();
+        let service, employee, court = null;
 
-                if (snapshot.size === reservations.length) {
-                  dispatch({
-                    type: ON_CLIENT_RESERVATIONS_READ,
-                    payload: reservations.sort((a, b) => a.startDate - b.startDate)
-                  });
-                }
-              });
-          });
+        try {
+          const commerce = await db.doc(`Commerces/${commerceId}`).get();
+
+          if (areaId === AREAS.hairdressers) {
+            service = await db.doc(`Commerces/${commerceId}/Services/${serviceId}`).get();
+            employee = await db.doc(`Commerces/${commerceId}/Employees/${employeeId}`).get();
+          } else if (areaId === AREAS.sports) {
+            court = await db.doc(`Commerces/${commerceId}/Courts/${courtId}`).get();
+          }
+
+          reservations.push(formatReservation({ res, commerce, service, court, employee }));
+
+          if (snapshot.size === reservations.length) {
+            dispatch({
+              type: ON_CLIENT_RESERVATIONS_READ,
+              payload: reservations.sort((a, b) => a.startDate - b.startDate)
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
       });
     });
 };

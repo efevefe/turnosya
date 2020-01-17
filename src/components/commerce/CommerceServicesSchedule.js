@@ -5,11 +5,12 @@ import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import Schedule from '../Schedule';
 import { Toast, Menu, MenuItem, IconButton } from '../common';
+import { MONTHS } from '../../constants';
 import {
     onScheduleRead,
     onScheduleValueChange,
     onReservationValueChange,
-    onCommerceEmployeeReservationsRead,
+    onCommerceReservationsRead,
     onNewReservation,
     servicesRead
 } from '../../actions';
@@ -54,7 +55,7 @@ class CommerceServicesSchedule extends Component {
         const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
         this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-        this.unsubscribeReservationsRead = this.props.onCommerceEmployeeReservationsRead({
+        this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
             commerceId: this.props.commerceId,
             selectedDate: date,
             employeeId: this.props.employeeId
@@ -93,6 +94,18 @@ class CommerceServicesSchedule extends Component {
         return endSlot && !notAvailableSlot && shiftsIds.size === 1;
     }
 
+    getReservationFromSlot = slot => {
+        const reservation = this.props.reservations.find(res =>
+            res.startDate.toString() === slot.startDate.toString()
+        );
+
+        const service = this.props.services.find(service =>
+            service.id === reservation.serviceId
+        );
+
+        return { ...reservation, service };
+    }
+
     onSlotPress = slot => {
         if (moment() >= slot.startDate && slot.available) {
             return Toast.show({
@@ -101,16 +114,29 @@ class CommerceServicesSchedule extends Component {
         }
 
         if (!slot.available) {
-            return alert('detalle de la reserva');
+            return this.props.navigation.navigate('reservationDetails', {
+                reservation: this.getReservationFromSlot(slot)
+            })
         }
+
+        const startDate = slot.startDate;
 
         this.props.onReservationValueChange({
             prop: 'startDate',
-            value: slot.startDate
+            value: startDate
         });
 
         this.props.onNewReservation();
-        alert('nueva reserva');
+
+        this.props.navigation.navigate('employeeServicesList', {
+            title:
+                startDate.format('DD') +
+                ' de ' +
+                MONTHS[startDate.month()] +
+                ', ' +
+                startDate.format('HH:mm') +
+                ' hs.'
+        });
     };
 
     isResFillingSlot = (slot, res) => {
@@ -262,7 +288,7 @@ export default connect(mapStateToProps, {
     onScheduleValueChange,
     onScheduleRead,
     onReservationValueChange,
-    onCommerceEmployeeReservationsRead,
+    onCommerceReservationsRead,
     onNewReservation,
     servicesRead
 })(CommerceServicesSchedule);

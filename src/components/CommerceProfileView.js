@@ -61,7 +61,7 @@ class CommerceProfileView extends Component {
 
   componentDidUpdate(prevProps) {
     // para evitar esto se deberia guardar el areaId en Algolia
-    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
+    if (this.props.areaId && (this.props.areaId !== prevProps.areaId)) {
       this.props.onReservationValueChange({ prop: 'areaId', value: this.props.areaId });
     }
   }

@@ -160,7 +160,8 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
     startDate,
     endDate,
     schedules,
-    reservationsToCancel
+    reservationsToCancel,
+    employeeId
   } = scheduleData;
 
   const db = firebase.firestore();
@@ -199,16 +200,22 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
   })
 
   try {
+    let newScheduleObj = {
+      startDate: startDate.toDate(),
+      endDate: endDate ? endDate.toDate() : null,
+      softDelete: null,
+      reservationMinLength,
+      reservationDayPeriod,
+      reservationMinCancelTime
+    }
+
+    if (employeeId) {
+      newScheduleObj = { ...newScheduleObj, employeeId };
+    }
+
     // new schedule creation
     const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
-      .add({
-        startDate: startDate.toDate(),
-        endDate: endDate ? endDate.toDate() : null,
-        softDelete: null,
-        reservationMinLength,
-        reservationDayPeriod,
-        reservationMinCancelTime
-      });
+      .add(newScheduleObj);
 
     cards.forEach(card => {
       const { days, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;

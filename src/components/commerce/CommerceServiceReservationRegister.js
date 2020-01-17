@@ -2,62 +2,33 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Input, Button, CardSection, ButtonGroup } from '../common';
-import CourtReservationDetails from '../CourtReservationDetails';
-import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
+import { StackActions, NavigationActions } from 'react-navigation';
+import { Input, Button, CardSection } from '../common';
+import ServiceReservationDetails from '../ServiceReservationDetails';
+import { onReservationValueChange, onCommerceServiceReservationCreate } from '../../actions';
 import { validateValueType } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
-    state = { selectedIndex: 0, priceButtons: [], prices: [], nameError: '', phoneError: '' };
+    state = { nameError: '', phoneError: '' };
 
-    componentDidMount() {
-        this.priceButtons();
-    }
+    componentDidUpdate(prevProps) {
+        if (this.props.saved && !prevProps.saved) {
+            const navigationAction = StackActions.reset({
+                index: 1,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'servicesCalendar' }),
+                    NavigationActions.navigate({ routeName: 'serviceReservationRegister' })
+                ],
+            });
 
-    priceButtons = () => {
-        const { court } = this.props;
-        const priceButtons = [];
-        const prices = [];
-
-        if (court) {
-            priceButtons.push(`Sin Luz: $${court.price}`);
-            prices.push(court.price);
-
-            if (court.lightPrice) {
-                priceButtons.push(`Con Luz: $${court.lightPrice}`);
-                prices.push(court.lightPrice);
-            }
+            this.props.navigation.dispatch(navigationAction);
         }
-
-        this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
-    };
-
-    onPriceSelect = selectedIndex => {
-        this.setState({ selectedIndex });
-
-        this.props.onReservationValueChange({
-            prop: "price",
-            value: this.state.prices[selectedIndex]
-        });
-
-        this.props.onReservationValueChange({
-            prop: "light",
-            value: !!selectedIndex // 0 = false = no light // 1 = true = light
-        });
-    };
+    }
 
     renderInputs = () => {
         if (!this.props.saved) {
             return (
                 <View>
-                    <CardSection>
-                        <ButtonGroup
-                            onPress={this.onPriceSelect}
-                            selectedIndex={this.state.selectedIndex}
-                            buttons={this.state.priceButtons}
-                            textStyle={{ fontSize: 14 }}
-                        />
-                    </CardSection>
                     <CardSection style={styles.cardSection}>
                         <Input
                             label="Nombre:"
@@ -143,25 +114,24 @@ class CommerceCourtReservationRegister extends Component {
 
     onConfirmReservation = () => {
         if (!this.nameError() && !this.phoneError()) {
-            const { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price } = this.props;
+            const { commerceId, areaId, clientName, clientPhone, employeeId, service, startDate, endDate, price } = this.props;
 
-            this.props.onCommerceCourtReservationCreate({
+            this.props.onCommerceServiceReservationCreate({
                 commerceId,
                 areaId,
-                courtId: court.id,
-                courtType: court.court,
+                serviceId: service.id,
+                employeeId,
                 clientName,
                 clientPhone,
                 startDate,
                 endDate,
-                light,
                 price
             })
         }
     }
 
     render() {
-        const { clientName, clientPhone, court, startDate, endDate, light, price, saved } = this.props;
+        const { clientName, clientPhone, service, startDate, endDate, price, saved } = this.props;
 
         return (
             <KeyboardAwareScrollView
@@ -169,16 +139,14 @@ class CommerceCourtReservationRegister extends Component {
                 extraScrollHeight={60}
                 contentContainerStyle={{ flexGrow: 1 }}
             >
-                <CourtReservationDetails
+                <ServiceReservationDetails
                     name={saved && clientName}
                     info={saved && clientPhone}
                     infoIcon='ios-call'
-                    court={court}
+                    service={service}
                     startDate={startDate}
                     endDate={endDate}
                     price={price}
-                    light={light}
-                    showPrice={saved}
                 />
                 {this.renderInputs()}
                 <View style={styles.confirmButtonContainer}>
@@ -202,12 +170,13 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     const { commerceId, area: { areaId } } = state.commerceData;
-    const { clientName, clientPhone, court, startDate, endDate, light, price, saved, loading } = state.reservation;
+    const { clientName, clientPhone, service, startDate, endDate, price, saved, loading } = state.reservation;
+    const { employeeId } = state.roleData;
 
-    return { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price, saved, loading };
+    return { commerceId, areaId, clientName, clientPhone, service, employeeId, startDate, endDate, price, saved, loading };
 }
 
 export default connect(mapStateToProps, {
     onReservationValueChange,
-    onCommerceCourtReservationCreate
+    onCommerceServiceReservationCreate
 })(CommerceCourtReservationRegister);
