@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>commerce-oauth</title>
+  <!-- importante que se llame asi por React Native -->
+</head>
+
+<body>
+  <a
+    id="a1"
+    href="https://auth.mercadopago.com.ar/authorization?client_id=<%= appId %>&response_type=code&platform_id=mp&redirect_uri=https%3A%2F%2Fproyecto-turnosya.web.app%2Fcommerce-oauth-redirect%3Fcommerce-id%3D<%= commerceId %>"
+  ></a>
+  <script>
+    document.getElementById('a1').click();
+  </script>
+</body>

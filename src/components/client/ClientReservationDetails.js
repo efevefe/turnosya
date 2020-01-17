@@ -256,6 +256,20 @@ class ClientReservationDetails extends Component {
     }
   };
 
+  // ** Payment buttons **
+
+  renderPayButton = () => {
+    return (
+      <View>
+        <Button
+          title="Pagar con Mercado Pago"
+          type="solid"
+          onPress={() => console.log('pepito')}
+        />
+      </View>
+    );
+  };
+
   // ** Render method **
 
   render() {
@@ -325,9 +339,9 @@ class ClientReservationDetails extends Component {
           light={light}
           showPrice={true}
         />
-
-        {this.renderReviewFields()}
+        {this.renderPayButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }

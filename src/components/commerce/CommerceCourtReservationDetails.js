@@ -265,6 +265,20 @@ class CommerceCourtReservationDetails extends Component {
     this.props.navigation.navigate('clientProfileView', { clientId });
   };
 
+  // *** Payment methods ***
+
+  renderRegisterPaymentButton = () => {
+    return (
+      <View>
+        <Button
+          title="Registrar Pago en Efectivo"
+          type="solid"
+          onPress={() => console.log('pepito')}
+        />
+      </View>
+    );
+  };
+
   // *** Render method ***
 
   render() {
@@ -344,9 +358,9 @@ class CommerceCourtReservationDetails extends Component {
           showPrice={true}
           onPicturePress={this.onUserProfilePicturePress}
         />
-
-        {this.renderReviewFields()}
+        {this.renderRegisterPaymentButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }

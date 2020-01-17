@@ -5,6 +5,7 @@ import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
 import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
+import PaymentSettings from '../components/commerce/PaymentSettings';
 import EmployeesList from '../components/commerce/EmployeesList';
 import EmployeeForm from '../components/commerce/EmployeeForm';
 import {
@@ -18,6 +19,12 @@ const CommerceSettingsStack = createStackNavigator(
       screen: CommerceSettings,
       navigationOptions: {
         title: 'Configuración'
+      }
+    },
+    paymentSettings: {
+      screen: PaymentSettings,
+      navigationOptions: {
+        title: 'Mercado Pago'
       }
     }
   },

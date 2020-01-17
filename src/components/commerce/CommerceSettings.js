@@ -19,7 +19,7 @@ class CommerceSettings extends Component {
       headerLeft: (
         <HeaderBackButton
           tintColor="white"
-          title='Back'
+          title="Back"
           onPress={() => navigation.goBack(null)}
         />
       )
@@ -109,11 +109,21 @@ class CommerceSettings extends Component {
       <ScrollView style={styles.containerStyle}>
         <SettingsItem
           leftIcon={{
+            name: 'md-card',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          title="Configurar cobro con Mercado Pago"
+          onPress={() => this.props.navigation.navigate('paymentSettings')}
+          bottomDivider
+        />
+        <SettingsItem
+          leftIcon={{
             name: 'md-trash',
             type: 'ionicon',
             color: 'black'
           }}
-          title="Eliminar Mi Negocio"
+          title="Eliminar mi negocio"
           onPress={() =>
             this.props.onCommerceValueChange({
               prop: 'confirmDeleteVisible',
@@ -152,7 +162,8 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onCommerceDelete, onCommerceValueChange, onLoginValueChange }
-)(CommerceSettings);
+export default connect(mapStateToProps, {
+  onCommerceDelete,
+  onCommerceValueChange,
+  onLoginValueChange
+})(CommerceSettings);
