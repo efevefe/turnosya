@@ -317,7 +317,7 @@ class ClientProfile extends Component {
           </View>
           {this.renderFullName()}
           {this.renderLocation()}
-          <LocationMessages />{' '}
+          <LocationMessages />
           {/* Este componente hace que la app crashee al querer cambiar la foto */}
           <TouchableOpacity
             onPress={() =>

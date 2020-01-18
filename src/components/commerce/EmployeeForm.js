@@ -12,7 +12,7 @@ import {
   onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
-import { MAIN_COLOR } from '../../constants';
+import { MAIN_COLOR, ROLES } from '../../constants';
 
 class EmployeeForm extends Component {
   state = { roleError: '', editing: false };
@@ -140,6 +140,7 @@ class EmployeeForm extends Component {
                       )
                     }
                     loadingProps={{ color: MAIN_COLOR }}
+                    disabled={this.state.editing}
                   />
                 }
               />
@@ -172,9 +173,13 @@ class EmployeeForm extends Component {
             <CardSection>
               <Picker
                 title={'Rol:'}
-                placeholder={{ value: null, label: 'Elija una opción...' }}
+                placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles}
+                items={this.props.roles.filter(
+                  role =>
+                    ROLES[role.value.roleId].value <=
+                    this.props.currentRole.value
+                )}
                 onValueChange={role =>
                   this.props.onEmployeeValueChange({ role: role || {} })
                 }
@@ -218,7 +223,7 @@ const mapStateToProps = state => {
     emailError,
     saveLoading
   } = state.employeeData;
-  const { roles } = state.roleData;
+  const { roles, role: currentRole } = state.roleData;
   const { employees } = state.employeesList;
 
   return {
@@ -232,6 +237,7 @@ const mapStateToProps = state => {
     employeeId: id,
     role,
     roles,
+    currentRole,
     emailLoading,
     emailError,
     saveLoading,
