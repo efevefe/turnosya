@@ -27,7 +27,8 @@ app.get('/pay', (req, res) => {
     items: [
       {
         title: 'Reserva en TurnosYa',
-        unit_price: parseInt(req.query.price),
+        // unit_price: parseInt(req.query.price),
+        unit_price: 1,
         quantity: 1
       }
     ],
@@ -72,14 +73,14 @@ app.get('/payment-success', (req, res) => {
   // external_reference
   // payment_type
   // merchant_order_id
-  // reference_id
+  // preference_id
   // merchant_account_id
   let {
     collection_id,
     collection_status,
     payment_type,
     merchant_order_id,
-    reference_id,
+    preference_id,
     merchant_account_id
   } = req.query;
   let { clientId, reservationId, commerceId } = JSON.parse(
@@ -107,7 +108,7 @@ app.get('/payment-success', (req, res) => {
     collectionId: collection_id,
     collectionStatus: collection_status,
     merchantOrderId: merchant_order_id,
-    referenceId: reference_id,
+    preferenceId: preference_id,
     merchantAccountId: merchant_account_id
   });
 
@@ -129,7 +130,7 @@ app.get('/payment-success', (req, res) => {
   //     collectionId: collection_id,
   //     collectionStatus: collection_status,
   //     merchantOrderId: merchant_order_id,
-  //     referenceId: reference_id,
+  //     referenceId: preference_id,
   //     merchantAccountId: merchant_account_id
   //   })
   //   .then(() => console.log('Guardado en Firestore'))
