@@ -3,21 +3,21 @@ import 'firebase/firestore';
 import algoliasearch from 'algoliasearch';
 import {
   ON_REGISTER_COMMERCE,
-  COMMERCE_PROFILE_CREATE,
+  ON_COMMERCE_PROFILE_CREATE,
   ON_COMMERCE_VALUE_CHANGE,
-  COMMERCE_FAIL,
+  ON_COMMERCE_CREATE_FAIL,
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_AREAS_READ,
+  ON_AREAS_READ_FOR_PICKER,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
-  CUIT_NOT_EXISTS,
-  CUIT_EXISTS,
+  ON_CUIT_NOT_EXISTS,
+  ON_CUIT_EXISTS,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
@@ -76,7 +76,7 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
     .catch(e => console.error(e));
 };
 
-export const onCreateCommerce = (
+export const onCommerceCreate = (
   {
     name,
     cuit,
@@ -134,16 +134,20 @@ export const onCreateCommerce = (
                   : {})
               })
               .then(() => {
-                dispatch({ type: COMMERCE_PROFILE_CREATE });
+                dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
                 navigation.navigate('commerce');
               })
               .catch(error =>
-                dispatch({ type: COMMERCE_FAIL, payload: error })
+                dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
               );
           })
-          .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+          .catch(error =>
+            dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
+          );
       })
-      .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+      .catch(error =>
+        dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
+      );
   };
 };
 
@@ -272,11 +276,12 @@ export const onCommerceUpdate = (
   }
 };
 
-export const onAreasRead = () => {
+export const onAreasReadForPicker = () => {
   const db = firebase.firestore();
 
   return dispatch => {
     db.collection('Areas')
+      .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
@@ -284,7 +289,7 @@ export const onAreasRead = () => {
         snapshot.forEach(doc =>
           areasList.push({ value: doc.id, label: doc.data().name })
         );
-        dispatch({ type: ON_AREAS_READ, payload: areasList });
+        dispatch({ type: ON_AREAS_READ_FOR_PICKER, payload: areasList });
       });
   };
 };
@@ -298,11 +303,9 @@ export const validateCuit = cuit => {
       .where('softDelete', '==', null)
       .get()
       .then(function(querySnapshot) {
-        if (!querySnapshot.empty) {
-          dispatch({ type: CUIT_EXISTS });
-        } else {
-          dispatch({ type: CUIT_NOT_EXISTS });
-        }
+        !querySnapshot.empty
+          ? dispatch({ type: ON_CUIT_EXISTS })
+          : dispatch({ type: ON_CUIT_NOT_EXISTS });
       });
   };
 };

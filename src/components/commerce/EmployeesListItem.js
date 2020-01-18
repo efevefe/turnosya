@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen, onEmployeeDelete } from '../../actions';
+import { onCourtFormOpen, onEmployeeDelete } from '../../actions';
 import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
@@ -142,7 +142,6 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  courtDelete,
   onCourtFormOpen,
   onEmployeeDelete
 })(CourtListItem);

@@ -5,12 +5,10 @@ import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onEmployeeValueChange,
-  onEmployeeNameClear,
   onEmployeeValuesReset,
   onRolesRead,
   searchUserByEmail,
-  onCreateEmployee,
-  employeeValidationError,
+  onEmployeeCreate,
   onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
@@ -35,8 +33,14 @@ class EmployeeForm extends Component {
   }
 
   onEmailValueChange = email => {
-    if (this.props.firstName) this.props.onEmployeeNameClear();
-    this.props.onEmployeeValueChange({ email });
+    this.props.firstName
+      ? this.props.onEmployeeValueChange({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email
+        })
+      : this.props.onEmployeeValueChange({ email });
   };
 
   onSavePressHandler = () => {
@@ -59,9 +63,9 @@ class EmployeeForm extends Component {
         !this.state.editing
       )
         // Si se cargó un usuario y es empleado aca entonces notificar
-        this.props.employeeValidationError(
-          'Este usuario ya es empleado de su negocio'
-        );
+        this.props.onEmployeeValueChange({
+          emailError: 'Este usuario ya es empleado de su negocio'
+        });
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
@@ -75,7 +79,7 @@ class EmployeeForm extends Component {
             navigation
           );
         else
-          this.props.onCreateEmployee(
+          this.props.onEmployeeCreate(
             {
               commerceId,
               commerceName,
@@ -89,9 +93,9 @@ class EmployeeForm extends Component {
             navigation
           );
     } else {
-      this.props.employeeValidationError(
-        'Debe cargar un usuario antes de guardar'
-      );
+      this.props.onEmployeeValueChange({
+        emailError: 'Debe cargar un usuario antes de guardar'
+      });
     }
 
     if (role.name && this.state.roleError) this.setState({ roleError: '' });
@@ -237,11 +241,9 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onEmployeeValueChange,
-  onEmployeeNameClear,
   onEmployeeValuesReset,
   onRolesRead,
   searchUserByEmail,
-  onCreateEmployee,
-  employeeValidationError,
+  onEmployeeCreate,
   onEmployeeUpdate
 })(EmployeeForm);

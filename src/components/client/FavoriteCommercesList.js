@@ -3,7 +3,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList } from '../common';
 import CommerceListItem from './CommerceListItem';
-import { readOnlyFavoriteCommerces } from '../../actions';
+import { onOnlyFavoriteCommercesRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class FavoriteCommercesList extends Component {
@@ -17,8 +17,8 @@ class FavoriteCommercesList extends Component {
 
   onFavoriteCommercesRead = () => {
     this.unsubscribeFavoritesRead && this.unsubscribeFavoritesRead();
-    this.unsubscribeFavoritesRead = this.props.readOnlyFavoriteCommerces();
-  }
+    this.unsubscribeFavoritesRead = this.props.onOnlyFavoriteCommercesRead();
+  };
 
   renderRow({ item }) {
     return (
@@ -54,22 +54,20 @@ class FavoriteCommercesList extends Component {
     }
 
     return (
-      <EmptyList
-        title='No tenes favoritos'
-        onRefresh={this.onRefresh()}
-      />
+      <EmptyList title="No tenes favoritos" onRefresh={this.onRefresh()} />
     );
   }
 }
 
 const mapStateToProps = state => {
-  const { onlyFavoriteCommerces, loading, favoriteCommerces } = state.commercesList;
+  const {
+    onlyFavoriteCommerces,
+    loading,
+    favoriteCommerces
+  } = state.commercesList;
   return { onlyFavoriteCommerces, loading, favoriteCommerces };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    readOnlyFavoriteCommerces
-  }
-)(FavoriteCommercesList);
+export default connect(mapStateToProps, {
+  onOnlyFavoriteCommercesRead
+})(FavoriteCommercesList);

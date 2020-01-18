@@ -7,8 +7,8 @@ import { CardSection, Button, Input } from '../common';
 import { validateValueType } from '../../utils';
 import {
   onServiceValueChange,
-  serviceCreate,
-  serviceUpdate
+  onServiceCreate,
+  onServiceUpdate
 } from '../../actions';
 
 class ServiceForm extends Component {
@@ -35,7 +35,7 @@ class ServiceForm extends Component {
       if (params) {
         const { id } = this.props.navigation.state.params.service;
 
-        this.props.serviceUpdate(
+        this.props.onServiceUpdate(
           {
             name,
             duration,
@@ -47,7 +47,7 @@ class ServiceForm extends Component {
           navigation
         );
       } else {
-        this.props.serviceCreate(
+        this.props.onServiceCreate(
           {
             name,
             duration,
@@ -202,6 +202,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onServiceValueChange,
-  serviceCreate,
-  serviceUpdate
+  onServiceCreate,
+  onServiceUpdate
 })(ServiceForm);

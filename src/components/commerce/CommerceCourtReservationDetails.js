@@ -19,13 +19,13 @@ import {
   onCommerceCancelReservation,
   onCourtReservationsListValueChange,
   onClientReviewValueChange,
-  onCreateClientReview,
-  readClientReview,
+  onClientReviewCreate,
+  onClientReviewReadById,
   onClientReviewUpdate,
   onClientReviewDelete,
   onClientReviewValuesReset,
-  readCommerceReview,
-  commerceReviewClear
+  onCommerceReviewReadById,
+  onCommerceReviewValuesReset
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 
@@ -46,12 +46,12 @@ class CommerceCourtReservationDetails extends Component {
   }
 
   componentDidMount() {
-    this.props.readClientReview({
+    this.props.onClientReviewReadById({
       clientId: this.state.reservation.clientId,
       reviewId: this.state.reservation.reviewId
     });
 
-    this.props.readCommerceReview({
+    this.props.onCommerceReviewReadById({
       commerceId: this.props.commerceId,
       reviewId: this.state.reservation.receivedReviewId
     });
@@ -59,7 +59,7 @@ class CommerceCourtReservationDetails extends Component {
 
   componentWillUnmount() {
     this.props.onClientReviewValuesReset();
-    this.props.commerceReviewClear();
+    this.props.onCommerceReviewValuesReset();
   }
 
   renderCancelButton = () => {
@@ -121,7 +121,7 @@ class CommerceCourtReservationDetails extends Component {
         });
       } else {
         // Si la reserva no tiene calificación, crearla
-        this.props.onCreateClientReview({
+        this.props.onClientReviewCreate({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
@@ -387,11 +387,11 @@ export default connect(mapStateToProps, {
   onCommerceCancelReservation,
   onCourtReservationsListValueChange,
   onClientReviewValueChange,
-  onCreateClientReview,
-  readClientReview,
+  onClientReviewCreate,
+  onClientReviewReadById,
   onClientReviewUpdate,
   onClientReviewDelete,
   onClientReviewValuesReset,
-  readCommerceReview,
-  commerceReviewClear
+  onCommerceReviewReadById,
+  onCommerceReviewValuesReset
 })(CommerceCourtReservationDetails);

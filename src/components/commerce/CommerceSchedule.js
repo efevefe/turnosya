@@ -11,7 +11,7 @@ import {
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  courtsRead,
+  onCourtsRead,
   isCourtDisabledOnSlot
 } from '../../actions';
 import PermissionsAssigner from '../common/PermissionsAssigner';
@@ -34,7 +34,7 @@ class CommerceSchedule extends Component {
       selectedDate: this.state.selectedDate
     });
 
-    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+    this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
 
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
@@ -260,5 +260,5 @@ export default connect(mapStateToProps, {
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  courtsRead
+  onCourtsRead
 })(CommerceSchedule);

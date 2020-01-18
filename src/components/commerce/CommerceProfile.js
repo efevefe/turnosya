@@ -13,7 +13,7 @@ import {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
+  onAreasReadForPicker,
   onLocationValueChange
 } from '../../actions';
 import {
@@ -110,7 +110,7 @@ class CommerceProfile extends Component {
 
   onEditPress = () => {
     this.props.onProvincesIdRead();
-    this.props.onAreasRead();
+    this.props.onAreasReadForPicker();
 
     const {
       name,
@@ -850,6 +850,6 @@ export default connect(mapStateToProps, {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
+  onAreasReadForPicker,
   onLocationValueChange
 })(CommerceProfile);

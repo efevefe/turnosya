@@ -20,10 +20,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PictureView, Spinner } from './common';
 import {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
   onLocationValueChange,
-  commerceHitsUpdate,
   onCommerceCourtTypesRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -53,8 +52,6 @@ class CommerceProfileView extends Component {
       commerceId,
       loadingType: 'loading'
     });
-
-    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
@@ -91,11 +88,10 @@ class CommerceProfileView extends Component {
   };
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
@@ -312,9 +308,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
   onLocationValueChange,
-  commerceHitsUpdate,
   onCommerceCourtTypesRead
 })(CommerceProfileView);

@@ -35,7 +35,7 @@ export const onCommerceReportValueReset = () => {
 };
 
 // Daily Reservations report
-export const readDailyReservationsByRange = (
+export const onDailyReservationsReadByRange = (
   commerceId,
   startDate,
   endDate
@@ -107,7 +107,7 @@ export const yearsOfActivity = commerceId => dispatch => {
     });
 };
 
-export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
+export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -187,7 +187,7 @@ export const yearsWithReview = commerceId => dispatch => {
     });
 };
 
-export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
+export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -236,7 +236,7 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
 };
 
 // Reserved and Cancelled Shift Report
-export const readReservedAndCancelledShiftByRange = (
+export const onReservedAndCancelledShiftReadByRange = (
   commerceId,
   startDate,
   endDate
@@ -272,7 +272,7 @@ export const readReservedAndCancelledShiftByRange = (
 };
 
 // Most Popular Shifts Report
-export const readMostPopularShiftsByRange = (
+export const onMostPopularShiftsReadByRange = (
   commerceId,
   startDate,
   endDate

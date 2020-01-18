@@ -6,9 +6,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import moment from 'moment';
 import {
   onCourtValueChange,
-  getCourtAndGroundTypes,
-  courtCreate,
-  courtUpdate,
+  onCourtAndGroundTypesRead,
+  onCourtCreate,
+  onCourtUpdate,
   onCourtNextReservationsRead
 } from '../../actions';
 import {
@@ -45,7 +45,7 @@ class CourtForm extends Component {
   };
 
   componentDidMount() {
-    this.props.getCourtAndGroundTypes();
+    this.props.onCourtAndGroundTypesRead();
 
     if (this.props.lightPrice) this.setState({ lightPriceOpen: true });
     this.isCourtDisabled();
@@ -96,7 +96,7 @@ class CourtForm extends Component {
     const { reservationsToCancel } = this.state;
 
     if (id) {
-      this.props.courtUpdate(
+      this.props.onCourtUpdate(
         {
           id,
           name,
@@ -112,7 +112,7 @@ class CourtForm extends Component {
         navigation
       );
     } else {
-      this.props.courtCreate(
+      this.props.onCourtCreate(
         {
           name,
           court,
@@ -621,8 +621,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCourtValueChange,
-  getCourtAndGroundTypes,
-  courtCreate,
-  courtUpdate,
+  onCourtAndGroundTypesRead,
+  onCourtCreate,
+  onCourtUpdate,
   onCourtNextReservationsRead
 })(CourtForm);

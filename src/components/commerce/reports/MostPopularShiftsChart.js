@@ -15,7 +15,7 @@ import {
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMostPopularShiftsByRange
+  onMostPopularShiftsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -25,7 +25,7 @@ class MostPopularShiftsChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.readMostPopularShiftsByRange(commerceId, startDate, endDate);
+    props.onMostPopularShiftsReadByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
@@ -52,7 +52,7 @@ class MostPopularShiftsChart extends Component {
   };
 
   onGenerateReportPress = () => {
-    this.props.readMostPopularShiftsByRange(
+    this.props.onMostPopularShiftsReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
       moment(this.state.modalEndDate)
@@ -170,5 +170,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMostPopularShiftsByRange
+  onMostPopularShiftsReadByRange
 })(MostPopularShiftsChart);

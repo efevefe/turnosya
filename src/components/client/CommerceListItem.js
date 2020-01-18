@@ -5,9 +5,8 @@ import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import {
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  readFavoriteCommerces,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
   onCourtReservationValueChange
 } from '../../actions';
 
@@ -33,11 +32,10 @@ class CommerceListItem extends Component {
   }
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
@@ -109,9 +107,8 @@ const mapStateToProps = state => {
 
 export default withNavigation(
   connect(mapStateToProps, {
-    registerFavoriteCommerce,
-    deleteFavoriteCommerce,
-    readFavoriteCommerces,
+    onFavoriteCommerceRegister,
+    onFavoriteCommerceDelete,
     onCourtReservationValueChange
   })(CommerceListItem)
 );

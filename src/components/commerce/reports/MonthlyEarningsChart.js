@@ -13,7 +13,7 @@ import {
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyEarningsByYear,
+  onMonthlyEarningsReadByYear,
   yearsOfActivity
 } from '../../../actions';
 
@@ -21,7 +21,7 @@ class MonthlyEarningsChart extends Component {
   constructor(props) {
     super(props);
     props.yearsOfActivity(props.commerceId);
-    props.readMonthlyEarningsByYear(props.commerceId, props.selectedYear);
+    props.onMonthlyEarningsReadByYear(props.commerceId, props.selectedYear);
 
     this.state = { modal: false, modalYear: this.props.selectedYear };
   }
@@ -42,7 +42,7 @@ class MonthlyEarningsChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.readMonthlyEarningsByYear(
+    this.props.onMonthlyEarningsReadByYear(
       this.props.commerceId,
       this.state.modalYear
     );
@@ -121,6 +121,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyEarningsByYear,
+  onMonthlyEarningsReadByYear,
   yearsOfActivity
 })(MonthlyEarningsChart);

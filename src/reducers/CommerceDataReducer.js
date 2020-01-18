@@ -1,7 +1,7 @@
 import {
   ON_COMMERCE_VALUE_CHANGE,
-  COMMERCE_PROFILE_CREATE,
-  COMMERCE_FAIL,
+  ON_COMMERCE_PROFILE_CREATE,
+  ON_COMMERCE_CREATE_FAIL,
   ON_REGISTER_COMMERCE,
   ON_COMMERCE_READING,
   ON_COMMERCE_READ,
@@ -9,11 +9,11 @@ import {
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_AREAS_READ,
+  ON_AREAS_READ_FOR_PICKER,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
-  CUIT_EXISTS,
-  CUIT_NOT_EXISTS,
+  ON_CUIT_EXISTS,
+  ON_CUIT_NOT_EXISTS,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
@@ -60,14 +60,14 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_VALUE_CHANGE:
       return { ...state, ...action.payload };
 
-    case COMMERCE_FAIL:
+    case ON_COMMERCE_CREATE_FAIL:
       return { ...state, error: action.payload, loading: false };
 
     case ON_REGISTER_COMMERCE:
     case ON_COMMERCE_DELETING:
       return { ...state, loading: true };
 
-    case COMMERCE_PROFILE_CREATE:
+    case ON_COMMERCE_PROFILE_CREATE:
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
 
@@ -86,13 +86,13 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
 
-    case ON_AREAS_READ:
+    case ON_AREAS_READ_FOR_PICKER:
       return { ...state, areasList: action.payload };
 
-    case CUIT_EXISTS:
+    case ON_CUIT_EXISTS:
       return { ...state, cuitExists: true };
 
-    case CUIT_NOT_EXISTS:
+    case CUIT_NOON_CUIT_NOT_EXISTST_EXISTS:
       return { ...state, cuitExists: false };
 
     case ON_REAUTH_SUCCESS:

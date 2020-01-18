@@ -3,14 +3,12 @@ import 'firebase/firestore';
 import {
   ON_EMPLOYEE_VALUE_CHANGE,
   ON_EMPLOYEE_VALUES_RESET,
-  ON_EMPLOYEE_NAME_CLEAR,
   ON_USER_SEARCHING,
   ON_USER_SEARCH_SUCCESS,
   ON_USER_SEARCH_FAIL,
   ON_EMPLOYEE_SAVING,
   ON_EMPLOYEE_CREATED,
   ON_EMPLOYEE_SAVE_FAIL,
-  EMPLOYEE_VALIDATION_ERROR,
   ON_EMPLOYEE_DELETED,
   ON_EMPLOYEE_UPDATED
 } from './types';
@@ -21,7 +19,7 @@ export const onEmployeeValueChange = payload => ({
   payload
 });
 
-export const onCreateEmployee = (
+export const onEmployeeCreate = (
   {
     commerceId,
     commerceName,
@@ -152,11 +150,4 @@ export const searchUserByEmail = (email, commerceId) => async dispatch => {
     });
 };
 
-export const employeeValidationError = errorText => ({
-  type: EMPLOYEE_VALIDATION_ERROR,
-  payload: errorText
-});
-
 export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
-
-export const onEmployeeNameClear = () => ({ type: ON_EMPLOYEE_NAME_CLEAR });

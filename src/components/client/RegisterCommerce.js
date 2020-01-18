@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   onCommerceValueChange,
   onCommerceFormOpen,
-  onAreasRead,
+  onAreasReadForPicker,
   validateCuit
 } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
@@ -23,7 +23,7 @@ class RegisterCommerce extends Component {
 
   componentDidMount() {
     this.props.onCommerceFormOpen();
-    this.props.onAreasRead();
+    this.props.onAreasReadForPicker();
   }
 
   componentDidUpdate(prevProps) {
@@ -258,6 +258,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceFormOpen,
-  onAreasRead,
+  onAreasReadForPicker,
   validateCuit
 })(RegisterCommerce);

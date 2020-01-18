@@ -19,7 +19,7 @@ export const onClientReviewValueChange = payload => {
   return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload };
 };
 
-export const onCreateClientReview = ({
+export const onClientReviewCreate = ({
   commerceId,
   rating,
   comment,
@@ -70,7 +70,7 @@ export const onCreateClientReview = ({
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_SAVE_FAIL }));
 };
 
-export const readClientReview = ({ clientId, reviewId }) => dispatch => {
+export const onClientReviewReadById = ({ clientId, reviewId }) => dispatch => {
   const db = firebase.firestore();
 
   if (reviewId) {

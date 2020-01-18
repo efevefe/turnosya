@@ -195,7 +195,7 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       schedule.startDate < startDate &&
       (!schedule.endDate || startDate < schedule.endDate)
     ) {
-      // si se superpone con un schedule que inicia antes, este ultimo termina donde inicia el nuevo
+      // si se superpone con un schedule que inicia antes, este último termina donde inicia el nuevo
       batch.update(schedulesRef.doc(schedule.id), {
         endDate: startDate.toDate()
       });
@@ -206,9 +206,9 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       (!endDate || (schedule.endDate && schedule.endDate <= endDate))
     ) {
       if (schedule.id === scheduleId) {
-        // el schedule que se esta modificando se elimina porque despues se crea de nuevo
+        // el schedule que se está modificando se elimina porque después se crea de nuevo
         batch.delete(schedulesRef.doc(schedule.id));
-        // al eliminarlo hace falta tambien eliminar las subcolecciones
+        // al eliminarlo hace falta también eliminar las subcolecciones
         schedule.cards.forEach(card => {
           const cardRef = schedulesRef.doc(
             `${schedule.id}/WorkShifts/${card.id}`
@@ -217,7 +217,7 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
         });
       } else {
         // si un schedule anterior queda dentro del periodo de vigencia del nuevo,
-        // se le hace una baja logica
+        // se le hace una baja lógica
         batch.update(schedulesRef.doc(schedule.id), { softDelete: new Date() });
       }
     }
@@ -228,7 +228,7 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
       (!schedule.endDate || (endDate && endDate < schedule.endDate)) &&
       schedule.startDate >= startDate
     ) {
-      // si se superpone con un schedule que esta despues, este ultimo inicia donde termina el nuevo
+      // si se superpone con un schedule que esta después, este último inicia donde termina el nuevo
       batch.update(schedulesRef.doc(schedule.id), {
         startDate: endDate.toDate()
       });
@@ -313,12 +313,12 @@ export const onScheduleDelete = ({
 
   try {
     if (endDate <= schedule.startDate) {
-      // si se esta elimiando un schedule que no estaba en vigencia todavia sin reservas o
-      // cancelando las reservas si es que tenia, se le hace una baja logica
+      // si se está elimiando un schedule que no estaba en vigencia todavía sin reservas o
+      // cancelando las reservas si es que tenía, se le hace una baja lógica
       batch.update(scheduleRef, { softDelete: new Date() });
     } else {
-      // si se esta eliminando un schedule que ya estaba en vigencia o uno que tiene reservas
-      // sin cancelarlas, se le establece una fecha de fin de vigencia lo mas pronto posible
+      // si se está eliminando un schedule que ya estaba en vigencia o uno que tiene reservas
+      // sin cancelarlas, se le establece una fecha de fin de vigencia lo más pronto posible
       batch.update(scheduleRef, { endDate: endDate.toDate() });
     }
 

@@ -1,11 +1,11 @@
 import {
   ON_COURT_VALUE_CHANGE,
-  COURT_CREATE,
-  COURT_FORM_SUBMIT,
-  COURT_EXISTS,
+  ON_COURT_CREATE,
+  ON_COURT_FORM_SUBMIT,
+  ON_COURT_EXISTS,
   ON_COURT_FORM_OPEN,
-  COURT_UPDATE,
-  COURT_DELETE
+  ON_COURT_UPDATE,
+  ON_COURT_DELETE
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -34,22 +34,22 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COURT_FORM_OPEN:
       return { ...INITIAL_STATE };
 
-    case COURT_FORM_SUBMIT:
+    case ON_COURT_FORM_SUBMIT:
       return { ...state, loading: true, existsError: '' };
 
-    case COURT_CREATE:
+    case ON_COURT_CREATE:
       Toast.show({ text: 'Cancha guardada' });
       return { ...INITIAL_STATE };
 
-    case COURT_UPDATE:
+    case ON_COURT_UPDATE:
       Toast.show({ text: 'Cambios guardados' });
       return { ...INITIAL_STATE };
 
-    case COURT_DELETE:
+    case ON_COURT_DELETE:
       Toast.show({ text: 'La cancha se ha eliminado' });
       return { ...INITIAL_STATE };
 
-    case COURT_EXISTS:
+    case ON_COURT_EXISTS:
       return {
         ...state,
         loading: false,

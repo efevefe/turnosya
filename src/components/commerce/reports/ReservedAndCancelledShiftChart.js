@@ -15,7 +15,7 @@ import {
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readReservedAndCancelledShiftByRange
+  onReservedAndCancelledShiftReadByRange
 } from '../../../actions/CommerceReportsActions';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
@@ -27,7 +27,11 @@ class ReservedAndCancelledShiftChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.readReservedAndCancelledShiftByRange(commerceId, startDate, endDate);
+    props.onReservedAndCancelledShiftReadByRange(
+      commerceId,
+      startDate,
+      endDate
+    );
 
     this.state = {
       modal: false,
@@ -52,7 +56,7 @@ class ReservedAndCancelledShiftChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.readReservedAndCancelledShiftByRange(
+    this.props.onReservedAndCancelledShiftReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
       moment(this.state.modalEndDate)
@@ -174,5 +178,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readReservedAndCancelledShiftByRange
+  onReservedAndCancelledShiftReadByRange
 })(ReservedAndCancelledShiftChart);

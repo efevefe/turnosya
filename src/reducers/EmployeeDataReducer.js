@@ -1,13 +1,11 @@
 import {
   ON_EMPLOYEE_VALUE_CHANGE,
   ON_EMPLOYEE_VALUES_RESET,
-  ON_EMPLOYEE_NAME_CLEAR,
   ON_USER_SEARCHING,
   ON_USER_SEARCH_SUCCESS,
   ON_USER_SEARCH_FAIL,
   ON_EMPLOYEE_SAVING,
   ON_EMPLOYEE_SAVE_FAIL,
-  EMPLOYEE_VALIDATION_ERROR,
   ON_EMPLOYEE_DELETED,
   ON_EMPLOYEE_CREATED,
   ON_EMPLOYEE_UPDATED
@@ -32,9 +30,6 @@ export default (state = INITIAL_STATE, action) => {
     case ON_EMPLOYEE_VALUE_CHANGE:
       return { ...state, ...action.payload };
 
-    case ON_EMPLOYEE_NAME_CLEAR:
-      return { ...state, firstName: '', lastName: '', phone: '' };
-
     case ON_USER_SEARCHING:
       return { ...state, emailLoading: true, emailError: '' };
 
@@ -57,9 +52,6 @@ export default (state = INITIAL_STATE, action) => {
     case ON_EMPLOYEE_UPDATED:
       Toast.show({ text: 'Empleado guardado exitosamente. ' });
       return { ...state, saveLoading: false };
-
-    case EMPLOYEE_VALIDATION_ERROR:
-      return { ...state, emailError: action.payload };
 
     case ON_EMPLOYEE_DELETED:
       Toast.show({ text: 'Empleado eliminado exitosamente.' });

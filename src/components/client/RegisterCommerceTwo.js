@@ -7,7 +7,7 @@ import { trimString } from '../../utils';
 import { MAIN_COLOR } from '../../constants';
 import { CardSection, Button, Input, Picker } from '../common';
 import {
-  onCreateCommerce,
+  onCommerceCreate,
   onCommerceValueChange,
   onProvincesIdRead,
   onLocationValueChange
@@ -46,7 +46,7 @@ class RegisterCommerceTwo extends Component {
         latitude,
         longitude
       } = this.props;
-      this.props.onCreateCommerce(
+      this.props.onCommerceCreate(
         {
           name,
           cuit,
@@ -262,7 +262,7 @@ const mapStateToProps = state => {
 };
 export default connect(mapStateToProps, {
   onCommerceValueChange,
-  onCreateCommerce,
+  onCommerceCreate,
   onProvincesIdRead,
   onLocationValueChange
 })(RegisterCommerceTwo);

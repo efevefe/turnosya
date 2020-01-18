@@ -14,7 +14,7 @@ import {
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readDailyReservationsByRange
+  onDailyReservationsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -24,7 +24,7 @@ class DailyReservationsChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.readDailyReservationsByRange(commerceId, startDate, endDate);
+    props.onDailyReservationsReadByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
@@ -49,7 +49,7 @@ class DailyReservationsChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.readDailyReservationsByRange(
+    this.props.onDailyReservationsReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
       moment(this.state.modalEndDate)
@@ -148,5 +148,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readDailyReservationsByRange
+  onDailyReservationsReadByRange
 })(DailyReservationsChart);
