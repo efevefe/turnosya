@@ -15,7 +15,7 @@ import {
   ON_ACTIVE_SCHEDULES_READ
 } from '../actions/types';
 import { Toast } from '../components/common';
-import { formattedMoment } from '../utils';
+import { formattedMoment } from '../utils/functions';
 
 const INITIAL_WORKSHIFTS = {
   id: '',

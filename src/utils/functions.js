@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { AREAS } from '../constants';
-import store from '../reducers';
+import store from '../reducers/index';
 
 export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
   if (!area) {
