@@ -66,10 +66,7 @@ export const onClientCancelReservation = ({
   reservationId,
   commerceId,
   navigation,
-  title,
-  body,
-  tokens,
-  connection
+  notification
 }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -99,7 +96,7 @@ export const onClientCancelReservation = ({
           batch
             .commit()
             .then(() => {
-              sendPushNotification({ title, body, tokens, connection });
+              sendPushNotification(notification);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

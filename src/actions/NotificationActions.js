@@ -1,14 +1,15 @@
 import {
-  ON_TOKEN_NOTIFICATION_READ,
-  ON_TOKEN_NOTIFICATION_READ_FAIL
+  ON_NOTIFICATION_TOKENS_READ,
+  ON_NOTIFICATION_TOKENS_READ_FAIL
 } from './types';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
+import { Toast, Menu } from '../components/common';
 
-export const readCommerceTokenNotification = commerceId => {
+export const readCommerceNotificationTokens = commerceId => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -19,13 +20,13 @@ export const readCommerceTokenNotification = commerceId => {
         querySnapshot.forEach(doc =>
           tokens.push({ token: doc.id, activity: doc.data().activity })
         );
-        dispatch({ type: ON_TOKEN_NOTIFICATION_READ, payload: tokens });
+        dispatch({ type: ON_NOTIFICATION_TOKENS_READ, payload: tokens });
       })
-      .catch(() => dispatch({ type: ON_TOKEN_NOTIFICATION_READ_FAIL }));
+      .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
   };
 };
 
-export const readCientTokenNotification = clientId => {
+export const readClientNotificationTokens = clientId => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -34,14 +35,15 @@ export const readCientTokenNotification = clientId => {
       .then(querySnapshot => {
         const tokens = [];
         querySnapshot.forEach(doc => tokens.push(doc.id));
-        dispatch({ type: ON_TOKEN_NOTIFICATION_READ, payload: tokens });
+        dispatch({ type: ON_NOTIFICATION_TOKENS_READ, payload: tokens });
       })
-      .catch(() => dispatch({ type: ON_TOKEN_NOTIFICATION_READ_FAIL }));
+      .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
   };
 };
 
-export const sendPushNotification = ({ title, body, tokens, connection }) => {
-  if (tokens.length > 0) {
+export const sendPushNotification = notification => {
+  const { title, body, tokens, connection } = notification;
+  if (tokens.length) {
     tokens.forEach(async token => {
       if (token.activity === 1) {
         const message = {
@@ -49,8 +51,7 @@ export const sendPushNotification = ({ title, body, tokens, connection }) => {
           sound: 'default',
           title,
           body,
-          _displayInForeground: true,
-          data: { data: 'goes here' }
+          _displayInForeground: true
         };
         const response = await fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
@@ -61,7 +62,6 @@ export const sendPushNotification = ({ title, body, tokens, connection }) => {
           },
           body: JSON.stringify(message)
         });
-        debugger;
         const data = response.status;
       }
     });
@@ -70,9 +70,7 @@ export const sendPushNotification = ({ title, body, tokens, connection }) => {
   }
 };
 
-export const registerForClientPushNotifications = async () => {
-  const { currentUser } = firebase.auth();
-  const db = firebase.firestore();
+export const onPushNotificationTokenRegister = async () => {
   if (Constants.isDevice) {
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
@@ -83,52 +81,35 @@ export const registerForClientPushNotifications = async () => {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
+      Toast.show({
+        text: 'No se pudo enlazar el dispositivo para el uso de notificaciones'
+      });
     }
-    let token = await Notifications.getExpoPushTokenAsync();
+    let tokens = await Notifications.getExpoPushTokenAsync();
 
-    db.doc(`Profiles/${currentUser.uid}/Token/${token}`).set({ activity: 1 });
+    // Se registra el token asociado a cada cuenta, puede ser mas de uno, junto a ese token se registra
+    //un campo activity indicado si el usuario esta logueado en ese dispositivo,en este caso el activity es 1
+    //y se procede a enviar la notificacion al dispositivo, en caso contrario es 0 y no se envia pero
+    // igualmente se almacena en base de dato.
+    const { currentUser } = firebase.auth();
+    const db = firebase.firestore();
+    db.doc(`Profiles/${currentUser.uid}/Token/${tokens}`).set({ activity: 1 });
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
       .then(doc => {
         if (doc.data().commerceId != null)
-          db.doc(`Commerces/${doc.data().commerceId}/Token/${token}`).set({
+          db.doc(`Commerces/${doc.data().commerceId}/Token/${tokens}`).set({
             activity: 1
           });
       });
   } else {
-    alert('Must use physical device for Push Notifications');
+    Toast.show({
+      text: 'Debe usar un dispositivo físico para el uso de notificaciones'
+    });
   }
 };
 
-/* export const registerTokenOnLogout = async (currentUser, commerceId) => {
-  // let token = await
-  const db = firebase.firestore();
-  if (Constants.isDevice) {
-    const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS
-    );
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    let token = await Notifications.getExpoPushTokenAsync();
-    db.doc(`Profiles/${currentUser}/Token/${token}`).set({ activity: 22 });
-    db.doc(`Commerces/${commerceId}/Token/${token}`).set({ activity: 0 });
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-}; */
-
 export const getToken = async commerceId => {
-  const db = firebase.firestore();
-  const { currentUser } = firebase.auth();
   if (Constants.isDevice) {
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
@@ -139,18 +120,21 @@ export const getToken = async commerceId => {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
       return;
     }
-    let token = await Notifications.getExpoPushTokenAsync();
+    let tokens = await Notifications.getExpoPushTokenAsync();
+    const { currentUser } = firebase.auth();
+    const db = firebase.firestore();
     await db
-      .doc(`Profiles/${currentUser.uid}/Token/${token}`)
+      .doc(`Profiles/${currentUser.uid}/Token/${tokens}`)
       .set({ activity: 0 });
     if (commerceId !== null)
       await db
-        .doc(`Commerces/${commerceId}/Token/${token}`)
+        .doc(`Commerces/${commerceId}/Token/${tokens}`)
         .set({ activity: 0 });
   } else {
-    alert('Must use physical device for Push Notifications');
+    Toast.show({
+      text: 'Debe usar un dispositivo físico para el uso de notificaciones'
+    });
   }
 };

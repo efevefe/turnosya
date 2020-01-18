@@ -19,10 +19,7 @@ export const onClientCourtReservationCreate = ({
   slot,
   price,
   light,
-  title,
-  body,
-  tokens,
-  connection
+  notification
 }) => {
   // using batched writes
   const db = firebase.firestore();
@@ -66,7 +63,7 @@ export const onClientCourtReservationCreate = ({
         batch
           .commit()
           .then(() => {
-            sendPushNotification({ title, body, tokens,connection });
+            sendPushNotification(notification);
             dispatch({ type: ON_COURT_RESERVATION_CREATE });
           })
           .catch(error => {
@@ -88,10 +85,7 @@ export const onCommerceCourtReservationCreate = ({
   slot,
   light,
   price,
-  title,
-  body,
-  tokens,
-  connection
+  notification
 }) => {
   const db = firebase.firestore();
 
@@ -114,7 +108,7 @@ export const onCommerceCourtReservationCreate = ({
         state: null
       })
       .then(() => {
-        sendPushNotification({ title, body, tokens, connection });
+        sendPushNotification(notification);
         dispatch({ type: ON_COURT_RESERVATION_CREATE });
       })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));

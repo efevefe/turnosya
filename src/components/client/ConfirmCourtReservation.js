@@ -9,7 +9,7 @@ import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
 import {
   onCourtReservationValueChange,
   onClientCourtReservationCreate,
-  readCommerceTokenNotification
+  readCommerceNotificationTokens
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
 import moment from 'moment';
@@ -29,7 +29,7 @@ class ConfirmCourtReservation extends Component {
     });
 
     this.priceButtons();
-    this.props.readCommerceTokenNotification(this.props.commerceId);
+    this.props.readCommerceNotificationTokens(this.props.commerceId);
   }
 
   renderBackButton = () => {
@@ -104,7 +104,8 @@ class ConfirmCourtReservation extends Component {
       MONTHS[moment(slot.startDate).month()]
     } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
     const title = 'Turno Reservado';
-    const connection = `Commerces/${commerce.objectID}/Notifications`
+    const connection = `Commerces/${commerce.objectID}/Notifications`;
+    notification = { title, body, tokens: this.props.tokens, connection };
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       courtId: court.id,
@@ -112,10 +113,7 @@ class ConfirmCourtReservation extends Component {
       slot,
       price,
       light,
-      title,
-      body,
-      tokens: this.props.tokens,
-      connection
+      notification
     });
   };
 
@@ -239,7 +237,7 @@ const mapStateToProps = state => {
     saved,
     loading
   } = state.courtReservation;
-  const { tokens } = state.notificationToken;
+  const { tokens } = state.notification;
   const { commerceId } = state.commerceData;
 
   return {
@@ -259,5 +257,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCourtReservationValueChange,
   onClientCourtReservationCreate,
-  readCommerceTokenNotification
+  readCommerceNotificationTokens
 })(ConfirmCourtReservation);

@@ -192,6 +192,6 @@ export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
 
 //Notification
 
-export const ON_TOKEN_NOTIFICATION_READ = 'on_token_notification_read';
-export const ON_TOKEN_NOTIFICATION_READ_FAIL =
-  'on_token_notification_read_fail';
+export const ON_NOTIFICATION_TOKENS_READ = 'on_notification_tokens_read';
+export const ON_NOTIFICATION_TOKENS_READ_FAIL =
+  'on_notification_tokens_read_fail';
