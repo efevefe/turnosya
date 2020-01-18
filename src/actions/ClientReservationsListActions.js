@@ -8,7 +8,7 @@ import {
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
 import moment from 'moment';
-import { sendPushNotification } from '../actions/NotificationActions';
+import { sendNotificationsTuCommerce } from '../actions/NotificationActions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -96,7 +96,7 @@ export const onClientCancelReservation = ({
           batch
             .commit()
             .then(() => {
-              sendPushNotification(notification);
+              sendNotificationsTuCommerce(notification,commerceId);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

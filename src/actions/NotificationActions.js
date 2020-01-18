@@ -13,12 +13,12 @@ export const readCommerceNotificationTokens = commerceId => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection(`Commerces/${commerceId}/Token`)
+    db.collection(`Commerces/${commerceId}/Tokens`)
       .get()
       .then(querySnapshot => {
         const tokens = [];
         querySnapshot.forEach(doc =>
-          tokens.push({ token: doc.id, activity: doc.data().activity })
+          tokens.push({ token: doc.id})
         );
         dispatch({ type: ON_NOTIFICATION_TOKENS_READ, payload: tokens });
       })
@@ -30,7 +30,7 @@ export const readClientNotificationTokens = clientId => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection(`Profiles/${clientId}/Token`)
+    db.collection(`Profiles/${clientId}/Tokens`)
       .get()
       .then(querySnapshot => {
         const tokens = [];
@@ -40,12 +40,20 @@ export const readClientNotificationTokens = clientId => {
       .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
   };
 };
+export const sendNotificationsTuCommerce = (notificacion, commerceId) => {
+  const path = `Commerces/${commerceId}/Notifications`;
+  sendPushNotification(notificacion, path);
+};
 
-export const sendPushNotification = notification => {
-  const { title, body, tokens, connection } = notification;
+export const sendNotificationsTuClient = (notificacion, clientId) => {
+  const path = `Profiles/${clientId}/Notifications`;
+  sendPushNotification(notificacion, path);
+};
+
+export const sendPushNotification = (notification, path) => {
+  const { title, body, tokens } = notification;
   if (tokens.length) {
     tokens.forEach(async token => {
-      if (token.activity === 1) {
         const message = {
           to: token.token,
           sound: 'default',
@@ -64,9 +72,9 @@ export const sendPushNotification = notification => {
         });
         const data = response.status;
       }
-    });
+    );
     const db = firebase.firestore();
-    db.collection(connection).add({ title, body, date: new Date() });
+    db.collection(path).add({ title, body, date: new Date() });
   }
 };
 
@@ -85,22 +93,17 @@ export const onPushNotificationTokenRegister = async () => {
         text: 'No se pudo enlazar el dispositivo para el uso de notificaciones'
       });
     }
-    let tokens = await Notifications.getExpoPushTokenAsync();
+    let token = await Notifications.getExpoPushTokenAsync();
 
-    // Se registra el token asociado a cada cuenta, puede ser mas de uno, junto a ese token se registra
-    //un campo activity indicado si el usuario esta logueado en ese dispositivo,en este caso el activity es 1
-    //y se procede a enviar la notificacion al dispositivo, en caso contrario es 0 y no se envia pero
-    // igualmente se almacena en base de dato.
+    // Se registra el token asociado a cada cuenta, puede ser mas de uno
     const { currentUser } = firebase.auth();
     const db = firebase.firestore();
-    db.doc(`Profiles/${currentUser.uid}/Token/${tokens}`).set({ activity: 1 });
+    db.doc(`Profiles/${currentUser.uid}/Tokens/${token}`).set({})
     db.doc(`Profiles/${currentUser.uid}`)
       .get()
       .then(doc => {
         if (doc.data().commerceId != null)
-          db.doc(`Commerces/${doc.data().commerceId}/Token/${tokens}`).set({
-            activity: 1
-          });
+          db.doc(`Commerces/${doc.data().commerceId}/Tokens/${token}`).set({});
       });
   } else {
     Toast.show({
@@ -122,17 +125,15 @@ export const getToken = async commerceId => {
     if (finalStatus !== 'granted') {
       return;
     }
-    let tokens = await Notifications.getExpoPushTokenAsync();
+    let token = await Notifications.getExpoPushTokenAsync();
     const { currentUser } = firebase.auth();
     const db = firebase.firestore();
     await db
-      .doc(`Profiles/${currentUser.uid}/Token/${tokens}`)
-      .set({ activity: 0 });
-    if (commerceId !== null)
+      .doc(`Profiles/${currentUser.uid}/Tokens/${token}`).delete()
+      if (commerceId !== null)
       await db
-        .doc(`Commerces/${commerceId}/Token/${tokens}`)
-        .set({ activity: 0 });
-  } else {
+        .doc(`Commerces/${commerceId}/Tokens/${token}`).delete()
+      } else {
     Toast.show({
       text: 'Debe usar un dispositivo físico para el uso de notificaciones'
     });

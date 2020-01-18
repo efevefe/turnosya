@@ -6,7 +6,7 @@ import {
   ON_COURT_RESERVATION_CREATE,
   ON_COURT_RESERVATION_CREATE_FAIL
 } from './types';
-import { sendPushNotification } from '../actions';
+import { sendNotificationsTuCommerce } from '../actions';
 
 export const onCourtReservationValueChange = ({ prop, value }) => {
   return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
@@ -63,7 +63,7 @@ export const onClientCourtReservationCreate = ({
         batch
           .commit()
           .then(() => {
-            sendPushNotification(notification);
+            sendNotificationsTuCommerce(notification,commerceId);
             dispatch({ type: ON_COURT_RESERVATION_CREATE });
           })
           .catch(error => {
@@ -108,7 +108,7 @@ export const onCommerceCourtReservationCreate = ({
         state: null
       })
       .then(() => {
-        sendPushNotification(notification);
+        sendNotificationsTuCommerce(notification,commerceId);
         dispatch({ type: ON_COURT_RESERVATION_CREATE });
       })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));

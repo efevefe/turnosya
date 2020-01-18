@@ -12,7 +12,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_NOTIFICATION_TOKENS_READ:
       return { ...state, tokens: action.payload };
       case ON_NOTIFICATION_TOKENS_READ_FAIL:
-      return { ...state}
+      return state
     default:
       return state;
   }

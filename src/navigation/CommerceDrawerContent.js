@@ -30,8 +30,13 @@ class CommerceDrawerContent extends Component {
           }}
         />
         <DrawerItem
-          title="Configuración"
+          title="Notificaciones"
           icon="md-settings"
+          onPress={() => this.props.navigation.navigate('commerceSettings')}
+        />
+        <DrawerItem
+          title="Configuración"
+          icon="md-notifications-outline"
           onPress={() => this.props.navigation.navigate('commerceSettings')}
         />
         <DrawerItem
@@ -52,7 +57,8 @@ const mapStateToProps = state => {
   return { name, profilePicture, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { onLogout, onCommerceRead, onScheduleValueChange }
-)(CommerceDrawerContent);
+export default connect(mapStateToProps, {
+  onLogout,
+  onCommerceRead,
+  onScheduleValueChange
+})(CommerceDrawerContent);

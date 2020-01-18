@@ -138,8 +138,7 @@ class ClientReservationDetails extends Component {
       'HH:mm'
     )} fue cancelado`;
     const title = 'Turno Cancelado';
-    const connection = `Commerces/${commerceId}/Notifications`;
-    notification = { title, body, tokens: this.props.tokens, connection };
+    notification = { title, body, tokens: this.props.tokens};
     this.setState({ optionsVisible: false });
     this.props.onClientCancelReservation({
       reservationId: id,
