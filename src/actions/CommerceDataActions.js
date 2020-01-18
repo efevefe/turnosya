@@ -9,6 +9,7 @@ import {
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
+  ON_COMMERCE_MP_TOKEN_READ,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
@@ -355,4 +356,21 @@ export const onCommerceDelete = (password, navigation = null) => {
         dispatch({ type: ON_COMMERCE_DELETE_FAIL });
       });
   };
+};
+
+export const readCommerceMPagoToken = commerceId => dispatch => {
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        dispatch({
+          type: ON_COMMERCE_MP_TOKEN_READ,
+          payload: snapshot.docs[0].id
+        });
+      }
+    })
+    .catch(err => console.log(err));
 };

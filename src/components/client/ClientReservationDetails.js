@@ -25,7 +25,8 @@ import {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview
+  readClientReview,
+  readCommerceMPagoToken
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 
@@ -46,7 +47,7 @@ class ClientReservationDetails extends Component {
   // ** Lifecycle methods **
 
   componentDidMount() {
-    // puse esta misma action para que traiga el tiempi minimo de cancelacion
+    // puse esta misma action para que traiga el tiempo minimo de cancelacion
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
       selectedDate: this.state.reservation.startDate
@@ -61,6 +62,8 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    this.props.readCommerceMPagoToken(this.state.reservation.commerceId);
   }
 
   componentWillUnmount() {
@@ -259,15 +262,27 @@ class ClientReservationDetails extends Component {
   // ** Payment buttons **
 
   renderPayButton = () => {
-    return (
-      <View>
+    return this.props.mPagoToken ? (
+      <CardSection>
         <Button
           title="Pagar con Mercado Pago"
           type="solid"
-          onPress={() => console.log('pepito')}
+          onPress={() =>
+            this.props.navigation.navigate('paymentForm', {
+              reservation: this.state.reservation,
+              mPagoToken: this.props.mPagoToken
+            })
+          }
         />
-      </View>
-    );
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : null;
   };
 
   // ** Render method **
@@ -367,6 +382,7 @@ const mapStateToProps = state => {
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId } = state.clientData;
+  const { mPagoToken } = state.commerceData;
 
   return {
     loadingReservations,
@@ -379,7 +395,8 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    mPagoToken
   };
 };
 
@@ -393,5 +410,6 @@ export default connect(mapStateToProps, {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview
+  readClientReview,
+  readCommerceMPagoToken
 })(ClientReservationDetails);

@@ -20,7 +20,6 @@ app.set('view engine', 'ejs');
 //#region Payment
 app.get('/pay', (req, res) => {
   mercadopago.configure({
-    sandbox: true,
     access_token: req.query['access-token']
   });
 
@@ -32,13 +31,13 @@ app.get('/pay', (req, res) => {
         quantity: 1
       }
     ],
-    payer: {
-      email: req.query['email'] || 'example@example.com',
-      identification: {
-        type: 'clientId',
-        number: req.query['client-id'] || ''
-      }
-    },
+    // payer: {
+    //   email: req.query['email'] || 'example@example.com',
+    //   identification: {
+    //     type: 'clientId',
+    //     number: req.query['client-id'] || ''
+    //   }
+    // },
     back_urls: {
       // success: 'localhost:5000/payment-success', // son endpoints
       success: 'https://proyecto-turnosya.web.app/payment-success',
@@ -192,7 +191,8 @@ app.get('/commerce-oauth-redirect', (req, res) => {
           publicKey: data.public_key,
           refreshToken: data.refresh_token,
           userId: data.user_id,
-          expirationDate: new Date(moment().add('seconds', data.expires_in))
+          expirationDate: new Date(moment().add('seconds', data.expires_in)),
+          softDelete: null
         })
         .then(() => {
           console.log('Guardado en Firestore');

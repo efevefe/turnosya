@@ -6,7 +6,10 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -15,6 +18,7 @@ import ClientReservationsList from '../components/client/ClientReservationsList'
 import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
+import PaymentForm from '../components/client/PaymentForm';
 import CommercesMap from '../components/common/CommercesMap';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import ClientReviewsList from '../components/ClientReviewsList';
@@ -66,7 +70,7 @@ const reservationScreens = {
       title: 'Reseñas del Comercio'
     }
   }
-}
+};
 
 const filtersStack = createStackNavigator(
   {
@@ -158,6 +162,12 @@ const calendarStack = createStackNavigator(
       screen: ClientReservationDetails,
       navigationOptions: {
         title: 'Detalle del Turno'
+      }
+    },
+    paymentForm: {
+      screen: PaymentForm,
+      navigationOptions: {
+        title: 'Pagar'
       }
     }
   },

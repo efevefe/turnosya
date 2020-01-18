@@ -77,6 +77,7 @@ export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
 export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
+export const ON_COMMERCE_MP_TOKEN_READ = 'on_commerce_mp_token_read';
 
 // Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';

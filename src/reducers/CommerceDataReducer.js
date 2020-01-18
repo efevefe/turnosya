@@ -9,6 +9,7 @@ import {
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
+  ON_COMMERCE_MP_TOKEN_READ,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
@@ -42,7 +43,8 @@ const INITIAL_STATE = {
   cuitExists: false,
   confirmDeleteVisible: false,
   latitude: null,
-  longitude: null
+  longitude: null,
+  mPagoToken: null
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -88,6 +90,8 @@ export default (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
+    case ON_COMMERCE_MP_TOKEN_READ:
+      return { ...state, mPagoToken: action.payload };
     default:
       return state;
   }
