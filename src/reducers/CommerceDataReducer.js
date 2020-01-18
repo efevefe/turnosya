@@ -92,7 +92,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_CUIT_EXISTS:
       return { ...state, cuitExists: true };
 
-    case CUIT_NOON_CUIT_NOT_EXISTST_EXISTS:
+    case ON_CUIT_NOT_EXISTS:
       return { ...state, cuitExists: false };
 
     case ON_REAUTH_SUCCESS:
