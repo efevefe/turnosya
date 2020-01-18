@@ -67,34 +67,22 @@ class MostPopularShiftsChart extends Component {
   };
 
   renderChart = () => {
-    if (this.props.data.data.length) {
-      const dataBar = {
-        labels: this.props.data.labels,
-        datasets: [{ data: this.props.data.data }]
-      };
-
-      return (
-        <BarChart
-          title={
-            'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
-          xlabel="HORARIOS"
-          data={dataBar}
-        />
-      );
-    }
+    const dataBar = {
+      labels: this.props.data.labels,
+      datasets: [{ data: this.props.data.data }]
+    };
 
     return (
-      <EmptyList
+      <BarChart
         title={
-          'Parece que no hay reservas entre el ' +
+          'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
           this.props.startDate.format('DD/MM/YYYY') +
-          ' y el ' +
+          ' Y EL ' +
           this.props.endDate.format('DD/MM/YYYY')
         }
+        emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
+        xlabel="HORARIOS"
+        data={dataBar}
       />
     );
   };

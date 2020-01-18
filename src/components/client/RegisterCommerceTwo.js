@@ -28,10 +28,12 @@ class RegisterCommerceTwo extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.province.provinceId !== this.props.province.provinceId) {
       this.renderProvinceError();
+      this.renderAddressError();
+      this.renderCityError();
     }
   }
 
-  onButtonPressHandler() {
+  onRegisterButtonPress() {
     if (this.validateMinimumData()) {
       const {
         name,
@@ -94,7 +96,7 @@ class RegisterCommerceTwo extends Component {
   renderCityError = () => {
     const city = trimString(this.props.city);
 
-    if (value === '') {
+    if (city === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -210,7 +212,7 @@ class RegisterCommerceTwo extends Component {
             <Button
               title="Registrar"
               loading={this.props.loading}
-              onPress={this.onButtonPressHandler.bind(this)}
+              onPress={this.onRegisterButtonPress.bind(this)}
             />
           </CardSection>
         </View>

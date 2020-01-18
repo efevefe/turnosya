@@ -22,12 +22,16 @@ class ClientDrawerContent extends Component {
 
   onMyCommercePress = async () => {
     try {
-      (await isEmailVerified())
-        ? this.props.onMyCommerceOpen(
-            this.props.commerceId,
-            this.props.navigation
-          )
-        : this.setState({ modal: true });
+      if (await isEmailVerified()) {
+        this.props.commerceId
+          ? this.props.onMyCommerceOpen(
+              this.props.commerceId,
+              this.props.navigation
+            )
+          : this.props.navigation.navigate('welcome');
+      } else {
+        this.setState({ modal: true });
+      }
     } catch (e) {
       console.error(e);
     }

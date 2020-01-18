@@ -135,6 +135,8 @@ export const onCommerceCreate = (
               })
               .then(() => {
                 dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
+                dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
+
                 navigation.navigate('commerce');
               })
               .catch(error =>
