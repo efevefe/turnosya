@@ -21,6 +21,7 @@ import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
 import PaymentForm from '../components/client/PaymentForm';
 import CommercesMap from '../components/common/CommercesMap';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
+import PaymentDetails from '../components/PaymentDetails';
 import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
@@ -168,6 +169,12 @@ const calendarStack = createStackNavigator(
       screen: PaymentForm,
       navigationOptions: {
         title: 'Pagar'
+      }
+    },
+    paymentDetails: {
+      screen: PaymentDetails,
+      navigationOptions: {
+        title: 'Detalles del Pago'
       }
     }
   },

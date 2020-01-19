@@ -261,14 +261,17 @@ class ClientReservationDetails extends Component {
   // ** Payment buttons **
 
   renderPayButton = () => {
-    console.log(this.state.reservation);
     return this.props.mPagoToken ? (
       <CardSection>
         {this.state.reservation.paymentDate ? (
           <Button
             title="Ver detalle del pago"
             type="solid"
-            onPress={() => console.log('Navegar a detalle')}
+            onPress={() =>
+              this.props.navigation.navigate('paymentDetails', {
+                reservation: this.state.reservation
+              })
+            }
           />
         ) : (
           <Button

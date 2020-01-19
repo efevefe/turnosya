@@ -273,7 +273,11 @@ class CommerceCourtReservationDetails extends Component {
           <Button
             title="Ver detalle del pago"
             type="solid"
-            onPress={() => console.log('Navegar a detalle')}
+            onPress={() =>
+              this.props.navigation.navigate('paymentDetails', {
+                reservation: this.state.reservation
+              })
+            }
           />
         ) : (
           <Button

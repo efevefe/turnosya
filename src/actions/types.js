@@ -218,6 +218,7 @@ export const ON_ROLE_ASSIGNED = 'on_role_assigned';
 
 // Workplaces types
 export const ON_WORKPLACES_READ = 'on_workplaces_read';
+
 // Reports types
 export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
 export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
@@ -226,3 +227,8 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE =
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
+
+//Payment types
+export const ON_PAYMENT_METHOD_READ = 'on_payment_method_read';
+export const ON_PAYMENT_METHOD_READING = 'on_payment_method_reading';
+export const ON_PAYMENT_METHOD_READ_FAIL = 'on_payment_method_read_fail';
