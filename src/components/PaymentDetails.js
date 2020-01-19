@@ -11,6 +11,7 @@ class PaymentDetails extends Component {
     super(props);
 
     const reservation = props.navigation.getParam('reservation', null);
+    console.log(reservation);
 
     this.state = { reservation, client: reservation.client };
   }

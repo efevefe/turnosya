@@ -10,7 +10,10 @@ export const readReservationPaymentMethod = reservation => dispatch => {
   dispatch({ type: ON_PAYMENT_METHOD_READING });
 
   const db = firebase.firestore();
-  const { commerceId, id } = reservation;
+  const { id } = reservation;
+  const commerceId = reservation.client
+    ? reservation.client.commerceId
+    : reservation.commerceId;
 
   db.collection(`Commerces/${commerceId}/Payments`)
     .where('reservationId', '==', id)
