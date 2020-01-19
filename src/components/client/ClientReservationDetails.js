@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
@@ -244,7 +244,6 @@ class ClientReservationDetails extends Component {
     if (this.state.reservation.startDate < moment()) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -262,18 +261,27 @@ class ClientReservationDetails extends Component {
   // ** Payment buttons **
 
   renderPayButton = () => {
+    console.log(this.state.reservation);
     return this.props.mPagoToken ? (
       <CardSection>
-        <Button
-          title="Pagar con Mercado Pago"
-          type="solid"
-          onPress={() =>
-            this.props.navigation.navigate('paymentForm', {
-              reservation: this.state.reservation,
-              mPagoToken: this.props.mPagoToken
-            })
-          }
-        />
+        {this.state.reservation.paymentDate ? (
+          <Button
+            title="Ver detalle del pago"
+            type="solid"
+            onPress={() => console.log('Navegar a detalle')}
+          />
+        ) : (
+          <Button
+            title="Pagar con Mercado Pago"
+            type="solid"
+            onPress={() =>
+              this.props.navigation.navigate('paymentForm', {
+                reservation: this.state.reservation,
+                mPagoToken: this.props.mPagoToken
+              })
+            }
+          />
+        )}
         <Divider
           style={{
             backgroundColor: 'gray',
@@ -362,16 +370,7 @@ class ClientReservationDetails extends Component {
   }
 }
 
-const {
-  reviewDividerStyle,
-  overlayDividerStyle,
-  scrollViewStyle
-} = StyleSheet.create({
-  reviewDividerStyle: {
-    marginBottom: 10,
-    marginHorizontal: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });

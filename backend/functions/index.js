@@ -94,8 +94,11 @@ app.get('/payment-success', (req, res) => {
   const db = admin.firestore();
 
   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-  const reservationRef = db
+  const commerceReservationRef = db
     .collection(`Commerces/${commerceId}/Reservations`)
+    .doc(reservationId);
+  const clientReservationRef = db
+    .collection(`Profiles/${clientId}/Reservations`)
     .doc(reservationId);
 
   const batch = db.batch();
@@ -112,7 +115,8 @@ app.get('/payment-success', (req, res) => {
     merchantAccountId: merchant_account_id
   });
 
-  batch.update(reservationRef, { paymentDate: new Date() });
+  batch.update(commerceReservationRef, { paymentDate: new Date() });
+  batch.update(clientReservationRef, { paymentDate: new Date() });
 
   batch
     .commit()

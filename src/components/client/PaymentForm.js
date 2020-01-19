@@ -48,12 +48,16 @@ class PaymentForm extends React.Component {
           originWhitelist={['*']}
           mixedContentMode={'always'}
           //useWebKit={Platform.OS == 'ios'}
-          // thirdPartyCookiesEnabled={true}
+          cacheEnabled={false}
           scrollEnabled={true}
           startInLoadingState={true}
           allowUniversalAccessFromFileURLs={true}
           style={{ flex: 1, flexGrow: 1, alignSelf: 'stretch' }}
-          // onNavigationStateChange={this.onWebViewStateChange}
+          onNavigationStateChange={e =>
+            console.log(
+              'Navigation State Change: ' + e.url + ' - ' + e.mainDocumentURL
+            )
+          }
         />
       </View>
     );

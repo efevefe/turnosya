@@ -245,7 +245,6 @@ class CommerceCourtReservationDetails extends Component {
     ) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -269,13 +268,28 @@ class CommerceCourtReservationDetails extends Component {
 
   renderRegisterPaymentButton = () => {
     return (
-      <View>
-        <Button
-          title="Registrar Pago en Efectivo"
-          type="solid"
-          onPress={() => console.log('pepito')}
+      <CardSection>
+        {this.state.reservation.paymentDate ? (
+          <Button
+            title="Ver detalle del pago"
+            type="solid"
+            onPress={() => console.log('Navegar a detalle')}
+          />
+        ) : (
+          <Button
+            title="Registrar pago en efectivo"
+            type="solid"
+            onPress={() => console.log('Registrar pago en efectivo')}
+          />
+        )}
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
         />
-      </View>
+      </CardSection>
     );
   };
 
@@ -366,17 +380,7 @@ class CommerceCourtReservationDetails extends Component {
   }
 }
 
-const {
-  reviewDividerStyle,
-  overlayDividerStyle,
-  scrollViewStyle
-} = StyleSheet.create({
-  reviewDividerStyle: {
-    margin: 10,
-    marginLeft: 40,
-    marginRight: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
