@@ -11,11 +11,8 @@ import {
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 
-export const onCourtReservationsListValueChange = ({ prop, value }) => {
-  return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload: { prop, value }
-  };
+export const onCourtReservationsListValueChange = payload => {
+  return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload };
 };
 
 const formatReservation = ({ res, court, client }) => {
@@ -28,7 +25,7 @@ const formatReservation = ({ res, court, client }) => {
     client: client ? { id: client.id, ...client.data() } : null,
     court: court ? { id: court.id, ...court.data() } : null
   };
-}
+};
 
 export const onCommerceCourtTypeReservationsRead = ({
   commerceId,
@@ -98,10 +95,12 @@ export const onCommerceCourtReservationsRead = ({
         db.doc(`Profiles/${doc.data().clientId}`)
           .get()
           .then(client => {
-            reservations.push(formatReservation({
-              res: doc,
-              client: client.exists && client
-            }));
+            reservations.push(
+              formatReservation({
+                res: doc,
+                client: client.exists && client
+              })
+            );
 
             if (reservations.length === snapshot.size) {
               dispatch({
@@ -109,7 +108,7 @@ export const onCommerceCourtReservationsRead = ({
                 payload: { reservations }
               });
             }
-          })
+          });
       });
     });
 };
@@ -151,14 +150,18 @@ export const onCommerceDetailedCourtReservationsRead = ({
             db.doc(`Profiles/${doc.data().clientId}`)
               .get()
               .then(client => {
-                detailedReservations.push(formatReservation({
-                  res: doc,
-                  court,
-                  client: client.exists && client
-                }));
+                detailedReservations.push(
+                  formatReservation({
+                    res: doc,
+                    court,
+                    client: client.exists && client
+                  })
+                );
 
                 if (detailedReservations.length === snapshot.size) {
-                  detailedReservations.sort((a, b) => a.startDate - b.startDate);
+                  detailedReservations.sort(
+                    (a, b) => a.startDate - b.startDate
+                  );
 
                   dispatch({
                     type: ON_COMMERCE_COURT_RESERVATIONS_READ,
@@ -175,7 +178,7 @@ export const onCommerceCancelReservation = ({
   commerceId,
   reservationId,
   clientId,
-  cancelationReason,
+  cancellationReason,
   navigation
 }) => {
   const db = firebase.firestore();
@@ -191,7 +194,7 @@ export const onCommerceCancelReservation = ({
           state: {
             id: stateDoc.id,
             name: stateDoc.data().name,
-            cancelationReason
+            cancellationReason
           },
           cancellationDate: new Date()
         };
@@ -243,11 +246,17 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
+          if (
+            !endDate ||
+            (endDate && endDate >= moment(doc.data().startDate.toDate()))
+          )
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -256,13 +265,26 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
-  }
-}
+      .catch(error =>
+        dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
+          payload: error
+        })
+      );
+  };
+};
 
-export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => {
+export const onCourtNextReservationsRead = ({
+  commerceId,
+  courtId,
+  startDate,
+  endDate
+}) => {
   // revisar el de arriba
   const db = firebase.firestore();
 
@@ -279,11 +301,17 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
+          if (
+            !endDate ||
+            (endDate && endDate > moment(doc.data().startDate.toDate()))
+          )
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -292,13 +320,26 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
-  }
-}
+      .catch(error =>
+        dispatch({
+          type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
+          payload: error
+        })
+      );
+  };
+};
 
-export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
+export const onReservationsCancel = async (
+  db,
+  batch,
+  commerceId,
+  reservations
+) => {
   // reservations cancel
   try {
     const state = await db.doc(`ReservationStates/canceled`).get();
@@ -308,12 +349,16 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
     };
 
     reservations.forEach(res => {
-      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+      const commerceResRef = db.doc(
+        `Commerces/${commerceId}/Reservations/${res.id}`
+      );
+      const clientResRef = db.doc(
+        `Profiles/${res.clientId}/Reservations/${res.id}`
+      );
       batch.update(commerceResRef, updateObj);
       batch.update(clientResRef, updateObj);
     });
   } catch (error) {
     console.error(error);
   }
-}
+};

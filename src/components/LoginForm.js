@@ -76,29 +76,19 @@ class LoginForm extends Component {
         onBackdropPress={() => this.setState({ resetPasswordModal: false })}
         isVisible={this.state.resetPasswordModal}
       >
-        <CardSection
-          style={styles.resetPasswordInputContainer}
-        >
+        <CardSection style={styles.resetPasswordInputContainer}>
           <Input
-            label='E-Mail'
+            label="E-Mail"
             placeholder="E-mail de la cuenta"
             autoCapitalize="none"
             keyboardType="email-address"
-            color='black'
+            color="black"
             value={this.props.email}
             errorMessage={this.props.error || this.state.emailError}
-            onChangeText={value =>
-              this.props.onLoginValueChange({
-                prop: 'email',
-                value
-              })
-            }
+            onChangeText={email => this.props.onLoginValueChange({ email })}
             onFocus={() => {
               this.setState({ emailError: '' });
-              this.props.onLoginValueChange({
-                prop: 'error',
-                value: ''
-              });
+              this.props.onLoginValueChange({ error: '' });
             }}
           />
         </CardSection>
@@ -121,14 +111,18 @@ class LoginForm extends Component {
 
   onSendPasswordResetEmailPress = async () => {
     if (this.renderEmailError()) {
-      const success = await this.props.onSendPasswordResetEmail(this.props.email);
+      const success = await this.props.onSendPasswordResetEmail(
+        this.props.email
+      );
 
       if (success) {
-        Toast.show({ text: 'El correo de recuperacion se envió correctamente' });
+        Toast.show({
+          text: 'El correo de recuperacion se envió correctamente'
+        });
         this.setState({ resetPasswordModal: false });
       }
     }
-  }
+  };
 
   render() {
     const {
@@ -155,12 +149,7 @@ class LoginForm extends Component {
               keyboardType="email-address"
               value={this.props.email}
               errorMessage={this.state.emailError}
-              onChangeText={value =>
-                this.props.onLoginValueChange({
-                  prop: 'email',
-                  value
-                })
-              }
+              onChangeText={email => this.props.onLoginValueChange({ email })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -173,11 +162,8 @@ class LoginForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
-              onChangeText={value =>
-                this.props.onLoginValueChange({
-                  prop: 'password',
-                  value
-                })
+              onChangeText={password =>
+                this.props.onLoginValueChange({ password })
               }
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
@@ -323,7 +309,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onLogin, onGoogleLogin, onFacebookLogin, onLoginValueChange, onSendPasswordResetEmail }
-)(LoginForm);
+export default connect(mapStateToProps, {
+  onLogin,
+  onGoogleLogin,
+  onFacebookLogin,
+  onLoginValueChange,
+  onSendPasswordResetEmail
+})(LoginForm);

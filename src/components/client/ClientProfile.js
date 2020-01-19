@@ -106,15 +106,7 @@ class ClientProfile extends Component {
   };
 
   onCancelPress = () => {
-    const { stateBeforeChanges } = this.state;
-
-    for (prop in stateBeforeChanges) {
-      this.props.onClientDataValueChange({
-        prop,
-        value: stateBeforeChanges[prop]
-      });
-    }
-
+    this.onClientDataValueChange(this.state.stateBeforeChanges);
     this.cleanErrors();
     this.disableEdit();
   };
@@ -169,11 +161,7 @@ class ClientProfile extends Component {
       const response = await ImagePicker.launchImageLibraryAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
-
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
     } catch (error) {
@@ -197,10 +185,7 @@ class ClientProfile extends Component {
       let response = await ImagePicker.launchCameraAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
     } catch (e) {
@@ -209,7 +194,7 @@ class ClientProfile extends Component {
   };
 
   onDeletePicturePress = () => {
-    this.props.onClientDataValueChange({ prop: 'profilePicture', value: '' });
+    this.props.onClientDataValueChange({ profilePicture: '' });
     this.onEditPicturePress();
   };
 
@@ -243,13 +228,10 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onClientDataValueChange } = this.props;
+    const firstName = trimString(this.props.firstName);
 
-    onClientDataValueChange({
-      prop: 'firstName',
-      value: trimString(firstName)
-    });
-    if (trimString(firstName) === '') {
+    this.props.onClientDataValueChange({ firstName });
+    if (firstName === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -259,10 +241,10 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onClientDataValueChange } = this.props;
+    const lastName = trimString(this.props.lastName);
 
-    onClientDataValueChange({ prop: 'lastName', value: trimString(lastName) });
-    if (trimString(lastName) === '') {
+    this.props.onClientDataValueChange({ lastName });
+    if (lastName === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -366,11 +348,8 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'firstName',
-                  value
-                })
+              onChangeText={firstName =>
+                this.props.onClientDataValueChange({ firstName })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}
@@ -383,8 +362,8 @@ class ClientProfile extends Component {
               label="Apellido:"
               value={this.props.lastName}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'lastName', value })
+              onChangeText={lastName =>
+                this.props.onClientDataValueChange({ lastName })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.lastNameError}
@@ -396,8 +375,8 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'phone', value })
+              onChangeText={phone =>
+                this.props.onClientDataValueChange({ phone })
               }
               keyboardType="numeric"
               editable={this.state.editEnabled}

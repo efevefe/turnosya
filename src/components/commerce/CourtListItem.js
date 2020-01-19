@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
 import { ROLES } from '../../constants';
 import {
-  courtDelete,
+  onCourtDelete,
   onCourtFormOpen,
   onCourtValueChange
 } from '../../actions';
@@ -25,23 +25,16 @@ class CourtListItem extends Component {
   };
 
   onConfirmDeletePress = () => {
-    const { court, commerceId, courtDelete } = this.props;
+    const { court, commerceId, onCourtDelete } = this.props;
 
-    courtDelete({ id: court.id, commerceId });
+    onCourtDelete({ id: court.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   };
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
-
-    const { court } = this.props;
-
-    for (prop in court) {
-      this.props.onCourtValueChange({ prop, value: court[prop] });
-    }
-
+    this.props.onCourtValueChange(this.props.court);
     this.setState({ optionsVisible: !this.state.optionsVisible });
-
     this.props.navigation.navigate('courtForm', {
       title: 'Editar Cancha'
     });
@@ -170,7 +163,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  courtDelete,
+  onCourtDelete,
   onCourtFormOpen,
   onCourtValueChange
 })(CourtListItem);

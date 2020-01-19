@@ -5,18 +5,20 @@ import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner, EmptyList } from '../common';
 import EmployeesListItem from './EmployeesListItem';
-import { readEmployees } from '../../actions';
+import { onEmployeesRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
   componentDidMount() {
-    this.unsubEmployeesRead = this.props.readEmployees(this.props.commerceId);
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(
+      this.props.commerceId
+    );
   }
 
   componentWillUnmount() {
-    this.unsubEmployeesRead && this.unsubEmployeesRead();
+    this.unsubscribeEmployeesRead && this.unsubscribeEmployeesRead();
   }
 
   renderRow({ item }) {
@@ -74,4 +76,4 @@ const mapStateToProps = state => {
   return { employees, loading, commerceId };
 };
 
-export default connect(mapStateToProps, { readEmployees })(EmployeesList);
+export default connect(mapStateToProps, { onEmployeesRead })(EmployeesList);

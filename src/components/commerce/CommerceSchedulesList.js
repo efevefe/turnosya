@@ -82,20 +82,16 @@ class CommerceSchedulesList extends Component {
     const { selectedSchedule } = this.state;
     this.setState({ optionsVisible: false });
 
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+    let startDate = selectedSchedule.startDate;
 
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
+    if (startDate < formattedMoment()) {
+      // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
+      // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
+      // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+      startDate = formattedMoment();
     }
+
+    this.props.onScheduleValueChange({ ...selectedSchedule, startDate });
 
     this.props.navigation.navigate('scheduleRegister', {
       schedule: selectedSchedule,
@@ -143,31 +139,6 @@ class CommerceSchedulesList extends Component {
     this.props.onScheduleFormOpen();
     this.props.navigation.navigate('scheduleRegister', {
       title: 'Nuevo horario'
-    });
-  };
-
-  onScheduleEditPress = () => {
-    const { selectedSchedule } = this.state;
-    this.setState({ optionsVisible: false });
-
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
-
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
-    }
-
-    this.props.navigation.navigate('scheduleRegister', {
-      schedule: selectedSchedule,
-      title: 'Modificar horario'
     });
   };
 

@@ -5,9 +5,8 @@ import { withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import {
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  readFavoriteCommerces,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
   onCourtReservationValueChange
 } from '../../actions';
 
@@ -33,20 +32,15 @@ class CommerceListItem extends Component {
   }
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
   onCommercePress = () => {
-    this.props.onCourtReservationValueChange({
-      prop: 'commerce',
-      value: this.props.commerce
-    });
-
+    this.props.onCourtReservationValueChange({ commerce: this.props.commerce });
     this.props.navigation.navigate('commerceProfileView');
   };
 
@@ -56,10 +50,12 @@ class CommerceListItem extends Component {
     return (
       <View>
         <Text style={{ color: 'grey', fontSize: 14 }}>{areaName}</Text>
-        <Text style={{ color: 'grey', fontSize: 12 }}>{`${address}, ${city}, ${provinceName}`}</Text>
+        <Text
+          style={{ color: 'grey', fontSize: 12 }}
+        >{`${address}, ${city}, ${provinceName}`}</Text>
       </View>
     );
-  }
+  };
 
   render() {
     const {
@@ -110,13 +106,9 @@ const mapStateToProps = state => {
 };
 
 export default withNavigation(
-  connect(
-    mapStateToProps,
-    {
-      registerFavoriteCommerce,
-      deleteFavoriteCommerce,
-      readFavoriteCommerces,
-      onCourtReservationValueChange
-    }
-  )(CommerceListItem)
+  connect(mapStateToProps, {
+    onFavoriteCommerceRegister,
+    onFavoriteCommerceDelete,
+    onCourtReservationValueChange
+  })(CommerceListItem)
 );

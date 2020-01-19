@@ -23,8 +23,8 @@ import {
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
-export const onClientDataValueChange = ({ prop, value }) => {
-  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload: { prop, value } };
+export const onClientDataValueChange = payload => {
+  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload };
 };
 
 export const onRegisterFormOpen = () => {

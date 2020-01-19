@@ -6,17 +6,24 @@ import {
   ON_COURT_RESERVATION_CREATE,
   ON_COURT_RESERVATION_CREATE_FAIL,
   ON_NEW_COURT_RESERVATION
-} from "./types";
+} from './types';
 
-export const onCourtReservationValueChange = ({ prop, value }) => {
-  return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
-}
+export const onCourtReservationValueChange = payload => {
+  return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload };
+};
 
 export const onNewCourtReservation = court => {
   return { type: ON_NEW_COURT_RESERVATION, payload: court };
-}
+};
 
-export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType, slot, price, light }) => {
+export const onClientCourtReservationCreate = ({
+  commerceId,
+  courtId,
+  courtType,
+  slot,
+  price,
+  light
+}) => {
   // using batched writes
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
@@ -27,7 +34,9 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
     db.collection(`Commerces/${commerceId}/Reservations`)
       .add({})
       .then(commerceReservationRef => {
-        const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
+        const clientReservationRef = db.doc(
+          `Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`
+        );
         const batch = db.batch();
 
         const reservationData = {
@@ -40,7 +49,7 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           price,
           light,
           state: null
-        }
+        };
 
         // reserva que se guarda en el negocio
         batch.set(commerceReservationRef, {
@@ -54,18 +63,29 @@ export const onClientCourtReservationCreate = ({ commerceId, courtId, courtType,
           commerceId
         });
 
-        batch.commit()
+        batch
+          .commit()
           .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
           .catch(error => {
-            db.doc(`Commerces/${commerceId}/Reservations/${commerceReservationRef.id}`).delete();
+            db.doc(
+              `Commerces/${commerceId}/Reservations/${commerceReservationRef.id}`
+            ).delete();
             dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL });
           });
       })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
-  }
-}
+  };
+};
 
-export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clientPhone, court, slot, light, price }) => {
+export const onCommerceCourtReservationCreate = ({
+  commerceId,
+  clientName,
+  clientPhone,
+  court,
+  slot,
+  light,
+  price
+}) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -88,5 +108,5 @@ export const onCommerceCourtReservationCreate = ({ commerceId, clientName, clien
       })
       .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
-  }
-}
+  };
+};

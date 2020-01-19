@@ -1,31 +1,24 @@
 import React, { Component } from 'react';
-import {
-  FlatList,
-  Text,
-  TouchableHighlight
-} from 'react-native';
+import { FlatList, Text, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList } from '../common';
-import {
-  onCourtReservationValueChange
-} from '../../actions';
+import { onCourtReservationValueChange } from '../../actions';
 
 class CommerceCourtTypes extends Component {
   onCourtTypePress = courtType => {
-    this.props.onCourtReservationValueChange({
-      prop: 'courtType',
-      value: courtType
-    });
-
+    this.props.onCourtReservationValueChange({ courtType });
     this.props.navigation.navigate('commerceSchedule');
   };
 
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
-        onPress={this.props.navigation.state.routeName === 'commerceProfileView'
-          ? (() => this.onCourtTypePress(item.name)) : null}
+        onPress={
+          this.props.navigation.state.routeName === 'commerceProfileView'
+            ? () => this.onCourtTypePress(item.name)
+            : null
+        }
         underlayColor="transparent"
       >
         <Card
@@ -56,12 +49,8 @@ class CommerceCourtTypes extends Component {
       );
     }
 
-    return (
-      <EmptyList
-        title="Parece que no hay canchas"
-      />
-    );
-  };
+    return <EmptyList title="Parece que no hay canchas" />;
+  }
 }
 
 const mapStateToProps = state => {
@@ -69,9 +58,6 @@ const mapStateToProps = state => {
   return { courtTypesList };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onCourtReservationValueChange
-  }
-)(CommerceCourtTypes);
+export default connect(mapStateToProps, {
+  onCourtReservationValueChange
+})(CommerceCourtTypes);

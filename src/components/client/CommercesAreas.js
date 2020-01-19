@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from '../common';
-import { areasRead } from '../../actions';
+import { onAreasRead } from '../../actions';
 import CommercesAreaItem from './CommercesAreaItem';
 
 class CommercesAreas extends Component {
@@ -14,7 +14,7 @@ class CommercesAreas extends Component {
   };
 
   componentDidMount() {
-    this.props.areasRead();
+    this.props.onAreasRead();
     this.props.navigation.setParams({
       rightIcon: this.renderRightIcon()
     });
@@ -77,7 +77,4 @@ const mapStateToProps = state => {
   return { areas, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { areasRead }
-)(CommercesAreas);
+export default connect(mapStateToProps, { onAreasRead })(CommercesAreas);

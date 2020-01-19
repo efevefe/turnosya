@@ -31,23 +31,33 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_LOGIN_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      return { ...state, ...action.payload };
+
     case ON_EMAIL_VERIFY_ASKED:
       Toast.show({ text: `El email se ha enviado a ${action.payload}` });
       return { ...state };
+
     case ON_EMAIL_VERIFY_REMINDED:
       Toast.show({
         text: 'Recuerda validar tu email para mayores funcionalidades!'
       });
       return state;
+
     case ON_LOGIN:
       return { ...state, error: '', loadingLogin: true };
+
     case ON_LOGIN_FACEBOOK:
       return { ...INITIAL_STATE, loadingFacebook: true };
+
     case ON_LOGIN_GOOGLE:
       return { ...INITIAL_STATE, loadingGoogle: true };
+
     case ON_LOGIN_SUCCESS:
-      return INITIAL_STATE;
+    case ON_LOGOUT_SUCCESS:
+    case ON_LOGOUT_FAIL:
+    case ON_REAUTH_SUCCESS:
+      return { ...INITIAL_STATE };
+
     case ON_LOGIN_FAIL:
       return {
         ...state,
@@ -56,22 +66,22 @@ export default (state = INITIAL_STATE, action) => {
         loadingFacebook: false,
         loadingGoogle: false
       };
+
     case ON_LOGOUT:
       return { ...INITIAL_STATE, loading: true };
-    case ON_LOGOUT_SUCCESS:
-      return INITIAL_STATE;
-    case ON_LOGOUT_FAIL:
-      return INITIAL_STATE;
-    case ON_REAUTH_SUCCESS:
-      return INITIAL_STATE;
+
     case ON_REAUTH_FAIL:
       return { ...state, error: 'Contraseña incorrecta' };
+
     case ON_PASSWORD_RESET_EMAIL_SENDING:
       return { ...state, sendingEmail: true, error: '' };
+
     case ON_PASSWORD_RESET_EMAIL_SENT:
       return { ...state, sendingEmail: false };
+
     case ON_PASSWORD_RESET_EMAIL_FAIL:
       return { ...state, sendingEmail: false, error: 'Usuario inexistente' };
+
     default:
       return state;
   }

@@ -5,7 +5,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import { onLocationChange } from '../../actions';
+import { onLocationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
 import { Toast } from '.';
@@ -114,7 +114,7 @@ class CommerceLocationMap extends React.Component {
         completeAddress: `${address}, ${city}, ${region}, ${country}`
       });
 
-      this.props.onLocationChange(location);
+      this.props.onLocationValueChange(location);
     } catch (e) {
       console.error(e);
     }
@@ -169,7 +169,7 @@ class CommerceLocationMap extends React.Component {
       arrayOfMarkers.push(selectedLocation);
     }
 
-    return arrayOfMarkers !== []
+    return arrayOfMarkers.length
       ? this.calculateMarkersRegion(arrayOfMarkers)
       : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
@@ -348,5 +348,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onLocationChange
+  onLocationValueChange
 })(CommerceLocationMap);

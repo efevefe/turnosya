@@ -4,15 +4,12 @@ import { Card, Button as RNEButton } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
+  onEmployeeValueChange,
+  onEmployeeValuesReset,
+  onRolesRead,
   searchUserByEmail,
-  createEmployee,
-  employeeValidationError,
-  loadEmployee,
-  updateEmployee
+  onEmployeeCreate,
+  onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button } from '../common';
 import { MAIN_COLOR, ROLES } from '../../constants';
@@ -21,23 +18,29 @@ class EmployeeForm extends Component {
   state = { roleError: '', editing: false };
 
   componentDidMount() {
-    this.props.readRoles();
+    this.props.onRolesRead();
 
     const employee = this.props.navigation.getParam('employee', null);
 
     if (employee) {
       this.setState({ editing: true });
-      this.props.loadEmployee(employee);
+      this.props.onEmployeeValueChange(employee);
     }
   }
 
   componentWillUnmount() {
-    this.props.employeeClear();
+    this.props.onEmployeeValuesReset();
   }
 
-  onEmailValueChange = value => {
-    if (this.props.firstName) this.props.employeeNameClear();
-    this.props.employeeValueChange('email', value);
+  onEmailValueChange = email => {
+    this.props.firstName
+      ? this.props.onEmployeeValueChange({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email
+        })
+      : this.props.onEmployeeValueChange({ email });
   };
 
   onSavePressHandler = () => {
@@ -60,13 +63,13 @@ class EmployeeForm extends Component {
         !this.state.editing
       )
         // Si se cargó un usuario y es empleado aca entonces notificar
-        this.props.employeeValidationError(
-          'Este usuario ya es empleado de su negocio'
-        );
+        this.props.onEmployeeValueChange({
+          emailError: 'Este usuario ya es empleado de su negocio'
+        });
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.updateEmployee(
+          this.props.onEmployeeUpdate(
             {
               commerceId,
               employeeId,
@@ -76,7 +79,7 @@ class EmployeeForm extends Component {
             navigation
           );
         else
-          this.props.createEmployee(
+          this.props.onEmployeeCreate(
             {
               commerceId,
               commerceName,
@@ -90,9 +93,9 @@ class EmployeeForm extends Component {
             navigation
           );
     } else {
-      this.props.employeeValidationError(
-        'Debe cargar un usuario antes de guardar'
-      );
+      this.props.onEmployeeValueChange({
+        emailError: 'Debe cargar un usuario antes de guardar'
+      });
     }
 
     if (role.name && this.state.roleError) this.setState({ roleError: '' });
@@ -123,10 +126,19 @@ class EmployeeForm extends Component {
                 editable={!this.state.editing} // No se puede modificar la persona, porque se debe enviar invitación y eso
                 rightIcon={
                   <RNEButton
-                    type='clear'
-                    icon={{ name: 'md-search', type: 'ionicon', color: MAIN_COLOR }}
+                    type="clear"
+                    icon={{
+                      name: 'md-search',
+                      type: 'ionicon',
+                      color: MAIN_COLOR
+                    }}
                     loading={this.props.emailLoading}
-                    onPress={() => this.props.searchUserByEmail(this.props.email, this.props.commerceId)}
+                    onPress={() =>
+                      this.props.searchUserByEmail(
+                        this.props.email,
+                        this.props.commerceId
+                      )
+                    }
                     loadingProps={{ color: MAIN_COLOR }}
                     disabled={this.state.editing}
                   />
@@ -163,11 +175,13 @@ class EmployeeForm extends Component {
                 title={'Rol:'}
                 placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles.filter(role =>
-                  ROLES[role.value.roleId].value <= this.props.currentRole.value
+                items={this.props.roles.filter(
+                  role =>
+                    ROLES[role.value.roleId].value <=
+                    this.props.currentRole.value
                 )}
-                onValueChange={value =>
-                  this.props.employeeValueChange('role', value || {})
+                onValueChange={role =>
+                  this.props.onEmployeeValueChange({ role: role || {} })
                 }
                 errorMessage={this.state.roleError}
               />
@@ -232,13 +246,10 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
+  onEmployeeValueChange,
+  onEmployeeValuesReset,
+  onRolesRead,
   searchUserByEmail,
-  createEmployee,
-  employeeValidationError,
-  loadEmployee,
-  updateEmployee
+  onEmployeeCreate,
+  onEmployeeUpdate
 })(EmployeeForm);

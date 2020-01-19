@@ -26,8 +26,8 @@ const arrayOfMonths = [
 ]; // Months of year
 const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
 
-export const onCommerceReportValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload: { prop, value } };
+export const onCommerceReportValueChange = payload => {
+  return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload };
 };
 
 export const onCommerceReportValueReset = () => {
@@ -35,7 +35,7 @@ export const onCommerceReportValueReset = () => {
 };
 
 // Daily Reservations report
-export const readDailyReservationsByRange = (
+export const onDailyReservationsReadByRange = (
   commerceId,
   startDate,
   endDate
@@ -99,11 +99,7 @@ export const yearsOfActivity = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'years', value: years }
-        });
-        dispatch({
-          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'selectedYear', value: currentYear }
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -111,7 +107,7 @@ export const yearsOfActivity = commerceId => dispatch => {
     });
 };
 
-export const readMonthlyEarningsByYear = (commerceId, year) => dispatch => {
+export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -183,11 +179,7 @@ export const yearsWithReview = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'years', value: years }
-        });
-        dispatch({
-          type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { prop: 'selectedYear', value: currentYear }
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -195,7 +187,7 @@ export const yearsWithReview = commerceId => dispatch => {
     });
 };
 
-export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
+export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -244,7 +236,7 @@ export const readMonthlyReviewsByYear = (commerceId, year) => dispatch => {
 };
 
 // Reserved and Cancelled Shift Report
-export const readReservedAndCancelledShiftByRange = (
+export const onReservedAndCancelledShiftReadByRange = (
   commerceId,
   startDate,
   endDate
@@ -280,7 +272,7 @@ export const readReservedAndCancelledShiftByRange = (
 };
 
 // Most Popular Shifts Report
-export const readMostPopularShiftsByRange = (
+export const onMostPopularShiftsReadByRange = (
   commerceId,
   startDate,
   endDate

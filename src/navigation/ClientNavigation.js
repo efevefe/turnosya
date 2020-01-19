@@ -6,7 +6,10 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -45,6 +48,12 @@ const reservationScreens = {
       title: 'Dirección'
     }
   },
+  commerceLocationMap: {
+    screen: CommerceLocationMap,
+    navigationOptions: {
+      title: 'Dirección'
+    }
+  },
   commerceSchedule: {
     screen: ClientCommerceSchedule,
     navigationOptions: {
@@ -66,7 +75,7 @@ const reservationScreens = {
       title: 'Reseñas del Comercio'
     }
   }
-}
+};
 
 const filtersStack = createStackNavigator(
   {

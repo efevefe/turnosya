@@ -20,10 +20,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PictureView, Spinner } from './common';
 import {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -53,8 +52,6 @@ class CommerceProfileView extends Component {
       commerceId,
       loadingType: 'loading'
     });
-
-    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
@@ -91,23 +88,20 @@ class CommerceProfileView extends Component {
   };
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
   onMapPress = () => {
-    const { address, city, province, latitude, longitude } = this.props;
-
-    this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+    this.props.onLocationValueChange({
+      address: this.props.address,
+      city: this.props.city,
+      provinceName: this.props.province.name,
+      latitude: this.props.latitude,
+      longitude: this.props.longitude
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -314,9 +308,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 })(CommerceProfileView);
