@@ -47,7 +47,9 @@ class CommerceListItem extends Component {
       value: this.props.commerce
     });
 
-    this.props.navigation.navigate('commerceProfileView');
+    this.props.navigation.navigate('commerceProfileView', {
+      navigatedFrom: this.props.navigation.state.routeName
+    });
   };
 
   renderSubtitle = () => {
