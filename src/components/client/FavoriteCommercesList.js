@@ -42,7 +42,7 @@ class FavoriteCommercesList extends Component {
 
     if (loading) return <Spinner />;
 
-    if (onlyFavoriteCommerces.length > 0) {
+    if (onlyFavoriteCommerces.length) {
       return (
         <FlatList
           data={onlyFavoriteCommerces}

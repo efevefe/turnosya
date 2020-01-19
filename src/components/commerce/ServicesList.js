@@ -47,7 +47,7 @@ class ServicesList extends Component {
   };
 
   renderList = () => {
-    if (this.props.services.length > 0) {
+    if (this.props.services.length) {
       return (
         <FlatList
           data={this.props.services}

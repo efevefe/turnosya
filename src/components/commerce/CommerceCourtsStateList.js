@@ -75,7 +75,7 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}
