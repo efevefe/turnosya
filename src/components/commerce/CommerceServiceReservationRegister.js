@@ -35,7 +35,9 @@ class CommerceCourtReservationRegister extends Component {
                             placeholder='Nombre del cliente'
                             autoCapitalize='words'
                             value={this.props.clientName}
-                            onChangeText={this.onNameValueChange}
+                            onChangeText={clientName =>
+                              this.props.onReservationValueChange({ clientName })
+                            }
                             errorMessage={this.state.nameError}
                             onFocus={() => this.setState({ nameError: '' })}
                             onBlur={this.nameError}
@@ -46,7 +48,9 @@ class CommerceCourtReservationRegister extends Component {
                             label="Teléfono:"
                             placeholder='Teléfono del cliente (opcional)'
                             value={this.props.clientPhone}
-                            onChangeText={this.onPhoneValueChange}
+                            onChangeText={clientPhone =>
+                              this.props.onReservationValueChange({ clientPhone })
+                            }
                             errorMessage={this.state.phoneError}
                             onFocus={() => this.setState({ phoneError: '' })}
                             onBlur={this.phoneError}
@@ -56,20 +60,6 @@ class CommerceCourtReservationRegister extends Component {
             );
         }
     };
-
-    onNameValueChange = name => {
-        this.props.onReservationValueChange({
-            prop: 'clientName',
-            value: name
-        });
-    }
-
-    onPhoneValueChange = phone => {
-        this.props.onReservationValueChange({
-            prop: 'clientPhone',
-            value: phone
-        });
-    }
 
     nameError = () => {
         const { clientName } = this.props;

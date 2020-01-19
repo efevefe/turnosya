@@ -22,8 +22,8 @@ const INITIAL_WORKSHIFTS = {
   cards: [
     {
       id: 0,
-      firstShiftStart: "",
-      firstShiftEnd: "",
+      firstShiftStart: '',
+      firstShiftEnd: '',
       secondShiftStart: null,
       secondShiftEnd: null,
       days: []
@@ -44,17 +44,17 @@ const INITIAL_STATE = {
   error: null,
   slots: [],
   loading: false,
-  refreshing: false,
+  refreshing: false
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_SCHEDULE_FORM_OPEN:
       return { ...state, ...INITIAL_WORKSHIFTS, startDate: formattedMoment() };
-    case ON_SCHEDULE_VALUE_CHANGE:
-      const { prop, value } = action.payload;
 
-      return { ...state, [prop]: value };
+    case ON_SCHEDULE_VALUE_CHANGE:
+      return { ...state, ...action.payload };
+
     case ON_SCHEDULE_CARD_VALUE_CHANGE:
       const newCard = action.payload;
       var newCards = state.cards.map(card => {
@@ -64,6 +64,7 @@ export default (state = INITIAL_STATE, action) => {
       });
 
       return { ...state, cards: newCards };
+
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
       const newSelectedDays = state.selectedDays.filter(
@@ -72,33 +73,40 @@ export default (state = INITIAL_STATE, action) => {
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
+
     case ON_SCHEDULE_READING:
-      return { ...state, loading: true };
-    case ON_SCHEDULE_READ:
-      return { ...state, ...action.payload, loading: false };
-    case ON_ACTIVE_SCHEDULES_READ: // este capaz ni hace falta, se podria usar la misma otra action
-      return { ...state, schedules: action.payload, loading: false };
-    case ON_SCHEDULE_READ_EMPTY:
-      Toast.show({ text: "No se encontraron horarios de atención" });
-      return INITIAL_STATE;
-    case ON_SCHEDULE_READ_FAIL:
-      return { ...state, loading: false };
-    case ON_SCHEDULE_CREATING:
-      return { ...state, refreshing: true };
-    case ON_SCHEDULE_CREATED:
-      Toast.show({ text: "Cambios guardados" });
-
-      return { ...state, refreshing: false };
-    case ON_SCHEDULE_CREATE_FAIL:
-      Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
-
-      return { ...state, loading: false, refreshing: false };
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
-    case ON_SCHEDULE_CONFIG_UPDATED:
-      Toast.show({ text: "Cambios guardados" });
 
+    case ON_SCHEDULE_READ:
+      return { ...state, ...action.payload, loading: false };
+
+    case ON_ACTIVE_SCHEDULES_READ: // este capaz ni hace falta, se podria usar la misma otra action
+      return { ...state, schedules: action.payload, loading: false };
+
+    case ON_SCHEDULE_READ_EMPTY:
+      Toast.show({ text: 'No se encontraron horarios de atención' });
+      return { ...INITIAL_STATE };
+
+    case ON_SCHEDULE_CONFIG_UPDATED:
+      Toast.show({ text: 'Cambios guardados' });
+    case ON_SCHEDULE_READ_FAIL:
       return { ...state, loading: false };
+
+    case ON_SCHEDULE_CREATING:
+      return { ...state, refreshing: true };
+
+    case ON_SCHEDULE_CREATED:
+      Toast.show({ text: 'Cambios guardados' });
+      return { ...state, refreshing: false };
+
+    case ON_SCHEDULE_CREATE_FAIL:
+      Toast.show({ text: 'Se ha producido un error, intente nuevamente' });
+      return { ...state, loading: false, refreshing: false };
+
+    case ON_SCHEDULE_CONFIG_UPDATING:
+      return { ...state, loading: true };
+
     default:
       return state;
   }

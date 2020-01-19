@@ -6,7 +6,7 @@ import {
   ON_CLIENT_REVIEWS_READ_FAIL
 } from './types';
 
-export const readClientReviews = clientId => dispatch => {
+export const onClientReviewsRead = clientId => dispatch => {
   dispatch({ type: ON_CLIENT_REVIEWS_READING });
 
   const db = firebase.firestore();

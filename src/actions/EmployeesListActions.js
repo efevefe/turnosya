@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING } from './types';
 
-export const readEmployees = commerceId => dispatch => {
+export const onEmployeesRead = commerceId => dispatch => {
   dispatch({ type: ON_EMPLOYEES_READING });
 
   const db = firebase.firestore();
@@ -17,7 +17,7 @@ export const readEmployees = commerceId => dispatch => {
     });
 };
 
-export const readEmployeesByService = ({ commerceId, employeesIds }) => dispatch => {
+export const onEmployeesByIdRead = ({ commerceId, employeesIds }) => dispatch => {
   dispatch({ type: ON_EMPLOYEES_READING });
 
   const db = firebase.firestore();

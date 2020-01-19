@@ -36,7 +36,7 @@ class CourtList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}
@@ -78,6 +78,4 @@ const mapStateToProps = state => {
   return { courts, loading, commerceId };
 };
 
-export default connect(mapStateToProps, { onCourtFormOpen })(
-  CourtList
-);
+export default connect(mapStateToProps, { onCourtFormOpen })(CourtList);

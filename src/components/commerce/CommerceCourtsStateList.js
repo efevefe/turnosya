@@ -43,18 +43,20 @@ class CommerceCourtsStateList extends Component {
 
   onAvailableCourtPress = court => {
     this.props.onNewReservation();
-    this.props.onReservationValueChange({ prop: 'court', value: court });
+    this.props.onReservationValueChange({ court });
     this.props.navigation.navigate('courtReservationRegister');
-  }
+  };
 
   isCourtTypeSelected = courtType => {
-    const selectedCourtTypes = this.props.navigation.getParam('selectedCourtTypes');
+    const selectedCourtTypes = this.props.navigation.getParam(
+      'selectedCourtTypes'
+    );
 
     return (
       selectedCourtTypes.includes('Todas') ||
       selectedCourtTypes.includes(courtType)
     );
-  }
+  };
 
   renderRow({ item }) {
     if (!this.isCourtTypeSelected(item.court)) return;
@@ -79,7 +81,7 @@ class CommerceCourtsStateList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}

@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import moment from "moment";
 import { formatReservation } from './ReservationsListActions';
 import { AREAS } from '../constants';
 import {
@@ -17,8 +16,9 @@ export const onClientReservationsListRead = () => dispatch => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
-  return db.collection(`Profiles/${currentUser.uid}/Reservations`)
-    .where('state', "==", null)
+  return db
+    .collection(`Profiles/${currentUser.uid}/Reservations`)
+    .where('state', '==', null)
     .orderBy('startDate')
     .limit(50) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
     .onSnapshot(snapshot => {
@@ -60,7 +60,7 @@ export const onClientReservationsListRead = () => dispatch => {
     });
 };
 
-export const onClientCancelReservation = ({
+export const onClientReservationCancel = ({
   reservationId,
   commerceId,
   navigation
@@ -78,7 +78,7 @@ export const onClientCancelReservation = ({
           const cancellationData = {
             state: { id: stateDoc.id, name: stateDoc.data().name },
             cancellationDate: new Date()
-          }
+          };
 
           batch.update(
             db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`),

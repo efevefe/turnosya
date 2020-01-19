@@ -9,8 +9,8 @@ import {
   ON_NEW_SERVICE_RESERVATION
 } from "./types";
 
-export const onReservationValueChange = ({ prop, value }) => {
-  return { type: ON_RESERVATION_VALUE_CHANGE, payload: { prop, value } };
+export const onReservationValueChange = payload => {
+  return { type: ON_RESERVATION_VALUE_CHANGE, payload };
 }
 
 export const onNewReservation = () => {

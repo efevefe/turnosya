@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen, deleteEmployee } from '../../actions';
+import { onCourtFormOpen, onEmployeeDelete } from '../../actions';
 import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
@@ -23,12 +23,13 @@ class CourtListItem extends Component {
   onConfirmDeletePress = () => {
     const { commerceId, employee } = this.props;
 
-    this.props.deleteEmployee({
+    this.props.onEmployeeDelete({
       employeeId: employee.id,
       commerceId,
       profileId: employee.profileId,
       email: employee.email
     });
+    
     this.setState({ deleteVisible: false });
   };
 
@@ -142,7 +143,6 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  courtDelete,
   onCourtFormOpen,
-  deleteEmployee
+  onEmployeeDelete
 })(CourtListItem);

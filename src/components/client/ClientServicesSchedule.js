@@ -100,13 +100,8 @@ class ClientServicesSchedule extends Component {
         }
 
         this.props.onReservationValueChange({
-            prop: 'startDate',
-            value: res.startDate
-        });
-
-        this.props.onReservationValueChange({
-            prop: 'endDate',
-            value: res.endDate
+            startDate: res.startDate,
+            endDate: res.endDate
         });
 
         this.props.onNewReservation();
@@ -145,7 +140,7 @@ class ClientServicesSchedule extends Component {
             };
         });
 
-        this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+        this.props.onScheduleValueChange({ slots: newSlots });
     };
 
     render() {

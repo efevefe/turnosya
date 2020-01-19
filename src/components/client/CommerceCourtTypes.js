@@ -1,25 +1,15 @@
 import React, { Component } from 'react';
-import {
-  FlatList,
-  Text,
-  TouchableHighlight
-} from 'react-native';
+import { FlatList, Text, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList } from '../common';
-import {
-  onReservationValueChange
-} from '../../actions';
+import { onReservationValueChange } from '../../actions';
 
 class CommerceCourtTypes extends Component {
   onCourtTypePress = courtType => {
     if (this.props.navigation.state.routeName === 'commerceProfileView') {
-      this.props.onReservationValueChange({
-        prop: 'courtType',
-        value: courtType
-      });
-
-      this.props.navigation.navigate('commerceSchedule');
+      this.props.onReservationValueChange({ courtType });
+      this.props.navigation.navigate('commerceCourtsSchedule');
     }
   };
 
@@ -57,12 +47,8 @@ class CommerceCourtTypes extends Component {
       );
     }
 
-    return (
-      <EmptyList
-        title="Parece que no hay canchas"
-      />
-    );
-  };
+    return <EmptyList title="Parece que no hay canchas" />;
+  }
 }
 
 const mapStateToProps = state => {
@@ -70,9 +56,4 @@ const mapStateToProps = state => {
   return { courtTypesList };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onReservationValueChange
-  }
-)(CommerceCourtTypes);
+export default connect(mapStateToProps, { onReservationValueChange })(CommerceCourtTypes);

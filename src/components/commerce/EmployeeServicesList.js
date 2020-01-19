@@ -15,11 +15,11 @@ class EmployeeServicesList extends Component {
         const { startDate } = this.props;
 
         this.props.onNewReservation()
-        this.props.onReservationValueChange({ prop: 'service', value: service });
-        this.props.onReservationValueChange({ prop: 'price', value: service.price });
+        
         this.props.onReservationValueChange({
-            prop: 'endDate',
-            value: moment(startDate).add(parseInt(service.duration), 'minutes')
+            service,
+            price: service.price,
+            endDate: moment(startDate).add(parseInt(service.duration), 'minutes')
         });
 
         this.props.navigation.navigate('serviceReservationRegister');

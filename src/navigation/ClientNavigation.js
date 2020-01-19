@@ -6,7 +6,10 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import {
+  stackNavigationOptions,
+  tabNavigationOptions
+} from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCourtsSchedule from '../components/client/ClientCourtsSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -27,9 +30,6 @@ import ClientServicesSchedule from '../components/client/ClientServicesSchedule'
 import ConfirmServiceReservation from '../components/client/ConfirmServiceReservation';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
-
-// como estas pantallas pueden accederse desde la lupita y desde favoritos, las saque
-// a un objeto y luego las agregue a cada uno de los stacks para no tener que duplicarlas
 
 const filtersStack = createStackNavigator(
   {
@@ -56,15 +56,13 @@ const filtersStack = createStackNavigator(
   }
 );
 
-const commerceProfileGoBack = navigation => {
-  const routeName = navigation.getParam('navigatedFrom');
+const onCommerceProfileGoBack = navigation => {
+  const navigatedFrom = navigation.getParam('navigatedFrom');
 
-  if (routeName === 'favoritesList') {
-    navigation.goBack();
-    navigation.navigate(routeName);
-  } else if (routeName === 'commercesList') {
-    navigation.goBack();
-  }
+  navigation.goBack();
+
+  if (navigatedFrom === 'favoritesList')
+    navigation.navigate(navigatedFrom);
 }
 
 const searchStack = createStackNavigator(
@@ -98,7 +96,7 @@ const searchStack = createStackNavigator(
           <HeaderBackButton
             tintColor='white'
             title='Back'
-            onPress={() => commerceProfileGoBack(navigation)}
+            onPress={() => onCommerceProfileGoBack(navigation)}
           />
         )
       })
@@ -109,7 +107,7 @@ const searchStack = createStackNavigator(
         title: 'Información'
       }
     },
-    showMyAddressMap: {
+    commerceLocationMap: {
       screen: CommerceLocationMap,
       navigationOptions: {
         title: 'Dirección'
@@ -127,7 +125,7 @@ const searchStack = createStackNavigator(
         title: 'Estilistas'
       }
     },
-    commerceSchedule: {
+    commerceCourtsSchedule: {
       screen: ClientCourtsSchedule,
       navigationOptions: {
         title: 'Turnos Disponibles'

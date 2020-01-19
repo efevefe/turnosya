@@ -5,10 +5,7 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import {
-    onReservationValueChange,
-    onClientServiceReservationCreate
-} from '../../actions';
+import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 
 class ConfirmServiceReservation extends Component {
@@ -134,7 +131,4 @@ const mapStateToProps = state => {
     return { commerce, employee, service, startDate, endDate, price, areaId, saved, loading };
 };
 
-export default connect(mapStateToProps, {
-    onReservationValueChange,
-    onClientServiceReservationCreate
-})(ConfirmServiceReservation);
+export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation);

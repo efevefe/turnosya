@@ -4,8 +4,8 @@ import { NavigationActions } from 'react-navigation';
 import { ListItem, Divider, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { serviceDelete, onFormOpen, offeringServiceUpdate } from '../../actions';
 import { SUCCESS_COLOR, MAIN_COLOR } from '../../constants';
+import { onServiceDelete, onFormOpen, onServiceOfferingUpdate } from '../../actions';
 
 class ServicesListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -24,7 +24,7 @@ class ServicesListItem extends Component {
   onConfirmDeletePress = () => {
     const { service, commerceId } = this.props;
 
-    this.props.serviceDelete({ id: service.id, commerceId });
+    this.props.onServiceDelete({ id: service.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   };
 
@@ -52,7 +52,7 @@ class ServicesListItem extends Component {
       employeesIds = [...service.employeesIds, employeeId];
     }
 
-    offeringServiceUpdate({
+    onServiceOfferingUpdate({
       id: service.id,
       employeesIds,
       commerceId
@@ -142,7 +142,4 @@ class ServicesListItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  { serviceDelete, onFormOpen }
-)(ServicesListItem);
+export default connect(null, { onServiceDelete, onFormOpen })(ServicesListItem);

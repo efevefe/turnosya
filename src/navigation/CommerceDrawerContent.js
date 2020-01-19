@@ -20,10 +20,7 @@ class CommerceDrawerContent extends Component {
           title="Ser Cliente"
           icon={{ name: 'md-person' }}
           onPress={() => {
-            this.props.onScheduleValueChange({
-              prop: 'slots',
-              value: []
-            });
+            this.props.onScheduleValueChange({ slots: [] });
             this.props.navigation.navigate('client');
           }}
         />

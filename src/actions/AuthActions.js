@@ -27,8 +27,8 @@ const {
   googleScopes
 } = getEnvVars();
 
-export const onLoginValueChange = ({ prop, value }) => {
-  return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
+export const onLoginValueChange = payload => {
+  return { type: ON_LOGIN_VALUE_CHANGE, payload };
 };
 
 export const sendEmailVefification = () => {
@@ -189,7 +189,7 @@ export const onSendPasswordResetEmail = email => async dispatch => {
     dispatch({ type: ON_PASSWORD_RESET_EMAIL_FAIL, payload: error.message });
     return false;
   }
-}
+};
 
 export const userReauthenticate = async (password = null) => {
   try {

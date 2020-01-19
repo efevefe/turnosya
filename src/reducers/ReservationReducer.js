@@ -31,7 +31,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ON_RESERVATION_VALUE_CHANGE:
-            return { ...state, [action.payload.prop]: action.payload.value };
+            return { ...state, ...action.payload };
         case ON_RESERVATION_CREATING:
             return { ...state, loading: true };
         case ON_RESERVATION_CREATE:

@@ -6,18 +6,17 @@ import moment from 'moment';
 import { Menu, MenuItem, IconButton } from '../common';
 import Schedule from '../Schedule';
 import { MONTHS } from '../../constants';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
+import CourtTypesFilter from './CourtTypesFilter';
 import {
   onScheduleRead,
   onScheduleValueChange,
   onCommerceReservationsRead,
   onReservationValueChange,
-  courtsRead,
+  onCourtsRead,
   isCourtDisabledOnSlot
 } from '../../actions';
-import PermissionsAssigner from '../common/PermissionsAssigner';
-import { ROLES } from '../../constants';
-
-import CourtTypesFilter from './CourtTypesFilter';
 
 class CommerceCourtsSchedule extends Component {
   state = { selectedDate: moment(), modal: false, selectedCourtTypes: [] };
@@ -34,7 +33,7 @@ class CommerceCourtsSchedule extends Component {
       selectedDate: this.state.selectedDate
     });
 
-    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+    this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
 
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
@@ -84,13 +83,8 @@ class CommerceCourtsSchedule extends Component {
     const { startDate, endDate } = slot;
 
     this.props.onReservationValueChange({
-      prop: 'startDate',
-      value: startDate
-    });
-
-    this.props.onReservationValueChange({
-      prop: 'endDate',
-      value: endDate
+      startDate,
+      endDate
     });
 
     this.props.navigation.navigate('commerceCourtsList', {
@@ -149,7 +143,7 @@ class CommerceCourtsSchedule extends Component {
       };
     });
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+    this.props.onScheduleValueChange({ slots: newSlots });
   };
 
   onCourtTypesFilterValueChange = selectedCourtTypes => {
@@ -267,5 +261,5 @@ export default connect(mapStateToProps, {
   onScheduleValueChange,
   onCommerceReservationsRead,
   onReservationValueChange,
-  courtsRead
+  onCourtsRead
 })(CommerceCourtsSchedule);

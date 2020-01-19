@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import {
-  onMyCommerceOpen,
   onCommerceOpen,
   onLogout,
   onUserRead,
-  onScheduleValueChange,
   readUserWorkplaces,
   onCommerceRead
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/client/VerifyEmailModal';
+import { AREAS } from '../constants';
 
 class ClientDrawerContent extends Component {
   state = { modal: false, loadingId: '' };
@@ -33,6 +32,7 @@ class ClientDrawerContent extends Component {
 
             if (success && this.props.areaId) {
               this.props.navigation.navigate(`${this.props.areaId}`);
+              this.props.navigation.navigate(`${this.props.areaId}Calendar`);
             }
           } else {
             this.setState({ modal: true });
@@ -136,11 +136,9 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onMyCommerceOpen,
   onCommerceOpen,
   onLogout,
   onUserRead,
-  onScheduleValueChange,
   readUserWorkplaces,
   onCommerceRead
 })(ClientDrawerContent);

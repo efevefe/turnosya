@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connectInfiniteHits } from 'react-instantsearch/connectors';
 import { EmptyList, Spinner } from '../common';
 import CommerceListItem from './CommerceListItem';
-import { commerceHitsUpdate } from '../../actions';
+import { onCommerceHitsUpdate } from '../../actions';
 import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
@@ -14,7 +14,7 @@ class Hits extends Component {
       prevProps.hits !== this.props.hits ||
       (this.props.isFocused && !prevProps.isFocused)
     ) {
-      this.props.commerceHitsUpdate(this.props.hits);
+      this.props.onCommerceHitsUpdate(this.props.hits);
     }
   }
 
@@ -34,8 +34,8 @@ class Hits extends Component {
     ) : this.props.searching ? (
       <Spinner style={{ position: 'relative' }} />
     ) : (
-          <EmptyList title="No se encontraron negocios" />
-        );
+      <EmptyList title="No se encontraron negocios" />
+    );
   }
 }
 
@@ -52,6 +52,6 @@ const mapStateToProps = state => {
 
 const ConnectedHits = connectInfiniteHits(Hits);
 
-export default connect(mapStateToProps, { commerceHitsUpdate })(
+export default connect(mapStateToProps, { onCommerceHitsUpdate })(
   withNavigationFocus(ConnectedHits)
 );

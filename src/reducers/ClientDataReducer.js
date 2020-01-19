@@ -40,48 +40,54 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_CLIENT_DATA_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      return { ...state, ...action.payload };
+
     case ON_USER_REGISTER:
       return { ...state, loading: true, error: '' };
-    case ON_REGISTER_FORM_OPEN:
-      return { ...INITIAL_STATE };
+
+    case ON_USER_DELETED:
+      Toast.show({ text: 'Su cuenta se ha eliminado' });
     case ON_USER_REGISTER_SUCCESS:
       return { ...state, password: '', confirmPassword: '', loading: false };
-    case ON_USER_REGISTER_FAIL:
-      return { ...state, loading: false, error: 'Usuario existente' };
-    case ON_USER_READING:
-      return { ...state, refreshing: true };
-    case ON_USER_READ:
-      return { ...INITIAL_STATE, ...action.payload };
+
+    case ON_REGISTER_FORM_OPEN:
     case ON_USER_READ_FAIL:
       return { ...INITIAL_STATE };
+
+    case ON_USER_REGISTER_FAIL:
+      return { ...state, loading: false, error: 'Usuario existente' };
+
+    case ON_USER_READING:
     case ON_USER_UPDATING:
       return { ...state, refreshing: true };
+
+    case ON_USER_READ:
+      return { ...INITIAL_STATE, ...action.payload };
+
     case ON_USER_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
       return { ...state, profilePicture: action.payload, refreshing: false };
+
     case ON_USER_PASSWORD_UPDATE:
       Toast.show({ text: 'Cambios guardados' });
-      return {
-        ...state,
-        password: '',
-        confirmPassword: '',
-        refreshing: false
-      };
+      return { ...state, password: '', confirmPassword: '', refreshing: false };
+
     case ON_USER_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
+
     case ON_USER_DELETING:
       return { ...state, loading: true };
+
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
-    case ON_USER_DELETED:
-      Toast.show({ text: 'Su cuenta se ha eliminado' });
-      return INITIAL_STATE;
+
     case ON_USER_DELETE_FAIL:
       return { ...state, loading: false };
+
     case ON_WORKPLACES_READ:
       return { ...state, workplaces: action.payload };
+
     default:
       return state;
   }

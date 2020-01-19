@@ -23,7 +23,7 @@ class CommerceCourtsList extends Component {
 
   onCourtPress = court => {
     this.props.onNewReservation();
-    this.props.onReservationValueChange({ prop: 'court', value: court });
+    this.props.onReservationValueChange({ court });
     this.props.navigation.navigate('confirmCourtReservation');
   };
 
@@ -48,7 +48,7 @@ class CommerceCourtsList extends Component {
   };
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}

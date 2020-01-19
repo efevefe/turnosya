@@ -3,22 +3,22 @@ import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList, Spinner } from '../common';
-import { onReservationValueChange, readEmployees, readEmployeesByService } from '../../actions';
+import { onReservationValueChange, onEmployeesRead, onEmployeesByIdRead } from '../../actions';
 
 class CommerceEmployeesList extends Component {
     componentDidMount() {
         if (this.props.service) {
-            this.props.readEmployeesByService({
+            this.props.onEmployeesByIdRead({
                 commerceId: this.props.commerce.objectID,
                 employeesIds: this.props.service.employeesIds
             });
         } else {
-            this.props.readEmployees(this.props.commerce.objectID);
+            this.props.onEmployeesRead(this.props.commerce.objectID);
         }
     }
 
     onEmployeePress = employee => {
-        this.props.onReservationValueChange({ prop: 'employee', value: employee });
+        this.props.onReservationValueChange({ employee });
 
         if (this.props.service) {
             this.props.navigation.navigate('commerceServicesSchedule');
@@ -74,6 +74,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
     onReservationValueChange,
-    readEmployees,
-    readEmployeesByService
+    onEmployeesRead,
+    onEmployeesByIdRead
 })(CommerceEmployeesList);

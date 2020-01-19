@@ -1,7 +1,7 @@
 import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
+import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
 import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import { ROLES } from '../constants';
@@ -31,7 +31,6 @@ import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarnings
 import MonthlyReviewsChart from '../components/commerce/reports/MonthlyReviewsChart';
 import ReservedAndCancelledShiftChart from '../components/commerce/reports/ReservedAndCancelledShiftChart';
 import MostPopularShiftsChart from '../components/commerce/reports/MostPopularShiftsChart';
-import CommerceSchedule from '../components/commerce/CommerceSchedule'; // provisorio
 import CommerceCourtsSchedule from '../components/commerce/CommerceCourtsSchedule';
 import CommerceServicesSchedule from '../components/commerce/CommerceServicesSchedule';
 import CommerceServiceReservationRegister from '../components/commerce/CommerceServiceReservationRegister';
@@ -64,8 +63,7 @@ const reservationDetailsScreens = {
 
 const calendarStack = createStackNavigator(
   {
-    calendarRedirect: CommerceSchedule,
-    courtsCalendar: {
+    sportsCalendar: {
       screen: CommerceCourtsSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
@@ -74,7 +72,7 @@ const calendarStack = createStackNavigator(
         )
       })
     },
-    servicesCalendar: {
+    hairdressersCalendar: {
       screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',

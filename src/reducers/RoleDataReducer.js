@@ -10,6 +10,7 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_ROLES_READ:
       return { ...state, roles: action.payload };
+
     case ON_ROLE_ASSIGNED:
       return { ...state, ...action.payload };
     default:

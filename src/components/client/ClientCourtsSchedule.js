@@ -53,11 +53,17 @@ class ClientCourtsSchedule extends Component {
   }
 
   renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" title='Back' />;
+    return (
+      <HeaderBackButton
+        onPress={this.onBackPress}
+        tintColor="white"
+        title="Back"
+      />
+    );
   };
 
   onBackPress = () => {
-    // hace lo mismo que haria si se volviera a montar la pantalla anterior
+    // hace lo mismo que haría si se volviera a montar la pantalla anterior
     this.props.navigation.goBack(null);
 
     this.props.onCommerceCourtTypesRead({
@@ -76,7 +82,11 @@ class ClientCourtsSchedule extends Component {
       courtType: this.props.courtType
     });
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (
+      !scheduleId ||
+      (scheduleEndDate && date >= scheduleEndDate) ||
+      date < scheduleStartDate
+    ) {
       this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
         selectedDate: date
@@ -84,7 +94,7 @@ class ClientCourtsSchedule extends Component {
     }
 
     this.setState({ selectedDate: date });
-  }
+  };
 
   onSlotPress = slot => {
     if (moment() >= slot.startDate) {
@@ -101,24 +111,17 @@ class ClientCourtsSchedule extends Component {
 
     const { startDate, endDate } = slot;
 
-    this.props.onReservationValueChange({
-      prop: 'startDate',
-      value: moment(startDate)
-    });
+    this.props.onReservationValueChange({ startDate, endDate });
 
-    this.props.onReservationValueChange({
-      prop: 'endDate',
-      value: moment(endDate)
+    this.props.navigation.navigate('commerceCourtsList', {
+      title:
+        startDate.format('DD') +
+        ' de ' +
+        MONTHS[startDate.month()] +
+        ', ' +
+        startDate.format('HH:mm') +
+        ' hs.'
     });
-
-    this.props.navigation.navigate(
-      'commerceCourtsList',
-      {
-        title: startDate.format('DD') +
-          ' de ' + MONTHS[startDate.month()] +
-          ', ' + startDate.format('HH:mm') + ' hs.'
-      }
-    );
   };
 
   reservationsOnSlots = () => {
@@ -148,7 +151,7 @@ class ClientCourtsSchedule extends Component {
       };
     });
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+    this.props.onScheduleValueChange({ slots: newSlots });
   };
 
   render() {

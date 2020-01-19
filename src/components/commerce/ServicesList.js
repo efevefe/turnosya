@@ -38,7 +38,7 @@ class ServicesList extends Component {
   };
 
   renderList = () => {
-    if (this.props.services.length > 0) {
+    if (this.props.services.length) {
       return (
         <FlatList
           data={this.props.services}
@@ -81,7 +81,4 @@ const mapStateToProps = state => {
   return { services, loading, commerceId, employeeId };
 };
 
-export default connect(
-  mapStateToProps,
-  { onFormOpen }
-)(ServicesList);
+export default connect(mapStateToProps, { onFormOpen })(ServicesList);

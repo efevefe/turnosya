@@ -12,7 +12,7 @@ import {
     onReservationValueChange,
     onCommerceReservationsRead,
     onNewReservation,
-    servicesRead
+    onServicesRead
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -35,7 +35,7 @@ class CommerceServicesSchedule extends Component {
             employeeId: this.props.employeeId
         });
 
-        this.unsubscribeServicesRead = this.props.servicesRead(
+        this.unsubscribeServicesRead = this.props.onServicesRead(
             this.props.commerceId
         );
     }
@@ -121,10 +121,7 @@ class CommerceServicesSchedule extends Component {
 
         const startDate = slot.startDate;
 
-        this.props.onReservationValueChange({
-            prop: 'startDate',
-            value: startDate
-        });
+        this.props.onReservationValueChange({ startDate });
 
         this.props.onNewReservation();
 
@@ -171,7 +168,7 @@ class CommerceServicesSchedule extends Component {
             };
         });
 
-        this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+        this.props.onScheduleValueChange({ slots: newSlots });
     };
 
     renderConfigurationButton = () => {
@@ -290,5 +287,5 @@ export default connect(mapStateToProps, {
     onReservationValueChange,
     onCommerceReservationsRead,
     onNewReservation,
-    servicesRead
+    onServicesRead
 })(CommerceServicesSchedule);

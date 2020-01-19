@@ -59,11 +59,13 @@ class Schedule extends Component {
 
     //slots & shifts
     let slots = [];
-    const shifts = []
+    const shifts = [];
     const { cards } = this.props;
-    const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atencion ese dia de la semana
+    const dayShifts = cards.find(card =>
+      card.days.includes(selectedDate.day())
+    ); // horario de atención ese día de la semana
 
-    //si hay horario de atencion ese dia, genera los slots
+    //si hay horario de atención ese día, genera los slots
     if (dayShifts) {
       const {
         firstShiftStart,
@@ -81,7 +83,7 @@ class Schedule extends Component {
       slots = this.generateSlots(selectedDate, shifts);
     }
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ slots });
     this.props.onDateChanged(selectedDate);
   };
 
@@ -89,7 +91,7 @@ class Schedule extends Component {
     // selected date params
     const year = selectedDate.year();
     const month = selectedDate.month();
-    const date = selectedDate.date(); // dia del mes
+    const date = selectedDate.date(); // día del mes
 
     const { reservationMinLength } = this.props;
     const slots = [];
@@ -119,8 +121,9 @@ class Schedule extends Component {
 
       for (
         let j = 0;
-        (shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
-          shiftStartDate.format('HH:mm') === '00:00' && shiftEndDate.format('HH:mm') === '23:59');
+        shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
+        (shiftStartDate.format('HH:mm') === '00:00' &&
+          shiftEndDate.format('HH:mm') === '23:59');
         j++
       ) {
         slots.push({
@@ -145,12 +148,12 @@ class Schedule extends Component {
   badgeColor = (free, total) => {
     if (!free) {
       return MAIN_COLOR;
-    } else if (free <= (total / 2)) {
+    } else if (free <= total / 2) {
       return WARNING_COLOR;
     } else {
       return SUCCESS_COLOR;
     }
-  }
+  };
 
   badgeTitle = (free, total) => {
     switch (this.props.mode) {
@@ -236,8 +239,8 @@ class Schedule extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-            this.renderSlots()
-          )}
+          this.renderSlots()
+        )}
       </View>
     );
   }
@@ -263,6 +266,8 @@ const mapStateToProps = state => {
   const { slots, loading, id } = state.commerceSchedule;
 
   return { slots, loadingSchedule: loading, scheduleId: id };
-}
+};
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(
+  withNavigationFocus(Schedule)
+);

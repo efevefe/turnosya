@@ -38,15 +38,9 @@ class ConfirmCourtReservation extends Component {
 
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
-
     this.props.onReservationValueChange({
-      prop: 'price',
-      value: this.state.prices[selectedIndex]
-    });
-
-    this.props.onReservationValueChange({
-      prop: 'light',
-      value: !!selectedIndex // 0 = false = no light // 1 = true = light
+      price: this.state.prices[selectedIndex],
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -99,7 +93,9 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => this.props.navigation.navigate('commerceProfileView')}
+              onPress={() =>
+                this.props.navigation.navigate('commerceProfileView')
+              }
             />
           </View>
           <View style={{ alignItems: 'flex-end' }}>
@@ -140,14 +136,16 @@ class ConfirmCourtReservation extends Component {
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
-          mode='commerce'
+          mode="commerce"
           name={commerce.name}
           info={
-            commerce.address + ', ' +
-            commerce.city + ', ' +
+            commerce.address +
+            ', ' +
+            commerce.city +
+            ', ' +
             commerce.provinceName
           }
-          infoIcon='md-pin'
+          infoIcon="md-pin"
           picture={commerce.profilePicture}
           court={court}
           startDate={startDate}

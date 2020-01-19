@@ -3,20 +3,21 @@ import 'firebase/firestore';
 import algoliasearch from 'algoliasearch';
 import {
   ON_REGISTER_COMMERCE,
-  COMMERCE_PROFILE_CREATE,
+  ON_COMMERCE_PROFILE_CREATE,
   ON_COMMERCE_VALUE_CHANGE,
-  COMMERCE_FAIL,
+  ON_COMMERCE_CREATE_FAIL,
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_AREAS_READ,
+  ON_AREAS_READ_FOR_PICKER,
+  ON_COMMERCE_OPEN, // borrar
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
-  CUIT_NOT_EXISTS,
-  CUIT_EXISTS,
+  ON_CUIT_NOT_EXISTS,
+  ON_CUIT_EXISTS,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
@@ -29,14 +30,13 @@ import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
 import { ROLES } from '../constants';
 
-const { algoliaConfig } = getEnvVars();
-const { appId, adminApiKey, commercesIndex } = algoliaConfig;
+const { appId, adminApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 const client = algoliasearch(appId, adminApiKey);
 const index = client.initIndex(commercesIndex);
 
-export const onCommerceValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
+export const onCommerceValueChange = payload => {
+  return { type: ON_COMMERCE_VALUE_CHANGE, payload };
 };
 
 export const onCommerceFormOpen = () => {
@@ -67,10 +67,10 @@ export const onCommerceOpen = commerceId => dispatch => {
 
       dispatch({ type: ON_LOCATION_VALUES_RESET });
     })
-    .catch(e => console.error(e));
+    .catch(error => console.error(error));
 };
 
-export const onCreateCommerce = (commerceData, navigation) => dispatch => {
+export const onCommerceCommerce = (commerceData, navigation) => dispatch => {
   dispatch({ type: ON_REGISTER_COMMERCE });
 
   const {
@@ -153,16 +153,16 @@ export const onCreateCommerce = (commerceData, navigation) => dispatch => {
                 : {})
             })
             .then(() => {
-              dispatch({ type: COMMERCE_PROFILE_CREATE });
-              navigation.navigate(`${area.areaId}Navigation`);
+              dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
+              navigation.navigate(`${area.areaId}`);
             })
             .catch(error =>
-              dispatch({ type: COMMERCE_FAIL, payload: error })
+              dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
             );
         })
-        .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+        .catch(error => dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error }));
     })
-    .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+    .catch(error => dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error }));
 };
 
 export const onCommerceRead = commerceId => async dispatch => {
@@ -290,11 +290,12 @@ export const onCommerceUpdate = (
   }
 };
 
-export const onAreasRead = () => {
+export const onAreasReadForPicker = () => {
   const db = firebase.firestore();
 
   return dispatch => {
     db.collection('Areas')
+      .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
@@ -302,7 +303,7 @@ export const onAreasRead = () => {
         snapshot.forEach(doc =>
           areasList.push({ value: doc.id, label: doc.data().name })
         );
-        dispatch({ type: ON_AREAS_READ, payload: areasList });
+        dispatch({ type: ON_AREAS_READ_FOR_PICKER, payload: areasList });
       });
   };
 };
@@ -315,11 +316,11 @@ export const validateCuit = cuit => {
       .where('cuit', '==', cuit)
       .where('softDelete', '==', null)
       .get()
-      .then(function (querySnapshot) {
+      .then(querySnapshot => {
         if (!querySnapshot.empty) {
-          dispatch({ type: CUIT_EXISTS });
+          dispatch({ type: ON_CUIT_EXISTS });
         } else {
-          dispatch({ type: CUIT_NOT_EXISTS });
+          dispatch({ type: ON_CUIT_NOT_EXISTS });
         }
       });
   };
@@ -356,7 +357,7 @@ export const onCommerceDelete = (password, navigation = null) => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
                   type: ON_CLIENT_DATA_VALUE_CHANGE,
-                  payload: { prop: 'commerceId', value: null }
+                  payload: { commerceId: null }
                 });
 
                 if (navigation) {

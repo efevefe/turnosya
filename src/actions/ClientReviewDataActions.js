@@ -5,7 +5,7 @@ import {
   ON_CLIENT_REVIEW_SAVED,
   ON_CLIENT_REVIEW_SAVING,
   ON_CLIENT_REVIEW_SAVE_FAIL,
-  ON_CLIENT_REVIEW_CLEAR,
+  ON_CLIENT_REVIEW_VALUES_RESET,
   ON_CLIENT_REVIEW_CREATED,
   ON_CLIENT_REVIEW_DELETED,
   ON_CLIENT_REVIEW_DELETING,
@@ -15,11 +15,11 @@ import {
   ON_CLIENT_REVIEW_READ_FAIL
 } from './types';
 
-export const clientReviewValueChange = (prop, value) => {
-  return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload: { prop, value } };
+export const onClientReviewValueChange = payload => {
+  return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload };
 };
 
-export const createClientReview = ({
+export const onClientReviewCreate = ({
   commerceId,
   rating,
   comment,
@@ -70,7 +70,7 @@ export const createClientReview = ({
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_SAVE_FAIL }));
 };
 
-export const readClientReview = ({ clientId, reviewId }) => dispatch => {
+export const onClientReviewReadById = ({ clientId, reviewId }) => dispatch => {
   const db = firebase.firestore();
 
   if (reviewId) {
@@ -91,7 +91,7 @@ export const readClientReview = ({ clientId, reviewId }) => dispatch => {
   }
 };
 
-export const updateClientReview = ({
+export const onClientReviewUpdate = ({
   clientId,
   rating,
   comment,
@@ -126,7 +126,7 @@ export const updateClientReview = ({
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_SAVE_FAIL }));
 };
 
-export const deleteClientReview = ({
+export const onClientReviewDelete = ({
   clientId,
   reservationId,
   reviewId,
@@ -166,6 +166,6 @@ export const deleteClientReview = ({
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_DELETE_FAIL }));
 };
 
-export const clientReviewClear = () => {
-  return { type: ON_CLIENT_REVIEW_CLEAR };
+export const onClientReviewValuesReset = () => {
+  return { type: ON_CLIENT_REVIEW_VALUES_RESET };
 };

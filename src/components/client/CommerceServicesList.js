@@ -3,17 +3,17 @@ import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList, Spinner } from '../common';
-import { servicesRead, onReservationValueChange, servicesReadByEmployee } from '../../actions';
+import { onServicesRead, onReservationValueChange, onServicesByEmployeeRead } from '../../actions';
 
 class CommerceServicesList extends Component {
     componentDidMount() {
         if (this.props.employee) {
-            this.unsubscribeServices = this.props.servicesReadByEmployee({
+            this.unsubscribeServices = this.props.onServicesByEmployeeRead({
                 commerceId: this.props.commerce.objectID,
                 employeeId: this.props.employee.id
             });
         } else {
-            this.unsubscribeServices = this.props.servicesRead(this.props.commerce.objectID);
+            this.unsubscribeServices = this.props.onServicesRead(this.props.commerce.objectID);
         }
     }
 
@@ -22,8 +22,7 @@ class CommerceServicesList extends Component {
     }
 
     onServicePress = service => {
-        this.props.onReservationValueChange({ prop: 'service', value: service });
-        this.props.onReservationValueChange({ prop: 'price', value: service.price });
+        this.props.onReservationValueChange({ service, price: service.price });
 
         if (this.props.employee) {
             this.props.navigation.navigate('commerceServicesSchedule');
@@ -76,7 +75,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-    servicesRead,
+    onServicesRead,
     onReservationValueChange,
-    servicesReadByEmployee
+    onServicesByEmployeeRead
 })(CommerceServicesList);

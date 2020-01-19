@@ -7,7 +7,7 @@ import { trimString } from '../../utils';
 import { MAIN_COLOR } from '../../constants';
 import { CardSection, Button, Input, Picker } from '../common';
 import {
-  onCreateCommerce,
+  onCommerceCreate,
   onCommerceValueChange,
   onProvincesIdRead,
   onLocationValueChange
@@ -28,10 +28,12 @@ class RegisterCommerceTwo extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.province.provinceId !== this.props.province.provinceId) {
       this.renderProvinceError();
+      this.renderAddressError();
+      this.renderCityError();
     }
   }
 
-  onButtonPressHandler() {
+  onRegisterButtonPress() {
     if (this.validateMinimumData()) {
       const {
         name,
@@ -46,7 +48,7 @@ class RegisterCommerceTwo extends Component {
         latitude,
         longitude
       } = this.props;
-      this.props.onCreateCommerce(
+      this.props.onCommerceCreate(
         {
           name,
           cuit,
@@ -72,39 +74,33 @@ class RegisterCommerceTwo extends Component {
         : this.state.pickerPlaceholder;
 
     this.props.onCommerceValueChange({
-      prop: 'province',
-      value: { provinceId: value, name: label }
+      province: { provinceId: value, name: label }
     });
 
-    this.props.onLocationValueChange({
-      prop: 'provinceName',
-      value: index > 0 ? label : ''
-    });
+    this.props.onLocationValueChange({ provinceName: index > 0 ? label : '' });
   };
 
   renderAddressError = () => {
-    const { address, onCommerceValueChange } = this.props;
-    const value = trimString(address);
+    const address = trimString(this.props.address);
 
-    if (value === '') {
+    if (address === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
-      onCommerceValueChange({ prop: 'address', value });
+      this.props.onCommerceValueChange({ address });
       this.setState({ addressError: '' });
       return true;
     }
   };
 
   renderCityError = () => {
-    const { city, onCommerceValueChange } = this.props;
-    const value = trimString(city);
+    const city = trimString(this.props.city);
 
-    if (value === '') {
+    if (city === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
-      onCommerceValueChange({ prop: 'city', value });
+      this.props.onCommerceValueChange({ city });
       this.setState({ cityError: '' });
       return true;
     }
@@ -135,13 +131,11 @@ class RegisterCommerceTwo extends Component {
 
     if (province) {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: province.value, name }
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: '', name: '' }
+        province: { provinceId: '', name: '' }
       });
     }
   };
@@ -161,11 +155,8 @@ class RegisterCommerceTwo extends Component {
               label="Calle"
               placeholder="San Martín 30"
               value={this.props.address}
-              onChangeText={value =>
-                this.props.onLocationValueChange({
-                  prop: 'address',
-                  value
-                })
+              onChangeText={address =>
+                this.props.onLocationValueChange({ address })
               }
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
@@ -178,9 +169,7 @@ class RegisterCommerceTwo extends Component {
               label="Ciudad:"
               placeholder="Córdoba"
               value={this.props.city}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'city', value })
-              }
+              onChangeText={city => this.props.onLocationValueChange({ city })}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -223,7 +212,7 @@ class RegisterCommerceTwo extends Component {
             <Button
               title="Registrar"
               loading={this.props.loading}
-              onPress={this.onButtonPressHandler.bind(this)}
+              onPress={this.onRegisterButtonPress.bind(this)}
             />
           </CardSection>
         </View>
@@ -273,12 +262,9 @@ const mapStateToProps = state => {
     longitude
   };
 };
-export default connect(
-  mapStateToProps,
-  {
-    onCommerceValueChange,
-    onCreateCommerce,
-    onProvincesIdRead,
-    onLocationValueChange
-  }
-)(RegisterCommerceTwo);
+export default connect(mapStateToProps, {
+  onCommerceValueChange,
+  onCommerceCreate,
+  onProvincesIdRead,
+  onLocationValueChange
+})(RegisterCommerceTwo);
