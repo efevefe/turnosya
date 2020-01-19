@@ -7,9 +7,9 @@ import 'firebase/firestore';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
-import { Toast, Menu } from '../components/common';
+import { Toast } from '../components/common';
 
-export const readCommerceNotificationTokens = commerceId => {
+export const onCommercePushNotificationTokensRead = commerceId => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -17,16 +17,15 @@ export const readCommerceNotificationTokens = commerceId => {
       .get()
       .then(querySnapshot => {
         const tokens = [];
-        querySnapshot.forEach(doc =>
-          tokens.push({ token: doc.id})
-        );
+        querySnapshot.forEach(doc => tokens.push({ token: doc.id }));
         dispatch({ type: ON_NOTIFICATION_TOKENS_READ, payload: tokens });
       })
       .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
   };
 };
 
-export const readClientNotificationTokens = clientId => {
+// FVF esta no se usa
+export const onClientPushNotificationTokensRead = clientId => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -40,20 +39,22 @@ export const readClientNotificationTokens = clientId => {
       .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
   };
 };
-export const sendNotificationsTuCommerce = (notificacion, commerceId) => {
-  const path = `Commerces/${commerceId}/Notifications`;
-  sendPushNotification(notificacion, path);
+
+export const onCommercePushNotificationSend = (notification, commerceId) => {
+  const collectionPath = `Commerces/${commerceId}/Notifications`;
+  sendPushNotification({ ...notification, collectionPath });
 };
 
-export const sendNotificationsTuClient = (notificacion, clientId) => {
-  const path = `Profiles/${clientId}/Notifications`;
-  sendPushNotification(notificacion, path);
+// FVF esta no se usa
+export const onClientNotificationSend = (notification, clientId) => {
+  const collectionPath = `Profiles/${clientId}/Notifications`;
+  sendPushNotification({ ...notification, collectionPath });
 };
 
-export const sendPushNotification = (notification, path) => {
-  const { title, body, tokens } = notification;
-  if (tokens.length) {
-    tokens.forEach(async token => {
+const sendPushNotification = ({ title, body, tokens, collectionPath }) => {
+  try {
+    if (tokens.length) {
+      tokens.forEach(async token => {
         const message = {
           to: token.token,
           sound: 'default',
@@ -71,71 +72,90 @@ export const sendPushNotification = (notification, path) => {
           body: JSON.stringify(message)
         });
         const data = response.status;
+      });
+
+      const db = firebase.firestore();
+      db.collection(collectionPath).add({ title, body, date: new Date() });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const getDeviceToken = async () => {
+  // -1 (is simulator device) | 0 (permission not granted) | token value
+  try {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(
+        Permissions.NOTIFICATIONS
+      );
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(
+          Permissions.NOTIFICATIONS
+        );
+        finalStatus = status;
       }
-    );
-    const db = firebase.firestore();
-    db.collection(path).add({ title, body, date: new Date() });
+      if (finalStatus !== 'granted') {
+        return 0;
+      }
+
+      return await Notifications.getExpoPushTokenAsync();
+    } else {
+      Toast.show({
+        text: 'Debe usar un dispositivo físico para el uso de notificaciones'
+      });
+      return -1;
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 
 export const onPushNotificationTokenRegister = async () => {
-  if (Constants.isDevice) {
-    const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS
-    );
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      Toast.show({
-        text: 'No se pudo enlazar el dispositivo para el uso de notificaciones'
-      });
-    }
-    let token = await Notifications.getExpoPushTokenAsync();
+  try {
+    const deviceToken = await getDeviceToken();
 
-    // Se registra el token asociado a cada cuenta, puede ser mas de uno
-    const { currentUser } = firebase.auth();
-    const db = firebase.firestore();
-    db.doc(`Profiles/${currentUser.uid}/Tokens/${token}`).set({})
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        if (doc.data().commerceId != null)
-          db.doc(`Commerces/${doc.data().commerceId}/Tokens/${token}`).set({});
-      });
-  } else {
-    Toast.show({
-      text: 'Debe usar un dispositivo físico para el uso de notificaciones'
-    });
+    if (deviceToken.length > 2) {
+      // const tokenoftoken = deviceToken.substring(
+      //   deviceToken.indexOf('[') + 1,
+      //   deviceToken.length - 1
+      // );
+      const { currentUser } = firebase.auth();
+      const db = firebase.firestore();
+
+      db.doc(`Profiles/${currentUser.uid}/Tokens/${deviceToken}`).set({});
+      db.doc(`Profiles/${currentUser.uid}`)
+        .get()
+        .then(doc => {
+          if (doc.data().commerceId != null)
+            db.doc(
+              `Commerces/${doc.data().commerceId}/Tokens/${deviceToken}`
+            ).set({});
+        });
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 
-export const getToken = async commerceId => {
-  if (Constants.isDevice) {
-    const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS
-    );
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      return;
-    }
-    let token = await Notifications.getExpoPushTokenAsync();
-    const { currentUser } = firebase.auth();
-    const db = firebase.firestore();
-    await db
-      .doc(`Profiles/${currentUser.uid}/Tokens/${token}`).delete()
+export const onPushNotificationTokenDelete = async commerceId => {
+  try {
+    const deviceToken = await getDeviceToken();
+
+    if (deviceToken.length > 2) {
+      // const tokenoftoken = deviceToken.substring(
+      //   deviceToken.indexOf('[') + 1,
+      //   deviceToken.length - 1
+      // );
+      const { currentUser } = firebase.auth();
+      const db = firebase.firestore();
+
+      db.doc(`Profiles/${currentUser.uid}/Tokens/${deviceToken}`).delete();
       if (commerceId !== null)
-      await db
-        .doc(`Commerces/${commerceId}/Tokens/${token}`).delete()
-      } else {
-    Toast.show({
-      text: 'Debe usar un dispositivo físico para el uso de notificaciones'
-    });
+        db.doc(`Commerces/${commerceId}/Tokens/${deviceToken}`).delete();
+    }
+  } catch (e) {
+    console.error(e);
   }
 };

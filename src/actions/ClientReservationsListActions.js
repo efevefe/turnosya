@@ -8,7 +8,7 @@ import {
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
 import moment from 'moment';
-import { sendNotificationsTuCommerce } from '../actions/NotificationActions';
+import { onCommercePushNotificationSend } from '../actions/NotificationActions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -81,7 +81,7 @@ export const onClientCancelReservation = ({
           const cancellationData = {
             state: { id: stateDoc.id, name: stateDoc.data().name },
             cancellationDate: new Date()
-          }
+          };
 
           batch.update(
             db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`),
@@ -96,7 +96,7 @@ export const onClientCancelReservation = ({
           batch
             .commit()
             .then(() => {
-              sendNotificationsTuCommerce(notification,commerceId);
+              onCommercePushNotificationSend(notification, commerceId);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

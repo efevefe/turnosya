@@ -28,8 +28,7 @@ const {
 } = getEnvVars();
 import {
   onPushNotificationTokenRegister,
-  registerTokenOnLogout,
-  getToken
+  onPushNotificationTokenDelete
 } from '../actions/NotificationActions';
 
 export const onLoginValueChange = ({ prop, value }) => {
@@ -178,9 +177,10 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = commerceId => {
-  return async dispatch => {
-    await getToken(commerceId);
+export const onLogout = commerceId => async dispatch => {
+  try {
+    await onPushNotificationTokenDelete(commerceId);
+
     dispatch({ type: ON_LOGOUT });
     firebase
       .auth()
@@ -189,7 +189,9 @@ export const onLogout = commerceId => {
         dispatch({ type: ON_LOGOUT_SUCCESS });
       })
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
-  };
+  } catch (e) {
+    return dispatch => dispatch({ type: ON_LOGIN_FAIL });
+  }
 };
 
 export const onSendPasswordResetEmail = email => async dispatch => {
