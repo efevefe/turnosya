@@ -360,7 +360,7 @@ const mapStateToProps = state => {
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId } = state.clientData;
-  const { tokens } = state.notification;
+  const { tokens } = state.pushNotification;
 
   return {
     loadingReservations,

@@ -8,7 +8,7 @@ import {
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
 import moment from 'moment';
-import { onCommercePushNotificationSend } from '../actions/NotificationActions';
+import { onCommercePushNotificationSend } from '../actions/PushNotificationActions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });

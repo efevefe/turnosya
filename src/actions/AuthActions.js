@@ -29,7 +29,7 @@ const {
 import {
   onPushNotificationTokenRegister,
   onPushNotificationTokenDelete
-} from '../actions/NotificationActions';
+} from '../actions/PushNotificationActions';
 
 export const onLoginValueChange = ({ prop, value }) => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };

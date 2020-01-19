@@ -244,7 +244,7 @@ const mapStateToProps = state => {
     saved,
     loading
   } = state.courtReservation;
-  const { tokens } = state.notification;
+  const { tokens } = state.pushNotification;
 
   return {
     commerceId,
