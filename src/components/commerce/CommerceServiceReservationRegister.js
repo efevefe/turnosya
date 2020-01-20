@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { StackActions, NavigationActions } from 'react-navigation';
 import { Input, Button, CardSection } from '../common';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 import { onReservationValueChange, onCommerceServiceReservationCreate } from '../../actions';
@@ -13,15 +12,7 @@ class CommerceCourtReservationRegister extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.saved && !prevProps.saved) {
-            const navigationAction = StackActions.reset({
-                index: 1,
-                actions: [
-                    NavigationActions.navigate({ routeName: 'servicesCalendar' }),
-                    NavigationActions.navigate({ routeName: 'serviceReservationRegister' })
-                ],
-            });
-
-            this.props.navigation.dispatch(navigationAction);
+            this.props.navigation.goBack();
         }
     }
 
@@ -36,7 +27,7 @@ class CommerceCourtReservationRegister extends Component {
                             autoCapitalize='words'
                             value={this.props.clientName}
                             onChangeText={clientName =>
-                              this.props.onReservationValueChange({ clientName })
+                                this.props.onReservationValueChange({ clientName })
                             }
                             errorMessage={this.state.nameError}
                             onFocus={() => this.setState({ nameError: '' })}
@@ -49,7 +40,7 @@ class CommerceCourtReservationRegister extends Component {
                             placeholder='Teléfono del cliente (opcional)'
                             value={this.props.clientPhone}
                             onChangeText={clientPhone =>
-                              this.props.onReservationValueChange({ clientPhone })
+                                this.props.onReservationValueChange({ clientPhone })
                             }
                             errorMessage={this.state.phoneError}
                             onFocus={() => this.setState({ phoneError: '' })}

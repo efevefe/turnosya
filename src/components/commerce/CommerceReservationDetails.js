@@ -291,7 +291,7 @@ class CommerceReservationDetails extends Component {
         <Menu
           title="Informar el motivo de la cancelación"
           onBackdropPress={() => this.onBackdropPress()}
-          isVisible={this.state.optionsVisible}
+          isVisible={this.state.optionsVisible || this.props.loading}
         >
           <View style={{ alignSelf: 'stretch' }}>
             <CardSection

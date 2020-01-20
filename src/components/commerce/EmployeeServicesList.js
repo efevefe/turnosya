@@ -11,11 +11,17 @@ class EmployeeServicesList extends Component {
         title: navigation.getParam('title')
     });
 
+    componentDidUpdate(prevProps) {
+        if (!prevProps.saved && this.props.saved) {
+            this.props.navigation.replace('serviceReservationRegister');
+        }
+    }
+
     onServicePress = service => {
         const { startDate } = this.props;
 
         this.props.onNewReservation()
-        
+
         this.props.onReservationValueChange({
             service,
             price: service.price,
