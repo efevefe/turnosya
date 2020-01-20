@@ -13,7 +13,6 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_AREAS_READ_FOR_PICKER,
-  ON_COMMERCE_OPEN, // borrar
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
   ON_CUIT_NOT_EXISTS,
@@ -70,7 +69,7 @@ export const onCommerceOpen = commerceId => dispatch => {
     .catch(error => console.error(error));
 };
 
-export const onCommerceCommerce = (commerceData, navigation) => dispatch => {
+export const onCommerceCreate = (commerceData, navigation) => async dispatch => {
   dispatch({ type: ON_REGISTER_COMMERCE });
 
   const {
@@ -89,10 +88,12 @@ export const onCommerceCommerce = (commerceData, navigation) => dispatch => {
 
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
-  let docId;
+  const batch = db.batch();
 
-  db.collection(`Commerces`)
-    .add({
+  try {
+    const commerceRef = db.collection(`Commerces`).doc();
+
+    batch.set(commerceRef, {
       name,
       cuit,
       email,
@@ -107,62 +108,56 @@ export const onCommerceCommerce = (commerceData, navigation) => dispatch => {
       softDelete: null,
       creationDate: new Date()
     })
-    .then(reference => {
-      docId = reference.id;
-      const profileRef = db.doc(`Profiles/${currentUser.uid}`);
-      const employeesRef = db.collection(`Commerces/${docId}/Employees`);
 
-      profileRef
-        .get()
-        .then(profile => {
-          const { firstName, lastName, email, phone } = profile.data();
+    const commerceId = commerceRef.id;
+    const profileRef = db.doc(`Profiles/${currentUser.uid}`);
+    const employeesRef = db.collection(`Commerces/${commerceId}/Employees`).doc();
 
-          employeesRef.add({
-            profileId: profile.id,
-            email,
-            firstName,
-            lastName,
-            phone,
-            softDelete: null,
-            role: { name: ROLES['OWNER'].name, roleId: ROLES['OWNER'].roleId },
-            inviteDate: new Date(),
-            startDate: new Date()
-          })
-            .then(employeeRef => {
-              dispatch({
-                type: ON_ROLE_ASSIGNED,
-                payload: { role: ROLES['OWNER'], employeeId: employeeRef.id }
-              });
-            })
-        });
+    batch.update(profileRef, { commerceId });
 
-      profileRef
-        .update({ commerceId: docId })
-        .then(() => {
-          index
-            .addObject({
-              objectID: docId,
-              name,
-              description,
-              areaName: area.name,
-              address,
-              city,
-              provinceName: province.name,
-              ...(latitude && longitude
-                ? { _geoloc: { lat: latitude, lng: longitude } }
-                : {})
-            })
-            .then(() => {
-              dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
-              navigation.navigate(`${area.areaId}`);
-            })
-            .catch(error =>
-              dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
-            );
-        })
-        .catch(error => dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error }));
-    })
-    .catch(error => dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error }));
+    const profile = await profileRef.get();
+
+    batch.set(employeesRef, {
+      profileId: profile.id,
+      email: profile.data().email,
+      firstName: profile.data().firstName,
+      lastName: profile.data().lastName,
+      phone: profile.data().phone,
+      softDelete: null,
+      role: { name: ROLES.OWNER.name, roleId: ROLES.OWNER.roleId },
+      inviteDate: new Date(),
+      startDate: new Date()
+    });
+
+    await batch.commit();
+
+    await index.addObject({
+      objectID: commerceId,
+      name,
+      description,
+      areaName: area.name,
+      address,
+      city,
+      provinceName: province.name,
+      ...(latitude && longitude
+        ? { _geoloc: { lat: latitude, lng: longitude } }
+        : {})
+    });
+
+    dispatch({
+      type: ON_ROLE_ASSIGNED,
+      payload: { role: ROLES.OWNER, employeeId: employeesRef.id }
+    });
+
+    dispatch({ type: ON_COMMERCE_VALUE_CHANGE, payload: { commerceId } });
+
+    dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
+
+    navigation.navigate(`${area.areaId}`);
+    navigation.navigate(`${area.areaId}Calendar`);
+  } catch (error) {
+    dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error });
+  }
 };
 
 export const onCommerceRead = commerceId => async dispatch => {
@@ -308,7 +303,7 @@ export const onAreasReadForPicker = () => {
   };
 };
 
-export const validateCuit = cuit => {
+export const onCuitValidate = cuit => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -326,51 +321,67 @@ export const validateCuit = cuit => {
   };
 };
 
-export const onCommerceDelete = (password, navigation = null) => {
+export const onCommerceDelete = (password, navigation = null) => dispatch => {
+  dispatch({ type: ON_COMMERCE_DELETING });
+
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
-  let docId;
+  const batch = db.batch();
 
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_DELETING });
+  userReauthenticate(password)
+    .then(async () => {
+      dispatch({ type: ON_REAUTH_SUCCESS });
 
-    userReauthenticate(password)
-      .then(() => {
-        dispatch({ type: ON_REAUTH_SUCCESS });
-
+      try {
         const userRef = db.doc(`Profiles/${currentUser.uid}`);
+        const user = await userRef.get();
 
-        db.runTransaction(transaction => {
-          return transaction.get(userRef).then(userDoc => {
-            docId = userDoc.data().commerceId;
+        const commerceId = user.data().commerceId;
+        const commerceRef = db.doc(`Commerces/${commerceId}`);
 
-            const commerceRef = db.doc(`Commerces/${docId}`);
+        batch.update(userRef, { commerceId: null });
+        batch.update(commerceRef, { softDelete: new Date() });
 
-            transaction.update(userRef, { commerceId: null });
-            transaction.update(commerceRef, { softDelete: new Date() });
-          });
-        })
-          .then(() => {
-            index
-              .deleteObject(docId)
-              .then(() => {
-                dispatch({ type: ON_COMMERCE_DELETED });
-                dispatch({
-                  type: ON_CLIENT_DATA_VALUE_CHANGE,
-                  payload: { commerceId: null }
-                });
+        const employeesRef = db.collection(`Commerces/${commerceId}/Employees`);
+        const employees = await employeesRef.where('softDelete', '==', null).get();
+        let deletedEmployees = 0;
 
-                if (navigation) {
-                  navigation.navigate('client');
-                }
-              })
-              .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
-          })
-          .catch(error => dispatch({ type: ON_COMMERCE_DELETE_FAIL }));
-      })
-      .catch(error => {
-        dispatch({ type: ON_REAUTH_FAIL });
-        dispatch({ type: ON_COMMERCE_DELETE_FAIL });
-      });
-  };
+        employees.forEach(async employee => {
+          const profileId = employee.data().profileId;
+          const workplace = await db
+            .collection(`Profiles/${profileId}/Workplaces`)
+            .where('softDelete', '==', null)
+            .where('commerceId', '==', commerceId)
+            .get();
+
+          if (!workplace.empty) {
+            const workplaceRef = workplace.docs[0].ref;
+            batch.update(workplaceRef, { softDelete: new Date() });
+          }
+
+          deletedEmployees++;
+
+          if (deletedEmployees === employees.size) {
+            await batch.commit();
+
+            await index.deleteObject(commerceId)
+
+            dispatch({ type: ON_COMMERCE_DELETED });
+
+            dispatch({
+              type: ON_CLIENT_DATA_VALUE_CHANGE,
+              payload: { commerceId: null }
+            });
+
+            navigation && navigation.navigate('client');
+          }
+        });
+      } catch (error) {
+        dispatch({ type: ON_COMMERCE_DELETE_FAIL })
+      }
+    })
+    .catch(error => {
+      dispatch({ type: ON_REAUTH_FAIL });
+      dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+    });
 };

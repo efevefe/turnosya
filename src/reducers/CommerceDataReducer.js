@@ -50,7 +50,6 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Su negocio se ha eliminado' });
     case ON_COMMERCE_CREATING:
     case ON_COMMERCE_READ_FAIL:
-    case ON_COMMERCE_READ_FAIL:
       return { ...INITIAL_STATE };
 
     case ON_COMMERCE_VALUE_CHANGE:

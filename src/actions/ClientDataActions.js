@@ -161,7 +161,7 @@ export const onUserDelete = password => {
   };
 };
 
-export const readUserWorkplaces = () => dispatch => {
+export const onUserWorkplacesRead = () => dispatch => {
   const db = firebase.firestore();
   const clientId = firebase.auth().currentUser.uid;
 

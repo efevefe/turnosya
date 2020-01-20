@@ -5,7 +5,7 @@ import {
   onCommerceOpen,
   onLogout,
   onUserRead,
-  readUserWorkplaces,
+  onUserWorkplacesRead,
   onCommerceRead
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
@@ -18,7 +18,7 @@ class ClientDrawerContent extends Component {
 
   componentDidMount() {
     this.props.onUserRead();
-    this.props.readUserWorkplaces();
+    this.props.onUserWorkplacesRead();
   }
 
   onCommercePress = commerceId => {
@@ -139,6 +139,6 @@ export default connect(mapStateToProps, {
   onCommerceOpen,
   onLogout,
   onUserRead,
-  readUserWorkplaces,
+  onUserWorkplacesRead,
   onCommerceRead
 })(ClientDrawerContent);

@@ -6,7 +6,7 @@ import {
   onCommerceValueChange,
   onCommerceFormOpen,
   onAreasReadForPicker,
-  validateCuit
+  onCuitValidate
 } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
 import { CardSection, Button, Input, Picker } from '../common';
@@ -101,7 +101,7 @@ class RegisterCommerce extends Component {
   };
 
   renderCuitError = () => {
-    this.props.validateCuit(this.props.cuit);
+    this.props.onCuitValidate(this.props.cuit);
 
     if (this.props.cuit === '') {
       this.setState({ cuitError: 'Dato requerido' });
@@ -259,5 +259,5 @@ export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceFormOpen,
   onAreasReadForPicker,
-  validateCuit
+  onCuitValidate
 })(RegisterCommerce);
