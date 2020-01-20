@@ -194,6 +194,7 @@ export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
 // Employee types
 export const ON_EMPLOYEES_READING = 'on_employees_reading';
 export const ON_EMPLOYEES_READ = 'on_employees_read';
+export const ON_EMPLOYEES_READ_FAIL = 'on_employees_read_fail';
 export const ON_EMPLOYEE_VALUE_CHANGE = 'on_employee_value_change';
 export const ON_EMPLOYEE_VALUES_RESET = 'on_employee_values_reset';
 export const ON_USER_SEARCHING = 'on_user_searching';

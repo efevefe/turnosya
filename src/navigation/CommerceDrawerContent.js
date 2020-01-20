@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { onLogout } from '../actions/AuthActions';
 import { Drawer, DrawerItem } from '../components/common';
-import { onCommerceRead, onScheduleValueChange, readEmployeeByProfileId } from '../actions';
+import { onCommerceRead, onScheduleValueChange } from '../actions';
 import PermissionsAssigner from '../components/common/PermissionsAssigner';
 import { ROLES } from '../constants';
 
@@ -59,6 +59,5 @@ export default connect(mapStateToProps, {
   onLogout,
   onCommerceRead,
   onCommerceRead,
-  onScheduleValueChange,
-  readEmployeeByProfileId
+  onScheduleValueChange
 })(CommerceDrawerContent);

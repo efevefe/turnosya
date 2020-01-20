@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING } from './types';
+import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL } from './types';
 
 export const onEmployeesRead = commerceId => dispatch => {
   dispatch({ type: ON_EMPLOYEES_READING });
@@ -33,6 +33,6 @@ export const onEmployeesByIdRead = ({ commerceId, employeesIds }) => dispatch =>
         if (index === (employeesIds.length - 1))
           dispatch({ type: ON_EMPLOYEES_READ, payload: employees });
       })
-      .catch(error => dispatch({ type: ON_EMPLOYEES_READ, payload: employees }));
+      .catch(error => dispatch({ type: ON_EMPLOYEES_READ_FAIL }));
   });
 };
