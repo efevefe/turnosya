@@ -25,8 +25,7 @@ import {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview,
-  onCommercePushNotificationTokensRead
+  readClientReview
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -62,10 +61,6 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
-
-    this.props.onCommercePushNotificationTokensRead(
-      this.state.reservation.commerceId
-    );
   }
 
   componentWillUnmount() {
@@ -138,7 +133,7 @@ class ClientReservationDetails extends Component {
       'HH:mm'
     )} fue cancelado`;
     const title = 'Turno Cancelado';
-    notification = { title, body, tokens: this.props.tokens };
+    notification = { title, body };
     this.setState({ optionsVisible: false });
     this.props.onClientCancelReservation({
       reservationId: id,
@@ -360,7 +355,6 @@ const mapStateToProps = state => {
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId } = state.clientData;
-  const { tokens } = state.pushNotification;
 
   return {
     loadingReservations,
@@ -373,8 +367,7 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId,
-    tokens
+    clientId
   };
 };
 
@@ -388,6 +381,5 @@ export default connect(mapStateToProps, {
   commerceReviewValueChange,
   commerceReviewClear,
   clientReviewClear,
-  readClientReview,
-  onCommercePushNotificationTokensRead
+  readClientReview
 })(ClientReservationDetails);

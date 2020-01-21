@@ -6,8 +6,7 @@ import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onCourtReservationValueChange,
-  onCommerceCourtReservationCreate,
-  onCommercePushNotificationTokensRead
+  onCommerceCourtReservationCreate
 } from '../../actions';
 import { validateValueType } from '../../utils';
 import { DAYS, MONTHS } from '../../constants';
@@ -24,7 +23,6 @@ class CommerceCourtReservationRegister extends Component {
 
   componentDidMount() {
     this.priceButtons();
-    this.props.onCommercePushNotificationTokensRead(this.props.commerceId);
   }
 
   priceButtons = () => {
@@ -170,7 +168,7 @@ class CommerceCourtReservationRegister extends Component {
         MONTHS[moment(slot.startDate).month()]
       } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
       const title = 'Turno Reservado';
-      notification = { title, body, tokens: this.props.tokens };
+      notification = { title, body};
       this.props.onCommerceCourtReservationCreate({
         commerceId,
         clientName,
@@ -244,7 +242,6 @@ const mapStateToProps = state => {
     saved,
     loading
   } = state.courtReservation;
-  const { tokens } = state.pushNotification;
 
   return {
     commerceId,
@@ -256,12 +253,10 @@ const mapStateToProps = state => {
     price,
     saved,
     loading,
-    tokens
   };
 };
 
 export default connect(mapStateToProps, {
   onCourtReservationValueChange,
-  onCommerceCourtReservationCreate,
-  onCommercePushNotificationTokensRead
+  onCommerceCourtReservationCreate
 })(CommerceCourtReservationRegister);

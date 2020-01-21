@@ -30,13 +30,8 @@ class CommerceDrawerContent extends Component {
           }}
         />
         <DrawerItem
-          title="Notificaciones"
-          icon="md-settings"
-          onPress={() => this.props.navigation.navigate('commerceSettings')}
-        />
-        <DrawerItem
           title="Configuración"
-          icon="md-notifications-outline"
+          icon="md-settings"
           onPress={() => this.props.navigation.navigate('commerceSettings')}
         />
         <DrawerItem
