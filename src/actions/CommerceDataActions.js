@@ -342,42 +342,37 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
         batch.update(userRef, { commerceId: null });
         batch.update(commerceRef, { softDelete: new Date() });
 
-        const employeesRef = db.collection(`Commerces/${commerceId}/Employees`);
-        const employees = await employeesRef.where('softDelete', '==', null).get();
-        let deletedEmployees = 0;
+        const employees = await db
+          .collection(`Commerces/${commerceId}/Employees`)
+          .where('softDelete', '==', null)
+          .get();
 
-        employees.forEach(async employee => {
-          const profileId = employee.data().profileId;
-          const workplace = await db
-            .collection(`Profiles/${profileId}/Workplaces`)
+        for await (const employee of employees.docs) {
+          const workplaces = await db
+            .collection(`Profiles/${employee.data().profileId}/Workplaces`)
             .where('softDelete', '==', null)
             .where('commerceId', '==', commerceId)
             .get();
 
-          if (!workplace.empty) {
-            const workplaceRef = workplace.docs[0].ref;
-            batch.update(workplaceRef, { softDelete: new Date() });
-          }
+          workplaces.forEach(workplace => {
+            batch.update(workplace.ref, { softDelete: new Date() });
+          });
+        }
 
-          deletedEmployees++;
+        await batch.commit();
 
-          if (deletedEmployees === employees.size) {
-            await batch.commit();
+        await index.deleteObject(commerceId);
 
-            await index.deleteObject(commerceId)
+        dispatch({ type: ON_COMMERCE_DELETED });
 
-            dispatch({ type: ON_COMMERCE_DELETED });
-
-            dispatch({
-              type: ON_CLIENT_DATA_VALUE_CHANGE,
-              payload: { commerceId: null }
-            });
-
-            navigation && navigation.navigate('client');
-          }
+        dispatch({
+          type: ON_CLIENT_DATA_VALUE_CHANGE,
+          payload: { commerceId: null }
         });
+
+        navigation && navigation.navigate('client');
       } catch (error) {
-        dispatch({ type: ON_COMMERCE_DELETE_FAIL })
+        dispatch({ type: ON_COMMERCE_DELETE_FAIL });
       }
     })
     .catch(error => {

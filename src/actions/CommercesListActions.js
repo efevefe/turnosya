@@ -87,11 +87,11 @@ export const onFavoriteCommercesRead = () => {
     db.collection(`Profiles/${currentUser.uid}/FavoriteCommerces`)
       .get()
       .then(snapshot => {
-        const favorites = [];
-        snapshot.forEach(doc => favorites.push(doc.id));
+        const favoriteCommerces = [];
+        snapshot.forEach(doc => favoriteCommerces.push(doc.id));
         dispatch({
           type: ON_COMMERCES_LIST_VALUE_CHANGE,
-          payload: { favorites }
+          payload: { favoriteCommerces }
         });
       });
   };
