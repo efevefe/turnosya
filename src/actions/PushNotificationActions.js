@@ -13,14 +13,13 @@ const onCommercePushNotificationTokensRead = commerceId => {
     .collection(`Commerces/${commerceId}/PushNotificationTokens`)
     .get()
     .then(querySnapshot => {
-      querySnapshot.forEach(doc => tokens.push({ token: doc.id }));
+      querySnapshot.forEach(doc => tokens.push(doc.id));
       return tokens;
     })
     .catch(err => console.error(err));
 };
 
-// Se va a usar en el futuro
-export const onClientPushNotificationTokensRead = clientId => {
+const onClientPushNotificationTokensRead = clientId => {
   const db = firebase.firestore();
   const tokens = [];
 
@@ -43,7 +42,7 @@ export const onCommercePushNotificationSend = (notification, commerceId) => {
 
 // Se va a usar en el futuro
 export const onClientNotificationSend = (notification, clientId) => {
-  onCommercePushNotificationTokensRead(commerceId).then(tokens => {
+  onClientPushNotificationTokensRead(clientId).then(tokens => {
     const collectionPath = `Profiles/${clientId}/Notifications`;
     sendPushNotification({ ...notification, tokens, collectionPath });
   });
@@ -54,7 +53,7 @@ const sendPushNotification = ({ title, body, tokens, collectionPath }) => {
     if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
         const message = {
-          to: token.token,
+          to: token,
           sound: 'default',
           title,
           body,
@@ -123,23 +122,26 @@ export const onPushNotificationTokenRegister = async () => {
       const db = firebase.firestore();
 
       // Se guarda el deviceToken en la colección del cliente
-      await db.doc(
-        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-      ).set({});
+      await db
+        .doc(
+          `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
+        )
+        .set({});
 
-      await db.doc(`Profiles/${currentUser.uid}`)
+      await db
+        .doc(`Profiles/${currentUser.uid}`)
         .get()
-        .then(doc => {
+        .then(async doc => {
           if (doc.data().commerceId != null)
             // Se guarda el deviceToken en la colección del comercio donde es dueño
-            await db.doc(
+            db.doc(
               `Commerces/${
                 doc.data().commerceId
               }/PushNotificationTokens/${deviceToken}`
             ).set({ profileId: currentUser.uid });
-            
+
           // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado
-          await db.collection(`Profiles/${currentUser.uid}/Workplaces`)
+          db.collection(`Profiles/${currentUser.uid}/Workplaces`)
             .where('softDelete', '==', null)
             .get()
             .then(querySnapshot => {

@@ -28,6 +28,7 @@ import {
   commerceReviewClear
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
+import { MONTHS, DAYS } from '../../constants';
 
 class CommerceCourtReservationDetails extends Component {
   constructor(props) {
@@ -98,12 +99,26 @@ class CommerceCourtReservationDetails extends Component {
   onConfirmDelete = (id, clientId) => {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
+
+      const { startDate } = this.state.reservation;
+
+      const body = `El Turno del día ${
+        DAYS[startDate.day()]
+      } ${startDate.format('D')} de ${
+        MONTHS[moment(startDate).month()]
+      } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
+        this.props.cancelationReason
+      }"`;
+      const title = 'Turno Cancelado';
+      notification = { title, body };
+
       this.props.onCommerceCancelReservation({
         commerceId: this.props.commerceId,
         reservationId: id,
         clientId,
         cancelationReason: this.props.cancelationReason,
-        navigation: this.props.navigation
+        navigation: this.props.navigation,
+        notification
       });
     }
   };
@@ -192,19 +207,19 @@ class CommerceCourtReservationDetails extends Component {
     return this.props.commerceRating ? (
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
-          title='Calificación realizada por el cliente'
+          title="Calificación realizada por el cliente"
           rating={this.props.commerceRating}
-          commentPlaceholder='El cliente no realizó ningún comentario...'
+          commentPlaceholder="El cliente no realizó ningún comentario..."
           commentText={this.props.commerceComment}
           readOnly
           fieldsVisible
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title='El cliente no te ha calificado' />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El cliente no te ha calificado" />
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -215,32 +230,34 @@ class CommerceCourtReservationDetails extends Component {
 
     return this.state.isOneWeekOld && !this.props.clientReviewId ? (
       <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title='Ya pasó el período de calificación' />
+        <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={value =>
-              this.props.clientReviewValueChange('rating', value)
-            }
-            rating={this.props.clientRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={value =>
-              this.props.clientReviewValueChange('comment', value)
-            }
-            commentPlaceholder='Comente sobre el cliente...'
-            commentText={this.props.clientComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={value =>
+            this.props.clientReviewValueChange('rating', value)
+          }
+          rating={this.props.clientRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={value =>
+            this.props.clientReviewValueChange('comment', value)
+          }
+          commentPlaceholder="Comente sobre el cliente..."
+          commentText={this.props.clientComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderReviewFields = () => {
-    if (this.state.reservation.clientId &&
-      this.state.reservation.startDate < moment()) {
+    if (
+      this.state.reservation.clientId &&
+      this.state.reservation.startDate < moment()
+    ) {
       return (
         <CardSection>
           <Divider style={reviewDividerStyle} />
@@ -329,16 +346,10 @@ class CommerceCourtReservationDetails extends Component {
         <CourtReservationDetails
           mode={clientId && 'client'}
           name={
-            clientId
-              ? `${client.firstName} ${client.lastName}`
-              : clientName
+            clientId ? `${client.firstName} ${client.lastName}` : clientName
           }
-          info={
-            clientId
-              ? client.phone
-              : clientPhone
-          }
-          infoIcon='ios-call'
+          info={clientId ? client.phone : clientPhone}
+          infoIcon="ios-call"
           picture={clientId && client.profilePicture}
           court={court}
           startDate={startDate}
