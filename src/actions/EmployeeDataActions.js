@@ -12,12 +12,13 @@ import {
   ON_EMPLOYEE_DELETED,
   ON_EMPLOYEE_UPDATED
 } from './types';
-import { Toast } from '../components/common';
 
 export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
   payload
 });
+
+export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
 
 export const onEmployeeCreate = (
   {
@@ -64,66 +65,72 @@ export const onEmployeeCreate = (
 };
 
 export const onEmployeeUpdate = (
-  { employeeId, commerceId, email, role },
+  { employeeId, commerceId, firstName, lastName, phone, role },
   navigation
 ) => dispatch => {
-  if (firebase.auth().currentUser.email === email) {
-    Toast.show({ text: 'No puede editar su propio rol!' });
-  } else {
-    const db = firebase.firestore();
+  const db = firebase.firestore();
 
-    dispatch({ type: ON_EMPLOYEE_SAVING });
+  dispatch({ type: ON_EMPLOYEE_SAVING });
 
-    db.collection(`Commerces/${commerceId}/Employees`)
-      .doc(employeeId)
-      .update({ role })
-      .then(() => {
-        dispatch({ type: ON_EMPLOYEE_UPDATED });
-        navigation.goBack();
-      })
-      .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
-  }
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .doc(employeeId)
+    .update({ firstName, lastName, phone, role })
+    .then(() => {
+      dispatch({ type: ON_EMPLOYEE_UPDATED });
+      navigation.goBack();
+    })
+    .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
 export const onEmployeeDelete = ({
   employeeId,
   commerceId,
-  profileId,
-  email
+  profileId
 }) => async dispatch => {
-  if (firebase.auth().currentUser.email === email) {
-    Toast.show({ text: 'No puede eliminarse usted mismo' });
-  } else {
-    const db = firebase.firestore();
-
-    const snapshot = await db
-      .collection(`Profiles/${profileId}/Workplaces`)
-      .where('commerceId', '==', commerceId)
-      .get();
-
-    const workplaceRef = db
-      .collection(`Profiles/${profileId}/Workplaces`)
-      .doc(snapshot.docs[0].id);
-    const employeeRef = db
-      .collection(`Commerces/${commerceId}/Employees`)
-      .doc(employeeId);
-
-    const batch = db.batch();
-
-    batch.update(workplaceRef, { softDelete: new Date() });
-    batch.update(employeeRef, { softDelete: new Date() });
-
-    batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
-  }
-};
-
-export const searchUserByEmail = (email, commerceId) => async dispatch => {
-  dispatch({ type: ON_USER_SEARCHING });
   const db = firebase.firestore();
 
-  db.collection('Profiles')
-    .where('email', '==', email)
-    .get()
+  const snapshot = await db
+    .collection(`Profiles/${profileId}/Workplaces`)
+    .where('commerceId', '==', commerceId)
+    .get();
+
+  const workplaceRef = db
+    .collection(`Profiles/${profileId}/Workplaces`)
+    .doc(snapshot.docs[0].id);
+  const employeeRef = db
+    .collection(`Commerces/${commerceId}/Employees`)
+    .doc(employeeId);
+
+  const batch = db.batch();
+
+  batch.update(workplaceRef, { softDelete: new Date() });
+  batch.update(employeeRef, { softDelete: new Date() });
+
+  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+};
+
+export const onEmployeeInfoUpdate = (email) => dispatch => {
+  dispatch({ type: ON_USER_SEARCHING });
+
+  searchUserByEmail(email)
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
+        dispatch({
+          type: ON_USER_SEARCH_SUCCESS,
+          payload: {
+            ...doc.data(),
+            profileId: doc.id
+          }
+        });
+      }
+    });
+}
+
+export const onUserByEmailSearch = (email, commerceId) => dispatch => {
+  dispatch({ type: ON_USER_SEARCHING });
+
+  searchUserByEmail(email)
     .then(snapshot => {
       if (snapshot.empty) {
         dispatch({
@@ -148,6 +155,10 @@ export const searchUserByEmail = (email, commerceId) => async dispatch => {
           });
       }
     });
+}
+
+const searchUserByEmail = email => {
+  const db = firebase.firestore();
+  return db.collection('Profiles').where('email', '==', email).get();
 };
 
-export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
