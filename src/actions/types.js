@@ -192,9 +192,3 @@ export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_review_read_fail';
 export const ON_CLIENT_REVIEWS_READING = 'on_client_reviews_reading';
 export const ON_CLIENT_REVIEWS_READ = 'on_client_reviews_read';
 export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
-
-//Push Notification types
-
-export const ON_NOTIFICATION_TOKENS_READ = 'on_notification_tokens_read';
-export const ON_NOTIFICATION_TOKENS_READ_FAIL =
-  'on_notification_tokens_read_fail';

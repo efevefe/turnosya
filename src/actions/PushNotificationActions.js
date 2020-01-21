@@ -1,7 +1,3 @@
-import {
-  ON_NOTIFICATION_TOKENS_READ,
-  ON_NOTIFICATION_TOKENS_READ_FAIL
-} from './types';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Notifications } from 'expo';
@@ -20,23 +16,22 @@ const onCommercePushNotificationTokensRead = commerceId => {
       querySnapshot.forEach(doc => tokens.push({ token: doc.id }));
       return tokens;
     })
-    .catch(() => 'perri');
+    .catch(err => console.error(err));
 };
 
-// FVF esta no se usa, ya se
+// Se va a usar en el futuro
 export const onClientPushNotificationTokensRead = clientId => {
   const db = firebase.firestore();
+  const tokens = [];
 
-  return dispatch => {
-    db.collection(`Profiles/${clientId}/PushNotificationTokens`)
-      .get()
-      .then(querySnapshot => {
-        const tokens = [];
-        querySnapshot.forEach(doc => tokens.push(doc.id));
-        dispatch({ type: ON_NOTIFICATION_TOKENS_READ, payload: tokens });
-      })
-      .catch(() => dispatch({ type: ON_NOTIFICATION_TOKENS_READ_FAIL }));
-  };
+  return db
+    .collection(`Profiles/${clientId}/PushNotificationTokens`)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(doc => tokens.push(doc.id));
+      return tokens;
+    })
+    .catch(err => console.error(err));
 };
 
 export const onCommercePushNotificationSend = (notification, commerceId) => {
@@ -46,7 +41,7 @@ export const onCommercePushNotificationSend = (notification, commerceId) => {
   });
 };
 
-// FVF esta no se usa
+// Se va a usar en el futuro
 export const onClientNotificationSend = (notification, clientId) => {
   onCommercePushNotificationTokensRead(commerceId).then(tokens => {
     const collectionPath = `Profiles/${clientId}/Notifications`;
@@ -56,7 +51,7 @@ export const onClientNotificationSend = (notification, clientId) => {
 
 const sendPushNotification = ({ title, body, tokens, collectionPath }) => {
   try {
-    if (tokens.length) {
+    if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
         const message = {
           to: token.token,
@@ -127,23 +122,24 @@ export const onPushNotificationTokenRegister = async () => {
       const { currentUser } = firebase.auth();
       const db = firebase.firestore();
 
-      // guarda el token en la coleccion del cliente
-      db.doc(
+      // Se guarda el deviceToken en la colección del cliente
+      await db.doc(
         `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
       ).set({});
 
-      db.doc(`Profiles/${currentUser.uid}`)
+      await db.doc(`Profiles/${currentUser.uid}`)
         .get()
         .then(doc => {
           if (doc.data().commerceId != null)
-            // guarda el token en el comercio donde es dueño
-            db.doc(
+            // Se guarda el deviceToken en la colección del comercio donde es dueño
+            await db.doc(
               `Commerces/${
                 doc.data().commerceId
               }/PushNotificationTokens/${deviceToken}`
             ).set({ profileId: currentUser.uid });
-            // guarda el token en el comercio donde es empleado
-          db.collection(`Profiles/${currentUser.uid}/Workplaces`)
+            
+          // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado
+          await db.collection(`Profiles/${currentUser.uid}/Workplaces`)
             .where('softDelete', '==', null)
             .get()
             .then(querySnapshot => {
@@ -178,27 +174,35 @@ export const onPushNotificationTokenDelete = async commerceId => {
       const { currentUser } = firebase.auth();
       const db = firebase.firestore();
 
-      db.doc(
-        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-      ).delete();
+      // Se elimina el deviceToken en la colección del cliente
+      await db
+        .doc(
+          `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
+        )
+        .delete();
       if (commerceId !== null) {
-        db.doc(
-          `Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`
-        ).delete();
+        // Se elimina el deviceToken en la colección del comercio donde es dueño
+        await db
+          .doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`)
+          .delete();
       }
-      db.collection(`Profiles/${currentUser.uid}/Workplaces`)
+
+      // Se elimina el deviceToken en las colecciónes de los comercios donde es empleado
+      await db
+        .collection(`Profiles/${currentUser.uid}/Workplaces`)
+        .where('softDelete', '==', null)
         .get()
         .then(querySnapshot => {
           if (!querySnapshot.empty) {
-            querySnapshot.forEach(employee =>
-              db
+            querySnapshot.forEach(async employee => {
+              await db
                 .doc(
                   `Commerces/${
                     employee.data().commerceId
                   }/PushNotificationTokens/${deviceToken}`
                 )
-                .delete()
-            );
+                .delete();
+            });
           }
         });
     }
