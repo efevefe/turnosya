@@ -13,21 +13,11 @@ class PaymentDetails extends Component {
     const reservation = props.navigation.getParam('reservation', null);
     console.log(reservation);
 
-    this.state = { reservation, client: reservation.client };
+    this.state = { reservation, client: reservation.client || {} };
   }
 
   componentDidMount() {
     this.props.readReservationPaymentMethod(this.state.reservation);
-
-    if (!this.state.client) {
-      this.setState({
-        client: {
-          firstName: this.props.firstName,
-          lastName: this.props.lastName,
-          email: this.props.email
-        }
-      });
-    }
   }
 
   render() {
@@ -47,10 +37,12 @@ class PaymentDetails extends Component {
           ).format('DD/MM/YYYY')}`}</Text>
           <Text
             style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Nombre: ${this.state.client.firstName} ${this.state.client.lastName}`}</Text>
+          >{`Nombre: ${this.state.client.firstName ||
+            this.props.firstName} ${this.state.client.lastName ||
+            this.props.lastName}`}</Text>
           <Text
             style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Email: ${this.state.client.email}`}</Text>
+          >{`Email: ${this.state.client.email || this.props.email}`}</Text>
           <Text
             style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
           >{`Monto: $${this.state.reservation.price}`}</Text>

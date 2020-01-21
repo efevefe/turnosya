@@ -25,7 +25,8 @@ import {
   deleteClientReview,
   clientReviewClear,
   readCommerceReview,
-  commerceReviewClear
+  commerceReviewClear,
+  createCashPayment
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 
@@ -41,7 +42,8 @@ class CommerceCourtReservationDetails extends Component {
       error: '',
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0
+      reviewBGIndex: 0,
+      confirmCashPayVisible: false
     };
   }
 
@@ -55,6 +57,14 @@ class CommerceCourtReservationDetails extends Component {
       commerceId: this.props.commerceId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    if (!this.state.reservation.commerceId)
+      this.setState({
+        reservation: {
+          ...this.state.reservation,
+          commerceId: this.props.commerceId
+        }
+      });
   }
 
   componentWillUnmount() {
@@ -266,9 +276,38 @@ class CommerceCourtReservationDetails extends Component {
 
   // *** Payment methods ***
 
+  renderRegisterPaymentConfirmation = () => {
+    return (
+      <Menu
+        title="¿Está seguro que desea registrar el pago en efectivo?"
+        onBackdropPress={() => this.setState({ confirmCashPayVisible: false })}
+        isVisible={this.state.confirmCashPayVisible}
+      >
+        <MenuItem
+          title="Confirmar"
+          icon="md-checkmark"
+          loadingWithText={this.props.cashPayRegisterLoading}
+          onPress={() =>
+            this.props.createCashPayment(
+              this.state.reservation,
+              this.props.navigation
+            )
+          }
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem
+          title="Cerrar"
+          icon="md-close"
+          onPress={() => this.setState({ confirmCashPayVisible: false })}
+        />
+      </Menu>
+    );
+  };
+
   renderRegisterPaymentButton = () => {
     return (
       <CardSection>
+        {this.renderRegisterPaymentConfirmation()}
         {this.state.reservation.paymentDate ? (
           <Button
             title="Ver detalle del pago"
@@ -283,7 +322,7 @@ class CommerceCourtReservationDetails extends Component {
           <Button
             title="Registrar pago en efectivo"
             type="solid"
-            onPress={() => console.log('Registrar pago en efectivo')}
+            onPress={() => this.setState({ confirmCashPayVisible: true })}
           />
         )}
         <Divider
@@ -393,6 +432,7 @@ const mapStateToProps = state => {
   const { loading, cancelationReason } = state.courtReservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
+  const { cashPayRegisterLoading } = state.paymentData;
 
   return {
     loading,
@@ -405,7 +445,8 @@ const mapStateToProps = state => {
     commerceComment: state.commerceReviewData.comment,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,
-    reviewDataLoading: dataLoading
+    reviewDataLoading: dataLoading,
+    cashPayRegisterLoading
   };
 };
 
@@ -419,5 +460,6 @@ export default connect(mapStateToProps, {
   deleteClientReview,
   clientReviewClear,
   readCommerceReview,
-  commerceReviewClear
+  commerceReviewClear,
+  createCashPayment
 })(CommerceCourtReservationDetails);
