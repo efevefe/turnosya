@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
+import { Toast, Spinner } from '../common';
 
 class PaymentForm extends React.Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class PaymentForm extends React.Component {
     this.state = {
       clientId: this.props.clientId,
       reservation,
-      accessToken: mPagoToken
+      accessToken: mPagoToken,
+      loading: true
     };
   }
 
@@ -22,9 +24,51 @@ class PaymentForm extends React.Component {
   //reservation-id
   //commerce-id
 
-  render() {
-    console.log(this.state);
+  handleWebViewNavigationStateChange = newNavState => {
+    // newNavState looks something like this:
+    // {
+    //   url?: string;
+    //   title?: string;
+    //   loading?: boolean;
+    //   canGoBack?: boolean;
+    //   canGoForward?: boolean;
+    // }
+    console.log(newNavState);
+    const { url, loading } = newNavState;
+    if (!url) return;
 
+    if (loading !== this.state.loading) this.setState({ loading });
+
+    if (url.includes('proyecto-turnosya.web.app/payment-success?')) {
+      Toast.show({ text: 'Pago registrado con éxito ' });
+      this.props.navigation.goBack();
+    }
+    // // handle certain doctypes
+    // if (url.includes('.pdf')) {
+    //   this.webview.stopLoading();
+    //   // open a modal with the PDF viewer
+    // }
+
+    // // one way to handle a successful form submit is via query strings
+    // if (url.includes('?message=success')) {
+    //   this.webview.stopLoading();
+    //   // maybe close this view?
+    // }
+
+    // // one way to handle errors is via query string
+    // if (url.includes('?errors=true')) {
+    //   this.webview.stopLoading();
+    // }
+
+    // // redirect somewhere else
+    // if (url.includes('google.com')) {
+    //   const newURL = 'https://facebook.github.io/react-native/';
+    //   const redirectTo = 'window.location = "' + newURL + '"';
+    //   this.webview.injectJavaScript(redirectTo);
+    // }
+  };
+
+  render() {
     const {
       accessToken,
       clientId,
@@ -43,6 +87,7 @@ class PaymentForm extends React.Component {
                 ? `https://proyecto-turnosya.web.app/pay?access-token=${accessToken}&client-id=${clientId}&reservation-id=${id}&price=${price}&commerce-id=${commerceId}`
                 : null
           }}
+          renderLoading={() => <Spinner />}
           javaScriptEnabled={true}
           //domStorageEnabled={true} //For the Cache
           originWhitelist={['*']}
@@ -52,13 +97,14 @@ class PaymentForm extends React.Component {
           scrollEnabled={true}
           startInLoadingState={true}
           allowUniversalAccessFromFileURLs={true}
-          style={{ flex: 1, flexGrow: 1, alignSelf: 'stretch' }}
-          onNavigationStateChange={e =>
-            console.log(
-              'Navigation State Change: ' + e.url + ' - ' + e.mainDocumentURL
-            )
+          style={
+            this.state.loading
+              ? { flex: 0, height: 0 }
+              : { flex: 1, flexGrow: 1, alignSelf: 'stretch' }
           }
+          onNavigationStateChange={this.handleWebViewNavigationStateChange}
         />
+        {this.state.loading ? <Spinner /> : null}
       </View>
     );
   }

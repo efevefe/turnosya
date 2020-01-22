@@ -32,29 +32,13 @@ app.get('/pay', (req, res) => {
         quantity: 1
       }
     ],
-    // payer: {
-    //   email: req.query['email'] || 'example@example.com',
-    //   identification: {
-    //     type: 'clientId',
-    //     number: req.query['client-id'] || ''
-    //   }
-    // },
-    back_urls: {
-      // success: 'localhost:5000/payment-success', // son endpoints
-      success: 'https://proyecto-turnosya.web.app/payment-success',
-      failure: 'https://proyecto-turnosya.web.app/payment-failure'
-    },
-    auto_return: 'approved',
+    notification_url: 'https://proyecto-turnosya.web.app/ipn-notification',
     external_reference: `{"clientId":"${req.query['client-id']}","reservationId":"${req.query['reservation-id']}","commerceId":"${req.query['commerce-id']}"}`
   };
 
   mercadopago.preferences
     .create(preference)
     .then(function(mpagoResp) {
-      console.log('Nueva reponse de creación de preferencia');
-      console.log(mpagoResp);
-      console.log('-----------------------------');
-
       res.render('pay', {
         init_point: mpagoResp.body.init_point,
         sandbox_init_point: mpagoResp.body.sandbox_init_point
@@ -65,92 +49,88 @@ app.get('/pay', (req, res) => {
     });
 });
 
-app.get('/payment-success', (req, res) => {
-  console.log('Nueva request de success');
-  console.log('Headers \n' + JSON.stringify(req.query));
-  // collection_id
-  // collection_status
-  // external_reference
-  // payment_type
-  // merchant_order_id
-  // preference_id
-  // merchant_account_id
-  let {
-    collection_id,
-    collection_status,
-    payment_type,
-    merchant_order_id,
-    preference_id,
-    merchant_account_id
-  } = req.query;
-  let { clientId, reservationId, commerceId } = JSON.parse(
-    req.query.external_reference
-  );
+// app.get('/payment-success', (req, res) => {
+//   console.log('Nueva request de success');
+//   console.log('Headers \n' + JSON.stringify(req.query));
+//   // collection_id
+//   // collection_status
+//   // external_reference
+//   // payment_type
+//   // merchant_order_id
+//   // preference_id
+//   // merchant_account_id
+//   let {
+//     collection_id,
+//     collection_status,
+//     payment_type,
+//     merchant_order_id,
+//     preference_id,
+//     merchant_account_id
+//   } = req.query;
+//   let { clientId, reservationId, commerceId } = JSON.parse(req.query.external_reference);
 
-  console.log(clientId);
-  console.log(reservationId);
-  console.log(commerceId);
+//   console.log(clientId);
+//   console.log(reservationId);
+//   console.log(commerceId);
 
-  const db = admin.firestore();
+//   const db = admin.firestore();
 
-  const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-  const commerceReservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
-  const clientReservationRef = db
-    .collection(`Profiles/${clientId}/Reservations`)
-    .doc(reservationId);
+//   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
+//   const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+//   const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
 
-  const batch = db.batch();
+//   const batch = db.batch();
 
-  batch.create(paymentRef, {
-    clientId,
-    reservationId,
-    date: new Date(),
-    method: env.paymentTypes[payment_type],
-    collectionId: collection_id,
-    collectionStatus: collection_status,
-    merchantOrderId: merchant_order_id,
-    preferenceId: preference_id,
-    merchantAccountId: merchant_account_id
-  });
+//   batch.create(paymentRef, {
+//     clientId,
+//     reservationId,
+//     date: new Date(),
+//     method: env.paymentTypes[payment_type],
+//     collectionId: collection_id,
+//     collectionStatus: collection_status,
+//     merchantOrderId: merchant_order_id,
+//     preferenceId: preference_id,
+//     merchantAccountId: merchant_account_id
+//   });
 
-  batch.update(commerceReservationRef, { paymentDate: new Date() });
-  batch.update(clientReservationRef, { paymentDate: new Date() });
+//   batch.update(commerceReservationRef, { paymentDate: new Date() });
+//   batch.update(clientReservationRef, { paymentDate: new Date() });
 
-  batch
-    .commit()
-    .then(() => console.log('Guardado en Firestore'))
-    .catch(err => console.log('Firestore error: ' + err));
+//   batch
+//     .commit()
+//     .then(() => console.log('Guardado en Firestore'))
+//     .catch(err => console.log('Firestore error: ' + err));
 
-  // admin
-  //   .firestore()
-  //   .collection(`Commerces/${commerceId}/Payments`)
-  //   .add({
-  //     clientId,
-  //     reservationId,
-  //     date: new Date(),
-  //     method: env.paymentTypes[payment_type],
-  //     collectionId: collection_id,
-  //     collectionStatus: collection_status,
-  //     merchantOrderId: merchant_order_id,
-  //     referenceId: preference_id,
-  //     merchantAccountId: merchant_account_id
-  //   })
-  //   .then(() => console.log('Guardado en Firestore'))
-  //   .catch(err => console.log('Firestore error: ' + err));
+//   // admin
+//   //   .firestore()
+//   //   .collection(`Commerces/${commerceId}/Payments`)
+//   //   .add({
+//   //     clientId,
+//   //     reservationId,
+//   //     date: new Date(),
+//   //     method: env.paymentTypes[payment_type],
+//   //     collectionId: collection_id,
+//   //     collectionStatus: collection_status,
+//   //     merchantOrderId: merchant_order_id,
+//   //     referenceId: preference_id,
+//   //     merchantAccountId: merchant_account_id
+//   //   })
+//   //   .then(() => console.log('Guardado en Firestore'))
+//   //   .catch(err => console.log('Firestore error: ' + err));
 
-  console.log('---------------------');
-  res.render('payment-success');
-});
+//   console.log('---------------------');
+//   res.render('payment-success');
+// });
 
-app.get('/payment-failure', (req, res) => {
-  res.render('payment-failure');
-});
+// app.get('/payment-failure', (req, res) => {
+//   console.log('Nueva failure');
+//   res.render('payment-failure');
+// });
 //#endregion
 
 //#region OAuth
 app.get('/commerce-oauth', (req, res) => {
+  console.log('Oauth');
   res.render('commerce-oauth', {
     appId: env.marketplace.APP_ID,
     commerceId: req.query['commerce-id']
@@ -158,30 +138,24 @@ app.get('/commerce-oauth', (req, res) => {
 });
 
 app.get('/commerce-oauth-redirect', (req, res) => {
-  console.log('Nuevo redirect!');
+  console.log('Redirect');
   console.log(req.query); // req.query.code
 
-  var headers = {
+  let headers = {
     accept: 'application/json',
     'content-type': 'application/x-www-form-urlencoded'
   };
 
-  console.log(
-    'clientId: ' +
-      env.marketplace.APP_ID +
-      ' - clientsecret: ' +
-      env.marketplace.SECRET_KEY
-  );
-  var dataString = `client_id=${env.marketplace.APP_ID}&client_secret=${env.marketplace.SECRET_KEY}&grant_type=authorization_code&code=${req.query.code}&redirect_uri=https%3A%2F%2Fproyecto-turnosya.web.app%2Fcommerce-oauth-redirect%3Fcommerce-id%3D${req.query['commerce-id']}`;
+  let dataString = `client_id=${env.marketplace.APP_ID}&client_secret=${env.marketplace.SECRET_KEY}&grant_type=authorization_code&code=${req.query.code}&redirect_uri=https%3A%2F%2Fproyecto-turnosya.web.app%2Fcommerce-oauth-redirect%3Fcommerce-id%3D${req.query['commerce-id']}`;
 
-  var options = {
+  let options = {
     url: 'https://api.mercadopago.com/oauth/token',
     method: 'POST',
     headers: headers,
     body: dataString
   };
 
-  function callback(error, response, body) {
+  request(options, (error, response, body) => {
     const db = admin.firestore();
     console.log(error);
     console.log(response.statusCode);
@@ -189,26 +163,95 @@ app.get('/commerce-oauth-redirect', (req, res) => {
       console.log(body);
       let data = JSON.parse(body);
 
-      db.doc(
-        `Commerces/${req.query['commerce-id']}/MercadoPagoTokens/${data.access_token}`
-      )
-        .set({
-          publicKey: data.public_key,
-          refreshToken: data.refresh_token,
-          userId: data.user_id,
-          expirationDate: new Date(moment().add('seconds', data.expires_in)),
-          softDelete: null
-        })
+      const batch = db.batch();
+
+      const commerceRef = db.doc(`Commerces/${req.query['commerce-id']}`);
+      const mPagoTokenRef = db.doc(`Commerces/${req.query['commerce-id']}/MercadoPagoTokens/${data.access_token}`);
+
+      batch.update(commerceRef, { mPagoUserId: data.user_id });
+
+      batch.set(mPagoTokenRef, {
+        publicKey: data.public_key,
+        refreshToken: data.refresh_token,
+        userId: data.user_id,
+        expirationDate: new Date(moment().add('seconds', data.expires_in)),
+        softDelete: null
+      });
+
+      batch
+        .commit()
         .then(() => {
           console.log('Guardado en Firestore');
           res.render('commerce-oauth-redirect');
         })
         .catch(err => console.log('Firestore error: ' + err));
     }
-  }
-
-  request(options, callback);
+  });
 });
 //#endregion
+
+app.post('/ipn-notification', (req, res) => {
+  console.log('Nueva notificacion');
+  console.log(req.body);
+  // { action: 'payment.created',
+  // api_version: 'v1',
+  // data: { id: '5805048310' },
+  // date_created: '2020-01-21T20:39:07Z',
+  // id: 5550615951,
+  // live_mode: true,
+  // type: 'payment',
+  // user_id: '515244502' }
+  console.log(req.query);
+  // { 'data.id': '5808660474', type: 'payment' }
+
+  if (req.query.topic === 'payment') {
+    const db = admin.firestore();
+
+    request(
+      `https://api.mercadopago.com/v1/payments/${req.query.id}?access_token=${env.marketplace.ACCESS_TOKEN}`,
+      (error, response, body) => {
+        console.log(error);
+        console.log(response.statusCode);
+
+        if (!error && response.statusCode == 200) {
+          console.log(body);
+
+          const { id, collector, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
+          const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
+          console.log(external_reference);
+
+          if (status === 'approved') {
+            const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc(id.toString());
+            const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+            const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
+
+            const batch = db.batch();
+
+            batch.set(paymentRef, {
+              clientId,
+              reservationId,
+              date: new Date(),
+              collectorId: collector.id,
+              method: env.paymentTypes[payment_type_id],
+              order,
+              payerId: payer_id
+            });
+
+            batch.update(commerceReservationRef, { paymentDate: new Date() });
+            batch.update(clientReservationRef, { paymentDate: new Date() });
+
+            batch
+              .commit()
+              .then(() => {
+                console.log('Guardado Firestore');
+                res.status(200).send('API de Notificación recibida');
+              })
+              .catch(err => console.error('Firestore error: ' + err));
+          }
+        }
+      }
+    );
+  }
+});
 
 exports.app = functions.https.onRequest(app);
