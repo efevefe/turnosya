@@ -50,13 +50,9 @@ export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, emp
         .toDate()
     );
 
-  if (employeeId) {
-    query = query.where('employeeId', '==', employeeId);
-  }
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-  if (courtType) {
-    query = query.where('courtType', '==', courtType);
-  }
+  if (courtType) query = query.where('courtType', '==', courtType);
 
   return query
     .onSnapshot(snapshot => {
@@ -94,9 +90,7 @@ export const onCommerceReservationsRead = ({
         .toDate()
     );
 
-  if (employeeId) {
-    query = query.where('employeeId', '==', employeeId);
-  }
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
 
   return query
     .onSnapshot(snapshot => {
@@ -152,9 +146,7 @@ export const onCommerceDetailedReservationsRead = ({
         .toDate()
     );
 
-  if (employeeId) {
-    query = query.where('employeeId', '==', employeeId);
-  }
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
 
   return query
     .orderBy('startDate')
@@ -255,9 +247,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
       .where('state', '==', null)
       .where('startDate', '>=', startDate.toDate());
 
-    if (employeeId) {
-      query = query.where('employeeId', '==', employeeId);
-    }
+    if (employeeId) query = query.where('employeeId', '==', employeeId);
 
     query
       .orderBy('startDate')

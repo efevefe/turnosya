@@ -32,7 +32,7 @@ class CommerceProfileInfo extends Component {
     scheduleRead();
   }
 
-  getFormattesSchedules = () => {
+  getFormattedSchedules = () => {
     const { schedules } = this.props;
 
     return schedules.map(schedule => {
@@ -120,7 +120,7 @@ class CommerceProfileInfo extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
-    const schedules = this.getFormattesSchedules();
+    const schedules = this.getFormattedSchedules();
 
     return (
       <View style={{ flex: 1 }}>

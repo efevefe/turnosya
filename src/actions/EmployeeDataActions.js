@@ -158,7 +158,6 @@ export const onUserByEmailSearch = (email, commerceId) => dispatch => {
 }
 
 const searchUserByEmail = email => {
-  const db = firebase.firestore();
-  return db.collection('Profiles').where('email', '==', email).get();
+  firebase.firestore().collection('Profiles').where('email', '==', email).get();
 };
 

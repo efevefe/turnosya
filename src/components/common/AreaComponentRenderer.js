@@ -17,8 +17,7 @@ const AreaComponentRenderer = connect(
 );
 
 const mapStateToProps = state => {
-    const { area: { areaId } } = state.commerceData;
-    return { areaId };
+    return { areaId: state.commerceData.area.areaId };
 }
 
 export { AreaComponentRenderer };

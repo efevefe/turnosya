@@ -50,7 +50,7 @@ export const onServicesRead = commerceId => dispatch => {
     });
 };
 
-export const onServicesByEmployeeRead = ({ commerceId, employeeId }) => dispatch => { // rename
+export const onServicesByEmployeeRead = ({ commerceId, employeeId }) => dispatch => {
   dispatch({ type: ON_SERVICES_READING });
 
   const db = firebase.firestore();
