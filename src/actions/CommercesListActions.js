@@ -61,7 +61,7 @@ export const onFavoriteCommerceDelete = commerceId => {
       .then(() =>
         dispatch({ type: ON_FAVORITE_COMMERCE_DELETED, payload: commerceId })
       )
-      .catch(err => console.log(err));
+      .catch(error => console.error(error));
   };
 };
 
@@ -75,7 +75,7 @@ export const onFavoriteCommerceRegister = commerceId => {
       .then(() =>
         dispatch({ type: ON_FAVORITE_COMMERCE_ADDED, payload: commerceId })
       )
-      .catch(err => console.log(err));
+      .catch(error => console.error(error));
   };
 };
 

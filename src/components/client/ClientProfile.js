@@ -100,8 +100,8 @@ class ClientProfile extends Component {
 
         this.disableEdit();
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -188,8 +188,8 @@ class ClientProfile extends Component {
         this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 

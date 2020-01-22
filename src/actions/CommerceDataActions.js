@@ -73,7 +73,7 @@ export const onCommerceOpen = (commerceId, navigation) => dispatch => {
 
       navigation.navigate('commerce');
     })
-    .catch(e => console.error(e));
+    .catch(error => console.error(error));
 };
 
 export const onCommerceCreate = (

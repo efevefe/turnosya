@@ -86,8 +86,8 @@ class CommerceLocationMap extends React.Component {
             'No se han encontrado resultados, intente modificar la dirección.'
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -115,8 +115,8 @@ class CommerceLocationMap extends React.Component {
       });
 
       this.props.onLocationValueChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 

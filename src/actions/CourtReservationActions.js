@@ -7,6 +7,7 @@ import {
   ON_COURT_RESERVATION_CREATE_FAIL,
   ON_NEW_COURT_RESERVATION
 } from './types';
+import { onCommercePushNotificationSend } from './PushNotificationActions';
 
 export const onCourtReservationValueChange = payload => {
   return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload };
@@ -22,7 +23,8 @@ export const onClientCourtReservationCreate = ({
   courtType,
   slot,
   price,
-  light
+  light,
+  notification
 }) => {
   // using batched writes
   const db = firebase.firestore();
@@ -65,7 +67,10 @@ export const onClientCourtReservationCreate = ({
 
         batch
           .commit()
-          .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
+          .then(() => {
+            onCommercePushNotificationSend(notification, commerceId);
+            dispatch({ type: ON_COURT_RESERVATION_CREATE });
+          })
           .catch(error => {
             db.doc(
               `Commerces/${commerceId}/Reservations/${commerceReservationRef.id}`
@@ -84,7 +89,8 @@ export const onCommerceCourtReservationCreate = ({
   court,
   slot,
   light,
-  price
+  price,
+  notification
 }) => {
   const db = firebase.firestore();
 
@@ -106,7 +112,10 @@ export const onCommerceCourtReservationCreate = ({
         light,
         state: null
       })
-      .then(() => dispatch({ type: ON_COURT_RESERVATION_CREATE }))
+      .then(() => {
+        onCommercePushNotificationSend(notification, commerceId);
+        dispatch({ type: ON_COURT_RESERVATION_CREATE });
+      })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));
   };
 };

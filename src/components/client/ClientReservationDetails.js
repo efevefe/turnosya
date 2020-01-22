@@ -28,11 +28,11 @@ import {
   onClientReviewReadById
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
+import { MONTHS, DAYS } from '../../constants';
 
 class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
-
     const reservation = props.navigation.getParam('reservation');
     this.state = {
       reservation,
@@ -124,12 +124,23 @@ class ClientReservationDetails extends Component {
     }
   };
 
-  onDeleteReviewHandler = () => {
-    this.setState({ confirmDeleteVisible: true });
-  };
+  onCancelReservationButtonPress = () => {
+    const { startDate, id, commerceId } = this.state.reservation;
 
-  onDeleteConfirmBackdropPress = () => {
-    this.setState({ confirmDeleteVisible: false });
+    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format(
+      'D'
+    )} de ${MONTHS[moment(startDate).month()]} a las ${moment(startDate).format(
+      'HH:mm'
+    )} fue cancelado`;
+    const title = 'Turno Cancelado';
+    notification = { title, body };
+    this.setState({ optionsVisible: false });
+    this.props.onClientReservationCancel({
+      reservationId: id,
+      commerceId,
+      navigation: this.props.navigation,
+      notification
+    });
   };
 
   deleteReview = () => {
@@ -148,7 +159,7 @@ class ClientReservationDetails extends Component {
     return (
       <Menu
         title="¿Está seguro que desea borrar su reseña?"
-        onBackdropPress={this.onDeleteConfirmBackdropPress}
+        onBackdropPress={() => this.setState({ confirmDeleteVisible: false })}
         isVisible={this.state.confirmDeleteVisible}
       >
         <MenuItem
@@ -160,7 +171,7 @@ class ClientReservationDetails extends Component {
         <MenuItem
           title="Cancelar"
           icon="md-close"
-          onPress={this.onDeleteConfirmBackdropPress}
+          onPress={() => this.setState({ confirmDeleteVisible: false })}
         />
       </Menu>
     );
@@ -172,7 +183,7 @@ class ClientReservationDetails extends Component {
         <Button
           title="Borrar"
           outerContainerStyle={{ flex: 1 }}
-          onPress={this.onDeleteReviewHandler}
+          onPress={() => this.setState({ confirmDeleteVisible: true })}
           loading={this.props.deleteReviewLoading}
           disabled={this.state.isOneWeekOld || !this.props.commerceReviewId}
         />
@@ -265,9 +276,7 @@ class ClientReservationDetails extends Component {
       endDate,
       startDate,
       light,
-      price,
-      id,
-      commerceId
+      price
     } = this.state.reservation;
 
     if (this.props.loadingCancel) return <Spinner />;
@@ -289,14 +298,7 @@ class ClientReservationDetails extends Component {
             title="Aceptar"
             icon="md-checkmark"
             loadingWithText={this.props.loadingReservations}
-            onPress={() => {
-              this.setState({ optionsVisible: false });
-              this.props.onClientReservationCancel({
-                reservationId: id,
-                commerceId,
-                navigation: this.props.navigation
-              });
-            }}
+            onPress={() => this.onCancelReservationButtonPress()}
           />
           <Divider style={overlayDividerStyle} />
           <MenuItem

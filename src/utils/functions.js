@@ -35,8 +35,8 @@ export const imageToBlob = async uri => {
     });
 
     return blob;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -52,7 +52,7 @@ const trimStrings = strings => {
       res.replace(/  +/g, ' ');
       return res;
     });
-  } catch (err) {
+  } catch (error) {
     return [];
   }
 };
@@ -65,7 +65,7 @@ export const trimString = string => {
   try {
     const res = trimStrings([string]);
     if (res.length) return res[0];
-  } catch (err) {
+  } catch (error) {
     return '';
   }
 };
@@ -76,7 +76,7 @@ export const trimString = string => {
 export const removeDoubleSpaces = value => {
   try {
     return value.replace(/  +/g, ' ');
-  } catch (err) {
+  } catch (error) {
     return '';
   }
 };

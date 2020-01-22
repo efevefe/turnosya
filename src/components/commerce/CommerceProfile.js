@@ -196,8 +196,8 @@ class CommerceProfile extends Component {
           this.props.navigation
         );
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -261,7 +261,7 @@ class CommerceProfile extends Component {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }
@@ -292,7 +292,7 @@ class CommerceProfile extends Component {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }

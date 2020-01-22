@@ -10,6 +10,7 @@ import {
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
+import { onClientPushNotificationSend } from './PushNotificationActions';
 
 export const onCourtReservationsListValueChange = payload => {
   return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload };
@@ -174,12 +175,13 @@ export const onCommerceDetailedCourtReservationsRead = ({
     });
 };
 
-export const onCommerceCancelReservation = ({
+export const onCommerceReservationCancel = ({
   commerceId,
   reservationId,
   clientId,
   cancellationReason,
-  navigation
+  navigation,
+  notification
 }) => {
   const db = firebase.firestore();
   const batch = db.batch();
@@ -214,16 +216,17 @@ export const onCommerceCancelReservation = ({
         batch
           .commit()
           .then(() => {
+            onClientPushNotificationSend(notification, clientId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
-          .catch(e => {
+          .catch(error => {
             dispatch({
               type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
             });
           });
       })
-      .catch(e => {
+      .catch(error => {
         dispatch({
           type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
         });

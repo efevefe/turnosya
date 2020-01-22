@@ -32,8 +32,8 @@ class ClientDrawerContent extends Component {
       } else {
         this.setState({ modal: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -95,7 +95,7 @@ class ClientDrawerContent extends Component {
             title="Cerrar Sesión"
             icon={{ name: 'md-exit' }}
             loadingWithText={this.props.loading}
-            onPress={() => this.props.onLogout()}
+            onPress={() => this.props.onLogout(this.props.commerceId)}
           />
         </Drawer>
         {this.renderModal()}

@@ -8,6 +8,7 @@ import {
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
 import moment from 'moment';
+import { onCommercePushNotificationSend } from './PushNotificationActions';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -64,7 +65,8 @@ export const onClientReservationsListRead = () => dispatch => {
 export const onClientReservationCancel = ({
   reservationId,
   commerceId,
-  navigation
+  navigation,
+  notification
 }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -94,6 +96,7 @@ export const onClientReservationCancel = ({
           batch
             .commit()
             .then(() => {
+              onCommercePushNotificationSend(notification, commerceId);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

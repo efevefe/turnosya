@@ -9,6 +9,8 @@ import {
   onCommerceCourtReservationCreate
 } from '../../actions';
 import { validateValueType } from '../../utils';
+import { DAYS, MONTHS } from '../../constants';
+import moment from 'moment';
 
 class CommerceCourtReservationRegister extends Component {
   state = {
@@ -104,8 +106,6 @@ class CommerceCourtReservationRegister extends Component {
       this.setState({ nameError: '' });
       return false;
     }
-
-    return true;
   };
 
   phoneError = () => {
@@ -145,7 +145,13 @@ class CommerceCourtReservationRegister extends Component {
         light,
         price
       } = this.props;
-
+      const body = `El Turno del día ${
+        DAYS[slot.startDate.day()]
+      } ${slot.startDate.format('D')} de ${
+        MONTHS[moment(slot.startDate).month()]
+      } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
+      const title = 'Turno Reservado';
+      notification = { title, body };
       this.props.onCommerceCourtReservationCreate({
         commerceId,
         clientName,
@@ -153,7 +159,8 @@ class CommerceCourtReservationRegister extends Component {
         court,
         slot,
         light,
-        price
+        price,
+        notification
       });
     }
   };

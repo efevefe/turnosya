@@ -4,12 +4,13 @@ import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { CardSection, Button, ButtonGroup } from '../common';
-import { MAIN_COLOR } from '../../constants';
+import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
 import {
   onCourtReservationValueChange,
   onClientCourtReservationCreate
 } from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
+import moment from 'moment';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -64,13 +65,23 @@ class ConfirmCourtReservation extends Component {
   onConfirmReservation = () => {
     const { commerce, court, courtType, slot, price, light } = this.props;
 
+    const body = `El Turno del día ${
+      DAYS[slot.startDate.day()]
+    } ${slot.startDate.format('D')} de ${
+      MONTHS[moment(slot.startDate).month()]
+    } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
+    const title = 'Turno Reservado';
+
+    notification = { title, body };
+
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       courtId: court.id,
       courtType,
       slot,
       price,
-      light
+      light,
+      notification
     });
   };
 
@@ -183,8 +194,19 @@ const mapStateToProps = state => {
     saved,
     loading
   } = state.courtReservation;
+  const { commerceId } = state.commerceData;
 
-  return { commerce, courtType, court, slot, price, light, saved, loading };
+  return {
+    commerce,
+    courtType,
+    court,
+    slot,
+    price,
+    light,
+    saved,
+    loading,
+    commerceId
+  };
 };
 
 export default connect(mapStateToProps, {

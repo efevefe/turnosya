@@ -16,7 +16,7 @@ import {
 } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onCourtReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,
@@ -28,6 +28,7 @@ import {
   onCommerceReviewValuesReset
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
+import { MONTHS, DAYS } from '../../constants';
 
 class CommerceCourtReservationDetails extends Component {
   constructor(props) {
@@ -95,12 +96,26 @@ class CommerceCourtReservationDetails extends Component {
   onConfirmDelete = (id, clientId) => {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
-      this.props.onCommerceCancelReservation({
+
+      const { startDate } = this.state.reservation;
+
+      const body = `El Turno del día ${
+        DAYS[startDate.day()]
+      } ${startDate.format('D')} de ${
+        MONTHS[moment(startDate).month()]
+      } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
+        this.props.cancelationReason
+      }"`;
+      const title = 'Turno Cancelado';
+      notification = { title, body };
+
+      this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
         reservationId: id,
         clientId,
         cancellationReason: this.props.cancellationReason,
-        navigation: this.props.navigation
+        navigation: this.props.navigation,
+        notification
       });
     }
   };
@@ -384,7 +399,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onCourtReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,
