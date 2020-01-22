@@ -6,7 +6,8 @@ import {
   ON_RESERVATION_CREATE,
   ON_RESERVATION_CREATE_FAIL,
   ON_NEW_RESERVATION,
-  ON_NEW_SERVICE_RESERVATION
+  ON_NEW_SERVICE_RESERVATION,
+  ON_RESERVATION_EXISTS
 } from "./types";
 
 export const onReservationValueChange = payload => {
@@ -44,46 +45,69 @@ export const onClientServiceReservationCreate = ({ commerceId, areaId, serviceId
   }, commerceId);
 }
 
-const onClientReservationCreate = (reservationObject, commerceId) => {
+const reservationExists = async ({ commerceId, employeeId, courtId, startDate, endDate }) => {
+  // creo que lo mejor que pude hacerlo teniendo en cuenta las limitaciones de firestore
+  // de todas formas traten de no hacer reservas duplicadas xd
   const db = firebase.firestore();
+
+  let query = db.collection(`Commerces/${commerceId}/Reservations`)
+    .where('state', '==', null)
+    .where('endDate', '>', startDate)
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  if (courtId) query = query.where('courtId', '==', courtId);
+
+  try {
+    const snapshot = await query.get();
+    return snapshot.docs.some(res => res.data().startDate.toDate() < endDate);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+const onClientReservationCreate = (reservationObject, commerceId) => async dispatch => {
+  dispatch({ type: ON_RESERVATION_CREATING });
+
   const { currentUser } = firebase.auth();
+  const db = firebase.firestore();
+  const batch = db.batch();
 
-  return dispatch => {
-    dispatch({ type: ON_RESERVATION_CREATING });
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc();
+  const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
 
-    db.collection(`Commerces/${commerceId}/Reservations`)
-      .add({})
-      .then(commerceReservationRef => {
-        const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
-        const batch = db.batch();
+  const reservationData = {
+    ...reservationObject,
+    reservationDate: new Date(),
+    cancellationDate: null,
+    state: null
+  }
 
-        const reservationData = {
-          ...reservationObject,
-          reservationDate: new Date(),
-          cancellationDate: null,
-          state: null
-        }
+  // reserva que se guarda en el negocio
+  batch.set(commerceReservationRef, {
+    ...reservationData,
+    clientId: currentUser.uid
+  });
 
-        // reserva que se guarda en el negocio
-        batch.set(commerceReservationRef, {
-          ...reservationData,
-          clientId: currentUser.uid
-        });
+  // reserva que se guarda en el cliente
+  batch.set(clientReservationRef, {
+    ...reservationData,
+    commerceId
+  });
 
-        // reserva que se guarda en el cliente
-        batch.set(clientReservationRef, {
-          ...reservationData,
-          commerceId
-        });
+  try {
+    const { employeeId, courtId, startDate, endDate } = reservationData;
 
-        batch.commit()
-          .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
-          .catch(error => {
-            db.doc(`Commerces/${commerceId}/Reservations/${commerceReservationRef.id}`).delete();
-            dispatch({ type: ON_RESERVATION_CREATE_FAIL });
-          });
-      })
-      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
+    if (await reservationExists({ commerceId, employeeId, courtId, startDate, endDate })) {
+      return dispatch({ type: ON_RESERVATION_EXISTS });
+    }
+
+    await batch.commit();
+
+    dispatch({ type: ON_RESERVATION_CREATE })
+  } catch (error) {
+    console.error(error);
+    dispatch({ type: ON_RESERVATION_CREATE_FAIL })
   }
 }
 
@@ -98,13 +122,22 @@ export const onCommerceCourtReservationCreate = ({
   endDate,
   light,
   price
-}) => {
+}) => async dispatch => {
+  dispatch({ type: ON_RESERVATION_CREATING });
+
   const db = firebase.firestore();
 
-  return dispatch => {
-    dispatch({ type: ON_RESERVATION_CREATING });
+  try {
+    if (await reservationExists({
+      commerceId,
+      courtId,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate()
+    })) {
+      return dispatch({ type: ON_RESERVATION_EXISTS });
+    }
 
-    db.collection(`Commerces/${commerceId}/Reservations`)
+    await db.collection(`Commerces/${commerceId}/Reservations`)
       .add({
         areaId,
         clientId: null,
@@ -119,9 +152,11 @@ export const onCommerceCourtReservationCreate = ({
         price,
         light,
         state: null
-      })
-      .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
-      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
+      });
+
+    dispatch({ type: ON_RESERVATION_CREATE });
+  } catch (error) {
+    dispatch({ type: ON_RESERVATION_CREATE_FAIL });
   }
 }
 
@@ -135,13 +170,22 @@ export const onCommerceServiceReservationCreate = ({
   startDate,
   endDate,
   price
-}) => {
+}) => async dispatch => {
+  dispatch({ type: ON_RESERVATION_CREATING });
+
   const db = firebase.firestore();
 
-  return dispatch => {
-    dispatch({ type: ON_RESERVATION_CREATING });
+  try {
+    if (await reservationExists({
+      commerceId,
+      employeeId,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate()
+    })) {
+      return dispatch({ type: ON_RESERVATION_EXISTS });
+    }
 
-    db.collection(`Commerces/${commerceId}/Reservations`)
+    await db.collection(`Commerces/${commerceId}/Reservations`)
       .add({
         areaId,
         serviceId,
@@ -155,8 +199,10 @@ export const onCommerceServiceReservationCreate = ({
         cancellationDate: null,
         price,
         state: null
-      })
-      .then(() => dispatch({ type: ON_RESERVATION_CREATE }))
-      .catch(error => dispatch({ type: ON_RESERVATION_CREATE_FAIL }));
+      });
+
+    dispatch({ type: ON_RESERVATION_CREATE });
+  } catch (error) {
+    dispatch({ type: ON_RESERVATION_CREATE_FAIL });
   }
 }

@@ -77,12 +77,12 @@ class ConfirmCourtReservation extends Component {
   };
 
   renderButtons = () => {
-    if (this.props.saved) {
+    if (this.props.saved || this.props.exists) {
       return (
         <CardSection style={{ flexDirection: 'row' }}>
           <View style={{ alignItems: 'flex-start', flex: 1 }}>
             <RNEButton
-              title="Reservar otro"
+              title="Reservar Otro"
               type="clear"
               titleStyle={{ color: MAIN_COLOR }}
               icon={
@@ -98,23 +98,24 @@ class ConfirmCourtReservation extends Component {
               }
             />
           </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <RNEButton
-              title="Finalizar"
-              type="clear"
-              titleStyle={{ color: MAIN_COLOR }}
-              iconRight
-              icon={
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={30}
-                  color={MAIN_COLOR}
-                  style={{ marginLeft: 10 }}
-                />
-              }
-              onPress={() => this.props.navigation.navigate('commercesAreas')}
-            />
-          </View>
+          {this.props.saved ?
+            <View style={{ alignItems: 'flex-end' }}>
+              <RNEButton
+                title="Finalizar"
+                type="clear"
+                titleStyle={{ color: MAIN_COLOR }}
+                iconRight
+                icon={
+                  <Ionicons
+                    name="ios-arrow-forward"
+                    size={30}
+                    color={MAIN_COLOR}
+                    style={{ marginLeft: 10 }}
+                  />
+                }
+                onPress={() => this.props.navigation.navigate('commercesAreas')}
+              />
+            </View> : null}
         </CardSection>
       );
     }
@@ -185,10 +186,11 @@ const mapStateToProps = state => {
     light,
     areaId,
     saved,
+    exists,
     loading
   } = state.reservation;
 
-  return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, loading };
+  return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, exists, loading };
 };
 
 export default connect(mapStateToProps, {

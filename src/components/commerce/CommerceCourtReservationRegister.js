@@ -121,7 +121,7 @@ class CommerceCourtReservationRegister extends Component {
   }
 
   renderButtons = () => {
-    if (!this.props.saved) {
+    if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
           <Button
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { commerceId, area: { areaId } } = state.commerceData;
-  const { clientName, clientPhone, court, startDate, endDate, light, price, saved, loading } = state.reservation;
+  const { clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading } = state.reservation;
 
-  return { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price, saved, loading };
+  return { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading };
 }
 
 export default connect(mapStateToProps, {

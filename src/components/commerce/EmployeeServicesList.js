@@ -12,7 +12,8 @@ class EmployeeServicesList extends Component {
     });
 
     componentDidUpdate(prevProps) {
-        if (!prevProps.saved && this.props.saved) {
+        if (!prevProps.saved && this.props.saved ||
+            !prevProps.exists && this.props.exists) {
             this.props.navigation.replace('serviceReservationRegister');
         }
     }
@@ -114,9 +115,9 @@ const mapStateToProps = state => {
     const { employeeId } = state.roleData;
     const { commerceId } = state.commerceData;
     const { services, loading } = state.servicesList;
-    const { startDate, saved } = state.reservation;
+    const { startDate, saved, exists } = state.reservation;
 
-    return { commerceId, services, slots, startDate, loading, employeeId, saved };
+    return { commerceId, services, slots, startDate, loading, employeeId, saved, exists };
 };
 
 export default connect(mapStateToProps, {

@@ -111,13 +111,12 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_RESERVATION_VALUE_CHANGE =
-  'on_court_reservation_value_change';
-export const ON_RESERVATION_CREATING = 'on_court_reservation_creating';
-export const ON_RESERVATION_CREATE = 'on_court_reservation_create';
-export const ON_RESERVATION_CREATE_FAIL =
-  'on_court_reservation_create_fail';
-export const ON_NEW_RESERVATION = 'on_new_court_reservation';
+export const ON_RESERVATION_VALUE_CHANGE = 'on_reservation_value_change';
+export const ON_RESERVATION_CREATING = 'on_reservation_creating';
+export const ON_RESERVATION_CREATE = 'on_reservation_create';
+export const ON_RESERVATION_CREATE_FAIL = 'on_reservation_create_fail';
+export const ON_RESERVATION_EXISTS = 'on_reservation_exists'
+export const ON_NEW_RESERVATION = 'on_new_reservation';
 export const ON_NEW_SERVICE_RESERVATION = 'on_new_service_reservation';
 
 // Location types
