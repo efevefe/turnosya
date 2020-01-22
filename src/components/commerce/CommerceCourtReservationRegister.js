@@ -45,15 +45,9 @@ class CommerceCourtReservationRegister extends Component {
 
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
-
     this.props.onCourtReservationValueChange({
-      prop: 'price',
-      value: this.state.prices[selectedIndex]
-    });
-
-    this.props.onCourtReservationValueChange({
-      prop: 'light',
-      value: !!selectedIndex // 0 = false = no light // 1 = true = light
+      price: this.state.prices[selectedIndex],
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -73,8 +67,11 @@ class CommerceCourtReservationRegister extends Component {
             <Input
               label="Nombre:"
               placeholder="Nombre del cliente"
+              autoCapitalize="words"
               value={this.props.clientName}
-              onChangeText={this.onNameValueChange}
+              onChangeText={clientName =>
+                this.props.onCourtReservationValueChange({ clientName })
+              }
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.nameError}
@@ -85,7 +82,9 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={this.onPhoneValueChange}
+              onChangeText={clientPhone =>
+                this.props.onCourtReservationValueChange({ clientPhone })
+              }
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -96,40 +95,24 @@ class CommerceCourtReservationRegister extends Component {
     }
   };
 
-  onNameValueChange = name => {
-    this.props.onCourtReservationValueChange({
-      prop: 'clientName',
-      value: name
-    });
-  };
-
-  onPhoneValueChange = phone => {
-    this.props.onCourtReservationValueChange({
-      prop: 'clientPhone',
-      value: phone
-    });
-  };
-
   nameError = () => {
     const { clientName } = this.props;
 
     if (!clientName) {
       this.setState({ nameError: 'Dato requerido' });
     } else if (!validateValueType('name', clientName)) {
-      this.setState({ nameError: 'Formato no valido' });
+      this.setState({ nameError: 'Formato no válido' });
     } else {
       this.setState({ nameError: '' });
       return false;
     }
-
-    return true;
   };
 
   phoneError = () => {
     const { clientPhone } = this.props;
 
     if (clientPhone && !validateValueType('phone', clientPhone)) {
-      this.setState({ phoneError: 'Formato no valido' });
+      this.setState({ phoneError: 'Formato no válido' });
       return true;
     } else {
       this.setState({ phoneError: '' });
@@ -168,7 +151,7 @@ class CommerceCourtReservationRegister extends Component {
         MONTHS[moment(slot.startDate).month()]
       } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
       const title = 'Turno Reservado';
-      notification = { title, body};
+      notification = { title, body };
       this.props.onCommerceCourtReservationCreate({
         commerceId,
         clientName,
@@ -252,7 +235,7 @@ const mapStateToProps = state => {
     light,
     price,
     saved,
-    loading,
+    loading
   };
 };
 

@@ -10,7 +10,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions';
+import { onFavoriteCommercesRead } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -26,7 +26,7 @@ class CommercesList extends Component {
       header: undefined
     });
 
-    this.props.readFavoriteCommerces();
+    this.props.onFavoriteCommercesRead();
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -171,5 +171,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  readFavoriteCommerces
+  onFavoriteCommercesRead
 })(CommercesList);

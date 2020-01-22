@@ -16,16 +16,16 @@ import {
 } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onCourtReservationsListValueChange,
-  clientReviewValueChange,
-  createClientReview,
-  readClientReview,
-  updateClientReview,
-  deleteClientReview,
-  clientReviewClear,
-  readCommerceReview,
-  commerceReviewClear
+  onClientReviewValueChange,
+  onClientReviewCreate,
+  onClientReviewReadById,
+  onClientReviewUpdate,
+  onClientReviewDelete,
+  onClientReviewValuesReset,
+  onCommerceReviewReadById,
+  onCommerceReviewValuesReset
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -47,20 +47,20 @@ class CommerceCourtReservationDetails extends Component {
   }
 
   componentDidMount() {
-    this.props.readClientReview({
+    this.props.onClientReviewReadById({
       clientId: this.state.reservation.clientId,
       reviewId: this.state.reservation.reviewId
     });
 
-    this.props.readCommerceReview({
+    this.props.onCommerceReviewReadById({
       commerceId: this.props.commerceId,
       reviewId: this.state.reservation.receivedReviewId
     });
   }
 
   componentWillUnmount() {
-    this.props.clientReviewClear();
-    this.props.commerceReviewClear();
+    this.props.onClientReviewValuesReset();
+    this.props.onCommerceReviewValuesReset();
   }
 
   renderCancelButton = () => {
@@ -79,7 +79,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   renderError = () => {
-    if (this.props.cancelationReason === '') {
+    if (this.props.cancellationReason === '') {
       this.setState({ error: 'Debe informar el motivo' });
       return false;
     } else {
@@ -90,10 +90,7 @@ class CommerceCourtReservationDetails extends Component {
 
   onBackdropPress = () => {
     this.setState({ optionsVisible: false, error: '' });
-    this.props.onCourtReservationsListValueChange({
-      prop: 'cancelationReason',
-      value: ''
-    });
+    this.props.onCourtReservationsListValueChange({ cancellationReason: '' });
   };
 
   onConfirmDelete = (id, clientId) => {
@@ -112,11 +109,11 @@ class CommerceCourtReservationDetails extends Component {
       const title = 'Turno Cancelado';
       notification = { title, body };
 
-      this.props.onCommerceCancelReservation({
+      this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
         reservationId: id,
         clientId,
-        cancelationReason: this.props.cancelationReason,
+        cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation,
         notification
       });
@@ -130,16 +127,16 @@ class CommerceCourtReservationDetails extends Component {
       Toast.show({ text: 'Debe primero especificar una calificación.' });
     } else {
       if (this.props.clientReviewId) {
-        // Si tenia calificacion actualizarla
-        this.props.updateClientReview({
+        // Si tenia calificación actualizarla
+        this.props.onClientReviewUpdate({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
           reviewId: this.props.clientReviewId
         });
       } else {
-        // Si la reserva no tiene calificacion, crearla
-        this.props.createClientReview({
+        // Si la reserva no tiene calificación, crearla
+        this.props.onClientReviewCreate({
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
@@ -151,7 +148,7 @@ class CommerceCourtReservationDetails extends Component {
   };
 
   onDeleteReviewHandler = () => {
-    this.props.deleteClientReview({
+    this.props.onClientReviewDelete({
       clientId: this.state.reservation.clientId,
       reviewId: this.props.clientReviewId,
       reservationId: this.state.reservation.id,
@@ -236,13 +233,13 @@ class CommerceCourtReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
           title={title}
-          onFinishRating={value =>
-            this.props.clientReviewValueChange('rating', value)
+          onFinishRating={rating =>
+            this.props.onClientReviewValueChange({ rating })
           }
           rating={this.props.clientRating}
           readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.clientReviewValueChange('comment', value)
+          onChangeText={comment =>
+            this.props.onClientReviewValueChange({ comment })
           }
           commentPlaceholder="Comente sobre el cliente..."
           commentText={this.props.clientComment}
@@ -315,14 +312,13 @@ class CommerceCourtReservationDetails extends Component {
                 placeholder="Motivo de cancelación..."
                 multiline={true}
                 color="black"
-                onChangeText={value => {
+                onChangeText={cancellationReason => {
                   this.props.onCourtReservationsListValueChange({
-                    prop: 'cancelationReason',
-                    value
+                    cancellationReason
                   });
                   this.setState({ error: '' });
                 }}
-                value={this.props.cancelationReason}
+                value={this.props.cancellationReason}
                 errorMessage={this.state.error}
                 onFocus={() => this.setState({ error: '' })}
               />
@@ -383,14 +379,14 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { loading, cancelationReason } = state.courtReservationsList;
+  const { loading, cancellationReason } = state.courtReservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
   return {
     loading,
     commerceId,
-    cancelationReason,
+    cancellationReason,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
     clientReviewId: state.clientReviewData.reviewId,
@@ -403,14 +399,14 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onCourtReservationsListValueChange,
-  clientReviewValueChange,
-  createClientReview,
-  readClientReview,
-  updateClientReview,
-  deleteClientReview,
-  clientReviewClear,
-  readCommerceReview,
-  commerceReviewClear
+  onClientReviewValueChange,
+  onClientReviewCreate,
+  onClientReviewReadById,
+  onClientReviewUpdate,
+  onClientReviewDelete,
+  onClientReviewValuesReset,
+  onCommerceReviewReadById,
+  onCommerceReviewValuesReset
 })(CommerceCourtReservationDetails);

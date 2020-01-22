@@ -5,12 +5,12 @@ import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Spinner, EmptyList } from '../common';
 import ServicesListItem from './ServicesListItem';
-import { servicesRead, onFormOpen } from '../../actions';
+import { onServicesRead, onFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class ServicesList extends Component {
   componentDidMount() {
-    this.unsubscribeServicesRead = this.props.servicesRead(
+    this.unsubscribeServicesRead = this.props.onServicesRead(
       this.props.commerceId
     );
   }
@@ -47,7 +47,7 @@ class ServicesList extends Component {
   };
 
   renderList = () => {
-    if (this.props.services.length > 0) {
+    if (this.props.services.length) {
       return (
         <FlatList
           data={this.props.services}
@@ -89,7 +89,6 @@ const mapStateToProps = state => {
   return { services, loading, commerceId };
 };
 
-export default connect(
-  mapStateToProps,
-  { servicesRead, onFormOpen }
-)(ServicesList);
+export default connect(mapStateToProps, { onServicesRead, onFormOpen })(
+  ServicesList
+);

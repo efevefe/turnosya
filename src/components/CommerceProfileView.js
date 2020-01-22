@@ -19,11 +19,10 @@ import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PictureView, Spinner } from './common';
 import {
-  onCommerceReadProfile,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onCommerceRead,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
@@ -47,14 +46,12 @@ class CommerceProfileView extends Component {
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
-    this.props.onCommerceReadProfile(commerceId);
+    this.props.onCommerceRead(commerceId);
 
     this.props.onCommerceCourtTypesRead({
       commerceId,
       loadingType: 'loading'
     });
-
-    this.props.commerceHitsUpdate([]);
   }
 
   renderDescription = () => {
@@ -91,23 +88,20 @@ class CommerceProfileView extends Component {
   };
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
   onMapPress = () => {
-    const { address, city, province, latitude, longitude } = this.props;
-
-    this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+    this.props.onLocationValueChange({
+      address: this.props.address,
+      city: this.props.city,
+      provinceName: this.props.province.name,
+      latitude: this.props.latitude,
+      longitude: this.props.longitude
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -135,10 +129,10 @@ class CommerceProfileView extends Component {
       loadingCourtTypes
     } = this.props;
 
-    if (loadingProfile || loadingCourtTypes) return <Spinner />
+    if (loadingProfile || loadingCourtTypes) return <Spinner />;
 
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View>
           <Image
             style={{
@@ -168,8 +162,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -313,10 +307,9 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceReadProfile,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onCommerceRead,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 })(CommerceProfileView);

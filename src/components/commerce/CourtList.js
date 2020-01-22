@@ -6,12 +6,14 @@ import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList } from '../common';
 import CourtListItem from './CourtListItem';
-import { courtsRead, onCourtFormOpen } from '../../actions';
+import { onCourtsRead, onCourtFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
 
 class CourtList extends Component {
   componentDidMount() {
-    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+    this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
   }
 
   componentWillUnmount() {
@@ -26,7 +28,7 @@ class CourtList extends Component {
   isCourtDisabled = court => {
     const { disabledTo, disabledFrom } = court;
     return disabledFrom && (!disabledTo || disabledTo >= moment());
-  }
+  };
 
   renderRow({ item }) {
     return (
@@ -42,7 +44,7 @@ class CourtList extends Component {
   }
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}
@@ -63,13 +65,15 @@ class CourtList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.onAddPress()}
-        >
-          <Ionicons name="md-add" />
-        </Fab>
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+          <Fab
+            style={{ backgroundColor: MAIN_COLOR }}
+            position="bottomRight"
+            onPress={() => this.onAddPress()}
+          >
+            <Ionicons name="md-add" />
+          </Fab>
+        </PermissionsAssigner>
       </View>
     );
   }
@@ -82,7 +86,6 @@ const mapStateToProps = state => {
   return { courts, loading, commerceId };
 };
 
-export default connect(
-  mapStateToProps,
-  { courtsRead, onCourtFormOpen }
-)(CourtList);
+export default connect(mapStateToProps, { onCourtsRead, onCourtFormOpen })(
+  CourtList
+);

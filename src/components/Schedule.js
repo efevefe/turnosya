@@ -25,6 +25,7 @@ import { onScheduleValueChange } from '../actions';
 
     slot: {
       id: identificador unico,
+      shiftId: si pertenece al primer o segundo turno
       startDate: fecha y hora de inicio del turno,
       endDate: fecha y hora de fin del turno,
       available: indica si tiene turnos libres o no,
@@ -58,10 +59,13 @@ class Schedule extends Component {
 
     //slots & shifts
     let slots = [];
+    const shifts = [];
     const { cards } = this.props;
-    const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atencion ese dia de la semana
+    const dayShifts = cards.find(card =>
+      card.days.includes(selectedDate.day())
+    ); // horario de atención ese día de la semana
 
-    //si hay horario de atencion ese dia, genera los slots
+    //si hay horario de atención ese día, genera los slots
     if (dayShifts) {
       const {
         firstShiftStart,
@@ -70,70 +74,72 @@ class Schedule extends Component {
         secondShiftEnd
       } = dayShifts;
 
-      slots = this.generateSlots(
-        selectedDate,
-        firstShiftStart,
-        firstShiftEnd,
-        slots
-      );
+      shifts.push({ shiftStart: firstShiftStart, shiftEnd: firstShiftEnd });
 
       if (secondShiftStart && secondShiftEnd) {
-        slots = this.generateSlots(
-          selectedDate,
-          secondShiftStart,
-          secondShiftEnd,
-          slots
-        );
+        shifts.push({ shiftStart: secondShiftStart, shiftEnd: secondShiftEnd });
       }
+
+      slots = this.generateSlots(selectedDate, shifts);
     }
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ slots });
     this.props.onDateChanged(selectedDate);
   };
 
-  generateSlots = (selectedDate, shiftStart, shiftEnd, slots) => {
+  generateSlots = (selectedDate, shifts) => {
     // selected date params
     const year = selectedDate.year();
     const month = selectedDate.month();
-    const date = selectedDate.date(); // dia del mes
+    const date = selectedDate.date(); // día del mes
 
-    let slotId = slots.length;
-    shiftStart = getHourAndMinutes(shiftStart);
-    shiftEnd = getHourAndMinutes(shiftEnd);
     const { reservationMinLength } = this.props;
+    const slots = [];
 
-    const shiftStartDate = moment([
-      year,
-      month,
-      date,
-      shiftStart.hour,
-      shiftStart.minutes
-    ]);
-    const shiftEndDate = moment([
-      year,
-      month,
-      date,
-      shiftEnd.hour,
-      shiftEnd.minutes
-    ]);
-    const slotStartDate = moment(shiftStartDate);
+    shifts.forEach((shift, index) => {
+      let { shiftStart, shiftEnd } = shift;
+      shiftStart = getHourAndMinutes(shiftStart);
+      shiftEnd = getHourAndMinutes(shiftEnd);
 
-    for (
-      let j = 0;
-      shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate;
-      j++
-    ) {
-      slots.push({
-        id: slotId++,
-        startDate: moment(slotStartDate),
-        endDate: moment(shiftStartDate),
-        available: true,
-        disabled: false,
-        free: 0,
-        total: 0
-      });
-      slotStartDate.add(reservationMinLength, 'minutes');
-    }
+      const shiftStartDate = moment([
+        year,
+        month,
+        date,
+        shiftStart.hour,
+        shiftStart.minutes
+      ]);
+
+      const shiftEndDate = moment([
+        year,
+        month,
+        date,
+        shiftEnd.hour,
+        shiftEnd.minutes
+      ]);
+
+      const slotStartDate = moment(shiftStartDate);
+
+      for (
+        let j = 0;
+        shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
+        (shiftStartDate.format('HH:mm') === '00:00' &&
+          shiftEndDate.format('HH:mm') === '23:59');
+        j++
+      ) {
+        slots.push({
+          id: slots.length,
+          shiftId: index,
+          startDate: moment(slotStartDate),
+          endDate: moment(shiftStartDate),
+          available: true,
+          disabled: false,
+          free: 0,
+          total: 0
+        });
+
+        slotStartDate.add(reservationMinLength, 'minutes');
+      }
+    });
 
     return slots;
   };
@@ -141,12 +147,12 @@ class Schedule extends Component {
   badgeColor = (free, total) => {
     if (free == 0) {
       return MAIN_COLOR;
-    } else if (free <= (total / 2)) {
+    } else if (free <= total / 2) {
       return WARNING_COLOR;
     } else {
       return SUCCESS_COLOR;
     }
-  }
+  };
 
   renderList = ({ item }) => {
     return (
@@ -158,8 +164,15 @@ class Schedule extends Component {
         }}
         rightElement={
           <Badge
-            value={item.free ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}` : 'Ocupadas'}
-            badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+            value={
+              item.free
+                ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}`
+                : 'Ocupadas'
+            }
+            badgeStyle={{
+              ...styles.slotBadgeStyle,
+              backgroundColor: this.badgeColor(item.free, item.total)
+            }}
           />
         }
         title={`${item.startDate.format('HH:mm')}`}
@@ -216,8 +229,8 @@ class Schedule extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-            this.renderSlots()
-          )}
+          this.renderSlots()
+        )}
       </View>
     );
   }
@@ -243,6 +256,8 @@ const mapStateToProps = state => {
   const { slots, loading, id } = state.commerceSchedule;
 
   return { slots, loadingSchedule: loading, scheduleId: id };
-}
+};
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(
+  withNavigationFocus(Schedule)
+);

@@ -100,21 +100,13 @@ class ClientProfile extends Component {
 
         this.disableEdit();
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onCancelPress = () => {
-    const { stateBeforeChanges } = this.state;
-
-    for (prop in stateBeforeChanges) {
-      this.props.onClientDataValueChange({
-        prop,
-        value: stateBeforeChanges[prop]
-      });
-    }
-
+    this.onClientDataValueChange(this.state.stateBeforeChanges);
     this.cleanErrors();
     this.disableEdit();
   };
@@ -152,24 +144,13 @@ class ClientProfile extends Component {
     this.setState({ pictureOptionsVisible: !this.state.pictureOptionsVisible });
   };
 
-  getPermissionAsync = async () => {
+  onChoosePicturePress = async () => {
+    this.onEditPicturePress();
+
     try {
       if (Constants.platform.ios) {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  onChoosePicturePress = async () => {
-    try {
-      this.onEditPicturePress();
-
-      await this.getPermissionAsync();
 
       const options = {
         mediaTypes: 'Images',
@@ -177,17 +158,14 @@ class ClientProfile extends Component {
         aspect: [1, 1]
       };
 
-      let response = await ImagePicker.launchImageLibraryAsync(options);
+      const response = await ImagePicker.launchImageLibraryAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -207,19 +185,16 @@ class ClientProfile extends Component {
       let response = await ImagePicker.launchCameraAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onDeletePicturePress = () => {
-    this.props.onClientDataValueChange({ prop: 'profilePicture', value: '' });
+    this.props.onClientDataValueChange({ profilePicture: '' });
     this.onEditPicturePress();
   };
 
@@ -253,13 +228,10 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onClientDataValueChange } = this.props;
+    const firstName = trimString(this.props.firstName);
 
-    onClientDataValueChange({
-      prop: 'firstName',
-      value: trimString(firstName)
-    });
-    if (trimString(firstName) === '') {
+    this.props.onClientDataValueChange({ firstName });
+    if (firstName === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -269,10 +241,10 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onClientDataValueChange } = this.props;
+    const lastName = trimString(this.props.lastName);
 
-    onClientDataValueChange({ prop: 'lastName', value: trimString(lastName) });
-    if (trimString(lastName) === '') {
+    this.props.onClientDataValueChange({ lastName });
+    if (lastName === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -327,7 +299,6 @@ class ClientProfile extends Component {
           />
         }
       >
-        <LocationMessages />
         <View style={headerContainerStyle}>
           <View style={avatarContainerStyle}>
             <Avatar
@@ -346,6 +317,8 @@ class ClientProfile extends Component {
           </View>
           {this.renderFullName()}
           {this.renderLocation()}
+          <LocationMessages />
+          {/* Este componente hace que la app crashee al querer cambiar la foto */}
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('clientReviewsList', {
@@ -374,11 +347,9 @@ class ClientProfile extends Component {
             <Input
               label="Nombre:"
               value={this.props.firstName}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'firstName',
-                  value
-                })
+              autoCapitalize="words"
+              onChangeText={firstName =>
+                this.props.onClientDataValueChange({ firstName })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}
@@ -390,8 +361,9 @@ class ClientProfile extends Component {
             <Input
               label="Apellido:"
               value={this.props.lastName}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'lastName', value })
+              autoCapitalize="words"
+              onChangeText={lastName =>
+                this.props.onClientDataValueChange({ lastName })
               }
               editable={this.state.editEnabled}
               errorMessage={this.state.lastNameError}
@@ -403,8 +375,8 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'phone', value })
+              onChangeText={phone =>
+                this.props.onClientDataValueChange({ phone })
               }
               keyboardType="numeric"
               editable={this.state.editEnabled}

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Icon } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
 class DrawerItem extends Component {
   renderIcon = (color) => {
-    // el icono debe ser de ionicons
     if (this.props.icon) {
       return (
         <View style={{ width: 25, alignItems: 'center' }} >
@@ -17,11 +16,20 @@ class DrawerItem extends Component {
                 size='small'
               />
             ) : (
-                <Ionicons
-                  name={this.props.icon}
-                  color={color}
-                  size={22}
-                />
+                this.props.icon.type ? (
+                  <Icon
+                    name={this.props.icon.name}
+                    type={this.props.icon.type}
+                    color={color}
+                    size={22}
+                  />
+                ) : (
+                    <Ionicons
+                      name={this.props.icon.name}
+                      color={color}
+                      size={22}
+                    />
+                  )
               )
           }
 

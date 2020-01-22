@@ -18,12 +18,13 @@ import {
   ON_REAUTH_SUCCESS,
   ON_EMAIL_VERIFY_REMINDED,
   ON_REGISTER_FORM_OPEN,
+  ON_WORKPLACES_READ,
   ON_USER_PASSWORD_UPDATE
 } from './types';
 import { userReauthenticate } from './AuthActions';
 
-export const onClientDataValueChange = ({ prop, value }) => {
-  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload: { prop, value } };
+export const onClientDataValueChange = payload => {
+  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload };
 };
 
 export const onRegisterFormOpen = () => {
@@ -160,6 +161,25 @@ export const onUserDelete = password => {
   };
 };
 
+export const readUserWorkplaces = () => dispatch => {
+  const db = firebase.firestore();
+  const clientId = firebase.auth().currentUser.uid;
+
+  let workplaces = [];
+
+  db.collection(`Profiles/${clientId}/Workplaces`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      snapshot.forEach(doc =>
+        workplaces.push({
+          commerceId: doc.data().commerceId,
+          name: doc.data().name
+        })
+      );
+      dispatch({ type: ON_WORKPLACES_READ, payload: workplaces });
+    });
+};
 
 export const onUserPasswordUpdate = ({ password, newPassword }, navigation) => {
   const { currentUser } = firebase.auth();
@@ -169,7 +189,8 @@ export const onUserPasswordUpdate = ({ password, newPassword }, navigation) => {
 
     userReauthenticate(password)
       .then(() => {
-        currentUser.updatePassword(newPassword)
+        currentUser
+          .updatePassword(newPassword)
           .then(() => {
             dispatch({ type: ON_REAUTH_SUCCESS });
             dispatch({ type: ON_USER_PASSWORD_UPDATE });
@@ -178,11 +199,11 @@ export const onUserPasswordUpdate = ({ password, newPassword }, navigation) => {
           .catch(error => {
             dispatch({ type: ON_USER_UPDATE_FAIL });
             dispatch({ type: ON_REAUTH_SUCCESS });
-          })
+          });
       })
       .catch(error => {
         dispatch({ type: ON_REAUTH_FAIL });
         dispatch({ type: ON_USER_UPDATE_FAIL });
       });
   };
-}
+};

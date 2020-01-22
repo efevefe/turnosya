@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
 import {
@@ -16,34 +15,9 @@ import moment from 'moment';
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: navigation.getParam('leftButton')
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
-    });
-
     this.priceButtons();
   }
-
-  renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        onPress={this.onBackPress}
-        tintColor="white"
-        title="Back"
-      />
-    );
-  };
-
-  onBackPress = () => {
-    this.onNewReservation();
-    this.props.navigation.goBack(null);
-  };
 
   priceButtons = () => {
     const { court } = this.props;
@@ -65,15 +39,9 @@ class ConfirmCourtReservation extends Component {
 
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
-
     this.props.onCourtReservationValueChange({
-      prop: 'price',
-      value: this.state.prices[selectedIndex]
-    });
-
-    this.props.onCourtReservationValueChange({
-      prop: 'light',
-      value: !!selectedIndex // 0 = false = no light // 1 = true = light
+      price: this.state.prices[selectedIndex],
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -96,13 +64,16 @@ class ConfirmCourtReservation extends Component {
 
   onConfirmReservation = () => {
     const { commerce, court, courtType, slot, price, light } = this.props;
+
     const body = `El Turno del día ${
       DAYS[slot.startDate.day()]
     } ${slot.startDate.format('D')} de ${
       MONTHS[moment(slot.startDate).month()]
     } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
     const title = 'Turno Reservado';
+
     notification = { title, body };
+
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       courtId: court.id,
@@ -111,13 +82,6 @@ class ConfirmCourtReservation extends Component {
       price,
       light,
       notification
-    });
-  };
-
-  onNewReservation = () => {
-    this.props.onCourtReservationValueChange({
-      prop: 'saved',
-      value: false
     });
   };
 
@@ -138,10 +102,9 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commerceProfileView');
-              }}
+              onPress={() =>
+                this.props.navigation.navigate('commerceProfileView')
+              }
             />
           </View>
           <View style={{ alignItems: 'flex-end' }}>
@@ -158,10 +121,7 @@ class ConfirmCourtReservation extends Component {
                   style={{ marginLeft: 10 }}
                 />
               }
-              onPress={() => {
-                this.onNewReservation();
-                this.props.navigation.navigate('commercesAreas');
-              }}
+              onPress={() => this.props.navigation.navigate('commercesAreas')}
             />
           </View>
         </CardSection>

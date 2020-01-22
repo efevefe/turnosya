@@ -10,13 +10,10 @@ import {
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
-import { onClientNotificationSend } from './PushNotificationActions';
+import { onClientPushNotificationSend } from './PushNotificationActions';
 
-export const onCourtReservationsListValueChange = ({ prop, value }) => {
-  return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload: { prop, value }
-  };
+export const onCourtReservationsListValueChange = payload => {
+  return { type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE, payload };
 };
 
 const formatReservation = ({ res, court, client }) => {
@@ -178,11 +175,11 @@ export const onCommerceDetailedCourtReservationsRead = ({
     });
 };
 
-export const onCommerceCancelReservation = ({
+export const onCommerceReservationCancel = ({
   commerceId,
   reservationId,
   clientId,
-  cancelationReason,
+  cancellationReason,
   navigation,
   notification
 }) => {
@@ -199,7 +196,7 @@ export const onCommerceCancelReservation = ({
           state: {
             id: stateDoc.id,
             name: stateDoc.data().name,
-            cancelationReason
+            cancellationReason
           },
           cancellationDate: new Date()
         };
@@ -219,17 +216,17 @@ export const onCommerceCancelReservation = ({
         batch
           .commit()
           .then(() => {
-            onClientNotificationSend(notification, clientId);
+            onClientPushNotificationSend(notification, clientId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
-          .catch(e => {
+          .catch(error => {
             dispatch({
               type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
             });
           });
       })
-      .catch(e => {
+      .catch(error => {
         dispatch({
           type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
         });
@@ -366,67 +363,5 @@ export const onReservationsCancel = async (
     });
   } catch (error) {
     console.error(error);
-  }
-};
-
-export const cancellationDateScript = async () => {
-  // script para corregir el nombre del campo cancellationDate en la reserva
-  // cuando este publicada la version corregida, lo ejecutamos de nuevo por las
-  // dudas y despues lo borramos
-  const db = firebase.firestore();
-
-  try {
-    const commercesSnapshot = await db
-      .collection('Commerces')
-      .where('softDelete', '==', null)
-      .get();
-    if (commercesSnapshot.empty) return;
-
-    commercesSnapshot.forEach(async commerce => {
-      const reservationsSnapshot = await db
-        .collection(`Commerces/${commerce.id}/Reservations`)
-        .get();
-
-      if (!reservationsSnapshot.empty) {
-        // batch instance
-        const batch = db.batch();
-
-        reservationsSnapshot.forEach(reservation => {
-          // updating reservation in commerce
-          const {
-            cancelationDate,
-            cancellationDate,
-            clientId
-          } = reservation.data();
-          let newCancellationDate = null;
-
-          if (cancelationDate) {
-            newCancellationDate = cancelationDate;
-          } else if (cancellationDate) {
-            newCancellationDate = cancellationDate;
-          }
-
-          const updateObject = {
-            cancellationDate: newCancellationDate,
-            cancelationDate: firebase.firestore.FieldValue.delete()
-          };
-
-          batch.update(reservation.ref, updateObject);
-
-          // updating reservation in client
-          if (clientId) {
-            const clientReservationRef = db.doc(
-              `Profiles/${clientId}/Reservations/${reservation.id}`
-            );
-            batch.update(clientReservationRef, updateObject);
-          }
-        });
-
-        await batch.commit();
-        console.log(`${commerce.data().name} --> success`);
-      }
-    });
-  } catch (error) {
-    throw new Error(error);
   }
 };

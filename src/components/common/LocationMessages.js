@@ -39,8 +39,8 @@ class LocationMessages extends Component {
         this.setState({ permissionStatus, modal: true });
       }
       AppState.addEventListener('change', this._handleAppStateChange);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -59,8 +59,8 @@ class LocationMessages extends Component {
           modal: true
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
 
     if (this.state.permissionStatus === 'permissionsAllowed') {
@@ -104,8 +104,8 @@ class LocationMessages extends Component {
       };
 
       this.props.onUserLocationChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 

@@ -27,11 +27,10 @@ class ReviewCard extends Component {
           />
         </CardSection>
         <CardSection>
-          {this.props.readOnly
-            ? <Text style={readOnlyReviewStyle}>
-              {this.props.commentText}
-            </Text>
-            : <Input
+          {this.props.readOnly ? (
+            <Text style={readOnlyReviewStyle}>{this.props.commentText}</Text>
+          ) : (
+            <Input
               onChangeText={this.props.onChangeText}
               multiline={true}
               maxLength={254}
@@ -39,13 +38,12 @@ class ReviewCard extends Component {
               placeholder={this.props.commentPlaceholder}
               defaultValue={this.props.commentText}
             />
-          }
-
+          )}
         </CardSection>
       </View>
     ) : (
-        <View>{this.renderReviewTitle(this.props.title)}</View>
-      );
+      <View>{this.renderReviewTitle(this.props.title)}</View>
+    );
   }
 }
 
@@ -58,7 +56,8 @@ const { reviewTitleStyle, readOnlyReviewStyle } = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     alignSelf: 'center',
-    color: 'grey'
+    color: 'grey',
+    marginHorizontal: 10
   }
 });
 

@@ -62,7 +62,7 @@ export const onClientReservationsListRead = () => dispatch => {
     });
 };
 
-export const onClientCancelReservation = ({
+export const onClientReservationCancel = ({
   reservationId,
   commerceId,
   navigation,

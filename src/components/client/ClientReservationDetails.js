@@ -16,16 +16,16 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {
-  onClientCancelReservation,
+  onClientReservationCancel,
   onScheduleRead,
-  createCommerceReview,
-  readCommerceReview,
-  updateCommerceReview,
-  deleteCommerceReview,
-  commerceReviewValueChange,
-  commerceReviewClear,
-  clientReviewClear,
-  readClientReview
+  onCommerceReviewCreate,
+  onCommerceReviewReadById,
+  onCommerceReviewUpdate,
+  onCommerceReviewDelete,
+  onCommerceReviewValueChange,
+  onCommerceReviewValuesReset,
+  onClientReviewValuesReset,
+  onClientReviewReadById
 } from '../../actions';
 import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -52,23 +52,23 @@ class ClientReservationDetails extends Component {
       selectedDate: this.state.reservation.startDate
     });
 
-    this.props.readCommerceReview({
+    this.props.onCommerceReviewReadById({
       commerceId: this.state.reservation.commerceId,
       reviewId: this.state.reservation.reviewId
     });
 
-    this.props.readClientReview({
+    this.props.onClientReviewReadById({
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
   }
 
   componentWillUnmount() {
-    this.props.commerceReviewClear();
-    this.props.clientReviewClear();
+    this.props.onCommerceReviewValuesReset();
+    this.props.onClientReviewValuesReset();
   }
 
-  // ** Cancelation methods **
+  // ** cancellation methods **
 
   onCancelButtonPress = () => {
     const { reservationMinCancelTime } = this.props;
@@ -106,7 +106,7 @@ class ClientReservationDetails extends Component {
     } else {
       if (this.props.commerceReviewId) {
         // Si tenia calificacion actualizarla
-        this.props.updateCommerceReview({
+        this.props.onCommerceReviewUpdate({
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
@@ -114,7 +114,7 @@ class ClientReservationDetails extends Component {
         });
       } else {
         // Si la reserva no tiene calificacion, crearla
-        this.props.createCommerceReview({
+        this.props.onCommerceReviewCreate({
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
@@ -135,7 +135,7 @@ class ClientReservationDetails extends Component {
     const title = 'Turno Cancelado';
     notification = { title, body };
     this.setState({ optionsVisible: false });
-    this.props.onClientCancelReservation({
+    this.props.onClientReservationCancel({
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
@@ -148,7 +148,7 @@ class ClientReservationDetails extends Component {
       confirmDeleteVisible: false,
       reservation: { ...this.state.reservation, reviewId: null }
     });
-    this.props.deleteCommerceReview({
+    this.props.onCommerceReviewDelete({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
       reviewId: this.props.commerceReviewId
@@ -212,13 +212,13 @@ class ClientReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
           title={title}
-          onFinishRating={value =>
-            this.props.commerceReviewValueChange('rating', value)
+          onFinishRating={rating =>
+            this.props.onCommerceReviewValueChange({ rating })
           }
           rating={this.props.commerceRating}
           readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.commerceReviewValueChange('comment', value)
+          onChangeText={comment =>
+            this.props.onCommerceReviewValueChange({ comment })
           }
           commentPlaceholder="Deje un comentario sobre la atención..."
           commentText={this.props.commerceComment}
@@ -372,14 +372,14 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onClientCancelReservation,
+  onClientReservationCancel,
   onScheduleRead,
-  createCommerceReview,
-  readCommerceReview,
-  updateCommerceReview,
-  deleteCommerceReview,
-  commerceReviewValueChange,
-  commerceReviewClear,
-  clientReviewClear,
-  readClientReview
+  onCommerceReviewCreate,
+  onCommerceReviewReadById,
+  onCommerceReviewUpdate,
+  onCommerceReviewDelete,
+  onCommerceReviewValueChange,
+  onCommerceReviewValuesReset,
+  onClientReviewValuesReset,
+  onClientReviewReadById
 })(ClientReservationDetails);

@@ -1,13 +1,13 @@
 export const ON_FORM_OPEN = 'on_form_open';
-export const SERVICE_FORM_SUBMIT = 'service_form_submit';
+export const ON_SERVICE_FORM_SUBMIT = 'on_service_form_submit';
 
 // Services types
 export const ON_SERVICE_VALUE_CHANGE = 'on_service_value_change';
-export const SERVICE_CREATE = 'service_create';
-export const SERVICES_READING = 'services_reading';
-export const SERVICES_READ = 'services_read';
-export const SERVICE_DELETE = 'service_delete';
-export const SERVICE_UPDATE = 'service_update';
+export const ON_SERVICE_CREATE = 'on_service_create';
+export const ON_SERVICES_READING = 'on_services_reading';
+export const ON_SERVICES_READ = 'on_services_read';
+export const ON_SERVICE_DELETE = 'on_service_delete';
+export const ON_SERVICE_UPDATE = 'on_service_update';
 
 // Authentication types
 export const ON_LOGIN_VALUE_CHANGE = 'on_login_value_change';
@@ -41,13 +41,13 @@ export const ON_USER_DELETE_FAIL = 'on_user_delete_fail';
 // Court types
 export const ON_COURT_FORM_OPEN = 'on_court_form_open';
 export const ON_COURT_VALUE_CHANGE = 'on_court_value_change';
-export const COURT_CREATE = 'court_create';
-export const COURT_FORM_SUBMIT = 'court_form_submit';
-export const COURT_EXISTS = 'court_existed';
-export const COURT_READING = 'court_reading';
-export const COURT_READ = 'court_read';
-export const COURT_DELETE = 'court_delete';
-export const COURT_UPDATE = 'court_update';
+export const ON_COURT_CREATE = 'on_court_create';
+export const ON_COURT_FORM_SUBMIT = 'on_court_form_submit';
+export const ON_COURT_EXISTS = 'on_court_existed';
+export const ON_COURT_READING = 'on_court_reading';
+export const ON_COURT_READ = 'on_court_read';
+export const ON_COURT_DELETE = 'on_court_delete';
+export const ON_COURT_UPDATE = 'on_court_update';
 
 // Client Profile
 export const ON_USER_READING = 'on_user_reading';
@@ -61,10 +61,10 @@ export const ON_USER_PASSWORD_UPDATE = 'on_user_password_update';
 // Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
 export const ON_COMMERCE_OPEN = 'on_commerce_open';
-export const COMMERCE_FAIL = 'commerce_fail';
+export const ON_COMMERCE_CREATE_FAIL = 'on_commerce_create_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';
-export const COMMERCE_PROFILE_CREATE = 'commerce_profile_create';
+export const ON_COMMERCE_PROFILE_CREATE = 'on_commerce_profile_create';
 export const ON_COMMERCE_DELETING = 'on_commerce_deleting';
 export const ON_COMMERCE_DELETED = 'on_commerce_deleted';
 export const ON_COMMERCE_DELETE_FAIL = 'on_commerce_delete_fail';
@@ -74,20 +74,24 @@ export const ON_COMMERCE_READ_FAIL = 'on_commerce_read_fail';
 export const ON_COMMERCE_UPDATING = 'on_commerce_updating';
 export const ON_COMMERCE_UPDATED = 'on_commerce_updated';
 export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
-export const ON_AREAS_READ = 'on_areas_read';
-export const CUIT_EXISTS = 'cuit_exists';
-export const CUIT_NOT_EXISTS = 'cuit_not_exists';
+export const ON_AREAS_READ_FOR_PICKER = 'on_areas_read_for_picker';
+export const ON_CUIT_EXISTS = 'on_cuit_exists';
+export const ON_CUIT_NOT_EXISTS = 'on_cuit_not_exists';
 
 // Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
-export const ON_COMMERCE_SEARCHING = 'on_commerce_searching';
-export const ON_PROVINCE_FILTER_UPDATE = 'on_province_filter_update';
-export const ON_UPDATE_ALL_FILTERS = 'on_update_all_filters';
-export const ON_HITS_UPDATE = 'on_hits_update';
+export const ON_COMMERCES_LIST_VALUE_CHANGE = 'on_commerces_list_value_change';
+
+// Favorites
+export const ON_FAVORITE_COMMERCE_DELETED = 'on_favorite_commerce_deleted';
+export const ON_FAVORITE_COMMERCE_ADDED = 'on_favorite_commerce_added';
+export const ON_ONLY_FAVORITE_COMMERCES_READ = 'on_only_favorite_commerce_read';
+export const ON_ONLY_FAVORITE_COMMERCES_READING =
+  'on_only_favorite_commerce_reading';
 
 // Schedule Register
-export const ON_SCHEDULE_VALUE_CHANGE = 'on_register_schedule_value_change';
+export const ON_SCHEDULE_VALUE_CHANGE = 'on_schedule_value_change';
 export const ON_SCHEDULE_FORM_OPEN = 'on_schedule_form_open';
 export const ON_SCHEDULE_CARD_VALUE_CHANGE = 'on_schedule_card_value_change';
 export const ON_SCHEDULE_CARD_DELETE = 'on_schedule_card_delete';
@@ -102,13 +106,6 @@ export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
 export const ON_SCHEDULE_CONFIG_UPDATING = 'on_schedule_config_updating';
 export const ON_SCHEDULE_CONFIG_UPDATED = 'on_schedule_config_updated';
 
-// Favorites
-export const FAVORITE_COMMERCE_DELETED = 'favorite_commerce_deleted';
-export const FAVORITE_COMMERCE_ADDED = 'favorite_commerce_added';
-export const FAVORITE_COMMERCES_READ = 'favorite_commerce_read';
-export const ONLY_FAVORITE_COMMERCES_READ = 'only_favorite_commerce_read';
-export const ONLY_FAVORITE_COMMERCES_READING = 'only_favorite_commerce_reading';
-
 // Commerce Court Types
 export const COMMERCE_COURT_TYPES_READING = 'on_commerce_court_types_reading';
 export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
@@ -121,10 +118,10 @@ export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
 export const ON_COURT_RESERVATION_CREATE_FAIL =
   'on_court_reservation_create_fail';
+export const ON_NEW_COURT_RESERVATION = 'on_new_court_reservation';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
-export const ON_LOCATION_CHANGE = 'on_location_change';
 export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
@@ -164,7 +161,8 @@ export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
 export const ON_COMMERCE_REVIEW_SAVING = 'on_commerce_review_saving';
 export const ON_COMMERCE_REVIEW_SAVED = 'on_commerce_review_saved';
 export const ON_COMMERCE_REVIEW_SAVE_FAIL = 'on_commerce_review_save_fail';
-export const ON_COMMERCE_REVIEW_CLEAR = 'on_commerce_review_clear';
+export const ON_COMMERCE_REVIEW_VALUES_RESET =
+  'on_commerce_review_values_reset';
 export const ON_COMMERCE_REVIEW_CREATED = 'on_commerce_review_created';
 export const ON_COMMERCE_REVIEW_DELETING = 'on_commerce_review_deleting';
 export const ON_COMMERCE_REVIEW_DELETED = 'on_commerce_review_deleted';
@@ -181,7 +179,7 @@ export const ON_CLIENT_REVIEW_VALUE_CHANGE = 'on_client_review_value_change';
 export const ON_CLIENT_REVIEW_SAVING = 'on_client_review_saving';
 export const ON_CLIENT_REVIEW_SAVED = 'on_client_review_saved';
 export const ON_CLIENT_REVIEW_SAVE_FAIL = 'on_client_review_save_fail';
-export const ON_CLIENT_REVIEW_CLEAR = 'on_client_review_clear';
+export const ON_CLIENT_REVIEW_VALUES_RESET = 'on_client_review_values_reset';
 export const ON_CLIENT_REVIEW_CREATED = 'on_client_review_created';
 export const ON_CLIENT_REVIEW_DELETING = 'on_client_review_deleting';
 export const ON_CLIENT_REVIEW_DELETED = 'on_client_review_deleted';
@@ -192,3 +190,33 @@ export const ON_CLIENT_REVIEW_READ_FAIL = 'on_client_review_read_fail';
 export const ON_CLIENT_REVIEWS_READING = 'on_client_reviews_reading';
 export const ON_CLIENT_REVIEWS_READ = 'on_client_reviews_read';
 export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
+
+// Employee types
+export const ON_EMPLOYEES_READING = 'on_employees_reading';
+export const ON_EMPLOYEES_READ = 'on_employees_read';
+export const ON_EMPLOYEE_VALUE_CHANGE = 'on_employee_value_change';
+export const ON_EMPLOYEE_VALUES_RESET = 'on_employee_values_reset';
+export const ON_USER_SEARCHING = 'on_user_searching';
+export const ON_USER_SEARCH_SUCCESS = 'on_user_search_success';
+export const ON_USER_SEARCH_FAIL = 'on_user_search_fail';
+export const ON_EMPLOYEE_SAVING = 'on_employee_saving';
+export const ON_EMPLOYEE_SAVE_FAIL = 'on_employee_save_fail';
+export const ON_EMPLOYEE_DELETED = 'on_employee_deleted';
+export const ON_EMPLOYEE_UPDATED = 'on_employee_updated';
+export const ON_EMPLOYEE_CREATED = 'on_employee_created';
+
+// Roles types
+export const ON_ROLES_READ = 'on_roles_read';
+export const ON_ROLE_ASSIGNED = 'on_role_assigned';
+
+// Workplaces types
+export const ON_WORKPLACES_READ = 'on_workplaces_read';
+
+// Reports types
+export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
+export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
+export const ON_COMMERCE_REPORT_VALUE_CHANGE =
+  'on_commerce_report_value_change';
+export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
+export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
+export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';

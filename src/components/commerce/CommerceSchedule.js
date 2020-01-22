@@ -11,12 +11,16 @@ import {
   onScheduleValueChange,
   onCommerceCourtReservationsRead,
   onCourtReservationValueChange,
-  courtsRead,
+  onCourtsRead,
   isCourtDisabledOnSlot
 } from '../../actions';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
+
+import CourtTypesFilter from './CourtTypesFilter';
 
 class CommerceSchedule extends Component {
-  state = { selectedDate: moment(), modal: false };
+  state = { selectedDate: moment(), modal: false, selectedCourtTypes: [] };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -30,7 +34,7 @@ class CommerceSchedule extends Component {
       selectedDate: this.state.selectedDate
     });
 
-    this.unsubscribeCourtsRead = this.props.courtsRead(this.props.commerceId);
+    this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
 
     this.props.navigation.setParams({
       rightIcon: this.renderConfigurationButton()
@@ -38,8 +42,10 @@ class CommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations ||
-      prevProps.courts !== this.props.courts) {
+    if (
+      prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts
+    ) {
       this.reservationsOnSlots();
     }
   }
@@ -53,12 +59,18 @@ class CommerceSchedule extends Component {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead({
-      commerceId: this.props.commerceId,
-      selectedDate: date
-    });
+    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead(
+      {
+        commerceId: this.props.commerceId,
+        selectedDate: date
+      }
+    );
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (
+      !scheduleId ||
+      (scheduleEndDate && date >= scheduleEndDate) ||
+      date < scheduleStartDate
+    ) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date
@@ -69,25 +81,38 @@ class CommerceSchedule extends Component {
   };
 
   onSlotPress = slot => {
-    this.props.onCourtReservationValueChange({
-      prop: 'slot',
-      value: slot
-    });
+    this.props.onCourtReservationValueChange({ slot });
 
     const { startDate } = slot;
 
-    this.props.navigation.navigate(
-      'commerceCourtsList',
-      {
-        title: startDate.format('DD') +
-          ' de ' + MONTHS[startDate.month()] +
-          ', ' + startDate.format('HH:mm') + ' hs.'
-      }
+    this.props.navigation.navigate('commerceCourtsList', {
+      selectedCourtTypes: this.state.selectedCourtTypes,
+      title:
+        startDate.format('DD') +
+        ' de ' +
+        MONTHS[startDate.month()] +
+        ', ' +
+        startDate.format('HH:mm') +
+        ' hs.'
+    });
+  };
+
+  isCourtTypeSelected = courtType => {
+    const { selectedCourtTypes } = this.state;
+
+    return (
+      selectedCourtTypes.includes('Todas') ||
+      selectedCourtTypes.includes(courtType)
     );
   };
 
   reservationsOnSlots = () => {
-    const { reservations, courts, slots } = this.props;
+    const { reservations, slots } = this.props;
+
+    // se filtran los courts segun los courtTypes seleccionados
+    const courts = this.props.courts.filter(court => {
+      return this.isCourtTypeSelected(court.court);
+    });
 
     const newSlots = slots.map(slot => {
       let reserved = 0;
@@ -95,7 +120,10 @@ class CommerceSchedule extends Component {
       let courtsAvailable = 0;
 
       reservations.forEach(reservation => {
-        if (slot.startDate.toString() === reservation.startDate.toString())
+        if (
+          slot.startDate.toString() === reservation.startDate.toString() &&
+          this.isCourtTypeSelected(reservation.courtType)
+        )
           reserved++;
       });
 
@@ -113,21 +141,29 @@ class CommerceSchedule extends Component {
       };
     });
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: newSlots });
+    this.props.onScheduleValueChange({ slots: newSlots });
+  };
+
+  onCourtTypesFilterValueChange = selectedCourtTypes => {
+    this.setState({ selectedCourtTypes }, this.reservationsOnSlots);
   };
 
   renderConfigurationButton = () => {
     return (
-      <IconButton
-        icon="md-options"
-        onPress={() => this.setState({ modal: true })}
-      />
+      <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+        <IconButton
+          icon="md-options"
+          onPress={() => this.setState({ modal: true })}
+        />
+      </PermissionsAssigner>
     );
   };
 
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
-    this.props.navigation.navigate('schedulesList', { selectedDate: this.state.selectedDate });
+    this.props.navigation.navigate('schedulesList', {
+      selectedDate: this.state.selectedDate
+    });
   };
 
   onScheduleConfigurationPress = () => {
@@ -149,6 +185,8 @@ class CommerceSchedule extends Component {
 
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
+        <CourtTypesFilter onValueChange={this.onCourtTypesFilterValueChange} />
+
         <Schedule
           cards={cards}
           selectedDate={selectedDate}
@@ -217,13 +255,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onScheduleRead,
-    onScheduleValueChange,
-    onCommerceCourtReservationsRead,
-    onCourtReservationValueChange,
-    courtsRead
-  }
-)(CommerceSchedule);
+export default connect(mapStateToProps, {
+  onScheduleRead,
+  onScheduleValueChange,
+  onCommerceCourtReservationsRead,
+  onCourtReservationValueChange,
+  onCourtsRead
+})(CommerceSchedule);

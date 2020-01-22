@@ -3,40 +3,40 @@ import 'firebase/firestore';
 import algoliasearch from 'algoliasearch';
 import {
   ON_REGISTER_COMMERCE,
-  COMMERCE_PROFILE_CREATE,
+  ON_COMMERCE_PROFILE_CREATE,
   ON_COMMERCE_VALUE_CHANGE,
-  COMMERCE_FAIL,
+  ON_COMMERCE_CREATE_FAIL,
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
-  ON_AREAS_READ,
+  ON_AREAS_READ_FOR_PICKER,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   ON_LOCATION_VALUES_RESET,
-  CUIT_NOT_EXISTS,
-  CUIT_EXISTS,
+  ON_CUIT_NOT_EXISTS,
+  ON_CUIT_EXISTS,
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
-  ON_CLIENT_DATA_VALUE_CHANGE,
-  ON_PROVINCES_READ
+  ON_ROLE_ASSIGNED,
+  ON_CLIENT_DATA_VALUE_CHANGE
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
+import { ROLES } from '../constants';
 
-const { algoliaConfig } = getEnvVars();
-const { appId, adminApiKey, commercesIndex } = algoliaConfig;
+const { appId, adminApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 const client = algoliasearch(appId, adminApiKey);
 const index = client.initIndex(commercesIndex);
 
-export const onCommerceValueChange = ({ prop, value }) => {
-  return { type: ON_COMMERCE_VALUE_CHANGE, payload: { prop, value } };
+export const onCommerceValueChange = payload => {
+  return { type: ON_COMMERCE_VALUE_CHANGE, payload };
 };
 
 export const onCommerceFormOpen = () => {
@@ -46,27 +46,37 @@ export const onCommerceFormOpen = () => {
   };
 };
 
-export const onCommerceOpen = navigation => {
-  const { currentUser } = firebase.auth();
-  const db = firebase.firestore();
+export const onMyCommerceOpen = (commerceId, navigation) => dispatch => {
+  dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+  dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
+  dispatch({ type: ON_LOCATION_VALUES_RESET });
 
-  return dispatch => {
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        if (doc.data().commerceId == null) {
-          navigation.navigate('commerceRegister');
-        } else {
-          dispatch({ type: ON_COMMERCE_OPEN, payload: doc.data().commerceId });
-          dispatch({ type: ON_LOCATION_VALUES_RESET });
-
-          navigation.navigate('commerce');
-        }
-      });
-  };
+  navigation.navigate('commerce');
 };
 
-export const onCreateCommerce = (
+export const onCommerceOpen = (commerceId, navigation) => dispatch => {
+  const db = firebase.firestore();
+  const profileId = firebase.auth().currentUser.uid;
+
+  // Agregar validaciones por fecha de aceptación (post-Notificaciones)
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .where('softDelete', '==', null)
+    .where('profileId', '==', profileId)
+    .get()
+    .then(snapshot => {
+      dispatch({ type: ON_COMMERCE_OPEN, payload: commerceId });
+      dispatch({
+        type: ON_ROLE_ASSIGNED,
+        payload: ROLES[snapshot.docs[0].data().role.roleId]
+      });
+      dispatch({ type: ON_LOCATION_VALUES_RESET });
+
+      navigation.navigate('commerce');
+    })
+    .catch(error => console.error(error));
+};
+
+export const onCommerceCreate = (
   {
     name,
     cuit,
@@ -124,65 +134,27 @@ export const onCreateCommerce = (
                   : {})
               })
               .then(() => {
-                dispatch({ type: COMMERCE_PROFILE_CREATE });
+                dispatch({ type: ON_COMMERCE_PROFILE_CREATE });
+                dispatch({ type: ON_ROLE_ASSIGNED, payload: ROLES.OWNER });
+
                 navigation.navigate('commerce');
               })
               .catch(error =>
-                dispatch({ type: COMMERCE_FAIL, payload: error })
+                dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
               );
           })
-          .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+          .catch(error =>
+            dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
+          );
       })
-      .catch(error => dispatch({ type: COMMERCE_FAIL, payload: error }));
+      .catch(error =>
+        dispatch({ type: ON_COMMERCE_CREATE_FAIL, payload: error })
+      );
   };
 };
 
-export const onCommerceRead = () => {
-  const { currentUser } = firebase.auth();
+export const onCommerceRead = commerceId => {
   const db = firebase.firestore();
-
-  return dispatch => {
-    dispatch({ type: ON_COMMERCE_READING });
-
-    //POR AHORA ACA SE CONSULTA PRIMERO EL ID DEL NEGOCIO DESDE EL CLIENTE, PERO INGRESANDO
-    //PRIMERO COMO CLIENTE ESTO NO HARIA
-    //FALTA YA QUE EL ID DEL NEGOCIO SE OBTENDRIA DEL REDUCER QUE TIENE LOS DATOS DEL
-    //CLIENTE, POR AHORA LO DEJO ASI PARA PROBAR
-    db.doc(`Profiles/${currentUser.uid}`)
-      .get()
-      .then(doc => {
-        db.doc(`Commerces/${doc.data().commerceId}`)
-          .get()
-          .then(doc => {
-            //province
-            var { name, provinceId } = doc.data().province;
-            const province = { value: provinceId, label: name };
-
-            //area
-            var { name, areaId } = doc.data().area;
-            const area = { value: areaId, label: name };
-
-            dispatch({
-              type: ON_COMMERCE_READ,
-              payload: {
-                ...doc.data(),
-                areasList: [area],
-                commerceId: doc.id
-              }
-            });
-            dispatch({
-              type: ON_PROVINCES_READ,
-              payload: [province]
-            });
-          })
-          .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_READ_FAIL }));
-  };
-};
-
-export const onCommerceReadProfile = commerceId => {
-  var db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_COMMERCE_READING });
@@ -239,9 +211,6 @@ export const onCommerceUpdate = (
 
   const {
     name,
-    cuit,
-    email,
-    phone,
     description,
     address,
     city,
@@ -309,11 +278,12 @@ export const onCommerceUpdate = (
   }
 };
 
-export const onAreasRead = () => {
+export const onAreasReadForPicker = () => {
   const db = firebase.firestore();
 
   return dispatch => {
     db.collection('Areas')
+      .where('softDelete', '==', null)
       .orderBy('name', 'asc')
       .get()
       .then(snapshot => {
@@ -321,7 +291,7 @@ export const onAreasRead = () => {
         snapshot.forEach(doc =>
           areasList.push({ value: doc.id, label: doc.data().name })
         );
-        dispatch({ type: ON_AREAS_READ, payload: areasList });
+        dispatch({ type: ON_AREAS_READ_FOR_PICKER, payload: areasList });
       });
   };
 };
@@ -335,11 +305,9 @@ export const validateCuit = cuit => {
       .where('softDelete', '==', null)
       .get()
       .then(function(querySnapshot) {
-        if (!querySnapshot.empty) {
-          dispatch({ type: CUIT_EXISTS });
-        } else {
-          dispatch({ type: CUIT_NOT_EXISTS });
-        }
+        !querySnapshot.empty
+          ? dispatch({ type: ON_CUIT_EXISTS })
+          : dispatch({ type: ON_CUIT_NOT_EXISTS });
       });
   };
 };
@@ -375,7 +343,7 @@ export const onCommerceDelete = (password, navigation = null) => {
                 dispatch({ type: ON_COMMERCE_DELETED });
                 dispatch({
                   type: ON_CLIENT_DATA_VALUE_CHANGE,
-                  payload: { prop: 'commerceId', value: null }
+                  payload: { commerceId: null }
                 });
 
                 if (navigation) {

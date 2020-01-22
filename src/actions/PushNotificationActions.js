@@ -5,50 +5,48 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { Toast } from '../components/common';
 
-const onCommercePushNotificationTokensRead = commerceId => {
+const onCommercePushNotificationTokensRead = async commerceId => {
   const db = firebase.firestore();
   const tokens = [];
-
-  return db
+  return await db
     .collection(`Commerces/${commerceId}/PushNotificationTokens`)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => tokens.push(doc.id));
       return tokens;
     })
-    .catch(err => console.error(err));
+    .catch(error => console.error(error));
 };
 
-const onClientPushNotificationTokensRead = clientId => {
+const onClientPushNotificationTokensRead = async clientId => {
   const db = firebase.firestore();
   const tokens = [];
 
-  return db
+  return await db
     .collection(`Profiles/${clientId}/PushNotificationTokens`)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => tokens.push(doc.id));
       return tokens;
     })
-    .catch(err => console.error(err));
+    .catch(error => console.error(error));
 };
 
 export const onCommercePushNotificationSend = (notification, commerceId) => {
   onCommercePushNotificationTokensRead(commerceId).then(tokens => {
-    const collectionPath = `Commerces/${commerceId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionPath });
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef });
   });
 };
 
-// Se va a usar en el futuro
-export const onClientNotificationSend = (notification, clientId) => {
+export const onClientPushNotificationSend = (notification, clientId) => {
   onClientPushNotificationTokensRead(clientId).then(tokens => {
-    const collectionPath = `Profiles/${clientId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionPath });
+    const collectionRef = `Profiles/${clientId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef });
   });
 };
 
-const sendPushNotification = ({ title, body, tokens, collectionPath }) => {
+const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
   try {
     if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
@@ -72,10 +70,10 @@ const sendPushNotification = ({ title, body, tokens, collectionPath }) => {
       });
 
       const db = firebase.firestore();
-      db.collection(collectionPath).add({ title, body, date: new Date() });
+      db.collection(collectionRef).add({ title, body, date: new Date() });
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -104,8 +102,8 @@ const getDeviceToken = async () => {
       });
       return -1;
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -132,16 +130,20 @@ export const onPushNotificationTokenRegister = async () => {
         .doc(`Profiles/${currentUser.uid}`)
         .get()
         .then(async doc => {
-          if (doc.data().commerceId != null)
+          if (doc.data().commerceId != null) {
             // Se guarda el deviceToken en la colección del comercio donde es dueño
-            db.doc(
-              `Commerces/${
-                doc.data().commerceId
-              }/PushNotificationTokens/${deviceToken}`
-            ).set({ profileId: currentUser.uid });
+            await db
+              .doc(
+                `Commerces/${
+                  doc.data().commerceId
+                }/PushNotificationTokens/${deviceToken}`
+              )
+              .set({ profileId: currentUser.uid });
+          }
 
           // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado
-          db.collection(`Profiles/${currentUser.uid}/Workplaces`)
+          await db
+            .collection(`Profiles/${currentUser.uid}/Workplaces`)
             .where('softDelete', '==', null)
             .get()
             .then(querySnapshot => {
@@ -159,8 +161,8 @@ export const onPushNotificationTokenRegister = async () => {
             });
         });
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -208,7 +210,7 @@ export const onPushNotificationTokenDelete = async commerceId => {
           }
         });
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };

@@ -31,8 +31,8 @@ import {
   onPushNotificationTokenDelete
 } from '../actions/PushNotificationActions';
 
-export const onLoginValueChange = ({ prop, value }) => {
-  return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
+export const onLoginValueChange = payload => {
+  return { type: ON_LOGIN_VALUE_CHANGE, payload };
 };
 
 export const sendEmailVefification = () => {
@@ -189,7 +189,7 @@ export const onLogout = commerceId => async dispatch => {
         dispatch({ type: ON_LOGOUT_SUCCESS });
       })
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
-  } catch (e) {
+  } catch (error) {
     return dispatch => dispatch({ type: ON_LOGIN_FAIL });
   }
 };
@@ -242,7 +242,7 @@ export const userReauthenticate = async (password = null) => {
     }
 
     return currentUser.reauthenticateWithCredential(credential);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };

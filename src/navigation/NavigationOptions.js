@@ -45,6 +45,8 @@ export const tabNavigationOptions = {
         iconName = `md-heart`;
       } else if (routeName === 'reservations') {
         iconName = `md-time`;
+      } else if (routeName === 'reports') {
+        iconName = `md-podium`;
       }
 
       return (
