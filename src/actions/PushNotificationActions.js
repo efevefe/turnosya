@@ -118,68 +118,43 @@ export const onPushNotificationTokenRegister = async () => {
       const batch = db.batch();
 
       // Se guarda el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(
-        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-      );
-
+      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
       batch.set(clientPushNotificationRef, {});
 
-      await db
-        .doc(`Profiles/${currentUser.uid}`)
-        .get()
-        .then(async doc => {
-          if (doc.data().commerceId != null) {
-            // Se guarda el deviceToken en la colección del comercio donde es dueño
-            const commercePushNotificationRef = db.doc(
-              `Commerces/${
-                doc.data().commerceId
-              }/PushNotificationTokens/${deviceToken}`
-            );
+      const userDoc = await db.doc(`Profiles/${currentUser.uid}`).get();
+      const { commerceId } = userDoc.data();
 
-            batch.set(commercePushNotificationRef, {
-              profileId: currentUser.uid
-            });
-          }
+      if (commerceId) {
+        // Se guarda el deviceToken del dueño en un negocio
+        const ownerSnapshot = await db
+          .collection(`Commerces/${commerceId}/Employees/`)
+          .where('softDelete', '==', null)
+          .where('profileId', '==', currentUser.uid)
+          .get();
 
-          // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado (con el id del employee)
-          await db
-            .collection(`Profiles/${currentUser.uid}/Workplaces`)
-            .where('softDelete', '==', null)
-            .get()
-            .then(async querySnapshot => {
-              if (!querySnapshot.empty) {
-                querySnapshot.forEach(async workplace => {
-                  let commerceEmployeeId;
-                  await db
-                    .collection(
-                      `Commerces/${workplace.data().commerceId}/Employees`
-                    )
-                    .get()
-                    .then(async qSnapshot => {
-                      if (!qSnapshot.empty) {
-                        commerceEmployeeId = qSnapshot.docs.find(
-                          employee =>
-                            employee.data().profileId === currentUser.uid
-                        );
-                      }
-                    });
+        const ownerTokenRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+        ownerSnapshot.forEach(owner => batch.set(ownerTokenRef, { employeeId: owner.id }));
+      }
 
-                  const workplacePushNotificationRef = db.doc(
-                    `Commerces/${
-                      workplace.data().commerceId
-                    }/PushNotificationTokens/${deviceToken}`
-                  );
+      // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado (con el id del employee)
+      const workplacesSnapshot = await db
+        .collection(`Profiles/${currentUser.uid}/Workplaces`)
+        .where('softDelete', '==', null)
+        .get();
 
-                  console.log('antes que este (no se esta esperando esto): ');
+      for await (const workplace of workplacesSnapshot.docs) {
+        const { commerceId } = workplace.data();
 
-                  batch.set(workplacePushNotificationRef, {
-                    employeeId: commerceEmployeeId.id
-                  });
-                });
-              }
-            });
-        });
-      console.log('se tira este commit');
+        const employeeSnapshot = await db
+          .collection(`Commerces/${commerceId}/Employees/`)
+          .where('softDelete', '==', null)
+          .where('profileId', '==', currentUser.uid)
+          .get();
+
+        const employeeTokenRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+        employeeSnapshot.forEach(employee => batch.set(employeeTokenRef, { employeeId: employee.id }));
+      }
+
       await batch.commit();
     }
   } catch (error) {
@@ -197,18 +172,15 @@ export const onPushNotificationTokenDelete = async commerceId => {
       const batch = db.batch();
 
       // Se elimina el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(
-        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-      );
+      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
 
       batch.delete(clientPushNotificationRef);
-      if (commerceId !== null) {
-        // Se elimina el deviceToken en la colección del comercio donde es dueño
-        const comercePushNotificationRef = db.doc(
-          `Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`
-        );
 
-        batch.delete(comercePushNotificationRef);
+      if (commerceId) {
+        // Se elimina el deviceToken en la colección del comercio donde es dueño
+        const commercePushNotificationRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+
+        batch.delete(commercePushNotificationRef);
       }
 
       // Se elimina el deviceToken en las colecciónes de los comercios donde es empleado
@@ -216,18 +188,14 @@ export const onPushNotificationTokenDelete = async commerceId => {
         .collection(`Profiles/${currentUser.uid}/Workplaces`)
         .where('softDelete', '==', null)
         .get()
-        .then(querySnapshot => {
-          if (!querySnapshot.empty) {
-            querySnapshot.forEach(async employee => {
-              const workplacePushNotificationRef = db.doc(
-                `Commerces/${
-                  employee.data().commerceId
-                }/PushNotificationTokens/${deviceToken}`
-              );
+        .then(snapshot => {
+          snapshot.forEach(async workplace => {
+            const workplacePushNotificationRef = db.doc(
+              `Commerces/${workplace.data().commerceId}/PushNotificationTokens/${deviceToken}`
+            );
 
-              batch.delete(workplacePushNotificationRef);
-            });
-          }
+            batch.delete(workplacePushNotificationRef);
+          });
         });
 
       batch.commit();
