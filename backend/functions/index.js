@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const env = require('./environment');
+const constants = require('./constants');
 const express = require('express');
 const engines = require('consolidate');
 const mercadopago = require('mercadopago');
@@ -241,7 +242,7 @@ app.post('/ipn-notification', (req, res) => {
               reservationId,
               date: new Date(),
               collectorId: collector.id,
-              method: env.paymentTypes[payment_type_id],
+              method: constants.paymentTypes[payment_type_id],
               order,
               payerId: payer_id
             });
