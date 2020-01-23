@@ -177,7 +177,7 @@ app.get('/commerce-oauth-redirect', (req, res) => {
       batch.set(mPagoTokenRef, {
         publicKey: data.public_key,
         refreshToken: data.refresh_token,
-        userId: data.user_id,
+        userId: data.user_id, // creo que no va a hacer falta
         expirationDate: new Date(moment().add('seconds', data.expires_in)),
         softDelete: null
       });
@@ -226,7 +226,7 @@ app.post('/ipn-notification', (req, res) => {
         if (!error && response.statusCode == 200) {
           console.log(body);
 
-          const { id, collector, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
+          const { id, collector, order, payer, payment_type_id, status, external_reference } = JSON.parse(body);
           const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
           console.log(external_reference);
 
@@ -244,7 +244,7 @@ app.post('/ipn-notification', (req, res) => {
               collectorId: collector.id,
               method: constants.paymentTypes[payment_type_id],
               order,
-              payerId: payer_id
+              payer
             });
 
             batch.update(commerceReservationRef, { paymentDate: new Date() });

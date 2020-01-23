@@ -1,18 +1,9 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import {
-  CardSection,
-  Button,
-  Menu,
-  MenuItem,
-  Spinner,
-  Toast,
-  ReviewCard,
-  ButtonGroup
-} from '../common';
+import { CardSection, Button, Menu, MenuItem, Spinner, Toast, ReviewCard, ButtonGroup } from '../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {
@@ -80,9 +71,7 @@ class ClientReservationDetails extends Component {
       this.setState({ optionsVisible: true });
     else
       Toast.show({
-        text:
-          'No puede cancelar el turno, el tiempo mínimo permitido es ' +
-          stringFormatHours(reservationMinCancelTime)
+        text: 'No puede cancelar el turno, el tiempo mínimo permitido es ' + stringFormatHours(reservationMinCancelTime)
       });
   };
 
@@ -91,11 +80,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button
-            title="Cancelar Reserva"
-            type="solid"
-            onPress={this.onCancelButtonPress}
-          />
+          <Button title="Cancelar Reserva" type="solid" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -154,17 +139,9 @@ class ClientReservationDetails extends Component {
         onBackdropPress={this.onDeleteConfirmBackdropPress}
         isVisible={this.state.confirmDeleteVisible}
       >
-        <MenuItem
-          title="Confirmar"
-          icon="md-checkmark"
-          onPress={this.deleteReview}
-        />
+        <MenuItem title="Confirmar" icon="md-checkmark" onPress={this.deleteReview} />
         <Divider style={overlayDividerStyle} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onDeleteConfirmBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onDeleteConfirmBackdropPress} />
       </Menu>
     );
   };
@@ -204,14 +181,10 @@ class ClientReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard
           title={title}
-          onFinishRating={value =>
-            this.props.commerceReviewValueChange('rating', value)
-          }
+          onFinishRating={value => this.props.commerceReviewValueChange('rating', value)}
           rating={this.props.commerceRating}
           readOnly={this.state.isOneWeekOld}
-          onChangeText={value =>
-            this.props.commerceReviewValueChange('comment', value)
-          }
+          onChangeText={value => this.props.commerceReviewValueChange('comment', value)}
           commentPlaceholder="Deje un comentario sobre la atención..."
           commentText={this.props.commerceComment}
           fieldsVisible
@@ -249,9 +222,7 @@ class ClientReservationDetails extends Component {
             selectedIndex={this.state.reviewBGIndex}
             buttons={['Calificar al negocio', 'Ver su calificación']}
           />
-          {this.state.reviewBGIndex === 0
-            ? this.renderCommerceReview()
-            : this.renderClientReview()}
+          {this.state.reviewBGIndex === 0 ? this.renderCommerceReview() : this.renderClientReview()}
           {this.renderConfirmReviewDelete()}
         </CardSection>
       );
@@ -261,30 +232,37 @@ class ClientReservationDetails extends Component {
   // ** Payment buttons **
 
   renderPayButton = () => {
-    return this.props.mPagoToken ? (
+    return this.state.reservation.paymentDate ? (
       <CardSection>
-        {this.state.reservation.paymentDate ? (
-          <Button
-            title="Ver detalle del pago"
-            type="solid"
-            onPress={() =>
-              this.props.navigation.navigate('paymentDetails', {
-                reservation: this.state.reservation
-              })
-            }
-          />
-        ) : (
-          <Button
-            title="Pagar con Mercado Pago"
-            type="solid"
-            onPress={() =>
-              this.props.navigation.navigate('paymentForm', {
-                reservation: this.state.reservation,
-                mPagoToken: this.props.mPagoToken
-              })
-            }
-          />
-        )}
+        <Button
+          title="Ver detalle del pago"
+          type="solid"
+          onPress={() =>
+            this.props.navigation.navigate('paymentDetails', {
+              reservation: this.state.reservation
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : this.props.mPagoToken ? (
+      <CardSection>
+        <Button
+          title="Pagar con Mercado Pago"
+          type="solid"
+          onPress={() =>
+            this.props.navigation.navigate('paymentForm', {
+              reservation: this.state.reservation,
+              mPagoToken: this.props.mPagoToken
+            })
+          }
+        />
         <Divider
           style={{
             backgroundColor: 'gray',
@@ -299,31 +277,16 @@ class ClientReservationDetails extends Component {
   // ** Render method **
 
   render() {
-    const {
-      commerce,
-      court,
-      endDate,
-      startDate,
-      light,
-      price,
-      id,
-      commerceId
-    } = this.state.reservation;
+    const { commerce, court, endDate, startDate, light, price, id, commerceId } = this.state.reservation;
 
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView
-        enableOnAndroid
-        style={scrollViewStyle}
-        extraScrollHeight={60}
-      >
+      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={
-            this.state.optionsVisible || this.props.loadingReservations
-          }
+          isVisible={this.state.optionsVisible || this.props.loadingReservations}
         >
           <MenuItem
             title="Aceptar"
@@ -339,24 +302,14 @@ class ClientReservationDetails extends Component {
             }}
           />
           <Divider style={overlayDividerStyle} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ optionsVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ optionsVisible: false })} />
         </Menu>
 
         <CourtReservationDetails
           mode="commerce"
           name={commerce.name}
           picture={commerce.profilePicture}
-          info={
-            commerce.address +
-            ', ' +
-            commerce.city +
-            ', ' +
-            commerce.province.name
-          }
+          info={commerce.address + ', ' + commerce.city + ', ' + commerce.province.name}
           infoIcon="md-pin"
           court={court}
           startDate={startDate}
