@@ -110,12 +110,9 @@ const getDeviceToken = async () => {
 export const onPushNotificationTokenRegister = async () => {
   try {
     const deviceToken = await getDeviceToken();
+    // const deviceToken = 'ExponentPushToken[AKryxSG5_l0KFxxzyO8Wt6]';
 
     if (deviceToken.length > 2) {
-      // const tokenoftoken = deviceToken.substring(
-      //   deviceToken.indexOf('[') + 1,
-      //   deviceToken.length - 1
-      // );
       const { currentUser } = firebase.auth();
       const db = firebase.firestore();
       const batch = db.batch();
@@ -144,28 +141,46 @@ export const onPushNotificationTokenRegister = async () => {
             });
           }
 
-          // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado
+          // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado (con el id del employee)
           await db
             .collection(`Profiles/${currentUser.uid}/Workplaces`)
             .where('softDelete', '==', null)
             .get()
-            .then(querySnapshot => {
+            .then(async querySnapshot => {
               if (!querySnapshot.empty) {
-                querySnapshot.forEach(employee => {
+                querySnapshot.forEach(async workplace => {
+                  let commerceEmployeeId;
+                  await db
+                    .collection(
+                      `Commerces/${workplace.data().commerceId}/Employees`
+                    )
+                    .get()
+                    .then(async qSnapshot => {
+                      if (!qSnapshot.empty) {
+                        commerceEmployeeId = qSnapshot.docs.find(
+                          employee =>
+                            employee.data().profileId === currentUser.uid
+                        );
+                      }
+                    });
+
                   const workplacePushNotificationRef = db.doc(
                     `Commerces/${
-                      employee.data().commerceId
+                      workplace.data().commerceId
                     }/PushNotificationTokens/${deviceToken}`
                   );
+
+                  console.log('antes que este (no se esta esperando esto): ');
+
                   batch.set(workplacePushNotificationRef, {
-                    profileId: currentUser.uid
+                    employeeId: commerceEmployeeId.id
                   });
                 });
               }
             });
-
-          await batch.commit();
         });
+      console.log('se tira este commit');
+      await batch.commit();
     }
   } catch (error) {
     console.error(error);
@@ -177,10 +192,6 @@ export const onPushNotificationTokenDelete = async commerceId => {
     const deviceToken = await getDeviceToken();
 
     if (deviceToken.length > 2) {
-      // const tokenoftoken = deviceToken.substring(
-      //   deviceToken.indexOf('[') + 1,
-      //   deviceToken.length - 1
-      // );
       const { currentUser } = firebase.auth();
       const db = firebase.firestore();
       const batch = db.batch();
