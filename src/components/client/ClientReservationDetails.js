@@ -36,8 +36,10 @@ class ClientReservationDetails extends Component {
   constructor(props) {
     super(props);
 
+    const reservation = props.navigation.getParam('reservation');
+
     this.state = {
-      reservation: props.navigation.getParam('reservation'),
+      reservation,
       optionsVisible: false,
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
