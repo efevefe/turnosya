@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
-import CommerceNavigation from './CommerceNavigation';
+import { SportsNavigation, HairdressersNavigation } from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
 import EmployeesList from '../components/commerce/EmployeesList';
@@ -16,9 +16,16 @@ const CommerceSettingsStack = createStackNavigator(
   {
     settings: {
       screen: CommerceSettings,
-      navigationOptions: {
-        title: 'Configuración'
-      }
+      navigationOptions: ({ navigation }) => ({
+        title: 'Configuración',
+        headerLeft: (
+          <HeaderBackButton
+            onPress={() => navigation.goBack(null)}
+            tintColor="white"
+            title='Back'
+          />
+        )
+      })
     }
   },
   stackNavigationOptions
@@ -34,6 +41,7 @@ const CommerceEmployeesStack = createStackNavigator(
           <HeaderBackButton
             onPress={() => navigation.goBack(null)}
             tintColor="white"
+            title='Back'
           />
         )
       })
@@ -48,11 +56,15 @@ const CommerceEmployeesStack = createStackNavigator(
   stackNavigationOptions
 );
 
-const commerceDrawer = createDrawerNavigator(
+const commonNavigations = {
+  commerceSettings: CommerceSettingsStack,
+  commerceEmployees: CommerceEmployeesStack
+};
+
+const sportsDrawer = createDrawerNavigator(
   {
-    tabs: CommerceNavigation,
-    commerceSettings: CommerceSettingsStack,
-    commerceEmployees: CommerceEmployeesStack
+    sportsNavigation: SportsNavigation,
+    ...commonNavigations
   },
   {
     ...drawerNavigationOptions,
@@ -60,6 +72,18 @@ const commerceDrawer = createDrawerNavigator(
   }
 );
 
-const CommerceDrawer = createAppContainer(commerceDrawer);
+const hairdressersDrawer = createDrawerNavigator(
+  {
+    hairdressersNavigation: HairdressersNavigation,
+    ...commonNavigations
+  },
+  {
+    ...drawerNavigationOptions,
+    contentComponent: CommerceDrawerContent
+  }
+);
 
-export default CommerceDrawer;
+const SportsDrawer = createAppContainer(sportsDrawer);
+const HairdressersDrawer = createAppContainer(hairdressersDrawer);
+
+export { SportsDrawer, HairdressersDrawer };

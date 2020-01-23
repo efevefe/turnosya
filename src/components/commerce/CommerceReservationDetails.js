@@ -12,12 +12,14 @@ import {
   CardSection,
   Toast,
   ReviewCard,
-  ButtonGroup
+  ButtonGroup,
+  AreaComponentRenderer
 } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
+import ServiceReservationDetails from '../ServiceReservationDetails';
 import {
   onCommerceReservationCancel,
-  onCourtReservationsListValueChange,
+  onReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,
   onClientReviewReadById,
@@ -30,7 +32,7 @@ import {
 import { isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
 
-class CommerceCourtReservationDetails extends Component {
+class CommerceReservationDetails extends Component {
   constructor(props) {
     super(props);
 
@@ -90,7 +92,7 @@ class CommerceCourtReservationDetails extends Component {
 
   onBackdropPress = () => {
     this.setState({ optionsVisible: false, error: '' });
-    this.props.onCourtReservationsListValueChange({ cancellationReason: '' });
+    this.props.onReservationsListValueChange({ cancellationReason: '' });
   };
 
   onConfirmDelete = (id, clientId) => {
@@ -101,13 +103,13 @@ class CommerceCourtReservationDetails extends Component {
 
       const body = `El Turno del día ${
         DAYS[startDate.day()]
-      } ${startDate.format('D')} de ${
+        } ${startDate.format('D')} de ${
         MONTHS[moment(startDate).month()]
-      } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
+        } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
         this.props.cancelationReason
-      }"`;
+        }"`;
+
       const title = 'Turno Cancelado';
-      notification = { title, body };
 
       this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
@@ -115,7 +117,7 @@ class CommerceCourtReservationDetails extends Component {
         clientId,
         cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation,
-        notification
+        notification: { title, body }
       });
     }
   };
@@ -213,10 +215,10 @@ class CommerceCourtReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El cliente no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El cliente no te ha calificado" />
+        </View>
+      );
   };
 
   renderClientReview = () => {
@@ -230,24 +232,24 @@ class CommerceCourtReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={rating =>
-            this.props.onClientReviewValueChange({ rating })
-          }
-          rating={this.props.clientRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={comment =>
-            this.props.onClientReviewValueChange({ comment })
-          }
-          commentPlaceholder="Comente sobre el cliente..."
-          commentText={this.props.clientComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={rating =>
+              this.props.onClientReviewValueChange({ rating })
+            }
+            rating={this.props.clientRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={comment =>
+              this.props.onClientReviewValueChange({ comment })
+            }
+            commentPlaceholder="Comente sobre el cliente..."
+            commentText={this.props.clientComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderReviewFields = () => {
@@ -281,16 +283,18 @@ class CommerceCourtReservationDetails extends Component {
 
   render() {
     const {
+      id,
+      areaId,
       clientId,
+      clientName,
+      clientPhone,
       client,
       court,
+      service,
       startDate,
       endDate,
       price,
-      light,
-      id,
-      clientName,
-      clientPhone
+      light
     } = this.state.reservation;
 
     return (
@@ -302,7 +306,7 @@ class CommerceCourtReservationDetails extends Component {
         <Menu
           title="Informar el motivo de la cancelación"
           onBackdropPress={() => this.onBackdropPress()}
-          isVisible={this.state.optionsVisible}
+          isVisible={this.state.optionsVisible || this.props.loading}
         >
           <View style={{ alignSelf: 'stretch' }}>
             <CardSection
@@ -313,7 +317,7 @@ class CommerceCourtReservationDetails extends Component {
                 multiline={true}
                 color="black"
                 onChangeText={cancellationReason => {
-                  this.props.onCourtReservationsListValueChange({
+                  this.props.onReservationsListValueChange({
                     cancellationReason
                   });
                   this.setState({ error: '' });
@@ -339,21 +343,42 @@ class CommerceCourtReservationDetails extends Component {
           />
         </Menu>
 
-        <CourtReservationDetails
-          mode={clientId && 'client'}
-          name={
-            clientId ? `${client.firstName} ${client.lastName}` : clientName
+        <AreaComponentRenderer
+          area={areaId}
+          sports={
+            <CourtReservationDetails
+              mode={clientId && 'client'}
+              name={
+                clientId ? `${client.firstName} ${client.lastName}` : clientName
+              }
+              info={clientId ? client.phone : clientPhone}
+              infoIcon="ios-call"
+              picture={clientId && client.profilePicture}
+              court={court}
+              startDate={startDate}
+              endDate={endDate}
+              price={price}
+              light={light}
+              showPrice={true}
+              onPicturePress={this.onUserProfilePicturePress}
+            />
           }
-          info={clientId ? client.phone : clientPhone}
-          infoIcon="ios-call"
-          picture={clientId && client.profilePicture}
-          court={court}
-          startDate={startDate}
-          endDate={endDate}
-          price={price}
-          light={light}
-          showPrice={true}
-          onPicturePress={this.onUserProfilePicturePress}
+          hairdressers={
+            <ServiceReservationDetails
+              mode={clientId && 'client'}
+              name={
+                clientId ? `${client.firstName} ${client.lastName}` : clientName
+              }
+              info={clientId ? client.phone : clientPhone}
+              infoIcon="ios-call"
+              picture={clientId && client.profilePicture}
+              service={service}
+              startDate={startDate}
+              endDate={endDate}
+              price={price}
+              onPicturePress={this.onUserProfilePicturePress}
+            />
+          }
         />
 
         {this.renderReviewFields()}
@@ -379,7 +404,7 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { loading, cancellationReason } = state.courtReservationsList;
+  const { loading, cancellationReason } = state.reservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
@@ -400,7 +425,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceReservationCancel,
-  onCourtReservationsListValueChange,
+  onReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,
   onClientReviewReadById,
@@ -409,4 +434,4 @@ export default connect(mapStateToProps, {
   onClientReviewValuesReset,
   onCommerceReviewReadById,
   onCommerceReviewValuesReset
-})(CommerceCourtReservationDetails);
+})(CommerceReservationDetails);

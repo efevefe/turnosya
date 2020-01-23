@@ -6,20 +6,19 @@ import moment from 'moment';
 import { Menu, MenuItem, IconButton } from '../common';
 import Schedule from '../Schedule';
 import { MONTHS } from '../../constants';
+import PermissionsAssigner from '../common/PermissionsAssigner';
+import { ROLES } from '../../constants';
+import CourtTypesFilter from './CourtTypesFilter';
 import {
   onScheduleRead,
   onScheduleValueChange,
-  onCommerceCourtReservationsRead,
-  onCourtReservationValueChange,
+  onCommerceReservationsRead,
+  onReservationValueChange,
   onCourtsRead,
   isCourtDisabledOnSlot
 } from '../../actions';
-import PermissionsAssigner from '../common/PermissionsAssigner';
-import { ROLES } from '../../constants';
 
-import CourtTypesFilter from './CourtTypesFilter';
-
-class CommerceSchedule extends Component {
+class CommerceCourtsSchedule extends Component {
   state = { selectedDate: moment(), modal: false, selectedCourtTypes: [] };
 
   static navigationOptions = ({ navigation }) => {
@@ -59,7 +58,7 @@ class CommerceSchedule extends Component {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtReservationsRead(
+    this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead(
       {
         commerceId: this.props.commerceId,
         selectedDate: date
@@ -81,9 +80,12 @@ class CommerceSchedule extends Component {
   };
 
   onSlotPress = slot => {
-    this.props.onCourtReservationValueChange({ slot });
+    const { startDate, endDate } = slot;
 
-    const { startDate } = slot;
+    this.props.onReservationValueChange({
+      startDate,
+      endDate
+    });
 
     this.props.navigation.navigate('commerceCourtsList', {
       selectedCourtTypes: this.state.selectedCourtTypes,
@@ -188,6 +190,7 @@ class CommerceSchedule extends Component {
         <CourtTypesFilter onValueChange={this.onCourtTypesFilterValueChange} />
 
         <Schedule
+          mode='courts'
           cards={cards}
           selectedDate={selectedDate}
           reservationDayPeriod={reservationDayPeriod}
@@ -231,9 +234,8 @@ const mapStateToProps = state => {
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
   const { commerceId } = state.commerceData;
-  const { reservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
-  const { slot } = state.courtReservation;
+  const { reservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
   const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
@@ -247,7 +249,6 @@ const mapStateToProps = state => {
     scheduleEndDate: endDate,
     commerceId,
     reservations,
-    slot,
     courts,
     loadingSchedule,
     loadingReservations,
@@ -258,7 +259,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onScheduleRead,
   onScheduleValueChange,
-  onCommerceCourtReservationsRead,
-  onCourtReservationValueChange,
+  onCommerceReservationsRead,
+  onReservationValueChange,
   onCourtsRead
-})(CommerceSchedule);
+})(CommerceCourtsSchedule);

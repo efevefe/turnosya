@@ -47,9 +47,10 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_USER_DELETED:
       Toast.show({ text: 'Su cuenta se ha eliminado' });
-    case ON_REGISTER_FORM_OPEN:
     case ON_USER_REGISTER_SUCCESS:
-    case ON_USER_READ_FAIL:
+      return { ...state, password: '', confirmPassword: '', loading: false };
+
+    case ON_REGISTER_FORM_OPEN:
     case ON_USER_READ_FAIL:
       return { ...INITIAL_STATE };
 

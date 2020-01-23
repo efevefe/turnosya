@@ -35,37 +35,83 @@ export const onScheduleFormOpen = () => {
 };
 
 const formatScheduleDoc = scheduleDoc => {
-  const {
-    id,
-    reservationDayPeriod,
-    reservationMinLength,
-    startDate,
-    endDate
-  } = scheduleDoc;
+  const { id, reservationDayPeriod, reservationMinLength, startDate, endDate, employeeId } = scheduleDoc;
 
   return {
     id,
     startDate: moment(startDate.toDate()),
     endDate: endDate ? moment(endDate.toDate()) : null,
     reservationDayPeriod,
-    reservationMinLength
-  };
-};
+    reservationMinLength,
+    employeeId: employeeId || null
+  }
+}
 
-export const onScheduleRead = ({
-  commerceId,
-  selectedDate
-}) => async dispatch => {
+export const onScheduleRead = ({ commerceId, selectedDate, employeeId }) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
+  try {
+    const schedule = await scheduleRead({ commerceId, selectedDate, employeeId });
+
+    if (schedule) {
+      dispatch({ type: ON_SCHEDULE_READ, payload: schedule });
+      dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: [schedule] });
+    } else {
+      dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+    }
+  } catch (error) {
+    dispatch({ type: ON_SCHEDULE_READ_FAIL });
+  }
+}
+
+export const onEmployeesScheduleRead = ({ commerceId, selectedDate }) => async dispatch => {
+  dispatch({ type: ON_SCHEDULE_READING });
+
+  const db = firebase.firestore();
+  const schedules = [];
+
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      let index = 0;
+
+      snapshot.forEach(async employee => {
+        const employeeId = employee.id;
+        const { firstName, lastName } = employee.data();
+
+        try {
+          const schedule = await scheduleRead({ commerceId, selectedDate, employeeId });
+          if (schedule) {
+            schedules.push({
+              ...schedule,
+              employeeName: `${firstName} ${lastName}`
+            });
+          }
+
+          index++;
+
+          if (index === snapshot.size) {
+            dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
+          }
+        } catch (error) {
+          dispatch({ type: ON_SCHEDULE_READ_FAIL });
+        }
+      });
+    })
+    .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
+};
+
+const scheduleRead = async ({ commerceId, selectedDate, employeeId }) => {
   const db = firebase.firestore();
   const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
 
   let schedule;
+  let snapshot;
 
   try {
     // reading schedule
-    let snapshot = await schedulesRef
+    snapshot = await schedulesRef
       .where('softDelete', '==', null)
       .where('endDate', '>', selectedDate.toDate())
       .orderBy('endDate')
@@ -78,22 +124,20 @@ export const onScheduleRead = ({
         .get();
     }
 
-    if (!snapshot.empty) {
-      snapshot.forEach(doc => {
-        if (moment(doc.data().startDate.toDate()) <= selectedDate) {
-          schedule = formatScheduleDoc({ id: doc.id, ...doc.data() });
-        }
-      });
-    }
+    snapshot.forEach(doc => {
+      if ((moment(doc.data().startDate.toDate()) <= selectedDate) &&
+        (!employeeId || doc.data().employeeId === employeeId)) {
+        schedule = formatScheduleDoc({ id: doc.id, ...doc.data() });
+      }
+    });
 
-    if (snapshot.empty || !schedule) {
-      return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+    if (!schedule) {
+      return schedule;
     }
 
     // reading schedule cards
-    snapshot = await db
-      .collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`)
-      .get();
+    snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedule.id}/WorkShifts`).get();
+
     let cards = [];
     let selectedDays = [];
 
@@ -102,18 +146,13 @@ export const onScheduleRead = ({
       selectedDays = [...selectedDays, ...doc.data().days];
     });
 
-    schedule = { ...schedule, cards, selectedDays };
-
-    dispatch({ type: ON_SCHEDULE_READ, payload: schedule });
+    return { ...schedule, cards, selectedDays };
   } catch (error) {
-    dispatch({ type: ON_SCHEDULE_READ_FAIL });
+    return error;
   }
 };
 
-export const onActiveSchedulesRead = ({
-  commerceId,
-  date
-}) => async dispatch => {
+export const onActiveSchedulesRead = ({ commerceId, date, employeeId }) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_READING });
 
   const db = firebase.firestore();
@@ -123,36 +162,30 @@ export const onActiveSchedulesRead = ({
 
   try {
     // reading active schedules
-    let snapshot = await schedulesRef
-      .where('softDelete', '==', null)
-      .where('endDate', '>=', date.toDate())
-      .orderBy('endDate')
-      .get();
+    let snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '>=', date.toDate()).orderBy('endDate').get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc =>
-        schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
-      );
+      snapshot.forEach(doc => {
+        if (!employeeId || doc.data().employeeId === employeeId)
+          schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      });
     }
 
-    snapshot = await schedulesRef
-      .where('softDelete', '==', null)
-      .where('endDate', '==', null)
-      .get();
+    snapshot = await schedulesRef.where('softDelete', '==', null).where('endDate', '==', null).get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc =>
-        schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
-      );
-    }
+      snapshot.forEach(doc => {
+        if (!employeeId || doc.data().employeeId === employeeId)
+          schedules.push(formatScheduleDoc({ id: doc.id, ...doc.data() }))
+      });
+    };
 
     if (!schedules.length) return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
 
     // reading cards for each active schedule
     for (i in schedules) {
-      snapshot = await db
-        .collection(
-          `Commerces/${commerceId}/Schedules/${schedules[i].id}/WorkShifts`
-        )
-        .get();
+      snapshot = await db.collection(`Commerces/${commerceId}/Schedules/${schedules[i].id}/WorkShifts`).get();
+
       let cards = [];
       let selectedDays = [];
 
@@ -183,7 +216,8 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
     startDate,
     endDate,
     schedules,
-    reservationsToCancel
+    reservationsToCancel,
+    employeeId
   } = scheduleData;
 
   const db = firebase.firestore();
@@ -236,17 +270,22 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
   });
 
   try {
+    let newScheduleObj = {
+      startDate: startDate.toDate(),
+      endDate: endDate ? endDate.toDate() : null,
+      softDelete: null,
+      reservationMinLength,
+      reservationDayPeriod,
+      reservationMinCancelTime
+    }
+
+    if (employeeId) {
+      newScheduleObj = { ...newScheduleObj, employeeId };
+    }
+
     // new schedule creation
-    const newSchedule = await db
-      .collection(`Commerces/${commerceId}/Schedules/`)
-      .add({
-        startDate: startDate.toDate(),
-        endDate: endDate ? endDate.toDate() : null,
-        softDelete: null,
-        reservationMinLength,
-        reservationDayPeriod,
-        reservationMinCancelTime
-      });
+    const newSchedule = await db.collection(`Commerces/${commerceId}/Schedules/`)
+      .add(newScheduleObj);
 
     cards.forEach(card => {
       const {

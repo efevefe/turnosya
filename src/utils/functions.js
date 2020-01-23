@@ -1,4 +1,22 @@
 import moment from 'moment';
+import { AREAS } from '../constants';
+import store from '../reducers/index';
+
+export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
+  if (!area) {
+    const state = store.getState()
+    area = state.commerceData.area.areaId;
+  }
+
+  switch (area) {
+    case AREAS.sports:
+      return sports;
+    case AREAS.hairdressers:
+      return hairdressers;
+    default:
+      return AREAS.sports;
+  }
+}
 
 export const formattedMoment = (date = moment()) => {
   // receives moment date and returns the same date at 00:00 in moment format
@@ -23,10 +41,10 @@ export const imageToBlob = async uri => {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         resolve(xhr.response);
       };
-      xhr.onerror = function() {
+      xhr.onerror = function () {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';

@@ -138,7 +138,7 @@ export const onPushNotificationTokenRegister = async () => {
                   doc.data().commerceId
                 }/PushNotificationTokens/${deviceToken}`
               )
-              .set({ profileId: currentUser.uid });
+              .set({ profileId: currentUser.uid }); // corregir
           }
 
           // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado
@@ -155,7 +155,7 @@ export const onPushNotificationTokenRegister = async () => {
                         employee.data().commerceId
                       }/PushNotificationTokens/${deviceToken}`
                     )
-                    .set({ profileId: currentUser.uid })
+                    .set({ profileId: currentUser.uid }) // corregir
                 );
               }
             });

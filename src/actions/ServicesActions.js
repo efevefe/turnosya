@@ -19,17 +19,14 @@ export const onFormOpen = () => {
   return { type: ON_FORM_OPEN };
 };
 
-export const onServiceCreate = (
-  { name, duration, price, description, commerceId },
-  navigation
-) => {
+export const onServiceCreate = ({ name, duration, price, description, commerceId, employeesIds }, navigation) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_SERVICE_FORM_SUBMIT });
 
     db.collection(`Commerces/${commerceId}/Services`)
-      .add({ name, duration, price, description, softDelete: null })
+      .add({ name, duration, price, description, employeesIds, softDelete: null })
       .then(() => {
         dispatch({ type: ON_SERVICE_CREATE });
         navigation.goBack();
@@ -53,6 +50,22 @@ export const onServicesRead = commerceId => dispatch => {
     });
 };
 
+export const onServicesByEmployeeRead = ({ commerceId, employeeId }) => dispatch => {
+  dispatch({ type: ON_SERVICES_READING });
+
+  const db = firebase.firestore();
+
+  return db.collection(`Commerces/${commerceId}/Services`)
+    .where('softDelete', '==', null)
+    .where('employeesIds', 'array-contains', employeeId)
+    .orderBy('name', 'asc')
+    .onSnapshot(snapshot => {
+      const services = [];
+      snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
+      dispatch({ type: ON_SERVICES_READ, payload: services });
+    });
+}
+
 export const onServiceDelete = ({ id, commerceId }) => {
   const db = firebase.firestore();
 
@@ -63,20 +76,24 @@ export const onServiceDelete = ({ id, commerceId }) => {
   };
 };
 
-export const onServiceUpdate = (
-  { id, name, duration, price, description, commerceId },
-  navigation
-) => {
+export const onServiceUpdate = ({ id, name, duration, price, description, employeesIds, commerceId }, navigation) => {
   const db = firebase.firestore();
 
   return dispatch => {
     dispatch({ type: ON_SERVICE_FORM_SUBMIT });
 
     db.doc(`Commerces/${commerceId}/Services/${id}`)
-      .update({ name, duration, price, description })
+      .update({ name, duration, price, description, employeesIds })
       .then(() => {
         dispatch({ type: ON_SERVICE_UPDATE });
         navigation.goBack();
       });
   };
+};
+
+export const onServiceOfferingUpdate = ({ id, employeesIds, commerceId }) => {  // rename
+  const db = firebase.firestore();
+
+  db.doc(`Commerces/${commerceId}/Services/${id}`)
+    .update({ employeesIds });
 };

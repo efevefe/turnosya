@@ -3,18 +3,19 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IconButton } from '../components/common';
-// import ServicesList from '../components/commerce/ServicesList';
-// import ServiceForm from '../components/commerce/ServiceForm';
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
+import { ROLES } from '../constants';
+import ServicesList from '../components/commerce/ServicesList';
+import ServiceForm from '../components/commerce/ServiceForm';
 import CourtList from '../components/commerce/CourtList';
 import CourtForm from '../components/commerce/CourtForm';
 import ScheduleRegister from '../components/commerce/ScheduleRegister';
 import CommerceProfile from '../components/commerce/CommerceProfile';
-import CommerceSchedule from '../components/commerce/CommerceSchedule';
 import ScheduleRegisterConfiguration from '../components/commerce/ScheduleRegisterConfiguration';
 import LocationMap from '../components/LocationMap';
 import CommerceCourtsStateList from '../components/commerce/CommerceCourtsStateList';
-import CommerceCourtReservations from '../components/commerce/CommerceCourtReservations';
-import CommerceCourtReservationDetails from '../components/commerce/CommerceCourtReservationDetails';
+import CommerceReservationsList from '../components/commerce/CommerceReservationsList';
+import CommerceReservationDetails from '../components/commerce/CommerceReservationDetails';
 import CommerceSchedulesList from '../components/commerce/CommerceSchedulesList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
@@ -23,18 +24,17 @@ import CommerceReviewsList from '../components/CommerceReviewsList';
 import CommerceCourtReservationRegister from '../components/commerce/CommerceCourtReservationRegister';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
-import {
-  stackNavigationOptions,
-  tabNavigationOptions
-} from './NavigationOptions';
 import PermissionsAssigner from '../components/common/PermissionsAssigner';
-import { ROLES } from '../constants';
 import DashBoard from '../components/commerce/reports/DashBoard';
 import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
 import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';
 import MonthlyReviewsChart from '../components/commerce/reports/MonthlyReviewsChart';
 import ReservedAndCancelledShiftChart from '../components/commerce/reports/ReservedAndCancelledShiftChart';
 import MostPopularShiftsChart from '../components/commerce/reports/MostPopularShiftsChart';
+import CommerceCourtsSchedule from '../components/commerce/CommerceCourtsSchedule';
+import CommerceServicesSchedule from '../components/commerce/CommerceServicesSchedule';
+import CommerceServiceReservationRegister from '../components/commerce/CommerceServiceReservationRegister';
+import EmployeeServicesList from '../components/commerce/EmployeeServicesList';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -42,7 +42,7 @@ import MostPopularShiftsChart from '../components/commerce/reports/MostPopularSh
 // a un objeto y luego las agregue a cada uno de los stacks para no tener que duplicarlas
 const reservationDetailsScreens = {
   reservationDetails: {
-    screen: CommerceCourtReservationDetails,
+    screen: CommerceReservationDetails,
     navigationOptions: {
       title: 'Detalles del Turno'
     }
@@ -63,8 +63,17 @@ const reservationDetailsScreens = {
 
 const calendarStack = createStackNavigator(
   {
-    calendar: {
-      screen: CommerceSchedule,
+    sportsCalendar: {
+      screen: CommerceCourtsSchedule,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Calendario',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    hairdressersCalendar: {
+      screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
         headerLeft: (
@@ -96,38 +105,24 @@ const calendarStack = createStackNavigator(
         title: 'Nuevo Turno'
       }
     },
+    employeeServicesList: {
+      screen: EmployeeServicesList
+    },
+    serviceReservationRegister: {
+      screen: CommerceServiceReservationRegister,
+      navigationOptions: {
+        title: 'Nuevo Turno'
+      }
+    },
     ...reservationDetailsScreens
   },
   stackNavigationOptions
 );
 
-/*
-const servicesStack = createStackNavigator(
-  {
-    servicesList: {
-      screen: ServicesList,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Servicios',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
-    },
-    serviceForm: {
-      screen: ServiceForm,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Nuevo Servicio')
-      })
-    }
-  },
-  stackNavigationOptions
-);
-*/
-
 const reservationsStack = createStackNavigator(
   {
     reservationsList: {
-      screen: CommerceCourtReservations,
+      screen: CommerceReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Turnos',
         headerLeft: (
@@ -136,27 +131,6 @@ const reservationsStack = createStackNavigator(
       })
     },
     ...reservationDetailsScreens
-  },
-  stackNavigationOptions
-);
-
-const courtsStack = createStackNavigator(
-  {
-    courtsList: {
-      screen: CourtList,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Canchas',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
-    },
-    courtForm: {
-      screen: CourtForm,
-      navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Nueva Cancha')
-      })
-    }
   },
   stackNavigationOptions
 );
@@ -261,15 +235,65 @@ const reportsStack = createStackNavigator(
   stackNavigationOptions
 );
 
+// SCREENS ONLY FOR HAIRDRESSERS COMMERCES
+const servicesStack = createStackNavigator(
+  {
+    servicesList: {
+      screen: ServicesList,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Servicios',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    serviceForm: {
+      screen: ServiceForm,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Nuevo Servicio')
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
+// SCREENS ONLY FOR SPORTS COMMERCES
+const courtsStack = createStackNavigator(
+  {
+    courtsList: {
+      screen: CourtList,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Canchas',
+        headerLeft: (
+          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
+        )
+      })
+    },
+    courtForm: {
+      screen: CourtForm,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('title', 'Nueva Cancha')
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
-const commerceTabs = createBottomTabNavigator(
+// TABS FOR BOTH AREAS
+const commonTabs = {
+  reports: reportsStack,
+  reservations: reservationsStack,
+  calendar: calendarStack,
+  profile: profileStack
+}
+
+// TABS FOR SPORTS COMMERCES
+const sportsTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
-    reports: reportsStack,
-    reservations: reservationsStack,
-    calendar: calendarStack,
-    profile: profileStack
+    ...commonTabs
   },
   {
     ...tabNavigationOptions,
@@ -277,6 +301,19 @@ const commerceTabs = createBottomTabNavigator(
   }
 );
 
-const CommerceNavigation = createAppContainer(commerceTabs);
+// TABS FOR HAIRDRESSERS COMMERCES
+const hairdressersTabs = createBottomTabNavigator(
+  {
+    services: servicesStack,
+    ...commonTabs
+  },
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'calendar'
+  }
+);
 
-export default CommerceNavigation;
+const SportsNavigation = createAppContainer(sportsTabs);
+const HairdressersNavigation = createAppContainer(hairdressersTabs);
+
+export { SportsNavigation, HairdressersNavigation };

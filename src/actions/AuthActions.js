@@ -178,10 +178,11 @@ export const onGoogleLogin = () => {
 };
 
 export const onLogout = commerceId => async dispatch => {
+  dispatch({ type: ON_LOGOUT });
+
   try {
     await onPushNotificationTokenDelete(commerceId);
 
-    dispatch({ type: ON_LOGOUT });
     firebase
       .auth()
       .signOut()

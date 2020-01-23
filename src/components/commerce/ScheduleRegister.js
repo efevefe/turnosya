@@ -5,7 +5,7 @@ import { FlatList, View, RefreshControl, Text } from 'react-native';
 import { Divider, Card, Slider, CheckBox } from 'react-native-elements';
 import { Fab } from 'native-base';
 import moment from 'moment';
-import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS } from '../../constants';
+import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS, AREAS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 import { hourToDate, formattedMoment, stringFormatMinutes } from '../../utils';
 import {
@@ -20,7 +20,6 @@ import {
 } from '../common';
 import {
   onScheduleValueChange,
-  onScheduleCreate,
   onScheduleUpdate,
   onNextReservationsRead,
   onActiveSchedulesRead
@@ -44,7 +43,7 @@ class ScheduleRegister extends Component {
       startDateError: '',
       endDateError: '',
       sliderValues: {
-        reservationMinFrom: 10,
+        reservationMinFrom: 5,
         reservationMinTo: 240,
         reservationMinValue: 60
       }
@@ -97,7 +96,7 @@ class ScheduleRegister extends Component {
   onSavePress = () => {
     if (!this.validateMinimumData()) return;
 
-    let { startDate, endDate, commerceId, schedules } = this.props;
+    let { startDate, endDate, commerceId, schedules, employeeId } = this.props;
     const { prevSchedule } = this.state;
 
     // el overlapped schedule es un schedule cuyo periodo de vigencia abarca el periodo de
@@ -124,7 +123,8 @@ class ScheduleRegister extends Component {
       return this.props.onNextReservationsRead({
         commerceId,
         startDate,
-        endDate
+        endDate,
+        employeeId
       });
     }
 
@@ -299,8 +299,8 @@ class ScheduleRegister extends Component {
           // en el caso en que un turno pueda ocupar varios slots se
           // reemplazaría la primer comparación por esta que esta comentada
           // (reservationDuration % reservationMinLength) ||
-          reservationDuration !== reservationMinLength ||
-          startDiff % reservationMinLength ||
+          (!this.props.employeeId && (reservationDuration !== reservationMinLength)) ||
+          (startDiff % reservationMinLength) ||
           !days.includes(startDate.day())
         );
       }
@@ -420,7 +420,9 @@ class ScheduleRegister extends Component {
       reservationMinCancelTime,
       startDate,
       endDate,
-      schedules
+      schedules,
+      // only hairdressers
+      employeeId
     } = this.props;
     const { reservationsToCancel } = this.state;
 
@@ -435,15 +437,17 @@ class ScheduleRegister extends Component {
         startDate,
         endDate,
         schedules,
-        reservationsToCancel
+        reservationsToCancel,
+        employeeId
       });
 
       if (success) {
         // si se guardo con éxito, se recarga el listado de schedules y se vuelve
         this.props.onActiveSchedulesRead({
           commerceId,
-          date: moment()
-        });
+          date: moment(),
+          employeeId
+        })
 
         this.props.navigation.goBack();
       }
@@ -785,9 +789,10 @@ const mapStateToProps = state => {
     loading,
     refreshing
   } = state.commerceSchedule;
-  const { nextReservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
-  const { commerceId } = state.commerceData;
+  const { nextReservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
+  const { commerceId, area: { areaId } } = state.commerceData;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
   return {
     scheduleId: id,
@@ -804,14 +809,17 @@ const mapStateToProps = state => {
     loading,
     loadingReservations,
     refreshing,
-    nextReservations
+    nextReservations,
+    employeeId
   };
 };
 
-export default connect(mapStateToProps, {
-  onScheduleValueChange,
-  onScheduleCreate,
-  onScheduleUpdate,
-  onNextReservationsRead,
-  onActiveSchedulesRead
-})(ScheduleRegister);
+export default connect(
+  mapStateToProps,
+  {
+    onScheduleValueChange,
+    onScheduleUpdate,
+    onNextReservationsRead,
+    onActiveSchedulesRead
+  }
+)(ScheduleRegister);

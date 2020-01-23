@@ -596,8 +596,8 @@ const mapStateToProps = state => {
     disabledTo
   } = state.courtForm;
   const { commerceId } = state.commerceData;
-  const { nextReservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
+  const { nextReservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
 
   return {
     id,

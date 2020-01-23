@@ -2,43 +2,45 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import {
-  onMyCommerceOpen,
   onCommerceOpen,
   onLogout,
   onUserRead,
-  readUserWorkplaces
+  onUserWorkplacesRead,
+  onCommerceRead
 } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/client/VerifyEmailModal';
+import { AREAS } from '../constants';
 
 class ClientDrawerContent extends Component {
-  state = { modal: false };
+  state = { modal: false, loadingId: '' };
 
   componentDidMount() {
     this.props.onUserRead();
-    this.props.readUserWorkplaces();
+    this.props.onUserWorkplacesRead();
   }
 
-  onMyCommercePress = async () => {
-    try {
-      if (await isEmailVerified()) {
-        this.props.commerceId
-          ? this.props.onMyCommerceOpen(
-              this.props.commerceId,
-              this.props.navigation
-            )
-          : this.props.navigation.navigate('welcome');
-      } else {
-        this.setState({ modal: true });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   onCommercePress = commerceId => {
-    this.props.onCommerceOpen(commerceId, this.props.navigation);
+    this.setState({ loadingId: commerceId },
+      async () => {
+        try {
+          if (await isEmailVerified()) {
+            this.props.onCommerceOpen(commerceId);
+
+            const success = await this.props.onCommerceRead(commerceId);
+
+            if (success && this.props.areaId) {
+              this.props.navigation.navigate(`${this.props.areaId}`);
+              this.props.navigation.navigate(`${this.props.areaId}Calendar`);
+            }
+          } else {
+            this.setState({ modal: true });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      })
   };
 
   onModalClose = () => {
@@ -64,6 +66,7 @@ class ClientDrawerContent extends Component {
         key={workplace.commerceId}
         title={workplace.name}
         icon={{ name: 'store', type: 'material' }}
+        loadingWithText={this.props.loadingCommerce && this.state.loadingId === workplace.commerceId}
         onPress={() => this.onCommercePress(workplace.commerceId)}
       />
     ));
@@ -83,7 +86,12 @@ class ClientDrawerContent extends Component {
           <DrawerItem
             title="Mi Negocio"
             icon={{ name: 'ios-briefcase' }}
-            onPress={() => this.onMyCommercePress()}
+            loadingWithText={this.props.loadingCommerce && this.state.loadingId === this.props.commerceId}
+            onPress={() => {
+              this.props.commerceId
+                ? this.onCommercePress(this.props.commerceId)
+                : this.props.navigation.navigate('commerceRegister')
+            }}
           />
           {this.renderWorkplaces()}
           <DrawerItem
@@ -112,6 +120,7 @@ const mapStateToProps = state => {
     workplaces,
     commerceId
   } = state.clientData;
+  const { area: { areaId }, refreshing: loadingCommerce } = state.commerceData;
   const { loading } = state.auth;
 
   return {
@@ -120,14 +129,16 @@ const mapStateToProps = state => {
     lastName,
     loading,
     workplaces,
-    commerceId
+    commerceId,
+    areaId,
+    loadingCommerce
   };
 };
 
 export default connect(mapStateToProps, {
-  onMyCommerceOpen,
   onCommerceOpen,
   onLogout,
   onUserRead,
-  readUserWorkplaces
+  onUserWorkplacesRead,
+  onCommerceRead
 })(ClientDrawerContent);

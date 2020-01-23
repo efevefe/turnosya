@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 import { Card, Button as RNEButton } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -7,25 +8,38 @@ import {
   onEmployeeValueChange,
   onEmployeeValuesReset,
   onRolesRead,
-  searchUserByEmail,
+  onUserByEmailSearch,
+  onEmployeeInfoUpdate,
   onEmployeeCreate,
   onEmployeeUpdate
 } from '../../actions';
-import { CardSection, Input, Picker, Button } from '../common';
+import { CardSection, Input, Picker, Button, IconButton } from '../common';
 import { MAIN_COLOR, ROLES } from '../../constants';
 
 class EmployeeForm extends Component {
-  state = { roleError: '', editing: false };
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      roleError: '',
+      editing: props.navigation.getParam('editing') || false
+    }
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: navigation.getParam('rightButton')
+    }
+  }
 
   componentDidMount() {
-    this.props.onRolesRead();
-
-    const employee = this.props.navigation.getParam('employee', null);
-
-    if (employee) {
-      this.setState({ editing: true });
-      this.props.onEmployeeValueChange(employee);
+    if (this.state.editing) {
+      this.props.navigation.setParams({
+        rightButton: <IconButton icon='md-refresh' onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />
+      })
     }
+
+    this.props.onRolesRead();
   }
 
   componentWillUnmount() {
@@ -35,11 +49,11 @@ class EmployeeForm extends Component {
   onEmailValueChange = email => {
     this.props.firstName
       ? this.props.onEmployeeValueChange({
-          firstName: '',
-          lastName: '',
-          phone: '',
-          email
-        })
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email
+      })
       : this.props.onEmployeeValueChange({ email });
   };
 
@@ -73,7 +87,9 @@ class EmployeeForm extends Component {
             {
               commerceId,
               employeeId,
-              email,
+              firstName,
+              lastName,
+              phone,
               role
             },
             navigation
@@ -134,7 +150,7 @@ class EmployeeForm extends Component {
                     }}
                     loading={this.props.emailLoading}
                     onPress={() =>
-                      this.props.searchUserByEmail(
+                      this.props.onUserByEmailSearch(
                         this.props.email,
                         this.props.commerceId
                       )
@@ -184,6 +200,7 @@ class EmployeeForm extends Component {
                   this.props.onEmployeeValueChange({ role: role || {} })
                 }
                 errorMessage={this.state.roleError}
+                disabled={this.props.email === firebase.auth().currentUser.email}
               />
             </CardSection>
 
@@ -249,7 +266,8 @@ export default connect(mapStateToProps, {
   onEmployeeValueChange,
   onEmployeeValuesReset,
   onRolesRead,
-  searchUserByEmail,
+  onUserByEmailSearch,
+  onEmployeeInfoUpdate,
   onEmployeeCreate,
   onEmployeeUpdate
 })(EmployeeForm);

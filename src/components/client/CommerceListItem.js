@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
-  onCourtReservationValueChange
+  onReservationValueChange
 } from '../../actions';
 
 class CommerceListItem extends Component {
@@ -40,7 +40,7 @@ class CommerceListItem extends Component {
   };
 
   onCommercePress = () => {
-    this.props.onCourtReservationValueChange({ commerce: this.props.commerce });
+    this.props.onReservationValueChange({ commerce: this.props.commerce });
     this.props.navigation.navigate('commerceProfileView', {
       navigatedFrom: this.props.navigation.state.routeName
     });
@@ -62,9 +62,7 @@ class CommerceListItem extends Component {
   render() {
     const {
       name,
-      address,
       profilePicture,
-      areaName,
       objectID
     } = this.props.commerce;
 
@@ -111,6 +109,6 @@ export default withNavigation(
   connect(mapStateToProps, {
     onFavoriteCommerceRegister,
     onFavoriteCommerceDelete,
-    onCourtReservationValueChange
+    onReservationValueChange
   })(CommerceListItem)
 );
