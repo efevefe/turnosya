@@ -16,6 +16,7 @@ admin.initializeApp({
 app.engine('ejs', engines.ejs);
 app.set('views', './views');
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
 
 //#region Payment
 app.get('/pay', (req, res) => {
@@ -48,7 +49,9 @@ app.get('/pay', (req, res) => {
       console.log(error);
     });
 });
+//#endregion
 
+//#region
 // app.get('/payment-success', (req, res) => {
 //   console.log('Nueva request de success');
 //   console.log('Headers \n' + JSON.stringify(req.query));
@@ -184,12 +187,18 @@ app.get('/commerce-oauth-redirect', (req, res) => {
           console.log('Guardado en Firestore');
           res.render('commerce-oauth-redirect');
         })
-        .catch(err => console.log('Firestore error: ' + err));
+        .catch(err => {
+          console.log('Firestore error: ' + err);
+          res.render('error');
+        });
+    } else {
+      res.render('error');
     }
   });
 });
 //#endregion
 
+//#region Notifications
 app.post('/ipn-notification', (req, res) => {
   console.log('Nueva notificacion');
   console.log(req.body);
@@ -253,5 +262,6 @@ app.post('/ipn-notification', (req, res) => {
     );
   }
 });
+//#endregion
 
 exports.app = functions.https.onRequest(app);
