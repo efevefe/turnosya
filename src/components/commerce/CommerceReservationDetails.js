@@ -18,7 +18,7 @@ import {
 import CourtReservationDetails from '../CourtReservationDetails';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 import {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,
@@ -30,6 +30,7 @@ import {
   onCommerceReviewValuesReset
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
+import { MONTHS, DAYS } from '../../constants';
 
 class CommerceReservationDetails extends Component {
   constructor(props) {
@@ -97,12 +98,26 @@ class CommerceReservationDetails extends Component {
   onConfirmDelete = (id, clientId) => {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
-      this.props.onCommerceCancelReservation({
+
+      const { startDate } = this.state.reservation;
+
+      const body = `El Turno del día ${
+        DAYS[startDate.day()]
+        } ${startDate.format('D')} de ${
+        MONTHS[moment(startDate).month()]
+        } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
+        this.props.cancelationReason
+        }"`;
+
+      const title = 'Turno Cancelado';
+
+      this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
         reservationId: id,
         clientId,
         cancellationReason: this.props.cancellationReason,
-        navigation: this.props.navigation
+        navigation: this.props.navigation,
+        notification: { title, body }
       });
     }
   };
@@ -217,24 +232,24 @@ class CommerceReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={rating =>
-            this.props.onClientReviewValueChange({ rating })
-          }
-          rating={this.props.clientRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={comment =>
-            this.props.onClientReviewValueChange({ comment })
-          }
-          commentPlaceholder="Comente sobre el cliente..."
-          commentText={this.props.clientComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={rating =>
+              this.props.onClientReviewValueChange({ rating })
+            }
+            rating={this.props.clientRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={comment =>
+              this.props.onClientReviewValueChange({ comment })
+            }
+            commentPlaceholder="Comente sobre el cliente..."
+            commentText={this.props.clientComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderReviewFields = () => {
@@ -409,7 +424,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceCancelReservation,
+  onCommerceReservationCancel,
   onReservationsListValueChange,
   onClientReviewValueChange,
   onClientReviewCreate,

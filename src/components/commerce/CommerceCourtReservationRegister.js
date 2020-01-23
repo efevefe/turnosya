@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
+import { validateValueType } from '../../utils';
 import {
   onReservationValueChange,
   onCommerceCourtReservationCreate
 } from '../../actions';
-import { validateValueType } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
   state = {
@@ -104,8 +104,6 @@ class CommerceCourtReservationRegister extends Component {
       this.setState({ nameError: '' });
       return false;
     }
-
-    return true;
   };
 
   phoneError = () => {

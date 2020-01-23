@@ -77,7 +77,8 @@ class CommerceReservationsList extends Component {
     if (this.props.areaId === AREAS.hairdressers) {
       service = this.props.services.find(service => service.id === item.serviceId);
       name = service.name;
-    } else if (this.props.areaId === AREAS.sports) {
+      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
+    } else {
       court = this.props.courts.find(court => court.id === item.courtId);
       name = court.name;
     }

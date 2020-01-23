@@ -2,13 +2,14 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { formatReservation } from './ReservationsListActions';
 import { AREAS } from '../constants';
+import { onCommercePushNotificationSend } from './PushNotificationActions';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
   ON_CLIENT_RESERVATION_CANCEL,
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
-} from "./types";
+} from './types';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -41,7 +42,8 @@ export const onClientReservationsListRead = () => dispatch => {
           if (areaId === AREAS.hairdressers) {
             service = await db.doc(`Commerces/${commerceId}/Services/${serviceId}`).get();
             employee = await db.doc(`Commerces/${commerceId}/Employees/${employeeId}`).get();
-          } else if (areaId === AREAS.sports) {
+            // } else if (areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
+          } else {
             court = await db.doc(`Commerces/${commerceId}/Courts/${courtId}`).get();
           }
 
@@ -63,7 +65,8 @@ export const onClientReservationsListRead = () => dispatch => {
 export const onClientReservationCancel = ({
   reservationId,
   commerceId,
-  navigation
+  navigation,
+  notification
 }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -93,6 +96,7 @@ export const onClientReservationCancel = ({
           batch
             .commit()
             .then(() => {
+              onCommercePushNotificationSend(notification, commerceId);
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

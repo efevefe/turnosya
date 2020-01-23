@@ -59,9 +59,11 @@ class MonthlyReviewsChart extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
+    const { data } = this.props.data;
+
     const dataLine = {
       labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
+      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
     };
 
     return (

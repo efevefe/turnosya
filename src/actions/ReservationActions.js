@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { onCommercePushNotificationSend } from './PushNotificationActions';
 import {
   ON_RESERVATION_VALUE_CHANGE,
   ON_RESERVATION_CREATING,
@@ -22,7 +23,7 @@ export const onNewServiceReservation = () => {
   return { type: ON_NEW_SERVICE_RESERVATION };
 }
 
-export const onClientCourtReservationCreate = ({ commerceId, areaId, courtId, courtType, startDate, endDate, price, light }) => {
+export const onClientCourtReservationCreate = ({ commerceId, areaId, courtId, courtType, startDate, endDate, price, light, notification }) => {
   return onClientReservationCreate({
     areaId,
     courtId,
@@ -31,10 +32,10 @@ export const onClientCourtReservationCreate = ({ commerceId, areaId, courtId, co
     endDate: endDate.toDate(),
     price,
     light
-  }, commerceId);
+  }, commerceId, notification);
 }
 
-export const onClientServiceReservationCreate = ({ commerceId, areaId, serviceId, employeeId, startDate, endDate, price }) => {
+export const onClientServiceReservationCreate = ({ commerceId, areaId, serviceId, employeeId, startDate, endDate, price, notification }) => {
   return onClientReservationCreate({
     areaId,
     serviceId,
@@ -42,7 +43,7 @@ export const onClientServiceReservationCreate = ({ commerceId, areaId, serviceId
     startDate: startDate.toDate(),
     endDate: endDate.toDate(),
     price
-  }, commerceId);
+  }, commerceId, notification);
 }
 
 const reservationExists = async ({ commerceId, employeeId, courtId, startDate, endDate }) => {
@@ -66,7 +67,7 @@ const reservationExists = async ({ commerceId, employeeId, courtId, startDate, e
   }
 }
 
-const onClientReservationCreate = (reservationObject, commerceId) => async dispatch => {
+const onClientReservationCreate = (reservationObject, commerceId, notification) => async dispatch => {
   dispatch({ type: ON_RESERVATION_CREATING });
 
   const { currentUser } = firebase.auth();
@@ -103,6 +104,11 @@ const onClientReservationCreate = (reservationObject, commerceId) => async dispa
     }
 
     await batch.commit();
+
+    // pongo esto asi porque en el caso de la reserva de un servicio, la notificacion le deberia llegar
+    // unicamente al empleado al que se le reservo el turno, pero como eso todavia no esta, en la reserva
+    // de un servicio todavia no se le estaria pasando la notificacion
+    notification && onCommercePushNotificationSend(notification, commerceId);
 
     dispatch({ type: ON_RESERVATION_CREATE })
   } catch (error) {

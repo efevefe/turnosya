@@ -61,9 +61,8 @@ const onCommerceProfileGoBack = navigation => {
 
   navigation.goBack();
 
-  if (navigatedFrom === 'favoritesList')
-    navigation.navigate(navigatedFrom);
-}
+  if (navigatedFrom === 'favoritesList') navigation.navigate(navigatedFrom);
+};
 
 const searchStack = createStackNavigator(
   {
@@ -94,8 +93,8 @@ const searchStack = createStackNavigator(
         title: 'Perfil',
         headerLeft: (
           <HeaderBackButton
-            tintColor='white'
-            title='Back'
+            tintColor="white"
+            title="Back"
             onPress={() => onCommerceProfileGoBack(navigation)}
           />
         )

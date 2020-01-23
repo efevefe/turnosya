@@ -11,7 +11,7 @@ const AreaComponentRenderer = connect(
             case AREAS.hairdressers:
                 return props.hairdressers;
             default:
-                return props.sports;
+                return props.sports; // porque originalmente para las reservas de canchas no guardabamos el areaId
         }
     }
 );
