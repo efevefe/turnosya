@@ -118,7 +118,9 @@ export const onPushNotificationTokenRegister = async () => {
       const batch = db.batch();
 
       // Se guarda el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
+      const clientPushNotificationRef = db.doc(
+        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
+      );
       batch.set(clientPushNotificationRef, {});
 
       const userDoc = await db.doc(`Profiles/${currentUser.uid}`).get();
@@ -132,8 +134,12 @@ export const onPushNotificationTokenRegister = async () => {
           .where('profileId', '==', currentUser.uid)
           .get();
 
-        const ownerTokenRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
-        ownerSnapshot.forEach(owner => batch.set(ownerTokenRef, { employeeId: owner.id }));
+        const ownerTokenRef = db.doc(
+          `Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`
+        );
+        ownerSnapshot.forEach(owner =>
+          batch.set(ownerTokenRef, { employeeId: owner.id })
+        );
       }
 
       // Se guarda el deviceToken en las colecciónes de los comercios donde es empleado (con el id del employee)
@@ -143,16 +149,20 @@ export const onPushNotificationTokenRegister = async () => {
         .get();
 
       for await (const workplace of workplacesSnapshot.docs) {
-        const { commerceId } = workplace.data();
+        const { commerceId: workplaceId } = workplace.data();
 
         const employeeSnapshot = await db
-          .collection(`Commerces/${commerceId}/Employees/`)
+          .collection(`Commerces/${workplaceId}/Employees/`)
           .where('softDelete', '==', null)
           .where('profileId', '==', currentUser.uid)
           .get();
 
-        const employeeTokenRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
-        employeeSnapshot.forEach(employee => batch.set(employeeTokenRef, { employeeId: employee.id }));
+        const employeeTokenRef = db.doc(
+          `Commerces/${workplaceId}/PushNotificationTokens/${deviceToken}`
+        );
+        employeeSnapshot.forEach(employee =>
+          batch.set(employeeTokenRef, { employeeId: employee.id })
+        );
       }
 
       await batch.commit();
@@ -162,9 +172,10 @@ export const onPushNotificationTokenRegister = async () => {
   }
 };
 
-export const onPushNotificationTokenDelete = async commerceId => {
+export const onPushNotificationTokenDelete = async (commerceId, workplaces) => {
   try {
     const deviceToken = await getDeviceToken();
+    // const deviceToken = 'ExponentPushToken[AKryxSG5_l0KFxxzyO8Wt6]';
 
     if (deviceToken.length > 2) {
       const { currentUser } = firebase.auth();
@@ -172,31 +183,30 @@ export const onPushNotificationTokenDelete = async commerceId => {
       const batch = db.batch();
 
       // Se elimina el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
+      const clientPushNotificationRef = db.doc(
+        `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
+      );
 
       batch.delete(clientPushNotificationRef);
 
       if (commerceId) {
         // Se elimina el deviceToken en la colección del comercio donde es dueño
-        const commercePushNotificationRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+        const commercePushNotificationRef = db.doc(
+          `Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`
+        );
 
         batch.delete(commercePushNotificationRef);
       }
 
       // Se elimina el deviceToken en las colecciónes de los comercios donde es empleado
-      await db
-        .collection(`Profiles/${currentUser.uid}/Workplaces`)
-        .where('softDelete', '==', null)
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(async workplace => {
-            const workplacePushNotificationRef = db.doc(
-              `Commerces/${workplace.data().commerceId}/PushNotificationTokens/${deviceToken}`
-            );
-
-            batch.delete(workplacePushNotificationRef);
-          });
+      if (workplaces.length) {
+        workplaces.forEach(workplace => {
+          const workplacePushNotificationRef = db.doc(
+            `Commerces/${workplace.commerceId}/PushNotificationTokens/${deviceToken}`
+          );
+          batch.delete(workplacePushNotificationRef);
         });
+      }
 
       batch.commit();
     }

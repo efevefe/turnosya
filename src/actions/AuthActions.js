@@ -177,11 +177,11 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = commerceId => async dispatch => {
+export const onLogout = (commerceId, workplaces) => async dispatch => {
   dispatch({ type: ON_LOGOUT });
 
   try {
-    await onPushNotificationTokenDelete(commerceId);
+    await onPushNotificationTokenDelete(commerceId, workplaces);
 
     firebase
       .auth()
