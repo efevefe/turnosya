@@ -72,28 +72,6 @@ class CommerceServicesSchedule extends Component {
     this.setState({ selectedDate: date });
   }
 
-  enoughTime = res => {
-    const shiftsIds = new Set();
-
-    const notAvailableSlot = this.props.slots.some(slot => {
-      if (this.isResFillingSlot(slot, res)) {
-        shiftsIds.add(slot.shiftsIds);
-        return !slot.available;
-      }
-
-      return false;
-    });
-
-    const endSlot = this.props.slots.some(slot =>
-      slot.startDate.toString() < res.endDate.toString() && slot.endDate.toString() >= res.endDate.toString()
-    );
-
-    // endSlot: para verificar que existe un slot que cubre la hora de finalizacion del turno
-    // !notAvailableSlot: no tiene que haber slots ocupados entre los slots que ocupa el servicio
-    // (shiftsIds.size === 1): todos los slots deben pertenecer al mismo turno (primero o segundo)
-    return endSlot && !notAvailableSlot && shiftsIds.size === 1;
-  }
-
   getReservationFromSlot = slot => {
     const reservation = this.props.reservations.find(res =>
       res.startDate.toString() === slot.startDate.toString()
@@ -146,6 +124,8 @@ class CommerceServicesSchedule extends Component {
     const { reservations, slots } = this.props;
 
     const newSlots = slots.map(slot => {
+      if (slot.divider) return slot;
+
       let available = true;
       let visible = true;
 
