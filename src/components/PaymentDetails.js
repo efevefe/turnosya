@@ -11,7 +11,6 @@ class PaymentDetails extends Component {
     super(props);
 
     const reservation = props.navigation.getParam('reservation', null);
-    console.log(reservation);
 
     this.state = { reservation, client: reservation.client || {} };
   }
@@ -24,31 +23,19 @@ class PaymentDetails extends Component {
     return this.props.loading ? (
       <Spinner />
     ) : (
-      <Card
-        title="Información"
-        textAlign="center"
-        containerStyle={{ borderRadius: 10 }}
-      >
+      <Card title="Información" textAlign="center" containerStyle={{ borderRadius: 10 }}>
         <View style={{ flexDirection: 'column', marginRight: 15 }}>
-          <Text
-            style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Fecha del Pago: ${moment(
+          <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Fecha del Pago: ${moment(
             this.state.reservation.paymentDate.toDate()
           ).format('DD/MM/YYYY')}`}</Text>
-          <Text
-            style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Nombre: ${this.state.client.firstName ||
-            this.props.firstName} ${this.state.client.lastName ||
-            this.props.lastName}`}</Text>
-          <Text
-            style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Email: ${this.state.client.email || this.props.email}`}</Text>
+          <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Nombre: ${this.state.client.firstName ||
+            this.props.firstName} ${this.state.client.lastName || this.props.lastName}`}</Text>
+          <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Email: ${this.state.client.email ||
+            this.props.email}`}</Text>
           <Text
             style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
           >{`Monto: $${this.state.reservation.price}`}</Text>
-          <Text
-            style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-          >{`Método de Pago: ${this.props.method}`}</Text>
+          <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Método de Pago: ${this.props.method}`}</Text>
         </View>
       </Card>
     );
@@ -61,6 +48,4 @@ const mapStateToProps = state => {
   return { method, loading, firstName, lastName, email };
 };
 
-export default connect(mapStateToProps, { readReservationPaymentMethod })(
-  PaymentDetails
-);
+export default connect(mapStateToProps, { readReservationPaymentMethod })(PaymentDetails);

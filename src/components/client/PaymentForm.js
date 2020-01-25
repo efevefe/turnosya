@@ -19,13 +19,7 @@ class PaymentForm extends React.Component {
     };
   }
 
-  //access-token
-  //client-id
-  //reservation-id
-  //commerce-id
-
   handleWebViewNavigationStateChange = newNavState => {
-    console.log(newNavState);
     const { loading } = newNavState;
 
     if (loading !== this.state.loading) this.setState({ loading });
