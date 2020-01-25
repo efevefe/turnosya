@@ -358,7 +358,7 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
     });
 };
 
-export const readCommerceMPagoToken = commerceId => dispatch => {
+export const onCommerceMPagoTokenRead = commerceId => dispatch => {
   dispatch({ type: ON_COMMERCE_MP_TOKEN_READING });
 
   const db = firebase.firestore();
@@ -381,7 +381,7 @@ export const readCommerceMPagoToken = commerceId => dispatch => {
     .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_READ_FAIL }));
 };
 
-export const enableCommerceMPagoToken = commerceId => dispatch => {
+export const onCommerceMPagoTokenEnable = commerceId => dispatch => {
   dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
 
   const db = firebase.firestore();
@@ -401,7 +401,7 @@ export const enableCommerceMPagoToken = commerceId => dispatch => {
     .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
 };
 
-export const disableCommerceMPagoToken = commerceId => dispatch => {
+export const onCommerceMPagoTokenDisable = commerceId => dispatch => {
   dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
 
   const db = firebase.firestore();

@@ -3,14 +3,14 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, readCommerceMPagoToken } from '../../actions';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, onCommerceMPagoTokenRead } from '../../actions';
 import { MenuItem, Menu, Input, CardSection, SettingsItem, Spinner } from '../common';
 
 class CommerceSettings extends Component {
   state = { providerId: null, mPagoModalVisible: false };
 
   componentDidMount() {
-    this.props.readCommerceMPagoToken(this.props.commerceId);
+    this.props.onCommerceMPagoTokenRead(this.props.commerceId);
 
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
@@ -138,5 +138,5 @@ export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
   onLoginValueChange,
-  readCommerceMPagoToken
+  onCommerceMPagoTokenRead
 })(CommerceSettings);

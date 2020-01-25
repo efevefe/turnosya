@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from '../common';
 import { WebView } from 'react-native-webview';
-import { readCommerceMPagoToken } from '../../actions';
+import { onCommerceMPagoTokenRead } from '../../actions';
 
 class PaymentSettings extends Component {
   state = { loading: true };
@@ -12,7 +12,7 @@ class PaymentSettings extends Component {
     const { loading, url } = newNavState;
 
     if (url.includes('https://proyecto-turnosya.web.app/commerce-oauth-redirect'))
-      this.props.readCommerceMPagoToken(this.props.commerceId);
+      this.props.onCommerceMPagoTokenRead(this.props.commerceId);
 
     if (loading !== this.state.loading) this.setState({ loading });
   };
@@ -50,4 +50,4 @@ const mapStateToProps = state => {
   return { commerceId };
 };
 
-export default connect(mapStateToProps, { readCommerceMPagoToken })(PaymentSettings);
+export default connect(mapStateToProps, { onCommerceMPagoTokenRead })(PaymentSettings);

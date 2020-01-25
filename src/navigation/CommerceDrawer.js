@@ -15,10 +15,10 @@ const CommerceSettingsStack = createStackNavigator(
   {
     settings: {
       screen: CommerceSettings,
-      navigationOptions: {
+      navigationOptions: ({ navigation }) => ({
         title: 'Configuración',
         headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
-      }
+      })
     },
     paymentSettings: {
       screen: PaymentSettings,

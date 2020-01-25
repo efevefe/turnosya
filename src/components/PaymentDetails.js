@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
-import { readReservationPaymentMethod } from '../actions';
+import { onReservationPaymentMethodRead } from '../actions';
 import { Spinner } from './common';
 
 class PaymentDetails extends Component {
@@ -16,7 +16,7 @@ class PaymentDetails extends Component {
   }
 
   componentDidMount() {
-    this.props.readReservationPaymentMethod(this.state.reservation);
+    this.props.onReservationPaymentMethodRead(this.state.reservation);
   }
 
   render() {
@@ -48,4 +48,4 @@ const mapStateToProps = state => {
   return { method, loading, firstName, lastName, email };
 };
 
-export default connect(mapStateToProps, { readReservationPaymentMethod })(PaymentDetails);
+export default connect(mapStateToProps, { onReservationPaymentMethodRead })(PaymentDetails);

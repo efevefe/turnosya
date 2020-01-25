@@ -9,7 +9,7 @@ import {
   ON_CASH_PAYMENT_REGISTER_FAIL
 } from '../actions/types';
 
-export const readReservationPaymentMethod = reservation => dispatch => {
+export const onReservationPaymentMethodRead = reservation => dispatch => {
   dispatch({ type: ON_PAYMENT_METHOD_READING });
 
   const db = firebase.firestore();
@@ -34,7 +34,7 @@ export const readReservationPaymentMethod = reservation => dispatch => {
     .catch(() => dispatch({ type: ON_PAYMENT_METHOD_READ_FAIL }));
 };
 
-export const createCashPayment = (reservation, navigation) => dispatch => {
+export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
   dispatch({ type: ON_CASH_PAYMENT_REGISTERING });
 
   const db = firebase.firestore();
@@ -46,12 +46,8 @@ export const createCashPayment = (reservation, navigation) => dispatch => {
   console.log(reservationId);
 
   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-  const commerceReservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
-  const clientReservationRef = db
-    .collection(`Profiles/${clientId}/Reservations`)
-    .doc(reservationId);
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+  const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
 
   const batch = db.batch();
 

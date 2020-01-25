@@ -28,7 +28,7 @@ import {
   onClientReviewValuesReset,
   onCommerceReviewReadById,
   onCommerceReviewValuesReset,
-  createCashPayment
+  onCashPaymentCreate
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -278,7 +278,7 @@ class CommerceReservationDetails extends Component {
           title="Confirmar"
           icon="md-checkmark"
           loadingWithText={this.props.cashPayRegisterLoading}
-          onPress={() => this.props.createCashPayment(this.state.reservation, this.props.navigation)}
+          onPress={() => this.props.onCashPaymentCreate(this.state.reservation, this.props.navigation)}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
         <MenuItem title="Cerrar" icon="md-close" onPress={() => this.setState({ confirmCashPayVisible: false })} />
@@ -451,5 +451,5 @@ export default connect(mapStateToProps, {
   onClientReviewValuesReset,
   onCommerceReviewReadById,
   onCommerceReviewValuesReset,
-  createCashPayment
+  onCashPaymentCreate
 })(CommerceReservationDetails);

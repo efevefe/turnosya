@@ -3,15 +3,15 @@ import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Card, Divider } from 'react-native-elements';
 import { MenuItem, Menu, Spinner, Button } from '../common';
-import { enableCommerceMPagoToken, disableCommerceMPagoToken } from '../../actions';
+import { onCommerceMPagoTokenEnable, onCommerceMPagoTokenDisable } from '../../actions';
 
 class PaymentSettings extends Component {
   state = { mPagoModalVisible: false };
 
   mPagoSwitchPressHandler = () => {
     this.props.mPagoToken
-      ? this.props.disableCommerceMPagoToken(this.props.commerceId)
-      : this.props.enableCommerceMPagoToken(this.props.commerceId);
+      ? this.props.onCommerceMPagoTokenDisable(this.props.commerceId)
+      : this.props.onCommerceMPagoTokenEnable(this.props.commerceId);
     this.setState({ mPagoModalVisible: false });
   };
 
@@ -87,4 +87,4 @@ const mapStateToProps = state => {
   return { commerceId, mPagoTokenSwitchLoading, mPagoTokenReadLoading, hasAnyMPagoToken, mPagoToken };
 };
 
-export default connect(mapStateToProps, { enableCommerceMPagoToken, disableCommerceMPagoToken })(PaymentSettings);
+export default connect(mapStateToProps, { onCommerceMPagoTokenEnable, onCommerceMPagoTokenDisable })(PaymentSettings);

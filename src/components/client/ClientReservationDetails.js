@@ -30,7 +30,7 @@ import {
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
   onClientReviewReadById,
-  readCommerceMPagoToken
+  onCommerceMPagoTokenRead
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -68,7 +68,7 @@ class ClientReservationDetails extends Component {
       reviewId: this.state.reservation.receivedReviewId
     });
 
-    this.props.readCommerceMPagoToken(this.state.reservation.commerceId);
+    this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
   componentWillUnmount() {
@@ -403,5 +403,5 @@ export default connect(mapStateToProps, {
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
   onClientReviewReadById,
-  readCommerceMPagoToken
+  onCommerceMPagoTokenRead
 })(ClientReservationDetails);
