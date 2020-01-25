@@ -10,6 +10,11 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_COMMERCE_MP_TOKEN_READ,
+  ON_COMMERCE_MP_TOKEN_READING,
+  ON_COMMERCE_MP_TOKEN_READ_FAIL,
+  ON_COMMERCE_MP_TOKEN_SWITCHED,
+  ON_COMMERCE_MP_TOKEN_SWITCHING,
+  ON_COMMERCE_MP_TOKEN_SWITCH_FAIL,
   ON_AREAS_READ,
   ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
@@ -44,7 +49,10 @@ const INITIAL_STATE = {
   confirmDeleteVisible: false,
   latitude: null,
   longitude: null,
-  mPagoToken: null
+  mPagoToken: null,
+  hasAnyMPagoToken: false, // Para verificar si el commercio lo debe rehabilitar u obtener uno desde cero
+  mPagoTokenReadLoading: false,
+  mPagoTokenSwitchLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -90,8 +98,20 @@ export default (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
+    case ON_COMMERCE_MP_TOKEN_READING:
+      return { ...state, mPagoTokenReadLoading: true };
     case ON_COMMERCE_MP_TOKEN_READ:
-      return { ...state, mPagoToken: action.payload };
+      return { ...state, ...action.payload, mPagoTokenReadLoading: false };
+    case ON_COMMERCE_MP_TOKEN_READ_FAIL:
+      Toast.show({ text: 'Se ha producido un error' });
+      return { ...state, mPagoTokenReadLoading: false };
+    case ON_COMMERCE_MP_TOKEN_SWITCHING:
+      return { ...state, mPagoTokenSwitchLoading: true };
+    case ON_COMMERCE_MP_TOKEN_SWITCHED:
+      return { ...state, mPagoTokenSwitchLoading: false, mPagoToken: action.payload };
+    case ON_COMMERCE_MP_TOKEN_SWITCH_FAIL:
+      Toast.show({ text: 'Se ha producido un error' });
+      return { ...state, mPagoTokenSwitchLoading: false };
     default:
       return state;
   }

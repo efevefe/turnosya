@@ -6,12 +6,10 @@ import CommerceNavigation from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
 import PaymentSettings from '../components/commerce/PaymentSettings';
+import PaymentSettingsWeb from '../components/commerce/PaymentSettingsWeb';
 import EmployeesList from '../components/commerce/EmployeesList';
 import EmployeeForm from '../components/commerce/EmployeeForm';
-import {
-  stackNavigationOptions,
-  drawerNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 
 const CommerceSettingsStack = createStackNavigator(
   {
@@ -26,6 +24,12 @@ const CommerceSettingsStack = createStackNavigator(
       navigationOptions: {
         title: 'Mercado Pago'
       }
+    },
+    paymentSettingsWeb: {
+      screen: PaymentSettingsWeb,
+      navigationOptions: {
+        title: 'Mercado Pago'
+      }
     }
   },
   stackNavigationOptions
@@ -37,12 +41,7 @@ const CommerceEmployeesStack = createStackNavigator(
       screen: EmployeesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Empleados',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-          />
-        )
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" />
       })
     },
     employeeForm: {

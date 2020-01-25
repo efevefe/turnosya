@@ -4,29 +4,21 @@ import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
-import {
-  onCommerceDelete,
-  onCommerceValueChange,
-  onLoginValueChange
-} from '../../actions';
-import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, readCommerceMPagoToken } from '../../actions';
+import { MenuItem, Menu, Input, CardSection, SettingsItem, Spinner } from '../common';
 
 class CommerceSettings extends Component {
-  state = { providerId: null };
+  state = { providerId: null, mPagoModalVisible: false };
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerLeft: (
-        <HeaderBackButton
-          tintColor="white"
-          title="Back"
-          onPress={() => navigation.goBack(null)}
-        />
-      )
+      headerLeft: <HeaderBackButton tintColor="white" title="Back" onPress={() => navigation.goBack(null)} />
     };
   };
 
   componentDidMount() {
+    this.props.readCommerceMPagoToken(this.props.commerceId);
+
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
@@ -37,21 +29,15 @@ class CommerceSettings extends Component {
     if (this.state.providerId == 'password') {
       return (
         <View style={{ alignSelf: 'stretch' }}>
-          <CardSection
-            style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
-          >
+          <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Input
               label="Contraseña:"
               password
               value={this.props.password}
               color="black"
-              onChangeText={value =>
-                this.props.onLoginValueChange({ prop: 'password', value })
-              }
+              onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}
               errorMessage={this.props.reauthError}
-              onFocus={() =>
-                this.props.onLoginValueChange({ prop: 'error', value: '' })
-              }
+              onFocus={() => this.props.onLoginValueChange({ prop: 'error', value: '' })}
             />
           </CardSection>
           <Divider style={{ backgroundColor: 'grey' }} />
@@ -64,7 +50,7 @@ class CommerceSettings extends Component {
     // ventana de confirmacion para eliminar negocio
     return (
       <Menu
-        title="¿Esta seguro que desea eliminar su negocio?"
+        title="¿Está seguro que desea eliminar su negocio?"
         onBackdropPress={this.onBackdropPress}
         isVisible={this.props.confirmCommerceDeleteVisible}
       >
@@ -76,11 +62,7 @@ class CommerceSettings extends Component {
           onPress={this.onConfirmCommerceDelete}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onBackdropPress} />
       </Menu>
     );
   };
@@ -105,7 +87,9 @@ class CommerceSettings extends Component {
   };
 
   render() {
-    return (
+    return this.props.mPagoTokenReadLoading ? (
+      <Spinner />
+    ) : (
       <ScrollView style={styles.containerStyle}>
         <SettingsItem
           leftIcon={{
@@ -133,7 +117,6 @@ class CommerceSettings extends Component {
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />
-
         {this.renderConfirmCommerceDelete()}
       </ScrollView>
     );
@@ -151,6 +134,7 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
+  const { commerceId, mPagoToken, mPagoTokenDisableLoading, mPagoTokenReadLoading } = state.commerceData;
   // auth
   const { password, error } = state.auth;
 
@@ -158,12 +142,17 @@ const mapStateToProps = state => {
     loadingCommerceDelete,
     password,
     reauthError: error,
-    confirmCommerceDeleteVisible
+    confirmCommerceDeleteVisible,
+    commerceId,
+    mPagoToken,
+    mPagoTokenDisableLoading,
+    mPagoTokenReadLoading
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
-  onLoginValueChange
+  onLoginValueChange,
+  readCommerceMPagoToken
 })(CommerceSettings);

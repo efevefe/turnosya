@@ -23,8 +23,7 @@ export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
 export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
-export const ON_PASSWORD_RESET_EMAIL_SENDING =
-  'on_password_reset_email_sending';
+export const ON_PASSWORD_RESET_EMAIL_SENDING = 'on_password_reset_email_sending';
 export const ON_PASSWORD_RESET_EMAIL_SENT = 'on_password_reset_email_sent';
 export const ON_PASSWORD_RESET_EMAIL_FAIL = 'on_password_reset_email_fail';
 
@@ -77,7 +76,14 @@ export const ON_COMMERCE_UPDATE_FAIL = 'on_commerce_update_fail';
 export const ON_AREAS_READ = 'on_areas_read';
 export const CUIT_EXISTS = 'cuit_exists';
 export const CUIT_NOT_EXISTS = 'cuit_not_exists';
+
+// Commerce MercadoPago Tokens
 export const ON_COMMERCE_MP_TOKEN_READ = 'on_commerce_mp_token_read';
+export const ON_COMMERCE_MP_TOKEN_READING = 'on_commerce_mp_token_reading';
+export const ON_COMMERCE_MP_TOKEN_READ_FAIL = 'on_commerce_mp_token_read_fail';
+export const ON_COMMERCE_MP_TOKEN_SWITCHED = 'on_commerce_mp_token_switched';
+export const ON_COMMERCE_MP_TOKEN_SWITCHING = 'on_commerce_mp_token_switching';
+export const ON_COMMERCE_MP_TOKEN_SWITCH_FAIL = 'on_commerce_mp_token_switch_fail';
 
 // Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';
@@ -116,12 +122,10 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE =
-  'on_court_reservation_value_change';
+export const ON_COURT_RESERVATION_VALUE_CHANGE = 'on_court_reservation_value_change';
 export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
 export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
-export const ON_COURT_RESERVATION_CREATE_FAIL =
-  'on_court_reservation_create_fail';
+export const ON_COURT_RESERVATION_CREATE_FAIL = 'on_court_reservation_create_fail';
 export const ON_NEW_COURT_RESERVATION = 'on_new_court_reservation';
 
 // Location types
@@ -135,34 +139,24 @@ export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 // Client Reservations List
 export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
 export const ON_CLIENT_RESERVATIONS_READING = 'on_client_reservations_reading';
-export const ON_CLIENT_RESERVATION_CANCELING =
-  'on_client_reservation_canceling';
+export const ON_CLIENT_RESERVATION_CANCELING = 'on_client_reservation_canceling';
 export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
-export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
-  'on_client_reservation_cancel_fail';
+export const ON_CLIENT_RESERVATION_CANCEL_FAIL = 'on_client_reservation_cancel_fail';
 
 // Commerce Reservations List
-export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE =
-  'on_court_reservations_list_value_change';
-export const ON_COMMERCE_COURT_RESERVATIONS_READING =
-  'on_commerce_reservations_reading';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ =
-  'on_commerce_reservations_read';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
-  'on_commerce_reservations_read_fail';
-export const ON_COMMERCE_RESERVATION_CANCELING =
-  'on_commerce_reservation_canceling';
-export const ON_COMMERCE_RESERVATION_CANCELED =
-  'on_commerce_reservation_canceled';
-export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
-  'on_commerce_reservation_cancel_fail';
+export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE = 'on_court_reservations_list_value_change';
+export const ON_COMMERCE_COURT_RESERVATIONS_READING = 'on_commerce_reservations_reading';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ = 'on_commerce_reservations_read';
+export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL = 'on_commerce_reservations_read_fail';
+export const ON_COMMERCE_RESERVATION_CANCELING = 'on_commerce_reservation_canceling';
+export const ON_COMMERCE_RESERVATION_CANCELED = 'on_commerce_reservation_canceled';
+export const ON_COMMERCE_RESERVATION_CANCEL_FAIL = 'on_commerce_reservation_cancel_fail';
 
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';
 
 // Commerce review types
-export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
-  'on_commerce_review_value_change';
+export const ON_COMMERCE_REVIEW_VALUE_CHANGE = 'on_commerce_review_value_change';
 export const ON_COMMERCE_REVIEW_SAVING = 'on_commerce_review_saving';
 export const ON_COMMERCE_REVIEW_SAVED = 'on_commerce_review_saved';
 export const ON_COMMERCE_REVIEW_SAVE_FAIL = 'on_commerce_review_save_fail';
@@ -222,8 +216,7 @@ export const ON_WORKPLACES_READ = 'on_workplaces_read';
 // Reports types
 export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
 export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
-export const ON_COMMERCE_REPORT_VALUE_CHANGE =
-  'on_commerce_report_value_change';
+export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change';
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';

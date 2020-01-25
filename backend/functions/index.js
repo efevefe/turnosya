@@ -169,15 +169,12 @@ app.get('/commerce-oauth-redirect', (req, res) => {
 
       const batch = db.batch();
 
-      const commerceRef = db.doc(`Commerces/${req.query['commerce-id']}`);
       const mPagoTokenRef = db.doc(`Commerces/${req.query['commerce-id']}/MercadoPagoTokens/${data.access_token}`);
-
-      batch.update(commerceRef, { mPagoUserId: data.user_id });
 
       batch.set(mPagoTokenRef, {
         publicKey: data.public_key,
         refreshToken: data.refresh_token,
-        userId: data.user_id, // creo que no va a hacer falta
+        userId: data.user_id,
         expirationDate: new Date(moment().add('seconds', data.expires_in)),
         softDelete: null
       });
@@ -225,8 +222,9 @@ app.post('/ipn-notification', (req, res) => {
 
         if (!error && response.statusCode == 200) {
           console.log(body);
+          console.log(JSON.parse(body));
 
-          const { id, collector, order, payer, payment_type_id, status, external_reference } = JSON.parse(body);
+          const { id, collector, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
           const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
           console.log(external_reference);
 
@@ -237,6 +235,7 @@ app.post('/ipn-notification', (req, res) => {
 
             const batch = db.batch();
 
+            console.log(payer);
             batch.set(paymentRef, {
               clientId,
               reservationId,
@@ -244,7 +243,7 @@ app.post('/ipn-notification', (req, res) => {
               collectorId: collector.id,
               method: constants.paymentTypes[payment_type_id],
               order,
-              payer
+              payerId: payer_id
             });
 
             batch.update(commerceReservationRef, { paymentDate: new Date() });
