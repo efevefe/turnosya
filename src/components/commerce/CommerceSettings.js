@@ -134,7 +134,7 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
-  const { commerceId, mPagoToken, mPagoTokenDisableLoading, mPagoTokenReadLoading } = state.commerceData;
+  const { commerceId, mPagoToken, mPagoTokenSwitchLoading, mPagoTokenReadLoading } = state.commerceData;
   // auth
   const { password, error } = state.auth;
 
@@ -145,7 +145,7 @@ const mapStateToProps = state => {
     confirmCommerceDeleteVisible,
     commerceId,
     mPagoToken,
-    mPagoTokenDisableLoading,
+    mPagoTokenSwitchLoading,
     mPagoTokenReadLoading
   };
 };

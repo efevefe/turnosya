@@ -52,89 +52,8 @@ app.get('/pay', (req, res) => {
 });
 //#endregion
 
-//#region
-// app.get('/payment-success', (req, res) => {
-//   console.log('Nueva request de success');
-//   console.log('Headers \n' + JSON.stringify(req.query));
-//   // collection_id
-//   // collection_status
-//   // external_reference
-//   // payment_type
-//   // merchant_order_id
-//   // preference_id
-//   // merchant_account_id
-//   let {
-//     collection_id,
-//     collection_status,
-//     payment_type,
-//     merchant_order_id,
-//     preference_id,
-//     merchant_account_id
-//   } = req.query;
-//   let { clientId, reservationId, commerceId } = JSON.parse(req.query.external_reference);
-
-//   console.log(clientId);
-//   console.log(reservationId);
-//   console.log(commerceId);
-
-//   const db = admin.firestore();
-
-//   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-//   const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
-//   const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
-
-//   const batch = db.batch();
-
-//   batch.create(paymentRef, {
-//     clientId,
-//     reservationId,
-//     date: new Date(),
-//     method: env.paymentTypes[payment_type],
-//     collectionId: collection_id,
-//     collectionStatus: collection_status,
-//     merchantOrderId: merchant_order_id,
-//     preferenceId: preference_id,
-//     merchantAccountId: merchant_account_id
-//   });
-
-//   batch.update(commerceReservationRef, { paymentDate: new Date() });
-//   batch.update(clientReservationRef, { paymentDate: new Date() });
-
-//   batch
-//     .commit()
-//     .then(() => console.log('Guardado en Firestore'))
-//     .catch(err => console.log('Firestore error: ' + err));
-
-//   // admin
-//   //   .firestore()
-//   //   .collection(`Commerces/${commerceId}/Payments`)
-//   //   .add({
-//   //     clientId,
-//   //     reservationId,
-//   //     date: new Date(),
-//   //     method: env.paymentTypes[payment_type],
-//   //     collectionId: collection_id,
-//   //     collectionStatus: collection_status,
-//   //     merchantOrderId: merchant_order_id,
-//   //     referenceId: preference_id,
-//   //     merchantAccountId: merchant_account_id
-//   //   })
-//   //   .then(() => console.log('Guardado en Firestore'))
-//   //   .catch(err => console.log('Firestore error: ' + err));
-
-//   console.log('---------------------');
-//   res.render('payment-success');
-// });
-
-// app.get('/payment-failure', (req, res) => {
-//   console.log('Nueva failure');
-//   res.render('payment-failure');
-// });
-//#endregion
-
 //#region OAuth
 app.get('/commerce-oauth', (req, res) => {
-  console.log('Oauth');
   res.render('commerce-oauth', {
     appId: env.marketplace.APP_ID,
     commerceId: req.query['commerce-id']
@@ -142,9 +61,6 @@ app.get('/commerce-oauth', (req, res) => {
 });
 
 app.get('/commerce-oauth-redirect', (req, res) => {
-  console.log('Redirect');
-  console.log(req.query); // req.query.code
-
   let headers = {
     accept: 'application/json',
     'content-type': 'application/x-www-form-urlencoded'
@@ -161,10 +77,8 @@ app.get('/commerce-oauth-redirect', (req, res) => {
 
   request(options, (error, response, body) => {
     const db = admin.firestore();
-    console.log(error);
-    console.log(response.statusCode);
+
     if (!error && response.statusCode == 200) {
-      console.log(body);
       let data = JSON.parse(body);
 
       const batch = db.batch();
@@ -182,11 +96,9 @@ app.get('/commerce-oauth-redirect', (req, res) => {
       batch
         .commit()
         .then(() => {
-          console.log('Guardado en Firestore');
           res.render('commerce-oauth-redirect');
         })
         .catch(err => {
-          console.log('Firestore error: ' + err);
           res.render('error');
         });
     } else {
@@ -198,35 +110,15 @@ app.get('/commerce-oauth-redirect', (req, res) => {
 
 //#region Notifications
 app.post('/ipn-notification', (req, res) => {
-  console.log('Nueva notificacion');
-  console.log(req.body);
-  // { action: 'payment.created',
-  // api_version: 'v1',
-  // data: { id: '5805048310' },
-  // date_created: '2020-01-21T20:39:07Z',
-  // id: 5550615951,
-  // live_mode: true,
-  // type: 'payment',
-  // user_id: '515244502' }
-  console.log(req.query);
-  // { 'data.id': '5808660474', type: 'payment' }
-
   if (req.query.topic === 'payment') {
     const db = admin.firestore();
 
     request(
       `https://api.mercadopago.com/v1/payments/${req.query.id}?access_token=${env.marketplace.ACCESS_TOKEN}`,
       (error, response, body) => {
-        console.log(error);
-        console.log(response.statusCode);
-
         if (!error && response.statusCode == 200) {
-          console.log(body);
-          console.log(JSON.parse(body));
-
           const { id, collector, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
           const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
-          console.log(external_reference);
 
           if (status === 'approved') {
             const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc(id.toString());
@@ -235,7 +127,6 @@ app.post('/ipn-notification', (req, res) => {
 
             const batch = db.batch();
 
-            console.log(payer);
             batch.set(paymentRef, {
               clientId,
               reservationId,
@@ -252,14 +143,17 @@ app.post('/ipn-notification', (req, res) => {
             batch
               .commit()
               .then(() => {
-                console.log('Guardado Firestore');
-                res.status(200).send('API de Notificación recibida');
+                res.status(200).send('Notification successfully processed');
               })
-              .catch(err => console.error('Firestore error: ' + err));
+              .catch(err => {
+                res.status(500).send();
+              });
           }
         }
       }
     );
+  } else {
+    res.status(200).send('Notification not required');
   }
 });
 //#endregion

@@ -12,6 +12,7 @@ class PaymentSettings extends Component {
     this.props.mPagoToken
       ? this.props.disableCommerceMPagoToken(this.props.commerceId)
       : this.props.enableCommerceMPagoToken(this.props.commerceId);
+    this.setState({ mPagoModalVisible: false });
   };
 
   renderConfirmMPagoSwitch = () => {
@@ -24,12 +25,7 @@ class PaymentSettings extends Component {
         onBackdropPress={() => this.setState({ mPagoModalVisible: false })}
         isVisible={this.state.mPagoModalVisible}
       >
-        <MenuItem
-          title="Confirmar"
-          icon="md-checkmark"
-          loadingWithText={this.props.mPagoTokenSwitchLoading}
-          onPress={this.mPagoSwitchPressHandler}
-        />
+        <MenuItem title="Confirmar" icon="md-checkmark" onPress={this.mPagoSwitchPressHandler} />
         <Divider style={{ backgroundColor: 'grey' }} />
         <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ mPagoModalVisible: false })} />
       </Menu>
@@ -50,6 +46,7 @@ class PaymentSettings extends Component {
               title="Deshabilitar Cobro"
               type="solid"
               onPress={() => this.setState({ mPagoModalVisible: true })}
+              loading={this.props.mPagoTokenSwitchLoading}
             />
           </View>
         ) : this.props.hasAnyMPagoToken ? (
@@ -60,6 +57,7 @@ class PaymentSettings extends Component {
               title="Habilitar Cobro"
               type="solid"
               onPress={() => this.setState({ mPagoModalVisible: true })}
+              loading={this.props.mPagoTokenSwitchLoading}
             />
           </View>
         ) : (
@@ -79,8 +77,14 @@ class PaymentSettings extends Component {
 }
 
 const mapStateToProps = state => {
-  const { commerceId, mPagoTokenReadLoading, hasAnyMPagoToken, mPagoToken } = state.commerceData;
-  return { commerceId, mPagoTokenReadLoading, hasAnyMPagoToken, mPagoToken };
+  const {
+    commerceId,
+    mPagoTokenSwitchLoading,
+    mPagoTokenReadLoading,
+    hasAnyMPagoToken,
+    mPagoToken
+  } = state.commerceData;
+  return { commerceId, mPagoTokenSwitchLoading, mPagoTokenReadLoading, hasAnyMPagoToken, mPagoToken };
 };
 
 export default connect(mapStateToProps, { enableCommerceMPagoToken, disableCommerceMPagoToken })(PaymentSettings);

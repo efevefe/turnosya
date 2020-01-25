@@ -37,9 +37,6 @@ class PaymentForm extends React.Component {
       clientId,
       reservation: { id, price, commerceId }
     } = this.state;
-    console.log(
-      `https://proyecto-turnosya.web.app/pay?access-token=${accessToken}&client-id=${clientId}&reservation-id=${id}&price=${price}&commerce-id=${commerceId}`
-    );
 
     return (
       <View style={{ flex: 1 }}>
@@ -52,13 +49,13 @@ class PaymentForm extends React.Component {
           }}
           renderLoading={() => <Spinner />}
           javaScriptEnabled={true}
-          //domStorageEnabled={true} //For the Cache
           originWhitelist={['*']}
           mixedContentMode={'always'}
-          //useWebKit={Platform.OS == 'ios'}
           cacheEnabled={false}
           scrollEnabled={true}
           startInLoadingState={true}
+          thirdPartyCookiesEnabled={false}
+          incognito={true}
           allowUniversalAccessFromFileURLs={true}
           style={this.state.loading ? { flex: 0, height: 0 } : { flex: 1, flexGrow: 1, alignSelf: 'stretch' }}
           onNavigationStateChange={this.handleWebViewNavigationStateChange}

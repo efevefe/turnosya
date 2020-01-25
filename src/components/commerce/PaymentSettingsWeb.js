@@ -3,12 +3,16 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { Spinner } from '../common';
 import { WebView } from 'react-native-webview';
+import { readCommerceMPagoToken } from '../../actions';
 
 class PaymentSettings extends Component {
-  state = { loading: true, webViewVisible: false };
+  state = { loading: true };
 
   handleWebViewNavigationStateChange = newNavState => {
-    const { loading } = newNavState;
+    const { loading, url } = newNavState;
+
+    if (url.includes('https://proyecto-turnosya.web.app/commerce-oauth-redirect'))
+      this.props.readCommerceMPagoToken(this.props.commerceId);
 
     if (loading !== this.state.loading) this.setState({ loading });
   };
@@ -29,6 +33,8 @@ class PaymentSettings extends Component {
           cacheEnabled={false}
           scrollEnabled={true}
           startInLoadingState={true}
+          thirdPartyCookiesEnabled={false}
+          incognito={true}
           allowUniversalAccessFromFileURLs={true}
           style={this.state.loading ? { flex: 0, height: 0 } : { flex: 1, flexGrow: 1, alignSelf: 'stretch' }}
           onNavigationStateChange={this.handleWebViewNavigationStateChange}
@@ -44,4 +50,4 @@ const mapStateToProps = state => {
   return { commerceId };
 };
 
-export default connect(mapStateToProps, {})(PaymentSettings);
+export default connect(mapStateToProps, { readCommerceMPagoToken })(PaymentSettings);
