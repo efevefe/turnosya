@@ -6,10 +6,10 @@ import { IconButton, Picker, ButtonGroup } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
-  updateAllFilters,
+  onCommercesListValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
-  commerceHitsUpdate
+  onCommerceHitsUpdate
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -46,29 +46,29 @@ class CommerceFiltersScreen extends Component {
       <Button
         title="Aplicar Filtros"
         type="clear"
-        titleStyle={{ color: "white" }}
+        titleStyle={{ color: 'white' }}
         onPress={this.onApplyFiltersPress.bind(this)}
         containerStyle={applyFilterButtonStyle}
       />
     );
-  }
+  };
 
   renderCloseButton = () => {
     return (
       <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
     );
-  }
+  };
 
   onClosePress() {
     this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
     this.props.onUserLocationChange(this.state.oldData.userLocation);
-    this.props.commerceHitsUpdate(this.state.oldData.markers);
+    this.props.onCommerceHitsUpdate(this.state.oldData.markers);
 
     this.props.navigation.goBack(null);
   }
 
   onApplyFiltersPress() {
-    this.props.updateAllFilters({
+    this.props.onCommercesListValueChange({
       provinceNameFilter: this.state.provinceName,
       locationButtonIndex: this.state.locationButtonIndex,
       locationRadiusKms: this.state.locationRadiusKms
@@ -194,7 +194,7 @@ const {
   dividerTextStyle: { color: 'white', padding: 5 },
   dividerContainerStyle: { flexDirection: 'row', justifyContent: 'center' },
   windowContainerStyle: { flex: 1, backgroundColor: MAIN_COLOR },
-  windowContentContainerStyle: { flex: 1, alignItems: "center" },
+  windowContentContainerStyle: { flex: 1, alignItems: 'center' },
   applyFilterButtonStyle: { paddingRight: 10 },
   provinceContainerStyle: {
     alignSelf: 'stretch',
@@ -240,8 +240,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onProvincesNameRead,
-  updateAllFilters,
+  onCommercesListValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
-  commerceHitsUpdate
+  onCommerceHitsUpdate
 })(CommerceFiltersScreen);

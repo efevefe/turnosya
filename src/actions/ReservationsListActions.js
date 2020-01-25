@@ -2,23 +2,24 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import moment from 'moment';
 import {
-  ON_COMMERCE_COURT_RESERVATIONS_READ,
-  ON_COMMERCE_COURT_RESERVATIONS_READING,
-  ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL,
-  ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
+  ON_COMMERCE_RESERVATIONS_READ,
+  ON_COMMERCE_RESERVATIONS_READING,
+  ON_COMMERCE_RESERVATIONS_READ_FAIL,
+  ON_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
+import { onClientPushNotificationSend } from './PushNotificationActions';
 
-export const onCourtReservationsListValueChange = ({ prop, value }) => {
+export const onReservationsListValueChange = payload => {
   return {
-    type: ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload: { prop, value }
+    type: ON_RESERVATIONS_LIST_VALUE_CHANGE,
+    payload
   };
 };
 
-const formatReservation = ({ res, court, client }) => {
+export const formatReservation = ({ res, court, client, commerce, employee, service }) => {
   return {
     id: res.id,
     ...res.data(),
@@ -26,23 +27,21 @@ const formatReservation = ({ res, court, client }) => {
     endDate: moment(res.data().endDate.toDate()),
     reservationDate: moment(res.data().reservationDate.toDate()),
     client: client ? { id: client.id, ...client.data() } : null,
-    court: court ? { id: court.id, ...court.data() } : null
+    court: court ? { id: court.id, ...court.data() } : null,
+    employee: employee ? { id: employee.id, ...employee.data() } : null,
+    service: service ? { id: service.id, ...service.data() } : null,
+    commerce: commerce ? { id: commerce.id, ...commerce.data() } : null,
   };
-}
+};
 
-export const onCommerceCourtTypeReservationsRead = ({
-  commerceId,
-  selectedDate,
-  courtType
-}) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, employeeId, courtType }) => dispatch => {
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
-    .where('courtType', '==', courtType)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -50,7 +49,13 @@ export const onCommerceCourtTypeReservationsRead = ({
       moment(selectedDate)
         .add(1, 'days')
         .toDate()
-    )
+    );
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  if (courtType) query = query.where('courtType', '==', courtType);
+
+  return query
     .onSnapshot(snapshot => {
       const reservations = [];
 
@@ -59,21 +64,22 @@ export const onCommerceCourtTypeReservationsRead = ({
       });
 
       dispatch({
-        type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+        type: ON_COMMERCE_RESERVATIONS_READ,
         payload: { reservations }
       });
     });
-};
+}
 
-export const onCommerceCourtReservationsRead = ({
+export const onCommerceReservationsRead = ({
   commerceId,
-  selectedDate
+  selectedDate,
+  employeeId
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
@@ -83,13 +89,17 @@ export const onCommerceCourtReservationsRead = ({
       moment(selectedDate)
         .add(1, 'days')
         .toDate()
-    )
+    );
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  return query
     .onSnapshot(snapshot => {
       const reservations = [];
 
       if (snapshot.empty) {
         return dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { reservations }
         });
       }
@@ -98,31 +108,34 @@ export const onCommerceCourtReservationsRead = ({
         db.doc(`Profiles/${doc.data().clientId}`)
           .get()
           .then(client => {
-            reservations.push(formatReservation({
-              res: doc,
-              client: client.exists && client
-            }));
+            reservations.push(
+              formatReservation({
+                res: doc,
+                client: client.exists && client
+              })
+            );
 
             if (reservations.length === snapshot.size) {
               dispatch({
-                type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+                type: ON_COMMERCE_RESERVATIONS_READ,
                 payload: { reservations }
               });
             }
-          })
+          });
       });
     });
 };
 
-export const onCommerceDetailedCourtReservationsRead = ({
+export const onCommerceDetailedReservationsRead = ({
   commerceId,
-  selectedDate
+  selectedDate,
+  employeeId
 }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('state', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
@@ -132,51 +145,51 @@ export const onCommerceDetailedCourtReservationsRead = ({
       moment(selectedDate)
         .add(1, 'days')
         .toDate()
-    )
+    );
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  return query
     .orderBy('startDate')
     .onSnapshot(snapshot => {
       const detailedReservations = [];
 
       if (snapshot.empty) {
         return dispatch({
-          type: ON_COMMERCE_COURT_RESERVATIONS_READ,
+          type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { detailedReservations }
         });
       }
 
       snapshot.forEach(doc => {
-        db.doc(`Commerces/${commerceId}/Courts/${doc.data().courtId}`)
+        db.doc(`Profiles/${doc.data().clientId}`)
           .get()
-          .then(court => {
-            db.doc(`Profiles/${doc.data().clientId}`)
-              .get()
-              .then(client => {
-                detailedReservations.push(formatReservation({
-                  res: doc,
-                  court,
-                  client: client.exists && client
-                }));
+          .then(client => {
+            detailedReservations.push(formatReservation({
+              res: doc,
+              client: client.exists && client
+            }));
 
-                if (detailedReservations.length === snapshot.size) {
-                  detailedReservations.sort((a, b) => a.startDate - b.startDate);
+            if (detailedReservations.length === snapshot.size) {
+              detailedReservations.sort((a, b) => a.startDate - b.startDate);
 
-                  dispatch({
-                    type: ON_COMMERCE_COURT_RESERVATIONS_READ,
-                    payload: { detailedReservations }
-                  });
-                }
+              dispatch({
+                type: ON_COMMERCE_RESERVATIONS_READ,
+                payload: { detailedReservations }
               });
+            }
           });
       });
     });
 };
 
-export const onCommerceCancelReservation = ({
+export const onCommerceReservationCancel = ({
   commerceId,
   reservationId,
   clientId,
-  cancelationReason,
-  navigation
+  cancellationReason,
+  navigation,
+  notification
 }) => {
   const db = firebase.firestore();
   const batch = db.batch();
@@ -191,7 +204,7 @@ export const onCommerceCancelReservation = ({
           state: {
             id: stateDoc.id,
             name: stateDoc.data().name,
-            cancelationReason
+            cancellationReason
           },
           cancellationDate: new Date()
         };
@@ -211,16 +224,17 @@ export const onCommerceCancelReservation = ({
         batch
           .commit()
           .then(() => {
+            onClientPushNotificationSend(notification, clientId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
-          .catch(e => {
+          .catch(error => {
             dispatch({
               type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
             });
           });
       })
-      .catch(e => {
+      .catch(error => {
         dispatch({
           type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
         });
@@ -228,26 +242,33 @@ export const onCommerceCancelReservation = ({
   };
 };
 
-export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
+export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId }) => {
   const db = firebase.firestore();
 
   return dispatch => {
-    db.collection(`Commerces/${commerceId}/Reservations`)
+    let query = db.collection(`Commerces/${commerceId}/Reservations`)
       .where('state', '==', null)
-      .where('startDate', '>=', startDate.toDate())
+      .where('startDate', '>=', startDate.toDate());
+
+    if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+    query
       .orderBy('startDate')
       .get()
       .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
         }
 
         snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
+          if (
+            !endDate ||
+            (endDate && endDate >= moment(doc.data().startDate.toDate()))
+          )
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -256,14 +277,13 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate }) => {
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }
 
 export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => {
-  // revisar el de arriba
   const db = firebase.firestore();
 
   return dispatch => {
@@ -274,16 +294,19 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
       .orderBy('endDate')
       .get()
       .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READING });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
         }
 
         snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
+          if (
+            !endDate ||
+            (endDate && endDate > moment(doc.data().startDate.toDate()))
+          )
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -292,13 +315,18 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
             });
         });
 
-        dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
       })
-      .catch(error => dispatch({ type: ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL, payload: error }));
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   }
 }
 
-export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
+export const onReservationsCancel = async (
+  db,
+  batch,
+  commerceId,
+  reservations
+) => {
   // reservations cancel
   try {
     const state = await db.doc(`ReservationStates/canceled`).get();
@@ -308,12 +336,16 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
     };
 
     reservations.forEach(res => {
-      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+      const commerceResRef = db.doc(
+        `Commerces/${commerceId}/Reservations/${res.id}`
+      );
+      const clientResRef = db.doc(
+        `Profiles/${res.clientId}/Reservations/${res.id}`
+      );
       batch.update(commerceResRef, updateObj);
       batch.update(clientResRef, updateObj);
     });
   } catch (error) {
     console.error(error);
   }
-}
+};

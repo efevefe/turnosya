@@ -7,7 +7,7 @@ import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
 import {
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
@@ -82,8 +82,8 @@ class CommercesMap extends React.Component {
             'No se han encontrado resultados, intente modificar la dirección.'
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -111,8 +111,8 @@ class CommercesMap extends React.Component {
       });
 
       this.props.onSelectedLocationChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -165,11 +165,11 @@ class CommercesMap extends React.Component {
       arrayOfMarkers.push(selectedLocation);
     }
 
-    if (this.props.markers.length > 0) {
+    if (this.props.markers.length) {
       Array.prototype.push.apply(arrayOfMarkers, this.props.markers);
     }
 
-    return arrayOfMarkers.length > 0
+    return arrayOfMarkers.length
       ? this.calculateMarkersRegion(arrayOfMarkers)
       : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
@@ -243,12 +243,8 @@ class CommercesMap extends React.Component {
     }
   };
 
-  onMarkerTitlePress = marker => {
-    this.props.onCourtReservationValueChange({
-      prop: 'commerce',
-      value: marker
-    });
-
+  onMarkerTitlePress = commerce => {
+    this.props.onReservationValueChange({ commerce });
     this.props.navigation.navigate('commerceProfileView');
   };
 
@@ -380,5 +376,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 })(CommercesMap);

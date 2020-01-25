@@ -10,6 +10,7 @@ const Drawer = props => {
     profilePicturePlaceholder,
     onProfilePicturePress,
     name,
+    role,
     children
   } = props;
 
@@ -18,6 +19,12 @@ const Drawer = props => {
       return <Text style={styles.nameStyle}>{name}</Text>;
     }
   };
+
+  renderRole = role => {
+    if (role) {
+      return <Text style={styles.roleStyle}>{role}</Text>;
+    }
+  }
 
   return (
     <View>
@@ -37,6 +44,7 @@ const Drawer = props => {
           onPress={onProfilePicturePress}
         />
         {this.renderName(name)}
+        {this.renderRole(role)}
       </View>
       <Divider style={styles.dividerStyle} />
       {children}
@@ -65,8 +73,13 @@ const styles = StyleSheet.create({
   nameStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 0,
     textAlign: 'center'
+  },
+  roleStyle: {
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 0,
   },
   avatarStyle: {
     borderWidth: 3,
@@ -75,7 +88,7 @@ const styles = StyleSheet.create({
   },
   dividerStyle: {
     backgroundColor: 'grey',
-    marginTop: 0,
+    marginTop: 4,
     marginBottom: 5,
     marginLeft: 15,
     marginRight: 15

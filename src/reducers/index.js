@@ -1,4 +1,5 @@
-import { combineReducers } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
 import AuthReducer from './AuthReducer';
@@ -9,9 +10,9 @@ import CommerceDataReducer from './CommerceDataReducer';
 import CommercesListReducer from './CommercesListReducer';
 import CommerceScheduleReducer from './CommerceScheduleReducer';
 import CommerceCourtTypesReducer from './CommerceCourtTypesReducer';
-import CourtReservationReducer from './CourtReservationReducer';
+import ReservationReducer from './ReservationReducer';
 import ClientReservationsListReducer from './ClientReservationsListReducer';
-import CourtReservationsListReducer from './CourtReservationsListReducer';
+import ReservationsListReducer from './ReservationsListReducer';
 import LocationDataReducer from './LocationDataReducer';
 import ProvinceDataReducer from './ProvinceDataReducer';
 import CommerceReviewDataReducer from './CommerceReviewDataReducer';
@@ -24,7 +25,7 @@ import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
 import PaymentDataReducer from './PaymentDataReducer';
 
-export default combineReducers({
+const reducers = combineReducers({
   auth: AuthReducer,
   clientData: ClientDataReducer,
   serviceForm: ServiceFormReducer,
@@ -35,9 +36,9 @@ export default combineReducers({
   commercesList: CommercesListReducer,
   commerceSchedule: CommerceScheduleReducer,
   commerceCourtTypes: CommerceCourtTypesReducer,
-  courtReservation: CourtReservationReducer,
+  reservation: ReservationReducer,
   clientReservationsList: ClientReservationsListReducer,
-  courtReservationsList: CourtReservationsListReducer,
+  reservationsList: ReservationsListReducer,
   locationData: LocationDataReducer,
   provinceData: ProvinceDataReducer,
   commerceReviewData: CommerceReviewDataReducer,
@@ -50,3 +51,6 @@ export default combineReducers({
   commerceReports: CommerceReportsReducer,
   paymentData: PaymentDataReducer
 });
+
+
+export default createStore(reducers, {}, applyMiddleware(ReduxThunk));

@@ -13,9 +13,8 @@ import {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
-  onLocationValueChange,
-  onLocationChange
+  onAreasReadForPicker,
+  onLocationValueChange
 } from '../../actions';
 import {
   CardSection,
@@ -62,25 +61,14 @@ class CommerceProfile extends Component {
   };
 
   componentDidMount() {
-    const {
-      address,
-      city,
-      provinceName,
-      latitude,
-      longitude,
-      country
-    } = this.props.locationData;
-
-    const location = {
-      address,
-      city,
-      provinceName,
-      latitude,
-      longitude,
-      country
-    };
-
-    this.props.onLocationChange(location);
+    this.props.onLocationValueChange({
+      address: this.props.locationData.address,
+      city: this.props.locationData.city,
+      provinceName: this.props.locationData.provinceName,
+      latitude: this.props.locationData.latitude,
+      longitude: this.props.locationData.longitude,
+      country: this.props.locationData.country
+    });
 
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
@@ -122,7 +110,7 @@ class CommerceProfile extends Component {
 
   onEditPress = () => {
     this.props.onProvincesIdRead();
-    this.props.onAreasRead();
+    this.props.onAreasReadForPicker();
 
     const {
       name,
@@ -156,7 +144,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange(location);
+    // this.props.onLocationChange(location); ///what? de donde sale esta variable 'location' //lo veo en la proxima user
   };
 
   onRefresh = () => {
@@ -208,39 +196,24 @@ class CommerceProfile extends Component {
           this.props.navigation
         );
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onCancelPress = () => {
     const { stateBeforeChanges } = this.state;
+    const locationProps = ['address', 'city', 'latitude', 'longitude'];
+    const location = {};
 
     for (prop in stateBeforeChanges) {
-      if (prop === 'address' || prop === 'city') {
-        this.props.onCommerceValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
-        this.props.onLocationValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
+      if (locationProps.includes(prop)) {
+        location = { ...location, prop: stateBeforeChanges[prop] };
       }
-
-      if (prop === 'latitude' || prop === 'longitude') {
-        this.props.onLocationValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
-      }
-
-      this.props.onCommerceValueChange({
-        prop,
-        value: stateBeforeChanges[prop]
-      });
     }
 
+    this.props.onLocationValueChange(location);
+    this.props.onCommerceValueChange(stateBeforeChanges);
     this.cleanErrors();
     this.props.navigation.goBack(null);
   };
@@ -279,23 +252,16 @@ class CommerceProfile extends Component {
 
       if (!response.cancelled) {
         if (this.state.profilePictureEdit) {
-          this.props.onCommerceValueChange({
-            prop: 'profilePicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ profilePicture: response.uri });
           this.setState({ newProfilePicture: true });
         } else {
-          this.props.onCommerceValueChange({
-            prop: 'headerPicture',
-            value: response.uri
-          });
+          this.props.onCommerceValueChange({ headerPicture: response.uri });
 
           this.setState({ newHeaderPicture: true });
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }
@@ -318,23 +284,15 @@ class CommerceProfile extends Component {
 
       if (!response.cancelled) {
         if (this.state.profilePictureEdit) {
-          this.props.onCommerceValueChange({
-            prop: 'profilePicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ profilePicture: response.uri });
           this.setState({ newProfilePicture: true });
         } else {
-          this.props.onCommerceValueChange({
-            prop: 'headerPicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ headerPicture: response.uri });
           this.setState({ newHeaderPicture: true });
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }
@@ -342,10 +300,10 @@ class CommerceProfile extends Component {
 
   onDeletePicturePress = () => {
     if (this.state.profilePictureEdit) {
-      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
+      this.props.onCommerceValueChange({ profilePicture: '' });
       this.setState({ newProfilePicture: false });
     } else {
-      this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+      this.props.onCommerceValueChange({ headerPicture: '' });
       this.setState({ newHeaderPicture: false });
     }
 
@@ -387,14 +345,9 @@ class CommerceProfile extends Component {
         province => province.value == value
       );
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
+        province: { provinceId: value, name: label }
       });
-
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: label
-      });
+      this.props.onLocationValueChange({ provinceName: label });
     }
   };
 
@@ -404,18 +357,16 @@ class CommerceProfile extends Component {
         area => area.value == value
       );
       this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
+        area: { areaId: value, name: label }
       });
     }
   };
 
   renderNameError = () => {
-    const { name, onCommerceValueChange } = this.props;
-    const value = trimString(name);
-    onCommerceValueChange({ prop: 'name', value });
+    const name = trimString(this.props.name);
 
-    if (value === '') {
+    this.props.onCommerceValueChange({ name });
+    if (name === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -464,12 +415,10 @@ class CommerceProfile extends Component {
   };
 
   renderAddressError = () => {
-    const { onLocationValueChange } = this.props;
-    const { address } = this.props.locationData;
-    const value = trimString(address);
-    onLocationValueChange({ prop: 'address', value });
+    const address = trimString(this.props.locationData.address);
 
-    if (value === '') {
+    this.props.onLocationValueChange({ address });
+    if (address === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -479,12 +428,10 @@ class CommerceProfile extends Component {
   };
 
   renderCityError = () => {
-    const { onLocationValueChange } = this.props;
-    const { city } = this.props.locationData;
-    const value = trimString(city);
-    onLocationValueChange({ prop: 'city', value });
+    const city = trimString(this.props.locationData.city);
 
-    if (value === '') {
+    this.props.onLocationValueChange({ city });
+    if (city === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -520,13 +467,11 @@ class CommerceProfile extends Component {
 
     if (province) {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: province.value, name }
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: '', name: '' }
+        province: { provinceId: '', name: '' }
       });
     }
   };
@@ -648,9 +593,7 @@ class CommerceProfile extends Component {
               label="Razón Social:"
               value={this.props.name}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'name', value })
-              }
+              onChangeText={name => this.props.onCommerceValueChange({ name })}
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
@@ -661,9 +604,7 @@ class CommerceProfile extends Component {
             <Input
               label="CUIT:"
               value={this.props.cuit}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'cuit', value })
-              }
+              onChangeText={cuit => this.props.onCommerceValueChange({ cuit })}
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
               onFocus={() => this.setState({ cuitError: '' })}
@@ -674,8 +615,8 @@ class CommerceProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'phone', value })
+              onChangeText={phone =>
+                this.props.onCommerceValueChange({ phone })
               }
               keyboardType="numeric"
               errorMessage={this.state.phoneError}
@@ -687,9 +628,9 @@ class CommerceProfile extends Component {
             <Input
               label="E-Mail:"
               value={this.props.email}
-              autoCapitalize='none'
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'email', value })
+              autoCapitalize="none"
+              onChangeText={email =>
+                this.props.onCommerceValueChange({ email })
               }
               keyboardType="email-address"
               errorMessage={this.state.emailError}
@@ -701,8 +642,8 @@ class CommerceProfile extends Component {
             <Input
               label="Descripción:"
               value={this.props.description}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'description', value })
+              onChangeText={description =>
+                this.props.onCommerceValueChange({ description })
               }
               multiline={true}
               maxLength={250}
@@ -713,8 +654,8 @@ class CommerceProfile extends Component {
             <Input
               label="Dirección:"
               value={this.props.locationData.address}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'address', value })
+              onChangeText={address =>
+                this.props.onLocationValueChange({ address })
               }
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
@@ -725,9 +666,7 @@ class CommerceProfile extends Component {
             <Input
               label="Ciudad:"
               value={this.props.locationData.city}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'city', value })
-              }
+              onChangeText={city => this.props.onLocationValueChange({ city })}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -911,7 +850,6 @@ export default connect(mapStateToProps, {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
-  onLocationValueChange,
-  onLocationChange
+  onAreasReadForPicker,
+  onLocationValueChange
 })(CommerceProfile);

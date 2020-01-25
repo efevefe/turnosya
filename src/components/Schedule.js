@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+// import { Ionicons } from '@expo/vector-icons';
 import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
 import { getHourAndMinutes } from '../utils';
-import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR } from '../constants';
+import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR, GREY_DISABLED } from '../constants';
 import { onScheduleValueChange } from '../actions';
 
 /*
@@ -59,11 +60,13 @@ class Schedule extends Component {
 
     //slots & shifts
     let slots = [];
-    const shifts = []
+    const shifts = [];
     const { cards } = this.props;
-    const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atencion ese dia de la semana
+    const dayShifts = cards.find(card =>
+      card.days.includes(selectedDate.day())
+    ); // horario de atención ese día de la semana
 
-    //si hay horario de atencion ese dia, genera los slots
+    //si hay horario de atención ese día, genera los slots
     if (dayShifts) {
       const {
         firstShiftStart,
@@ -81,7 +84,7 @@ class Schedule extends Component {
       slots = this.generateSlots(selectedDate, shifts);
     }
 
-    this.props.onScheduleValueChange({ prop: 'slots', value: slots });
+    this.props.onScheduleValueChange({ slots });
     this.props.onDateChanged(selectedDate);
   };
 
@@ -89,7 +92,7 @@ class Schedule extends Component {
     // selected date params
     const year = selectedDate.year();
     const month = selectedDate.month();
-    const date = selectedDate.date(); // dia del mes
+    const date = selectedDate.date(); // día del mes
 
     const { reservationMinLength } = this.props;
     const slots = [];
@@ -117,12 +120,21 @@ class Schedule extends Component {
 
       const slotStartDate = moment(shiftStartDate);
 
+      let divider = index > 0;
+
       for (
         let j = 0;
-        (shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
-          shiftStartDate.format('HH:mm') === '00:00' && shiftEndDate.format('HH:mm') === '23:59');
+        shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
+        (shiftStartDate.format('HH:mm') === '00:00' &&
+          shiftEndDate.format('HH:mm') === '23:59');
         j++
       ) {
+
+        if (divider) {
+          slots.push({ id: `divider${j}`, divider });
+          divider = false;
+        }
+
         slots.push({
           id: slots.length,
           shiftId: index,
@@ -130,6 +142,7 @@ class Schedule extends Component {
           endDate: moment(shiftStartDate),
           available: true,
           disabled: false,
+          visible: true,
           free: 0,
           total: 0
         });
@@ -142,37 +155,64 @@ class Schedule extends Component {
   };
 
   badgeColor = (free, total) => {
-    if (free == 0) {
+    if (!free) {
       return MAIN_COLOR;
-    } else if (free <= (total / 2)) {
+    } else if (free <= total / 2) {
       return WARNING_COLOR;
     } else {
       return SUCCESS_COLOR;
     }
+  };
+
+  badgeTitle = (free, total) => {
+    switch (this.props.mode) {
+      case 'courts':
+        return free
+          ? `Disponibles: ${free.toString()} / ${total.toString()}`
+          : 'Ocupadas';
+      case 'services':
+        return free
+          ? `Disponible`
+          : 'Ocupado';
+      default:
+        return null;
+    }
   }
 
   renderList = ({ item }) => {
-    return (
-      <ListItem
-        leftIcon={{
-          name: 'md-time',
-          type: 'ionicon',
-          color: 'black'
-        }}
-        rightElement={
-          <Badge
-            value={item.free ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}` : 'Ocupadas'}
-            badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+    if (item.visible)
+      return (
+        <ListItem
+          leftIcon={{
+            name: 'md-time',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          rightElement={
+            <Badge
+              value={this.badgeTitle(item.free, item.total)}
+              badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+            />
+          }
+          title={`${item.startDate.format('HH:mm')}`}
+          containerStyle={styles.slotContainerStyle}
+          rightSubtitleStyle={styles.slotRightSubtitleStyle}
+          onPress={() => this.props.onSlotPress(item)}
+          disabled={item.disabled}
+          bottomDivider
+        />
+      );
+
+    if (item.divider)
+      return (
+        <View style={styles.slotDividerContainer}>
+          <Image
+            source={require('../../assets/turnosya-white-notext.png')}
+            style={{ height: 25 }}
+            resizeMode='contain'
           />
-        }
-        title={`${item.startDate.format('HH:mm')}`}
-        containerStyle={styles.slotContainerStyle}
-        rightSubtitleStyle={styles.slotRightSubtitleStyle}
-        onPress={() => this.props.onSlotPress(item)}
-        disabled={item.disabled}
-        bottomDivider
-      />
-    );
+        </View>
+      );
   };
 
   onRefresh = () => {
@@ -239,6 +279,13 @@ const styles = StyleSheet.create({
   },
   slotRightSubtitleStyle: {
     color: 'grey'
+  },
+  slotDividerContainer: {
+    backgroundColor: GREY_DISABLED,
+    height: 45,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 
@@ -246,6 +293,8 @@ const mapStateToProps = state => {
   const { slots, loading, id } = state.commerceSchedule;
 
   return { slots, loadingSchedule: loading, scheduleId: id };
-}
+};
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(
+  withNavigationFocus(Schedule)
+);

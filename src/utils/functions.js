@@ -1,10 +1,28 @@
 import moment from 'moment';
+import { AREAS } from '../constants';
+import store from '../reducers/index';
+
+export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
+  if (!area) {
+    const state = store.getState()
+    area = state.commerceData.area.areaId;
+  }
+
+  switch (area) {
+    case AREAS.sports:
+      return sports;
+    case AREAS.hairdressers:
+      return hairdressers;
+    default:
+      return AREAS.sports;
+  }
+}
 
 export const formattedMoment = (date = moment()) => {
   // receives moment date and returns the same date at 00:00 in moment format
   // if not receive a date as param, returns the current date
   return moment([date.year(), date.month(), date.date()]);
-}
+};
 
 export const getHourAndMinutes = hour => {
   // receives string hour (HH:mm) and returns and object that contains 2 props, the hour and the minutes
@@ -16,17 +34,17 @@ export const hourToDate = (stringHour, date = moment()) => {
   // receives string hour (HH:mm) and returns the current date at that hour in moment format
   const { hour, minutes } = getHourAndMinutes(stringHour);
   return moment([date.year(), date.month(), date.date(), hour, minutes]);
-}
+};
 
 export const imageToBlob = async uri => {
   try {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         resolve(xhr.response);
       };
-      xhr.onerror = function() {
+      xhr.onerror = function () {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';
@@ -35,8 +53,8 @@ export const imageToBlob = async uri => {
     });
 
     return blob;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -52,7 +70,7 @@ const trimStrings = strings => {
       res.replace(/  +/g, ' ');
       return res;
     });
-  } catch (err) {
+  } catch (error) {
     return [];
   }
 };
@@ -64,8 +82,8 @@ const trimStrings = strings => {
 export const trimString = string => {
   try {
     const res = trimStrings([string]);
-    if (res.length > 0) return res[0];
-  } catch (err) {
+    if (res.length) return res[0];
+  } catch (error) {
     return '';
   }
 };
@@ -76,7 +94,7 @@ export const trimString = string => {
 export const removeDoubleSpaces = value => {
   try {
     return value.replace(/  +/g, ' ');
-  } catch (err) {
+  } catch (error) {
     return '';
   }
 };
@@ -88,7 +106,7 @@ export const validateValueType = (type, value) => {
     case 'number':
       return !isNaN(parseFloat(value)) && !isNaN(value - 0);
     case 'string':
-      return value.length > 0 && value.trim();
+      return value.length && value.trim();
     case 'email':
       const emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return emailRe.test(String(value).toLowerCase());

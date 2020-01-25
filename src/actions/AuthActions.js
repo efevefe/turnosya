@@ -26,9 +26,13 @@ const {
   androidClientId,
   googleScopes
 } = getEnvVars();
+import {
+  onPushNotificationTokenRegister,
+  onPushNotificationTokenDelete
+} from '../actions/PushNotificationActions';
 
-export const onLoginValueChange = ({ prop, value }) => {
-  return { type: ON_LOGIN_VALUE_CHANGE, payload: { prop, value } };
+export const onLoginValueChange = payload => {
+  return { type: ON_LOGIN_VALUE_CHANGE, payload };
 };
 
 export const sendEmailVefification = () => {
@@ -46,7 +50,8 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        onPushNotificationTokenRegister(),
+          dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
             type: ON_EMAIL_VERIFY_REMINDED
@@ -75,6 +80,7 @@ export const onFacebookLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { first_name, last_name } = additionalUserInfo.profile;
+              onPushNotificationTokenRegister();
 
               const userData = {
                 firstName: first_name,
@@ -95,7 +101,9 @@ export const onFacebookLogin = () => {
                   .then(() =>
                     dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
                   );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              } else {
+                dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              }
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
@@ -131,6 +139,7 @@ export const onGoogleLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { given_name, family_name } = additionalUserInfo.profile;
+              onPushNotificationTokenRegister();
 
               const userData = {
                 firstName: given_name,
@@ -148,10 +157,12 @@ export const onGoogleLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(() =>
-                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
-                  );
-              } else dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  .then(() => {
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  });
+              } else {
+                () => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+              }
             })
             .catch(error =>
               dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
@@ -166,16 +177,22 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = () => {
-  return dispatch => {
-    dispatch({ type: ON_LOGOUT });
+export const onLogout = commerceId => async dispatch => {
+  dispatch({ type: ON_LOGOUT });
+
+  try {
+    await onPushNotificationTokenDelete(commerceId);
 
     firebase
       .auth()
       .signOut()
-      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
+      .then(() => {
+        dispatch({ type: ON_LOGOUT_SUCCESS });
+      })
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
-  };
+  } catch (error) {
+    return dispatch => dispatch({ type: ON_LOGIN_FAIL });
+  }
 };
 
 export const onSendPasswordResetEmail = email => async dispatch => {
@@ -189,7 +206,7 @@ export const onSendPasswordResetEmail = email => async dispatch => {
     dispatch({ type: ON_PASSWORD_RESET_EMAIL_FAIL, payload: error.message });
     return false;
   }
-}
+};
 
 export const userReauthenticate = async (password = null) => {
   try {
@@ -226,7 +243,7 @@ export const userReauthenticate = async (password = null) => {
     }
 
     return currentUser.reauthenticateWithCredential(credential);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };

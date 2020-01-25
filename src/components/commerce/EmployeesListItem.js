@@ -1,19 +1,27 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import firebase from 'firebase';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem } from '../common';
-import { courtDelete, onCourtFormOpen, deleteEmployee } from '../../actions';
+import { Menu, MenuItem, Toast } from '../common';
+import { onCourtFormOpen, onEmployeeDelete, onEmployeeValueChange } from '../../actions';
 import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
-  state = { optionsVisible: false, deleteVisible: false };
+  state = {
+    optionsVisible: false,
+    deleteVisible: false,
+    currentUserEmail: firebase.auth().currentUser.email
+  };
 
   onOptionsPress = () => {
     this.setState({ optionsVisible: true });
   };
 
   onDeletePress = () => {
+    if (this.state.currentUserEmail === this.props.employee.email)
+      return Toast.show({ text: 'No puede eliminarse usted mismo' });
+
     this.setState({
       optionsVisible: false,
       deleteVisible: !this.state.deleteVisible
@@ -23,12 +31,12 @@ class CourtListItem extends Component {
   onConfirmDeletePress = () => {
     const { commerceId, employee } = this.props;
 
-    this.props.deleteEmployee({
+    this.props.onEmployeeDelete({
       employeeId: employee.id,
       commerceId,
-      profileId: employee.profileId,
-      email: employee.email
+      profileId: employee.profileId
     });
+
     this.setState({ deleteVisible: false });
   };
 
@@ -37,7 +45,8 @@ class CourtListItem extends Component {
 
     this.setState({ optionsVisible: false });
 
-    this.props.navigation.navigate('employeeForm', { employee });
+    this.props.onEmployeeValueChange(employee);
+    this.props.navigation.navigate('employeeForm', { editing: true });
   };
 
   render() {
@@ -115,18 +124,20 @@ class CourtListItem extends Component {
             </Text>
           }
           onLongPress={
-            this.props.role.value >= ROLES.ADMIN.value
+            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
+              || this.state.currentUserEmail === this.props.employee.email)
               ? this.onOptionsPress
               : null
           }
           rightIcon={
-            this.props.role.value >= ROLES.ADMIN.value
+            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
+              || this.state.currentUserEmail === this.props.employee.email)
               ? {
-                  name: 'md-more',
-                  type: 'ionicon',
-                  containerStyle: { height: 20, width: 10 },
-                  onPress: this.onOptionsPress
-                }
+                name: 'md-more',
+                type: 'ionicon',
+                containerStyle: { height: 20, width: 10 },
+                onPress: this.onOptionsPress
+              }
               : null
           }
           bottomDivider
@@ -142,7 +153,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  courtDelete,
   onCourtFormOpen,
-  deleteEmployee
+  onEmployeeDelete,
+  onEmployeeValueChange
 })(CourtListItem);

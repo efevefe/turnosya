@@ -7,8 +7,8 @@ import { CardSection, Button, Input } from '../common';
 import { validateValueType } from '../../utils';
 import {
   onServiceValueChange,
-  serviceCreate,
-  serviceUpdate
+  onServiceCreate,
+  onServiceUpdate
 } from '../../actions';
 
 class ServiceForm extends Component {
@@ -17,13 +17,7 @@ class ServiceForm extends Component {
   componentDidMount() {
     const { params } = this.props.navigation.state;
 
-    if (params) {
-      const { service } = params;
-
-      for (prop in service) {
-        this.props.onServiceValueChange({ prop, value: service[prop] });
-      }
-    }
+    if (params) this.props.onServiceValueChange(params.service);
   }
 
   onButtonPressHandler() {
@@ -34,32 +28,36 @@ class ServiceForm extends Component {
         price,
         description,
         navigation,
-        commerceId
+        commerceId,
+        employeeId,
+        employeesIds
       } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {
         const { id } = this.props.navigation.state.params.service;
 
-        this.props.serviceUpdate(
+        this.props.onServiceUpdate(
           {
             name,
             duration,
             price,
             description,
             id,
-            commerceId
+            commerceId,
+            employeesIds
           },
           navigation
         );
       } else {
-        this.props.serviceCreate(
+        this.props.onServiceCreate(
           {
             name,
             duration,
             price,
             description,
-            commerceId
+            commerceId,
+            employeesIds: [employeeId]
           },
           navigation
         );
@@ -124,12 +122,7 @@ class ServiceForm extends Component {
                 placeholder="Nombre del servicio"
                 value={this.props.name}
                 errorMessage={this.state.nameError}
-                onChangeText={value =>
-                  this.props.onServiceValueChange({
-                    prop: 'name',
-                    value
-                  })
-                }
+                onChangeText={name => this.props.onServiceValueChange({ name })}
                 onFocus={() => this.setState({ nameError: '' })}
                 onBlur={this.renderNameError}
               />
@@ -141,11 +134,8 @@ class ServiceForm extends Component {
                 keyboardType="numeric"
                 value={this.props.duration}
                 errorMessage={this.state.durationError}
-                onChangeText={value => {
-                  this.props.onServiceValueChange({
-                    prop: 'duration',
-                    value
-                  });
+                onChangeText={duration => {
+                  this.props.onServiceValueChange({ duration });
                 }}
                 onFocus={() => this.setState({ durationError: '' })}
                 onBlur={this.renderDurationError}
@@ -158,11 +148,8 @@ class ServiceForm extends Component {
                 keyboardType="numeric"
                 value={this.props.price}
                 errorMessage={this.state.priceError}
-                onChangeText={value =>
-                  this.props.onServiceValueChange({
-                    prop: 'price',
-                    value
-                  })
+                onChangeText={price =>
+                  this.props.onServiceValueChange({ price })
                 }
                 onFocus={() => this.setState({ priceError: '' })}
                 onBlur={this.renderPriceError}
@@ -175,11 +162,8 @@ class ServiceForm extends Component {
                 multiline={true}
                 maxLength={250}
                 maxHeight={180}
-                onChangeText={value =>
-                  this.props.onServiceValueChange({
-                    prop: 'description',
-                    value
-                  })
+                onChangeText={description =>
+                  this.props.onServiceValueChange({ description })
                 }
                 value={this.props.description}
               />
@@ -213,14 +197,17 @@ const mapStateToProps = state => {
     price,
     description,
     error,
-    loading
+    loading,
+    employeesIds
   } = state.serviceForm;
   const { commerceId } = state.commerceData;
+  const { employeeId } = state.roleData;
 
-  return { name, duration, price, description, error, loading, commerceId };
+  return { name, duration, price, description, error, loading, commerceId, employeeId, employeesIds };
 };
 
-export default connect(
-  mapStateToProps,
-  { onServiceValueChange, serviceCreate, serviceUpdate }
-)(ServiceForm);
+export default connect(mapStateToProps, {
+  onServiceValueChange,
+  onServiceCreate,
+  onServiceUpdate
+})(ServiceForm);

@@ -7,7 +7,7 @@ import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList, Menu, MenuItem } from '../common';
-import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
+import { DAYS, MONTHS, MAIN_COLOR, AREAS } from '../../constants';
 import { formattedMoment, stringFormatMinutes } from '../../utils';
 import {
   onActiveSchedulesRead,
@@ -41,12 +41,12 @@ class CommerceSchedulesList extends Component {
 
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
-      date: moment()
+      date: moment(),
+      employeeId: this.props.employeeId
     });
   }
 
   componentDidUpdate(prevProps) {
-    this.props.schedules;
     if (prevProps.nextReservations !== this.props.nextReservations) {
       this.props.navigation.isFocused() && this.onScheduleDelete();
     }
@@ -65,7 +65,8 @@ class CommerceSchedulesList extends Component {
   onBackPress = () => {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate')
+      selectedDate: this.props.navigation.getParam('selectedDate'),
+      employeeId: this.props.employeeId
     });
 
     this.props.navigation.goBack();
@@ -82,20 +83,16 @@ class CommerceSchedulesList extends Component {
     const { selectedSchedule } = this.state;
     this.setState({ optionsVisible: false });
 
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+    let startDate = selectedSchedule.startDate;
 
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
+    if (startDate < formattedMoment()) {
+      // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
+      // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
+      // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+      startDate = formattedMoment();
     }
+
+    this.props.onScheduleValueChange({ ...selectedSchedule, startDate });
 
     this.props.navigation.navigate('scheduleRegister', {
       schedule: selectedSchedule,
@@ -104,7 +101,7 @@ class CommerceSchedulesList extends Component {
   };
 
   onScheduleDeletePress = () => {
-    const { commerceId } = this.props;
+    const { commerceId, employeeId } = this.props;
     const { selectedSchedule } = this.state;
 
     let startDate = formattedMoment();
@@ -115,76 +112,10 @@ class CommerceSchedulesList extends Component {
     this.props.onNextReservationsRead({
       commerceId,
       startDate,
-      endDate: selectedSchedule.endDate
-    });
-    this.setState({ optionsVisible: false, reservationsToCancel: [] });
-  };
-
-  renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        tintColor="white"
-        title="Volver"
-        onPress={this.onBackPress}
-      />
-    );
-  };
-
-  onBackPress = () => {
-    this.props.onScheduleRead({
-      commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate')
+      endDate: selectedSchedule.endDate,
+      employeeId
     });
 
-    this.props.navigation.goBack();
-  };
-
-  onScheduleAddPress = () => {
-    this.props.onScheduleFormOpen();
-    this.props.navigation.navigate('scheduleRegister', {
-      title: 'Nuevo horario'
-    });
-  };
-
-  onScheduleEditPress = () => {
-    const { selectedSchedule } = this.state;
-    this.setState({ optionsVisible: false });
-
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
-
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
-    }
-
-    this.props.navigation.navigate('scheduleRegister', {
-      schedule: selectedSchedule,
-      title: 'Modificar horario'
-    });
-  };
-
-  onScheduleDeletePress = () => {
-    const { commerceId } = this.props;
-    const { selectedSchedule } = this.state;
-
-    let startDate = formattedMoment();
-
-    if (selectedSchedule.startDate > startDate)
-      startDate = selectedSchedule.startDate;
-
-    this.props.onNextReservationsRead({
-      commerceId,
-      startDate,
-      endDate: selectedSchedule.endDate
-    });
     this.setState({ optionsVisible: false, reservationsToCancel: [] });
   };
 
@@ -231,7 +162,8 @@ class CommerceSchedulesList extends Component {
     if (success)
       this.props.onActiveSchedulesRead({
         commerceId: this.props.commerceId,
-        date: moment()
+        date: moment(),
+        employeeId: this.props.employeeId
       });
 
     this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
@@ -431,10 +363,11 @@ class CommerceSchedulesList extends Component {
 
 const mapStateToProps = state => {
   const { schedules, loading } = state.commerceSchedule;
-  const { nextReservations } = state.courtReservationsList;
-  const { commerceId } = state.commerceData;
+  const { nextReservations } = state.reservationsList;
+  const { commerceId, area: { areaId } } = state.commerceData;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { schedules, commerceId, loading, nextReservations };
+  return { schedules, commerceId, loading, nextReservations, employeeId };
 };
 
 export default connect(mapStateToProps, {

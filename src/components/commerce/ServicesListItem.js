@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Divider } from 'react-native-elements';
+import { ListItem, Divider, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
-import { serviceDelete, onFormOpen } from '../../actions';
+import { SUCCESS_COLOR, MAIN_COLOR } from '../../constants';
+import { onServiceDelete, onFormOpen, onServiceOfferingUpdate } from '../../actions';
 
 class ServicesListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -23,7 +24,7 @@ class ServicesListItem extends Component {
   onConfirmDeletePress = () => {
     const { service, commerceId } = this.props;
 
-    this.props.serviceDelete({ id: service.id, commerceId });
+    this.props.onServiceDelete({ id: service.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   };
 
@@ -39,8 +40,32 @@ class ServicesListItem extends Component {
     this.props.navigation.navigate(navigateAction);
   };
 
+  onBadgePress = () => {
+    const { service, commerceId, employeeId } = this.props;
+    let employeesIds = [];
+
+    if (this.isEmployeeOfferingService()) {
+      employeesIds = service.employeesIds.filter(id =>
+        id !== employeeId
+      );
+    } else {
+      employeesIds = [...service.employeesIds, employeeId];
+    }
+
+    onServiceOfferingUpdate({
+      id: service.id,
+      employeesIds,
+      commerceId
+    });
+  }
+
+  isEmployeeOfferingService = () => {
+    return this.props.service.employeesIds.includes(this.props.employeeId);
+  }
+
   render() {
     const { name, duration, price, id } = this.props.service;
+    const offering = this.isEmployeeOfferingService();
 
     return (
       <View style={{ flex: 1 }}>
@@ -78,8 +103,30 @@ class ServicesListItem extends Component {
 
         <ListItem
           title={name}
-          subtitle={`Duración: ${duration} min.`}
+          subtitle={
+            <View style={{ alignItems: 'flex-start' }}>
+              <Text
+                style={{ color: 'grey' }}
+              >
+                {`Duración: ${duration} min.`}
+              </Text>
+              <Badge
+                value={offering ? 'Dejar de Ofrecer' : 'Ofrecer Servicio'}
+                badgeStyle={{
+                  height: 25,
+                  width: 'auto',
+                  borderRadius: 12.5,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  backgroundColor: offering ? MAIN_COLOR : SUCCESS_COLOR
+                }}
+                containerStyle={{ paddingTop: 3 }}
+                onPress={this.onBadgePress}
+              />
+            </View>
+          }
           rightTitle={`$${price}`}
+          rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
           key={id}
           onLongPress={this.onOptionsPress.bind(this)}
           rightIcon={{
@@ -95,7 +142,4 @@ class ServicesListItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  { serviceDelete, onFormOpen }
-)(ServicesListItem);
+export default connect(null, { onServiceDelete, onFormOpen })(ServicesListItem);

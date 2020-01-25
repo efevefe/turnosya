@@ -2,9 +2,15 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
-import { MenuItem, Menu, Input, CardSection, SettingsItem, Toast } from '../common';
+import {
+  MenuItem,
+  Menu,
+  Input,
+  CardSection,
+  SettingsItem,
+  Toast
+} from '../common';
 import { isEmailVerified } from '../../utils';
 import {
   onUserDelete,
@@ -17,18 +23,6 @@ import {
 
 class ClientSettings extends Component {
   state = { providerId: null };
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: (
-        <HeaderBackButton
-          tintColor="white"
-          title='Back'
-          onPress={() => navigation.goBack(null)}
-        />
-      )
-    };
-  };
 
   componentDidMount() {
     this.setState({
@@ -49,13 +43,11 @@ class ClientSettings extends Component {
               password
               value={this.props.password}
               color="black"
-              onChangeText={value =>
-                this.props.onLoginValueChange({ prop: 'password', value })
+              onChangeText={password =>
+                this.props.onLoginValueChange({ password })
               }
               errorMessage={this.props.reauthError}
-              onFocus={() =>
-                this.props.onLoginValueChange({ prop: 'error', value: '' })
-              }
+              onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />
           </CardSection>
           <Divider style={{ backgroundColor: 'grey' }} />
@@ -66,20 +58,19 @@ class ClientSettings extends Component {
 
   onUserDeletePress = () => {
     if (this.props.commerceId) {
-      Toast.show({ text: 'No podés eliminar tu cuenta porque tenés un negocio' });
-    } else {
-      this.props.onClientDataValueChange({
-        prop: 'confirmDeleteVisible',
-        value: true
+      Toast.show({
+        text: 'No podés eliminar tu cuenta porque tenés un negocio'
       });
+    } else {
+      this.props.onClientDataValueChange({ confirmDeleteVisible: true });
     }
   };
 
   renderConfirmUserDelete = () => {
-    // ventana de confirmacion para eliminar cuenta
+    // ventana de confirmación para eliminar cuenta
     return (
       <Menu
-        title="¿Esta seguro que desea eliminar la cuenta?"
+        title="¿Está seguro que desea eliminar la cuenta?"
         onBackdropPress={this.onBackdropPress}
         isVisible={this.props.confirmUserDeleteVisible}
       >
@@ -110,10 +101,7 @@ class ClientSettings extends Component {
 
   onCommerceDeletePress = () => {
     if (this.props.commerceId) {
-      this.props.onCommerceValueChange({
-        prop: 'confirmDeleteVisible',
-        value: true
-      });
+      this.props.onCommerceValueChange({ confirmDeleteVisible: true });
     } else {
       Toast.show({ text: 'No tienes ningún negocio' });
     }
@@ -123,7 +111,7 @@ class ClientSettings extends Component {
     // ventana de confirmacion para eliminar negocio
     return (
       <Menu
-        title="¿Esta seguro que desea eliminar su negocio?"
+        title="¿Está seguro que desea eliminar su negocio?"
         onBackdropPress={this.onBackdropPress}
         isVisible={this.props.confirmCommerceDeleteVisible}
       >
@@ -154,18 +142,11 @@ class ClientSettings extends Component {
 
   onBackdropPress = () => {
     // auth
-    this.props.onLoginValueChange({ prop: 'password', value: '' });
-    this.props.onLoginValueChange({ prop: 'error', value: '' });
+    this.props.onLoginValueChange({ password: '', error: '' });
     // client
-    this.props.onClientDataValueChange({
-      prop: 'confirmDeleteVisible',
-      value: false
-    });
+    this.props.onClientDataValueChange({ confirmDeleteVisible: false });
     // commerce
-    this.props.onCommerceValueChange({
-      prop: 'confirmDeleteVisible',
-      value: false
-    });
+    this.props.onCommerceValueChange({ confirmDeleteVisible: false });
   };
 
   onEmailVerifyPress = async () => {
@@ -176,28 +157,26 @@ class ClientSettings extends Component {
     } else {
       this.props.sendEmailVefification();
     }
-  }
+  };
 
   render() {
     return (
       <ScrollView style={styles.containerStyle}>
-        {
-          // opcion de cambiar contraseña es solo para los que se autenticaron con email y password
-          this.state.providerId === 'password' &&
+        {// opción de cambiar contraseña es solo para los que se autenticaron con email y password
+        this.state.providerId === 'password' && (
           <SettingsItem
             leftIcon={{
               name: 'md-key',
               type: 'ionicon',
               color: 'black'
             }}
-            title='Cambiar Contraseña'
+            title="Cambiar Contraseña"
             onPress={() => this.props.navigation.navigate('changeUserPassword')}
             bottomDivider
           />
-        }
-        {
-          // opcion de validar mail es solo para los que se autenticaron con email y password
-          this.state.providerId === 'password' &&
+        )}
+        {// opción de validar mail es solo para los que se autenticaron con email y password
+        this.state.providerId === 'password' && (
           <SettingsItem
             title="Verificar mi Cuenta"
             leftIcon={{
@@ -208,7 +187,7 @@ class ClientSettings extends Component {
             onPress={this.onEmailVerifyPress}
             bottomDivider
           />
-        }
+        )}
         <SettingsItem
           leftIcon={{
             name: 'md-trash',
@@ -268,14 +247,11 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onUserDelete,
-    onCommerceDelete,
-    onLoginValueChange,
-    onCommerceValueChange,
-    onClientDataValueChange,
-    sendEmailVefification
-  }
-)(ClientSettings);
+export default connect(mapStateToProps, {
+  onUserDelete,
+  onCommerceDelete,
+  onLoginValueChange,
+  onCommerceValueChange,
+  onClientDataValueChange,
+  sendEmailVefification
+})(ClientSettings);

@@ -6,7 +6,7 @@ export const isEmailVerified = async () => {
     await currentUser.reload();
 
     return currentUser.emailVerified;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };

@@ -2,19 +2,12 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
 import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, readCommerceMPagoToken } from '../../actions';
 import { MenuItem, Menu, Input, CardSection, SettingsItem, Spinner } from '../common';
 
 class CommerceSettings extends Component {
   state = { providerId: null, mPagoModalVisible: false };
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: <HeaderBackButton tintColor="white" title="Back" onPress={() => navigation.goBack(null)} />
-    };
-  };
 
   componentDidMount() {
     this.props.readCommerceMPagoToken(this.props.commerceId);
@@ -35,9 +28,9 @@ class CommerceSettings extends Component {
               password
               value={this.props.password}
               color="black"
-              onChangeText={value => this.props.onLoginValueChange({ prop: 'password', value })}
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               errorMessage={this.props.reauthError}
-              onFocus={() => this.props.onLoginValueChange({ prop: 'error', value: '' })}
+              onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />
           </CardSection>
           <Divider style={{ backgroundColor: 'grey' }} />
@@ -47,7 +40,7 @@ class CommerceSettings extends Component {
   };
 
   renderConfirmCommerceDelete = () => {
-    // ventana de confirmacion para eliminar negocio
+    // ventana de confirmación para eliminar negocio
     return (
       <Menu
         title="¿Está seguro que desea eliminar su negocio?"
@@ -77,13 +70,9 @@ class CommerceSettings extends Component {
 
   onBackdropPress = () => {
     // auth
-    this.props.onLoginValueChange({ prop: 'password', value: '' });
-    this.props.onLoginValueChange({ prop: 'error', value: '' });
+    this.props.onLoginValueChange({ password: '', error: '' });
     // commerce
-    this.props.onCommerceValueChange({
-      prop: 'confirmDeleteVisible',
-      value: false
-    });
+    this.props.onCommerceValueChange({ confirmDeleteVisible: false });
   };
 
   render() {
@@ -108,12 +97,7 @@ class CommerceSettings extends Component {
             color: 'black'
           }}
           title="Eliminar mi negocio"
-          onPress={() =>
-            this.props.onCommerceValueChange({
-              prop: 'confirmDeleteVisible',
-              value: true
-            })
-          }
+          onPress={() => this.props.onCommerceValueChange({ confirmDeleteVisible: true })}
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />

@@ -6,7 +6,10 @@ import moment from 'moment';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../../constants';
 import { stringFormatDays, stringFormatHours } from '../../utils';
-import { onScheduleConfigurationSave, onScheduleValueChange } from '../../actions';
+import {
+  onScheduleConfigurationSave,
+  onScheduleValueChange
+} from '../../actions';
 
 class ScheduleRegisterConfiguration extends Component {
   state = {
@@ -17,10 +20,7 @@ class ScheduleRegisterConfiguration extends Component {
   };
 
   componentDidMount() {
-    const {
-      reservationDayPeriod,
-      reservationMinCancelTime
-    } = this.props;
+    const { reservationDayPeriod, reservationMinCancelTime } = this.props;
 
     this.setState({
       reservationDayValue: reservationDayPeriod,
@@ -35,25 +35,26 @@ class ScheduleRegisterConfiguration extends Component {
       commerceId
     } = this.props;
 
-    this.props.onScheduleConfigurationSave({
-      reservationDayPeriod,
-      reservationMinCancelTime,
-      commerceId,
-      date: moment()
-    }, this.props.navigation);
+    this.props.onScheduleConfigurationSave(
+      {
+        reservationDayPeriod,
+        reservationMinCancelTime,
+        commerceId,
+        date: moment()
+      },
+      this.props.navigation
+    );
   }
 
   onDaySliderValueChange() {
     this.props.onScheduleValueChange({
-      prop: 'reservationDayPeriod',
-      value: this.state.reservationDayValue
+      reservationDayPeriod: this.state.reservationDayValue
     });
   }
 
   onCancelTimeSliderValueChange() {
     this.props.onScheduleValueChange({
-      prop: 'reservationMinCancelTime',
-      value: this.state.reservationMinHoursCancelValue
+      reservationMinCancelTime: this.state.reservationMinHoursCancelValue
     });
   }
 
@@ -70,7 +71,8 @@ class ScheduleRegisterConfiguration extends Component {
         <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
             <Text>
-              {'Límite previo a reservar: ' + stringFormatDays(reservationDayValue)}
+              {'Límite previo a reservar: ' +
+                stringFormatDays(reservationDayValue)}
             </Text>
             <Slider
               animationType="spring"
@@ -136,7 +138,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onScheduleConfigurationSave, onScheduleValueChange }
-)(ScheduleRegisterConfiguration);
+export default connect(mapStateToProps, {
+  onScheduleConfigurationSave,
+  onScheduleValueChange
+})(ScheduleRegisterConfiguration);

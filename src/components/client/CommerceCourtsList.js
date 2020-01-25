@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Spinner, EmptyList, Toast } from '../common';
 import CommerceCourtsStateListItem from '../commerce/CommerceCourtsStateListItem';
-import { onCourtReservationValueChange, isCourtDisabledOnSlot, onNewCourtReservation } from '../../actions';
+import { onReservationValueChange, isCourtDisabledOnSlot, onNewReservation } from '../../actions';
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -11,30 +11,32 @@ class CommerceCourtsList extends Component {
   });
 
   courtReservation = court => {
-    const { reservations, slot } = this.props;
+    const { reservations, startDate } = this.props;
 
     return reservations.find(reservation => {
       return (
-        reservation.startDate.toString() === slot.startDate.toString() &&
+        reservation.startDate.toString() === startDate.toString() &&
         reservation.courtId === court.id
       );
     });
   };
 
   onCourtPress = court => {
-    this.props.onNewCourtReservation(court);
+    this.props.onNewReservation();
+    this.props.onReservationValueChange({ court });
     this.props.navigation.navigate('confirmCourtReservation');
   };
 
   renderRow = ({ item }) => {
     const courtAvailable = !this.courtReservation(item);
+    const { startDate, endDate } = this.props;
 
     return (
       <CommerceCourtsStateListItem
         court={item}
         commerceId={this.props.commerce.objectID}
         navigation={this.props.navigation}
-        disabled={isCourtDisabledOnSlot(item, this.props.slot)}
+        disabled={isCourtDisabledOnSlot(item, { startDate, endDate })}
         courtAvailable={courtAvailable}
         onPress={() =>
           courtAvailable
@@ -46,7 +48,7 @@ class CommerceCourtsList extends Component {
   };
 
   renderList = () => {
-    if (this.props.courts.length > 0) {
+    if (this.props.courts.length) {
       return (
         <FlatList
           data={this.props.courts}
@@ -69,13 +71,13 @@ class CommerceCourtsList extends Component {
 
 const mapStateToProps = state => {
   const { courts } = state.courtsList;
-  const { commerce, courtType, slot } = state.courtReservation;
-  const { reservations, loading } = state.courtReservationsList;
+  const { commerce, courtType, startDate, endDate } = state.reservation;
+  const { reservations, loading } = state.reservationsList;
 
-  return { commerce, courtType, reservations, courts, loading, slot };
+  return { commerce, courtType, reservations, courts, loading, startDate, endDate };
 };
 
 export default connect(
   mapStateToProps,
-  { onCourtReservationValueChange, onNewCourtReservation }
+  { onReservationValueChange, onNewReservation }
 )(CommerceCourtsList);

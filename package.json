@@ -16,6 +16,7 @@
     "expo-intent-launcher": "^7.0.0",
     "expo-location": "^7.0.0",
     "expo-permissions": "^7.0.0",
+    "expo-server-sdk": "^3.4.0",
     "firebase": "6.0.2",
     "moment": "^2.24.0",
     "native-base": "^2.13.5",

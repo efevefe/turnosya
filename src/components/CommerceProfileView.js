@@ -17,17 +17,18 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { PictureView, Spinner } from './common';
+import { PictureView, Spinner, AreaComponentRenderer } from './common';
 import {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onReservationValueChange,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
+import CommerceServicesEmployees from './client/CommerceServicesEmployees';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -53,8 +54,13 @@ class CommerceProfileView extends Component {
       commerceId,
       loadingType: 'loading'
     });
+  }
 
-    this.props.commerceHitsUpdate([]);
+  componentDidUpdate(prevProps) {
+    // para evitar esto se deberia guardar el areaId en Algolia
+    if (this.props.areaId && (this.props.areaId !== prevProps.areaId)) {
+      this.props.onReservationValueChange({ areaId: this.props.areaId });
+    }
   }
 
   renderDescription = () => {
@@ -91,23 +97,20 @@ class CommerceProfileView extends Component {
   };
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
   onMapPress = () => {
-    const { address, city, province, latitude, longitude } = this.props;
-
-    this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+    this.props.onLocationValueChange({
+      address: this.props.address,
+      city: this.props.city,
+      provinceName: this.props.province.name,
+      latitude: this.props.latitude,
+      longitude: this.props.longitude
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -168,8 +171,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -228,7 +231,13 @@ class CommerceProfileView extends Component {
             }}
           />
         </View>
-        <CommerceCourtTypes navigation={navigation} />
+
+        <AreaComponentRenderer
+          area={this.props.areaId}
+          sports={<CommerceCourtTypes navigation={navigation} />}
+          hairdressers={<CommerceServicesEmployees navigation={navigation} />}
+        />
+
         <PictureView
           isVisible={this.state.pictureVisible}
           onClosePress={this.onPicturePress}
@@ -273,7 +282,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerce } = state.courtReservation;
+  const { commerce } = state.reservation;
   const { favoriteCommerces } = state.commercesList;
   const loadingCourtTypes = state.commerceCourtTypes.loading;
   const { cards } = state.commerceSchedule;
@@ -289,7 +298,8 @@ const mapStateToProps = state => {
     commerceId,
     latitude,
     longitude,
-    rating
+    rating,
+    area: { areaId }
   } = state.commerceData;
 
   return {
@@ -308,15 +318,16 @@ const mapStateToProps = state => {
     favoriteCommerces,
     cards,
     loadingCourtTypes,
-    loadingProfile
+    loadingProfile,
+    areaId
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
+  onReservationValueChange,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
   onCommerceCourtTypesRead
 })(CommerceProfileView);

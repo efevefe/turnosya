@@ -13,7 +13,7 @@ import {
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyReviewsByYear,
+  onMonthlyReviewsReadByYear,
   yearsWithReview
 } from '../../../actions';
 
@@ -21,7 +21,7 @@ class MonthlyReviewsChart extends Component {
   constructor(props) {
     super(props);
     props.yearsWithReview(props.commerceId);
-    props.readMonthlyReviewsByYear(props.commerceId, props.selectedYear);
+    props.onMonthlyReviewsReadByYear(props.commerceId, props.selectedYear);
 
     this.state = { modal: false, modalYear: props.selectedYear };
   }
@@ -44,14 +44,13 @@ class MonthlyReviewsChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.readMonthlyReviewsByYear(
+    this.props.onMonthlyReviewsReadByYear(
       this.props.commerceId,
       this.state.modalYear
     );
 
     this.props.onCommerceReportValueChange({
-      prop: 'selectedYear',
-      value: this.state.modalYear
+      selectedYear: this.state.modalYear
     });
 
     this.setState({ modal: false });
@@ -60,9 +59,11 @@ class MonthlyReviewsChart extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
+    const { data } = this.props.data;
+
     const dataLine = {
       labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
+      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
     };
 
     return (
@@ -124,6 +125,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyReviewsByYear,
+  onMonthlyReviewsReadByYear,
   yearsWithReview
 })(MonthlyReviewsChart);
