@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
-import { CardSection, Button, ButtonGroup } from '../common';
-import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
-import CourtReservationDetails from '../CourtReservationDetails';
 import {
   onReservationValueChange,
   onClientCourtReservationCreate
 } from '../../actions';
+import CourtReservationDetails from '../CourtReservationDetails';
+import { CardSection, Button, ButtonGroup } from '../common';
+import { MAIN_COLOR } from '../../constants';
+import { reservationPushNotificationFormat } from '../../utils';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -63,16 +63,23 @@ class ConfirmCourtReservation extends Component {
   };
 
   onConfirmReservation = () => {
-    const { commerce, court, courtType, startDate, endDate, areaId, price, light } = this.props;
+    const {
+      commerce,
+      court,
+      courtType,
+      startDate,
+      endDate,
+      areaId,
+      price,
+      light,
+      firstName,
+      lastName
+    } = this.props;
 
-    const body = `El Turno del día ${
-      DAYS[startDate.day()]
-      } ${startDate.format('D')} de ${
-      MONTHS[moment(startDate).month()]
-      } a las ${moment(startDate).format('HH:mm')} fue reservado`;
-
-    const title = 'Turno Reservado';
-
+    const { title, body } = reservationPushNotificationFormat(
+      startDate,
+      `${firstName} ${lastName}`
+    );
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       areaId,
@@ -108,7 +115,7 @@ class ConfirmCourtReservation extends Component {
               }
             />
           </View>
-          {this.props.saved ?
+          {this.props.saved ? (
             <View style={{ alignItems: 'flex-end' }}>
               <RNEButton
                 title="Finalizar"
@@ -125,7 +132,8 @@ class ConfirmCourtReservation extends Component {
                 }
                 onPress={() => this.props.navigation.navigate('commercesAreas')}
               />
-            </View> : null}
+            </View>
+          ) : null}
         </CardSection>
       );
     }
@@ -142,7 +150,15 @@ class ConfirmCourtReservation extends Component {
   };
 
   render() {
-    const { commerce, court, startDate, endDate, light, price, saved } = this.props;
+    const {
+      commerce,
+      court,
+      startDate,
+      endDate,
+      light,
+      price,
+      saved
+    } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -199,8 +215,23 @@ const mapStateToProps = state => {
     exists,
     loading
   } = state.reservation;
+  const { firstName, lastName } = state.clientData;
 
-  return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, exists, loading };
+  return {
+    commerce,
+    courtType,
+    court,
+    startDate,
+    endDate,
+    price,
+    light,
+    areaId,
+    saved,
+    exists,
+    loading,
+    firstName,
+    lastName
+  };
 };
 
 export default connect(mapStateToProps, {

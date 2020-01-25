@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { AREAS } from '../constants';
+import { AREAS, MONTHS, DAYS } from '../constants';
 import store from '../reducers/index';
 
 export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
   if (!area) {
-    const state = store.getState()
+    const state = store.getState();
     area = state.commerceData.area.areaId;
   }
 
@@ -16,7 +16,7 @@ export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
     default:
       return AREAS.sports;
   }
-}
+};
 
 export const formattedMoment = (date = moment()) => {
   // receives moment date and returns the same date at 00:00 in moment format
@@ -41,10 +41,10 @@ export const imageToBlob = async uri => {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
+      xhr.onload = function() {
         resolve(xhr.response);
       };
-      xhr.onerror = function () {
+      xhr.onerror = function() {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';
@@ -217,4 +217,23 @@ export const isOneWeekOld = date => {
   return !moment()
     .subtract(1, 'w')
     .isBefore(date);
+};
+
+/**
+ * Función para tener un formato único de envío de notificación al comercio
+ * a la hora de reservarle un turno.
+ * @param {Date}    startDate   La fecha de inicio del turno
+ * @param {String}  actorName   Nombre de quién reserva
+ * @return {String, String}     Título (title) y cuerpo (body) del mensaje
+ */
+export const reservationPushNotificationFormat = (startDate, actorName) => {
+  const dayOfWeek = DAYS[startDate.day()];
+  const dayOfMonth = startDate.format('D');
+  const month = MONTHS[moment(startDate).month()];
+  const formattedTime = moment(startDate).format('HH:mm');
+
+  return {
+    title: 'Nueva Reserva',
+    body: `${actorName} ha reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`
+  };
 };
