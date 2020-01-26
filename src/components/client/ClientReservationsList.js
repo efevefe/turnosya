@@ -74,9 +74,9 @@ class ClientReservationsList extends Component {
         rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
-        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
-          'HH:mm'
-        )} hs.`}
+          }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
+            'HH:mm'
+          )} hs.`}
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
@@ -122,8 +122,8 @@ class ClientReservationsList extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderList()
-        )}
+            this.renderList()
+          )}
       </View>
     );
   }

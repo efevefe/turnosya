@@ -1,3 +1,4 @@
+import { Toast } from '../components/common';
 import {
   ON_COMMERCE_VALUE_CHANGE,
   ON_COMMERCE_PROFILE_CREATE,
@@ -10,7 +11,6 @@ import {
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
   ON_AREAS_READ_FOR_PICKER,
-  ON_COMMERCE_OPEN,
   ON_COMMERCE_CREATING,
   ON_CUIT_EXISTS,
   ON_CUIT_NOT_EXISTS,
@@ -19,7 +19,6 @@ import {
   ON_COMMERCE_DELETE_FAIL,
   ON_REAUTH_SUCCESS
 } from '../actions/types';
-import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
   name: '',
@@ -47,13 +46,9 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ON_COMMERCE_OPEN:
-      return { ...state, commerceId: action.payload };
-
     case ON_COMMERCE_DELETED:
       Toast.show({ text: 'Su negocio se ha eliminado' });
     case ON_COMMERCE_CREATING:
-    case ON_COMMERCE_READ_FAIL:
     case ON_COMMERCE_READ_FAIL:
       return { ...INITIAL_STATE };
 

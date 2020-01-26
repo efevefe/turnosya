@@ -9,11 +9,12 @@ import {
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
-  name: '',
-  duration: '',
-  price: '',
-  description: '',
-  loading: false
+    name: '',
+    duration: '',
+    price: '',
+    description: '',
+    employeesIds: [],
+    loading: false
 };
 
 export default (state = INITIAL_STATE, action) => {

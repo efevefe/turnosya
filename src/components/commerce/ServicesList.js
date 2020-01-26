@@ -5,26 +5,17 @@ import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Spinner, EmptyList } from '../common';
 import ServicesListItem from './ServicesListItem';
-import { onServicesRead, onFormOpen } from '../../actions';
+import { onFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
 
 class ServicesList extends Component {
-  componentDidMount() {
-    this.unsubscribeServicesRead = this.props.onServicesRead(
-      this.props.commerceId
-    );
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeServicesRead && this.unsubscribeServicesRead();
-  }
-
   renderRow({ item }) {
     return (
       <ServicesListItem
         service={item}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}
+        employeeId={this.props.employeeId}
       />
     );
   }
@@ -85,10 +76,9 @@ class ServicesList extends Component {
 const mapStateToProps = state => {
   const { services, loading } = state.servicesList;
   const { commerceId } = state.commerceData;
+  const { employeeId } = state.roleData;
 
-  return { services, loading, commerceId };
+  return { services, loading, commerceId, employeeId };
 };
 
-export default connect(mapStateToProps, { onServicesRead, onFormOpen })(
-  ServicesList
-);
+export default connect(mapStateToProps, { onFormOpen })(ServicesList);

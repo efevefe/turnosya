@@ -3,22 +3,20 @@ import { FlatList, Text, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList } from '../common';
-import { onCourtReservationValueChange } from '../../actions';
+import { onReservationValueChange } from '../../actions';
 
 class CommerceCourtTypes extends Component {
   onCourtTypePress = courtType => {
-    this.props.onCourtReservationValueChange({ courtType });
-    this.props.navigation.navigate('commerceSchedule');
+    if (this.props.navigation.state.routeName === 'commerceProfileView') {
+      this.props.onReservationValueChange({ courtType });
+      this.props.navigation.navigate('commerceCourtsSchedule');
+    }
   };
 
   renderItem = ({ item }) => {
     return (
       <TouchableHighlight
-        onPress={
-          this.props.navigation.state.routeName === 'commerceProfileView'
-            ? () => this.onCourtTypePress(item.name)
-            : null
-        }
+        onPress={() => this.onCourtTypePress(item.name)}
         underlayColor="transparent"
       >
         <Card
@@ -58,6 +56,4 @@ const mapStateToProps = state => {
   return { courtTypesList };
 };
 
-export default connect(mapStateToProps, {
-  onCourtReservationValueChange
-})(CommerceCourtTypes);
+export default connect(mapStateToProps, { onReservationValueChange })(CommerceCourtTypes);

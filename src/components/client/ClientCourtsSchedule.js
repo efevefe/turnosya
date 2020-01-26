@@ -8,14 +8,14 @@ import { MONTHS } from '../../constants';
 import {
   onScheduleRead,
   onScheduleValueChange,
-  onCourtReservationValueChange,
-  onCommerceCourtTypeReservationsRead,
+  onReservationValueChange,
+  onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead,
   isCourtDisabledOnSlot
 } from '../../actions';
 
-class ClientCommerceSchedule extends Component {
+class ClientCourtsSchedule extends Component {
   state = { selectedDate: moment() };
 
   static navigationOptions = ({ navigation }) => {
@@ -41,11 +41,9 @@ class ClientCommerceSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.reservations !== this.props.reservations ||
-      prevProps.courts !== this.props.courts
-    ) {
-      this.reservationsOnSlots(this.props.slots);
+    if (prevProps.reservations !== this.props.reservations ||
+      prevProps.courts !== this.props.courts) {
+      this.reservationsOnSlots();
     }
   }
 
@@ -78,13 +76,11 @@ class ClientCommerceSchedule extends Component {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceCourtTypeReservationsRead(
-      {
-        commerceId: this.props.commerce.objectID,
-        selectedDate: date,
-        courtType: this.props.courtType
-      }
-    );
+    this.unsubscribeReservationsRead = this.props.onClientCommerceReservationsRead({
+      commerceId: this.props.commerce.objectID,
+      selectedDate: date,
+      courtType: this.props.courtType
+    });
 
     if (
       !scheduleId ||
@@ -113,9 +109,9 @@ class ClientCommerceSchedule extends Component {
       });
     }
 
-    this.props.onCourtReservationValueChange({ slot });
+    const { startDate, endDate } = slot;
 
-    const { startDate } = slot;
+    this.props.onReservationValueChange({ startDate, endDate });
 
     this.props.navigation.navigate('commerceCourtsList', {
       title:
@@ -128,10 +124,12 @@ class ClientCommerceSchedule extends Component {
     });
   };
 
-  reservationsOnSlots = slots => {
-    const { reservations, courts } = this.props;
+  reservationsOnSlots = () => {
+    const { reservations, courts, slots } = this.props;
 
     const newSlots = slots.map(slot => {
+      if (slot.divider) return slot;
+
       let reserved = 0;
       let available = true;
       let courtsAvailable = 0;
@@ -172,6 +170,7 @@ class ClientCommerceSchedule extends Component {
 
     return (
       <Schedule
+        mode='courts'
         cards={cards}
         selectedDate={selectedDate}
         reservationMinLength={reservationMinLength}
@@ -202,10 +201,9 @@ const mapStateToProps = state => {
     refreshing
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
-  const { commerce, courtType } = state.courtReservation;
-  const { reservations } = state.courtReservationsList;
-  const loadingReservations = state.courtReservationsList.loading;
-  const { slot } = state.courtReservation;
+  const { commerce, courtType } = state.reservation;
+  const { reservations } = state.reservationsList;
+  const loadingReservations = state.reservationsList.loading;
   const { courts } = state.courtsList;
   const loadingCourts = state.courtsList.loading;
 
@@ -218,10 +216,8 @@ const mapStateToProps = state => {
     reservationMinLength,
     scheduleStartDate: startDate,
     scheduleEndDate: endDate,
-    endDate,
     refreshing,
     reservations,
-    slot,
     courts,
     courtType,
     loadingSchedule,
@@ -233,8 +229,8 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onScheduleValueChange,
   onScheduleRead,
-  onCourtReservationValueChange,
-  onCommerceCourtTypeReservationsRead,
+  onReservationValueChange,
+  onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead
-})(ClientCommerceSchedule);
+})(ClientCourtsSchedule);

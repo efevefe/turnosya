@@ -7,10 +7,6 @@ import PermissionsAssigner from '../components/common/PermissionsAssigner';
 import { ROLES } from '../constants';
 
 class CommerceDrawerContent extends Component {
-  componentDidMount() {
-    this.props.onCommerceRead(this.props.commerceId);
-  }
-
   render() {
     return (
       <Drawer
@@ -18,6 +14,7 @@ class CommerceDrawerContent extends Component {
         profilePicturePlaceholder="store"
         onProfilePicturePress={() => this.props.navigation.navigate('profile')}
         name={this.props.name}
+        role={ROLES[this.props.roleId].name}
       >
         <DrawerItem
           title="Ser Cliente"
@@ -48,7 +45,9 @@ class CommerceDrawerContent extends Component {
           title="Cerrar Sesión"
           icon={{ name: 'md-exit' }}
           loadingWithText={this.props.loading}
-          onPress={() => this.props.onLogout(this.props.commerceId)}
+          onPress={() =>
+            this.props.onLogout(this.props.commerceId, this.props.workplaces)
+          }
         />
       </Drawer>
     );
@@ -58,8 +57,12 @@ class CommerceDrawerContent extends Component {
 const mapStateToProps = state => {
   const { name, profilePicture, commerceId } = state.commerceData;
   const { loading } = state.auth;
+  const {
+    role: { roleId }
+  } = state.roleData;
+  const { workplaces } = state.clientData;
 
-  return { name, profilePicture, commerceId, loading };
+  return { name, profilePicture, commerceId, loading, roleId, workplaces };
 };
 
 export default connect(mapStateToProps, {

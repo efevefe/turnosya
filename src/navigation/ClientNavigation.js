@@ -11,7 +11,7 @@ import {
   tabNavigationOptions
 } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
-import ClientCommerceSchedule from '../components/client/ClientCommerceSchedule';
+import ClientCourtsSchedule from '../components/client/ClientCourtsSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
 import ConfirmCourtReservation from '../components/client/ConfirmCourtReservation';
 import ClientReservationsList from '../components/client/ClientReservationsList';
@@ -24,6 +24,10 @@ import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceReviewsList from '../components/CommerceReviewsList';
+import CommerceServicesList from '../components/client/CommerceServicesList';
+import CommerceEmployeesList from '../components/client/CommerceEmployeesList';
+import ClientServicesSchedule from '../components/client/ClientServicesSchedule';
+import ConfirmServiceReservation from '../components/client/ConfirmServiceReservation';
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -102,20 +106,32 @@ const searchStack = createStackNavigator(
         title: 'Información'
       }
     },
-    showMyAddressMap: {
-      screen: CommerceLocationMap,
-      navigationOptions: {
-        title: 'Dirección'
-      }
-    },
     commerceLocationMap: {
       screen: CommerceLocationMap,
       navigationOptions: {
         title: 'Dirección'
       }
     },
-    commerceSchedule: {
-      screen: ClientCommerceSchedule,
+    commerceServicesList: {
+      screen: CommerceServicesList,
+      navigationOptions: {
+        title: 'Servicios'
+      }
+    },
+    commerceEmployeesList: {
+      screen: CommerceEmployeesList,
+      navigationOptions: {
+        title: 'Estilistas'
+      }
+    },
+    commerceCourtsSchedule: {
+      screen: ClientCourtsSchedule,
+      navigationOptions: {
+        title: 'Turnos Disponibles'
+      }
+    },
+    commerceServicesSchedule: {
+      screen: ClientServicesSchedule,
       navigationOptions: {
         title: 'Turnos Disponibles'
       }
@@ -125,6 +141,12 @@ const searchStack = createStackNavigator(
     },
     confirmCourtReservation: {
       screen: ConfirmCourtReservation,
+      navigationOptions: {
+        title: 'Turno'
+      }
+    },
+    confirmServiceReservation: {
+      screen: ConfirmServiceReservation,
       navigationOptions: {
         title: 'Turno'
       }

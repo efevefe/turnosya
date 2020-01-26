@@ -60,7 +60,6 @@ export const ON_USER_PASSWORD_UPDATE = 'on_user_password_update';
 
 // Commerce Profile
 export const ON_COMMERCE_CREATING = 'on_commerce_creating';
-export const ON_COMMERCE_OPEN = 'on_commerce_open';
 export const ON_COMMERCE_CREATE_FAIL = 'on_commerce_create_fail';
 export const ON_REGISTER_COMMERCE = 'on_register_commerce';
 export const ON_COMMERCE_VALUE_CHANGE = 'on_commerce_value_change';
@@ -112,13 +111,13 @@ export const COMMERCE_COURT_TYPES_READ = 'on_commerce_court_types_read';
 export const COMMERCE_COURT_TYPES_READ_FAIL = 'on_commerce_court_types_read';
 
 // Reservation types
-export const ON_COURT_RESERVATION_VALUE_CHANGE =
-  'on_court_reservation_value_change';
-export const ON_COURT_RESERVATION_CREATING = 'on_court_reservation_creating';
-export const ON_COURT_RESERVATION_CREATE = 'on_court_reservation_create';
-export const ON_COURT_RESERVATION_CREATE_FAIL =
-  'on_court_reservation_create_fail';
-export const ON_NEW_COURT_RESERVATION = 'on_new_court_reservation';
+export const ON_RESERVATION_VALUE_CHANGE = 'on_reservation_value_change';
+export const ON_RESERVATION_CREATING = 'on_reservation_creating';
+export const ON_RESERVATION_CREATE = 'on_reservation_create';
+export const ON_RESERVATION_CREATE_FAIL = 'on_reservation_create_fail';
+export const ON_RESERVATION_EXISTS = 'on_reservation_exists'
+export const ON_NEW_RESERVATION = 'on_new_reservation';
+export const ON_NEW_SERVICE_RESERVATION = 'on_new_service_reservation';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
@@ -137,13 +136,13 @@ export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
   'on_client_reservation_cancel_fail';
 
 // Commerce Reservations List
-export const ON_COURT_RESERVATIONS_LIST_VALUE_CHANGE =
-  'on_court_reservations_list_value_change';
-export const ON_COMMERCE_COURT_RESERVATIONS_READING =
+export const ON_RESERVATIONS_LIST_VALUE_CHANGE =
+  'on_reservations_list_value_change';
+export const ON_COMMERCE_RESERVATIONS_READING =
   'on_commerce_reservations_reading';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ =
+export const ON_COMMERCE_RESERVATIONS_READ =
   'on_commerce_reservations_read';
-export const ON_COMMERCE_COURT_RESERVATIONS_READ_FAIL =
+export const ON_COMMERCE_RESERVATIONS_READ_FAIL =
   'on_commerce_reservations_read_fail';
 export const ON_COMMERCE_RESERVATION_CANCELING =
   'on_commerce_reservation_canceling';
@@ -194,6 +193,7 @@ export const ON_CLIENT_REVIEWS_READ_FAIL = 'on_client_reviews_read_fail';
 // Employee types
 export const ON_EMPLOYEES_READING = 'on_employees_reading';
 export const ON_EMPLOYEES_READ = 'on_employees_read';
+export const ON_EMPLOYEES_READ_FAIL = 'on_employees_read_fail';
 export const ON_EMPLOYEE_VALUE_CHANGE = 'on_employee_value_change';
 export const ON_EMPLOYEE_VALUES_RESET = 'on_employee_values_reset';
 export const ON_USER_SEARCHING = 'on_user_searching';
@@ -226,3 +226,5 @@ export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
 export const ON_COMMERCE_NOTIFICATIONS_READING = 'on_commerce_notifications_reading';
 export const ON_COMMERCE_NOTIFICATIONS_READ = 'on_commerce_notifications_read';
 export const ON_COMMERCE_NOTIFICATIONS_READ_FAIL = 'on_commerce_notifications_read_fail';
+export const ON_COMMERCE_NOTIFICATIONS_DELETED = 'on_commerce_notifications_deleted';
+export const ON_COMMERCE_NOTIFICATIONS_DELETED_FAIL = 'on_commerce_notifications_deleted_fail';

@@ -46,7 +46,7 @@ class Welcome extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => this.props.navigation.navigate('tabs')}
+              onPress={() => this.props.navigation.goBack(null)}
             />
           </CardSection>
         </View>

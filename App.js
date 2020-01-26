@@ -1,12 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import ReduxThunk from 'redux-thunk';
 import firebase from 'firebase';
 import { Root } from 'native-base';
 import MainNavigation from './src/navigation/MainNavigation';
-import reducers from './src/reducers';
+import store from './src/reducers';
 import { MAIN_COLOR } from './src/constants';
 import getEnvVars from './environment';
 
@@ -17,8 +15,6 @@ if (!firebase.apps.length) {
 }
 
 console.disableYellowBox = true;
-
-const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 
 class App extends React.Component {
   render() {

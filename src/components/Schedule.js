@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+// import { Ionicons } from '@expo/vector-icons';
 import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
 import { getHourAndMinutes } from '../utils';
-import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR } from '../constants';
+import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR, GREY_DISABLED } from '../constants';
 import { onScheduleValueChange } from '../actions';
 
 /*
@@ -119,6 +120,8 @@ class Schedule extends Component {
 
       const slotStartDate = moment(shiftStartDate);
 
+      let divider = index > 0;
+
       for (
         let j = 0;
         shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
@@ -126,6 +129,12 @@ class Schedule extends Component {
           shiftEndDate.format('HH:mm') === '23:59');
         j++
       ) {
+
+        if (divider) {
+          slots.push({ id: `divider${j}`, divider });
+          divider = false;
+        }
+
         slots.push({
           id: slots.length,
           shiftId: index,
@@ -133,6 +142,7 @@ class Schedule extends Component {
           endDate: moment(shiftStartDate),
           available: true,
           disabled: false,
+          visible: true,
           free: 0,
           total: 0
         });
@@ -145,7 +155,7 @@ class Schedule extends Component {
   };
 
   badgeColor = (free, total) => {
-    if (free == 0) {
+    if (!free) {
       return MAIN_COLOR;
     } else if (free <= total / 2) {
       return WARNING_COLOR;
@@ -154,35 +164,55 @@ class Schedule extends Component {
     }
   };
 
+  badgeTitle = (free, total) => {
+    switch (this.props.mode) {
+      case 'courts':
+        return free
+          ? `Disponibles: ${free.toString()} / ${total.toString()}`
+          : 'Ocupadas';
+      case 'services':
+        return free
+          ? `Disponible`
+          : 'Ocupado';
+      default:
+        return null;
+    }
+  }
+
   renderList = ({ item }) => {
-    return (
-      <ListItem
-        leftIcon={{
-          name: 'md-time',
-          type: 'ionicon',
-          color: 'black'
-        }}
-        rightElement={
-          <Badge
-            value={
-              item.free
-                ? `Disponibles: ${item.free.toString()} / ${item.total.toString()}`
-                : 'Ocupadas'
-            }
-            badgeStyle={{
-              ...styles.slotBadgeStyle,
-              backgroundColor: this.badgeColor(item.free, item.total)
-            }}
+    if (item.visible)
+      return (
+        <ListItem
+          leftIcon={{
+            name: 'md-time',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          rightElement={
+            <Badge
+              value={this.badgeTitle(item.free, item.total)}
+              badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+            />
+          }
+          title={`${item.startDate.format('HH:mm')}`}
+          containerStyle={styles.slotContainerStyle}
+          rightSubtitleStyle={styles.slotRightSubtitleStyle}
+          onPress={() => this.props.onSlotPress(item)}
+          disabled={item.disabled}
+          bottomDivider
+        />
+      );
+
+    if (item.divider)
+      return (
+        <View style={styles.slotDividerContainer}>
+          <Image
+            source={require('../../assets/turnosya-white-notext.png')}
+            style={{ height: 25 }}
+            resizeMode='contain'
           />
-        }
-        title={`${item.startDate.format('HH:mm')}`}
-        containerStyle={styles.slotContainerStyle}
-        rightSubtitleStyle={styles.slotRightSubtitleStyle}
-        onPress={() => this.props.onSlotPress(item)}
-        disabled={item.disabled}
-        bottomDivider
-      />
-    );
+        </View>
+      );
   };
 
   onRefresh = () => {
@@ -229,8 +259,8 @@ class Schedule extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderSlots()
-        )}
+            this.renderSlots()
+          )}
       </View>
     );
   }
@@ -249,6 +279,13 @@ const styles = StyleSheet.create({
   },
   slotRightSubtitleStyle: {
     color: 'grey'
+  },
+  slotDividerContainer: {
+    backgroundColor: GREY_DISABLED,
+    height: 45,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

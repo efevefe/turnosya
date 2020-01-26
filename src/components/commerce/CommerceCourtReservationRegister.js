@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
+import { validateValueType } from '../../utils';
 import {
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onCommerceCourtReservationCreate
 } from '../../actions';
-import { validateValueType } from '../../utils';
-import { DAYS, MONTHS } from '../../constants';
-import moment from 'moment';
 
 class CommerceCourtReservationRegister extends Component {
   state = {
@@ -45,7 +43,7 @@ class CommerceCourtReservationRegister extends Component {
 
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
-    this.props.onCourtReservationValueChange({
+    this.props.onReservationValueChange({
       price: this.state.prices[selectedIndex],
       light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
@@ -70,7 +68,7 @@ class CommerceCourtReservationRegister extends Component {
               autoCapitalize="words"
               value={this.props.clientName}
               onChangeText={clientName =>
-                this.props.onCourtReservationValueChange({ clientName })
+                this.props.onReservationValueChange({ clientName })
               }
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
@@ -83,7 +81,7 @@ class CommerceCourtReservationRegister extends Component {
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
               onChangeText={clientPhone =>
-                this.props.onCourtReservationValueChange({ clientPhone })
+                this.props.onReservationValueChange({ clientPhone })
               }
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
@@ -118,10 +116,10 @@ class CommerceCourtReservationRegister extends Component {
       this.setState({ phoneError: '' });
       return false;
     }
-  };
+  }
 
   renderButtons = () => {
-    if (!this.props.saved) {
+    if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
           <Button
@@ -136,45 +134,25 @@ class CommerceCourtReservationRegister extends Component {
 
   onConfirmReservation = () => {
     if (!this.nameError() && !this.phoneError()) {
-      const {
-        commerceId,
-        clientName,
-        clientPhone,
-        court,
-        slot,
-        light,
-        price
-      } = this.props;
-      const body = `El Turno del día ${
-        DAYS[slot.startDate.day()]
-      } ${slot.startDate.format('D')} de ${
-        MONTHS[moment(slot.startDate).month()]
-      } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
-      const title = 'Turno Reservado';
-      notification = { title, body, service: court, name :clientName };
+      const { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price } = this.props;
+
       this.props.onCommerceCourtReservationCreate({
         commerceId,
+        areaId,
+        courtId: court.id,
+        courtType: court.court,
         clientName,
         clientPhone,
-        court,
-        slot,
+        startDate,
+        endDate,
         light,
-        price,
-        notification
-      });
+        price
+      })
     }
-  };
+  }
 
   render() {
-    const {
-      clientName,
-      clientPhone,
-      court,
-      slot,
-      light,
-      price,
-      saved
-    } = this.props;
+    const { clientName, clientPhone, court, startDate, endDate, light, price, saved } = this.props;
 
     return (
       <KeyboardAwareScrollView
@@ -185,10 +163,10 @@ class CommerceCourtReservationRegister extends Component {
         <CourtReservationDetails
           name={saved && clientName}
           info={saved && clientPhone}
-          infoIcon="ios-call"
+          infoIcon='ios-call'
           court={court}
-          startDate={slot.startDate}
-          endDate={slot.endDate}
+          startDate={startDate}
+          endDate={endDate}
           price={price}
           light={light}
           showPrice={saved}
@@ -200,7 +178,7 @@ class CommerceCourtReservationRegister extends Component {
       </KeyboardAwareScrollView>
     );
   }
-}
+};
 
 const styles = StyleSheet.create({
   cardSection: {
@@ -214,32 +192,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId } = state.commerceData;
-  const {
-    clientName,
-    clientPhone,
-    court,
-    slot,
-    light,
-    price,
-    saved,
-    loading
-  } = state.courtReservation;
+  const { commerceId, area: { areaId } } = state.commerceData;
+  const { clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading } = state.reservation;
 
-  return {
-    commerceId,
-    clientName,
-    clientPhone,
-    court,
-    slot,
-    light,
-    price,
-    saved,
-    loading
-  };
-};
+  return { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading };
+}
 
 export default connect(mapStateToProps, {
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onCommerceCourtReservationCreate
 })(CommerceCourtReservationRegister);
