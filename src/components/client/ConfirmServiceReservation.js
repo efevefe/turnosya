@@ -3,14 +3,30 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { CardSection, Button } from '../common';
-import { MAIN_COLOR } from '../../constants';
 import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
+import { CardSection, Button } from '../common';
+import { MAIN_COLOR } from '../../constants';
+import { newReservationPushNotificationFormat } from '../../utils';
 
 class ConfirmServiceReservation extends Component {
   onConfirmReservation = () => {
-    const { commerce, service, employee, startDate, endDate, price, areaId } = this.props;
+    const {
+      commerce,
+      service,
+      employee,
+      startDate,
+      endDate,
+      price,
+      areaId,
+      clientFirstName,
+      clientLastName
+    } = this.props;
+
+    const notification = newReservationPushNotificationFormat(
+      startDate,
+      `${clientFirstName} ${clientLastName}`
+    );
 
     this.props.onClientServiceReservationCreate({
       commerceId: commerce.objectID,
@@ -19,7 +35,8 @@ class ConfirmServiceReservation extends Component {
       employeeId: employee.id,
       startDate,
       endDate,
-      price
+      price,
+      notification
     });
   };
 
@@ -40,10 +57,12 @@ class ConfirmServiceReservation extends Component {
                   style={{ marginRight: 10 }}
                 />
               }
-              onPress={() => this.props.navigation.navigate('commerceProfileView')}
+              onPress={() =>
+                this.props.navigation.navigate('commerceProfileView')
+              }
             />
           </View>
-          {this.props.saved ?
+          {this.props.saved ? (
             <View style={{ alignItems: 'flex-end' }}>
               <RNEButton
                 title="Finalizar"
@@ -60,7 +79,8 @@ class ConfirmServiceReservation extends Component {
                 }
                 onPress={() => this.props.navigation.navigate('commercesAreas')}
               />
-            </View> : null}
+            </View>
+          ) : null}
         </CardSection>
       );
     }
@@ -77,19 +97,28 @@ class ConfirmServiceReservation extends Component {
   };
 
   render() {
-    const { commerce, employee, service, startDate, endDate, price } = this.props;
+    const {
+      commerce,
+      employee,
+      service,
+      startDate,
+      endDate,
+      price
+    } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
         <ServiceReservationDetails
-          mode='commerce'
+          mode="commerce"
           name={commerce.name}
           info={
-            commerce.address + ', ' +
-            commerce.city + ', ' +
+            commerce.address +
+            ', ' +
+            commerce.city +
+            ', ' +
             commerce.provinceName
           }
-          infoIcon='md-pin'
+          infoIcon="md-pin"
           picture={commerce.profilePicture}
           service={service}
           employee={employee}
@@ -130,7 +159,27 @@ const mapStateToProps = state => {
     loading
   } = state.reservation;
 
-  return { commerce, employee, service, startDate, endDate, price, areaId, saved, exists, loading };
+  const {
+    firstName: clientFirstName,
+    lastName: clientLastName
+  } = state.clientData;
+
+  return {
+    commerce,
+    employee,
+    service,
+    startDate,
+    endDate,
+    price,
+    areaId,
+    saved,
+    exists,
+    loading,
+    clientFirstName,
+    clientLastName
+  };
 };
 
-export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation);
+export default connect(mapStateToProps, { onClientServiceReservationCreate })(
+  ConfirmServiceReservation
+);

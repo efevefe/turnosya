@@ -1,8 +1,11 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { formatReservation } from './ReservationsListActions';
 import { AREAS } from '../constants';
-import { onCommercePushNotificationSend } from './PushNotificationActions';
+import {
+  onCommercePushNotificationSend,
+  onEmployeePushNotificationSend
+} from './PushNotificationActions';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
@@ -33,21 +36,37 @@ export const onClientReservationsListRead = () => dispatch => {
       }
 
       snapshot.forEach(async res => {
-        const { commerceId, areaId, serviceId, employeeId, courtId } = res.data();
-        let service, employee, court = null;
+        const {
+          commerceId,
+          areaId,
+          serviceId,
+          employeeId,
+          courtId
+        } = res.data();
+        let service,
+          employee,
+          court = null;
 
         try {
           const commerce = await db.doc(`Commerces/${commerceId}`).get();
 
           if (areaId === AREAS.hairdressers) {
-            service = await db.doc(`Commerces/${commerceId}/Services/${serviceId}`).get();
-            employee = await db.doc(`Commerces/${commerceId}/Employees/${employeeId}`).get();
+            service = await db
+              .doc(`Commerces/${commerceId}/Services/${serviceId}`)
+              .get();
+            employee = await db
+              .doc(`Commerces/${commerceId}/Employees/${employeeId}`)
+              .get();
             // } else if (areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
           } else {
-            court = await db.doc(`Commerces/${commerceId}/Courts/${courtId}`).get();
+            court = await db
+              .doc(`Commerces/${commerceId}/Courts/${courtId}`)
+              .get();
           }
 
-          reservations.push(formatReservation({ res, commerce, service, court, employee }));
+          reservations.push(
+            formatReservation({ res, commerce, service, court, employee })
+          );
 
           if (snapshot.size === reservations.length) {
             dispatch({
@@ -96,7 +115,14 @@ export const onClientReservationCancel = ({
           batch
             .commit()
             .then(() => {
-              onCommercePushNotificationSend(notification, commerceId);
+              notification.employeeId
+                ? onEmployeePushNotificationSend(
+                    notification,
+                    commerceId,
+                    notification.employeeId
+                  )
+                : onCommercePushNotificationSend(notification, commerceId);
+
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

@@ -29,8 +29,10 @@ import {
   onCommerceReviewReadById,
   onCommerceReviewValuesReset
 } from '../../actions';
-import { isOneWeekOld } from '../../utils/functions';
-import { MONTHS, DAYS } from '../../constants';
+import {
+  isOneWeekOld,
+  cancelReservationPushNotificationFormat
+} from '../../utils';
 
 class CommerceReservationDetails extends Component {
   constructor(props) {
@@ -99,17 +101,11 @@ class CommerceReservationDetails extends Component {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
 
-      const { startDate } = this.state.reservation;
-
-      const body = `El Turno del día ${
-        DAYS[startDate.day()]
-        } ${startDate.format('D')} de ${
-        MONTHS[moment(startDate).month()]
-        } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${
-        this.props.cancelationReason
-        }"`;
-
-      const title = 'Turno Cancelado';
+      const notification = cancelReservationPushNotificationFormat(
+        this.state.reservation.startDate,
+        this.props.name,
+        this.props.cancellationReason
+      );
 
       this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
@@ -117,7 +113,7 @@ class CommerceReservationDetails extends Component {
         clientId,
         cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation,
-        notification: { title, body }
+        notification
       });
     }
   };
@@ -215,10 +211,10 @@ class CommerceReservationDetails extends Component {
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title="El cliente no te ha calificado" />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El cliente no te ha calificado" />
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -232,24 +228,24 @@ class CommerceReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating =>
-              this.props.onClientReviewValueChange({ rating })
-            }
-            rating={this.props.clientRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment =>
-              this.props.onClientReviewValueChange({ comment })
-            }
-            commentPlaceholder="Comente sobre el cliente..."
-            commentText={this.props.clientComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating =>
+            this.props.onClientReviewValueChange({ rating })
+          }
+          rating={this.props.clientRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment =>
+            this.props.onClientReviewValueChange({ comment })
+          }
+          commentPlaceholder="Comente sobre el cliente..."
+          commentText={this.props.clientComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderReviewFields = () => {
@@ -405,12 +401,13 @@ const {
 
 const mapStateToProps = state => {
   const { loading, cancellationReason } = state.reservationsList;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
   return {
     loading,
     commerceId,
+    name,
     cancellationReason,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,

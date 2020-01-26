@@ -10,7 +10,7 @@ import {
 import CourtReservationDetails from '../CourtReservationDetails';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import { reservationPushNotificationFormat } from '../../utils';
+import { newReservationPushNotificationFormat } from '../../utils';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -76,7 +76,7 @@ class ConfirmCourtReservation extends Component {
       lastName
     } = this.props;
 
-    const { title, body } = reservationPushNotificationFormat(
+    const notification = newReservationPushNotificationFormat(
       startDate,
       `${firstName} ${lastName}`
     );
@@ -89,7 +89,7 @@ class ConfirmCourtReservation extends Component {
       endDate,
       price,
       light,
-      notification: { title, body }
+      notification
     });
   };
 

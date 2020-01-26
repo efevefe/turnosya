@@ -226,7 +226,7 @@ export const isOneWeekOld = date => {
  * @param {String}  actorName   Nombre de quién reserva
  * @return {String, String}     Título (title) y cuerpo (body) del mensaje
  */
-export const reservationPushNotificationFormat = (startDate, actorName) => {
+export const newReservationPushNotificationFormat = (startDate, actorName) => {
   const dayOfWeek = DAYS[startDate.day()];
   const dayOfMonth = startDate.format('D');
   const month = MONTHS[moment(startDate).month()];
@@ -235,5 +235,23 @@ export const reservationPushNotificationFormat = (startDate, actorName) => {
   return {
     title: 'Nueva Reserva',
     body: `${actorName} ha reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`
+  };
+};
+
+export const cancelReservationPushNotificationFormat = (
+  startDate,
+  actorName,
+  cancellationReason
+) => {
+  const dayOfWeek = DAYS[startDate.day()];
+  const dayOfMonth = startDate.format('D');
+  const month = MONTHS[moment(startDate).month()];
+  const formattedTime = moment(startDate).format('HH:mm');
+  let body = `${actorName} ha cancelado el turno del día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
+  body += `${cancellationReason ? ` "${cancellationReason}".` : ''}`;
+
+  return {
+    title: 'Reserva Cancelada',
+    body
   };
 };

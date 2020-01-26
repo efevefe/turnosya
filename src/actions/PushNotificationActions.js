@@ -8,12 +8,30 @@ import { Toast } from '../components/common';
 const onCommercePushNotificationTokensRead = async commerceId => {
   const db = firebase.firestore();
   const tokens = [];
+
   return await db
     .collection(`Commerces/${commerceId}/PushNotificationTokens`)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => tokens.push(doc.id));
       return tokens;
+    })
+    .catch(error => console.error(error));
+};
+
+const onEmployeePushNotificationTokensRead = async (commerceId, employeeId) => {
+  const db = firebase.firestore();
+  const employeeToken = [];
+
+  return await db
+    .collection(`Commerces/${commerceId}/PushNotificationTokens`)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        if (doc.data().employeeId === employeeId) employeeToken.push(doc.id);
+      });
+
+      return employeeToken;
     })
     .catch(error => console.error(error));
 };
@@ -34,6 +52,17 @@ const onClientPushNotificationTokensRead = async clientId => {
 
 export const onCommercePushNotificationSend = (notification, commerceId) => {
   onCommercePushNotificationTokensRead(commerceId).then(tokens => {
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef });
+  });
+};
+
+export const onEmployeePushNotificationSend = (
+  notification,
+  commerceId,
+  employeeId
+) => {
+  onEmployeePushNotificationTokensRead(commerceId, employeeId).then(tokens => {
     const collectionRef = `Commerces/${commerceId}/Notifications`;
     sendPushNotification({ ...notification, tokens, collectionRef });
   });

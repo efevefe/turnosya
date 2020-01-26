@@ -6,8 +6,11 @@ import { Divider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CourtReservationDetails from '../CourtReservationDetails';
 import ServiceReservationDetails from '../ServiceReservationDetails';
-import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
-import { MONTHS, DAYS } from '../../constants';
+import {
+  stringFormatHours,
+  isOneWeekOld,
+  cancelReservationPushNotificationFormat
+} from '../../utils';
 import {
   CardSection,
   Button,
@@ -130,21 +133,19 @@ class ClientReservationDetails extends Component {
   };
 
   onCancelReservationButtonPress = () => {
-    const { startDate, id, commerceId } = this.state.reservation;
+    const { startDate, id, commerceId, employeeId } = this.state.reservation;
+    const { firstName, lastName } = this.props;
 
-    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format(
-      'D'
-    )} de ${MONTHS[moment(startDate).month()]} a las ${moment(startDate).format(
-      'HH:mm'
-    )} fue cancelado`;
-
-    const title = 'Turno Cancelado';
+    const notification = cancelReservationPushNotificationFormat(
+      startDate,
+      `${firstName} ${lastName}`
+    );
 
     this.props.onClientReservationCancel({
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
-      notification: { title, body }
+      notification: { ...notification, employeeId }
     });
 
     this.setState({ optionsVisible: false });
@@ -216,24 +217,24 @@ class ClientReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating =>
-              this.props.onCommerceReviewValueChange({ rating })
-            }
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment =>
-              this.props.onCommerceReviewValueChange({ comment })
-            }
-            commentPlaceholder="Deje un comentario sobre la atención..."
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating =>
+            this.props.onCommerceReviewValueChange({ rating })
+          }
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment =>
+            this.props.onCommerceReviewValueChange({ comment })
+          }
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -249,10 +250,10 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title="El negocio no te ha calificado" />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El negocio no te ha calificado" />
+      </View>
+    );
   };
 
   renderReviewFields = () => {
@@ -389,7 +390,7 @@ const mapStateToProps = state => {
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
-  const { clientId } = state.clientData;
+  const { clientId, firstName, lastName } = state.clientData;
 
   return {
     loadingReservations,
@@ -402,7 +403,9 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    firstName,
+    lastName
   };
 };
 
