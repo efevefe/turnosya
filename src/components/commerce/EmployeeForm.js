@@ -11,32 +11,32 @@ import {
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
   onEmployeeCreate,
-  onEmployeeUpdate
+  onEmployeeUpdate,
 } from '../../actions';
 import { CardSection, Input, Picker, Button, IconButton } from '../common';
 import { MAIN_COLOR, ROLES } from '../../constants';
 
 class EmployeeForm extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       roleError: '',
-      editing: props.navigation.getParam('editing') || false
-    }
+      editing: props.navigation.getParam('editing') || false,
+    };
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton')
-    }
-  }
+      headerRight: navigation.getParam('rightButton'),
+    };
+  };
 
   componentDidMount() {
     if (this.state.editing) {
       this.props.navigation.setParams({
-        rightButton: <IconButton icon='md-refresh' onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />
-      })
+        rightButton: <IconButton icon="md-refresh" onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />,
+      });
     }
 
     this.props.onRolesRead();
@@ -49,11 +49,11 @@ class EmployeeForm extends Component {
   onEmailValueChange = email => {
     this.props.firstName
       ? this.props.onEmployeeValueChange({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email
-      })
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email,
+        })
       : this.props.onEmployeeValueChange({ email });
   };
 
@@ -69,16 +69,13 @@ class EmployeeForm extends Component {
       profileId,
       employeeId,
       employees,
-      navigation
+      navigation,
     } = this.props;
     if (firstName) {
-      if (
-        employees.some(employee => employee.profileId === profileId) &&
-        !this.state.editing
-      )
+      if (employees.some(employee => employee.profileId === profileId) && !this.state.editing)
         // Si se cargó un usuario y es empleado aca entonces notificar
         this.props.onEmployeeValueChange({
-          emailError: 'Este usuario ya es empleado de su negocio'
+          emailError: 'Este usuario ya es empleado de su negocio',
         });
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
@@ -90,7 +87,7 @@ class EmployeeForm extends Component {
               firstName,
               lastName,
               phone,
-              role
+              role,
             },
             navigation
           );
@@ -104,13 +101,13 @@ class EmployeeForm extends Component {
               lastName,
               phone,
               role,
-              profileId
+              profileId,
             },
             navigation
           );
     } else {
       this.props.onEmployeeValueChange({
-        emailError: 'Debe cargar un usuario antes de guardar'
+        emailError: 'Debe cargar un usuario antes de guardar',
       });
     }
 
@@ -127,7 +124,7 @@ class EmployeeForm extends Component {
             <CardSection
               style={{
                 flexDirection: 'row',
-                alignItems: 'flex-start'
+                alignItems: 'flex-start',
               }}
             >
               <Input
@@ -146,15 +143,10 @@ class EmployeeForm extends Component {
                     icon={{
                       name: 'md-search',
                       type: 'ionicon',
-                      color: MAIN_COLOR
+                      color: MAIN_COLOR,
                     }}
                     loading={this.props.emailLoading}
-                    onPress={() =>
-                      this.props.onUserByEmailSearch(
-                        this.props.email,
-                        this.props.commerceId
-                      )
-                    }
+                    onPress={() => this.props.onUserByEmailSearch(this.props.email, this.props.commerceId)}
                     loadingProps={{ color: MAIN_COLOR }}
                     disabled={this.state.editing}
                   />
@@ -163,27 +155,15 @@ class EmployeeForm extends Component {
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Nombre:"
-                value={this.props.firstName}
-                editable={false}
-              />
+              <Input label="Nombre:" value={this.props.firstName} editable={false} />
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Apellido:"
-                value={this.props.lastName}
-                editable={false}
-              />
+              <Input label="Apellido:" value={this.props.lastName} editable={false} />
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Teléfono:"
-                value={this.props.phone}
-                editable={false}
-              />
+              <Input label="Teléfono:" value={this.props.phone} editable={false} />
             </CardSection>
 
             <CardSection>
@@ -191,23 +171,15 @@ class EmployeeForm extends Component {
                 title={'Rol:'}
                 placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles.filter(role =>
-                  ROLES[role.value.roleId].value <= this.props.currentRole.value
-                )}
-                onValueChange={role =>
-                  this.props.onEmployeeValueChange({ role: role || {} })
-                }
+                items={this.props.roles.filter(role => ROLES[role.value.roleId].value <= this.props.currentRole.value)}
+                onValueChange={role => this.props.onEmployeeValueChange({ role: role || {} })}
                 errorMessage={this.state.roleError}
                 disabled={this.props.email === firebase.auth().currentUser.email}
               />
             </CardSection>
 
             <CardSection>
-              <Button
-                title="Guardar"
-                loading={this.props.saveLoading}
-                onPress={this.onSavePressHandler}
-              />
+              <Button title="Guardar" loading={this.props.saveLoading} onPress={this.onSavePressHandler} />
             </CardSection>
           </Card>
         </View>
@@ -220,8 +192,8 @@ const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
     paddingTop: 10,
-    borderRadius: 10
-  }
+    borderRadius: 10,
+  },
 });
 
 const mapStateToProps = state => {
@@ -236,7 +208,7 @@ const mapStateToProps = state => {
     role,
     emailLoading,
     emailError,
-    saveLoading
+    saveLoading,
   } = state.employeeData;
   const { roles, role: currentRole } = state.roleData;
   const { employees } = state.employeesList;
@@ -256,7 +228,7 @@ const mapStateToProps = state => {
     emailLoading,
     emailError,
     saveLoading,
-    employees
+    employees,
   };
 };
 
@@ -267,5 +239,5 @@ export default connect(mapStateToProps, {
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
   onEmployeeCreate,
-  onEmployeeUpdate
+  onEmployeeUpdate,
 })(EmployeeForm);

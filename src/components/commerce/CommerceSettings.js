@@ -3,11 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import {
-  onCommerceDelete,
-  onCommerceValueChange,
-  onLoginValueChange
-} from '../../actions';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../../actions';
 import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
 
 class CommerceSettings extends Component {
@@ -15,7 +11,7 @@ class CommerceSettings extends Component {
 
   componentDidMount() {
     this.setState({
-      providerId: firebase.auth().currentUser.providerData[0].providerId
+      providerId: firebase.auth().currentUser.providerData[0].providerId,
     });
   }
 
@@ -24,17 +20,13 @@ class CommerceSettings extends Component {
     if (this.state.providerId == 'password') {
       return (
         <View style={{ alignSelf: 'stretch' }}>
-          <CardSection
-            style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
-          >
+          <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Input
               label="Contraseña:"
               password
               value={this.props.password}
               color="black"
-              onChangeText={password =>
-                this.props.onLoginValueChange({ password })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               errorMessage={this.props.reauthError}
               onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />
@@ -61,11 +53,7 @@ class CommerceSettings extends Component {
           onPress={this.onConfirmCommerceDelete}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onBackdropPress} />
       </Menu>
     );
   };
@@ -92,12 +80,10 @@ class CommerceSettings extends Component {
           leftIcon={{
             name: 'md-trash',
             type: 'ionicon',
-            color: 'black'
+            color: 'black',
           }}
           title="Eliminar Mi Negocio"
-          onPress={() =>
-            this.props.onCommerceValueChange({ confirmDeleteVisible: true })
-          }
+          onPress={() => this.props.onCommerceValueChange({ confirmDeleteVisible: true })}
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />
@@ -111,8 +97,8 @@ class CommerceSettings extends Component {
 const styles = StyleSheet.create({
   containerStyle: {
     alignSelf: 'stretch',
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 const mapStateToProps = state => {
@@ -126,12 +112,12 @@ const mapStateToProps = state => {
     loadingCommerceDelete,
     password,
     reauthError: error,
-    confirmCommerceDeleteVisible
+    confirmCommerceDeleteVisible,
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
-  onLoginValueChange
+  onLoginValueChange,
 })(CommerceSettings);

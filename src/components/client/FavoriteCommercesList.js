@@ -21,9 +21,7 @@ class FavoriteCommercesList extends Component {
   };
 
   renderRow({ item }) {
-    return (
-      <CommerceListItem commerce={item} navigation={this.props.navigation} />
-    );
+    return <CommerceListItem commerce={item} navigation={this.props.navigation} />;
   }
 
   onRefresh = () => {
@@ -53,21 +51,15 @@ class FavoriteCommercesList extends Component {
       );
     }
 
-    return (
-      <EmptyList title="No tenes favoritos" onRefresh={this.onRefresh()} />
-    );
+    return <EmptyList title="No tenes favoritos" onRefresh={this.onRefresh()} />;
   }
 }
 
 const mapStateToProps = state => {
-  const {
-    onlyFavoriteCommerces,
-    loading,
-    favoriteCommerces
-  } = state.commercesList;
+  const { onlyFavoriteCommerces, loading, favoriteCommerces } = state.commercesList;
   return { onlyFavoriteCommerces, loading, favoriteCommerces };
 };
 
 export default connect(mapStateToProps, {
-  onOnlyFavoriteCommercesRead
+  onOnlyFavoriteCommercesRead,
 })(FavoriteCommercesList);

@@ -17,16 +17,12 @@ const PictureView = props => {
         overlayBackgroundColor="black"
       >
         <View style={styles.mainContainerStyle}>
-          <IconButton
-            icon='md-close'
-            containerStyle={styles.iconButtonContainerStyle}
-            onPress={props.onClosePress}
-          />
+          <IconButton icon="md-close" containerStyle={styles.iconButtonContainerStyle} onPress={props.onClosePress} />
           <View style={styles.imageContainerStyle}>
             <Image
               style={{
                 height: props.height,
-                width: props.width
+                width: props.width,
               }}
               source={{ uri: props.picture }}
             />
@@ -38,25 +34,25 @@ const PictureView = props => {
   };
 
   return renderPicture();
-}
+};
 
 const styles = StyleSheet.create({
   overlayStyle: {
     padding: 0,
-    alignItems: 'stretch'
+    alignItems: 'stretch',
   },
   mainContainerStyle: {
     flex: 1,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   iconButtonContainerStyle: {
     padding: 10,
-    position: 'absolute'
+    position: 'absolute',
   },
   imageContainerStyle: {
     justifyContent: 'center',
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export { PictureView };

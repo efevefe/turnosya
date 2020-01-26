@@ -9,17 +9,13 @@ const pickerWidth = Math.round(Dimensions.get('window').width) / 2.7;
 class DatePicker extends Component {
   renderErrorMessage = () => {
     if (this.props.errorMessage) {
-      return (
-        <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
-      );
+      return <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>;
     }
   };
 
   renderLabel = color => {
     if (this.props.label) {
-      return (
-        <Text style={[styles.labelStyle, { color }]}>{this.props.label}</Text>
-      );
+      return <Text style={[styles.labelStyle, { color }]}>{this.props.label}</Text>;
     }
   };
 
@@ -37,13 +33,7 @@ class DatePicker extends Component {
           mode={this.props.mode || 'time'}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
-          iconComponent={
-            <Ionicons
-              name={this.props.mode ? 'md-calendar' : 'md-time'}
-              color={color}
-              size={20}
-            />
-          }
+          iconComponent={<Ionicons name={this.props.mode ? 'md-calendar' : 'md-time'} color={color} size={20} />}
           customStyles={{
             dateInput: styles.dateInput,
             dateText: styles.dateText,
@@ -52,8 +42,8 @@ class DatePicker extends Component {
             dateTouchBody: {
               borderBottomWidth: borderBottomWidth,
               borderColor: color,
-              paddingRight: 5
-            }
+              paddingRight: 5,
+            },
           }}
           style={{ width }}
         />
@@ -66,30 +56,30 @@ class DatePicker extends Component {
 const styles = StyleSheet.create({
   labelStyle: {
     fontSize: 12,
-    fontWeight: 'normal'
+    fontWeight: 'normal',
   },
   errorMessageStyle: {
     margin: 5,
     marginHorizontal: 0,
     color: 'red',
-    fontSize: 12
+    fontSize: 12,
   },
   dateInput: {
-    borderWidth: 0
+    borderWidth: 0,
   },
   dateText: {
     alignSelf: 'flex-start',
     fontSize: 13,
-    marginLeft: 5
+    marginLeft: 5,
   },
   placeholderText: {
     alignSelf: 'flex-start',
     fontSize: 13,
-    marginLeft: 5
+    marginLeft: 5,
   },
   disabled: {
-    backgroundColor: 'transparent'
-  }
+    backgroundColor: 'transparent',
+  },
 });
 
 export { DatePicker };

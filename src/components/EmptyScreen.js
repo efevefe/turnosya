@@ -50,12 +50,11 @@ class EmptyScreen extends Component {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          alignSelf: 'stretch'
+          alignSelf: 'stretch',
         }}
       >
         <Text style={{ padding: 20, textAlign: 'center' }}>
-          Estas pantallas se van a ir reemplazando a medida que vayamos
-          agregando las que faltan
+          Estas pantallas se van a ir reemplazando a medida que vayamos agregando las que faltan
         </Text>
         {/* <Button onPress={buttonPressed} /> */}
       </View>

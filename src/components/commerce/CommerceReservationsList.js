@@ -13,7 +13,7 @@ class CommerceReservationsList extends Component {
     selectedIndex: 1,
     filteredList: [],
     selectedReservation: {},
-    detailsVisible: false
+    detailsVisible: false,
   };
 
   componentDidMount() {
@@ -37,11 +37,11 @@ class CommerceReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate,
-      employeeId: this.props.employeeId
+      employeeId: this.props.employeeId,
     });
 
     this.setState({ selectedDate });
-  }
+  };
 
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
@@ -49,14 +49,10 @@ class CommerceReservationsList extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations
-        .filter(res => res.endDate < moment())
-        .reverse();
+      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
     } else if (selectedIndex == 1) {
       // turnos en curso
-      filteredList = reservations.filter(
-        res => res.startDate <= moment() && res.endDate >= moment()
-      );
+      filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
@@ -66,9 +62,7 @@ class CommerceReservationsList extends Component {
   };
 
   renderItem = ({ item }) => {
-    const clientName = item.clientId
-      ? `${item.client.firstName} ${item.client.lastName}`
-      : item.clientName;
+    const clientName = item.clientId ? `${item.client.firstName} ${item.client.lastName}` : item.clientName;
 
     let name;
     let service;
@@ -88,19 +82,17 @@ class CommerceReservationsList extends Component {
         rightIcon={{
           name: 'ios-arrow-forward',
           type: 'ionicon',
-          color: 'black'
+          color: 'black',
         }}
-        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format(
-          'HH:mm'
-        )}`}
+        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
         subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={(item.light !== undefined) ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
+        rightSubtitle={item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: { ...item, court, service }
+            reservation: { ...item, court, service },
           })
         }
         bottomDivider
@@ -127,10 +119,7 @@ class CommerceReservationsList extends Component {
   render() {
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
-        <Calendar
-          onDateSelected={date => this.onDateSelected(date)}
-          startingDate={this.state.selectedDate}
-        />
+        <Calendar onDateSelected={date => this.onDateSelected(date)} startingDate={this.state.selectedDate} />
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
@@ -143,11 +132,7 @@ class CommerceReservationsList extends Component {
           selectedTextStyle={styles.buttonGroupSelectedTextStyle}
           innerBorderStyle={styles.buttonGroupInnerBorderStyle}
         />
-        {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
-        ) : (
-            this.renderList()
-          )}
+        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
       </View>
     );
   }
@@ -162,42 +147,45 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 0,
     marginLeft: 0,
-    marginRight: 0
+    marginRight: 0,
   },
   buttonGroupSelectedButtonStyle: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   buttonGroupButtonStyle: {
-    backgroundColor: MAIN_COLOR
+    backgroundColor: MAIN_COLOR,
   },
   buttonGroupTextStyle: {
-    color: 'white'
+    color: 'white',
   },
   buttonGroupSelectedTextStyle: {
-    color: MAIN_COLOR
+    color: MAIN_COLOR,
   },
   buttonGroupInnerBorderStyle: {
-    width: 0
+    width: 0,
   },
   listItemRightTitleStyle: {
     fontWeight: 'bold',
-    color: 'black'
+    color: 'black',
   },
   listItemRightSubtitleStyle: {
-    color: 'grey'
-  }
+    color: 'grey',
+  },
 });
 
 const mapStateToProps = state => {
-  const { commerceId, area: { areaId } } = state.commerceData;
+  const {
+    commerceId,
+    area: { areaId },
+  } = state.commerceData;
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
-  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
+  const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
   return { commerceId, areaId, employeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {
-  onCommerceDetailedReservationsRead
+  onCommerceDetailedReservationsRead,
 })(CommerceReservationsList);

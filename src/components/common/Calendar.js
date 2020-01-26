@@ -5,7 +5,7 @@ import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 
 class Calendar extends Component {
   shouldComponentUpdate(nextProps) {
-    return (nextProps.selectedDate !== this.props.selectedDate);
+    return nextProps.selectedDate !== this.props.selectedDate;
   }
 
   render() {
@@ -16,7 +16,7 @@ class Calendar extends Component {
         daySelectionAnimation={{
           type: 'background',
           duration: 60,
-          highlightColor: 'white'
+          highlightColor: 'white',
         }}
         calendarColor={MAIN_COLOR}
         style={{ height: 115, paddingTop: 10, paddingBottom: 10 }} //main container
@@ -30,12 +30,8 @@ class Calendar extends Component {
         disabledDateNumberStyle={{ color: MAIN_COLOR_DISABLED }}
         maxDayComponentSize={60}
         iconContainer={{ flex: 0.1 }}
-        leftSelector={
-          <Ionicons name="ios-arrow-back" color="white" size={25} />
-        }
-        rightSelector={
-          <Ionicons name="ios-arrow-forward" color="white" size={25} />
-        }
+        leftSelector={<Ionicons name="ios-arrow-back" color="white" size={25} />}
+        rightSelector={<Ionicons name="ios-arrow-forward" color="white" size={25} />}
       />
     );
   }

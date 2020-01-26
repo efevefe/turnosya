@@ -9,15 +9,15 @@ const guestScreenStack = createStackNavigator(
     loginForm: {
       screen: LoginForm,
       navigationOptions: {
-        header: null
-      }
+        header: null,
+      },
     },
     registerForm: {
       screen: RegisterForm,
       navigationOptions: {
-        title: 'Registrarse'
-      }
-    }
+        title: 'Registrarse',
+      },
+    },
   },
   stackNavigationOptions
 );

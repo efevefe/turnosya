@@ -2,7 +2,7 @@ import {
   ON_LOCATION_VALUE_CHANGE,
   ON_USER_LOCATION_CHANGE,
   ON_SELECTED_LOCATION_CHANGE,
-  ON_LOCATION_VALUES_RESET
+  ON_LOCATION_VALUES_RESET,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -18,7 +18,7 @@ const INITIAL_STATE = {
     provinceName: '',
     country: '',
     latitude: null,
-    longitude: null
+    longitude: null,
   },
   selectedLocation: {
     address: '',
@@ -26,8 +26,8 @@ const INITIAL_STATE = {
     provinceName: '',
     country: '',
     latitude: null,
-    longitude: null
-  }
+    longitude: null,
+  },
 };
 
 export default (state = INITIAL_STATE, action) => {

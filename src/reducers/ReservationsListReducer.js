@@ -5,7 +5,7 @@ import {
   ON_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
   ON_COMMERCE_RESERVATION_CANCELED,
-  ON_COMMERCE_RESERVATION_CANCEL_FAIL
+  ON_COMMERCE_RESERVATION_CANCEL_FAIL,
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -14,7 +14,7 @@ INITIAL_STATE = {
   detailedReservations: [],
   nextReservations: [],
   loading: false,
-  cancellationReason: ''
+  cancellationReason: '',
 };
 
 export default (state = INITIAL_STATE, action) => {

@@ -12,11 +12,7 @@ class BarChart extends Component {
 
   renderTitle = () => {
     if (this.props.title)
-      return (
-        <Text style={StyleSheet.flatten([styles.title, this.props.titleStyle])}>
-          {this.props.title}
-        </Text>
-      );
+      return <Text style={StyleSheet.flatten([styles.title, this.props.titleStyle])}>{this.props.title}</Text>;
   };
 
   renderXLabel = () => {
@@ -30,13 +26,13 @@ class BarChart extends Component {
             fontSize: 12,
             top: chartPosition.y + chartHeight * 0.9,
             left: chartPosition.x + chartWidth / 11,
-            width: chartWidth - chartWidth / 11
+            width: chartWidth - chartWidth / 11,
           }}
         >
           <Text
             style={{
               ...styles.chartText,
-              fontSize: 12
+              fontSize: 12,
             }}
           >
             {this.props.xlabel}
@@ -57,7 +53,7 @@ class BarChart extends Component {
             top: chartPosition.y + chartHeight / 3,
             left: chartPosition.x + chartWidth / 10,
             width: chartWidth - chartWidth / 10,
-            paddingHorizontal: chartWidth / 6.5
+            paddingHorizontal: chartWidth / 6.5,
           }}
         >
           <Text style={styles.chartText}>{this.props.emptyDataMessage}</Text>
@@ -100,8 +96,8 @@ class BarChart extends Component {
             this.setState({
               chartPosition: {
                 x: nativeEvent.layout.x,
-                y: nativeEvent.layout.y
-              }
+                y: nativeEvent.layout.y,
+              },
             });
           }}
         >
@@ -132,7 +128,7 @@ const chartConfig = {
   color: (opacity = 1) => `rgba(199, 44, 65, ${opacity})`,
   barPercentage: 0.5,
   fillShadowGradient: MAIN_COLOR,
-  decimalPlaces: 1
+  decimalPlaces: 1,
 };
 
 const styles = StyleSheet.create({
@@ -152,17 +148,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 15,
     color: 'black',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   chartText: {
     fontSize: 14,
     color: MAIN_COLOR,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   chartTextContainer: {
     position: 'absolute',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export { BarChart };

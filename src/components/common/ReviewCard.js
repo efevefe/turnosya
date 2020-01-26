@@ -50,15 +50,15 @@ class ReviewCard extends Component {
 const { reviewTitleStyle, readOnlyReviewStyle } = StyleSheet.create({
   reviewTitleStyle: {
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   readOnlyReviewStyle: {
     fontSize: 15,
     textAlign: 'center',
     alignSelf: 'center',
     color: 'grey',
-    marginHorizontal: 10
-  }
+    marginHorizontal: 10,
+  },
 });
 
 export { ReviewCard };

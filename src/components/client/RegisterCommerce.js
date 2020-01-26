@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import {
-  onCommerceValueChange,
-  onCommerceFormOpen,
-  onAreasReadForPicker,
-  onCuitValidate
-} from '../../actions';
+import { onCommerceValueChange, onCommerceFormOpen, onAreasReadForPicker, onCuitValidate } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
 import { CardSection, Button, Input, Picker } from '../common';
 
@@ -18,7 +13,7 @@ class RegisterCommerce extends Component {
     nameError: '',
     emailError: '',
     cuitError: '',
-    areaError: ''
+    areaError: '',
   };
 
   componentDidMount() {
@@ -43,10 +38,7 @@ class RegisterCommerce extends Component {
   }
 
   onAreaPickerChange = index => {
-    const { value, label } =
-      index > 0
-        ? this.props.areasList[index - 1]
-        : this.state.pickerPlaceholder;
+    const { value, label } = index > 0 ? this.props.areasList[index - 1] : this.state.pickerPlaceholder;
 
     this.props.onCommerceValueChange({ area: { areaId: value, name: label } });
   };
@@ -163,9 +155,7 @@ class RegisterCommerce extends Component {
               placeholder="Teléfono"
               keyboardType="phone-pad"
               errorMessage={this.state.phoneError}
-              onChangeText={phone =>
-                this.props.onCommerceValueChange({ phone })
-              }
+              onChangeText={phone => this.props.onCommerceValueChange({ phone })}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
             />
@@ -179,9 +169,7 @@ class RegisterCommerce extends Component {
               autoCapitalize="none"
               keyboardType="email-address"
               errorMessage={this.state.emailError}
-              onChangeText={email =>
-                this.props.onCommerceValueChange({ email: email.trim() })
-              }
+              onChangeText={email => this.props.onCommerceValueChange({ email: email.trim() })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -206,22 +194,17 @@ class RegisterCommerce extends Component {
               multiline={true}
               maxLength={250}
               maxHeight={180}
-              onChangeText={description =>
-                this.props.onCommerceValueChange({ description })
-              }
+              onChangeText={description => this.props.onCommerceValueChange({ description })}
               onBlur={() =>
                 this.props.onCommerceValueChange({
-                  description: trimString(this.props.description)
+                  description: trimString(this.props.description),
                 })
               }
             />
           </CardSection>
 
           <CardSection>
-            <Button
-              title="Continuar"
-              onPress={this.onContinueButtonPress.bind(this)}
-            />
+            <Button title="Continuar" onPress={this.onContinueButtonPress.bind(this)} />
           </CardSection>
         </View>
       </KeyboardAwareScrollView>
@@ -230,17 +213,7 @@ class RegisterCommerce extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    name,
-    description,
-    cuit,
-    email,
-    phone,
-    area,
-    areasList,
-    error,
-    cuitExists
-  } = state.commerceData;
+  const { name, description, cuit, email, phone, area, areasList, error, cuitExists } = state.commerceData;
 
   return {
     name,
@@ -251,7 +224,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     error,
-    cuitExists
+    cuitExists,
   };
 };
 
@@ -259,5 +232,5 @@ export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceFormOpen,
   onAreasReadForPicker,
-  onCuitValidate
+  onCuitValidate,
 })(RegisterCommerce);

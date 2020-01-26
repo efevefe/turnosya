@@ -14,34 +14,30 @@ const ReviewItem = props => (
       {props.comment ? (
         <Text style={commentStyle}>{props.comment}</Text>
       ) : (
-          <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
-        )}
+        <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
+      )}
     </CardSection>
     <Divider />
   </View>
 );
 
-const {
-  topCardContainerStyle,
-  commentStyle,
-  placeholderStyle
-} = StyleSheet.create({
+const { topCardContainerStyle, commentStyle, placeholderStyle } = StyleSheet.create({
   topCardContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     margin: 8,
     marginBottom: 0,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   commentStyle: {
     fontSize: 15,
-    margin: 10
+    margin: 10,
   },
   placeholderStyle: {
     color: 'gray',
     fontSize: 15,
-    margin: 10
-  }
+    margin: 10,
+  },
 });
 
 export { ReviewItem };

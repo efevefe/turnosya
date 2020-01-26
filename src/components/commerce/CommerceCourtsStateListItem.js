@@ -8,25 +8,18 @@ class CommerceCourtsStateListItem extends Component {
     if (this.props.disabled) {
       return {
         badgeTitle: 'Deshabilitada',
-        badgeColor: 'grey'
+        badgeColor: 'grey',
       };
     } else {
       return {
         badgeTitle: this.props.courtAvailable ? 'Disponible' : 'Ocupada',
-        badgeColor: this.props.courtAvailable ? SUCCESS_COLOR : MAIN_COLOR
+        badgeColor: this.props.courtAvailable ? SUCCESS_COLOR : MAIN_COLOR,
       };
     }
-  }
+  };
 
   render() {
-    const {
-      name,
-      court,
-      ground,
-      price,
-      lightPrice,
-      id
-    } = this.props.court;
+    const { name, court, ground, price, lightPrice, id } = this.props.court;
     const { disabled, onPress } = this.props;
     const { badgeTitle, badgeColor } = this.setCourtBadge();
 
@@ -40,25 +33,17 @@ class CommerceCourtsStateListItem extends Component {
               <Text
                 style={{
                   textAlign: 'right',
-                  lineHeight: 20
+                  lineHeight: 20,
                 }}
               >
-                {
-                  lightPrice
-                    ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
-                    : `Sin Luz: $${price}`
-                }
+                {lightPrice ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}` : `Sin Luz: $${price}`}
               </Text>
             </View>
           }
           key={id}
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
-              <Text
-                style={{ color: 'grey' }}
-              >
-                {`${court} - ${ground}`}
-              </Text>
+              <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
               <Badge
                 value={badgeTitle}
                 badgeStyle={{
@@ -67,7 +52,7 @@ class CommerceCourtsStateListItem extends Component {
                   borderRadius: 12.5,
                   paddingLeft: 5,
                   paddingRight: 5,
-                  backgroundColor: badgeColor
+                  backgroundColor: badgeColor,
                 }}
                 containerStyle={{ paddingTop: 3 }}
               />

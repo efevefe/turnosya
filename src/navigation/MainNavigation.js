@@ -10,10 +10,10 @@ const mainNavigation = createSwitchNavigator(
     login: GuestNavigation,
     client: ClientDrawer,
     sports: SportsDrawer,
-    hairdressers: HairdressersDrawer
+    hairdressers: HairdressersDrawer,
   },
   {
-    initialRouteName: 'loading'
+    initialRouteName: 'loading',
   }
 );
 

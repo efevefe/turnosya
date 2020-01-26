@@ -20,7 +20,7 @@ import {
   ON_EMAIL_VERIFY_REMINDED,
   ON_REGISTER_FORM_OPEN,
   ON_WORKPLACES_READ,
-  ON_USER_PASSWORD_UPDATE
+  ON_USER_PASSWORD_UPDATE,
 } from './types';
 
 export const onClientDataValueChange = payload => {
@@ -31,13 +31,7 @@ export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({
-  email,
-  password,
-  firstName,
-  lastName,
-  phone
-}) => {
+export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -55,20 +49,16 @@ export const onUserRegister = ({
             email,
             phone,
             commerceId: null,
-            softDelete: null
+            softDelete: null,
           })
           .then(() => {
             dispatch({ type: ON_USER_REGISTER_SUCCESS, payload: user });
             dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
             user.user.sendEmailVerification();
           })
-          .catch(error =>
-            dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-          );
+          .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
       })
-      .catch(error =>
-        dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
   };
 };
 
@@ -83,19 +73,14 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
       .then(doc =>
         dispatch({
           type: ON_USER_READ,
-          payload: { ...doc.data(), clientId: doc.id }
+          payload: { ...doc.data(), clientId: doc.id },
         })
       )
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));
   };
 };
 
-export const onUserUpdate = ({
-  firstName,
-  lastName,
-  phone,
-  profilePicture
-}) => async dispatch => {
+export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => async dispatch => {
   dispatch({ type: ON_USER_UPDATING });
 
   const { currentUser } = firebase.auth();
@@ -120,7 +105,7 @@ export const onUserUpdate = ({
         firstName,
         lastName,
         phone,
-        profilePicture: url ? url : profilePicture
+        profilePicture: url ? url : profilePicture,
       });
 
     dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture });
@@ -193,7 +178,7 @@ export const onUserWorkplacesRead = () => dispatch => {
       snapshot.forEach(doc =>
         workplaces.push({
           commerceId: doc.data().commerceId,
-          name: doc.data().name
+          name: doc.data().name,
         })
       );
       dispatch({ type: ON_WORKPLACES_READ, payload: workplaces });

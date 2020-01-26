@@ -5,14 +5,7 @@ import Constants from 'expo-constants';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 
 const Drawer = props => {
-  const {
-    profilePicture,
-    profilePicturePlaceholder,
-    onProfilePicturePress,
-    name,
-    role,
-    children
-  } = props;
+  const { profilePicture, profilePicturePlaceholder, onProfilePicturePress, name, role, children } = props;
 
   renderName = name => {
     if (!!name) {
@@ -24,15 +17,12 @@ const Drawer = props => {
     if (role) {
       return <Text style={styles.roleStyle}>{role}</Text>;
     }
-  }
+  };
 
   return (
     <View>
       <View style={styles.drawerHeader}>
-        <Image
-          source={require('../../../assets/header-logo.png')}
-          style={styles.headerLogo}
-        />
+        <Image source={require('../../../assets/header-logo.png')} style={styles.headerLogo} />
       </View>
       <View style={styles.drawerHeaderContainer}>
         <Avatar
@@ -57,24 +47,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     paddingLeft: 15,
-    paddingRight: 15
+    paddingRight: 15,
   },
   drawerHeader: {
     height: Constants.statusBarHeight + NAVIGATION_HEIGHT,
     backgroundColor: MAIN_COLOR,
     justifyContent: 'flex-end',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   headerLogo: {
     height: 30, //50 es el size maximo
     width: 210, //230 es el size maximo
-    marginBottom: 10
+    marginBottom: 10,
   },
   nameStyle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 0,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   roleStyle: {
     fontSize: 13,
@@ -84,15 +74,15 @@ const styles = StyleSheet.create({
   avatarStyle: {
     borderWidth: 3,
     borderColor: MAIN_COLOR,
-    margin: 10
+    margin: 10,
   },
   dividerStyle: {
     backgroundColor: 'grey',
     marginTop: 4,
     marginBottom: 5,
     marginLeft: 15,
-    marginRight: 15
-  }
+    marginRight: 15,
+  },
 });
 
 export { Drawer };

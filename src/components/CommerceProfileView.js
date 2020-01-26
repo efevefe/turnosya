@@ -1,19 +1,6 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView
-} from 'react-native';
-import {
-  Avatar,
-  Text,
-  Divider,
-  Image,
-  Button,
-  Rating
-} from 'react-native-elements';
+import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Avatar, Text, Divider, Image, Button, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,7 +11,7 @@ import {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -37,14 +24,13 @@ const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 class CommerceProfileView extends Component {
   state = {
     favorite: false,
-    pictureVisible: false
+    pictureVisible: false,
   };
 
   componentDidMount() {
     let { commerceId, favoriteCommerces } = this.props;
 
-    if (this.props.navigation.state.routeName === 'commerceProfileView')
-      commerceId = this.props.commerce.objectID;
+    if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
@@ -52,13 +38,13 @@ class CommerceProfileView extends Component {
 
     this.props.onCommerceCourtTypesRead({
       commerceId,
-      loadingType: 'loading'
+      loadingType: 'loading',
     });
   }
 
   componentDidUpdate(prevProps) {
     // para evitar esto se deberia guardar el areaId en Algolia
-    if (this.props.areaId && (this.props.areaId !== prevProps.areaId)) {
+    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
       this.props.onReservationValueChange({ areaId: this.props.areaId });
     }
   }
@@ -67,9 +53,7 @@ class CommerceProfileView extends Component {
     if (this.props.description)
       return (
         <View style={styles.descriptionStyle}>
-          <Text style={{ textAlign: 'center', fontSize: 16 }}>
-            {this.props.description}
-          </Text>
+          <Text style={{ textAlign: 'center', fontSize: 16 }}>{this.props.description}</Text>
         </View>
       );
   };
@@ -82,15 +66,10 @@ class CommerceProfileView extends Component {
       const { locationContainerStyle } = styles;
 
       return (
-        <TouchableOpacity
-          onPress={() => this.onMapPress()}
-          style={locationContainerStyle}
-        >
+        <TouchableOpacity onPress={() => this.onMapPress()} style={locationContainerStyle}>
           <Ionicons name="md-pin" type="ionicon" size={16} />
 
-          <Text
-            style={{ textAlign: 'center', paddingLeft: 5 }}
-          >{`${address}, ${city}, ${name}`}</Text>
+          <Text style={{ textAlign: 'center', paddingLeft: 5 }}>{`${address}, ${city}, ${name}`}</Text>
         </TouchableOpacity>
       );
     }
@@ -110,7 +89,7 @@ class CommerceProfileView extends Component {
       city: this.props.city,
       provinceName: this.props.province.name,
       latitude: this.props.latitude,
-      longitude: this.props.longitude
+      longitude: this.props.longitude,
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -135,7 +114,7 @@ class CommerceProfileView extends Component {
       commerceId,
       navigation,
       loadingProfile,
-      loadingCourtTypes
+      loadingCourtTypes,
     } = this.props;
 
     if (loadingProfile || loadingCourtTypes) return <Spinner />;
@@ -147,7 +126,7 @@ class CommerceProfileView extends Component {
             style={{
               height: imageSizeHeight,
               width: imageSizeWidth,
-              position: 'absolute'
+              position: 'absolute',
             }}
             source={headerPicture ? { uri: headerPicture } : null}
           />
@@ -155,13 +134,7 @@ class CommerceProfileView extends Component {
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
               type="clear"
-              icon={
-                <Ionicons
-                  name="md-information-circle-outline"
-                  color={'white'}
-                  size={30}
-                />
-              }
+              icon={<Ionicons name="md-information-circle-outline" color={'white'} size={30} />}
               onPress={() => navigation.navigate('commerceProfileInfo')}
             />
 
@@ -171,8 +144,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -182,7 +155,7 @@ class CommerceProfileView extends Component {
               icon={<Ionicons name="md-text" color={'white'} size={30} />}
               onPress={() =>
                 this.props.navigation.navigate('commerceReviewsList', {
-                  commerceId: this.props.commerceId
+                  commerceId: this.props.commerceId,
                 })
               }
             />
@@ -205,16 +178,11 @@ class CommerceProfileView extends Component {
             <TouchableOpacity
               onPress={() =>
                 this.props.navigation.navigate('commerceReviewsList', {
-                  commerceId: this.props.commerceId
+                  commerceId: this.props.commerceId,
                 })
               }
             >
-              <Rating
-                style={{ padding: 8 }}
-                readonly
-                imageSize={22}
-                startingValue={this.getRatingValue()}
-              />
+              <Rating style={{ padding: 8 }} readonly imageSize={22} startingValue={this.getRatingValue()} />
             </TouchableOpacity>
 
             {this.renderLocation()}
@@ -227,7 +195,7 @@ class CommerceProfileView extends Component {
               marginTop: 15,
               marginBottom: 0,
               marginLeft: 15,
-              marginRight: 15
+              marginRight: 15,
             }}
           />
         </View>
@@ -252,33 +220,33 @@ class CommerceProfileView extends Component {
 const styles = StyleSheet.create({
   containerStyle: {
     flex: 1,
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: imageSizeHeight / 2 - 49
+    marginTop: imageSizeHeight / 2 - 49,
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    marginBottom: 10
+    marginBottom: 10,
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
     margin: 10,
     marginLeft: 15,
-    marginRight: 15
+    marginRight: 15,
   },
   descriptionStyle: {
     alignItems: 'center',
-    marginHorizontal: 15
-  }
+    marginHorizontal: 15,
+  },
 });
 
 const mapStateToProps = state => {
@@ -299,7 +267,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     rating,
-    area: { areaId }
+    area: { areaId },
   } = state.commerceData;
 
   return {
@@ -319,7 +287,7 @@ const mapStateToProps = state => {
     cards,
     loadingCourtTypes,
     loadingProfile,
-    areaId
+    areaId,
   };
 };
 
@@ -329,5 +297,5 @@ export default connect(mapStateToProps, {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
 })(CommerceProfileView);

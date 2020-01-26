@@ -6,10 +6,7 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import {
-  stackNavigationOptions,
-  tabNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCourtsSchedule from '../components/client/ClientCourtsSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -39,20 +36,20 @@ const filtersStack = createStackNavigator(
         headerStyle: {
           ...stackNavigationOptions.defaultNavigationOptions.headerStyle,
           borderBottomWidth: 0,
-          elevation: 0
-        }
-      }
+          elevation: 0,
+        },
+      },
     },
     commercesFiltersMap: {
       screen: CommercesFiltersMap,
       navigationOptions: {
-        title: 'Seleccionar ubicación'
-      }
-    }
+        title: 'Seleccionar ubicación',
+      },
+    },
   },
   {
     ...stackNavigationOptions,
-    mode: 'modal' // necesito iOS para ver si funca esto (Nico)
+    mode: 'modal', // necesito iOS para ver si funca esto (Nico)
   }
 );
 
@@ -70,99 +67,93 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     commercesList: {
       screen: CommercesList,
       navigationOptions: {
-        title: 'Buscar Negocios'
-      }
+        title: 'Buscar Negocios',
+      },
     },
     commercesListMap: {
       screen: CommercesMap,
       navigationOptions: {
-        title: 'Buscar Negocios'
-      }
+        title: 'Buscar Negocios',
+      },
     },
     commerceProfileView: {
       screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft: (
-          <HeaderBackButton
-            tintColor="white"
-            title="Back"
-            onPress={() => onCommerceProfileGoBack(navigation)}
-          />
-        )
-      })
+          <HeaderBackButton tintColor="white" title="Back" onPress={() => onCommerceProfileGoBack(navigation)} />
+        ),
+      }),
     },
     commerceProfileInfo: {
       screen: CommerceProfileInfo,
       navigationOptions: {
-        title: 'Información'
-      }
+        title: 'Información',
+      },
     },
     commerceLocationMap: {
       screen: CommerceLocationMap,
       navigationOptions: {
-        title: 'Dirección'
-      }
+        title: 'Dirección',
+      },
     },
     commerceServicesList: {
       screen: CommerceServicesList,
       navigationOptions: {
-        title: 'Servicios'
-      }
+        title: 'Servicios',
+      },
     },
     commerceEmployeesList: {
       screen: CommerceEmployeesList,
       navigationOptions: {
-        title: 'Estilistas'
-      }
+        title: 'Estilistas',
+      },
     },
     commerceCourtsSchedule: {
       screen: ClientCourtsSchedule,
       navigationOptions: {
-        title: 'Turnos Disponibles'
-      }
+        title: 'Turnos Disponibles',
+      },
     },
     commerceServicesSchedule: {
       screen: ClientServicesSchedule,
       navigationOptions: {
-        title: 'Turnos Disponibles'
-      }
+        title: 'Turnos Disponibles',
+      },
     },
     commerceCourtsList: {
-      screen: CommerceCourtsList
+      screen: CommerceCourtsList,
     },
     confirmCourtReservation: {
       screen: ConfirmCourtReservation,
       navigationOptions: {
-        title: 'Turno'
-      }
+        title: 'Turno',
+      },
     },
     confirmServiceReservation: {
       screen: ConfirmServiceReservation,
       navigationOptions: {
-        title: 'Turno'
-      }
+        title: 'Turno',
+      },
     },
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas del Comercio'
-      }
+        title: 'Reseñas del Comercio',
+      },
     },
     filtersStack: {
       screen: filtersStack,
       navigationOptions: {
-        header: null
-      }
-    }
+        header: null,
+      },
+    },
   },
   stackNavigationOptions
 );
@@ -189,17 +180,15 @@ const calendarStack = createStackNavigator(
       screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     reservationDetails: {
       screen: ClientReservationDetails,
       navigationOptions: {
-        title: 'Detalle del Turno'
-      }
-    }
+        title: 'Detalle del Turno',
+      },
+    },
   },
   stackNavigationOptions
 );
@@ -210,11 +199,9 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
-    }
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
+    },
   },
   stackNavigationOptions
 );
@@ -225,17 +212,15 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: navigation.getParam('leftIcon') || <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     clientReviewsList: {
       screen: ClientReviewsList,
       navigationOptions: {
-        title: 'Reseñas del Cliente'
-      }
-    }
+        title: 'Reseñas del Cliente',
+      },
+    },
   },
   stackNavigationOptions
 );
@@ -247,11 +232,11 @@ const clientTabs = createBottomTabNavigator(
     search: searchStack,
     calendar: calendarStack,
     favorites: favoritesStack,
-    profile: profileStack
+    profile: profileStack,
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'search'
+    initialRouteName: 'search',
   }
 );
 

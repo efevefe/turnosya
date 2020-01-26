@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  View,
-  AppState,
-  StyleSheet,
-  Image,
-  Text
-} from 'react-native';
+import { Platform, View, AppState, StyleSheet, Image, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
@@ -19,7 +12,7 @@ import {
   askPermissionLocation,
   getCurrentPosition,
   getPermissionLocationStatus,
-  getAddressFromLatAndLong
+  getAddressFromLatAndLong,
 } from '../../utils';
 
 class LocationMessages extends Component {
@@ -27,7 +20,7 @@ class LocationMessages extends Component {
     location: 'location sin setear',
     appState: AppState.currentState,
     permissionStatus: null,
-    modal: false
+    modal: false,
   };
 
   async componentDidMount() {
@@ -50,13 +43,10 @@ class LocationMessages extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     try {
-      if (
-        this.state.appState === 'active' &&
-        prevState.appState !== this.state.appState
-      ) {
+      if (this.state.appState === 'active' && prevState.appState !== this.state.appState) {
         this.setState({
           permissionStatus: await getPermissionLocationStatus(),
-          modal: true
+          modal: true,
         });
       }
     } catch (error) {
@@ -65,7 +55,7 @@ class LocationMessages extends Component {
 
     if (this.state.permissionStatus === 'permissionsAllowed') {
       const {
-        coords: { latitude, longitude }
+        coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync();
 
       this.props.onUserLocationChange({ latitude, longitude });
@@ -88,7 +78,7 @@ class LocationMessages extends Component {
       const { latitude, longitude } = currentLatLong.coords;
       const [addressResult] = await getAddressFromLatAndLong({
         latitude,
-        longitude
+        longitude,
       });
       const { name, street, city, region, country } = addressResult;
 
@@ -100,7 +90,7 @@ class LocationMessages extends Component {
         provinceName: region,
         country,
         latitude,
-        longitude
+        longitude,
       };
 
       this.props.onUserLocationChange(location);
@@ -124,47 +114,29 @@ class LocationMessages extends Component {
                 }}
               />
               <Divider />
-              <MenuItem
-                title="Más tarde"
-                icon="md-time"
-                onPress={() => this.closeModal()}
-              />
+              <MenuItem title="Más tarde" icon="md-time" onPress={() => this.closeModal()} />
             </View>
           );
         case 'permissionsAllowedWithGPSOff':
           return (
             <View>
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/settings.png')}
-                  style={styles.iosModalIcon}
-                />
-                <Text style={styles.iosModalText}>
-                  Abrí la aplicación Ajustes
-                </Text>
+                <Image source={require('../../../assets/ios-icons/settings.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Abrí la aplicación Ajustes</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/privacy.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/privacy.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Seleccioná Privacidad</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/location.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/location.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Seleccioná Localización</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/switch.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/switch.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Activá la Localización</Text>
               </View>
               <Divider />
@@ -185,18 +157,12 @@ class LocationMessages extends Component {
             title="Ir a Configuración"
             icon="md-settings"
             onPress={() => {
-              this.state.permissionStatus === 'permissionsDenied'
-                ? askPermissionLocation()
-                : openGPSAndroid();
+              this.state.permissionStatus === 'permissionsDenied' ? askPermissionLocation() : openGPSAndroid();
               this.closeModal();
             }}
           />
           <Divider />
-          <MenuItem
-            title="Más tarde"
-            icon="md-time"
-            onPress={() => this.closeModal()}
-          />
+          <MenuItem title="Más tarde" icon="md-time" onPress={() => this.closeModal()} />
         </View>
       );
     }
@@ -233,17 +199,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     padding: 8,
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   iosModalText: {
     fontWeight: '400',
     fontSize: 13,
-    marginLeft: 15
+    marginLeft: 15,
   },
   iosModalIcon: {
     height: 30,
-    width: 30
-  }
+    width: 30,
+  },
 });
 
 export default connect(null, { onUserLocationChange })(LocationMessages);

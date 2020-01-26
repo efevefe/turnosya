@@ -4,45 +4,27 @@ import { Button, Icon } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
 class DrawerItem extends Component {
-  renderIcon = (color) => {
+  renderIcon = color => {
     if (this.props.icon) {
       return (
-        <View style={{ width: 25, alignItems: 'center' }} >
-          {
-            this.props.loadingWithText ? (
-              <ActivityIndicator
-                style={StyleSheet.flatten({ marginVertical: 2 })}
-                color={color}
-                size='small'
-              />
-            ) : (
-                this.props.icon.type ? (
-                  <Icon
-                    name={this.props.icon.name}
-                    type={this.props.icon.type}
-                    color={color}
-                    size={22}
-                  />
-                ) : (
-                    <Ionicons
-                      name={this.props.icon.name}
-                      color={color}
-                      size={22}
-                    />
-                  )
-              )
-          }
-
+        <View style={{ width: 25, alignItems: 'center' }}>
+          {this.props.loadingWithText ? (
+            <ActivityIndicator style={StyleSheet.flatten({ marginVertical: 2 })} color={color} size="small" />
+          ) : this.props.icon.type ? (
+            <Icon name={this.props.icon.name} type={this.props.icon.type} color={color} size={22} />
+          ) : (
+            <Ionicons name={this.props.icon.name} color={color} size={22} />
+          )}
         </View>
       );
     }
-  }
+  };
 
   render() {
     return (
       <Button
         {...this.props}
-        type='clear'
+        type="clear"
         icon={() => this.renderIcon(color)}
         loadingProps={{ color: color }}
         buttonStyle={[styles.buttonStyle, this.props.buttonStyle]}
@@ -62,18 +44,18 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 15,
     margin: 0,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   containerStyle: {
     borderRadius,
     overflow: 'hidden',
-    margin: 0
+    margin: 0,
   },
   titleStyle: {
     fontSize: 15,
     color: color,
-    paddingLeft: 18
-  }
+    paddingLeft: 18,
+  },
 });
 
 export { DrawerItem };

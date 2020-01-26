@@ -14,7 +14,7 @@ import {
   ON_COURT_UPDATE,
   COMMERCE_COURT_TYPES_READ,
   COMMERCE_COURT_TYPES_READING,
-  COMMERCE_COURT_TYPES_READ_FAIL
+  COMMERCE_COURT_TYPES_READ_FAIL,
 } from './types';
 
 export const onCourtValueChange = payload => {
@@ -54,16 +54,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  {
-    name,
-    court,
-    ground,
-    price,
-    lightPrice,
-    disabledFrom,
-    disabledTo,
-    commerceId
-  },
+  { name, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -91,7 +82,7 @@ export const onCourtCreate = (
 
               // este campo lo dejo por ahora para que las consultas que tienen indexado este campo sigan funcionando
               // pero no se usa más, una vez que todos estemos en la nueva versión hay que borrarlo
-              courtState: true
+              courtState: true,
             })
             .then(() => {
               dispatch({ type: ON_COURT_CREATE });
@@ -122,12 +113,8 @@ const formatCourt = doc => {
   return {
     ...doc.data(),
     id: doc.id,
-    disabledFrom: doc.data().disabledFrom
-      ? moment(doc.data().disabledFrom.toDate())
-      : null,
-    disabledTo: doc.data().disabledTo
-      ? moment(doc.data().disabledTo.toDate())
-      : null
+    disabledFrom: doc.data().disabledFrom ? moment(doc.data().disabledFrom.toDate()) : null,
+    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null,
   };
 };
 
@@ -175,7 +162,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
     commerceId,
     disabledFrom,
     disabledTo,
-    reservationsToCancel
+    reservationsToCancel,
   } = courtData;
 
   const db = firebase.firestore();
@@ -199,7 +186,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
       price,
       lightPrice,
       disabledFrom: disabledFrom ? disabledFrom.toDate() : null,
-      disabledTo: disabledTo ? disabledTo.toDate() : null
+      disabledTo: disabledTo ? disabledTo.toDate() : null,
     });
 
     if (reservationsToCancel.length) {
@@ -246,7 +233,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
 
             dispatch({
               type: COMMERCE_COURT_TYPES_READ,
-              payload: courtTypesList
+              payload: courtTypesList,
             });
           })
           .catch(error => dispatch({ type: COMMERCE_COURT_TYPES_READ_FAIL }));
@@ -255,10 +242,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsReadByType = ({
-  commerceId,
-  courtType
-}) => dispatch => {
+export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => dispatch => {
   dispatch({ type: ON_COURT_READING, payload: 'loading' });
 
   const db = firebase.firestore();

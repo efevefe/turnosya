@@ -12,31 +12,21 @@ import {
   ON_CLIENT_REVIEW_DELETE_FAIL,
   ON_CLIENT_REVIEW_READING,
   ON_CLIENT_REVIEW_READ,
-  ON_CLIENT_REVIEW_READ_FAIL
+  ON_CLIENT_REVIEW_READ_FAIL,
 } from './types';
 
 export const onClientReviewValueChange = payload => {
   return { type: ON_CLIENT_REVIEW_VALUE_CHANGE, payload };
 };
 
-export const onClientReviewCreate = ({
-  commerceId,
-  rating,
-  comment,
-  reservationId,
-  clientId
-}) => dispatch => {
+export const onClientReviewCreate = ({ commerceId, rating, comment, reservationId, clientId }) => dispatch => {
   dispatch({ type: ON_CLIENT_REVIEW_SAVING });
 
   const db = firebase.firestore();
 
   const reviewRef = db.collection(`Profiles/${clientId}/Reviews`).doc();
-  const clientReservationRef = db
-    .collection(`Profiles/${clientId}/Reservations`)
-    .doc(reservationId);
-  const commerceReservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
+  const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
   const clientRef = db.collection('Profiles').doc(clientId);
 
   db.runTransaction(transaction => {
@@ -51,16 +41,16 @@ export const onClientReviewCreate = ({
         date: new Date(),
         commerceId,
         reservationId,
-        softDelete: null
+        softDelete: null,
       });
 
       transaction.update(commerceReservationRef, { reviewId: reviewRef.id });
       transaction.update(clientReservationRef, {
-        receivedReviewId: reviewRef.id
+        receivedReviewId: reviewRef.id,
       });
 
       transaction.update(clientRef, {
-        rating: { total: ratingTotal + rating, count: ratingCount + 1 }
+        rating: { total: ratingTotal + rating, count: ratingCount + 1 },
       });
     });
   })
@@ -84,19 +74,14 @@ export const onClientReviewReadById = ({ clientId, reviewId }) => dispatch => {
           ? dispatch({ type: ON_CLIENT_REVIEW_READ })
           : dispatch({
               type: ON_CLIENT_REVIEW_READ,
-              payload: { rating, comment, reviewId }
+              payload: { rating, comment, reviewId },
             });
       })
       .catch(() => dispatch({ type: ON_CLIENT_REVIEW_READ_FAIL }));
   }
 };
 
-export const onClientReviewUpdate = ({
-  clientId,
-  rating,
-  comment,
-  reviewId
-}) => async dispatch => {
+export const onClientReviewUpdate = ({ clientId, rating, comment, reviewId }) => async dispatch => {
   dispatch({ type: ON_CLIENT_REVIEW_SAVING });
 
   const db = firebase.firestore();
@@ -114,11 +99,11 @@ export const onClientReviewUpdate = ({
       transaction.update(reviewRef, {
         rating,
         comment,
-        date: new Date()
+        date: new Date(),
       });
 
       transaction.update(clientRef, {
-        rating: { total: total - oldRating + rating, count }
+        rating: { total: total - oldRating + rating, count },
       });
     });
   })
@@ -126,24 +111,15 @@ export const onClientReviewUpdate = ({
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_SAVE_FAIL }));
 };
 
-export const onClientReviewDelete = ({
-  clientId,
-  reservationId,
-  reviewId,
-  commerceId
-}) => async dispatch => {
+export const onClientReviewDelete = ({ clientId, reservationId, reviewId, commerceId }) => async dispatch => {
   dispatch({ type: ON_CLIENT_REVIEW_DELETING });
 
   const db = firebase.firestore();
 
   const clientRef = db.collection('Profiles').doc(clientId);
   const reviewRef = db.collection(`Profiles/${clientId}/Reviews`).doc(reviewId);
-  const reservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
-  const clientReservationRef = db
-    .collection(`Profiles/${clientId}/Reservations`)
-    .doc(reservationId);
+  const reservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+  const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
 
   const oldReview = await reviewRef.get();
   const oldRating = oldReview.data().rating;
@@ -158,7 +134,7 @@ export const onClientReviewDelete = ({
       transaction.update(reviewRef, { softDelete: new Date() });
 
       transaction.update(clientRef, {
-        rating: { total: total - oldRating, count: count - 1 }
+        rating: { total: total - oldRating, count: count - 1 },
       });
     });
   })

@@ -7,10 +7,7 @@ import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
 import EmployeesList from '../components/commerce/EmployeesList';
 import EmployeeForm from '../components/commerce/EmployeeForm';
-import {
-  stackNavigationOptions,
-  drawerNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 
 const CommerceSettingsStack = createStackNavigator(
   {
@@ -18,15 +15,9 @@ const CommerceSettingsStack = createStackNavigator(
       screen: CommerceSettings,
       navigationOptions: ({ navigation }) => ({
         title: 'Configuración',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-            title='Back'
-          />
-        )
-      })
-    }
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />,
+      }),
+    },
   },
   stackNavigationOptions
 );
@@ -37,49 +28,43 @@ const CommerceEmployeesStack = createStackNavigator(
       screen: EmployeesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Empleados',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-            title='Back'
-          />
-        )
-      })
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />,
+      }),
     },
     employeeForm: {
       screen: EmployeeForm,
       navigationOptions: {
-        title: 'Empleado'
-      }
-    }
+        title: 'Empleado',
+      },
+    },
   },
   stackNavigationOptions
 );
 
 const commonNavigations = {
   commerceSettings: CommerceSettingsStack,
-  commerceEmployees: CommerceEmployeesStack
+  commerceEmployees: CommerceEmployeesStack,
 };
 
 const sportsDrawer = createDrawerNavigator(
   {
     sportsNavigation: SportsNavigation,
-    ...commonNavigations
+    ...commonNavigations,
   },
   {
     ...drawerNavigationOptions,
-    contentComponent: CommerceDrawerContent
+    contentComponent: CommerceDrawerContent,
   }
 );
 
 const hairdressersDrawer = createDrawerNavigator(
   {
     hairdressersNavigation: HairdressersNavigation,
-    ...commonNavigations
+    ...commonNavigations,
   },
   {
     ...drawerNavigationOptions,
-    contentComponent: CommerceDrawerContent
+    contentComponent: CommerceDrawerContent,
   }
 );
 

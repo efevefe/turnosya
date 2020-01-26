@@ -1,33 +1,16 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import { Avatar, Text, Divider, Icon, Rating } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  IconButton
-} from '../common';
+import { CardSection, Input, Spinner, Menu, MenuItem, IconButton } from '../common';
 import LocationMessages from '../common/LocationMessages';
 import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import {
-  onUserRead,
-  onUserUpdate,
-  onClientDataValueChange,
-  onLocationValuesReset
-} from '../../actions';
+import { onUserRead, onUserUpdate, onClientDataValueChange, onLocationValuesReset } from '../../actions';
 
 class ClientProfile extends Component {
   state = {
@@ -37,14 +20,14 @@ class ClientProfile extends Component {
     stateBeforeChanges: null,
     firstNameError: '',
     lastNameError: '',
-    phoneError: ''
+    phoneError: '',
   };
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title'),
       headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon')
+      headerLeft: navigation.getParam('leftIcon'),
     };
   };
 
@@ -73,12 +56,12 @@ class ClientProfile extends Component {
     const { firstName, lastName, phone, profilePicture } = this.props;
     this.setState({
       editEnabled: true,
-      stateBeforeChanges: { firstName, lastName, phone, profilePicture }
+      stateBeforeChanges: { firstName, lastName, phone, profilePicture },
     });
     this.props.navigation.setParams({
       title: 'Modificar Datos',
       rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderCancelButton()
+      leftIcon: this.renderCancelButton(),
     });
   };
 
@@ -88,14 +71,13 @@ class ClientProfile extends Component {
         var { firstName, lastName, phone, profilePicture } = this.props;
         const { newProfilePicture } = this.state;
 
-        if (newProfilePicture)
-          var profilePicture = await imageToBlob(profilePicture);
+        if (newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
 
         this.props.onUserUpdate({
           firstName,
           lastName,
           phone,
-          profilePicture
+          profilePicture,
         });
 
         this.disableEdit();
@@ -115,12 +97,12 @@ class ClientProfile extends Component {
     this.setState({
       editEnabled: false,
       newProfilePicture: false,
-      stateBeforeChanges: null
+      stateBeforeChanges: null,
     });
     this.props.navigation.setParams({
       title: 'Perfil',
       rightIcon: this.renderEditButton(),
-      leftIcon: null
+      leftIcon: null,
     });
   };
 
@@ -155,7 +137,7 @@ class ClientProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: [1, 1]
+        aspect: [1, 1],
       };
 
       const response = await ImagePicker.launchImageLibraryAsync(options);
@@ -179,7 +161,7 @@ class ClientProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: [1, 1]
+        aspect: [1, 1],
       };
 
       let response = await ImagePicker.launchCameraAsync(options);
@@ -215,12 +197,7 @@ class ClientProfile extends Component {
     if (this.props.city && this.props.provinceName) {
       return (
         <View style={locationContainerStyle}>
-          <Icon
-            name="md-pin"
-            type="ionicon"
-            size={16}
-            containerStyle={{ marginRight: 5 }}
-          />
+          <Icon name="md-pin" type="ionicon" size={16} containerStyle={{ marginRight: 5 }} />
           <Text>{`${this.props.city}, ${this.props.provinceName}`}</Text>
         </View>
       );
@@ -254,10 +231,7 @@ class ClientProfile extends Component {
   };
 
   renderPhoneError = () => {
-    if (
-      this.props.phone != '' &&
-      !validateValueType('phone', this.props.phone)
-    ) {
+    if (this.props.phone != '' && !validateValueType('phone', this.props.phone)) {
       this.setState({ phoneError: 'Formato de teléfono incorrecto' });
       return false;
     } else {
@@ -270,16 +244,12 @@ class ClientProfile extends Component {
     this.setState({
       firstNameError: '',
       lastNameError: '',
-      phoneError: ''
+      phoneError: '',
     });
   };
 
   validateMinimumData = () => {
-    return (
-      this.renderFirstNameError() &&
-      this.renderLastNameError() &&
-      this.renderPhoneError()
-    );
+    return this.renderFirstNameError() && this.renderLastNameError() && this.renderPhoneError();
   };
 
   render() {
@@ -303,11 +273,7 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={
-                this.props.profilePicture
-                  ? { uri: this.props.profilePicture }
-                  : null
-              }
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
@@ -322,16 +288,11 @@ class ClientProfile extends Component {
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('clientReviewsList', {
-                clientId: this.props.clientId
+                clientId: this.props.clientId,
               })
             }
           >
-            <Rating
-              style={ratingStyle}
-              readonly
-              imageSize={24}
-              startingValue={this.getRatingValue()}
-            />
+            <Rating style={ratingStyle} readonly imageSize={24} startingValue={this.getRatingValue()} />
           </TouchableOpacity>
         </View>
         <Divider
@@ -339,7 +300,7 @@ class ClientProfile extends Component {
             backgroundColor: 'grey',
             margin: 5,
             marginLeft: 10,
-            marginRight: 10
+            marginRight: 10,
           }}
         />
         <View style={infoContainerStyle}>
@@ -348,9 +309,7 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               autoCapitalize="words"
-              onChangeText={firstName =>
-                this.props.onClientDataValueChange({ firstName })
-              }
+              onChangeText={firstName => this.props.onClientDataValueChange({ firstName })}
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}
               onFocus={() => this.setState({ firstNameError: '' })}
@@ -362,9 +321,7 @@ class ClientProfile extends Component {
               label="Apellido:"
               value={this.props.lastName}
               autoCapitalize="words"
-              onChangeText={lastName =>
-                this.props.onClientDataValueChange({ lastName })
-              }
+              onChangeText={lastName => this.props.onClientDataValueChange({ lastName })}
               editable={this.state.editEnabled}
               errorMessage={this.state.lastNameError}
               onFocus={() => this.setState({ lastNameError: '' })}
@@ -375,9 +332,7 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={phone =>
-                this.props.onClientDataValueChange({ phone })
-              }
+              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
               keyboardType="numeric"
               editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}
@@ -395,23 +350,11 @@ class ClientProfile extends Component {
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
-          <MenuItem
-            title="Elegir de la galería"
-            icon="md-photos"
-            onPress={this.onChoosePicturePress}
-          />
+          <MenuItem title="Elegir de la galería" icon="md-photos" onPress={this.onChoosePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Tomar Foto"
-            icon="md-camera"
-            onPress={this.onTakePicturePress}
-          />
+          <MenuItem title="Tomar Foto" icon="md-camera" onPress={this.onTakePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePicturePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePicturePress} />
         </Menu>
       </KeyboardAwareScrollView>
     );
@@ -425,51 +368,41 @@ const {
   avatarStyle,
   locationContainerStyle,
   infoContainerStyle,
-  ratingStyle
+  ratingStyle,
 } = StyleSheet.create({
   containerStyle: {
     flex: 1,
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    padding: 20
+    padding: 20,
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    margin: 10
+    margin: 10,
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
     padding: 10,
-    paddingBottom: 22
+    paddingBottom: 22,
   },
-  ratingStyle: { paddingTop: 14 }
+  ratingStyle: { paddingTop: 14 },
 });
 
 const mapStateToProps = state => {
-  const {
-    clientId,
-    firstName,
-    lastName,
-    phone,
-    email,
-    profilePicture,
-    rating,
-    loading,
-    refreshing
-  } = state.clientData;
+  const { clientId, firstName, lastName, phone, email, profilePicture, rating, loading, refreshing } = state.clientData;
 
   const { city, provinceName } = state.locationData.userLocation;
 
@@ -484,7 +417,7 @@ const mapStateToProps = state => {
     loading,
     refreshing,
     city,
-    provinceName
+    provinceName,
   };
 };
 
@@ -492,5 +425,5 @@ export default connect(mapStateToProps, {
   onUserRead,
   onUserUpdate,
   onClientDataValueChange,
-  onLocationValuesReset
+  onLocationValuesReset,
 })(ClientProfile);

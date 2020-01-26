@@ -6,16 +6,14 @@ import * as Location from 'expo-location';
 const LocationStatus = {
   permissionsAllowed: 'permissionsAllowed',
   permissionsDenied: 'permissionsDenied',
-  permissionsAllowedWithGPSOff: 'permissionsAllowedWithGPSOff'
+  permissionsAllowedWithGPSOff: 'permissionsAllowedWithGPSOff',
 };
 
 export const getPermissionLocationStatus = async () => {
   try {
     const { status } = await getPermissionLocation();
 
-    return Platform.OS === 'ios'
-      ? getLocationIos(status)
-      : getLocationAndroid(status);
+    return Platform.OS === 'ios' ? getLocationIos(status) : getLocationAndroid(status);
   } catch (error) {
     console.error(error);
   }
@@ -57,7 +55,7 @@ export const getCurrentPosition = async () => {
   try {
     // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
     return await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High
+      accuracy: Location.Accuracy.High,
     });
   } catch (error) {
     console.error(error);
@@ -68,7 +66,7 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
   try {
     return await Location.reverseGeocodeAsync({
       latitude,
-      longitude
+      longitude,
     });
   } catch (error) {
     console.error(error);
@@ -85,9 +83,7 @@ export const getLatitudeAndLongitudeFromString = async string => {
 
 export const openGPSAndroid = () => {
   try {
-    IntentLauncher.startActivityAsync(
-      IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
-    ).then(async () => {
+    IntentLauncher.startActivityAsync(IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS).then(async () => {
       if (await Location.hasServicesEnabledAsync()) {
         return LocationStatus.permissionsAllowed;
       }

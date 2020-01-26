@@ -8,7 +8,7 @@ import { connectStateResults } from 'react-instantsearch/connectors';
 class StateResults extends Component {
   componentDidUpdate = () => {
     this.props.onCommercesListValueChange({
-      searching: this.props.isSearchStalled
+      searching: this.props.isSearchStalled,
     });
   };
 
@@ -17,6 +17,4 @@ class StateResults extends Component {
 
 const ConnectedStateResults = connectStateResults(StateResults);
 
-export default connect(null, { onCommercesListValueChange })(
-  ConnectedStateResults
-);
+export default connect(null, { onCommercesListValueChange })(ConnectedStateResults);

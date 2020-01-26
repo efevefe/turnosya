@@ -5,11 +5,7 @@ import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from '../common';
 import { validateValueType } from '../../utils';
-import {
-  onServiceValueChange,
-  onServiceCreate,
-  onServiceUpdate
-} from '../../actions';
+import { onServiceValueChange, onServiceCreate, onServiceUpdate } from '../../actions';
 
 class ServiceForm extends Component {
   state = { nameError: '', durationError: '', priceError: '' };
@@ -22,16 +18,7 @@ class ServiceForm extends Component {
 
   onButtonPressHandler() {
     if (this.validateMinimumData()) {
-      const {
-        name,
-        duration,
-        price,
-        description,
-        navigation,
-        commerceId,
-        employeeId,
-        employeesIds
-      } = this.props;
+      const { name, duration, price, description, navigation, commerceId, employeeId, employeesIds } = this.props;
       const { params } = this.props.navigation.state;
 
       if (params) {
@@ -45,7 +32,7 @@ class ServiceForm extends Component {
             description,
             id,
             commerceId,
-            employeesIds
+            employeesIds,
           },
           navigation
         );
@@ -57,7 +44,7 @@ class ServiceForm extends Component {
             price,
             description,
             commerceId,
-            employeesIds: [employeeId]
+            employeesIds: [employeeId],
           },
           navigation
         );
@@ -102,11 +89,7 @@ class ServiceForm extends Component {
   };
 
   validateMinimumData = () => {
-    return (
-      this.renderNameError() &&
-      this.renderDurationError() &&
-      this.renderPriceError()
-    );
+    return this.renderNameError() && this.renderDurationError() && this.renderPriceError();
   };
 
   render() {
@@ -148,9 +131,7 @@ class ServiceForm extends Component {
                 keyboardType="numeric"
                 value={this.props.price}
                 errorMessage={this.state.priceError}
-                onChangeText={price =>
-                  this.props.onServiceValueChange({ price })
-                }
+                onChangeText={price => this.props.onServiceValueChange({ price })}
                 onFocus={() => this.setState({ priceError: '' })}
                 onBlur={this.renderPriceError}
               />
@@ -162,18 +143,12 @@ class ServiceForm extends Component {
                 multiline={true}
                 maxLength={250}
                 maxHeight={180}
-                onChangeText={description =>
-                  this.props.onServiceValueChange({ description })
-                }
+                onChangeText={description => this.props.onServiceValueChange({ description })}
                 value={this.props.description}
               />
             </CardSection>
             <CardSection>
-              <Button
-                title="Guardar"
-                loading={this.props.loading}
-                onPress={this.onButtonPressHandler.bind(this)}
-              />
+              <Button title="Guardar" loading={this.props.loading} onPress={this.onButtonPressHandler.bind(this)} />
             </CardSection>
           </Card>
         </View>
@@ -186,20 +161,12 @@ const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
     paddingTop: 10,
-    borderRadius: 10
-  }
+    borderRadius: 10,
+  },
 });
 
 const mapStateToProps = state => {
-  const {
-    name,
-    duration,
-    price,
-    description,
-    error,
-    loading,
-    employeesIds
-  } = state.serviceForm;
+  const { name, duration, price, description, error, loading, employeesIds } = state.serviceForm;
   const { commerceId } = state.commerceData;
   const { employeeId } = state.roleData;
 
@@ -209,5 +176,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onServiceValueChange,
   onServiceCreate,
-  onServiceUpdate
+  onServiceUpdate,
 })(ServiceForm);

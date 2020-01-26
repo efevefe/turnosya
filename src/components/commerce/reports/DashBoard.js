@@ -16,7 +16,7 @@ const chartsData = [
     description:
       'Visualize la cantidad de reservas que recibe su negocio por día. ' +
       'Ayuda a organizar sus horarios, servicios, empleados en base a ' +
-      'las necesidades y gustos de sus clientes.'
+      'las necesidades y gustos de sus clientes.',
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const chartsData = [
       'Muestra la cantidad de ingresos percibidos en cada mes de un año. ' +
       'De esta manera puede visualizar el progreso de ingresos a lo ' +
       'largo de un determinado año, conociendo el comportamiento de ' +
-      'las distintas etapas del año.'
+      'las distintas etapas del año.',
   },
   {
     id: 3,
@@ -37,16 +37,14 @@ const chartsData = [
     description:
       'Haga un seguimiento de las calificaciones que recibe de sus ' +
       'clientes. Nos ayuda a observar las fluctuaciones de las ' +
-      'opiniones y gustos a lo largo del año.'
+      'opiniones y gustos a lo largo del año.',
   },
   {
     id: 4,
     title: 'Turnos Cancelados/Realizados',
     image: require(imagesRoute + 'reservations-chart.png'),
     screen: 'reservedAndCancelledShiftChart',
-    description:
-      'Haga una comparación entre la cantidad de reservas realizadas y ' +
-      'las canceladas.'
+    description: 'Haga una comparación entre la cantidad de reservas realizadas y ' + 'las canceladas.',
   },
   {
     id: 5,
@@ -56,14 +54,13 @@ const chartsData = [
     description:
       'Determine en qué horario recibe la mayor cantidad de demanda de ' +
       'turnos. Podrá así mejorar sus horarios de atención y tener mejor ' +
-      'control de decisión'
-  }
+      'control de decisión',
+  },
 ];
 
 class DashBoard extends Component {
   componentDidUpdate(prevProps) {
-    if (this.props.isFocused && !prevProps.isFocused)
-      this.props.onCommerceReportValueReset();
+    if (this.props.isFocused && !prevProps.isFocused) this.props.onCommerceReportValueReset();
   }
 
   render() {
@@ -75,11 +72,7 @@ class DashBoard extends Component {
             underlayColor="transparent"
             key={chart.id}
           >
-            <Card
-              image={chart.image}
-              containerStyle={styles.cardContainer}
-              imageProps={{ resizeMode: 'stretch' }}
-            >
+            <Card image={chart.image} containerStyle={styles.cardContainer} imageProps={{ resizeMode: 'stretch' }}>
               <Text style={styles.cardTitle}>{chart.title}</Text>
               <Text style={styles.cardDescription}>{chart.description}</Text>
             </Card>
@@ -92,24 +85,22 @@ class DashBoard extends Component {
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   cardContainer: {
     borderRadius: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   cardTitle: {
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   cardDescription: {
     fontSize: 12,
     fontWeight: '300',
     textAlign: 'center',
-    marginTop: 5
-  }
+    marginTop: 5,
+  },
 });
 
-export default connect(null, { onCommerceReportValueReset })(
-  withNavigationFocus(DashBoard)
-);
+export default connect(null, { onCommerceReportValueReset })(withNavigationFocus(DashBoard));

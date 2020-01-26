@@ -11,11 +11,7 @@ class Button extends Component {
       <View style={this.props.outerContainerStyle}>
         <RNEButton
           {...this.props}
-          buttonStyle={[
-            styles.buttonStyle,
-            { backgroundColor: color },
-            this.props.buttonStyle
-          ]}
+          buttonStyle={[styles.buttonStyle, { backgroundColor: color }, this.props.buttonStyle]}
           containerStyle={[styles.containerStyle, this.props.containerStyle]}
         />
       </View>
@@ -29,12 +25,12 @@ const styles = StyleSheet.create({
   buttonStyle: {
     borderRadius,
     padding: 10,
-    margin: 8
+    margin: 8,
   },
   containerStyle: {
     borderRadius,
-    overflow: 'hidden'
-  }
+    overflow: 'hidden',
+  },
 });
 
 export { Button };

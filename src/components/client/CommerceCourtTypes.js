@@ -15,16 +15,13 @@ class CommerceCourtTypes extends Component {
 
   renderItem = ({ item }) => {
     return (
-      <TouchableHighlight
-        onPress={() => this.onCourtTypePress(item.name)}
-        underlayColor="transparent"
-      >
+      <TouchableHighlight onPress={() => this.onCourtTypePress(item.name)} underlayColor="transparent">
         <Card
           image={item.image ? { uri: item.image } : null}
           imageStyle={{ height: 80 }}
           containerStyle={{
             overflow: 'hidden',
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
           <Text>{item.name}</Text>

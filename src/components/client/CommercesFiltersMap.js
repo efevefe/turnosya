@@ -3,18 +3,18 @@ import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Button } from 'react-native-elements';
 import CommercesMap from '../common/CommercesMap';
-import { Toast } from "../common";
+import { Toast } from '../common';
 
 class CommercesFiltersMap extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton')
-    }
+      headerRight: navigation.getParam('rightButton'),
+    };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightButton: this.renderApplyFiltersButton()
+      rightButton: this.renderApplyFiltersButton(),
     });
   }
 
@@ -23,20 +23,20 @@ class CommercesFiltersMap extends Component {
       <Button
         title="Aceptar"
         type="clear"
-        titleStyle={{ color: "white" }}
+        titleStyle={{ color: 'white' }}
         onPress={this.onApplyFiltersPress}
         containerStyle={applyFilterButtonStyle}
       />
     );
-  }
+  };
 
   onApplyFiltersPress = () => {
     if (this.props.latitude) {
-      this.props.navigation.goBack()
+      this.props.navigation.goBack();
     } else {
-      Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' })
+      Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' });
     }
-  }
+  };
 
   render() {
     return (
@@ -47,12 +47,9 @@ class CommercesFiltersMap extends Component {
   }
 }
 
-const {
-  windowContainerStyle,
-  applyFilterButtonStyle
-} = StyleSheet.create({
+const { windowContainerStyle, applyFilterButtonStyle } = StyleSheet.create({
   windowContainerStyle: { flex: 1 },
-  applyFilterButtonStyle: { paddingRight: 10 }
+  applyFilterButtonStyle: { paddingRight: 10 },
 });
 
 const mapStateToProps = state => {

@@ -50,7 +50,9 @@ class CommerceDrawerContent extends Component {
 const mapStateToProps = state => {
   const { name, profilePicture, commerceId } = state.commerceData;
   const { loading } = state.auth;
-  const { role: { roleId } } = state.roleData;
+  const {
+    role: { roleId },
+  } = state.roleData;
 
   return { name, profilePicture, commerceId, loading, roleId };
 };
@@ -59,5 +61,5 @@ export default connect(mapStateToProps, {
   onLogout,
   onCommerceRead,
   onCommerceRead,
-  onScheduleValueChange
+  onScheduleValueChange,
 })(CommerceDrawerContent);

@@ -19,7 +19,7 @@ class ConfirmServiceReservation extends Component {
       employeeId: employee.id,
       startDate,
       endDate,
-      price
+      price,
     });
   };
 
@@ -32,46 +32,29 @@ class ConfirmServiceReservation extends Component {
               title="Reservar Otro"
               type="clear"
               titleStyle={{ color: MAIN_COLOR }}
-              icon={
-                <Ionicons
-                  name="ios-arrow-back"
-                  size={30}
-                  color={MAIN_COLOR}
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Ionicons name="ios-arrow-back" size={30} color={MAIN_COLOR} style={{ marginRight: 10 }} />}
               onPress={() => this.props.navigation.navigate('commerceProfileView')}
             />
           </View>
-          {this.props.saved ?
+          {this.props.saved ? (
             <View style={{ alignItems: 'flex-end' }}>
               <RNEButton
                 title="Finalizar"
                 type="clear"
                 titleStyle={{ color: MAIN_COLOR }}
                 iconRight
-                icon={
-                  <Ionicons
-                    name="ios-arrow-forward"
-                    size={30}
-                    color={MAIN_COLOR}
-                    style={{ marginLeft: 10 }}
-                  />
-                }
+                icon={<Ionicons name="ios-arrow-forward" size={30} color={MAIN_COLOR} style={{ marginLeft: 10 }} />}
                 onPress={() => this.props.navigation.navigate('commercesAreas')}
               />
-            </View> : null}
+            </View>
+          ) : null}
         </CardSection>
       );
     }
 
     return (
       <CardSection>
-        <Button
-          title="Confirmar Reserva"
-          loading={this.props.loading}
-          onPress={this.onConfirmReservation}
-        />
+        <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
       </CardSection>
     );
   };
@@ -82,14 +65,10 @@ class ConfirmServiceReservation extends Component {
     return (
       <View style={{ flex: 1 }}>
         <ServiceReservationDetails
-          mode='commerce'
+          mode="commerce"
           name={commerce.name}
-          info={
-            commerce.address + ', ' +
-            commerce.city + ', ' +
-            commerce.provinceName
-          }
-          infoIcon='md-pin'
+          info={commerce.address + ', ' + commerce.city + ', ' + commerce.provinceName}
+          infoIcon="md-pin"
           picture={commerce.profilePicture}
           service={service}
           employee={employee}
@@ -97,9 +76,7 @@ class ConfirmServiceReservation extends Component {
           endDate={endDate}
           price={price}
         />
-        <View style={styles.confirmButtonContainer}>
-          {this.renderButtons()}
-        </View>
+        <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
       </View>
     );
   }
@@ -107,28 +84,17 @@ class ConfirmServiceReservation extends Component {
 
 const styles = StyleSheet.create({
   cardSections: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch'
-  }
+    alignSelf: 'stretch',
+  },
 });
 
 const mapStateToProps = state => {
-  const {
-    commerce,
-    service,
-    employee,
-    startDate,
-    endDate,
-    price,
-    saved,
-    exists,
-    areaId,
-    loading
-  } = state.reservation;
+  const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation;
 
   return { commerce, employee, service, startDate, endDate, price, areaId, saved, exists, loading };
 };

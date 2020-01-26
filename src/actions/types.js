@@ -23,8 +23,7 @@ export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';
 export const ON_EMAIL_VERIFY_ASKED = 'on_email_verification_asked';
 export const ON_EMAIL_VERIFY_REMINDED = 'on_email_verification_reminded';
-export const ON_PASSWORD_RESET_EMAIL_SENDING =
-  'on_password_reset_email_sending';
+export const ON_PASSWORD_RESET_EMAIL_SENDING = 'on_password_reset_email_sending';
 export const ON_PASSWORD_RESET_EMAIL_SENT = 'on_password_reset_email_sent';
 export const ON_PASSWORD_RESET_EMAIL_FAIL = 'on_password_reset_email_fail';
 
@@ -86,8 +85,7 @@ export const ON_COMMERCES_LIST_VALUE_CHANGE = 'on_commerces_list_value_change';
 export const ON_FAVORITE_COMMERCE_DELETED = 'on_favorite_commerce_deleted';
 export const ON_FAVORITE_COMMERCE_ADDED = 'on_favorite_commerce_added';
 export const ON_ONLY_FAVORITE_COMMERCES_READ = 'on_only_favorite_commerce_read';
-export const ON_ONLY_FAVORITE_COMMERCES_READING =
-  'on_only_favorite_commerce_reading';
+export const ON_ONLY_FAVORITE_COMMERCES_READING = 'on_only_favorite_commerce_reading';
 
 // Schedule Register
 export const ON_SCHEDULE_VALUE_CHANGE = 'on_schedule_value_change';
@@ -115,7 +113,7 @@ export const ON_RESERVATION_VALUE_CHANGE = 'on_reservation_value_change';
 export const ON_RESERVATION_CREATING = 'on_reservation_creating';
 export const ON_RESERVATION_CREATE = 'on_reservation_create';
 export const ON_RESERVATION_CREATE_FAIL = 'on_reservation_create_fail';
-export const ON_RESERVATION_EXISTS = 'on_reservation_exists'
+export const ON_RESERVATION_EXISTS = 'on_reservation_exists';
 export const ON_NEW_RESERVATION = 'on_new_reservation';
 export const ON_NEW_SERVICE_RESERVATION = 'on_new_service_reservation';
 
@@ -129,39 +127,28 @@ export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 // Client Reservations List
 export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
 export const ON_CLIENT_RESERVATIONS_READING = 'on_client_reservations_reading';
-export const ON_CLIENT_RESERVATION_CANCELING =
-  'on_client_reservation_canceling';
+export const ON_CLIENT_RESERVATION_CANCELING = 'on_client_reservation_canceling';
 export const ON_CLIENT_RESERVATION_CANCEL = 'on_client_reservation_cancel';
-export const ON_CLIENT_RESERVATION_CANCEL_FAIL =
-  'on_client_reservation_cancel_fail';
+export const ON_CLIENT_RESERVATION_CANCEL_FAIL = 'on_client_reservation_cancel_fail';
 
 // Commerce Reservations List
-export const ON_RESERVATIONS_LIST_VALUE_CHANGE =
-  'on_reservations_list_value_change';
-export const ON_COMMERCE_RESERVATIONS_READING =
-  'on_commerce_reservations_reading';
-export const ON_COMMERCE_RESERVATIONS_READ =
-  'on_commerce_reservations_read';
-export const ON_COMMERCE_RESERVATIONS_READ_FAIL =
-  'on_commerce_reservations_read_fail';
-export const ON_COMMERCE_RESERVATION_CANCELING =
-  'on_commerce_reservation_canceling';
-export const ON_COMMERCE_RESERVATION_CANCELED =
-  'on_commerce_reservation_canceled';
-export const ON_COMMERCE_RESERVATION_CANCEL_FAIL =
-  'on_commerce_reservation_cancel_fail';
+export const ON_RESERVATIONS_LIST_VALUE_CHANGE = 'on_reservations_list_value_change';
+export const ON_COMMERCE_RESERVATIONS_READING = 'on_commerce_reservations_reading';
+export const ON_COMMERCE_RESERVATIONS_READ = 'on_commerce_reservations_read';
+export const ON_COMMERCE_RESERVATIONS_READ_FAIL = 'on_commerce_reservations_read_fail';
+export const ON_COMMERCE_RESERVATION_CANCELING = 'on_commerce_reservation_canceling';
+export const ON_COMMERCE_RESERVATION_CANCELED = 'on_commerce_reservation_canceled';
+export const ON_COMMERCE_RESERVATION_CANCEL_FAIL = 'on_commerce_reservation_cancel_fail';
 
 // Province types
 export const ON_PROVINCES_READ = 'on_provinces_read';
 
 // Commerce review types
-export const ON_COMMERCE_REVIEW_VALUE_CHANGE =
-  'on_commerce_review_value_change';
+export const ON_COMMERCE_REVIEW_VALUE_CHANGE = 'on_commerce_review_value_change';
 export const ON_COMMERCE_REVIEW_SAVING = 'on_commerce_review_saving';
 export const ON_COMMERCE_REVIEW_SAVED = 'on_commerce_review_saved';
 export const ON_COMMERCE_REVIEW_SAVE_FAIL = 'on_commerce_review_save_fail';
-export const ON_COMMERCE_REVIEW_VALUES_RESET =
-  'on_commerce_review_values_reset';
+export const ON_COMMERCE_REVIEW_VALUES_RESET = 'on_commerce_review_values_reset';
 export const ON_COMMERCE_REVIEW_CREATED = 'on_commerce_review_created';
 export const ON_COMMERCE_REVIEW_DELETING = 'on_commerce_review_deleting';
 export const ON_COMMERCE_REVIEW_DELETED = 'on_commerce_review_deleted';
@@ -215,8 +202,7 @@ export const ON_WORKPLACES_READ = 'on_workplaces_read';
 // Reports types
 export const ON_COMMERCE_REPORT_READING = 'on_commerce_report_reading';
 export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
-export const ON_COMMERCE_REPORT_VALUE_CHANGE =
-  'on_commerce_report_value_change';
+export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change';
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';

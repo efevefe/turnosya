@@ -12,7 +12,7 @@ import {
   onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
   onCommerceCourtTypesRead,
-  isCourtDisabledOnSlot
+  isCourtDisabledOnSlot,
 } from '../../actions';
 
 class ClientCourtsSchedule extends Component {
@@ -20,29 +20,28 @@ class ClientCourtsSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerLeft: navigation.getParam('leftButton')
+      headerLeft: navigation.getParam('leftButton'),
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
+      leftButton: this.renderBackButton(),
     });
 
     this.props.onScheduleRead({
       commerceId: this.props.commerce.objectID,
-      selectedDate: this.state.selectedDate
+      selectedDate: this.state.selectedDate,
     });
 
     this.unsubscribeCourtsRead = this.props.onCommerceCourtsReadByType({
       commerceId: this.props.commerce.objectID,
-      courtType: this.props.courtType
+      courtType: this.props.courtType,
     });
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations ||
-      prevProps.courts !== this.props.courts) {
+    if (prevProps.reservations !== this.props.reservations || prevProps.courts !== this.props.courts) {
       this.reservationsOnSlots();
     }
   }
@@ -53,13 +52,7 @@ class ClientCourtsSchedule extends Component {
   }
 
   renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        onPress={this.onBackPress}
-        tintColor="white"
-        title="Back"
-      />
-    );
+    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" title="Back" />;
   };
 
   onBackPress = () => {
@@ -68,7 +61,7 @@ class ClientCourtsSchedule extends Component {
 
     this.props.onCommerceCourtTypesRead({
       commerceId: this.props.commerce.objectID,
-      loadingType: 'loading'
+      loadingType: 'loading',
     });
   };
 
@@ -79,17 +72,13 @@ class ClientCourtsSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onClientCommerceReservationsRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: date,
-      courtType: this.props.courtType
+      courtType: this.props.courtType,
     });
 
-    if (
-      !scheduleId ||
-      (scheduleEndDate && date >= scheduleEndDate) ||
-      date < scheduleStartDate
-    ) {
+    if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
-        selectedDate: date
+        selectedDate: date,
       });
     }
 
@@ -99,13 +88,13 @@ class ClientCourtsSchedule extends Component {
   onSlotPress = slot => {
     if (moment() >= slot.startDate) {
       return Toast.show({
-        text: 'Ya no se puede reservar en este horario'
+        text: 'Ya no se puede reservar en este horario',
       });
     }
 
     if (!slot.available) {
       return Toast.show({
-        text: 'No hay más canchas disponibles en este horario'
+        text: 'No hay más canchas disponibles en este horario',
       });
     }
 
@@ -114,13 +103,7 @@ class ClientCourtsSchedule extends Component {
     this.props.onReservationValueChange({ startDate, endDate });
 
     this.props.navigation.navigate('commerceCourtsList', {
-      title:
-        startDate.format('DD') +
-        ' de ' +
-        MONTHS[startDate.month()] +
-        ', ' +
-        startDate.format('HH:mm') +
-        ' hs.'
+      title: startDate.format('DD') + ' de ' + MONTHS[startDate.month()] + ', ' + startDate.format('HH:mm') + ' hs.',
     });
   };
 
@@ -135,8 +118,7 @@ class ClientCourtsSchedule extends Component {
       let courtsAvailable = 0;
 
       reservations.forEach(reservation => {
-        if (slot.startDate.toString() === reservation.startDate.toString())
-          reserved++;
+        if (slot.startDate.toString() === reservation.startDate.toString()) reserved++;
       });
 
       courts.forEach(court => {
@@ -149,7 +131,7 @@ class ClientCourtsSchedule extends Component {
         ...slot,
         free: courtsAvailable - reserved,
         total: courts.length,
-        available
+        available,
       };
     });
 
@@ -163,14 +145,14 @@ class ClientCourtsSchedule extends Component {
       reservationMinLength,
       loadingSchedule,
       loadingReservations,
-      loadingCourts
+      loadingCourts,
     } = this.props;
 
     const { selectedDate } = this.state;
 
     return (
       <Schedule
-        mode='courts'
+        mode="courts"
         cards={cards}
         selectedDate={selectedDate}
         reservationMinLength={reservationMinLength}
@@ -178,8 +160,8 @@ class ClientCourtsSchedule extends Component {
         datesWhitelist={[
           {
             start: moment(),
-            end: moment().add(reservationDayPeriod, 'days')
-          }
+            end: moment().add(reservationDayPeriod, 'days'),
+          },
         ]}
         loading={loadingSchedule || loadingReservations || loadingCourts}
         onDateChanged={date => this.onDateChanged(date)}
@@ -198,7 +180,7 @@ const mapStateToProps = state => {
     reservationMinLength,
     startDate,
     endDate,
-    refreshing
+    refreshing,
   } = state.commerceSchedule;
   const loadingSchedule = state.commerceSchedule.loading;
   const { commerce, courtType } = state.reservation;
@@ -222,7 +204,7 @@ const mapStateToProps = state => {
     courtType,
     loadingSchedule,
     loadingReservations,
-    loadingCourts
+    loadingCourts,
   };
 };
 
@@ -232,5 +214,5 @@ export default connect(mapStateToProps, {
   onReservationValueChange,
   onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
 })(ClientCourtsSchedule);

@@ -55,16 +55,16 @@ const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
           sound: 'default',
           title,
           body,
-          _displayInForeground: true
+          _displayInForeground: true,
         };
         const response = await fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(message)
+          body: JSON.stringify(message),
         });
         const data = response.status;
       });
@@ -81,14 +81,10 @@ const getDeviceToken = async () => {
   // -1 (is simulator device) | 0 (permission not granted) | token value
   try {
     if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-      );
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(
-          Permissions.NOTIFICATIONS
-        );
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
         finalStatus = status;
       }
       if (finalStatus !== 'granted') {
@@ -98,7 +94,7 @@ const getDeviceToken = async () => {
       return await Notifications.getExpoPushTokenAsync();
     } else {
       Toast.show({
-        text: 'Debe usar un dispositivo físico para el uso de notificaciones'
+        text: 'Debe usar un dispositivo físico para el uso de notificaciones',
       });
       return -1;
     }
@@ -120,11 +116,7 @@ export const onPushNotificationTokenRegister = async () => {
       const db = firebase.firestore();
 
       // Se guarda el deviceToken en la colección del cliente
-      await db
-        .doc(
-          `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-        )
-        .set({});
+      await db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`).set({});
 
       await db
         .doc(`Profiles/${currentUser.uid}`)
@@ -133,11 +125,7 @@ export const onPushNotificationTokenRegister = async () => {
           if (doc.data().commerceId != null) {
             // Se guarda el deviceToken en la colección del comercio donde es dueño
             await db
-              .doc(
-                `Commerces/${
-                  doc.data().commerceId
-                }/PushNotificationTokens/${deviceToken}`
-              )
+              .doc(`Commerces/${doc.data().commerceId}/PushNotificationTokens/${deviceToken}`)
               .set({ profileId: currentUser.uid }); // corregir
           }
 
@@ -148,14 +136,11 @@ export const onPushNotificationTokenRegister = async () => {
             .get()
             .then(querySnapshot => {
               if (!querySnapshot.empty) {
-                querySnapshot.forEach(employee =>
-                  db
-                    .doc(
-                      `Commerces/${
-                        employee.data().commerceId
-                      }/PushNotificationTokens/${deviceToken}`
-                    )
-                    .set({ profileId: currentUser.uid }) // corregir
+                querySnapshot.forEach(
+                  employee =>
+                    db
+                      .doc(`Commerces/${employee.data().commerceId}/PushNotificationTokens/${deviceToken}`)
+                      .set({ profileId: currentUser.uid }) // corregir
                 );
               }
             });
@@ -179,16 +164,10 @@ export const onPushNotificationTokenDelete = async commerceId => {
       const db = firebase.firestore();
 
       // Se elimina el deviceToken en la colección del cliente
-      await db
-        .doc(
-          `Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`
-        )
-        .delete();
+      await db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`).delete();
       if (commerceId !== null) {
         // Se elimina el deviceToken en la colección del comercio donde es dueño
-        await db
-          .doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`)
-          .delete();
+        await db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`).delete();
       }
 
       // Se elimina el deviceToken en las colecciónes de los comercios donde es empleado
@@ -199,13 +178,7 @@ export const onPushNotificationTokenDelete = async commerceId => {
         .then(querySnapshot => {
           if (!querySnapshot.empty) {
             querySnapshot.forEach(async employee => {
-              await db
-                .doc(
-                  `Commerces/${
-                    employee.data().commerceId
-                  }/PushNotificationTokens/${deviceToken}`
-                )
-                .delete();
+              await db.doc(`Commerces/${employee.data().commerceId}/PushNotificationTokens/${deviceToken}`).delete();
             });
           }
         });

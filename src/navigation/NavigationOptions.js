@@ -6,7 +6,7 @@ export const stackNavigationOptions = {
   defaultNavigationOptions: {
     headerStyle: {
       backgroundColor: MAIN_COLOR,
-      height: NAVIGATION_HEIGHT
+      height: NAVIGATION_HEIGHT,
     },
     headerTintColor: 'white',
     headerTitleStyle: {
@@ -14,15 +14,15 @@ export const stackNavigationOptions = {
       alignSelf: 'center',
       fontSize: 18,
       color: 'white',
-      fontWeight: 'bold'
-    }
-  }
+      fontWeight: 'bold',
+    },
+  },
 };
 
 export const drawerNavigationOptions = {
   drawerType: 'slide',
   drawerWidth: 230,
-  overlayColor: 0.6
+  overlayColor: 0.6,
 };
 
 export const tabNavigationOptions = {
@@ -49,15 +49,8 @@ export const tabNavigationOptions = {
         iconName = `md-stats`;
       }
 
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
-    }
+      return <Ionicons name={iconName} size={30} color={tintColor} style={{ opacity: focused ? 1 : 0.5 }} />;
+    },
   }),
   tabBarOptions: {
     showLabel: false,
@@ -65,7 +58,7 @@ export const tabNavigationOptions = {
     inactiveTintColor: 'white',
     style: {
       backgroundColor: MAIN_COLOR,
-      height: NAVIGATION_HEIGHT
-    }
-  }
+      height: NAVIGATION_HEIGHT,
+    },
+  },
 };

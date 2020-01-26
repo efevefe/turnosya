@@ -8,22 +8,8 @@ import moment from 'moment';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS, AREAS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 import { hourToDate, formattedMoment, stringFormatMinutes } from '../../utils';
-import {
-  Spinner,
-  IconButton,
-  EmptyList,
-  Menu,
-  MenuItem,
-  DatePicker,
-  CardSection,
-  Toast
-} from '../common';
-import {
-  onScheduleValueChange,
-  onScheduleUpdate,
-  onNextReservationsRead,
-  onActiveSchedulesRead
-} from '../../actions';
+import { Spinner, IconButton, EmptyList, Menu, MenuItem, DatePicker, CardSection, Toast } from '../common';
+import { onScheduleValueChange, onScheduleUpdate, onNextReservationsRead, onActiveSchedulesRead } from '../../actions';
 
 class ScheduleRegister extends Component {
   constructor(props) {
@@ -45,8 +31,8 @@ class ScheduleRegister extends Component {
       sliderValues: {
         reservationMinFrom: 5,
         reservationMinTo: 240,
-        reservationMinValue: 60
-      }
+        reservationMinValue: 60,
+      },
     };
 
     this.onConfirmPress = null;
@@ -55,20 +41,20 @@ class ScheduleRegister extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon'),
-      title: navigation.getParam('title')
+      title: navigation.getParam('title'),
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton()
+      rightIcon: this.renderSaveButton(),
     });
 
     this.setState({
       sliderValues: {
         ...this.state.sliderValues,
-        reservationMinValue: this.props.reservationMinLength
-      }
+        reservationMinValue: this.props.reservationMinLength,
+      },
     });
 
     const prevSchedule = this.props.navigation.getParam('schedule');
@@ -80,10 +66,7 @@ class ScheduleRegister extends Component {
       this.workShiftsValidate();
     }
 
-    if (
-      prevProps.startDate !== this.props.startDate ||
-      prevProps.endDate !== this.props.endDate
-    ) {
+    if (prevProps.startDate !== this.props.startDate || prevProps.endDate !== this.props.endDate) {
       this.renderStartDateError();
       this.renderEndDateError();
     }
@@ -104,8 +87,7 @@ class ScheduleRegister extends Component {
     const overlappedSchedule = schedules.find(schedule => {
       return (
         startDate > schedule.startDate &&
-        ((!schedule.endDate && endDate) ||
-          (schedule.endDate && endDate && endDate < schedule.endDate))
+        ((!schedule.endDate && endDate) || (schedule.endDate && endDate && endDate < schedule.endDate))
       );
     });
 
@@ -124,7 +106,7 @@ class ScheduleRegister extends Component {
         commerceId,
         startDate,
         endDate,
-        employeeId
+        employeeId,
       });
     }
 
@@ -140,24 +122,22 @@ class ScheduleRegister extends Component {
     const oldEndDate = this.state.prevSchedule.endDate;
     const prevSchedule = {
       cards: this.state.prevSchedule.cards,
-      reservationMinLength: this.state.prevSchedule.reservationMinLength
+      reservationMinLength: this.state.prevSchedule.reservationMinLength,
     };
 
     const newStartDate = this.props.startDate;
     const newEndDate = this.props.endDate;
     const newSchedule = {
       cards: this.props.cards,
-      reservationMinLength: this.props.reservationMinLength
+      reservationMinLength: this.props.reservationMinLength,
     };
 
     if (
       JSON.stringify(prevSchedule) !== JSON.stringify(newSchedule) ||
       !!oldEndDate !== !!newEndDate ||
       (oldEndDate && newEndDate && oldEndDate.diff(newEndDate, 'minutes')) ||
-      (oldStartDate <= formattedMoment() &&
-        newStartDate.diff(formattedMoment(), 'minutes')) ||
-      (oldStartDate >= formattedMoment() &&
-        newStartDate.diff(oldStartDate, 'minutes'))
+      (oldStartDate <= formattedMoment() && newStartDate.diff(formattedMoment(), 'minutes')) ||
+      (oldStartDate >= formattedMoment() && newStartDate.diff(oldStartDate, 'minutes'))
     )
       return true;
   };
@@ -172,13 +152,7 @@ class ScheduleRegister extends Component {
     if ((endDate && startDate >= endDate) || !cards.length) error = true;
 
     for (i in cards) {
-      const {
-        firstShiftStart,
-        firstShiftEnd,
-        secondShiftStart,
-        secondShiftEnd,
-        days
-      } = cards[i];
+      const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       if (
         !firstShiftStart ||
@@ -196,8 +170,7 @@ class ScheduleRegister extends Component {
 
     if (error) {
       Toast.show({
-        text:
-          'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.'
+        text: 'Hay datos faltantes o incorrectos. Revise los mismos e intente nuevamente.',
       });
     }
 
@@ -229,47 +202,27 @@ class ScheduleRegister extends Component {
     const { nextReservations, cards, startDate, endDate } = this.props;
 
     let notCoveredReservations = nextReservations.filter(res => {
-      return (
-        res.startDate >= startDate &&
-        (!endDate || (endDate && res.endDate <= endDate))
-      );
+      return res.startDate >= startDate && (!endDate || (endDate && res.endDate <= endDate));
     });
 
     for (i in cards) {
       // nuevos horarios de atención
-      const {
-        firstShiftStart,
-        firstShiftEnd,
-        secondShiftStart,
-        secondShiftEnd,
-        days
-      } = cards[i];
+      const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = cards[i];
 
       // se verifica si los nuevos horarios abarcan las (startDate, endDate) de los turnos próximos
-      notCoveredReservations = this.compatibleShift(
-        firstShiftStart,
-        firstShiftEnd,
-        days,
-        notCoveredReservations
-      );
+      notCoveredReservations = this.compatibleShift(firstShiftStart, firstShiftEnd, days, notCoveredReservations);
 
       // si existen segundos horarios, se verifica lo mismo que los primeros horarios
       if (notCoveredReservations.length && secondShiftStart && secondShiftEnd) {
-        notCoveredReservations = this.compatibleShift(
-          secondShiftStart,
-          secondShiftEnd,
-          days,
-          notCoveredReservations
-        );
+        notCoveredReservations = this.compatibleShift(secondShiftStart, secondShiftEnd, days, notCoveredReservations);
       }
     }
 
     if (notCoveredReservations.length) {
       return this.setState({
         notCoveredReservations,
-        lastIncompatibleDate:
-          notCoveredReservations[notCoveredReservations.length - 1].startDate,
-        incompatibleScheduleVisible: true
+        lastIncompatibleDate: notCoveredReservations[notCoveredReservations.length - 1].startDate,
+        incompatibleScheduleVisible: true,
       });
     }
 
@@ -291,16 +244,14 @@ class ScheduleRegister extends Component {
 
       if (startDate >= shiftStartDate && endDate <= shiftEndDate) {
         const startDiff = Math.abs(shiftStartDate.diff(startDate, 'minutes'));
-        const reservationDuration = Math.abs(
-          startDate.diff(endDate, 'minutes')
-        );
+        const reservationDuration = Math.abs(startDate.diff(endDate, 'minutes'));
 
         return (
           // en el caso en que un turno pueda ocupar varios slots se
           // reemplazaría la primer comparación por esta que esta comentada
           // (reservationDuration % reservationMinLength) ||
-          (!this.props.employeeId && (reservationDuration !== reservationMinLength)) ||
-          (startDiff % reservationMinLength) ||
+          (!this.props.employeeId && reservationDuration !== reservationMinLength) ||
+          startDiff % reservationMinLength ||
           !days.includes(startDate.day())
         );
       }
@@ -328,10 +279,8 @@ class ScheduleRegister extends Component {
       if (reservationsAfterEndDate.length) {
         this.setState({
           reservationsAfterEndDate,
-          lastReservationDate:
-            reservationsAfterEndDate[reservationsAfterEndDate.length - 1]
-              .startDate,
-          incompatibleEndDateVisible: true
+          lastReservationDate: reservationsAfterEndDate[reservationsAfterEndDate.length - 1].startDate,
+          incompatibleEndDateVisible: true,
         });
 
         return false;
@@ -346,14 +295,9 @@ class ScheduleRegister extends Component {
 
     if (cards.length === 0) {
       onScheduleValueChange({ cards: cards.concat([{ ...emptyCard, id: 0 }]) });
-    } else if (
-      selectedDays.length < 7 &&
-      !this.props.cards.find(card => card.days.length === 0)
-    ) {
+    } else if (selectedDays.length < 7 && !this.props.cards.find(card => card.days.length === 0)) {
       onScheduleValueChange({
-        cards: cards.concat([
-          { ...emptyCard, id: parseInt(cards[cards.length - 1].id) + 1 }
-        ])
+        cards: cards.concat([{ ...emptyCard, id: parseInt(cards[cards.length - 1].id) + 1 }]),
       });
     }
   };
@@ -373,7 +317,7 @@ class ScheduleRegister extends Component {
 
     if (endDate && startDate >= endDate) {
       this.setState({
-        startDateError: 'Debe ser anterior a la fecha de fin de vigencia'
+        startDateError: 'Debe ser anterior a la fecha de fin de vigencia',
       });
     } else if (!startDate) {
       this.setState({ startDateError: 'Debe seleccionar una fecha' });
@@ -400,7 +344,7 @@ class ScheduleRegister extends Component {
 
     if (endDate && startDate >= endDate) {
       this.setState({
-        endDateError: 'Debe ser posterior a la fecha de fin de vigencia'
+        endDateError: 'Debe ser posterior a la fecha de fin de vigencia',
       });
     } else {
       this.setState({ endDateError: '' });
@@ -422,7 +366,7 @@ class ScheduleRegister extends Component {
       endDate,
       schedules,
       // only hairdressers
-      employeeId
+      employeeId,
     } = this.props;
     const { reservationsToCancel } = this.state;
 
@@ -438,7 +382,7 @@ class ScheduleRegister extends Component {
         endDate,
         schedules,
         reservationsToCancel,
-        employeeId
+        employeeId,
       });
 
       if (success) {
@@ -446,8 +390,8 @@ class ScheduleRegister extends Component {
         this.props.onActiveSchedulesRead({
           commerceId,
           date: moment(),
-          employeeId
-        })
+          employeeId,
+        });
 
         this.props.navigation.goBack();
       }
@@ -474,9 +418,7 @@ class ScheduleRegister extends Component {
             '"Cancelar reservas y notificar" para cancelar dichas reservas e ' +
             'iniciar la vigencia en la fecha ingresada'
           }
-          onBackdropPress={() =>
-            this.setState({ incompatibleScheduleVisible: false })
-          }
+          onBackdropPress={() => this.setState({ incompatibleScheduleVisible: false })}
           isVisible={incompatibleScheduleVisible}
         >
           <MenuItem
@@ -488,17 +430,13 @@ class ScheduleRegister extends Component {
           <MenuItem
             title="Cancelar reservas y notificar"
             icon="md-trash"
-            onPress={() =>
-              this.onConfirmModalOpen(this.onIncompatibleScheduleSave)
-            }
+            onPress={() => this.onConfirmModalOpen(this.onIncompatibleScheduleSave)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Volver"
             icon="md-close"
-            onPress={() =>
-              this.setState({ incompatibleScheduleVisible: false })
-            }
+            onPress={() => this.setState({ incompatibleScheduleVisible: false })}
           />
         </Menu>
       );
@@ -509,7 +447,7 @@ class ScheduleRegister extends Component {
     const { lastIncompatibleDate } = this.state;
 
     this.props.onScheduleValueChange({
-      startDate: formattedMoment(lastIncompatibleDate).add(1, 'days')
+      startDate: formattedMoment(lastIncompatibleDate).add(1, 'days'),
     });
 
     this.setState({ confirmationVisible: false }, this.onScheduleSave);
@@ -520,10 +458,8 @@ class ScheduleRegister extends Component {
 
     this.setState(
       {
-        reservationsToCancel: reservationsToCancel.concat(
-          notCoveredReservations
-        ),
-        confirmationVisible: false
+        reservationsToCancel: reservationsToCancel.concat(notCoveredReservations),
+        confirmationVisible: false,
       },
       this.onScheduleSave
     );
@@ -548,23 +484,15 @@ class ScheduleRegister extends Component {
             '"Cancelar reservas y notificar" para cancelar dichas reservas ' +
             'y finalizar la vigencia en la fecha ingresada'
           }
-          onBackdropPress={() =>
-            this.setState({ incompatibleEndDateVisible: false })
-          }
+          onBackdropPress={() => this.setState({ incompatibleEndDateVisible: false })}
           isVisible={incompatibleEndDateVisible}
         >
-          <MenuItem
-            title="Aceptar"
-            icon="md-checkmark"
-            onPress={() => this.onConfirmModalOpen(this.onSetNewEndDate)}
-          />
+          <MenuItem title="Aceptar" icon="md-checkmark" onPress={() => this.onConfirmModalOpen(this.onSetNewEndDate)} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Cancelar reservas y notificar"
             icon="md-trash"
-            onPress={() =>
-              this.onConfirmModalOpen(this.onIncompatibleEndDateSave)
-            }
+            onPress={() => this.onConfirmModalOpen(this.onIncompatibleEndDateSave)}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
@@ -581,7 +509,7 @@ class ScheduleRegister extends Component {
     const { lastReservationDate } = this.state;
 
     this.props.onScheduleValueChange({
-      endDate: formattedMoment(lastReservationDate).add(1, 'days')
+      endDate: formattedMoment(lastReservationDate).add(1, 'days'),
     });
 
     this.setState({ confirmationVisible: false }, this.compatibleSchedule);
@@ -592,10 +520,8 @@ class ScheduleRegister extends Component {
 
     this.setState(
       {
-        reservationsToCancel: reservationsToCancel.concat(
-          reservationsAfterEndDate
-        ),
-        confirmationVisible: false
+        reservationsToCancel: reservationsToCancel.concat(reservationsAfterEndDate),
+        confirmationVisible: false,
       },
       this.compatibleSchedule
     );
@@ -605,18 +531,14 @@ class ScheduleRegister extends Component {
     this.setState({
       incompatibleEndDateVisible: false,
       incompatibleScheduleVisible: false,
-      confirmationVisible: true
+      confirmationVisible: true,
     });
 
     this.onConfirmPress = onConfirmPress;
   };
 
   renderFirstItem = () => {
-    const {
-      reservationMinFrom,
-      reservationMinTo,
-      reservationMinValue
-    } = this.state.sliderValues;
+    const { reservationMinFrom, reservationMinTo, reservationMinValue } = this.state.sliderValues;
 
     return (
       <Card containerStyle={{ borderRadius: 10, padding: 5, paddingTop: 10 }}>
@@ -624,7 +546,7 @@ class ScheduleRegister extends Component {
           style={{
             flexDirection: 'row',
             alignItems: 'flex-start',
-            justifyContent: 'space-around'
+            justifyContent: 'space-around',
           }}
         >
           <DatePicker
@@ -655,17 +577,12 @@ class ScheduleRegister extends Component {
               uncheckedColor={MAIN_COLOR}
               checkedTitle="Quitar fecha de fin de vigencia"
               checked={!!this.props.endDate}
-              onPress={() =>
-                this.props.onScheduleValueChange({ endDate: null })
-              }
+              onPress={() => this.props.onScheduleValueChange({ endDate: null })}
             />
           </CardSection>
         )}
         <CardSection style={{ paddingHorizontal: 20, paddingTop: 15 }}>
-          <Text>
-            {'Duración mínima de turnos: ' +
-              stringFormatMinutes(reservationMinValue)}
-          </Text>
+          <Text>{'Duración mínima de turnos: ' + stringFormatMinutes(reservationMinValue)}</Text>
           <Slider
             animationType="spring"
             minimumTrackTintColor={MAIN_COLOR_OPACITY}
@@ -675,15 +592,13 @@ class ScheduleRegister extends Component {
             thumbTouchSize={{ width: 60, height: 60 }}
             thumbTintColor={MAIN_COLOR}
             value={reservationMinValue}
-            onSlidingComplete={reservationMinLength =>
-              this.props.onScheduleValueChange({ reservationMinLength })
-            }
+            onSlidingComplete={reservationMinLength => this.props.onScheduleValueChange({ reservationMinLength })}
             onValueChange={value =>
               this.setState({
                 sliderValues: {
                   ...this.state.sliderValues,
-                  reservationMinValue: value
-                }
+                  reservationMinValue: value,
+                },
               })
             }
           />
@@ -736,11 +651,7 @@ class ScheduleRegister extends Component {
         {this.renderIncompatibleScheduleModal()}
         {this.renderIncompatibleEndDateModal()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onAddPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onAddPress}>
           <Ionicons name="md-add" />
         </Fab>
 
@@ -749,17 +660,9 @@ class ScheduleRegister extends Component {
           onBackdropPress={() => this.setState({ confirmationVisible: false })}
           isVisible={this.state.confirmationVisible}
         >
-          <MenuItem
-            title="Aceptar"
-            icon="md-checkmark"
-            onPress={this.onConfirmPress}
-          />
+          <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onConfirmPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ confirmationVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ confirmationVisible: false })} />
         </Menu>
       </View>
     );
@@ -771,7 +674,7 @@ const emptyCard = {
   firstShiftEnd: '',
   secondShiftStart: null,
   secondShiftEnd: null,
-  days: []
+  days: [],
 };
 
 const mapStateToProps = state => {
@@ -787,12 +690,15 @@ const mapStateToProps = state => {
     schedules,
     error,
     loading,
-    refreshing
+    refreshing,
   } = state.commerceSchedule;
   const { nextReservations } = state.reservationsList;
   const loadingReservations = state.reservationsList.loading;
-  const { commerceId, area: { areaId } } = state.commerceData;
-  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
+  const {
+    commerceId,
+    area: { areaId },
+  } = state.commerceData;
+  const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
   return {
     scheduleId: id,
@@ -810,16 +716,13 @@ const mapStateToProps = state => {
     loadingReservations,
     refreshing,
     nextReservations,
-    employeeId
+    employeeId,
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onScheduleValueChange,
-    onScheduleUpdate,
-    onNextReservationsRead,
-    onActiveSchedulesRead
-  }
-)(ScheduleRegister);
+export default connect(mapStateToProps, {
+  onScheduleValueChange,
+  onScheduleUpdate,
+  onNextReservationsRead,
+  onActiveSchedulesRead,
+})(ScheduleRegister);

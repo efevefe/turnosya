@@ -17,7 +17,7 @@ import {
   ON_COMMERCE_DELETING,
   ON_COMMERCE_DELETED,
   ON_COMMERCE_DELETE_FAIL,
-  ON_REAUTH_SUCCESS
+  ON_REAUTH_SUCCESS,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -41,7 +41,7 @@ const INITIAL_STATE = {
   cuitExists: false,
   confirmDeleteVisible: false,
   latitude: null,
-  longitude: null
+  longitude: null,
 };
 
 export default (state = INITIAL_STATE, action) => {

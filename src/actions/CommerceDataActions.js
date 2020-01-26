@@ -23,7 +23,7 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_ROLE_ASSIGNED,
-  ON_CLIENT_DATA_VALUE_CHANGE
+  ON_CLIENT_DATA_VALUE_CHANGE,
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -60,7 +60,7 @@ export const onCommerceOpen = commerceId => dispatch => {
 
         dispatch({
           type: ON_ROLE_ASSIGNED,
-          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id }
+          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id },
         });
       }
 
@@ -72,19 +72,7 @@ export const onCommerceOpen = commerceId => dispatch => {
 export const onCommerceCreate = (commerceData, navigation) => async dispatch => {
   dispatch({ type: ON_REGISTER_COMMERCE });
 
-  const {
-    name,
-    cuit,
-    email,
-    phone,
-    description,
-    area,
-    address,
-    city,
-    province,
-    latitude,
-    longitude
-  } = commerceData;
+  const { name, cuit, email, phone, description, area, address, city, province, latitude, longitude } = commerceData;
 
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -106,8 +94,8 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       latitude,
       longitude,
       softDelete: null,
-      creationDate: new Date()
-    })
+      creationDate: new Date(),
+    });
 
     const commerceId = commerceRef.id;
     const profileRef = db.doc(`Profiles/${currentUser.uid}`);
@@ -126,7 +114,7 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       softDelete: null,
       role: { name: ROLES.OWNER.name, roleId: ROLES.OWNER.roleId },
       inviteDate: new Date(),
-      startDate: new Date()
+      startDate: new Date(),
     });
 
     await batch.commit();
@@ -139,14 +127,12 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       address,
       city,
       provinceName: province.name,
-      ...(latitude && longitude
-        ? { _geoloc: { lat: latitude, lng: longitude } }
-        : {})
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {}),
     });
 
     dispatch({
       type: ON_ROLE_ASSIGNED,
-      payload: { role: ROLES.OWNER, employeeId: employeesRef.id }
+      payload: { role: ROLES.OWNER, employeeId: employeesRef.id },
     });
 
     dispatch({ type: ON_COMMERCE_VALUE_CHANGE, payload: { commerceId } });
@@ -182,8 +168,8 @@ export const onCommerceRead = commerceId => async dispatch => {
         ...doc.data(),
         provincesList: [province],
         areasList: [area],
-        commerceId: doc.id
-      }
+        commerceId: doc.id,
+      },
     });
 
     return true;
@@ -210,10 +196,7 @@ onPictureUpdate = async (commerceId, picture, type) => {
   }
 };
 
-export const onCommerceUpdate = (
-  commerceData,
-  navigation
-) => async dispatch => {
+export const onCommerceUpdate = (commerceData, navigation) => async dispatch => {
   dispatch({ type: ON_COMMERCE_UPDATING });
 
   const {
@@ -227,7 +210,7 @@ export const onCommerceUpdate = (
     headerPicture,
     commerceId,
     latitude,
-    longitude
+    longitude,
   } = commerceData;
 
   let profilePictureURL = null;
@@ -235,18 +218,10 @@ export const onCommerceUpdate = (
 
   try {
     if (profilePicture instanceof Blob)
-      profilePictureURL = await onPictureUpdate(
-        commerceId,
-        profilePicture,
-        'ProfilePicture'
-      );
+      profilePictureURL = await onPictureUpdate(commerceId, profilePicture, 'ProfilePicture');
 
     if (headerPicture instanceof Blob)
-      headerPictureURL = await onPictureUpdate(
-        commerceId,
-        headerPicture,
-        'HeaderPicture'
-      );
+      headerPictureURL = await onPictureUpdate(commerceId, headerPicture, 'HeaderPicture');
 
     await firebase
       .firestore()
@@ -254,7 +229,7 @@ export const onCommerceUpdate = (
       .update({
         ...commerceData,
         profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
-        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture,
       });
 
     await index.saveObject({
@@ -266,17 +241,15 @@ export const onCommerceUpdate = (
       name,
       city,
       provinceName: province.name,
-      ...(latitude && longitude
-        ? { _geoloc: { lat: latitude, lng: longitude } }
-        : {})
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {}),
     });
 
     dispatch({
       type: ON_COMMERCE_UPDATED,
       payload: {
         profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
-        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
-      }
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture,
+      },
     });
 
     navigation.goBack();
@@ -295,9 +268,7 @@ export const onAreasReadForPicker = () => {
       .get()
       .then(snapshot => {
         const areasList = [];
-        snapshot.forEach(doc =>
-          areasList.push({ value: doc.id, label: doc.data().name })
-        );
+        snapshot.forEach(doc => areasList.push({ value: doc.id, label: doc.data().name }));
         dispatch({ type: ON_AREAS_READ_FOR_PICKER, payload: areasList });
       });
   };
@@ -367,7 +338,7 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
 
         dispatch({
           type: ON_CLIENT_DATA_VALUE_CHANGE,
-          payload: { commerceId: null }
+          payload: { commerceId: null },
         });
 
         navigation && navigation.navigate('client');

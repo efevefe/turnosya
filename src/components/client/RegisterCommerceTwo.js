@@ -6,19 +6,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { trimString } from '../../utils';
 import { MAIN_COLOR } from '../../constants';
 import { CardSection, Button, Input, Picker } from '../common';
-import {
-  onCommerceCreate,
-  onCommerceValueChange,
-  onProvincesIdRead,
-  onLocationValueChange
-} from '../../actions';
+import { onCommerceCreate, onCommerceValueChange, onProvincesIdRead, onLocationValueChange } from '../../actions';
 
 class RegisterCommerceTwo extends Component {
   state = {
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
-    provinceError: ''
+    provinceError: '',
   };
 
   componentDidMount() {
@@ -35,19 +30,7 @@ class RegisterCommerceTwo extends Component {
 
   onRegisterButtonPress() {
     if (this.validateMinimumData()) {
-      const {
-        name,
-        cuit,
-        email,
-        phone,
-        description,
-        area,
-        address,
-        city,
-        province,
-        latitude,
-        longitude
-      } = this.props;
+      const { name, cuit, email, phone, description, area, address, city, province, latitude, longitude } = this.props;
       this.props.onCommerceCreate(
         {
           name,
@@ -60,7 +43,7 @@ class RegisterCommerceTwo extends Component {
           city,
           province,
           latitude,
-          longitude
+          longitude,
         },
         this.props.navigation
       );
@@ -68,13 +51,10 @@ class RegisterCommerceTwo extends Component {
   }
 
   onProvincePickerChange = index => {
-    const { value, label } =
-      index > 0
-        ? this.props.provincesList[index - 1]
-        : this.state.pickerPlaceholder;
+    const { value, label } = index > 0 ? this.props.provincesList[index - 1] : this.state.pickerPlaceholder;
 
     this.props.onCommerceValueChange({
-      province: { provinceId: value, name: label }
+      province: { provinceId: value, name: label },
     });
 
     this.props.onLocationValueChange({ provinceName: index > 0 ? label : '' });
@@ -117,32 +97,26 @@ class RegisterCommerceTwo extends Component {
   };
 
   validateMinimumData = () => {
-    return (
-      this.renderAddressError() &&
-      this.renderCityError() &&
-      this.renderProvinceError()
-    );
+    return this.renderAddressError() && this.renderCityError() && this.renderProvinceError();
   };
 
   onProvinceNameChangeOnMap = name => {
-    const province = this.props.provincesList.find(
-      province => province.label.toLowerCase() === name.toLowerCase()
-    );
+    const province = this.props.provincesList.find(province => province.label.toLowerCase() === name.toLowerCase());
 
     if (province) {
       this.props.onCommerceValueChange({
-        province: { provinceId: province.value, name }
+        province: { provinceId: province.value, name },
       });
     } else {
       this.props.onCommerceValueChange({
-        province: { provinceId: '', name: '' }
+        province: { provinceId: '', name: '' },
       });
     }
   };
 
   onMapPress = () => {
     this.props.navigation.navigate('commerceRegisterMap', {
-      onProvinceNameChange: this.onProvinceNameChangeOnMap
+      onProvinceNameChange: this.onProvinceNameChangeOnMap,
     });
   };
 
@@ -155,9 +129,7 @@ class RegisterCommerceTwo extends Component {
               label="Calle"
               placeholder="San Martín 30"
               value={this.props.address}
-              onChangeText={address =>
-                this.props.onLocationValueChange({ address })
-              }
+              onChangeText={address => this.props.onLocationValueChange({ address })}
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
               onBlur={this.renderAddressError}
@@ -181,9 +153,7 @@ class RegisterCommerceTwo extends Component {
               placeholder={this.state.pickerPlaceholder}
               items={this.props.provincesList}
               value={this.props.province.provinceId}
-              onValueChange={(value, index) =>
-                this.onProvincePickerChange(index)
-              }
+              onValueChange={(value, index) => this.onProvincePickerChange(index)}
               errorMessage={this.state.provinceError}
             />
           </CardSection>
@@ -197,23 +167,12 @@ class RegisterCommerceTwo extends Component {
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}
-              icon={
-                <Ionicons
-                  style={{ marginLeft: 10 }}
-                  name="md-pin"
-                  size={28}
-                  color={MAIN_COLOR}
-                />
-              }
+              icon={<Ionicons style={{ marginLeft: 10 }} name="md-pin" size={28} color={MAIN_COLOR} />}
             />
           </CardSection>
 
           <CardSection style={{ paddingTop: 0 }}>
-            <Button
-              title="Registrar"
-              loading={this.props.loading}
-              onPress={this.onRegisterButtonPress.bind(this)}
-            />
+            <Button title="Registrar" loading={this.props.loading} onPress={this.onRegisterButtonPress.bind(this)} />
           </CardSection>
         </View>
       </KeyboardAwareScrollView>
@@ -222,27 +181,11 @@ class RegisterCommerceTwo extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    name,
-    cuit,
-    email,
-    phone,
-    description,
-    province,
-    area,
-    loading,
-    error
-  } = state.commerceData;
+  const { name, cuit, email, phone, description, province, area, loading, error } = state.commerceData;
 
   const { provincesList } = state.provinceData;
 
-  const {
-    address,
-    provinceName,
-    city,
-    latitude,
-    longitude
-  } = state.locationData;
+  const { address, provinceName, city, latitude, longitude } = state.locationData;
 
   return {
     name,
@@ -259,12 +202,12 @@ const mapStateToProps = state => {
     city,
     provinceName,
     latitude,
-    longitude
+    longitude,
   };
 };
 export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceCreate,
   onProvincesIdRead,
-  onLocationValueChange
+  onLocationValueChange,
 })(RegisterCommerceTwo);

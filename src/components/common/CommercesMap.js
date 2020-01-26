@@ -5,23 +5,17 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { View, StyleSheet, Platform, Image, Text } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import {
-  onSelectedLocationChange,
-  onReservationValueChange
-} from '../../actions';
+import { onSelectedLocationChange, onReservationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
 import { Toast } from '.';
-import {
-  getAddressFromLatAndLong,
-  getLatitudeAndLongitudeFromString
-} from '../../utils';
+import { getAddressFromLatAndLong, getLatitudeAndLongitudeFromString } from '../../utils';
 
 class CommercesMap extends React.Component {
   state = {
     defaultAddress: 'Córdoba, Argentina',
     completeAddress: '',
-    locationAsked: false
+    locationAsked: false,
   };
 
   componentDidMount() {
@@ -31,10 +25,7 @@ class CommercesMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.state.locationAsked &&
-      prevProps.userLocation !== this.props.userLocation
-    ) {
+    if (this.state.locationAsked && prevProps.userLocation !== this.props.userLocation) {
       this.setState({ locationAsked: false });
     }
   }
@@ -66,20 +57,17 @@ class CommercesMap extends React.Component {
 
   onStringSearch = async string => {
     try {
-      const [latLongResult] = await getLatitudeAndLongitudeFromString(
-        string ? string : this.state.completeAddress
-      );
+      const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
 
       if (latLongResult !== undefined) {
         const { latitude, longitude } = latLongResult;
         this.updateAddressFromLatAndLong({ latitude, longitude });
       } else {
         this.setState({
-          completeAddress: this.state.completeAddress.replace('Calle', '')
+          completeAddress: this.state.completeAddress.replace('Calle', ''),
         });
         Toast.show({
-          text:
-            'No se han encontrado resultados, intente modificar la dirección.'
+          text: 'No se han encontrado resultados, intente modificar la dirección.',
         });
       }
     } catch (error) {
@@ -91,7 +79,7 @@ class CommercesMap extends React.Component {
     try {
       const [addresResult] = await getAddressFromLatAndLong({
         latitude,
-        longitude
+        longitude,
       });
       const { name, street, city, region, country } = addresResult;
 
@@ -103,11 +91,11 @@ class CommercesMap extends React.Component {
         address,
         provinceName: region,
         city,
-        country
+        country,
       };
 
       this.setState({
-        completeAddress: `${address}, ${city}, ${region}, ${country}`
+        completeAddress: `${address}, ${city}, ${region}, ${country}`,
       });
 
       this.props.onSelectedLocationChange(location);
@@ -141,7 +129,7 @@ class CommercesMap extends React.Component {
       latitude: midLat,
       longitude: midLng,
       latitudeDelta: deltaLat,
-      longitudeDelta: deltaLng
+      longitudeDelta: deltaLng,
     };
   };
 
@@ -150,7 +138,7 @@ class CommercesMap extends React.Component {
     if (this.props.userLocation.latitude) {
       user = {
         latitude: this.props.userLocation.latitude,
-        longitude: this.props.userLocation.longitude
+        longitude: this.props.userLocation.longitude,
       };
 
       arrayOfMarkers.push(user);
@@ -159,7 +147,7 @@ class CommercesMap extends React.Component {
     if (this.props.selectedLocation.latitude) {
       selectedLocation = {
         latitude: this.props.selectedLocation.latitude,
-        longitude: this.props.selectedLocation.longitude
+        longitude: this.props.selectedLocation.longitude,
       };
 
       arrayOfMarkers.push(selectedLocation);
@@ -182,7 +170,7 @@ class CommercesMap extends React.Component {
         <MapView.Marker
           coordinate={{
             latitude,
-            longitude
+            longitude,
           }}
           title={address}
           pinColor={'#1589FF'}
@@ -203,14 +191,14 @@ class CommercesMap extends React.Component {
         <MapView.Marker
           coordinate={{
             latitude,
-            longitude
+            longitude,
           }}
           draggable
           title={address}
           onDragEnd={e =>
             this.updateAddressFromLatAndLong({
               latitude: e.nativeEvent.coordinate.latitude,
-              longitude: e.nativeEvent.coordinate.longitude
+              longitude: e.nativeEvent.coordinate.longitude,
             })
           }
           pinColor={MAIN_COLOR}
@@ -227,15 +215,12 @@ class CommercesMap extends React.Component {
           key={marker.objectID}
           coordinate={{
             latitude: marker.latitude,
-            longitude: marker.longitude
+            longitude: marker.longitude,
           }}
           title={marker.name}
           pinColor={'black'}
         >
-          <MapView.Callout
-            tooltip
-            onPress={() => this.onMarkerTitlePress(marker)}
-          >
+          <MapView.Callout tooltip onPress={() => this.onMarkerTitlePress(marker)}>
             <Text>{marker.name}</Text>
           </MapView.Callout>
         </MapView.Marker>
@@ -250,10 +235,7 @@ class CommercesMap extends React.Component {
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
-      const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
-          ? this.state.completeAddress
-          : '';
+      const validAddress = this.state.completeAddress !== 'Córdoba, Argentina' ? this.state.completeAddress : '';
 
       return (
         <View style={mainContainer}>
@@ -298,7 +280,7 @@ class CommercesMap extends React.Component {
     if (this.props.selectedLocation.latitude || this.props.longPressAllowed)
       this.updateAddressFromLatAndLong({
         latitude: e.nativeEvent.coordinate.latitude,
-        longitude: e.nativeEvent.coordinate.longitude
+        longitude: e.nativeEvent.coordinate.longitude,
       });
   };
 
@@ -336,7 +318,7 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     backgroundColor: 'transparent',
-    position: 'absolute'
+    position: 'absolute',
   },
   searchBarContainer: {
     alignSelf: 'stretch',
@@ -348,18 +330,18 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1
+      height: 1,
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-    elevation: 2
+    elevation: 2,
   },
   searchInput: {
     marginTop: 1,
     fontSize: 16,
     marginLeft: 12,
-    marginRight: 0
-  }
+    marginRight: 0,
+  },
 });
 
 const mapStateToProps = state => {
@@ -370,11 +352,11 @@ const mapStateToProps = state => {
   return {
     userLocation,
     selectedLocation,
-    markers
+    markers,
   };
 };
 
 export default connect(mapStateToProps, {
   onSelectedLocationChange,
-  onReservationValueChange
+  onReservationValueChange,
 })(CommercesMap);

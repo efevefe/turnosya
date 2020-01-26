@@ -36,9 +36,7 @@ class ClientReservationsList extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations
-        .filter(res => res.endDate < moment())
-        .reverse();
+      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
@@ -66,21 +64,15 @@ class ClientReservationsList extends Component {
         title={commerce.name}
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
-        rightSubtitle={
-          endDate < moment() && !isOneWeekOld(endDate) && !reviewId
-            ? '¡Calificá el servicio!'
-            : null
-        }
+        rightSubtitle={endDate < moment() && !isOneWeekOld(endDate) && !reviewId ? '¡Calificá el servicio!' : null}
         rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
-          }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
-            'HH:mm'
-          )} hs.`}
+        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format('HH:mm')} hs.`}
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: item
+            reservation: item,
           })
         }
       />
@@ -119,11 +111,7 @@ class ClientReservationsList extends Component {
           innerBorderStyle={{ width: 0 }}
         />
 
-        {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
-        ) : (
-            this.renderList()
-          )}
+        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
       </View>
     );
   }
@@ -138,8 +126,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 0,
     marginLeft: 0,
-    marginRight: 0
-  }
+    marginRight: 0,
+  },
 });
 
 const mapStateToProps = state => {
@@ -147,6 +135,4 @@ const mapStateToProps = state => {
   return { reservations, loading };
 };
 
-export default connect(mapStateToProps, { onClientReservationsListRead })(
-  ClientReservationsList
-);
+export default connect(mapStateToProps, { onClientReservationsListRead })(ClientReservationsList);

@@ -39,7 +39,7 @@ class Menu extends Component {
 const styles = StyleSheet.create({
   overlayStyle: {
     padding: 0,
-    borderRadius: 8
+    borderRadius: 8,
   },
   titleContainerStyle: {
     alignSelf: 'stretch',
@@ -50,11 +50,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     margin: 18,
     textAlign: 'justify',
-    lineHeight: 22
+    lineHeight: 22,
   },
   dividerStyle: {
-    backgroundColor: 'grey'
-  }
+    backgroundColor: 'grey',
+  },
 });
 
 export { Menu };

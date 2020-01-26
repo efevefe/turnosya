@@ -2,20 +2,11 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import {
-  BarChart,
-  Spinner,
-  DatePicker,
-  Button,
-  CardSection,
-  Menu,
-  IconButton,
-  EmptyList
-} from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton, EmptyList } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onMostPopularShiftsReadByRange
+  onMostPopularShiftsReadByRange,
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -30,7 +21,7 @@ class MostPopularShiftsChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
     };
   }
 
@@ -40,9 +31,7 @@ class MostPopularShiftsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.onEditPress()} />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.onEditPress()} />,
     });
   }
 
@@ -60,7 +49,7 @@ class MostPopularShiftsChart extends Component {
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate)
+      endDate: moment(this.state.modalEndDate),
     });
 
     this.setState({ modal: false });
@@ -69,7 +58,7 @@ class MostPopularShiftsChart extends Component {
   renderChart = () => {
     const dataBar = {
       labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
+      datasets: [{ data: this.props.data.data }],
     };
 
     return (
@@ -99,7 +88,7 @@ class MostPopularShiftsChart extends Component {
             this.setState({
               modal: false,
               modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate
+              modalEndDate: this.props.endDate,
             })
           }
         >
@@ -107,7 +96,7 @@ class MostPopularShiftsChart extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-around',
-              paddingTop: 10
+              paddingTop: 10,
             }}
           >
             <DatePicker
@@ -128,10 +117,7 @@ class MostPopularShiftsChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
@@ -151,12 +137,12 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
-    loading
+    loading,
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onMostPopularShiftsReadByRange
+  onMostPopularShiftsReadByRange,
 })(MostPopularShiftsChart);

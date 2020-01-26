@@ -22,7 +22,9 @@ class App extends React.Component {
       <Provider store={store}>
         <Root>
           <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" />
-          <View style={styles.container}><MainNavigation /></View>
+          <View style={styles.container}>
+            <MainNavigation />
+          </View>
         </Root>
       </Provider>
     );
@@ -34,8 +36,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignSelf: 'stretch',
-    justifyContent: 'flex-start'
-  }
+    justifyContent: 'flex-start',
+  },
 });
 
 export default App;

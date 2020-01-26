@@ -17,7 +17,7 @@ import {
   Toast,
   ReviewCard,
   ButtonGroup,
-  AreaComponentRenderer
+  AreaComponentRenderer,
 } from '../common';
 import {
   onClientReservationCancel,
@@ -29,7 +29,7 @@ import {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -43,7 +43,7 @@ class ClientReservationDetails extends Component {
       optionsVisible: false,
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0
+      reviewBGIndex: 0,
     };
   }
 
@@ -54,17 +54,17 @@ class ClientReservationDetails extends Component {
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
       selectedDate: this.state.reservation.startDate,
-      employeeId: this.state.reservation.employeeId || null
+      employeeId: this.state.reservation.employeeId || null,
     });
 
     this.props.onCommerceReviewReadById({
       commerceId: this.state.reservation.commerceId,
-      reviewId: this.state.reservation.reviewId
+      reviewId: this.state.reservation.reviewId,
     });
 
     this.props.onClientReviewReadById({
       clientId: this.props.clientId,
-      reviewId: this.state.reservation.receivedReviewId
+      reviewId: this.state.reservation.receivedReviewId,
     });
   }
 
@@ -83,8 +83,7 @@ class ClientReservationDetails extends Component {
     else
       Toast.show({
         text:
-          'No puede cancelar el turno, el tiempo mínimo permitido es ' +
-          stringFormatHours(reservationMinCancelTime)
+          'No puede cancelar el turno, el tiempo mínimo permitido es ' + stringFormatHours(reservationMinCancelTime),
       });
   };
 
@@ -93,11 +92,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button
-            title="Cancelar Reserva"
-            type="solid"
-            onPress={this.onCancelButtonPress}
-          />
+          <Button title="Cancelar Reserva" type="solid" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -115,7 +110,7 @@ class ClientReservationDetails extends Component {
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
-          reviewId: this.props.commerceReviewId
+          reviewId: this.props.commerceReviewId,
         });
       } else {
         // Si la reserva no tiene calificacion, crearla
@@ -123,7 +118,7 @@ class ClientReservationDetails extends Component {
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
-          reservationId: this.state.reservation.id
+          reservationId: this.state.reservation.id,
         });
       }
     }
@@ -132,11 +127,9 @@ class ClientReservationDetails extends Component {
   onCancelReservationButtonPress = () => {
     const { startDate, id, commerceId } = this.state.reservation;
 
-    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format(
-      'D'
-    )} de ${MONTHS[moment(startDate).month()]} a las ${moment(startDate).format(
-      'HH:mm'
-    )} fue cancelado`;
+    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
+      MONTHS[moment(startDate).month()]
+    } a las ${moment(startDate).format('HH:mm')} fue cancelado`;
 
     const title = 'Turno Cancelado';
 
@@ -144,7 +137,7 @@ class ClientReservationDetails extends Component {
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
-      notification: { title, body }
+      notification: { title, body },
     });
 
     this.setState({ optionsVisible: false });
@@ -153,12 +146,12 @@ class ClientReservationDetails extends Component {
   deleteReview = () => {
     this.setState({
       confirmDeleteVisible: false,
-      reservation: { ...this.state.reservation, reviewId: null }
+      reservation: { ...this.state.reservation, reviewId: null },
     });
     this.props.onCommerceReviewDelete({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
-      reviewId: this.props.commerceReviewId
+      reviewId: this.props.commerceReviewId,
     });
   };
 
@@ -169,17 +162,9 @@ class ClientReservationDetails extends Component {
         onBackdropPress={() => this.setState({ confirmDeleteVisible: false })}
         isVisible={this.state.confirmDeleteVisible}
       >
-        <MenuItem
-          title="Confirmar"
-          icon="md-checkmark"
-          onPress={this.deleteReview}
-        />
+        <MenuItem title="Confirmar" icon="md-checkmark" onPress={this.deleteReview} />
         <Divider style={overlayDividerStyle} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={() => this.setState({ confirmDeleteVisible: false })}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ confirmDeleteVisible: false })} />
       </Menu>
     );
   };
@@ -216,24 +201,20 @@ class ClientReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating =>
-              this.props.onCommerceReviewValueChange({ rating })
-            }
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment =>
-              this.props.onCommerceReviewValueChange({ comment })
-            }
-            commentPlaceholder="Deje un comentario sobre la atención..."
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -249,10 +230,10 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title="El negocio no te ha calificado" />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El negocio no te ha calificado" />
+      </View>
+    );
   };
 
   renderReviewFields = () => {
@@ -265,9 +246,7 @@ class ClientReservationDetails extends Component {
             selectedIndex={this.state.reviewBGIndex}
             buttons={['Calificar al negocio', 'Ver su calificación']}
           />
-          {this.state.reviewBGIndex === 0
-            ? this.renderCommerceReview()
-            : this.renderClientReview()}
+          {this.state.reviewBGIndex === 0 ? this.renderCommerceReview() : this.renderClientReview()}
           {this.renderConfirmReviewDelete()}
         </CardSection>
       );
@@ -277,32 +256,16 @@ class ClientReservationDetails extends Component {
   // ** Render method **
 
   render() {
-    const {
-      areaId,
-      commerce,
-      service,
-      employee,
-      court,
-      endDate,
-      startDate,
-      light,
-      price
-    } = this.state.reservation;
+    const { areaId, commerce, service, employee, court, endDate, startDate, light, price } = this.state.reservation;
 
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView
-        enableOnAndroid
-        style={scrollViewStyle}
-        extraScrollHeight={60}
-      >
+      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={
-            this.state.optionsVisible || this.props.loadingReservations
-          }
+          isVisible={this.state.optionsVisible || this.props.loadingReservations}
         >
           <MenuItem
             title="Aceptar"
@@ -311,11 +274,7 @@ class ClientReservationDetails extends Component {
             onPress={() => this.onCancelReservationButtonPress()}
           />
           <Divider style={overlayDividerStyle} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ optionsVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ optionsVisible: false })} />
         </Menu>
 
         <AreaComponentRenderer
@@ -325,13 +284,7 @@ class ClientReservationDetails extends Component {
               mode="commerce"
               name={commerce.name}
               picture={commerce.profilePicture}
-              info={
-                commerce.address +
-                ', ' +
-                commerce.city +
-                ', ' +
-                commerce.province.name
-              }
+              info={commerce.address + ', ' + commerce.city + ', ' + commerce.province.name}
               infoIcon="md-pin"
               court={court}
               startDate={startDate}
@@ -346,13 +299,7 @@ class ClientReservationDetails extends Component {
               mode="commerce"
               name={commerce.name}
               picture={commerce.profilePicture}
-              info={
-                commerce.address +
-                ', ' +
-                commerce.city +
-                ', ' +
-                commerce.province.name
-              }
+              info={commerce.address + ', ' + commerce.city + ', ' + commerce.province.name}
               infoIcon="md-pin"
               service={service}
               employee={employee}
@@ -370,18 +317,14 @@ class ClientReservationDetails extends Component {
   }
 }
 
-const {
-  reviewDividerStyle,
-  overlayDividerStyle,
-  scrollViewStyle
-} = StyleSheet.create({
+const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   reviewDividerStyle: {
     marginBottom: 10,
     marginHorizontal: 40,
-    backgroundColor: 'grey'
+    backgroundColor: 'grey',
   },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
 });
 
 const mapStateToProps = state => {
@@ -402,7 +345,7 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
   };
 };
 
@@ -416,5 +359,5 @@ export default connect(mapStateToProps, {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
 })(ClientReservationDetails);

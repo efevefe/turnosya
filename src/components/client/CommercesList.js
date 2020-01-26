@@ -17,13 +17,13 @@ const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 class CommercesList extends Component {
   state = {
     areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
-    searchVisible: false
+    searchVisible: false,
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcons: this.renderRightButtons(),
-      header: undefined
+      header: undefined,
     });
 
     this.props.onFavoriteCommercesRead();
@@ -32,18 +32,14 @@ class CommercesList extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcons'),
-      header: navigation.getParam('header')
+      header: navigation.getParam('header'),
     };
   };
 
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton
-          icon="md-search"
-          containerStyle={{ paddingRight: 0 }}
-          onPress={this.onSearchPress}
-        />
+        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
@@ -65,25 +61,17 @@ class CommercesList extends Component {
 
   renderAlgoliaSearchBar = () => {
     if (this.state.searchVisible) {
-      return (
-        <ConnectedSearchBox
-          autoFocus={true}
-          showLoadingIndicator
-          onCancel={this.onCancelPress}
-        />
-      );
+      return <ConnectedSearchBox autoFocus={true} showLoadingIndicator onCancel={this.onCancelPress} />;
     }
   };
 
   obtainFacetProps = () => {
     if (this.state.areaName && this.props.provinceNameFilter)
       return {
-        filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
+        filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`,
       };
-    else if (this.state.areaName)
-      return { filters: `areaName:\'${this.state.areaName}\'` };
-    else if (this.props.provinceNameFilter)
-      return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
+    else if (this.state.areaName) return { filters: `areaName:\'${this.state.areaName}\'` };
+    else if (this.props.provinceNameFilter) return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
     else return null;
   };
 
@@ -91,12 +79,12 @@ class CommercesList extends Component {
     return this.props.selectedLocation.latitude
       ? {
           aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms),
         }
       : this.props.userLocation.latitude
       ? {
           aroundLatLng: `${this.props.userLocation.latitude}, ${this.props.userLocation.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
+          aroundRadius: Math.round(1000 * this.props.locationRadiusKms),
         }
       : null;
   };
@@ -114,20 +102,14 @@ class CommercesList extends Component {
         stalledSearchDelay={0}
         root={{
           Root: View, // component to render as the root of InstantSearch
-          props: { style: { flex: 1 } } // props that will be applied on the root component aka View
+          props: { style: { flex: 1 } }, // props that will be applied on the root component aka View
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        <Configure
-          {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
-        />
+        <Configure {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }} />
         <ConnectedStateResults />
         <ConnectedHits />
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onMapFabPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onMapFabPress}>
           <Ionicons name="md-compass" />
         </Fab>
       </InstantSearch>
@@ -136,12 +118,7 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    refinement,
-    favoriteCommerces,
-    provinceNameFilter,
-    locationRadiusKms
-  } = state.commercesList;
+  const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
 
   const {
     address,
@@ -151,7 +128,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     userLocation,
-    selectedLocation
+    selectedLocation,
   } = state.locationData;
 
   return {
@@ -166,10 +143,10 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     userLocation,
-    selectedLocation
+    selectedLocation,
   };
 };
 
 export default connect(mapStateToProps, {
-  onFavoriteCommercesRead
+  onFavoriteCommercesRead,
 })(CommercesList);

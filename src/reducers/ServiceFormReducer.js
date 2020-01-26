@@ -4,17 +4,17 @@ import {
   ON_SERVICE_FORM_SUBMIT,
   ON_SERVICE_CREATE,
   ON_SERVICE_UPDATE,
-  ON_SERVICE_DELETE
+  ON_SERVICE_DELETE,
 } from '../actions/types';
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = {
-    name: '',
-    duration: '',
-    price: '',
-    description: '',
-    employeesIds: [],
-    loading: false
+  name: '',
+  duration: '',
+  price: '',
+  description: '',
+  employeesIds: [],
+  loading: false,
 };
 
 export default (state = INITIAL_STATE, action) => {

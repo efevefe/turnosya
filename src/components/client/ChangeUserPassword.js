@@ -3,11 +3,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import { Button, Input, CardSection } from '../common';
-import {
-  onLoginValueChange,
-  onClientDataValueChange,
-  onUserPasswordUpdate
-} from '../../actions';
+import { onLoginValueChange, onClientDataValueChange, onUserPasswordUpdate } from '../../actions';
 import { validateValueType } from '../../utils';
 
 class ChangeUserPassword extends Component {
@@ -28,12 +24,11 @@ class ChangeUserPassword extends Component {
       this.setState({ newPasswordError: 'Dato requerido' });
     } else if (!validateValueType('password', this.props.newPassword)) {
       this.setState({
-        newPasswordError:
-          'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
+        newPasswordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres',
       });
     } else if (this.props.newPassword === this.props.password) {
       this.setState({
-        newPasswordError: 'La nueva contraseña debe ser diferente a la actual'
+        newPasswordError: 'La nueva contraseña debe ser diferente a la actual',
       });
     } else {
       this.setState({ newPasswordError: '' });
@@ -57,12 +52,7 @@ class ChangeUserPassword extends Component {
   };
 
   validateMinimumData = () => {
-    return (
-      !this.props.reauthError &&
-      this.passwordError() &&
-      this.newPasswordError() &&
-      this.confirmPasswordError()
-    );
+    return !this.props.reauthError && this.passwordError() && this.newPasswordError() && this.confirmPasswordError();
   };
 
   onSavePress = () => {
@@ -70,7 +60,7 @@ class ChangeUserPassword extends Component {
       this.props.onUserPasswordUpdate(
         {
           password: this.props.password,
-          newPassword: this.props.newPassword
+          newPassword: this.props.newPassword,
         },
         this.props.navigation
       );
@@ -84,7 +74,7 @@ class ChangeUserPassword extends Component {
           containerStyle={{
             padding: 5,
             paddingTop: 10,
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
           <CardSection>
@@ -93,9 +83,7 @@ class ChangeUserPassword extends Component {
               placeholder="Ingresar contraseña actual"
               password
               value={this.props.password}
-              onChangeText={password =>
-                this.props.onLoginValueChange({ password })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               errorMessage={this.props.reauthError || this.state.passwordError}
               onFocus={() => this.props.onLoginValueChange({ error: '' })}
               onBlur={this.passwordError}
@@ -107,9 +95,7 @@ class ChangeUserPassword extends Component {
               placeholder="Ingresar nueva contraseña"
               password
               value={this.props.newPassword}
-              onChangeText={password =>
-                this.props.onClientDataValueChange({ password })
-              }
+              onChangeText={password => this.props.onClientDataValueChange({ password })}
               errorMessage={this.state.newPasswordError}
               onFocus={() => this.setState({ newPasswordError: '' })}
               onBlur={this.newPasswordError}
@@ -121,20 +107,14 @@ class ChangeUserPassword extends Component {
               placeholder="Confirmar nueva contraseña"
               password
               value={this.props.confirmPassword}
-              onChangeText={confirmPassword =>
-                this.props.onClientDataValueChange({ confirmPassword })
-              }
+              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword })}
               errorMessage={this.state.confirmPasswordError}
               onFocus={() => this.setState({ confirmPasswordError: '' })}
               onBlur={this.confirmPasswordError}
             />
           </CardSection>
           <CardSection>
-            <Button
-              title="Guardar"
-              loading={this.props.loading}
-              onPress={this.onSavePress}
-            />
+            <Button title="Guardar" loading={this.props.loading} onPress={this.onSavePress} />
           </CardSection>
         </Card>
       </KeyboardAwareScrollView>
@@ -152,12 +132,12 @@ const mapStateToProps = state => {
     password,
     newPassword,
     confirmPassword,
-    reauthError: error
+    reauthError: error,
   };
 };
 
 export default connect(mapStateToProps, {
   onLoginValueChange,
   onClientDataValueChange,
-  onUserPasswordUpdate
+  onUserPasswordUpdate,
 })(ChangeUserPassword);

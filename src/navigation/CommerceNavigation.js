@@ -44,21 +44,21 @@ const reservationDetailsScreens = {
   reservationDetails: {
     screen: CommerceReservationDetails,
     navigationOptions: {
-      title: 'Detalles del Turno'
-    }
+      title: 'Detalles del Turno',
+    },
   },
   clientProfileView: {
     screen: ClientProfileView,
     navigationOptions: {
-      title: 'Perfil del Cliente'
-    }
+      title: 'Perfil del Cliente',
+    },
   },
   clientReviewsList: {
     screen: ClientReviewsList,
     navigationOptions: {
-      title: 'Reseñas del Cliente'
-    }
-  }
+      title: 'Reseñas del Cliente',
+    },
+  },
 };
 
 const calendarStack = createStackNavigator(
@@ -67,54 +67,50 @@ const calendarStack = createStackNavigator(
       screen: CommerceCourtsSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     hairdressersCalendar: {
       screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     schedulesList: {
       screen: CommerceSchedulesList,
       navigationOptions: {
-        title: 'Horarios de Atención'
-      }
+        title: 'Horarios de Atención',
+      },
     },
     scheduleRegister: {
-      screen: ScheduleRegister
+      screen: ScheduleRegister,
     },
     registerConfiguration: {
       screen: ScheduleRegisterConfiguration,
       navigationOptions: {
-        title: 'Límites de turnos'
-      }
+        title: 'Límites de turnos',
+      },
     },
     commerceCourtsList: {
-      screen: CommerceCourtsStateList
+      screen: CommerceCourtsStateList,
     },
     courtReservationRegister: {
       screen: CommerceCourtReservationRegister,
       navigationOptions: {
-        title: 'Nuevo Turno'
-      }
+        title: 'Nuevo Turno',
+      },
     },
     employeeServicesList: {
-      screen: EmployeeServicesList
+      screen: EmployeeServicesList,
     },
     serviceReservationRegister: {
       screen: CommerceServiceReservationRegister,
       navigationOptions: {
-        title: 'Nuevo Turno'
-      }
+        title: 'Nuevo Turno',
+      },
     },
-    ...reservationDetailsScreens
+    ...reservationDetailsScreens,
   },
   stackNavigationOptions
 );
@@ -125,12 +121,10 @@ const reservationsStack = createStackNavigator(
       screen: CommerceReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Turnos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
-    ...reservationDetailsScreens
+    ...reservationDetailsScreens,
   },
   stackNavigationOptions
 );
@@ -141,51 +135,46 @@ const profileStack = createStackNavigator(
       screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        ),
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
         headerRight: (
           <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-            <IconButton
-              icon="md-create"
-              onPress={() => navigation.navigate('profileEdit')}
-            />
+            <IconButton icon="md-create" onPress={() => navigation.navigate('profileEdit')} />
           </PermissionsAssigner>
-        )
-      })
+        ),
+      }),
     },
     profileEdit: {
       screen: CommerceProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Editar Perfil',
         headerLeft: navigation.getParam('leftIcon'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+        headerRight: navigation.getParam('rightIcon'),
+      }),
     },
     commerceProfileInfo: {
       screen: CommerceProfileInfo,
       navigationOptions: {
-        title: 'Información'
-      }
+        title: 'Información',
+      },
     },
     commerceLocationMap: {
       screen: CommerceLocationMap,
       navigationOptions: {
-        title: 'Dirección'
-      }
+        title: 'Dirección',
+      },
     },
     changeCommerceLocationMap: {
       screen: LocationMap,
       navigationOptions: {
-        title: 'Modificar mi Dirección'
-      }
+        title: 'Modificar mi Dirección',
+      },
     },
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas del Comercio'
-      }
-    }
+        title: 'Reseñas del Comercio',
+      },
+    },
   },
   stackNavigationOptions
 );
@@ -196,41 +185,39 @@ const reportsStack = createStackNavigator(
       screen: DashBoard,
       navigationOptions: ({ navigation }) => ({
         title: 'Reportes',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     dailyReservationsChart: {
       screen: DailyReservationsChart,
       navigationOptions: {
-        title: 'Reservas por Día'
-      }
+        title: 'Reservas por Día',
+      },
     },
     monthlyEarningsChart: {
       screen: MonthlyEarningsChart,
       navigationOptions: {
-        title: 'Ingresos Mensuales'
-      }
+        title: 'Ingresos Mensuales',
+      },
     },
     monthlyReviewsChart: {
       screen: MonthlyReviewsChart,
       navigationOptions: {
-        title: 'Mis Calificaciones'
-      }
+        title: 'Mis Calificaciones',
+      },
     },
     reservedAndCancelledShiftChart: {
       screen: ReservedAndCancelledShiftChart,
       navigationOptions: {
-        title: 'Cancelados/Realizados'
-      }
+        title: 'Cancelados/Realizados',
+      },
     },
     mostPopularShiftsChart: {
       screen: MostPopularShiftsChart,
       navigationOptions: {
-        title: 'Horarios más populares'
-      }
-    }
+        title: 'Horarios más populares',
+      },
+    },
   },
   stackNavigationOptions
 );
@@ -242,17 +229,15 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     serviceForm: {
       screen: ServiceForm,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Nuevo Servicio')
-      })
-    }
+        title: navigation.getParam('title', 'Nuevo Servicio'),
+      }),
+    },
   },
   stackNavigationOptions
 );
@@ -264,17 +249,15 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
-      })
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
+      }),
     },
     courtForm: {
       screen: CourtForm,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.getParam('title', 'Nueva Cancha')
-      })
-    }
+        title: navigation.getParam('title', 'Nueva Cancha'),
+      }),
+    },
   },
   stackNavigationOptions
 );
@@ -286,18 +269,18 @@ const commonTabs = {
   reports: reportsStack,
   reservations: reservationsStack,
   calendar: calendarStack,
-  profile: profileStack
-}
+  profile: profileStack,
+};
 
 // TABS FOR SPORTS COMMERCES
 const sportsTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
-    ...commonTabs
+    ...commonTabs,
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'calendar'
+    initialRouteName: 'calendar',
   }
 );
 
@@ -305,11 +288,11 @@ const sportsTabs = createBottomTabNavigator(
 const hairdressersTabs = createBottomTabNavigator(
   {
     services: servicesStack,
-    ...commonTabs
+    ...commonTabs,
   },
   {
     ...tabNavigationOptions,
-    initialRouteName: 'calendar'
+    initialRouteName: 'calendar',
   }
 );
 

@@ -2,20 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { ScrollView, Dimensions } from 'react-native';
-import {
-  PieChart,
-  Spinner,
-  Button,
-  DatePicker,
-  IconButton,
-  Menu,
-  CardSection,
-  EmptyList
-} from '../../common';
+import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onReservedAndCancelledShiftReadByRange
+  onReservedAndCancelledShiftReadByRange,
 } from '../../../actions/CommerceReportsActions';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
@@ -27,16 +18,12 @@ class ReservedAndCancelledShiftChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.onReservedAndCancelledShiftReadByRange(
-      commerceId,
-      startDate,
-      endDate
-    );
+    props.onReservedAndCancelledShiftReadByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
     };
   }
 
@@ -46,12 +33,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />,
     });
   }
 
@@ -64,7 +46,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate)
+      endDate: moment(this.state.modalEndDate),
     });
 
     this.setState({ modal: false });
@@ -79,7 +61,7 @@ class ReservedAndCancelledShiftChart extends Component {
           count: this.props.data.data[i],
           color: colors[i],
           legendFontColor: 'black',
-          legendFontSize: 15
+          legendFontSize: 15,
         });
       }
 
@@ -120,7 +102,7 @@ class ReservedAndCancelledShiftChart extends Component {
             this.setState({
               modal: false,
               modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate
+              modalEndDate: this.props.endDate,
             })
           }
         >
@@ -128,7 +110,7 @@ class ReservedAndCancelledShiftChart extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-around',
-              paddingTop: 10
+              paddingTop: 10,
             }}
           >
             <DatePicker
@@ -149,10 +131,7 @@ class ReservedAndCancelledShiftChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
@@ -171,12 +150,12 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
-    loading
+    loading,
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onReservedAndCancelledShiftReadByRange
+  onReservedAndCancelledShiftReadByRange,
 })(ReservedAndCancelledShiftChart);

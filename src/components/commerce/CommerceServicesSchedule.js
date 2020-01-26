@@ -12,7 +12,7 @@ import {
   onReservationValueChange,
   onCommerceReservationsRead,
   onNewReservation,
-  onServicesRead
+  onServicesRead,
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -20,24 +20,22 @@ class CommerceServicesSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: navigation.getParam('rightIcon'),
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderConfigurationButton()
+      rightIcon: this.renderConfigurationButton(),
     });
 
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.state.selectedDate,
-      employeeId: this.props.employeeId
+      employeeId: this.props.employeeId,
     });
 
-    this.unsubscribeServicesRead = this.props.onServicesRead(
-      this.props.commerceId
-    );
+    this.unsubscribeServicesRead = this.props.onServicesRead(this.props.commerceId);
   }
 
   componentDidUpdate(prevProps) {
@@ -58,43 +56,39 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date,
-      employeeId: this.props.employeeId
+      employeeId: this.props.employeeId,
     });
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
-        employeeId: this.props.employeeId
+        employeeId: this.props.employeeId,
       });
     }
 
     this.setState({ selectedDate: date });
-  }
+  };
 
   getReservationFromSlot = slot => {
-    const reservation = this.props.reservations.find(res =>
-      res.startDate.toString() === slot.startDate.toString()
-    );
+    const reservation = this.props.reservations.find(res => res.startDate.toString() === slot.startDate.toString());
 
-    const service = this.props.services.find(service =>
-      service.id === reservation.serviceId
-    );
+    const service = this.props.services.find(service => service.id === reservation.serviceId);
 
     return { ...reservation, service };
-  }
+  };
 
   onSlotPress = slot => {
     if (moment() >= slot.startDate && slot.available) {
       return Toast.show({
-        text: 'Ya no se puede reservar en este horario'
+        text: 'Ya no se puede reservar en este horario',
       });
     }
 
     if (!slot.available) {
       return this.props.navigation.navigate('reservationDetails', {
-        reservation: this.getReservationFromSlot(slot)
-      })
+        reservation: this.getReservationFromSlot(slot),
+      });
     }
 
     const startDate = slot.startDate;
@@ -104,21 +98,13 @@ class CommerceServicesSchedule extends Component {
     this.props.onNewReservation();
 
     this.props.navigation.navigate('employeeServicesList', {
-      title:
-        startDate.format('DD') +
-        ' de ' +
-        MONTHS[startDate.month()] +
-        ', ' +
-        startDate.format('HH:mm') +
-        ' hs.'
+      title: startDate.format('DD') + ' de ' + MONTHS[startDate.month()] + ', ' + startDate.format('HH:mm') + ' hs.',
     });
   };
 
   isResFillingSlot = (slot, res) => {
-    return (
-      slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString()
-    );
-  }
+    return slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString();
+  };
 
   reservationsOnSlots = () => {
     const { reservations, slots } = this.props;
@@ -144,7 +130,7 @@ class CommerceServicesSchedule extends Component {
         free: available ? 1 : 0,
         total: 1,
         available,
-        visible
+        visible,
       };
     });
 
@@ -152,18 +138,13 @@ class CommerceServicesSchedule extends Component {
   };
 
   renderConfigurationButton = () => {
-    return (
-      <IconButton
-        icon="md-options"
-        onPress={() => this.setState({ modal: true })}
-      />
-    );
+    return <IconButton icon="md-options" onPress={() => this.setState({ modal: true })} />;
   };
 
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
     this.props.navigation.navigate('schedulesList', {
-      selectedDate: this.state.selectedDate
+      selectedDate: this.state.selectedDate,
     });
   };
 
@@ -179,7 +160,7 @@ class CommerceServicesSchedule extends Component {
       reservationMinLength,
       loadingSchedule,
       loadingReservations,
-      loadingServices
+      loadingServices,
     } = this.props;
 
     const { selectedDate } = this.state;
@@ -187,7 +168,7 @@ class CommerceServicesSchedule extends Component {
     return (
       <View style={{ flex: 1, alignSelf: 'stretch' }}>
         <Schedule
-          mode='services'
+          mode="services"
           cards={cards}
           selectedDate={selectedDate}
           reservationMinLength={reservationMinLength}
@@ -201,11 +182,7 @@ class CommerceServicesSchedule extends Component {
           onBackdropPress={() => this.setState({ modal: false })}
           isVisible={this.state.modal}
         >
-          <MenuItem
-            title="Días y horarios de atención"
-            icon="md-grid"
-            onPress={this.onScheduleShiftsPress}
-          />
+          <MenuItem title="Días y horarios de atención" icon="md-grid" onPress={this.onScheduleShiftsPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Tiempos de reserva y cancelación"
@@ -227,7 +204,7 @@ const mapStateToProps = state => {
     reservationMinLength,
     startDate,
     endDate,
-    loading: loadingSchedule
+    loading: loadingSchedule,
   } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
   const { reservations } = state.reservationsList;
@@ -251,7 +228,7 @@ const mapStateToProps = state => {
     services,
     loadingSchedule,
     loadingReservations,
-    loadingServices
+    loadingServices,
   };
 };
 
@@ -261,5 +238,5 @@ export default connect(mapStateToProps, {
   onReservationValueChange,
   onCommerceReservationsRead,
   onNewReservation,
-  onServicesRead
+  onServicesRead,
 })(CommerceServicesSchedule);

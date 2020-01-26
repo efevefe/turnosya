@@ -4,7 +4,7 @@ import {
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
   ON_COMMERCE_REPORT_DATA_EMPTY,
-  ON_COMMERCE_REPORT_DATA_ERROR
+  ON_COMMERCE_REPORT_DATA_ERROR,
 } from '../actions/types';
 import moment from 'moment';
 
@@ -15,7 +15,7 @@ const INITIAL_STATE = {
   loading: false,
   selectedYear: moment().format('YYYY'),
   years: [],
-  error: ''
+  error: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -39,7 +39,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: 'El dato seleccionado no es válido',
-        loading: false
+        loading: false,
       };
 
     default:

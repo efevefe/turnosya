@@ -23,7 +23,7 @@ class Input extends Component {
     } else {
       return false;
     }
-  }
+  };
 
   revealPasswordButton = color => {
     if (this.props.password) {
@@ -34,38 +34,25 @@ class Input extends Component {
           onPressIn={() => this.setState({ revealPassword: !revealPassword })}
           onPressOut={() => this.setState({ revealPassword: !revealPassword })}
         >
-          <Ionicons
-            name={`md-eye${revealPassword ? '-off' : ''}`}
-            color={color}
-            size={22}
-            style={{ marginRight: 5 }}
-          />
+          <Ionicons name={`md-eye${revealPassword ? '-off' : ''}`} color={color} size={22} style={{ marginRight: 5 }} />
         </TouchableWithoutFeedback>
       );
     }
-  }
+  };
 
   render() {
     const enabled = this.isEnabled();
-    const inputColor = enabled ? (this.props.color || MAIN_COLOR) : GREY_DISABLED;
+    const inputColor = enabled ? this.props.color || MAIN_COLOR : GREY_DISABLED;
 
     return (
       <RNEInput
         {...this.props}
         inputContainerStyle={[
           { borderColor: inputColor, borderBottomWidth: enabled ? 1.5 : 1 },
-          this.props.inputContainerStyle
+          this.props.inputContainerStyle,
         ]}
-        inputStyle={[
-          styles.inputStyle,
-          { color: enabled ? 'black' : 'grey' },
-          this.props.inputStyle
-        ]}
-        labelStyle={[
-          styles.labelStyle,
-          { color: inputColor },
-          this.props.labelStyle
-        ]}
+        inputStyle={[styles.inputStyle, { color: enabled ? 'black' : 'grey' }, this.props.inputStyle]}
+        labelStyle={[styles.labelStyle, { color: inputColor }, this.props.labelStyle]}
         errorStyle={[styles.errorStyle, this.props.errorStyle]}
         secureTextEntry={!this.state.revealPassword}
         rightIcon={this.props.password ? this.revealPasswordButton(inputColor) : this.props.rightIcon}
@@ -80,15 +67,15 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     fontSize: 17,
-    lineHeight: 25
+    lineHeight: 25,
   },
   labelStyle: {
     fontSize: 12,
-    fontWeight: 'normal'
+    fontWeight: 'normal',
   },
   errorStyle: {
-    marginLeft: 0
-  }
+    marginLeft: 0,
+  },
 });
 
 export { Input };

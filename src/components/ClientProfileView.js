@@ -31,7 +31,7 @@ class ClientProfileView extends React.Component {
 
   onReviewButtonPress = () => {
     this.props.navigation.navigate('clientReviewsList', {
-      clientId: this.state.clientId
+      clientId: this.state.clientId,
     });
   };
 
@@ -41,76 +41,52 @@ class ClientProfileView extends React.Component {
     return this.props.loading ? (
       <Spinner />
     ) : (
-        <View style={mainContainerStyle}>
-          <Avatar
-            rounded
-            source={profilePicture ? { uri: profilePicture } : null}
-            size={avatarSize}
-            icon={{ name: 'person' }}
-            containerStyle={avatarStyle}
-          />
-          <Text h4>{`${firstName} ${lastName}`}</Text>
-          <TouchableOpacity onPress={this.onReviewButtonPress}>
-            <Rating
-              style={ratingStyle}
-              readonly
-              imageSize={24}
-              startingValue={this.getRatingValue()}
-            />
-          </TouchableOpacity>
-          <Divider style={dividerStyle} />
-          <Text style={clientInfoStyle}>{email}</Text>
-          {this.renderClientPhone()}
-          <IconButton
-            icon='md-text'
-            color={MAIN_COLOR}
-            iconSize={30}
-            onPress={this.onReviewButtonPress}
-          />
-        </View>
-      );
+      <View style={mainContainerStyle}>
+        <Avatar
+          rounded
+          source={profilePicture ? { uri: profilePicture } : null}
+          size={avatarSize}
+          icon={{ name: 'person' }}
+          containerStyle={avatarStyle}
+        />
+        <Text h4>{`${firstName} ${lastName}`}</Text>
+        <TouchableOpacity onPress={this.onReviewButtonPress}>
+          <Rating style={ratingStyle} readonly imageSize={24} startingValue={this.getRatingValue()} />
+        </TouchableOpacity>
+        <Divider style={dividerStyle} />
+        <Text style={clientInfoStyle}>{email}</Text>
+        {this.renderClientPhone()}
+        <IconButton icon="md-text" color={MAIN_COLOR} iconSize={30} onPress={this.onReviewButtonPress} />
+      </View>
+    );
   }
 }
 
-const {
-  mainContainerStyle,
-  avatarStyle,
-  clientInfoStyle,
-  dividerStyle,
-  ratingStyle
-} = StyleSheet.create({
+const { mainContainerStyle, avatarStyle, clientInfoStyle, dividerStyle, ratingStyle } = StyleSheet.create({
   mainContainerStyle: {
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    marginVertical: 20
+    marginVertical: 20,
   },
   clientInfoStyle: {
     fontSize: 14,
-    margin: 5
+    margin: 5,
   },
   dividerStyle: {
     marginHorizontal: 70,
     margin: 10,
     alignSelf: 'stretch',
-    backgroundColor: 'grey'
+    backgroundColor: 'grey',
   },
-  ratingStyle: { padding: 10 }
+  ratingStyle: { padding: 10 },
 });
 
 const mapStateToProps = state => {
-  const {
-    firstName,
-    lastName,
-    email,
-    phone,
-    profilePicture,
-    rating,
-    loading
-  } = state.clientData;
+  const { firstName, lastName, email, phone, profilePicture, rating, loading } = state.clientData;
 
   return { firstName, lastName, email, phone, profilePicture, rating, loading };
 };
