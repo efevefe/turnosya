@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native';
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
+// import { Ionicons } from '@expo/vector-icons';
 import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
 import { getHourAndMinutes } from '../utils';
-import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR } from '../constants';
+import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR, GREY_DISABLED } from '../constants';
 import { onScheduleValueChange } from '../actions';
 
 /*
@@ -119,6 +120,8 @@ class Schedule extends Component {
 
       const slotStartDate = moment(shiftStartDate);
 
+      let divider = index > 0;
+
       for (
         let j = 0;
         shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
@@ -126,6 +129,12 @@ class Schedule extends Component {
           shiftEndDate.format('HH:mm') === '23:59');
         j++
       ) {
+
+        if (divider) {
+          slots.push({ id: `divider${j}`, divider });
+          divider = false;
+        }
+
         slots.push({
           id: slots.length,
           shiftId: index,
@@ -193,6 +202,17 @@ class Schedule extends Component {
           bottomDivider
         />
       );
+
+    if (item.divider)
+      return (
+        <View style={styles.slotDividerContainer}>
+          <Image
+            source={require('../../assets/turnosya-white-notext.png')}
+            style={{ height: 25 }}
+            resizeMode='contain'
+          />
+        </View>
+      );
   };
 
   onRefresh = () => {
@@ -239,8 +259,8 @@ class Schedule extends Component {
         {this.props.loading ? (
           <Spinner style={{ position: 'relative' }} />
         ) : (
-          this.renderSlots()
-        )}
+            this.renderSlots()
+          )}
       </View>
     );
   }
@@ -259,6 +279,13 @@ const styles = StyleSheet.create({
   },
   slotRightSubtitleStyle: {
     color: 'grey'
+  },
+  slotDividerContainer: {
+    backgroundColor: GREY_DISABLED,
+    height: 45,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

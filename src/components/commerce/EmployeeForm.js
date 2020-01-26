@@ -191,10 +191,8 @@ class EmployeeForm extends Component {
                 title={'Rol:'}
                 placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles.filter(
-                  role =>
-                    ROLES[role.value.roleId].value <=
-                    this.props.currentRole.value
+                items={this.props.roles.filter(role =>
+                  ROLES[role.value.roleId].value <= this.props.currentRole.value
                 )}
                 onValueChange={role =>
                   this.props.onEmployeeValueChange({ role: role || {} })
