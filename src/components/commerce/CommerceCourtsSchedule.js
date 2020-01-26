@@ -117,6 +117,8 @@ class CommerceCourtsSchedule extends Component {
     });
 
     const newSlots = slots.map(slot => {
+      if (slot.divider) return slot;
+
       let reserved = 0;
       let available = true;
       let courtsAvailable = 0;

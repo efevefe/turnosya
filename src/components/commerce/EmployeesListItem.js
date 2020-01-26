@@ -8,14 +8,18 @@ import { onCourtFormOpen, onEmployeeDelete, onEmployeeValueChange } from '../../
 import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
-  state = { optionsVisible: false, deleteVisible: false };
+  state = {
+    optionsVisible: false,
+    deleteVisible: false,
+    currentUserEmail: firebase.auth().currentUser.email
+  };
 
   onOptionsPress = () => {
     this.setState({ optionsVisible: true });
   };
 
   onDeletePress = () => {
-    if (firebase.auth().currentUser.email === this.props.employee.email)
+    if (this.state.currentUserEmail === this.props.employee.email)
       return Toast.show({ text: 'No puede eliminarse usted mismo' });
 
     this.setState({
@@ -120,12 +124,14 @@ class CourtListItem extends Component {
             </Text>
           }
           onLongPress={
-            this.props.role.value >= ROLES.ADMIN.value
+            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
+              || this.state.currentUserEmail === this.props.employee.email)
               ? this.onOptionsPress
               : null
           }
           rightIcon={
-            this.props.role.value >= ROLES.ADMIN.value
+            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
+              || this.state.currentUserEmail === this.props.employee.email)
               ? {
                 name: 'md-more',
                 type: 'ionicon',
