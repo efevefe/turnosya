@@ -1,49 +1,46 @@
-import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button as RNEButton } from 'react-native-elements';
-import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import {
-  onReservationValueChange,
-  onClientCourtReservationCreate
-} from '../../actions';
-import CourtReservationDetails from '../CourtReservationDetails';
-import { CardSection, Button, ButtonGroup } from '../common';
-import { MAIN_COLOR } from '../../constants';
-import { newReservationPushNotificationFormat } from '../../utils';
+import React, { Component } from 'react'
+import { View, StyleSheet } from 'react-native'
+import { Button as RNEButton } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { Ionicons } from '@expo/vector-icons'
+import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions'
+import CourtReservationDetails from '../CourtReservationDetails'
+import { CardSection, Button, ButtonGroup } from '../common'
+import { MAIN_COLOR } from '../../constants'
+import { newReservationNotificationFormat } from '../../utils'
 
 class ConfirmCourtReservation extends Component {
-  state = { selectedIndex: 0, priceButtons: [], prices: [] };
+  state = { selectedIndex: 0, priceButtons: [], prices: [] }
 
   componentDidMount() {
-    this.priceButtons();
+    this.priceButtons()
   }
 
   priceButtons = () => {
-    const { court } = this.props;
-    const priceButtons = [];
-    const prices = [];
+    const { court } = this.props
+    const priceButtons = []
+    const prices = []
 
     if (court) {
-      priceButtons.push(`Sin Luz: $${court.price}`);
-      prices.push(court.price);
+      priceButtons.push(`Sin Luz: $${court.price}`)
+      prices.push(court.price)
 
       if (court.lightPrice) {
-        priceButtons.push(`Con Luz: $${court.lightPrice}`);
-        prices.push(court.lightPrice);
+        priceButtons.push(`Con Luz: $${court.lightPrice}`)
+        prices.push(court.lightPrice)
       }
     }
 
-    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
-  };
+    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0))
+  }
 
   onPriceSelect = selectedIndex => {
-    this.setState({ selectedIndex });
+    this.setState({ selectedIndex })
     this.props.onReservationValueChange({
       price: this.state.prices[selectedIndex],
-      light: !!selectedIndex // 0 = false = no light // 1 = true = light
-    });
-  };
+      light: !!selectedIndex, // 0 = false = no light // 1 = true = light
+    })
+  }
 
   renderPriceButtons = () => {
     if (!this.props.saved) {
@@ -58,28 +55,20 @@ class ConfirmCourtReservation extends Component {
             />
           </CardSection>
         </View>
-      );
+      )
     }
-  };
+  }
 
   onConfirmReservation = () => {
-    const {
-      commerce,
-      court,
-      courtType,
-      startDate,
-      endDate,
-      areaId,
-      price,
-      light,
-      firstName,
-      lastName
-    } = this.props;
+    const { commerce, court, courtType, startDate, endDate, areaId, price, light, firstName, lastName } = this.props
 
-    const notification = newReservationPushNotificationFormat(
+    const notification = newReservationNotificationFormat({
       startDate,
-      `${firstName} ${lastName}`
-    );
+      service: `${court.name}`,
+      actorName: `${firstName} ${lastName}`,
+      receptorName: `${commerce.name}`,
+    })
+
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
       areaId,
@@ -89,9 +78,9 @@ class ConfirmCourtReservation extends Component {
       endDate,
       price,
       light,
-      notification
-    });
-  };
+      notification,
+    })
+  }
 
   renderButtons = () => {
     if (this.props.saved || this.props.exists) {
@@ -102,17 +91,8 @@ class ConfirmCourtReservation extends Component {
               title="Reservar Otro"
               type="clear"
               titleStyle={{ color: MAIN_COLOR }}
-              icon={
-                <Ionicons
-                  name="ios-arrow-back"
-                  size={30}
-                  color={MAIN_COLOR}
-                  style={{ marginRight: 10 }}
-                />
-              }
-              onPress={() =>
-                this.props.navigation.navigate('commerceProfileView')
-              }
+              icon={<Ionicons name="ios-arrow-back" size={30} color={MAIN_COLOR} style={{ marginRight: 10 }} />}
+              onPress={() => this.props.navigation.navigate('commerceProfileView')}
             />
           </View>
           {this.props.saved ? (
@@ -122,56 +102,31 @@ class ConfirmCourtReservation extends Component {
                 type="clear"
                 titleStyle={{ color: MAIN_COLOR }}
                 iconRight
-                icon={
-                  <Ionicons
-                    name="ios-arrow-forward"
-                    size={30}
-                    color={MAIN_COLOR}
-                    style={{ marginLeft: 10 }}
-                  />
-                }
+                icon={<Ionicons name="ios-arrow-forward" size={30} color={MAIN_COLOR} style={{ marginLeft: 10 }} />}
                 onPress={() => this.props.navigation.navigate('commercesAreas')}
               />
             </View>
           ) : null}
         </CardSection>
-      );
+      )
     }
 
     return (
       <CardSection>
-        <Button
-          title="Confirmar Reserva"
-          loading={this.props.loading}
-          onPress={this.onConfirmReservation}
-        />
+        <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
       </CardSection>
-    );
-  };
+    )
+  }
 
   render() {
-    const {
-      commerce,
-      court,
-      startDate,
-      endDate,
-      light,
-      price,
-      saved
-    } = this.props;
+    const { commerce, court, startDate, endDate, light, price, saved } = this.props
 
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
           mode="commerce"
           name={commerce.name}
-          info={
-            commerce.address +
-            ', ' +
-            commerce.city +
-            ', ' +
-            commerce.provinceName
-          }
+          info={commerce.address + ', ' + commerce.city + ', ' + commerce.provinceName}
           infoIcon="md-pin"
           picture={commerce.profilePicture}
           court={court}
@@ -182,24 +137,22 @@ class ConfirmCourtReservation extends Component {
           showPrice={saved}
         />
         {this.renderPriceButtons()}
-        <View style={styles.confirmButtonContainer}>
-          {this.renderButtons()}
-        </View>
+        <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   cardSections: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch'
-  }
-});
+    alignSelf: 'stretch',
+  },
+})
 
 const mapStateToProps = state => {
   const {
@@ -213,9 +166,9 @@ const mapStateToProps = state => {
     areaId,
     saved,
     exists,
-    loading
-  } = state.reservation;
-  const { firstName, lastName } = state.clientData;
+    loading,
+  } = state.reservation
+  const { firstName, lastName } = state.clientData
 
   return {
     commerce,
@@ -230,11 +183,11 @@ const mapStateToProps = state => {
     exists,
     loading,
     firstName,
-    lastName
-  };
-};
+    lastName,
+  }
+}
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onClientCourtReservationCreate
-})(ConfirmCourtReservation);
+  onClientCourtReservationCreate,
+})(ConfirmCourtReservation)
