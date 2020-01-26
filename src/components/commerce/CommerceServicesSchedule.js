@@ -5,7 +5,9 @@ import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import Schedule from '../Schedule';
 import { Toast, Menu, MenuItem, IconButton } from '../common';
-import { MONTHS } from '../../constants';
+import { MONTHS, ROLES } from '../../constants';
+import EmployeesFilter from './EmployeesFilter';
+import PermissionsAssigner from '../common/PermissionsAssigner';
 import {
   onScheduleRead,
   onScheduleValueChange,
@@ -16,7 +18,7 @@ import {
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
-  state = { selectedDate: moment(), modal: false };
+  state = { selectedDate: moment(), modal: false, selectedEmployeeId: this.props.employeeId };
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -32,7 +34,7 @@ class CommerceServicesSchedule extends Component {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.state.selectedDate,
-      employeeId: this.props.employeeId
+      employeeId: this.state.employeeId //
     });
 
     this.unsubscribeServicesRead = this.props.onServicesRead(
@@ -58,14 +60,14 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date,
-      employeeId: this.props.employeeId
+      employeeId: this.state.employeeId //
     });
 
     if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
-        employeeId: this.props.employeeId
+        employeeId: this.state.employeeId //
       });
     }
 
@@ -172,6 +174,20 @@ class CommerceServicesSchedule extends Component {
     this.props.navigation.navigate('registerConfiguration');
   };
 
+  onEmployeesFilterValueChange = selectedEmployeeId => {
+    if (selectedEmployeeId !== this.state.selectedEmployeeId) {
+      this.props.onScheduleRead({
+        commerceId: this.props.commerceId,
+        selectedDate: this.state.selectedDate,
+        employeeId: selectedEmployeeId
+      });
+
+      this.onDateChanged(this.state.selectedDate);
+
+      this.setState({ selectedEmployeeId });
+    }
+  }
+
   render() {
     const {
       cards,
@@ -186,6 +202,10 @@ class CommerceServicesSchedule extends Component {
 
     return (
       <View style={{ flex: 1, alignSelf: 'stretch' }}>
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+          <EmployeesFilter onValueChange={this.onEmployeesFilterValueChange} />
+        </PermissionsAssigner>
+
         <Schedule
           mode='services'
           cards={cards}
