@@ -35,18 +35,36 @@ const onClientPushNotificationTokensRead = async clientId => {
 export const onCommercePushNotificationSend = (notification, commerceId) => {
   onCommercePushNotificationTokensRead(commerceId).then(tokens => {
     const collectionRef = `Commerces/${commerceId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionRef });
+    sendPushNotification({
+      ...notification,
+      tokens,
+      collectionRef,
+      type: 'Commerce'
+    });
   });
 };
 
 export const onClientPushNotificationSend = (notification, clientId) => {
   onClientPushNotificationTokensRead(clientId).then(tokens => {
     const collectionRef = `Profiles/${clientId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionRef });
+    sendPushNotification({
+      ...notification,
+      tokens,
+      collectionRef,
+      type: 'person'
+    });
   });
 };
 
-const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
+const sendPushNotification = ({
+  title,
+  body,
+  service,
+  name,
+  tokens,
+  collectionRef,
+  type
+}) => {
   try {
     if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
@@ -70,7 +88,16 @@ const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
       });
 
       const db = firebase.firestore();
-      db.collection(collectionRef).add({ title, body, date: new Date() });
+      db.collection(collectionRef).add({
+        title,
+        body,
+        service,
+        name,
+        date: new Date(),
+        softDelete: null,
+        state: 0,
+        type
+      });
     }
   } catch (error) {
     console.error(error);

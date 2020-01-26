@@ -220,3 +220,9 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE =
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
+
+
+
+export const ON_COMMERCE_NOTIFICATIONS_READING = 'on_commerce_notifications_reading';
+export const ON_COMMERCE_NOTIFICATIONS_READ = 'on_commerce_notifications_read';
+export const ON_COMMERCE_NOTIFICATIONS_READ_FAIL = 'on_commerce_notifications_read_fail';

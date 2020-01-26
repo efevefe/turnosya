@@ -96,7 +96,7 @@ export const onClientReservationCancel = ({
           batch
             .commit()
             .then(() => {
-              onCommercePushNotificationSend(notification, commerceId);
+              onCommercePushNotificationSend(notification, commerceId );
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

@@ -22,6 +22,7 @@ import EmployeesListReducer from './EmployeesListReducer';
 import EmployeeDataReducer from './EmployeeDataReducer';
 import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
+import CommerceNotificationsListReducer from './CommerceNotificationsListReducer'
 
 export default combineReducers({
   auth: AuthReducer,
@@ -46,5 +47,6 @@ export default combineReducers({
   employeesList: EmployeesListReducer,
   employeeData: EmployeeDataReducer,
   roleData: RoleDataReducer,
-  commerceReports: CommerceReportsReducer
+  commerceReports: CommerceReportsReducer,
+  commerceNotificationsList: CommerceNotificationsListReducer
 });

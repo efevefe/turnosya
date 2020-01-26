@@ -11,6 +11,9 @@ import {
   stackNavigationOptions,
   drawerNavigationOptions
 } from './NavigationOptions';
+import CommerceNotificationsList from '../components/commerce/CommerceNotificationsList';
+import CommerceNotificationsDetails from '../components/commerce/CommerceNotificationsDetails';
+
 
 const CommerceSettingsStack = createStackNavigator(
   {
@@ -48,11 +51,30 @@ const CommerceEmployeesStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const CommerceNotificationsStack = createStackNavigator(
+  {
+    commerceNotificationslist: {
+      screen: CommerceNotificationsList,
+      navigationOptions: {
+        title: 'Notificaciones'
+      }
+    },
+    commerceNotificationsDetails: {
+      screen: CommerceNotificationsDetails,
+      navigationOptions: {
+        title: 'Notificaciones'
+      }
+    }
+  },
+  stackNavigationOptions
+);
+
 const commerceDrawer = createDrawerNavigator(
   {
     tabs: CommerceNavigation,
     commerceSettings: CommerceSettingsStack,
-    commerceEmployees: CommerceEmployeesStack
+    commerceEmployees: CommerceEmployeesStack,
+    commerceNotifications:CommerceNotificationsStack
   },
   {
     ...drawerNavigationOptions,

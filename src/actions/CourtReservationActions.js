@@ -56,7 +56,7 @@ export const onClientCourtReservationCreate = ({
         // reserva que se guarda en el negocio
         batch.set(commerceReservationRef, {
           ...reservationData,
-          clientId: currentUser.uid
+          clientId :currentUser.uid
         });
 
         // reserva que se guarda en el cliente
@@ -113,7 +113,10 @@ export const onCommerceCourtReservationCreate = ({
         state: null
       })
       .then(() => {
-        onCommercePushNotificationSend(notification, commerceId);
+        onCommercePushNotificationSend(
+          notification,
+          commerceId
+        );
         dispatch({ type: ON_COURT_RESERVATION_CREATE });
       })
       .catch(error => dispatch({ type: ON_COURT_RESERVATION_CREATE_FAIL }));

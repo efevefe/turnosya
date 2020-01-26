@@ -125,7 +125,8 @@ class ClientReservationDetails extends Component {
   };
 
   onCancelReservationButtonPress = () => {
-    const { startDate, id, commerceId } = this.state.reservation;
+    const { startDate, id, commerceId, court } = this.state.reservation;
+    const { lastName, firstName } = this.props;
 
     const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format(
       'D'
@@ -133,7 +134,8 @@ class ClientReservationDetails extends Component {
       'HH:mm'
     )} fue cancelado`;
     const title = 'Turno Cancelado';
-    notification = { title, body };
+    const name = `${lastName}, ${firstName}`;
+    notification = { title, body, service: court.name, name };
     this.setState({ optionsVisible: false });
     this.props.onClientReservationCancel({
       reservationId: id,
@@ -354,7 +356,7 @@ const mapStateToProps = state => {
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
-  const { clientId } = state.clientData;
+  const { clientId, firstName, lastName } = state.clientData;
 
   return {
     loadingReservations,
@@ -367,7 +369,9 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    firstName,
+    lastName
   };
 };
 

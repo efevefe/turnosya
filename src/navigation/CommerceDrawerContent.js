@@ -32,6 +32,11 @@ class CommerceDrawerContent extends Component {
           icon={{ name: 'md-people' }}
           onPress={() => this.props.navigation.navigate('commerceEmployees')}
         />
+        <DrawerItem
+          title="Notificaciones"
+          icon={{ name: 'md-notifications-outline' }}
+          onPress={() => this.props.navigation.navigate('commerceNotifications')}
+        />
         <PermissionsAssigner requiredRole={ROLES.OWNER}>
           <DrawerItem
             title="Configuración"
@@ -43,7 +48,7 @@ class CommerceDrawerContent extends Component {
           title="Cerrar Sesión"
           icon={{ name: 'md-exit' }}
           loadingWithText={this.props.loading}
-          onPress={() => this.props.onLogout()}
+          onPress={() => this.props.onLogout(this.props.commerceId)}
         />
       </Drawer>
     );

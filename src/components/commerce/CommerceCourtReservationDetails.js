@@ -97,7 +97,7 @@ class CommerceCourtReservationDetails extends Component {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
 
-      const { startDate } = this.state.reservation;
+      const { startDate, court } = this.state.reservation;
 
       const body = `El Turno del día ${
         DAYS[startDate.day()]
@@ -107,7 +107,7 @@ class CommerceCourtReservationDetails extends Component {
         this.props.cancelationReason
       }"`;
       const title = 'Turno Cancelado';
-      notification = { title, body };
+      notification = { title, body, service: court, name: this.props.name };
 
       this.props.onCommerceReservationCancel({
         commerceId: this.props.commerceId,
@@ -380,7 +380,7 @@ const {
 
 const mapStateToProps = state => {
   const { loading, cancellationReason } = state.courtReservationsList;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
 
   return {
@@ -394,7 +394,8 @@ const mapStateToProps = state => {
     commerceComment: state.commerceReviewData.comment,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,
-    reviewDataLoading: dataLoading
+    reviewDataLoading: dataLoading,
+    name
   };
 };
 

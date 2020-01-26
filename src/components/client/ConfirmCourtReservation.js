@@ -63,7 +63,7 @@ class ConfirmCourtReservation extends Component {
   };
 
   onConfirmReservation = () => {
-    const { commerce, court, courtType, slot, price, light } = this.props;
+    const { commerce, court, slot, price, light , courtType, firstName,lastName} = this.props;
 
     const body = `El Turno del día ${
       DAYS[slot.startDate.day()]
@@ -71,8 +71,8 @@ class ConfirmCourtReservation extends Component {
       MONTHS[moment(slot.startDate).month()]
     } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
     const title = 'Turno Reservado';
-
-    notification = { title, body };
+    const name = `${lastName}, ${firstName}`;
+    notification = { title, body, service: court.name , name };
 
     this.props.onClientCourtReservationCreate({
       commerceId: commerce.objectID,
@@ -195,7 +195,7 @@ const mapStateToProps = state => {
     loading
   } = state.courtReservation;
   const { commerceId } = state.commerceData;
-
+  const {firstName, lastName} = state.clientData
   return {
     commerce,
     courtType,
@@ -205,7 +205,9 @@ const mapStateToProps = state => {
     light,
     saved,
     loading,
-    commerceId
+    commerceId,
+    firstName,
+    lastName
   };
 };
 

@@ -151,7 +151,7 @@ class CommerceCourtReservationRegister extends Component {
         MONTHS[moment(slot.startDate).month()]
       } a las ${moment(slot.startDate).format('HH:mm')} fue reservado`;
       const title = 'Turno Reservado';
-      notification = { title, body };
+      notification = { title, body, service: court, name :clientName };
       this.props.onCommerceCourtReservationCreate({
         commerceId,
         clientName,
