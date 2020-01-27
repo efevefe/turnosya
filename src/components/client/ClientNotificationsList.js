@@ -3,30 +3,30 @@ import { View, FlatList, RefreshControl} from 'react-native'
 import { Divider, ListItem } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { Spinner, EmptyList, MenuItem, Menu } from '../common'
-import { onCommerceNotificationsRead, onCommerceNotificationDelete } from '../../actions'
+import { onClientNotificationsRead, onClientNotificationDelete } from '../../actions'
 import { MAIN_COLOR } from '../../constants'
 import moment from 'moment'
 import { stringFormatMinutes } from '../../utils'
 
-class CommerceNotificationsList extends Component {
+class ClientNotificationsList extends Component {
   state = {
     optionsVisible: false,
     selectNotification: null,
   }
 
   componentDidMount() {
-    this.props.onCommerceNotificationsRead(this.props.commerceId)
+    this.props.onClientNotificationsRead(this.props.clientId)
   }
 
   onNotificationPerfilPress = () => {
-    const clientId = this.selectNotification.sendTo
-    this.props.navigation.navigate('clientProfileView', { clientId })
+    const commerceId = this.selectNotification.sendTo
+    this.props.navigation.navigate('commerceProfileView', { commerceId })
   }
 
   onNotificationDeletePress = () => {
-    const { commerceId } = this.props
-    this.props.onCommerceNotificationDelete({
-      commerceId,
+    const { clientId } = this.props
+    this.props.onClientNotificationDelete({
+      clientId,
       notificationId: this.state.selectNotification.id,
     })
     this.setState({ optionsVisible: false })
@@ -65,7 +65,7 @@ class CommerceNotificationsList extends Component {
     return (
       <RefreshControl
         refreshing={this.props.refreshing}
-        onRefresh={() => this.props.onCommerceNotificationsRead(this.props.commerceId)}
+        onRefresh={() => this.props.onClientNotificationsRead(this.props.clientId)}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />
@@ -97,7 +97,7 @@ class CommerceNotificationsList extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem title="Detalle del Turno" icon="md-person" onPress={this.onNotificationPerfilPress} />
+          <MenuItem title="Perfil" icon="md-person" onPress={this.onNotificationPerfilPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
         </Menu>
@@ -107,12 +107,12 @@ class CommerceNotificationsList extends Component {
 }
 
 const mapStateToProps = state => {
-  const { notifications, loading } = state.commerceNotificationsList
-  const { commerceId } = state.commerceData
-  return { notifications, loading, commerceId }
+  const { notifications, loading } = state.clientNotificationsList
+  const { clientId } = state.clientData
+  return { notifications, loading, clientId }
 }
 
 export default connect(mapStateToProps, {
-  onCommerceNotificationsRead,
-  onCommerceNotificationDelete,
-})(CommerceNotificationsList)
+  onClientNotificationsRead,
+  onClientNotificationDelete,
+})(ClientNotificationsList)

@@ -58,7 +58,7 @@ export const imageToBlob = async uri => {
   }
 }
 
-//Funcion para eliminar espacios vacios antes y despues de un string.
+//Función para eliminar espacios vacíos antes y después de un string.
 //@param: strings -> es un array de strings
 //Valida que el parametro sea un array y devuelve un array de los valores trimeados.
 //Si llega a no ser un array de strings. Devuelve un array vacio
@@ -74,11 +74,12 @@ const trimStrings = strings => {
     return []
   }
 }
-
-//Función para eliminar espacios vacíos antes y despues de un string, y eliminar espacios dobles.
-//@param: string -> es string
-//Valida que el valor sea un array y devuelve el valor trimeado.
-//Si llega a no ser un string. Devuelve un string vacío
+/**
+ * Función para eliminar espacios vacíos antes y despues de un string, y eliminar espacios dobles.
+ * @param {String} string  string a formatear
+ * Valida que el valor sea un array y devuelve el valor trimeado.
+ * Si llega a no ser un string. Devuelve un string vacío
+ */
 export const trimString = string => {
   try {
     const res = trimStrings([string])
@@ -88,9 +89,11 @@ export const trimString = string => {
   }
 }
 
-//Función para eliminar doble espacios vacíos.
-//@param: value -> string
-//Si llega a haber un error, devuelve un string vacío
+/**
+ * Función para eliminar doble espacios vacíos.
+ * @param {String}   value  string a formatear
+ * Si llega a haber un error, devuelve un string vacío
+ */
 export const removeDoubleSpaces = value => {
   try {
     return value.replace(/  +/g, ' ')
@@ -229,7 +232,7 @@ export const isOneWeekOld = date => {
  * @param {String}  actorName   Nombre de quién reserva
  * @return {String, String}     Título (title) y cuerpo (body) del mensaje
  */
-export const newReservationPushNotificationFormat = (startDate, actorName) => {
+export const newReservationNotificationFormat = ({ startDate, service, actorName, receptorName }) => {
   const dayOfWeek = DAYS[startDate.day()]
   const dayOfMonth = startDate.format('D')
   const month = MONTHS[moment(startDate).month()]
@@ -237,17 +240,31 @@ export const newReservationPushNotificationFormat = (startDate, actorName) => {
 
   return {
     title: 'Nueva Reserva',
-    body: `${actorName} ha reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`,
+    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`,
   }
 }
 
-export const cancelReservationPushNotificationFormat = (startDate, actorName, cancellationReason) => {
+/**
+ * Función para tener un formato único de envío de notificación al comercio
+ * o cliente a la hora de cancelar un turno.
+ * @param {Date}    startDate           La fecha de inicio del turno
+ * @param {String}  actorName           Nombre de quién cancela
+ * @param {String}  cancellationReason  Motivo de cancelación si cancela un negocio
+ * @return {String, String}             Título (title) y cuerpo (body) del mensaje
+ */
+export const cancelReservationNotificationFormat = ({
+  startDate,
+  service,
+  actorName,
+  receptorName,
+  cancellationReason,
+}) => {
   const dayOfWeek = DAYS[startDate.day()]
   const dayOfMonth = startDate.format('D')
   const month = MONTHS[moment(startDate).month()]
   const formattedTime = moment(startDate).format('HH:mm')
-  let body = `${actorName} ha cancelado el turno del día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`
-  body += `${cancellationReason ? ` "${cancellationReason}".` : ''}`
+  let body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`
+  body += `${cancellationReason ? ` Motivo: "${cancellationReason}".` : ''}`
 
   return {
     title: 'Reserva Cancelada',

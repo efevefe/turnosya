@@ -7,7 +7,7 @@ import {
   ON_COURT_RESERVATION_CREATE_FAIL,
   ON_NEW_COURT_RESERVATION
 } from './types';
-import { onCommercePushNotificationSend } from './PushNotificationActions';
+import { onCommerceNotificationSend } from './NotificationActions';
 
 export const onCourtReservationValueChange = payload => {
   return { type: ON_COURT_RESERVATION_VALUE_CHANGE, payload };
@@ -68,7 +68,7 @@ export const onClientCourtReservationCreate = ({
         batch
           .commit()
           .then(() => {
-            onCommercePushNotificationSend(notification, commerceId);
+            onCommerceNotificationSend(notification, commerceId, currentUser.uid);
             dispatch({ type: ON_COURT_RESERVATION_CREATE });
           })
           .catch(error => {
@@ -113,9 +113,10 @@ export const onCommerceCourtReservationCreate = ({
         state: null
       })
       .then(() => {
-        onCommercePushNotificationSend(
+        onCommerceNotificationSend(
           notification,
-          commerceId
+          commerceId,
+          currentUser.uid
         );
         dispatch({ type: ON_COURT_RESERVATION_CREATE });
       })

@@ -63,7 +63,14 @@ const CommerceNotificationsStack = createStackNavigator(
     commerceNotificationslist: {
       screen: CommerceNotificationsList,
       navigationOptions: {
-        title: 'Notificaciones'
+        title: 'Notificaciones',
+        headerLeft: (
+          <HeaderBackButton
+            onPress={() => navigation.goBack(null)}
+            tintColor="white"
+            title='Back'
+          />
+        )
       }
     }
   },

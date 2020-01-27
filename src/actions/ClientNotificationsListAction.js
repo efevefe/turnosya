@@ -1,22 +1,22 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import {
-  ON_COMMERCE_NOTIFICATIONS_READ,
-  ON_COMMERCE_NOTIFICATIONS_READING,
-  ON_COMMERCE_NOTIFICATIONS_DELETED,
-  ON_COMMERCE_NOTIFICATIONS_DELETED_FAIL,
+  ON_CLIENT_NOTIFICATIONS_READ,
+  ON_CLIENT_NOTIFICATIONS_READING,
+  ON_CLIENT_NOTIFICATIONS_DELETED,
+  ON_CLIENT_NOTIFICATIONS_DELETED_FAIL,
 } from './types'
 import moment from 'moment'
 
-export const onCommerceNotificationsRead = commerceId => dispatch => {
-  dispatch({ type: ON_COMMERCE_NOTIFICATIONS_READING })
+export const onCommerceNotificationsRead = clientId => dispatch => {
+  dispatch({ type: ON_CLIENT_NOTIFICATIONS_READING })
 
   const db = firebase.firestore()
   let notifications = []
 
   return (
     db
-      .collection(`Commerces/${commerceId}/Notifications`)
+      .collection(`Profiles/${clientId}/Notifications`)
       .where('softDelete', '==', null)
       .limit(50)
       /*     .where('date', '<=', moment().subtract(1,'month').toDate())*/
@@ -24,7 +24,7 @@ export const onCommerceNotificationsRead = commerceId => dispatch => {
       .onSnapshot(snapshot => {
         snapshot.forEach(doc => notifications.push({ ...doc.data(), id: doc.id }))
         dispatch({
-          type: ON_COMMERCE_NOTIFICATIONS_READ,
+          type: ON_CLIENT_NOTIFICATIONS_READ,
           payload: notifications,
         })
       })
@@ -32,11 +32,11 @@ export const onCommerceNotificationsRead = commerceId => dispatch => {
 }
 
 //Registra la notificacion como eliminada
-export const onCommerceNotificationDelete = ({ commerceId, notificationId }) => {
+export const onCommerceNotificationDelete = ({ clientId, notificationId }) => {
   const db = firebase.firestore()
   return dispatch => {
-    db.doc(`Commerces/${commerceId}/Notifications/${notificationId}`)
+    db.doc(`Profiles/${clientId}/Notifications/${notificationId}`)
       .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: ON_COMMERCE_NOTIFICATIONS_DELETED }))
+      .then(() => dispatch({ type: ON_CLIENT_NOTIFICATIONS_DELETED }))
   }
 }
