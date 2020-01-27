@@ -3,11 +3,7 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from '../common';
-import {
-  onClientDataValueChange,
-  onUserRegister,
-  onRegisterFormOpen
-} from '../../actions';
+import { onClientDataValueChange, onUserRegister, onRegisterFormOpen } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
 
 class RegisterForm extends Component {
@@ -55,8 +51,7 @@ class RegisterForm extends Component {
       return false;
     } else if (!validateValueType('password', this.props.password)) {
       this.setState({
-        passwordError:
-          'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
+        passwordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
       });
       return false;
     } else {
@@ -79,14 +74,13 @@ class RegisterForm extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onClientDataValueChange } = this.props;
-    const value = trimString(firstName);
-    onClientDataValueChange({ prop: 'firstName', value });
+    const firstName = trimString(this.props.firstName);
 
-    if (value === '') {
+    this.props.onClientDataValueChange({ firstName });
+    if (firstName === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('name', value)) {
+    } else if (!validateValueType('name', firstName)) {
       this.setState({ firstNameError: 'El formato del nombre es inválido' });
       return false;
     } else {
@@ -96,14 +90,13 @@ class RegisterForm extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onClientDataValueChange } = this.props;
-    const value = trimString(lastName);
-    onClientDataValueChange({ prop: 'lastName', value });
+    const lastName = trimString(this.props.lastName);
 
-    if (value === '') {
+    this.props.onClientDataValueChange({ lastName });
+    if (lastName === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('name', this.props.lastName)) {
+    } else if (!validateValueType('name', lastName)) {
       this.setState({ lastNameError: 'El formato del apellido es inválido' });
       return false;
     } else {
@@ -148,12 +141,7 @@ class RegisterForm extends Component {
               keyboardType="email-address"
               value={this.props.email}
               errorMessage={this.state.emailError || this.props.error}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'email',
-                  value
-                })
-              }
+              onChangeText={email => this.props.onClientDataValueChange({ email })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -166,12 +154,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'password',
-                  value
-                })
-              }
+              onChangeText={password => this.props.onClientDataValueChange({ password })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />
@@ -184,12 +167,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.confirmPassword}
               errorMessage={this.state.confirmPasswordError}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'confirmPassword',
-                  value
-                })
-              }
+              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword })}
               onFocus={() => this.setState({ confirmPasswordError: '' })}
               onBlur={this.renderConfirmPasswordError}
             />
@@ -201,12 +179,7 @@ class RegisterForm extends Component {
               autoCapitalize="words"
               value={this.props.firstName}
               errorMessage={this.state.firstNameError}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'firstName',
-                  value
-                })
-              }
+              onChangeText={firstName => this.props.onClientDataValueChange({ firstName })}
               onFocus={() => this.setState({ firstNameError: '' })}
               onBlur={this.renderFirstNameError}
             />
@@ -218,12 +191,7 @@ class RegisterForm extends Component {
               autoCapitalize="words"
               value={this.props.lastName}
               errorMessage={this.state.lastNameError}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'lastName',
-                  value
-                })
-              }
+              onChangeText={lastName => this.props.onClientDataValueChange({ lastName })}
               onFocus={() => this.setState({ lastNameError: '' })}
               onBlur={this.renderLastNameError}
             />
@@ -236,22 +204,13 @@ class RegisterForm extends Component {
               textContentType="telephoneNumber"
               value={this.props.phone}
               errorMessage={this.state.phoneError}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'phone',
-                  value
-                })
-              }
+              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
             />
           </CardSection>
           <CardSection>
-            <Button
-              title="Confirmar"
-              loading={this.props.loading}
-              onPress={this.onButtonPressHandler}
-            />
+            <Button title="Confirmar" loading={this.props.loading} onPress={this.onButtonPressHandler} />
           </CardSection>
         </View>
       </KeyboardAwareScrollView>
@@ -260,16 +219,7 @@ class RegisterForm extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    email,
-    password,
-    confirmPassword,
-    firstName,
-    lastName,
-    phone,
-    loading,
-    error
-  } = state.clientData;
+  const { email, password, confirmPassword, firstName, lastName, phone, loading, error } = state.clientData;
 
   return {
     email,
@@ -283,7 +233,8 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onClientDataValueChange, onUserRegister, onRegisterFormOpen }
-)(RegisterForm);
+export default connect(mapStateToProps, {
+  onClientDataValueChange,
+  onUserRegister,
+  onRegisterFormOpen
+})(RegisterForm);

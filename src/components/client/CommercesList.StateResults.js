@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { commerceSearching } from '../../actions';
+import { onCommercesListValueChange } from '../../actions';
 
 import { connectStateResults } from 'react-instantsearch/connectors';
 
 class StateResults extends Component {
   componentDidUpdate = () => {
-    this.props.commerceSearching(this.props.isSearchStalled);
+    this.props.onCommercesListValueChange({
+      searching: this.props.isSearchStalled
+    });
   };
 
   render = () => <View></View>;
@@ -15,7 +17,4 @@ class StateResults extends Component {
 
 const ConnectedStateResults = connectStateResults(StateResults);
 
-export default connect(
-  null,
-  { commerceSearching }
-)(ConnectedStateResults);
+export default connect(null, { onCommercesListValueChange })(ConnectedStateResults);

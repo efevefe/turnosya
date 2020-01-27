@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { Spinner } from '../common';
-import { areasRead } from '../../actions';
+import { onAreasRead } from '../../actions';
 import CommercesAreaItem from './CommercesAreaItem';
 
 class CommercesAreas extends Component {
@@ -14,7 +14,7 @@ class CommercesAreas extends Component {
   };
 
   componentDidMount() {
-    this.props.areasRead();
+    this.props.onAreasRead();
     this.props.navigation.setParams({
       rightIcon: this.renderRightIcon()
     });
@@ -23,9 +23,7 @@ class CommercesAreas extends Component {
   renderRightIcon = () => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('commercesList', { areaName: '' })
-        }
+        onPress={() => this.props.navigation.navigate('commercesList', { areaName: '' })}
         activeOpacity={0.5}
         style={{ backgorundColor: 'transparent' }}
       >
@@ -41,12 +39,7 @@ class CommercesAreas extends Component {
           >
             Ver todos
           </Text>
-          <Ionicons
-            name="md-arrow-forward"
-            size={24}
-            color="white"
-            style={{ marginRight: 15 }}
-          />
+          <Ionicons name="md-arrow-forward" size={24} color="white" style={{ marginRight: 15 }} />
         </View>
       </TouchableOpacity>
     );
@@ -62,11 +55,7 @@ class CommercesAreas extends Component {
     }
     return (
       <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.props.areas}
-          renderItem={this.renderRow}
-          keyExtractor={area => area.id}
-        />
+        <FlatList data={this.props.areas} renderItem={this.renderRow} keyExtractor={area => area.id} />
       </View>
     );
   }
@@ -77,7 +66,4 @@ const mapStateToProps = state => {
   return { areas, loading };
 };
 
-export default connect(
-  mapStateToProps,
-  { areasRead }
-)(CommercesAreas);
+export default connect(mapStateToProps, { onAreasRead })(CommercesAreas);

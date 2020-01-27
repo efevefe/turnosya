@@ -1,6 +1,7 @@
+import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
 import ClientNavigation from './ClientNavigation';
 import ClientDrawerContent from './ClientDrawerContent';
 import Welcome from '../components/client/Welcome';
@@ -9,10 +10,7 @@ import RegisterCommerceTwo from '../components/client/RegisterCommerceTwo';
 import LocationMap from '../components/LocationMap';
 import ClientSettings from '../components/client/ClientSettings';
 import ChangeUserPassword from '../components/client/ChangeUserPassword';
-import {
-  stackNavigationOptions,
-  drawerNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 
 const CommerceRegisterStack = createStackNavigator(
   {
@@ -48,9 +46,10 @@ const ClientSettingsStack = createStackNavigator(
   {
     settings: {
       screen: ClientSettings,
-      navigationOptions: {
-        title: 'Configuración'
-      }
+      navigationOptions: ({ navigation }) => ({
+        title: 'Configuración',
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
+      })
     },
     changeUserPassword: {
       screen: ChangeUserPassword,

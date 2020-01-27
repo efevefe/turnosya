@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import {
-  LineChart,
-  Spinner,
-  IconButton,
-  Button,
-  Picker,
-  Menu,
-  CardSection
-} from '../../common';
+import { LineChart, Spinner, IconButton, Button, Picker, Menu, CardSection } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyReviewsByYear,
+  onMonthlyReviewsReadByYear,
   yearsWithReview
 } from '../../../actions';
 
@@ -21,7 +13,7 @@ class MonthlyReviewsChart extends Component {
   constructor(props) {
     super(props);
     props.yearsWithReview(props.commerceId);
-    props.readMonthlyReviewsByYear(props.commerceId, props.selectedYear);
+    props.onMonthlyReviewsReadByYear(props.commerceId, props.selectedYear);
 
     this.state = { modal: false, modalYear: props.selectedYear };
   }
@@ -34,24 +26,15 @@ class MonthlyReviewsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
   onGenerateReportPress = () => {
-    this.props.readMonthlyReviewsByYear(
-      this.props.commerceId,
-      this.state.modalYear
-    );
+    this.props.onMonthlyReviewsReadByYear(this.props.commerceId, this.state.modalYear);
 
     this.props.onCommerceReportValueChange({
-      prop: 'selectedYear',
-      value: this.state.modalYear
+      selectedYear: this.state.modalYear
     });
 
     this.setState({ modal: false });
@@ -60,9 +43,11 @@ class MonthlyReviewsChart extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
+    const { data } = this.props.data;
+
     const dataLine = {
       labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
+      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
     };
 
     return (
@@ -96,10 +81,7 @@ class MonthlyReviewsChart extends Component {
         <LineChart
           data={dataLine}
           title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
-          emptyDataMessage={
-            this.props.error ||
-            `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`
-          }
+          emptyDataMessage={this.props.error || `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`}
           xlabel="MESES DEL AÑO"
         />
       </ScrollView>
@@ -124,6 +106,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readMonthlyReviewsByYear,
+  onMonthlyReviewsReadByYear,
   yearsWithReview
 })(MonthlyReviewsChart);

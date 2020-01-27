@@ -1,47 +1,21 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableHighlight, View } from 'react-native';
+import { FlatList, Text, TouchableHighlight } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { EmptyList } from '../common';
-import { onCourtReservationValueChange } from '../../actions';
-import VerifyEmailModal from '../client/VerifyEmailModal';
-import { isEmailVerified } from '../../utils';
+import { onReservationValueChange } from '../../actions';
 
 class CommerceCourtTypes extends Component {
-  state = { modal: false };
-
-  onCourtTypePress = async courtType => {
-    try {
-      if (await isEmailVerified()) {
-        this.props.onCourtReservationValueChange({ courtType });
-        this.props.navigation.navigate('commerceSchedule');
-      } else {
-        this.setState({ modal: true });
-      }
-    } catch (e) {
-      console.error(e);
+  onCourtTypePress = courtType => {
+    if (this.props.navigation.state.routeName === 'commerceProfileView') {
+      this.props.onReservationValueChange({ courtType });
+      this.props.navigation.navigate('commerceCourtsSchedule');
     }
-  };
-
-  onModalClose = () => {
-    this.setState({ modal: false });
-  };
-
-  renderModal = () => {
-    if (this.state.modal)
-      return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderItem = ({ item }) => {
     return (
-      <TouchableHighlight
-        onPress={
-          this.props.navigation.state.routeName === 'commerceProfileView'
-            ? () => this.onCourtTypePress(item.name)
-            : null
-        }
-        underlayColor="transparent"
-      >
+      <TouchableHighlight onPress={() => this.onCourtTypePress(item.name)} underlayColor="transparent">
         <Card
           image={item.image ? { uri: item.image } : null}
           imageStyle={{ height: 80 }}
@@ -82,6 +56,4 @@ const mapStateToProps = state => {
   return { courtTypesList };
 };
 
-export default connect(mapStateToProps, {
-  onCourtReservationValueChange
-})(CommerceCourtTypes);
+export default connect(mapStateToProps, { onReservationValueChange })(CommerceCourtTypes);

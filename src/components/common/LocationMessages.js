@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  View,
-  AppState,
-  StyleSheet,
-  Image,
-  Text
-} from 'react-native';
+import { Platform, View, AppState, StyleSheet, Image, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
@@ -39,8 +32,8 @@ class LocationMessages extends Component {
         this.setState({ permissionStatus, modal: true });
       }
       AppState.addEventListener('change', this._handleAppStateChange);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -50,17 +43,14 @@ class LocationMessages extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     try {
-      if (
-        this.state.appState === 'active' &&
-        prevState.appState !== this.state.appState
-      ) {
+      if (this.state.appState === 'active' && prevState.appState !== this.state.appState) {
         this.setState({
           permissionStatus: await getPermissionLocationStatus(),
           modal: true
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
 
     if (this.state.permissionStatus === 'permissionsAllowed') {
@@ -104,8 +94,8 @@ class LocationMessages extends Component {
       };
 
       this.props.onUserLocationChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -124,47 +114,29 @@ class LocationMessages extends Component {
                 }}
               />
               <Divider />
-              <MenuItem
-                title="Más tarde"
-                icon="md-time"
-                onPress={() => this.closeModal()}
-              />
+              <MenuItem title="Más tarde" icon="md-time" onPress={() => this.closeModal()} />
             </View>
           );
         case 'permissionsAllowedWithGPSOff':
           return (
             <View>
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/settings.png')}
-                  style={styles.iosModalIcon}
-                />
-                <Text style={styles.iosModalText}>
-                  Abrí la aplicación Ajustes
-                </Text>
+                <Image source={require('../../../assets/ios-icons/settings.png')} style={styles.iosModalIcon} />
+                <Text style={styles.iosModalText}>Abrí la aplicación Ajustes</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/privacy.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/privacy.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Seleccioná Privacidad</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/location.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/location.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Seleccioná Localización</Text>
               </View>
               <Divider />
               <View style={styles.iosModalItem}>
-                <Image
-                  source={require('../../../assets/ios-icons/switch.png')}
-                  style={styles.iosModalIcon}
-                />
+                <Image source={require('../../../assets/ios-icons/switch.png')} style={styles.iosModalIcon} />
                 <Text style={styles.iosModalText}>Activá la Localización</Text>
               </View>
               <Divider />
@@ -185,18 +157,12 @@ class LocationMessages extends Component {
             title="Ir a Configuración"
             icon="md-settings"
             onPress={() => {
-              this.state.permissionStatus === 'permissionsDenied'
-                ? askPermissionLocation()
-                : openGPSAndroid();
+              this.state.permissionStatus === 'permissionsDenied' ? askPermissionLocation() : openGPSAndroid();
               this.closeModal();
             }}
           />
           <Divider />
-          <MenuItem
-            title="Más tarde"
-            icon="md-time"
-            onPress={() => this.closeModal()}
-          />
+          <MenuItem title="Más tarde" icon="md-time" onPress={() => this.closeModal()} />
         </View>
       );
     }

@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { userReauthenticate } from './AuthActions';
 import {
   ON_CLIENT_DATA_VALUE_CHANGE,
   ON_USER_REGISTER,
@@ -21,23 +22,16 @@ import {
   ON_WORKPLACES_READ,
   ON_USER_PASSWORD_UPDATE
 } from './types';
-import { userReauthenticate } from './AuthActions';
 
-export const onClientDataValueChange = ({ prop, value }) => {
-  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload: { prop, value } };
+export const onClientDataValueChange = payload => {
+  return { type: ON_CLIENT_DATA_VALUE_CHANGE, payload };
 };
 
 export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({
-  email,
-  password,
-  firstName,
-  lastName,
-  phone
-}) => {
+export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -62,13 +56,9 @@ export const onUserRegister = ({
             dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
             user.user.sendEmailVerification();
           })
-          .catch(error =>
-            dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-          );
+          .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
       })
-      .catch(error =>
-        dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
   };
 };
 
@@ -90,12 +80,7 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   };
 };
 
-export const onUserUpdate = ({
-  firstName,
-  lastName,
-  phone,
-  profilePicture
-}) => async dispatch => {
+export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => async dispatch => {
   dispatch({ type: ON_USER_UPDATING });
 
   const { currentUser } = firebase.auth();
@@ -134,25 +119,44 @@ export const onUserUpdate = ({
 export const onUserDelete = password => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
+  const batch = db.batch();
 
   return dispatch => {
     dispatch({ type: ON_USER_DELETING });
 
     userReauthenticate(password)
-      .then(() => {
+      .then(async () => {
         dispatch({ type: ON_REAUTH_SUCCESS });
 
-        db.doc(`Profiles/${currentUser.uid}`)
-          .update({ softDelete: new Date() })
-          .then(() => {
-            currentUser
-              .delete()
-              .then(() => {
-                dispatch({ type: ON_USER_DELETED });
-              })
-              .catch(error => dispatch({ type: ON_USER_DELETE_FAIL }));
-          })
-          .catch(error => dispatch({ type: ON_USER_DELETE_FAIL }));
+        try {
+          const userRef = db.doc(`Profiles/${currentUser.uid}`);
+
+          batch.update(userRef, { softDelete: new Date() });
+
+          const workplaces = await db
+            .doc(`Profiles/${currentUser.uid}/Workplaces`)
+            .where('softDelete', '==', null)
+            .get();
+
+          for await (const workplace of workplaces.docs) {
+            const employees = await db
+              .collection(`Commerces/${workplace.data().commerceId}/Employees`)
+              .where('softDelete', '==', null)
+              .where('profileId', '==', currentUser.uid)
+              .get();
+
+            employees.forEach(employee => {
+              batch.update(employee.ref, { softDelete: new Date() });
+            });
+          }
+
+          await batch.commit();
+          await currentUser.delete();
+
+          dispatch({ type: ON_USER_DELETED });
+        } catch (error) {
+          dispatch({ type: ON_USER_DELETE_FAIL });
+        }
       })
       .catch(error => {
         dispatch({ type: ON_REAUTH_FAIL });
@@ -161,7 +165,7 @@ export const onUserDelete = password => {
   };
 };
 
-export const readUserWorkplaces = () => dispatch => {
+export const onUserWorkplacesRead = () => dispatch => {
   const db = firebase.firestore();
   const clientId = firebase.auth().currentUser.uid;
 

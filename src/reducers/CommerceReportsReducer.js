@@ -21,21 +21,27 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_COMMERCE_REPORT_VALUE_CHANGE:
-      return { ...state, [action.payload.prop]: action.payload.value };
+      return { ...state, ...action.payload };
+
     case ON_COMMERCE_REPORT_VALUE_RESET:
       return { ...INITIAL_STATE };
+
     case ON_COMMERCE_REPORT_READING:
       return { ...state, data: INITIAL_STATE.data, loading: true };
+
     case ON_COMMERCE_REPORT_READ:
       return { ...state, data: action.payload, loading: false, error: '' };
+
     case ON_COMMERCE_REPORT_DATA_EMPTY:
       return { ...state, data: { labels: [], data: [] }, loading: false };
+
     case ON_COMMERCE_REPORT_DATA_ERROR:
       return {
         ...state,
         error: 'El dato seleccionado no es válido',
         loading: false
       };
+
     default:
       return state;
   }

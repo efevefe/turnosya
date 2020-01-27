@@ -13,20 +13,10 @@ import {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
-  onLocationValueChange,
-  onLocationChange
+  onAreasReadForPicker,
+  onLocationValueChange
 } from '../../actions';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  Picker,
-  IconButton,
-  Button
-} from '../common';
+import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 import { HeaderBackButton } from 'react-navigation-stack';
 
@@ -62,25 +52,14 @@ class CommerceProfile extends Component {
   };
 
   componentDidMount() {
-    const {
-      address,
-      city,
-      provinceName,
-      latitude,
-      longitude,
-      country
-    } = this.props.locationData;
-
-    const location = {
-      address,
-      city,
-      provinceName,
-      latitude,
-      longitude,
-      country
-    };
-
-    this.props.onLocationChange(location);
+    this.props.onLocationValueChange({
+      address: this.props.locationData.address,
+      city: this.props.locationData.city,
+      provinceName: this.props.locationData.provinceName,
+      latitude: this.props.locationData.latitude,
+      longitude: this.props.locationData.longitude,
+      country: this.props.locationData.country
+    });
 
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
@@ -111,30 +90,14 @@ class CommerceProfile extends Component {
   };
 
   renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        onPress={() => this.props.navigation.goBack(null)}
-        tintColor="white"
-        title="Back"
-      />
-    );
+    return <HeaderBackButton onPress={() => this.props.navigation.goBack(null)} tintColor="white" title="Back" />;
   };
 
   onEditPress = () => {
     this.props.onProvincesIdRead();
-    this.props.onAreasRead();
+    this.props.onAreasReadForPicker();
 
-    const {
-      name,
-      cuit,
-      email,
-      phone,
-      description,
-      province,
-      area,
-      profilePicture,
-      headerPicture
-    } = this.props;
+    const { name, cuit, email, phone, description, province, area, profilePicture, headerPicture } = this.props;
 
     const { address, city, latitude, longitude } = this.props.locationData;
 
@@ -156,7 +119,7 @@ class CommerceProfile extends Component {
       }
     });
 
-    this.props.onLocationChange(location);
+    // this.props.onLocationChange(location); ///what? de donde sale esta variable 'location' //lo veo en la proxima user
   };
 
   onRefresh = () => {
@@ -182,11 +145,9 @@ class CommerceProfile extends Component {
         const { address, city, latitude, longitude } = this.props.locationData;
         const { newProfilePicture, newHeaderPicture } = this.state;
 
-        if (newProfilePicture)
-          var profilePicture = await imageToBlob(profilePicture);
+        if (newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
 
-        if (newHeaderPicture)
-          var headerPicture = await imageToBlob(headerPicture);
+        if (newHeaderPicture) var headerPicture = await imageToBlob(headerPicture);
 
         this.props.onCommerceUpdate(
           {
@@ -208,39 +169,24 @@ class CommerceProfile extends Component {
           this.props.navigation
         );
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onCancelPress = () => {
     const { stateBeforeChanges } = this.state;
+    const locationProps = ['address', 'city', 'latitude', 'longitude'];
+    const location = {};
 
     for (prop in stateBeforeChanges) {
-      if (prop === 'address' || prop === 'city') {
-        this.props.onCommerceValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
-        this.props.onLocationValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
+      if (locationProps.includes(prop)) {
+        location = { ...location, prop: stateBeforeChanges[prop] };
       }
-
-      if (prop === 'latitude' || prop === 'longitude') {
-        this.props.onLocationValueChange({
-          prop,
-          value: stateBeforeChanges[prop]
-        });
-      }
-
-      this.props.onCommerceValueChange({
-        prop,
-        value: stateBeforeChanges[prop]
-      });
     }
 
+    this.props.onLocationValueChange(location);
+    this.props.onCommerceValueChange(stateBeforeChanges);
     this.cleanErrors();
     this.props.navigation.goBack(null);
   };
@@ -279,23 +225,16 @@ class CommerceProfile extends Component {
 
       if (!response.cancelled) {
         if (this.state.profilePictureEdit) {
-          this.props.onCommerceValueChange({
-            prop: 'profilePicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ profilePicture: response.uri });
           this.setState({ newProfilePicture: true });
         } else {
-          this.props.onCommerceValueChange({
-            prop: 'headerPicture',
-            value: response.uri
-          });
+          this.props.onCommerceValueChange({ headerPicture: response.uri });
 
           this.setState({ newHeaderPicture: true });
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }
@@ -318,23 +257,15 @@ class CommerceProfile extends Component {
 
       if (!response.cancelled) {
         if (this.state.profilePictureEdit) {
-          this.props.onCommerceValueChange({
-            prop: 'profilePicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ profilePicture: response.uri });
           this.setState({ newProfilePicture: true });
         } else {
-          this.props.onCommerceValueChange({
-            prop: 'headerPicture',
-            value: response.uri
-          });
-
+          this.props.onCommerceValueChange({ headerPicture: response.uri });
           this.setState({ newHeaderPicture: true });
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       this.onEditPicturePress();
     }
@@ -342,10 +273,10 @@ class CommerceProfile extends Component {
 
   onDeletePicturePress = () => {
     if (this.state.profilePictureEdit) {
-      this.props.onCommerceValueChange({ prop: 'profilePicture', value: '' });
+      this.props.onCommerceValueChange({ profilePicture: '' });
       this.setState({ newProfilePicture: false });
     } else {
-      this.props.onCommerceValueChange({ prop: 'headerPicture', value: '' });
+      this.props.onCommerceValueChange({ headerPicture: '' });
       this.setState({ newHeaderPicture: false });
     }
 
@@ -373,9 +304,7 @@ class CommerceProfile extends Component {
       return (
         <View style={locationContainerStyle}>
           <Icon name="md-pin" type="ionicon" size={16} />
-          <Text
-            style={{ textAlign: 'center', paddingLeft: 5 }}
-          >{`${address}, ${city}, ${name}`}</Text>
+          <Text style={{ textAlign: 'center', paddingLeft: 5 }}>{`${address}, ${city}, ${name}`}</Text>
         </View>
       );
     }
@@ -383,39 +312,28 @@ class CommerceProfile extends Component {
 
   onProvincePickerChange = value => {
     if (value) {
-      var { value, label } = this.props.provincesList.find(
-        province => province.value == value
-      );
+      var { value, label } = this.props.provincesList.find(province => province.value == value);
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: value, name: label }
+        province: { provinceId: value, name: label }
       });
-
-      this.props.onLocationValueChange({
-        prop: 'provinceName',
-        value: label
-      });
+      this.props.onLocationValueChange({ provinceName: label });
     }
   };
 
   onAreaPickerChange = value => {
     if (value) {
-      var { value, label } = this.props.areasList.find(
-        area => area.value == value
-      );
+      var { value, label } = this.props.areasList.find(area => area.value == value);
       this.props.onCommerceValueChange({
-        prop: 'area',
-        value: { areaId: value, name: label }
+        area: { areaId: value, name: label }
       });
     }
   };
 
   renderNameError = () => {
-    const { name, onCommerceValueChange } = this.props;
-    const value = trimString(name);
-    onCommerceValueChange({ prop: 'name', value });
+    const name = trimString(this.props.name);
 
-    if (value === '') {
+    this.props.onCommerceValueChange({ name });
+    if (name === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -464,12 +382,10 @@ class CommerceProfile extends Component {
   };
 
   renderAddressError = () => {
-    const { onLocationValueChange } = this.props;
-    const { address } = this.props.locationData;
-    const value = trimString(address);
-    onLocationValueChange({ prop: 'address', value });
+    const address = trimString(this.props.locationData.address);
 
-    if (value === '') {
+    this.props.onLocationValueChange({ address });
+    if (address === '') {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -479,12 +395,10 @@ class CommerceProfile extends Component {
   };
 
   renderCityError = () => {
-    const { onLocationValueChange } = this.props;
-    const { city } = this.props.locationData;
-    const value = trimString(city);
-    onLocationValueChange({ prop: 'city', value });
+    const city = trimString(this.props.locationData.city);
 
-    if (value === '') {
+    this.props.onLocationValueChange({ city });
+    if (city === '') {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -514,19 +428,15 @@ class CommerceProfile extends Component {
   };
 
   onProvinceNameChangeOnMap = name => {
-    const province = this.props.provincesList.find(
-      province => province.label.toLowerCase() === name.toLowerCase()
-    );
+    const province = this.props.provincesList.find(province => province.label.toLowerCase() === name.toLowerCase());
 
     if (province) {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: province.value, name }
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        prop: 'province',
-        value: { provinceId: '', name: '' }
+        province: { provinceId: '', name: '' }
       });
     }
   };
@@ -592,11 +502,7 @@ class CommerceProfile extends Component {
         <View style={headerContainerStyle}>
           <Image
             style={headerPictureStyle}
-            source={
-              this.props.headerPicture
-                ? { uri: this.props.headerPicture }
-                : null
-            }
+            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
           >
             <Icon
               name="md-camera"
@@ -610,11 +516,7 @@ class CommerceProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={
-                this.props.profilePicture
-                  ? { uri: this.props.profilePicture }
-                  : null
-              }
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
@@ -648,9 +550,7 @@ class CommerceProfile extends Component {
               label="Razón Social:"
               value={this.props.name}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'name', value })
-              }
+              onChangeText={name => this.props.onCommerceValueChange({ name })}
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
@@ -661,9 +561,7 @@ class CommerceProfile extends Component {
             <Input
               label="CUIT:"
               value={this.props.cuit}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'cuit', value })
-              }
+              onChangeText={cuit => this.props.onCommerceValueChange({ cuit })}
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
               onFocus={() => this.setState({ cuitError: '' })}
@@ -674,9 +572,7 @@ class CommerceProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'phone', value })
-              }
+              onChangeText={phone => this.props.onCommerceValueChange({ phone })}
               keyboardType="numeric"
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
@@ -687,10 +583,8 @@ class CommerceProfile extends Component {
             <Input
               label="E-Mail:"
               value={this.props.email}
-              autoCapitalize='none'
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'email', value })
-              }
+              autoCapitalize="none"
+              onChangeText={email => this.props.onCommerceValueChange({ email })}
               keyboardType="email-address"
               errorMessage={this.state.emailError}
               onFocus={() => this.setState({ emailError: '' })}
@@ -701,9 +595,7 @@ class CommerceProfile extends Component {
             <Input
               label="Descripción:"
               value={this.props.description}
-              onChangeText={value =>
-                this.props.onCommerceValueChange({ prop: 'description', value })
-              }
+              onChangeText={description => this.props.onCommerceValueChange({ description })}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -713,9 +605,7 @@ class CommerceProfile extends Component {
             <Input
               label="Dirección:"
               value={this.props.locationData.address}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'address', value })
-              }
+              onChangeText={address => this.props.onLocationValueChange({ address })}
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
               onBlur={this.renderAddressError}
@@ -725,9 +615,7 @@ class CommerceProfile extends Component {
             <Input
               label="Ciudad:"
               value={this.props.locationData.city}
-              onChangeText={value =>
-                this.props.onLocationValueChange({ prop: 'city', value })
-              }
+              onChangeText={city => this.props.onLocationValueChange({ city })}
               errorMessage={this.state.cityError}
               onFocus={() => this.setState({ cityError: '' })}
               onBlur={this.renderCityError}
@@ -752,14 +640,7 @@ class CommerceProfile extends Component {
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}
-              icon={
-                <Ionicons
-                  style={{ marginLeft: 10 }}
-                  name="md-pin"
-                  size={22}
-                  color={MAIN_COLOR}
-                />
-              }
+              icon={<Ionicons style={{ marginLeft: 10 }} name="md-pin" size={22} color={MAIN_COLOR} />}
             />
           </CardSection>
           <CardSection>
@@ -775,29 +656,15 @@ class CommerceProfile extends Component {
         </View>
 
         <Menu
-          title={
-            this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'
-          }
+          title={this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'}
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
-          <MenuItem
-            title="Elegir de la galería"
-            icon="md-photos"
-            onPress={this.onChoosePicturePress}
-          />
+          <MenuItem title="Elegir de la galería" icon="md-photos" onPress={this.onChoosePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Tomar Foto"
-            icon="md-camera"
-            onPress={this.onTakePicturePress}
-          />
+          <MenuItem title="Tomar Foto" icon="md-camera" onPress={this.onTakePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePicturePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePicturePress} />
         </Menu>
       </KeyboardAwareScrollView>
     );
@@ -911,7 +778,6 @@ export default connect(mapStateToProps, {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasRead,
-  onLocationValueChange,
-  onLocationChange
+  onAreasReadForPicker,
+  onLocationValueChange
 })(CommerceProfile);

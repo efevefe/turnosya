@@ -1,43 +1,60 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 import { Card, Button as RNEButton } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
-  searchUserByEmail,
-  createEmployee,
-  employeeValidationError,
-  loadEmployee,
-  updateEmployee
+  onEmployeeValueChange,
+  onEmployeeValuesReset,
+  onRolesRead,
+  onUserByEmailSearch,
+  onEmployeeInfoUpdate,
+  onEmployeeCreate,
+  onEmployeeUpdate
 } from '../../actions';
-import { CardSection, Input, Picker, Button } from '../common';
+import { CardSection, Input, Picker, Button, IconButton } from '../common';
 import { MAIN_COLOR, ROLES } from '../../constants';
 
 class EmployeeForm extends Component {
-  state = { roleError: '', editing: false };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      roleError: '',
+      editing: props.navigation.getParam('editing') || false
+    };
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: navigation.getParam('rightButton')
+    };
+  };
 
   componentDidMount() {
-    this.props.readRoles();
-
-    const employee = this.props.navigation.getParam('employee', null);
-
-    if (employee) {
-      this.setState({ editing: true });
-      this.props.loadEmployee(employee);
+    if (this.state.editing) {
+      this.props.navigation.setParams({
+        rightButton: <IconButton icon="md-refresh" onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />
+      });
     }
+
+    this.props.onRolesRead();
   }
 
   componentWillUnmount() {
-    this.props.employeeClear();
+    this.props.onEmployeeValuesReset();
   }
 
-  onEmailValueChange = value => {
-    if (this.props.firstName) this.props.employeeNameClear();
-    this.props.employeeValueChange('email', value);
+  onEmailValueChange = email => {
+    this.props.firstName
+      ? this.props.onEmployeeValueChange({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email
+        })
+      : this.props.onEmployeeValueChange({ email });
   };
 
   onSavePressHandler = () => {
@@ -55,28 +72,27 @@ class EmployeeForm extends Component {
       navigation
     } = this.props;
     if (firstName) {
-      if (
-        employees.some(employee => employee.profileId === profileId) &&
-        !this.state.editing
-      )
+      if (employees.some(employee => employee.profileId === profileId) && !this.state.editing)
         // Si se cargó un usuario y es empleado aca entonces notificar
-        this.props.employeeValidationError(
-          'Este usuario ya es empleado de su negocio'
-        );
+        this.props.onEmployeeValueChange({
+          emailError: 'Este usuario ya es empleado de su negocio'
+        });
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.updateEmployee(
+          this.props.onEmployeeUpdate(
             {
               commerceId,
               employeeId,
-              email,
+              firstName,
+              lastName,
+              phone,
               role
             },
             navigation
           );
         else
-          this.props.createEmployee(
+          this.props.onEmployeeCreate(
             {
               commerceId,
               commerceName,
@@ -90,9 +106,9 @@ class EmployeeForm extends Component {
             navigation
           );
     } else {
-      this.props.employeeValidationError(
-        'Debe cargar un usuario antes de guardar'
-      );
+      this.props.onEmployeeValueChange({
+        emailError: 'Debe cargar un usuario antes de guardar'
+      });
     }
 
     if (role.name && this.state.roleError) this.setState({ roleError: '' });
@@ -123,10 +139,14 @@ class EmployeeForm extends Component {
                 editable={!this.state.editing} // No se puede modificar la persona, porque se debe enviar invitación y eso
                 rightIcon={
                   <RNEButton
-                    type='clear'
-                    icon={{ name: 'md-search', type: 'ionicon', color: MAIN_COLOR }}
+                    type="clear"
+                    icon={{
+                      name: 'md-search',
+                      type: 'ionicon',
+                      color: MAIN_COLOR
+                    }}
                     loading={this.props.emailLoading}
-                    onPress={() => this.props.searchUserByEmail(this.props.email, this.props.commerceId)}
+                    onPress={() => this.props.onUserByEmailSearch(this.props.email, this.props.commerceId)}
                     loadingProps={{ color: MAIN_COLOR }}
                     disabled={this.state.editing}
                   />
@@ -135,27 +155,15 @@ class EmployeeForm extends Component {
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Nombre:"
-                value={this.props.firstName}
-                editable={false}
-              />
+              <Input label="Nombre:" value={this.props.firstName} editable={false} />
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Apellido:"
-                value={this.props.lastName}
-                editable={false}
-              />
+              <Input label="Apellido:" value={this.props.lastName} editable={false} />
             </CardSection>
 
             <CardSection>
-              <Input
-                label="Teléfono:"
-                value={this.props.phone}
-                editable={false}
-              />
+              <Input label="Teléfono:" value={this.props.phone} editable={false} />
             </CardSection>
 
             <CardSection>
@@ -163,22 +171,15 @@ class EmployeeForm extends Component {
                 title={'Rol:'}
                 placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles.filter(role =>
-                  ROLES[role.value.roleId].value <= this.props.currentRole.value
-                )}
-                onValueChange={value =>
-                  this.props.employeeValueChange('role', value || {})
-                }
+                items={this.props.roles.filter(role => ROLES[role.value.roleId].value <= this.props.currentRole.value)}
+                onValueChange={role => this.props.onEmployeeValueChange({ role: role || {} })}
                 errorMessage={this.state.roleError}
+                disabled={this.props.email === firebase.auth().currentUser.email}
               />
             </CardSection>
 
             <CardSection>
-              <Button
-                title="Guardar"
-                loading={this.props.saveLoading}
-                onPress={this.onSavePressHandler}
-              />
+              <Button title="Guardar" loading={this.props.saveLoading} onPress={this.onSavePressHandler} />
             </CardSection>
           </Card>
         </View>
@@ -232,13 +233,11 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  employeeValueChange,
-  employeeNameClear,
-  employeeClear,
-  readRoles,
-  searchUserByEmail,
-  createEmployee,
-  employeeValidationError,
-  loadEmployee,
-  updateEmployee
+  onEmployeeValueChange,
+  onEmployeeValuesReset,
+  onRolesRead,
+  onUserByEmailSearch,
+  onEmployeeInfoUpdate,
+  onEmployeeCreate,
+  onEmployeeUpdate
 })(EmployeeForm);

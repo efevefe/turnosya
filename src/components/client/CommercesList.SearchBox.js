@@ -69,7 +69,4 @@ const mapStateToProps = state => {
 
 const ConnectedSearchBox = connectSearchBox(SearchBox);
 
-export default connect(
-  mapStateToProps,
-  {}
-)(ConnectedSearchBox);
+export default connect(mapStateToProps, {})(ConnectedSearchBox);

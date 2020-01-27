@@ -2,37 +2,26 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
   ON_EMPLOYEE_VALUE_CHANGE,
-  ON_EMPLOYEE_CLEAR,
-  ON_EMPLOYEE_NAME_CLEAR,
+  ON_EMPLOYEE_VALUES_RESET,
   ON_USER_SEARCHING,
   ON_USER_SEARCH_SUCCESS,
   ON_USER_SEARCH_FAIL,
   ON_EMPLOYEE_SAVING,
   ON_EMPLOYEE_CREATED,
   ON_EMPLOYEE_SAVE_FAIL,
-  EMPLOYEE_VALIDATION_ERROR,
   ON_EMPLOYEE_DELETED,
-  ON_EMPLOYEE_LOAD,
   ON_EMPLOYEE_UPDATED
 } from './types';
-import { Toast } from '../components/common';
 
-export const employeeValueChange = (prop, value) => ({
+export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
-  payload: { prop, value }
+  payload
 });
 
-export const createEmployee = (
-  {
-    commerceId,
-    commerceName,
-    email,
-    firstName,
-    lastName,
-    phone,
-    role,
-    profileId
-  },
+export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
+
+export const onEmployeeCreate = (
+  { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
   navigation
 ) => dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
@@ -66,103 +55,93 @@ export const createEmployee = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const updateEmployee = (
-  { employeeId, commerceId, email, role },
+export const onEmployeeUpdate = (
+  { employeeId, commerceId, firstName, lastName, phone, role },
   navigation
 ) => dispatch => {
-  if (firebase.auth().currentUser.email === email) {
-    Toast.show({ text: 'No puede editar su propio rol!' });
-  } else {
-    const db = firebase.firestore();
-
-    dispatch({ type: ON_EMPLOYEE_SAVING });
-
-    db.collection(`Commerces/${commerceId}/Employees`)
-      .doc(employeeId)
-      .update({ role })
-      .then(() => {
-        dispatch({ type: ON_EMPLOYEE_UPDATED });
-        navigation.goBack();
-      })
-      .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
-  }
-};
-
-export const deleteEmployee = ({
-  employeeId,
-  commerceId,
-  profileId,
-  email
-}) => async dispatch => {
-  if (firebase.auth().currentUser.email === email) {
-    Toast.show({ text: 'No puede eliminarse usted mismo' });
-  } else {
-    const db = firebase.firestore();
-
-    const snapshot = await db
-      .collection(`Profiles/${profileId}/Workplaces`)
-      .where('commerceId', '==', commerceId)
-      .get();
-
-    const workplaceRef = db
-      .collection(`Profiles/${profileId}/Workplaces`)
-      .doc(snapshot.docs[0].id);
-    const employeeRef = db
-      .collection(`Commerces/${commerceId}/Employees`)
-      .doc(employeeId);
-
-    const batch = db.batch();
-
-    batch.update(workplaceRef, { softDelete: new Date() });
-    batch.update(employeeRef, { softDelete: new Date() });
-
-    batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
-  }
-};
-
-export const searchUserByEmail = (email, commerceId) => async dispatch => {
-  dispatch({ type: ON_USER_SEARCHING });
   const db = firebase.firestore();
 
-  db.collection('Profiles')
-    .where('email', '==', email)
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        dispatch({
-          type: ON_USER_SEARCH_FAIL,
-          payload: 'No se encontró ningún usuario'
-        });
-      } else {
-        const doc = snapshot.docs[0];
+  dispatch({ type: ON_EMPLOYEE_SAVING });
 
-        if (doc.data().commerceId === commerceId)
-          dispatch({
-            type: ON_USER_SEARCH_FAIL,
-            payload: 'El dueño no puede ser empleado'
-          });
-        else
-          dispatch({
-            type: ON_USER_SEARCH_SUCCESS,
-            payload: {
-              ...doc.data(),
-              profileId: doc.id
-            }
-          });
-      }
-    });
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .doc(employeeId)
+    .update({ firstName, lastName, phone, role })
+    .then(() => {
+      dispatch({ type: ON_EMPLOYEE_UPDATED });
+      navigation.goBack();
+    })
+    .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const employeeValidationError = errorText => ({
-  type: EMPLOYEE_VALIDATION_ERROR,
-  payload: errorText
-});
+export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async dispatch => {
+  const db = firebase.firestore();
 
-export const employeeClear = () => ({ type: ON_EMPLOYEE_CLEAR });
+  const snapshot = await db
+    .collection(`Profiles/${profileId}/Workplaces`)
+    .where('commerceId', '==', commerceId)
+    .get();
 
-export const employeeNameClear = () => ({ type: ON_EMPLOYEE_NAME_CLEAR });
+  const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
+  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
 
-export const loadEmployee = employee => ({
-  type: ON_EMPLOYEE_LOAD,
-  payload: employee
-});
+  const batch = db.batch();
+
+  batch.update(workplaceRef, { softDelete: new Date() });
+  batch.update(employeeRef, { softDelete: new Date() });
+
+  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+};
+
+export const onEmployeeInfoUpdate = email => dispatch => {
+  dispatch({ type: ON_USER_SEARCHING });
+
+  searchUserByEmail(email).then(snapshot => {
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      dispatch({
+        type: ON_USER_SEARCH_SUCCESS,
+        payload: {
+          ...doc.data(),
+          profileId: doc.id
+        }
+      });
+    }
+  });
+};
+
+export const onUserByEmailSearch = (email, commerceId) => dispatch => {
+  dispatch({ type: ON_USER_SEARCHING });
+
+  searchUserByEmail(email).then(snapshot => {
+    if (snapshot.empty) {
+      dispatch({
+        type: ON_USER_SEARCH_FAIL,
+        payload: 'No se encontró ningún usuario'
+      });
+    } else {
+      const doc = snapshot.docs[0];
+
+      if (doc.data().commerceId === commerceId)
+        dispatch({
+          type: ON_USER_SEARCH_FAIL,
+          payload: 'El dueño no puede ser empleado'
+        });
+      else
+        dispatch({
+          type: ON_USER_SEARCH_SUCCESS,
+          payload: {
+            ...doc.data(),
+            profileId: doc.id
+          }
+        });
+    }
+  });
+};
+
+const searchUserByEmail = email => {
+  return firebase
+    .firestore()
+    .collection('Profiles')
+    .where('email', '==', email)
+    .get();
+};

@@ -5,17 +5,11 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { View, StyleSheet, Platform, Image, Text } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import {
-  onSelectedLocationChange,
-  onCourtReservationValueChange
-} from '../../actions';
+import { onSelectedLocationChange, onReservationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
 import { Toast } from '.';
-import {
-  getAddressFromLatAndLong,
-  getLatitudeAndLongitudeFromString
-} from '../../utils';
+import { getAddressFromLatAndLong, getLatitudeAndLongitudeFromString } from '../../utils';
 
 class CommercesMap extends React.Component {
   state = {
@@ -31,10 +25,7 @@ class CommercesMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.state.locationAsked &&
-      prevProps.userLocation !== this.props.userLocation
-    ) {
+    if (this.state.locationAsked && prevProps.userLocation !== this.props.userLocation) {
       this.setState({ locationAsked: false });
     }
   }
@@ -66,9 +57,7 @@ class CommercesMap extends React.Component {
 
   onStringSearch = async string => {
     try {
-      const [latLongResult] = await getLatitudeAndLongitudeFromString(
-        string ? string : this.state.completeAddress
-      );
+      const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
 
       if (latLongResult !== undefined) {
         const { latitude, longitude } = latLongResult;
@@ -78,12 +67,11 @@ class CommercesMap extends React.Component {
           completeAddress: this.state.completeAddress.replace('Calle', '')
         });
         Toast.show({
-          text:
-            'No se han encontrado resultados, intente modificar la dirección.'
+          text: 'No se han encontrado resultados, intente modificar la dirección.'
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -111,8 +99,8 @@ class CommercesMap extends React.Component {
       });
 
       this.props.onSelectedLocationChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -165,11 +153,11 @@ class CommercesMap extends React.Component {
       arrayOfMarkers.push(selectedLocation);
     }
 
-    if (this.props.markers.length > 0) {
+    if (this.props.markers.length) {
       Array.prototype.push.apply(arrayOfMarkers, this.props.markers);
     }
 
-    return arrayOfMarkers.length > 0
+    return arrayOfMarkers.length
       ? this.calculateMarkersRegion(arrayOfMarkers)
       : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
@@ -232,10 +220,7 @@ class CommercesMap extends React.Component {
           title={marker.name}
           pinColor={'black'}
         >
-          <MapView.Callout
-            tooltip
-            onPress={() => this.onMarkerTitlePress(marker)}
-          >
+          <MapView.Callout tooltip onPress={() => this.onMarkerTitlePress(marker)}>
             <Text>{marker.name}</Text>
           </MapView.Callout>
         </MapView.Marker>
@@ -243,21 +228,14 @@ class CommercesMap extends React.Component {
     }
   };
 
-  onMarkerTitlePress = marker => {
-    this.props.onCourtReservationValueChange({
-      prop: 'commerce',
-      value: marker
-    });
-
+  onMarkerTitlePress = commerce => {
+    this.props.onReservationValueChange({ commerce });
     this.props.navigation.navigate('commerceProfileView');
   };
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
-      const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
-          ? this.state.completeAddress
-          : '';
+      const validAddress = this.state.completeAddress !== 'Córdoba, Argentina' ? this.state.completeAddress : '';
 
       return (
         <View style={mainContainer}>
@@ -380,5 +358,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 })(CommercesMap);

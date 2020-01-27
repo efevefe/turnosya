@@ -17,10 +17,7 @@ class ScheduleRegisterConfiguration extends Component {
   };
 
   componentDidMount() {
-    const {
-      reservationDayPeriod,
-      reservationMinCancelTime
-    } = this.props;
+    const { reservationDayPeriod, reservationMinCancelTime } = this.props;
 
     this.setState({
       reservationDayValue: reservationDayPeriod,
@@ -29,49 +26,39 @@ class ScheduleRegisterConfiguration extends Component {
   }
 
   onSavePressHandler() {
-    const {
-      reservationDayPeriod,
-      reservationMinCancelTime,
-      commerceId
-    } = this.props;
+    const { reservationDayPeriod, reservationMinCancelTime, commerceId } = this.props;
 
-    this.props.onScheduleConfigurationSave({
-      reservationDayPeriod,
-      reservationMinCancelTime,
-      commerceId,
-      date: moment()
-    }, this.props.navigation);
+    this.props.onScheduleConfigurationSave(
+      {
+        reservationDayPeriod,
+        reservationMinCancelTime,
+        commerceId,
+        date: moment()
+      },
+      this.props.navigation
+    );
   }
 
   onDaySliderValueChange() {
     this.props.onScheduleValueChange({
-      prop: 'reservationDayPeriod',
-      value: this.state.reservationDayValue
+      reservationDayPeriod: this.state.reservationDayValue
     });
   }
 
   onCancelTimeSliderValueChange() {
     this.props.onScheduleValueChange({
-      prop: 'reservationMinCancelTime',
-      value: this.state.reservationMinHoursCancelValue
+      reservationMinCancelTime: this.state.reservationMinHoursCancelValue
     });
   }
 
   render() {
-    const {
-      reservationDayFrom,
-      reservationDayTo,
-      reservationDayValue,
-      reservationMinHoursCancelValue
-    } = this.state;
+    const { reservationDayFrom, reservationDayTo, reservationDayValue, reservationMinHoursCancelValue } = this.state;
 
     return (
       <View>
         <Card containerStyle={{ borderRadius: 10, paddingBottom: 10 }}>
           <CardSection>
-            <Text>
-              {'Límite previo a reservar: ' + stringFormatDays(reservationDayValue)}
-            </Text>
+            <Text>{'Límite previo a reservar: ' + stringFormatDays(reservationDayValue)}</Text>
             <Slider
               animationType="spring"
               minimumTrackTintColor={MAIN_COLOR_OPACITY}
@@ -88,8 +75,7 @@ class ScheduleRegisterConfiguration extends Component {
           <Divider style={{ marginVertical: 12 }} />
           <CardSection>
             <Text>
-              {'Tiempo mínimo de cancelacion del turno: ' +
-                stringFormatHours(reservationMinHoursCancelValue)}
+              {'Tiempo mínimo de cancelacion del turno: ' + stringFormatHours(reservationMinHoursCancelValue)}
             </Text>
             <Slider
               animationType="spring"
@@ -101,9 +87,7 @@ class ScheduleRegisterConfiguration extends Component {
               thumbTintColor={MAIN_COLOR}
               value={reservationMinHoursCancelValue}
               onSlidingComplete={this.onCancelTimeSliderValueChange.bind(this)}
-              onValueChange={val =>
-                this.setState({ reservationMinHoursCancelValue: val })
-              }
+              onValueChange={val => this.setState({ reservationMinHoursCancelValue: val })}
             />
           </CardSection>
           <Divider style={{ marginVertical: 12 }} />
@@ -122,11 +106,7 @@ class ScheduleRegisterConfiguration extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    loading,
-    reservationDayPeriod,
-    reservationMinCancelTime
-  } = state.commerceSchedule;
+  const { loading, reservationDayPeriod, reservationMinCancelTime } = state.commerceSchedule;
 
   return {
     commerceId: state.commerceData.commerceId,
@@ -136,7 +116,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onScheduleConfigurationSave, onScheduleValueChange }
-)(ScheduleRegisterConfiguration);
+export default connect(mapStateToProps, {
+  onScheduleConfigurationSave,
+  onScheduleValueChange
+})(ScheduleRegisterConfiguration);

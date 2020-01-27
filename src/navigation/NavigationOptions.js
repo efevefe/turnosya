@@ -46,17 +46,10 @@ export const tabNavigationOptions = {
       } else if (routeName === 'reservations') {
         iconName = `md-time`;
       } else if (routeName === 'reports') {
-        iconName = `md-podium`;
+        iconName = `md-stats`;
       }
 
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
+      return <Ionicons name={iconName} size={30} color={tintColor} style={{ opacity: focused ? 1 : 0.5 }} />;
     }
   }),
   tabBarOptions: {

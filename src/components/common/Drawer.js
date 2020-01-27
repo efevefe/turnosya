@@ -5,13 +5,7 @@ import Constants from 'expo-constants';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 
 const Drawer = props => {
-  const {
-    profilePicture,
-    profilePicturePlaceholder,
-    onProfilePicturePress,
-    name,
-    children
-  } = props;
+  const { profilePicture, profilePicturePlaceholder, onProfilePicturePress, name, role, children } = props;
 
   renderName = name => {
     if (!!name) {
@@ -19,13 +13,16 @@ const Drawer = props => {
     }
   };
 
+  renderRole = role => {
+    if (role) {
+      return <Text style={styles.roleStyle}>{role}</Text>;
+    }
+  };
+
   return (
     <View>
       <View style={styles.drawerHeader}>
-        <Image
-          source={require('../../../assets/header-logo.png')}
-          style={styles.headerLogo}
-        />
+        <Image source={require('../../../assets/header-logo.png')} style={styles.headerLogo} />
       </View>
       <View style={styles.drawerHeaderContainer}>
         <Avatar
@@ -37,6 +34,7 @@ const Drawer = props => {
           onPress={onProfilePicturePress}
         />
         {this.renderName(name)}
+        {this.renderRole(role)}
       </View>
       <Divider style={styles.dividerStyle} />
       {children}
@@ -65,8 +63,13 @@ const styles = StyleSheet.create({
   nameStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 0,
     textAlign: 'center'
+  },
+  roleStyle: {
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 0
   },
   avatarStyle: {
     borderWidth: 3,
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
   },
   dividerStyle: {
     backgroundColor: 'grey',
-    marginTop: 0,
+    marginTop: 4,
     marginBottom: 5,
     marginLeft: 15,
     marginRight: 15

@@ -2,29 +2,12 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation-stack';
 import firebase from 'firebase';
-import {
-  onCommerceDelete,
-  onCommerceValueChange,
-  onLoginValueChange
-} from '../../actions';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../../actions';
 import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
 
 class CommerceSettings extends Component {
   state = { providerId: null };
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: (
-        <HeaderBackButton
-          tintColor="white"
-          title='Back'
-          onPress={() => navigation.goBack(null)}
-        />
-      )
-    };
-  };
 
   componentDidMount() {
     this.setState({
@@ -37,21 +20,15 @@ class CommerceSettings extends Component {
     if (this.state.providerId == 'password') {
       return (
         <View style={{ alignSelf: 'stretch' }}>
-          <CardSection
-            style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
-          >
+          <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Input
               label="Contraseña:"
               password
               value={this.props.password}
               color="black"
-              onChangeText={value =>
-                this.props.onLoginValueChange({ prop: 'password', value })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               errorMessage={this.props.reauthError}
-              onFocus={() =>
-                this.props.onLoginValueChange({ prop: 'error', value: '' })
-              }
+              onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />
           </CardSection>
           <Divider style={{ backgroundColor: 'grey' }} />
@@ -61,10 +38,10 @@ class CommerceSettings extends Component {
   };
 
   renderConfirmCommerceDelete = () => {
-    // ventana de confirmacion para eliminar negocio
+    // ventana de confirmación para eliminar negocio
     return (
       <Menu
-        title="¿Esta seguro que desea eliminar su negocio?"
+        title="¿Está seguro que desea eliminar su negocio?"
         onBackdropPress={this.onBackdropPress}
         isVisible={this.props.confirmCommerceDeleteVisible}
       >
@@ -76,11 +53,7 @@ class CommerceSettings extends Component {
           onPress={this.onConfirmCommerceDelete}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onBackdropPress} />
       </Menu>
     );
   };
@@ -95,13 +68,9 @@ class CommerceSettings extends Component {
 
   onBackdropPress = () => {
     // auth
-    this.props.onLoginValueChange({ prop: 'password', value: '' });
-    this.props.onLoginValueChange({ prop: 'error', value: '' });
+    this.props.onLoginValueChange({ password: '', error: '' });
     // commerce
-    this.props.onCommerceValueChange({
-      prop: 'confirmDeleteVisible',
-      value: false
-    });
+    this.props.onCommerceValueChange({ confirmDeleteVisible: false });
   };
 
   render() {
@@ -114,12 +83,7 @@ class CommerceSettings extends Component {
             color: 'black'
           }}
           title="Eliminar Mi Negocio"
-          onPress={() =>
-            this.props.onCommerceValueChange({
-              prop: 'confirmDeleteVisible',
-              value: true
-            })
-          }
+          onPress={() => this.props.onCommerceValueChange({ confirmDeleteVisible: true })}
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />
@@ -152,7 +116,8 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onCommerceDelete, onCommerceValueChange, onLoginValueChange }
-)(CommerceSettings);
+export default connect(mapStateToProps, {
+  onCommerceDelete,
+  onCommerceValueChange,
+  onLoginValueChange
+})(CommerceSettings);

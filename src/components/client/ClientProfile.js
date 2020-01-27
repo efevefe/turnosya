@@ -1,33 +1,16 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import { Avatar, Text, Divider, Icon, Rating } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  IconButton
-} from '../common';
+import { CardSection, Input, Spinner, Menu, MenuItem, IconButton } from '../common';
 import LocationMessages from '../common/LocationMessages';
 import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import {
-  onUserRead,
-  onUserUpdate,
-  onClientDataValueChange,
-  onLocationValuesReset
-} from '../../actions';
+import { onUserRead, onUserUpdate, onClientDataValueChange, onLocationValuesReset } from '../../actions';
 
 class ClientProfile extends Component {
   state = {
@@ -88,8 +71,7 @@ class ClientProfile extends Component {
         var { firstName, lastName, phone, profilePicture } = this.props;
         const { newProfilePicture } = this.state;
 
-        if (newProfilePicture)
-          var profilePicture = await imageToBlob(profilePicture);
+        if (newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
 
         this.props.onUserUpdate({
           firstName,
@@ -100,21 +82,13 @@ class ClientProfile extends Component {
 
         this.disableEdit();
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onCancelPress = () => {
-    const { stateBeforeChanges } = this.state;
-
-    for (prop in stateBeforeChanges) {
-      this.props.onClientDataValueChange({
-        prop,
-        value: stateBeforeChanges[prop]
-      });
-    }
-
+    this.onClientDataValueChange(this.state.stateBeforeChanges);
     this.cleanErrors();
     this.disableEdit();
   };
@@ -169,11 +143,7 @@ class ClientProfile extends Component {
       const response = await ImagePicker.launchImageLibraryAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
-
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
     } catch (error) {
@@ -197,19 +167,16 @@ class ClientProfile extends Component {
       let response = await ImagePicker.launchCameraAsync(options);
 
       if (!response.cancelled) {
-        this.props.onClientDataValueChange({
-          prop: 'profilePicture',
-          value: response.uri
-        });
+        this.props.onClientDataValueChange({ profilePicture: response.uri });
         this.setState({ newProfilePicture: true });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   onDeletePicturePress = () => {
-    this.props.onClientDataValueChange({ prop: 'profilePicture', value: '' });
+    this.props.onClientDataValueChange({ profilePicture: '' });
     this.onEditPicturePress();
   };
 
@@ -230,12 +197,7 @@ class ClientProfile extends Component {
     if (this.props.city && this.props.provinceName) {
       return (
         <View style={locationContainerStyle}>
-          <Icon
-            name="md-pin"
-            type="ionicon"
-            size={16}
-            containerStyle={{ marginRight: 5 }}
-          />
+          <Icon name="md-pin" type="ionicon" size={16} containerStyle={{ marginRight: 5 }} />
           <Text>{`${this.props.city}, ${this.props.provinceName}`}</Text>
         </View>
       );
@@ -243,13 +205,10 @@ class ClientProfile extends Component {
   };
 
   renderFirstNameError = () => {
-    const { firstName, onClientDataValueChange } = this.props;
+    const firstName = trimString(this.props.firstName);
 
-    onClientDataValueChange({
-      prop: 'firstName',
-      value: trimString(firstName)
-    });
-    if (trimString(firstName) === '') {
+    this.props.onClientDataValueChange({ firstName });
+    if (firstName === '') {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -259,10 +218,10 @@ class ClientProfile extends Component {
   };
 
   renderLastNameError = () => {
-    const { lastName, onClientDataValueChange } = this.props;
+    const lastName = trimString(this.props.lastName);
 
-    onClientDataValueChange({ prop: 'lastName', value: trimString(lastName) });
-    if (trimString(lastName) === '') {
+    this.props.onClientDataValueChange({ lastName });
+    if (lastName === '') {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -272,10 +231,7 @@ class ClientProfile extends Component {
   };
 
   renderPhoneError = () => {
-    if (
-      this.props.phone != '' &&
-      !validateValueType('phone', this.props.phone)
-    ) {
+    if (this.props.phone != '' && !validateValueType('phone', this.props.phone)) {
       this.setState({ phoneError: 'Formato de teléfono incorrecto' });
       return false;
     } else {
@@ -293,11 +249,7 @@ class ClientProfile extends Component {
   };
 
   validateMinimumData = () => {
-    return (
-      this.renderFirstNameError() &&
-      this.renderLastNameError() &&
-      this.renderPhoneError()
-    );
+    return this.renderFirstNameError() && this.renderLastNameError() && this.renderPhoneError();
   };
 
   render() {
@@ -321,11 +273,7 @@ class ClientProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={
-                this.props.profilePicture
-                  ? { uri: this.props.profilePicture }
-                  : null
-              }
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size="xlarge"
               icon={{ name: 'person' }}
               containerStyle={avatarStyle}
@@ -344,12 +292,7 @@ class ClientProfile extends Component {
               })
             }
           >
-            <Rating
-              style={ratingStyle}
-              readonly
-              imageSize={24}
-              startingValue={this.getRatingValue()}
-            />
+            <Rating style={ratingStyle} readonly imageSize={24} startingValue={this.getRatingValue()} />
           </TouchableOpacity>
         </View>
         <Divider
@@ -366,12 +309,7 @@ class ClientProfile extends Component {
               label="Nombre:"
               value={this.props.firstName}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onClientDataValueChange({
-                  prop: 'firstName',
-                  value
-                })
-              }
+              onChangeText={firstName => this.props.onClientDataValueChange({ firstName })}
               editable={this.state.editEnabled}
               errorMessage={this.state.firstNameError}
               onFocus={() => this.setState({ firstNameError: '' })}
@@ -383,9 +321,7 @@ class ClientProfile extends Component {
               label="Apellido:"
               value={this.props.lastName}
               autoCapitalize="words"
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'lastName', value })
-              }
+              onChangeText={lastName => this.props.onClientDataValueChange({ lastName })}
               editable={this.state.editEnabled}
               errorMessage={this.state.lastNameError}
               onFocus={() => this.setState({ lastNameError: '' })}
@@ -396,9 +332,7 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={value =>
-                this.props.onClientDataValueChange({ prop: 'phone', value })
-              }
+              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
               keyboardType="numeric"
               editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}
@@ -416,23 +350,11 @@ class ClientProfile extends Component {
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
-          <MenuItem
-            title="Elegir de la galería"
-            icon="md-photos"
-            onPress={this.onChoosePicturePress}
-          />
+          <MenuItem title="Elegir de la galería" icon="md-photos" onPress={this.onChoosePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Tomar Foto"
-            icon="md-camera"
-            onPress={this.onTakePicturePress}
-          />
+          <MenuItem title="Tomar Foto" icon="md-camera" onPress={this.onTakePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePicturePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePicturePress} />
         </Menu>
       </KeyboardAwareScrollView>
     );
@@ -480,17 +402,7 @@ const {
 });
 
 const mapStateToProps = state => {
-  const {
-    clientId,
-    firstName,
-    lastName,
-    phone,
-    email,
-    profilePicture,
-    rating,
-    loading,
-    refreshing
-  } = state.clientData;
+  const { clientId, firstName, lastName, phone, email, profilePicture, rating, loading, refreshing } = state.clientData;
 
   const { city, provinceName } = state.locationData.userLocation;
 

@@ -1,103 +1,115 @@
 import React, { Component } from 'react';
 import { Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import { onScheduleRead } from '../actions';
-import { Spinner } from './common';
-import { DAYS } from '../constants';
-import { View } from 'native-base';
 import { Card } from 'react-native-elements';
 import moment from 'moment';
+import { View } from 'native-base';
+import { onScheduleRead, onEmployeesScheduleRead } from '../actions';
+import { Spinner } from './common';
+import { DAYS } from '../constants';
+import { areaFunctionReturn } from '../utils';
 
 class CommerceProfileInfo extends Component {
-  state = { onDay: new Date().getDay() };
+  state = { currentDay: new Date().getDay() };
 
   componentDidMount() {
-    this.props.onScheduleRead({
-      commerceId: this.props.commerceId,
-      selectedDate: moment()
+    const scheduleRead = areaFunctionReturn({
+      area: this.props.area.areaId,
+      sports: () => {
+        this.props.onScheduleRead({
+          commerceId: this.props.commerceId,
+          selectedDate: moment()
+        });
+      },
+      hairdressers: () => {
+        this.props.onEmployeesScheduleRead({
+          commerceId: this.props.commerceId,
+          selectedDate: moment()
+        });
+      }
     });
+
+    scheduleRead();
   }
 
-  renderSchedule = () => {
-    const { cards } = this.props;
-    const hoursOnDay = [];
+  getFormattedSchedules = () => {
+    const { schedules } = this.props;
 
-    cards.forEach(card => {
-      card.days.forEach(day => {
-        const firstShiftStart = card.firstShiftStart;
-        const firstShiftEnd = card.firstShiftEnd;
-        const secondShiftStart = card.secondShiftStart;
-        const secondShiftEnd = card.secondShiftEnd;
-        const dayName = DAYS[day];
-        const id = day;
-        hoursOnDay.push({
-          id,
-          dayName,
-          firstShiftStart,
-          firstShiftEnd,
-          secondShiftStart,
-          secondShiftEnd
+    return schedules.map(schedule => {
+      const hoursOnDays = [];
+
+      schedule.cards.forEach(card => {
+        const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = card;
+
+        card.days.forEach(day => {
+          hoursOnDays.push({
+            day,
+            dayName: DAYS[day],
+            firstShiftStart,
+            firstShiftEnd,
+            secondShiftStart,
+            secondShiftEnd
+          });
         });
       });
+
+      return {
+        id: schedule.id,
+        employeeName: schedule.employeeName || null,
+        hoursOnDays: hoursOnDays.sort((a, b) => a.day - b.day)
+      };
     });
-
-    hoursOnDay.sort((a, b) => a.id - b.id);
-
-    return hoursOnDay;
   };
 
   renderRow = ({ item }) => {
-    const { onDay } = this.state;
+    const { currentDay } = this.state;
+    const { hoursOnDays } = item;
 
     return (
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
-          alignItems: 'center'
+          padding: 10,
+          alignSelf: 'stretch'
         }}
       >
-        <View
-          style={{
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            padding: 5
-          }}
-        >
-          <Text
-            style={
-              item.id === onDay
-                ? {
-                  fontSize: 15,
-                  fontWeight: 'bold',
-                  width: 72
-                }
-                : {
-                  fontSize: 15,
-                  width: 72
-                }
-            }
-          >
-            {item.dayName}
-          </Text>
-        </View>
-
-        <Text
-          style={
-            item.id === onDay
-              ? { fontSize: 15, fontWeight: 'bold', padding: 5 }
-              : { fontSize: 15, padding: 5 }
-          }
-        >{`${item.firstShiftStart} - ${item.firstShiftEnd}`}</Text>
-        {item.secondShiftStart !== null ? (
-          <Text
-            style={
-              item.id === onDay
-                ? { fontSize: 15, fontWeight: 'bold', padding: 5 }
-                : { fontSize: 15, padding: 5 }
-            }
-          >{`${item.secondShiftStart} - ${item.secondShiftEnd}`}</Text>
+        {item.employeeName ? (
+          <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 5 }}>{item.employeeName}</Text>
         ) : null}
+        {hoursOnDays.map(hourOnDay => (
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+            <Text
+              key={hourOnDay.day}
+              style={{
+                fontSize: 14,
+                fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
+                width: 74
+              }}
+            >
+              {hourOnDay.dayName}
+            </Text>
+            <Text
+              key={hourOnDay.day}
+              style={{
+                fontSize: 14,
+                fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
+                width: 96
+              }}
+            >
+              {hourOnDay.firstShiftStart + ' - ' + hourOnDay.firstShiftEnd}
+            </Text>
+            {hourOnDay.secondShiftStart && hourOnDay.secondShiftEnd ? (
+              <Text
+                key={hourOnDay.day}
+                style={{
+                  fontSize: 14,
+                  fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal'
+                }}
+              >
+                {hourOnDay.secondShiftStart + ' - ' + hourOnDay.secondShiftEnd}
+              </Text>
+            ) : null}
+          </View>
+        ))}
       </View>
     );
   };
@@ -105,35 +117,22 @@ class CommerceProfileInfo extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
-    {
-      var hoursOnDay = this.renderSchedule();
-    }
+    const schedules = this.getFormattedSchedules();
 
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <Card
           title="Horarios"
           textAlign="center"
           containerStyle={{ borderRadius: 10 }}
+          dividerStyle={{ marginBottom: 8 }}
         >
-          <FlatList
-            data={hoursOnDay}
-            renderItem={this.renderRow}
-            keyExtractor={hourOnDay => hourOnDay.id.toString()}
-          />
+          <FlatList data={schedules} renderItem={this.renderRow} keyExtractor={schedule => schedule.id} />
         </Card>
-        <Card
-          title="Información de Contacto"
-          textAlign="center"
-          containerStyle={{ borderRadius: 10 }}
-        >
+        <Card title="Información de Contacto" textAlign="center" containerStyle={{ borderRadius: 10 }}>
           <View style={{ flexDirection: 'column', marginRight: 15 }}>
-            <Text
-              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`E-mail: ${this.props.email}`}</Text>
-            <Text
-              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`Teléfono: ${this.props.phone}`}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`E-mail: ${this.props.email}`}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Teléfono: ${this.props.phone}`}</Text>
           </View>
         </Card>
       </View>
@@ -160,7 +159,7 @@ const mapStateToProps = state => {
     longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
-  const { cards, loading } = state.commerceSchedule;
+  const { schedules, loading } = state.commerceSchedule;
 
   let locationData = { ...state.locationData };
 
@@ -191,11 +190,8 @@ const mapStateToProps = state => {
     loading,
     refreshing,
     locationData,
-    cards
+    schedules
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onScheduleRead }
-)(CommerceProfileInfo);
+export default connect(mapStateToProps, { onScheduleRead, onEmployeesScheduleRead })(CommerceProfileInfo);

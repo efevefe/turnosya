@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   titleContainerStyle: {
     alignSelf: 'stretch',
-    alignItems: 'flex-start',
+    alignItems: 'flex-start'
   },
   titleStyle: {
     color: 'black',
