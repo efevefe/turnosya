@@ -6,7 +6,7 @@ import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onMonthlyReviewsReadByYear,
-  yearsWithReview,
+  yearsWithReview
 } from '../../../actions';
 
 class MonthlyReviewsChart extends Component {
@@ -20,13 +20,13 @@ class MonthlyReviewsChart extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
+      headerRight: navigation.getParam('rightIcon')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />,
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -34,7 +34,7 @@ class MonthlyReviewsChart extends Component {
     this.props.onMonthlyReviewsReadByYear(this.props.commerceId, this.state.modalYear);
 
     this.props.onCommerceReportValueChange({
-      selectedYear: this.state.modalYear,
+      selectedYear: this.state.modalYear
     });
 
     this.setState({ modal: false });
@@ -47,7 +47,7 @@ class MonthlyReviewsChart extends Component {
 
     const dataLine = {
       labels: this.props.data.labels,
-      datasets: [{ data: data.length ? data : Array(12).fill(0) }],
+      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
     };
 
     return (
@@ -58,7 +58,7 @@ class MonthlyReviewsChart extends Component {
           onBackdropPress={() =>
             this.setState({
               modal: false,
-              modalYear: this.props.selectedYear,
+              modalYear: this.props.selectedYear
             })
           }
         >
@@ -99,7 +99,7 @@ const mapStateToProps = state => {
     selectedYear,
     commerceId,
     loading,
-    error,
+    error
   };
 };
 
@@ -107,5 +107,5 @@ export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onMonthlyReviewsReadByYear,
-  yearsWithReview,
+  yearsWithReview
 })(MonthlyReviewsChart);

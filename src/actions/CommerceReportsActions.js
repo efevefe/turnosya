@@ -6,7 +6,7 @@ import {
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
   ON_COMMERCE_REPORT_DATA_EMPTY,
-  ON_COMMERCE_REPORT_DATA_ERROR,
+  ON_COMMERCE_REPORT_DATA_ERROR
 } from './types';
 import moment from 'moment';
 
@@ -43,7 +43,7 @@ export const onDailyReservationsReadByRange = (commerceId, startDate, endDate) =
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data },
+          payload: { labels, data }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -70,7 +70,7 @@ export const yearsOfActivity = commerceId => dispatch => {
         if (currentYear === firstYear) {
           years.push({
             label: currentYear.toString(),
-            value: currentYear.toString(),
+            value: currentYear.toString()
           });
         } else {
           for (i = firstYear; i <= currentYear; i++) {
@@ -80,7 +80,7 @@ export const yearsOfActivity = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { years, selectedYear: currentYear },
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -124,7 +124,7 @@ export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
 
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
-        payload: { labels, data: months },
+        payload: { labels, data: months }
       });
     });
 };
@@ -148,7 +148,7 @@ export const yearsWithReview = commerceId => dispatch => {
         if (currentYear === firstYear) {
           years.push({
             label: currentYear.toString(),
-            value: currentYear.toString(),
+            value: currentYear.toString()
           });
         } else {
           for (i = firstYear; i <= currentYear; i++) {
@@ -158,7 +158,7 @@ export const yearsWithReview = commerceId => dispatch => {
 
         dispatch({
           type: ON_COMMERCE_REPORT_VALUE_CHANGE,
-          payload: { years, selectedYear: currentYear },
+          payload: { years, selectedYear: currentYear }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -209,7 +209,7 @@ export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
 
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
-        payload: { labels, data },
+        payload: { labels, data }
       });
     });
 };
@@ -238,7 +238,7 @@ export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, en
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data: counts },
+          payload: { labels, data: counts }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
@@ -278,7 +278,7 @@ export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate) =
 
         dispatch({
           type: ON_COMMERCE_REPORT_READ,
-          payload: { labels: sortedShifts, data },
+          payload: { labels: sortedShifts, data }
         });
       } else {
         dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });

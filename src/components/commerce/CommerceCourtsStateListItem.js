@@ -8,12 +8,12 @@ class CommerceCourtsStateListItem extends Component {
     if (this.props.disabled) {
       return {
         badgeTitle: 'Deshabilitada',
-        badgeColor: 'grey',
+        badgeColor: 'grey'
       };
     } else {
       return {
         badgeTitle: this.props.courtAvailable ? 'Disponible' : 'Ocupada',
-        badgeColor: this.props.courtAvailable ? SUCCESS_COLOR : MAIN_COLOR,
+        badgeColor: this.props.courtAvailable ? SUCCESS_COLOR : MAIN_COLOR
       };
     }
   };
@@ -33,7 +33,7 @@ class CommerceCourtsStateListItem extends Component {
               <Text
                 style={{
                   textAlign: 'right',
-                  lineHeight: 20,
+                  lineHeight: 20
                 }}
               >
                 {lightPrice ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}` : `Sin Luz: $${price}`}
@@ -52,7 +52,7 @@ class CommerceCourtsStateListItem extends Component {
                   borderRadius: 12.5,
                   paddingLeft: 5,
                   paddingRight: 5,
-                  backgroundColor: badgeColor,
+                  backgroundColor: badgeColor
                 }}
                 containerStyle={{ paddingTop: 3 }}
               />

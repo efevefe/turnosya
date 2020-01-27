@@ -10,12 +10,12 @@ import {
   ON_EMPLOYEE_CREATED,
   ON_EMPLOYEE_SAVE_FAIL,
   ON_EMPLOYEE_DELETED,
-  ON_EMPLOYEE_UPDATED,
+  ON_EMPLOYEE_UPDATED
 } from './types';
 
 export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
-  payload,
+  payload
 });
 
 export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
@@ -41,7 +41,7 @@ export const onEmployeeCreate = (
     softDelete: null,
     inviteDate: new Date(),
     startDate: null,
-    profileId,
+    profileId
   });
 
   batch.set(workplaceRef, { commerceId, name: commerceName, softDelete: null });
@@ -102,8 +102,8 @@ export const onEmployeeInfoUpdate = email => dispatch => {
         type: ON_USER_SEARCH_SUCCESS,
         payload: {
           ...doc.data(),
-          profileId: doc.id,
-        },
+          profileId: doc.id
+        }
       });
     }
   });
@@ -116,7 +116,7 @@ export const onUserByEmailSearch = (email, commerceId) => dispatch => {
     if (snapshot.empty) {
       dispatch({
         type: ON_USER_SEARCH_FAIL,
-        payload: 'No se encontró ningún usuario',
+        payload: 'No se encontró ningún usuario'
       });
     } else {
       const doc = snapshot.docs[0];
@@ -124,15 +124,15 @@ export const onUserByEmailSearch = (email, commerceId) => dispatch => {
       if (doc.data().commerceId === commerceId)
         dispatch({
           type: ON_USER_SEARCH_FAIL,
-          payload: 'El dueño no puede ser empleado',
+          payload: 'El dueño no puede ser empleado'
         });
       else
         dispatch({
           type: ON_USER_SEARCH_SUCCESS,
           payload: {
             ...doc.data(),
-            profileId: doc.id,
-          },
+            profileId: doc.id
+          }
         });
     }
   });

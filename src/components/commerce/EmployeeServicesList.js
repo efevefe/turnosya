@@ -8,7 +8,7 @@ import { onReservationValueChange, onNewReservation } from '../../actions';
 
 class EmployeeServicesList extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: navigation.getParam('title'),
+    title: navigation.getParam('title')
   });
 
   componentDidUpdate(prevProps) {
@@ -25,7 +25,7 @@ class EmployeeServicesList extends Component {
     this.props.onReservationValueChange({
       service,
       price: service.price,
-      endDate: moment(startDate).add(parseInt(service.duration), 'minutes'),
+      endDate: moment(startDate).add(parseInt(service.duration), 'minutes')
     });
 
     this.props.navigation.navigate('serviceReservationRegister');
@@ -39,7 +39,7 @@ class EmployeeServicesList extends Component {
     const startDate = this.props.startDate;
     const res = {
       startDate,
-      endDate: moment(startDate).add(parseInt(service.duration), 'minutes'),
+      endDate: moment(startDate).add(parseInt(service.duration), 'minutes')
     };
 
     const shiftsIds = new Set();
@@ -77,7 +77,7 @@ class EmployeeServicesList extends Component {
         rightIcon={{
           name: 'ios-arrow-forward',
           type: 'ionicon',
-          color: 'black',
+          color: 'black'
         }}
         bottomDivider
         onPress={() => this.onServicePress(item)}
@@ -121,5 +121,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onNewReservation,
+  onNewReservation
 })(EmployeeServicesList);

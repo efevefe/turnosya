@@ -50,7 +50,7 @@ class EmptyScreen extends Component {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          alignSelf: 'stretch',
+          alignSelf: 'stretch'
         }}
       >
         <Text style={{ padding: 20, textAlign: 'center' }}>

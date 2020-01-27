@@ -33,12 +33,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: MAIN_COLOR,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   logoContainerStyle: {
     alignItems: 'center',
-    paddingBottom: 20,
-  },
+    paddingBottom: 20
+  }
 });
 
 export default LoadingScreen;

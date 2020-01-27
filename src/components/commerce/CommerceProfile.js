@@ -14,7 +14,7 @@ import {
   onCommerceValueChange,
   onProvincesIdRead,
   onAreasReadForPicker,
-  onLocationValueChange,
+  onLocationValueChange
 } from '../../actions';
 import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
@@ -40,14 +40,14 @@ class CommerceProfile extends Component {
     addressError: '',
     cityError: '',
     provinceError: '',
-    areaError: '',
+    areaError: ''
   };
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title'),
       headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
@@ -58,12 +58,12 @@ class CommerceProfile extends Component {
       provinceName: this.props.locationData.provinceName,
       latitude: this.props.locationData.latitude,
       longitude: this.props.locationData.longitude,
-      country: this.props.locationData.country,
+      country: this.props.locationData.country
     });
 
     this.props.navigation.setParams({
       leftIcon: this.renderCancelButton(),
-      rightIcon: this.renderSaveButton(),
+      rightIcon: this.renderSaveButton()
     });
   }
 
@@ -115,8 +115,8 @@ class CommerceProfile extends Component {
         profilePicture,
         headerPicture,
         latitude,
-        longitude,
-      },
+        longitude
+      }
     });
 
     // this.props.onLocationChange(location); ///what? de donde sale esta variable 'location' //lo veo en la proxima user
@@ -139,7 +139,7 @@ class CommerceProfile extends Component {
           area,
           profilePicture,
           headerPicture,
-          commerceId,
+          commerceId
         } = this.props;
 
         const { address, city, latitude, longitude } = this.props.locationData;
@@ -164,7 +164,7 @@ class CommerceProfile extends Component {
             headerPicture,
             commerceId,
             latitude,
-            longitude,
+            longitude
           },
           this.props.navigation
         );
@@ -195,7 +195,7 @@ class CommerceProfile extends Component {
     this.setState({
       pictureOptionsVisible: false,
       profilePictureEdit: false,
-      headerPictureEdit: false,
+      headerPictureEdit: false
     });
   };
 
@@ -218,7 +218,7 @@ class CommerceProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5],
+        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
       };
 
       const response = await ImagePicker.launchImageLibraryAsync(options);
@@ -250,7 +250,7 @@ class CommerceProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5],
+        aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
       };
 
       const response = await ImagePicker.launchCameraAsync(options);
@@ -314,7 +314,7 @@ class CommerceProfile extends Component {
     if (value) {
       var { value, label } = this.props.provincesList.find(province => province.value == value);
       this.props.onCommerceValueChange({
-        province: { provinceId: value, name: label },
+        province: { provinceId: value, name: label }
       });
       this.props.onLocationValueChange({ provinceName: label });
     }
@@ -324,7 +324,7 @@ class CommerceProfile extends Component {
     if (value) {
       var { value, label } = this.props.areasList.find(area => area.value == value);
       this.props.onCommerceValueChange({
-        area: { areaId: value, name: label },
+        area: { areaId: value, name: label }
       });
     }
   };
@@ -432,18 +432,18 @@ class CommerceProfile extends Component {
 
     if (province) {
       this.props.onCommerceValueChange({
-        province: { provinceId: province.value, name },
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        province: { provinceId: '', name: '' },
+        province: { provinceId: '', name: '' }
       });
     }
   };
 
   onMapPress = () => {
     this.props.navigation.navigate('changeCommerceLocationMap', {
-      onProvinceNameChange: this.onProvinceNameChangeOnMap,
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 
@@ -455,7 +455,7 @@ class CommerceProfile extends Component {
       phoneError: '',
       addressError: '',
       cityError: '',
-      provinceError: '',
+      provinceError: ''
     });
   };
 
@@ -480,7 +480,7 @@ class CommerceProfile extends Component {
       avatarContainerStyle,
       avatarStyle,
       textContainerStyle,
-      infoContainerStyle,
+      infoContainerStyle
     } = styles;
 
     if (this.props.loading) return <Spinner />;
@@ -541,7 +541,7 @@ class CommerceProfile extends Component {
             backgroundColor: 'grey',
             margin: 5,
             marginLeft: 10,
-            marginRight: 10,
+            marginRight: 10
           }}
         />
         <View style={infoContainerStyle}>
@@ -674,48 +674,48 @@ class CommerceProfile extends Component {
 const styles = StyleSheet.create({
   containerStyle: {
     flex: 1,
-    alignSelf: 'stretch',
+    alignSelf: 'stretch'
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
     height: imageSizeHeight * 1.5,
-    marginBottom: 15,
+    marginBottom: 15
   },
   headerPictureStyle: {
     height: imageSizeHeight,
     width: imageSizeWidth,
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   avatarContainerStyle: {
     position: 'absolute',
     paddingTop: imageSizeHeight * 0.5,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    alignItems: 'flex-end'
   },
   avatarStyle: {
     margin: 5,
     marginTop: 0,
     borderWidth: 4,
-    borderColor: MAIN_COLOR,
+    borderColor: MAIN_COLOR
   },
   textContainerStyle: {
     alignSelf: 'stretch',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
     margin: 10,
     marginLeft: 15,
-    marginRight: 15,
+    marginRight: 15
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
     padding: 10,
-    paddingBottom: 22,
-  },
+    paddingBottom: 22
+  }
 });
 
 const mapStateToProps = state => {
@@ -736,7 +736,7 @@ const mapStateToProps = state => {
     loading,
     refreshing,
     latitude,
-    longitude,
+    longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
 
@@ -750,7 +750,7 @@ const mapStateToProps = state => {
       provinceName: province.name,
       latitude,
       longitude,
-      country: 'Argentina',
+      country: 'Argentina'
     };
   }
 
@@ -769,7 +769,7 @@ const mapStateToProps = state => {
     commerceId,
     loading,
     refreshing,
-    locationData,
+    locationData
   };
 };
 
@@ -779,5 +779,5 @@ export default connect(mapStateToProps, {
   onCommerceValueChange,
   onProvincesIdRead,
   onAreasReadForPicker,
-  onLocationValueChange,
+  onLocationValueChange
 })(CommerceProfile);

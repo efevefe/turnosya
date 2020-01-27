@@ -21,7 +21,7 @@ class CommerceCourtTypes extends Component {
           imageStyle={{ height: 80 }}
           containerStyle={{
             overflow: 'hidden',
-            borderRadius: 10,
+            borderRadius: 10
           }}
         >
           <Text>{item.name}</Text>

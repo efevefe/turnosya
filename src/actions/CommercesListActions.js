@@ -7,12 +7,12 @@ import {
   ON_ONLY_FAVORITE_COMMERCES_READING,
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
-  ON_COMMERCES_LIST_VALUE_CHANGE,
+  ON_COMMERCES_LIST_VALUE_CHANGE
 } from './types';
 
 export const onCommercesListValueChange = payload => ({
   type: ON_COMMERCES_LIST_VALUE_CHANGE,
-  payload,
+  payload
 });
 
 export const onCommerceHitsUpdate = hits => {
@@ -23,14 +23,14 @@ export const onCommerceHitsUpdate = hits => {
       normalizedHits.push({
         ...hit,
         latitude: hit._geoloc.lat,
-        longitude: hit._geoloc.lng,
+        longitude: hit._geoloc.lng
       });
     }
   });
 
   return {
     type: ON_COMMERCES_LIST_VALUE_CHANGE,
-    payload: { markers: normalizedHits },
+    payload: { markers: normalizedHits }
   };
 };
 
@@ -87,7 +87,7 @@ export const onFavoriteCommercesRead = () => {
         snapshot.forEach(doc => favoriteCommerces.push(doc.id));
         dispatch({
           type: ON_COMMERCES_LIST_VALUE_CHANGE,
-          payload: { favoriteCommerces },
+          payload: { favoriteCommerces }
         });
       });
   };
@@ -107,7 +107,7 @@ export const onOnlyFavoriteCommercesRead = () => dispatch => {
     if (snapshot.empty) {
       return dispatch({
         type: ON_ONLY_FAVORITE_COMMERCES_READ,
-        payload: { favoriteCommerces, onlyFavoriteCommerces },
+        payload: { favoriteCommerces, onlyFavoriteCommerces }
       });
     }
 
@@ -125,7 +125,7 @@ export const onOnlyFavoriteCommercesRead = () => dispatch => {
               city,
               provinceName: province.name,
               areaName: area.name,
-              objectID: commerce.id,
+              objectID: commerce.id
             });
 
             favoriteCommerces.push(doc.id);
@@ -136,7 +136,7 @@ export const onOnlyFavoriteCommercesRead = () => dispatch => {
           if (processedItems === snapshot.size) {
             dispatch({
               type: ON_ONLY_FAVORITE_COMMERCES_READ,
-              payload: { favoriteCommerces, onlyFavoriteCommerces },
+              payload: { favoriteCommerces, onlyFavoriteCommerces }
             });
           }
         });

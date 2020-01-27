@@ -32,7 +32,7 @@ class ServiceForm extends Component {
             description,
             id,
             commerceId,
-            employeesIds,
+            employeesIds
           },
           navigation
         );
@@ -44,7 +44,7 @@ class ServiceForm extends Component {
             price,
             description,
             commerceId,
-            employeesIds: [employeeId],
+            employeesIds: [employeeId]
           },
           navigation
         );
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
   cardStyle: {
     padding: 5,
     paddingTop: 10,
-    borderRadius: 10,
-  },
+    borderRadius: 10
+  }
 });
 
 const mapStateToProps = state => {
@@ -176,5 +176,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onServiceValueChange,
   onServiceCreate,
-  onServiceUpdate,
+  onServiceUpdate
 })(ServiceForm);

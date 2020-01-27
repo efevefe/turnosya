@@ -47,42 +47,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     paddingLeft: 15,
-    paddingRight: 15,
+    paddingRight: 15
   },
   drawerHeader: {
     height: Constants.statusBarHeight + NAVIGATION_HEIGHT,
     backgroundColor: MAIN_COLOR,
     justifyContent: 'flex-end',
-    alignItems: 'flex-start',
+    alignItems: 'flex-start'
   },
   headerLogo: {
     height: 30, //50 es el size maximo
     width: 210, //230 es el size maximo
-    marginBottom: 10,
+    marginBottom: 10
   },
   nameStyle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 0,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   roleStyle: {
     fontSize: 13,
     textAlign: 'center',
-    marginBottom: 0,
+    marginBottom: 0
   },
   avatarStyle: {
     borderWidth: 3,
     borderColor: MAIN_COLOR,
-    margin: 10,
+    margin: 10
   },
   dividerStyle: {
     backgroundColor: 'grey',
     marginTop: 4,
     marginBottom: 5,
     marginLeft: 15,
-    marginRight: 15,
-  },
+    marginRight: 15
+  }
 });
 
 export { Drawer };

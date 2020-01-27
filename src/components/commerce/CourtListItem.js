@@ -16,7 +16,7 @@ class CourtListItem extends Component {
   onDeletePress = () => {
     this.setState({
       optionsVisible: false,
-      deleteVisible: !this.state.deleteVisible,
+      deleteVisible: !this.state.deleteVisible
     });
   };
 
@@ -32,7 +32,7 @@ class CourtListItem extends Component {
     this.props.onCourtValueChange(this.props.court);
     this.setState({ optionsVisible: !this.state.optionsVisible });
     this.props.navigation.navigate('courtForm', {
-      title: 'Editar Cancha',
+      title: 'Editar Cancha'
     });
   };
 
@@ -81,13 +81,13 @@ class CourtListItem extends Component {
                 justifyContent: 'flex-start',
                 width: 120,
                 flex: 1,
-                paddingTop: 2,
+                paddingTop: 2
               }}
             >
               <Text
                 style={{
                   textAlign: 'right',
-                  lineHeight: 20,
+                  lineHeight: 20
                 }}
               >
                 {lightPrice ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}` : `Sin Luz: $${price}`}
@@ -112,7 +112,7 @@ class CourtListItem extends Component {
                   name: 'md-more',
                   type: 'ionicon',
                   containerStyle: { height: 20, width: 10 },
-                  onPress: this.onOptionsPress,
+                  onPress: this.onOptionsPress
                 }
               : null
           }
@@ -131,5 +131,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCourtDelete,
   onCourtFormOpen,
-  onCourtValueChange,
+  onCourtValueChange
 })(CourtListItem);

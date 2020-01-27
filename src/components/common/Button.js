@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
   buttonStyle: {
     borderRadius,
     padding: 10,
-    margin: 8,
+    margin: 8
   },
   containerStyle: {
     borderRadius,
-    overflow: 'hidden',
-  },
+    overflow: 'hidden'
+  }
 });
 
 export { Button };

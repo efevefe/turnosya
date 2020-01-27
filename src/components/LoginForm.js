@@ -17,14 +17,14 @@ class LoginForm extends Component {
     if (this.validateMinimumData()) {
       this.props.onLogin({
         email: this.props.email,
-        password: this.props.password,
+        password: this.props.password
       });
     }
   }
 
   onCreateAcount() {
     const navigateAction = NavigationActions.navigate({
-      routeName: 'registerForm',
+      routeName: 'registerForm'
     });
 
     this.props.navigation.navigate(navigateAction);
@@ -49,7 +49,7 @@ class LoginForm extends Component {
       return false;
     } else if (!validateValueType('password', this.props.password)) {
       this.setState({
-        passwordError: 'Usuario o contraseña incorrectos',
+        passwordError: 'Usuario o contraseña incorrectos'
       });
       return false;
     } else {
@@ -105,7 +105,7 @@ class LoginForm extends Component {
 
       if (success) {
         Toast.show({
-          text: 'El correo de recuperacion se envió correctamente',
+          text: 'El correo de recuperacion se envió correctamente'
         });
         this.setState({ resetPasswordModal: false });
       }
@@ -170,7 +170,7 @@ class LoginForm extends Component {
               backgroundColor: 'grey',
               margin: 10,
               marginTop: 12,
-              marginBottom: 12,
+              marginBottom: 12
             }}
           />
 
@@ -218,37 +218,37 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignSelf: 'stretch',
     padding: 15,
-    paddingBottom: 10,
+    paddingBottom: 10
   },
   logoContainerStyle: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: iconSize / 3,
+    paddingTop: iconSize / 3
   },
   loginContainerStyle: {
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   createAccountContainerStyle: {
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   buttonStyle: {
-    marginVertical: 4,
+    marginVertical: 4
   },
   resetPasswordTitleStyle: {
     fontSize: 14,
-    color: 'grey',
+    color: 'grey'
   },
   resetPasswordButtonStyle: {
     margin: 0,
     padding: 0,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   resetPasswordInputContainer: {
     padding: 20,
     paddingLeft: 10,
-    paddingRight: 10,
-  },
+    paddingRight: 10
+  }
 });
 
 const mapStateToProps = state => {
@@ -261,7 +261,7 @@ const mapStateToProps = state => {
     loadingLogin,
     loadingFacebook,
     loadingGoogle,
-    sendingEmail,
+    sendingEmail
   };
 };
 
@@ -270,5 +270,5 @@ export default connect(mapStateToProps, {
   onGoogleLogin,
   onFacebookLogin,
   onLoginValueChange,
-  onSendPasswordResetEmail,
+  onSendPasswordResetEmail
 })(LoginForm);

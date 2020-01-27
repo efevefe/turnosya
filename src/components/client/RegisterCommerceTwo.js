@@ -13,7 +13,7 @@ class RegisterCommerceTwo extends Component {
     pickerPlaceholder: { value: '', label: 'Seleccionar...' },
     addressError: '',
     cityError: '',
-    provinceError: '',
+    provinceError: ''
   };
 
   componentDidMount() {
@@ -43,7 +43,7 @@ class RegisterCommerceTwo extends Component {
           city,
           province,
           latitude,
-          longitude,
+          longitude
         },
         this.props.navigation
       );
@@ -54,7 +54,7 @@ class RegisterCommerceTwo extends Component {
     const { value, label } = index > 0 ? this.props.provincesList[index - 1] : this.state.pickerPlaceholder;
 
     this.props.onCommerceValueChange({
-      province: { provinceId: value, name: label },
+      province: { provinceId: value, name: label }
     });
 
     this.props.onLocationValueChange({ provinceName: index > 0 ? label : '' });
@@ -105,18 +105,18 @@ class RegisterCommerceTwo extends Component {
 
     if (province) {
       this.props.onCommerceValueChange({
-        province: { provinceId: province.value, name },
+        province: { provinceId: province.value, name }
       });
     } else {
       this.props.onCommerceValueChange({
-        province: { provinceId: '', name: '' },
+        province: { provinceId: '', name: '' }
       });
     }
   };
 
   onMapPress = () => {
     this.props.navigation.navigate('commerceRegisterMap', {
-      onProvinceNameChange: this.onProvinceNameChangeOnMap,
+      onProvinceNameChange: this.onProvinceNameChangeOnMap
     });
   };
 
@@ -202,12 +202,12 @@ const mapStateToProps = state => {
     city,
     provinceName,
     latitude,
-    longitude,
+    longitude
   };
 };
 export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceCreate,
   onProvincesIdRead,
-  onLocationValueChange,
+  onLocationValueChange
 })(RegisterCommerceTwo);

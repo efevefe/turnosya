@@ -6,7 +6,7 @@ import * as Location from 'expo-location';
 const LocationStatus = {
   permissionsAllowed: 'permissionsAllowed',
   permissionsDenied: 'permissionsDenied',
-  permissionsAllowedWithGPSOff: 'permissionsAllowedWithGPSOff',
+  permissionsAllowedWithGPSOff: 'permissionsAllowedWithGPSOff'
 };
 
 export const getPermissionLocationStatus = async () => {
@@ -55,7 +55,7 @@ export const getCurrentPosition = async () => {
   try {
     // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
     return await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High,
+      accuracy: Location.Accuracy.High
     });
   } catch (error) {
     console.error(error);
@@ -66,7 +66,7 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
   try {
     return await Location.reverseGeocodeAsync({
       latitude,
-      longitude,
+      longitude
     });
   } catch (error) {
     console.error(error);

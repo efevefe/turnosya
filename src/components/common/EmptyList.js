@@ -29,19 +29,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignSelf: 'stretch',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   textStyle: {
     padding: 0,
     paddingLeft: 25,
     paddingRight: 25,
     textAlign: 'center',
-    color: 'grey',
+    color: 'grey'
   },
   imageStyle: {
     height: 40,
-    width: 40,
-  },
+    width: 40
+  }
 });
 
 export { EmptyList };

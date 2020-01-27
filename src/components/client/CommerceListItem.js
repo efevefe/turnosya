@@ -11,14 +11,14 @@ class CommerceListItem extends Component {
 
   componentDidMount() {
     this.setState({
-      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID),
+      favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
     });
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.favoriteCommerces !== this.props.favoriteCommerces) {
       this.setState({
-        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID),
+        favorite: this.props.favoriteCommerces.includes(this.props.commerce.objectID)
       });
     }
   }
@@ -34,7 +34,7 @@ class CommerceListItem extends Component {
   onCommercePress = () => {
     this.props.onReservationValueChange({ commerce: this.props.commerce });
     this.props.navigation.navigate('commerceProfileView', {
-      navigatedFrom: this.props.navigation.state.routeName,
+      navigatedFrom: this.props.navigation.state.routeName
     });
   };
 
@@ -57,7 +57,7 @@ class CommerceListItem extends Component {
         leftAvatar={{
           source: profilePicture ? { uri: profilePicture } : null,
           icon: { name: 'store', type: 'material' },
-          size: 'medium',
+          size: 'medium'
         }}
         title={name}
         subtitle={this.renderSubtitle()}
@@ -81,7 +81,7 @@ const mapStateToProps = state => {
   const { favoriteCommerces } = state.commercesList;
 
   return {
-    favoriteCommerces,
+    favoriteCommerces
   };
 };
 
@@ -89,6 +89,6 @@ export default withNavigation(
   connect(mapStateToProps, {
     onFavoriteCommerceRegister,
     onFavoriteCommerceDelete,
-    onReservationValueChange,
+    onReservationValueChange
   })(CommerceListItem)
 );

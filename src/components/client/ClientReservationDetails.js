@@ -17,7 +17,7 @@ import {
   Toast,
   ReviewCard,
   ButtonGroup,
-  AreaComponentRenderer,
+  AreaComponentRenderer
 } from '../common';
 import {
   onClientReservationCancel,
@@ -29,7 +29,7 @@ import {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById,
+  onClientReviewReadById
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -43,7 +43,7 @@ class ClientReservationDetails extends Component {
       optionsVisible: false,
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0,
+      reviewBGIndex: 0
     };
   }
 
@@ -54,17 +54,17 @@ class ClientReservationDetails extends Component {
     this.props.onScheduleRead({
       commerceId: this.state.reservation.commerceId,
       selectedDate: this.state.reservation.startDate,
-      employeeId: this.state.reservation.employeeId || null,
+      employeeId: this.state.reservation.employeeId || null
     });
 
     this.props.onCommerceReviewReadById({
       commerceId: this.state.reservation.commerceId,
-      reviewId: this.state.reservation.reviewId,
+      reviewId: this.state.reservation.reviewId
     });
 
     this.props.onClientReviewReadById({
       clientId: this.props.clientId,
-      reviewId: this.state.reservation.receivedReviewId,
+      reviewId: this.state.reservation.receivedReviewId
     });
   }
 
@@ -82,8 +82,7 @@ class ClientReservationDetails extends Component {
       this.setState({ optionsVisible: true });
     else
       Toast.show({
-        text:
-          'No puede cancelar el turno, el tiempo mínimo permitido es ' + stringFormatHours(reservationMinCancelTime),
+        text: 'No puede cancelar el turno, el tiempo mínimo permitido es ' + stringFormatHours(reservationMinCancelTime)
       });
   };
 
@@ -110,7 +109,7 @@ class ClientReservationDetails extends Component {
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
-          reviewId: this.props.commerceReviewId,
+          reviewId: this.props.commerceReviewId
         });
       } else {
         // Si la reserva no tiene calificacion, crearla
@@ -118,7 +117,7 @@ class ClientReservationDetails extends Component {
           commerceId: this.state.reservation.commerceId,
           comment: this.props.commerceComment,
           rating: this.props.commerceRating,
-          reservationId: this.state.reservation.id,
+          reservationId: this.state.reservation.id
         });
       }
     }
@@ -137,7 +136,7 @@ class ClientReservationDetails extends Component {
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
-      notification: { title, body },
+      notification: { title, body }
     });
 
     this.setState({ optionsVisible: false });
@@ -146,12 +145,12 @@ class ClientReservationDetails extends Component {
   deleteReview = () => {
     this.setState({
       confirmDeleteVisible: false,
-      reservation: { ...this.state.reservation, reviewId: null },
+      reservation: { ...this.state.reservation, reviewId: null }
     });
     this.props.onCommerceReviewDelete({
       commerceId: this.state.reservation.commerceId,
       reservationId: this.state.reservation.id,
-      reviewId: this.props.commerceReviewId,
+      reviewId: this.props.commerceReviewId
     });
   };
 
@@ -321,10 +320,10 @@ const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.
   reviewDividerStyle: {
     marginBottom: 10,
     marginHorizontal: 40,
-    backgroundColor: 'grey',
+    backgroundColor: 'grey'
   },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
 
 const mapStateToProps = state => {
@@ -345,7 +344,7 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId,
+    clientId
   };
 };
 
@@ -359,5 +358,5 @@ export default connect(mapStateToProps, {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById,
+  onClientReviewReadById
 })(ClientReservationDetails);

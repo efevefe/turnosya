@@ -9,7 +9,7 @@ import {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead,
+  onCourtNextReservationsRead
 } from '../../actions';
 import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
 import { validateValueType, trimString } from '../../utils';
@@ -28,7 +28,7 @@ class CourtForm extends Component {
     lightPriceOpen: false,
     disabledPeriodModal: false,
     confirmationModal: false,
-    reservationsToCancel: [],
+    reservationsToCancel: []
   };
 
   componentDidMount() {
@@ -77,7 +77,7 @@ class CourtForm extends Component {
           commerceId,
           disabledFrom,
           disabledTo,
-          reservationsToCancel,
+          reservationsToCancel
         },
         navigation
       );
@@ -91,7 +91,7 @@ class CourtForm extends Component {
           lightPrice,
           disabledFrom,
           disabledTo,
-          commerceId,
+          commerceId
         },
         navigation
       );
@@ -231,7 +231,7 @@ class CourtForm extends Component {
               flexDirection: 'row',
               alignItems: 'flex-start',
               justifyContent: 'space-around',
-              paddingBottom: 10,
+              paddingBottom: 10
             }}
           >
             <DatePicker
@@ -284,7 +284,7 @@ class CourtForm extends Component {
 
     if (moment().diff(date, 'seconds') > 30) {
       return Toast.show({
-        text: 'No puede ingresar una fecha anterior a la actual',
+        text: 'No puede ingresar una fecha anterior a la actual'
       });
     }
 
@@ -303,7 +303,7 @@ class CourtForm extends Component {
       } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
         this.setState({
           disabledFromError: 'Debe ser anterior a la fecha de deshabilitación',
-          disabledToError: 'Debe ser posterior a la fecha de habilitación',
+          disabledToError: 'Debe ser posterior a la fecha de habilitación'
         });
         return false;
       }
@@ -322,7 +322,7 @@ class CourtForm extends Component {
           commerceId: this.props.commerceId,
           courtId: this.props.id,
           startDate: this.props.disabledFrom,
-          endDate: this.props.disabledTo,
+          endDate: this.props.disabledTo
         });
       } else {
         this.onCourtSave();
@@ -342,7 +342,7 @@ class CourtForm extends Component {
     this.setState(
       {
         reservationsToCancel: this.props.nextReservations,
-        confirmationModal: false,
+        confirmationModal: false
       },
       this.onCourtSave
     );
@@ -384,7 +384,7 @@ class CourtForm extends Component {
             onPress={() =>
               this.setState({
                 confirmationModal: true,
-                disabledPeriodModal: false,
+                disabledPeriodModal: false
               })
             }
           />
@@ -475,7 +475,7 @@ class CourtForm extends Component {
                 value={this.props.disabled}
                 trackColor={{
                   false: GREY_DISABLED,
-                  true: MAIN_COLOR_DISABLED,
+                  true: MAIN_COLOR_DISABLED
                 }}
                 thumbColor={this.props.disabled ? MAIN_COLOR : 'grey'}
               />
@@ -511,19 +511,19 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingTop: 10,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 20
   },
   disableCourtCardSection: {
     paddingRight: 12,
     paddingLeft: 15,
     paddingVertical: 5,
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   disableCourtText: {
     alignItems: 'flex-start',
     flexDirection: 'row',
-    flex: 1,
-  },
+    flex: 1
+  }
 });
 
 const mapStateToProps = state => {
@@ -540,7 +540,7 @@ const mapStateToProps = state => {
     existsError,
     disabled,
     disabledFrom,
-    disabledTo,
+    disabledTo
   } = state.courtForm;
   const { commerceId } = state.commerceData;
   const { nextReservations } = state.reservationsList;
@@ -562,7 +562,7 @@ const mapStateToProps = state => {
     disabledFrom,
     disabledTo,
     nextReservations,
-    loadingReservations,
+    loadingReservations
   };
 };
 
@@ -571,5 +571,5 @@ export default connect(mapStateToProps, {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead,
+  onCourtNextReservationsRead
 })(CourtForm);

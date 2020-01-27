@@ -6,7 +6,7 @@ import {
   ON_RESERVATION_CREATE_FAIL,
   ON_NEW_RESERVATION,
   ON_NEW_SERVICE_RESERVATION,
-  ON_RESERVATION_EXISTS,
+  ON_RESERVATION_EXISTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -28,7 +28,7 @@ const INITIAL_STATE = {
   light: false,
   // SERVICE RESERVATION ONLY
   service: null,
-  employee: null,
+  employee: null
 };
 
 export default (state = INITIAL_STATE, action) => {

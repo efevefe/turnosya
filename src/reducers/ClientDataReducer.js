@@ -15,7 +15,7 @@ import {
   ON_USER_DELETE_FAIL,
   ON_REAUTH_SUCCESS,
   ON_WORKPLACES_READ,
-  ON_USER_PASSWORD_UPDATE,
+  ON_USER_PASSWORD_UPDATE
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -34,7 +34,7 @@ const INITIAL_STATE = {
   refreshing: false,
   error: '',
   confirmDeleteVisible: false,
-  workplaces: [],
+  workplaces: []
 };
 
 export default (state = INITIAL_STATE, action) => {

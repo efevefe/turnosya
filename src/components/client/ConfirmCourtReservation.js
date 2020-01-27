@@ -38,7 +38,7 @@ class ConfirmCourtReservation extends Component {
     this.setState({ selectedIndex });
     this.props.onReservationValueChange({
       price: this.state.prices[selectedIndex],
-      light: !!selectedIndex, // 0 = false = no light // 1 = true = light
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -77,7 +77,7 @@ class ConfirmCourtReservation extends Component {
       endDate,
       price,
       light,
-      notification: { title, body },
+      notification: { title, body }
     });
   };
 
@@ -144,13 +144,13 @@ class ConfirmCourtReservation extends Component {
 
 const styles = StyleSheet.create({
   cardSections: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch',
-  },
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {
@@ -165,7 +165,7 @@ const mapStateToProps = state => {
     areaId,
     saved,
     exists,
-    loading,
+    loading
   } = state.reservation;
 
   return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, exists, loading };
@@ -173,5 +173,5 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onClientCourtReservationCreate,
+  onClientCourtReservationCreate
 })(ConfirmCourtReservation);

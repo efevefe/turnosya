@@ -8,7 +8,7 @@ import {
   ON_SERVICES_READ,
   ON_SERVICE_FORM_SUBMIT,
   ON_SERVICE_DELETE,
-  ON_SERVICE_UPDATE,
+  ON_SERVICE_UPDATE
 } from './types';
 
 export const onServiceValueChange = payload => {

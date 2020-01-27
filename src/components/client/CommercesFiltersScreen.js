@@ -9,7 +9,7 @@ import {
   onCommercesListValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
-  onCommerceHitsUpdate,
+  onCommerceHitsUpdate
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
 
@@ -21,21 +21,21 @@ class CommerceFiltersScreen extends Component {
     oldData: {
       selectedLocation: this.props.selectedLocation,
       userLocation: this.props.userLocation,
-      markers: this.props.markers,
-    },
+      markers: this.props.markers
+    }
   };
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightButton'),
-      headerLeft: navigation.getParam('leftButton'),
+      headerLeft: navigation.getParam('leftButton')
     };
   };
 
   componentDidMount = () => {
     this.props.navigation.setParams({
       rightButton: this.renderApplyFiltersButton(),
-      leftButton: this.renderCloseButton(),
+      leftButton: this.renderCloseButton()
     });
 
     this.props.onProvincesNameRead();
@@ -69,7 +69,7 @@ class CommerceFiltersScreen extends Component {
     this.props.onCommercesListValueChange({
       provinceNameFilter: this.state.provinceName,
       locationButtonIndex: this.state.locationButtonIndex,
-      locationRadiusKms: this.state.locationRadiusKms,
+      locationRadiusKms: this.state.locationRadiusKms
     });
 
     this.props.navigation.goBack(null);
@@ -175,13 +175,13 @@ const {
   locationBGContainerStyle,
   locationContainerStyle,
   locationTextStyle,
-  locationSliderStyle,
+  locationSliderStyle
 } = StyleSheet.create({
   dividerStyle: {
     backgroundColor: 'white',
     flex: 1,
     alignSelf: 'center',
-    marginHorizontal: 5,
+    marginHorizontal: 5
   },
   dividerTextStyle: { color: 'white', padding: 5 },
   dividerContainerStyle: { flexDirection: 'row', justifyContent: 'center' },
@@ -191,21 +191,21 @@ const {
   provinceContainerStyle: {
     alignSelf: 'stretch',
     paddingBottom: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
   },
   locationBGContainerStyle: {
     borderColor: 'white',
     marginTop: 15,
-    height: 35,
+    height: 35
   },
   locationContainerStyle: { padding: 5, alignSelf: 'stretch', flex: 1 },
   locationTextStyle: {
     color: 'white',
     marginTop: 15,
     marginLeft: 15,
-    marginBottom: 5,
+    marginBottom: 5
   },
-  locationSliderStyle: { marginHorizontal: 15 },
+  locationSliderStyle: { marginHorizontal: 15 }
 });
 //#endregion
 
@@ -221,7 +221,7 @@ const mapStateToProps = state => {
     locationRadiusKms,
     selectedLocation,
     userLocation,
-    markers,
+    markers
   };
 };
 
@@ -230,5 +230,5 @@ export default connect(mapStateToProps, {
   onCommercesListValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
-  onCommerceHitsUpdate,
+  onCommerceHitsUpdate
 })(CommerceFiltersScreen);

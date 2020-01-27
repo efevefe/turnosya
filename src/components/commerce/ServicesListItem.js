@@ -17,7 +17,7 @@ class ServicesListItem extends Component {
   onDeletePress = () => {
     this.setState({
       optionsVisible: false,
-      deleteVisible: !this.state.deleteVisible,
+      deleteVisible: !this.state.deleteVisible
     });
   };
 
@@ -32,7 +32,7 @@ class ServicesListItem extends Component {
     this.props.onFormOpen();
     const navigateAction = NavigationActions.navigate({
       routeName: 'serviceForm',
-      params: { service: this.props.service, title: 'Editar Servicio' },
+      params: { service: this.props.service, title: 'Editar Servicio' }
     });
 
     this.setState({ optionsVisible: !this.state.optionsVisible });
@@ -53,7 +53,7 @@ class ServicesListItem extends Component {
     onServiceOfferingUpdate({
       id: service.id,
       employeesIds,
-      commerceId,
+      commerceId
     });
   };
 
@@ -96,7 +96,7 @@ class ServicesListItem extends Component {
                   borderRadius: 12.5,
                   paddingLeft: 5,
                   paddingRight: 5,
-                  backgroundColor: offering ? MAIN_COLOR : SUCCESS_COLOR,
+                  backgroundColor: offering ? MAIN_COLOR : SUCCESS_COLOR
                 }}
                 containerStyle={{ paddingTop: 3 }}
                 onPress={this.onBadgePress}
@@ -111,7 +111,7 @@ class ServicesListItem extends Component {
             name: 'md-more',
             type: 'ionicon',
             containerStyle: { height: 20, width: 10 },
-            onPress: this.onOptionsPress,
+            onPress: this.onOptionsPress
           }}
           bottomDivider
         />

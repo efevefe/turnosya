@@ -21,7 +21,7 @@ const IconButton = ({ icon, iconSize, color, onPress, iconStyle, containerStyle 
             ...styles.touchableStyle,
             height: touchableSize,
             width: touchableSize,
-            borderRadius: touchableSize / 2,
+            borderRadius: touchableSize / 2
           }}
         >
           {this.renderIcon()}
@@ -35,7 +35,7 @@ const IconButton = ({ icon, iconSize, color, onPress, iconStyle, containerStyle 
             ...styles.touchableStyle,
             height: touchableSize,
             width: touchableSize,
-            borderRadius: touchableSize / 2,
+            borderRadius: touchableSize / 2
           }}
         >
           {this.renderIcon()}
@@ -50,13 +50,13 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 8,
-    paddingRight: 8,
+    paddingRight: 8
   },
   touchableStyle: {
     backgroundColor: 'transparent',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
 
 export { IconButton };

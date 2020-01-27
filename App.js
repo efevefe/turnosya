@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignSelf: 'stretch',
-    justifyContent: 'flex-start',
-  },
+    justifyContent: 'flex-start'
+  }
 });
 
 export default App;

@@ -12,7 +12,7 @@ import {
   askPermissionLocation,
   getCurrentPosition,
   getPermissionLocationStatus,
-  getAddressFromLatAndLong,
+  getAddressFromLatAndLong
 } from '../../utils';
 
 class LocationMessages extends Component {
@@ -20,7 +20,7 @@ class LocationMessages extends Component {
     location: 'location sin setear',
     appState: AppState.currentState,
     permissionStatus: null,
-    modal: false,
+    modal: false
   };
 
   async componentDidMount() {
@@ -46,7 +46,7 @@ class LocationMessages extends Component {
       if (this.state.appState === 'active' && prevState.appState !== this.state.appState) {
         this.setState({
           permissionStatus: await getPermissionLocationStatus(),
-          modal: true,
+          modal: true
         });
       }
     } catch (error) {
@@ -55,7 +55,7 @@ class LocationMessages extends Component {
 
     if (this.state.permissionStatus === 'permissionsAllowed') {
       const {
-        coords: { latitude, longitude },
+        coords: { latitude, longitude }
       } = await Location.getCurrentPositionAsync();
 
       this.props.onUserLocationChange({ latitude, longitude });
@@ -78,7 +78,7 @@ class LocationMessages extends Component {
       const { latitude, longitude } = currentLatLong.coords;
       const [addressResult] = await getAddressFromLatAndLong({
         latitude,
-        longitude,
+        longitude
       });
       const { name, street, city, region, country } = addressResult;
 
@@ -90,7 +90,7 @@ class LocationMessages extends Component {
         provinceName: region,
         country,
         latitude,
-        longitude,
+        longitude
       };
 
       this.props.onUserLocationChange(location);
@@ -199,17 +199,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     padding: 8,
-    paddingLeft: 15,
+    paddingLeft: 15
   },
   iosModalText: {
     fontWeight: '400',
     fontSize: 13,
-    marginLeft: 15,
+    marginLeft: 15
   },
   iosModalIcon: {
     height: 30,
-    width: 30,
-  },
+    width: 30
+  }
 });
 
 export default connect(null, { onUserLocationChange })(LocationMessages);

@@ -22,7 +22,7 @@ const PictureView = props => {
             <Image
               style={{
                 height: props.height,
-                width: props.width,
+                width: props.width
               }}
               source={{ uri: props.picture }}
             />
@@ -39,20 +39,20 @@ const PictureView = props => {
 const styles = StyleSheet.create({
   overlayStyle: {
     padding: 0,
-    alignItems: 'stretch',
+    alignItems: 'stretch'
   },
   mainContainerStyle: {
     flex: 1,
-    alignItems: 'flex-end',
+    alignItems: 'flex-end'
   },
   iconButtonContainerStyle: {
     padding: 10,
-    position: 'absolute',
+    position: 'absolute'
   },
   imageContainerStyle: {
     justifyContent: 'center',
-    flex: 1,
-  },
+    flex: 1
+  }
 });
 
 export { PictureView };

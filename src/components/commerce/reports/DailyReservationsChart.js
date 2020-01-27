@@ -6,7 +6,7 @@ import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } 
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onDailyReservationsReadByRange,
+  onDailyReservationsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -21,7 +21,7 @@ class DailyReservationsChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate,
+      modalEndDate: endDate
     };
   }
 
@@ -31,7 +31,7 @@ class DailyReservationsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />,
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -44,7 +44,7 @@ class DailyReservationsChart extends Component {
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate),
+      endDate: moment(this.state.modalEndDate)
     });
 
     this.setState({ modal: false });
@@ -55,7 +55,7 @@ class DailyReservationsChart extends Component {
 
     const dataBar = {
       labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }],
+      datasets: [{ data: this.props.data.data }]
     };
 
     return (
@@ -67,7 +67,7 @@ class DailyReservationsChart extends Component {
             this.setState({
               modal: false,
               modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate,
+              modalEndDate: this.props.endDate
             })
           }
         >
@@ -75,7 +75,7 @@ class DailyReservationsChart extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-around',
-              paddingTop: 10,
+              paddingTop: 10
             }}
           >
             <DatePicker
@@ -125,12 +125,12 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
-    loading,
+    loading
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onDailyReservationsReadByRange,
+  onDailyReservationsReadByRange
 })(DailyReservationsChart);

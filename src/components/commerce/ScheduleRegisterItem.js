@@ -14,13 +14,13 @@ class ScheduleRegister extends Component {
     checked: false,
     firstShiftEndError: '',
     secondShiftStartError: '',
-    secondShiftEndError: '',
+    secondShiftEndError: ''
   };
 
   componentDidMount() {
     this.setState({
       checked: !!this.props.card.secondShiftStart,
-      prevDays: this.props.card.days,
+      prevDays: this.props.card.days
     });
   }
 
@@ -46,7 +46,7 @@ class ScheduleRegister extends Component {
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
         this.setState({
-          firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre',
+          firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre'
         });
       } else {
         this.setState({ firstShiftStartError: '' });
@@ -60,11 +60,11 @@ class ScheduleRegister extends Component {
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
         this.setState({
-          firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura',
+          firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
         });
       } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
         this.setState({
-          firstShiftEndError: 'El primer turno debe finalzar antes del segundo',
+          firstShiftEndError: 'El primer turno debe finalzar antes del segundo'
         });
       } else {
         this.setState({ firstShiftEndError: '' });
@@ -78,11 +78,11 @@ class ScheduleRegister extends Component {
     if (secondShiftStart) {
       if (secondShiftStart <= firstShiftEnd) {
         this.setState({
-          secondShiftStartError: 'El segundo turno debe arrancar despues del primero',
+          secondShiftStartError: 'El segundo turno debe arrancar despues del primero'
         });
       } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
         this.setState({
-          secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre',
+          secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre'
         });
       } else {
         this.setState({ secondShiftStartError: '' });
@@ -96,7 +96,7 @@ class ScheduleRegister extends Component {
     if (secondShiftEnd) {
       if (secondShiftEnd <= secondShiftStart) {
         this.setState({
-          secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura',
+          secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
         });
       } else {
         this.setState({ secondShiftEndError: '' });
@@ -113,12 +113,12 @@ class ScheduleRegister extends Component {
       this.props.onScheduleCardValueChange({
         id: this.props.card.id,
         secondShiftStart: null,
-        secondShiftEnd: null,
+        secondShiftEnd: null
       });
     } else {
       if (!checked)
         Toast.show({
-          text: 'Debe completar el primer turno para agregar un segundo',
+          text: 'Debe completar el primer turno para agregar un segundo'
         });
       this.setState({ checked: false });
     }
@@ -134,20 +134,20 @@ class ScheduleRegister extends Component {
     if (selectedIndexes.length > card.days.length) {
       //On day Added
       this.props.onScheduleValueChange({
-        selectedDays: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]],
+        selectedDays: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
       });
     } else {
       //On day Deleted
       const valueErased = card.days.filter(day => !selectedIndexes.includes(day))[0];
 
       this.props.onScheduleValueChange({
-        selectedDays: selectedDays.filter(day => day !== valueErased),
+        selectedDays: selectedDays.filter(day => day !== valueErased)
       });
     }
 
     onScheduleCardValueChange({
       id: card.id,
-      days: [...selectedIndexes].sort((a, b) => a - b),
+      days: [...selectedIndexes].sort((a, b) => a - b)
     });
   };
 
@@ -162,7 +162,7 @@ class ScheduleRegister extends Component {
             onDateChange={value => {
               this.props.onScheduleCardValueChange({
                 id: this.props.card.id,
-                secondShiftStart: value,
+                secondShiftStart: value
               });
             }}
             errorMessage={this.state.secondShiftStartError}
@@ -175,7 +175,7 @@ class ScheduleRegister extends Component {
             onDateChange={value => {
               this.props.onScheduleCardValueChange({
                 id: this.props.card.id,
-                secondShiftEnd: value,
+                secondShiftEnd: value
               });
             }}
             disabled={!this.props.card.secondShiftStart}
@@ -212,7 +212,7 @@ class ScheduleRegister extends Component {
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
-                  firstShiftStart: value,
+                  firstShiftStart: value
                 });
               }}
               errorMessage={this.state.firstShiftStartError}
@@ -224,7 +224,7 @@ class ScheduleRegister extends Component {
               onDateChange={value => {
                 this.props.onScheduleCardValueChange({
                   id: this.props.card.id,
-                  firstShiftEnd: value,
+                  firstShiftEnd: value
                 });
               }}
               disabled={!this.props.card.firstShiftStart}
@@ -260,14 +260,14 @@ class ScheduleRegister extends Component {
               containerStyle={{
                 borderWidth: 0,
                 height: buttonSize,
-                marginTop: 0,
+                marginTop: 0
               }}
               innerBorderStyle={{ width: 0 }}
               buttonStyle={{
                 borderWidth: 2,
                 borderColor: 'white',
                 borderRadius: buttonSize / 2,
-                width: buttonSize,
+                width: buttonSize
               }}
               selectedButtonStyle={{ backgroundColor: MAIN_COLOR }}
               selectedTextStyle={{ color: 'white' }}
@@ -285,15 +285,15 @@ const styles = StyleSheet.create({
   viewPickerDate: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around'
   },
   cardStyle: {
     padding: 5,
     paddingTop: 10,
-    borderRadius: 10,
+    borderRadius: 10
   },
   buttonGroupCard: {
-    paddingTop: 0,
+    paddingTop: 0
   },
   headerContainer: {
     flexDirection: 'row',
@@ -301,25 +301,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     marginLeft: 15,
-    marginRight: 15,
+    marginRight: 15
   },
   titleContainer: {
     flex: 1,
     alignItems: 'center',
-    marginLeft: 15,
-  },
+    marginLeft: 15
+  }
 });
 
 const mapStateToProps = state => {
   const { selectedDays } = state.commerceSchedule;
 
   return {
-    selectedDays,
+    selectedDays
   };
 };
 
 export default connect(mapStateToProps, {
   onScheduleValueChange,
   onScheduleCardValueChange,
-  onScheduleCardDelete,
+  onScheduleCardDelete
 })(ScheduleRegister);

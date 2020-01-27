@@ -14,7 +14,7 @@ export const onRolesRead = () => dispatch => {
         roles.push({
           key: doc.id,
           label: doc.data().name,
-          value: { roleId: doc.id, name: doc.data().name },
+          value: { roleId: doc.id, name: doc.data().name }
         });
       });
       dispatch({ type: ON_ROLES_READ, payload: roles });

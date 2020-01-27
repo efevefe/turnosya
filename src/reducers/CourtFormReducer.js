@@ -5,7 +5,7 @@ import {
   ON_COURT_EXISTS,
   ON_COURT_FORM_OPEN,
   ON_COURT_UPDATE,
-  ON_COURT_DELETE,
+  ON_COURT_DELETE
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -23,7 +23,7 @@ const INITIAL_STATE = {
   disabledFrom: null,
   disabledTo: null,
   loading: false,
-  existsError: '',
+  existsError: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -53,7 +53,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         loading: false,
-        existsError: 'Nombre de cancha existente',
+        existsError: 'Nombre de cancha existente'
       };
 
     default:

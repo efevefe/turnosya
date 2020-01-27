@@ -8,14 +8,14 @@ import {
   ON_RESERVATIONS_LIST_VALUE_CHANGE,
   ON_COMMERCE_RESERVATION_CANCELING,
   ON_COMMERCE_RESERVATION_CANCELED,
-  ON_COMMERCE_RESERVATION_CANCEL_FAIL,
+  ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 import { onClientPushNotificationSend } from './PushNotificationActions';
 
 export const onReservationsListValueChange = payload => {
   return {
     type: ON_RESERVATIONS_LIST_VALUE_CHANGE,
-    payload,
+    payload
   };
 };
 
@@ -30,7 +30,7 @@ export const formatReservation = ({ res, court, client, commerce, employee, serv
     court: court ? { id: court.id, ...court.data() } : null,
     employee: employee ? { id: employee.id, ...employee.data() } : null,
     service: service ? { id: service.id, ...service.data() } : null,
-    commerce: commerce ? { id: commerce.id, ...commerce.data() } : null,
+    commerce: commerce ? { id: commerce.id, ...commerce.data() } : null
   };
 };
 
@@ -64,7 +64,7 @@ export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, emp
 
     dispatch({
       type: ON_COMMERCE_RESERVATIONS_READ,
-      payload: { reservations },
+      payload: { reservations }
     });
   });
 };
@@ -94,7 +94,7 @@ export const onCommerceReservationsRead = ({ commerceId, selectedDate, employeeI
     if (snapshot.empty) {
       return dispatch({
         type: ON_COMMERCE_RESERVATIONS_READ,
-        payload: { reservations },
+        payload: { reservations }
       });
     }
 
@@ -105,14 +105,14 @@ export const onCommerceReservationsRead = ({ commerceId, selectedDate, employeeI
           reservations.push(
             formatReservation({
               res: doc,
-              client: client.exists && client,
+              client: client.exists && client
             })
           );
 
           if (reservations.length === snapshot.size) {
             dispatch({
               type: ON_COMMERCE_RESERVATIONS_READ,
-              payload: { reservations },
+              payload: { reservations }
             });
           }
         });
@@ -145,7 +145,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
     if (snapshot.empty) {
       return dispatch({
         type: ON_COMMERCE_RESERVATIONS_READ,
-        payload: { detailedReservations },
+        payload: { detailedReservations }
       });
     }
 
@@ -156,7 +156,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
           detailedReservations.push(
             formatReservation({
               res: doc,
-              client: client.exists && client,
+              client: client.exists && client
             })
           );
 
@@ -165,7 +165,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
 
             dispatch({
               type: ON_COMMERCE_RESERVATIONS_READ,
-              payload: { detailedReservations },
+              payload: { detailedReservations }
             });
           }
         });
@@ -179,7 +179,7 @@ export const onCommerceReservationCancel = ({
   clientId,
   cancellationReason,
   navigation,
-  notification,
+  notification
 }) => {
   const db = firebase.firestore();
   const batch = db.batch();
@@ -194,9 +194,9 @@ export const onCommerceReservationCancel = ({
           state: {
             id: stateDoc.id,
             name: stateDoc.data().name,
-            cancellationReason,
+            cancellationReason
           },
-          cancellationDate: new Date(),
+          cancellationDate: new Date()
         };
 
         batch.update(db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`), cancellationData);
@@ -214,13 +214,13 @@ export const onCommerceReservationCancel = ({
           })
           .catch(error => {
             dispatch({
-              type: ON_COMMERCE_RESERVATION_CANCEL_FAIL,
+              type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
             });
           });
       })
       .catch(error => {
         dispatch({
-          type: ON_COMMERCE_RESERVATION_CANCEL_FAIL,
+          type: ON_COMMERCE_RESERVATION_CANCEL_FAIL
         });
       });
   };
@@ -255,7 +255,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
               id: doc.id,
               clientId: doc.data().clientId,
               startDate: moment(doc.data().startDate.toDate()),
-              endDate: moment(doc.data().endDate.toDate()),
+              endDate: moment(doc.data().endDate.toDate())
             });
         });
 
@@ -290,7 +290,7 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
               id: doc.id,
               clientId: doc.data().clientId,
               startDate: moment(doc.data().startDate.toDate()),
-              endDate: moment(doc.data().endDate.toDate()),
+              endDate: moment(doc.data().endDate.toDate())
             });
         });
 
@@ -306,7 +306,7 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
     const state = await db.doc(`ReservationStates/canceled`).get();
     const updateObj = {
       cancellationDate: new Date(),
-      state: { id: state.id, name: state.data().name },
+      state: { id: state.id, name: state.data().name }
     };
 
     reservations.forEach(res => {

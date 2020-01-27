@@ -45,15 +45,15 @@ const CommerceCourtTypes = props => {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    paddingBottom: 15,
+    paddingBottom: 15
   },
   imageStyle: {
-    height: 80,
+    height: 80
   },
   containerStyle: {
     overflow: 'hidden',
-    borderRadius: 10,
-  },
+    borderRadius: 10
+  }
 });
 
 export default connect(null, { onNewServiceReservation })(CommerceCourtTypes);

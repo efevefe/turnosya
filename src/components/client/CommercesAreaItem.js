@@ -20,7 +20,7 @@ class CommercesAreaItem extends Component {
             <Text
               style={{
                 fontSize: 16,
-                textAlign: 'center',
+                textAlign: 'center'
               }}
             >
               {name}

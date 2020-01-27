@@ -11,14 +11,14 @@ class LocationMap extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
       rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton(),
+      leftIcon: this.renderBackButton()
     });
 
     const { address, city, provinceName, country, latitude, longitude } = this.props;
@@ -29,8 +29,8 @@ class LocationMap extends React.Component {
         provinceName,
         country,
         latitude,
-        longitude,
-      },
+        longitude
+      }
     });
   }
 

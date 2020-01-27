@@ -13,7 +13,7 @@ class CommerceReservationsList extends Component {
     selectedIndex: 1,
     filteredList: [],
     selectedReservation: {},
-    detailsVisible: false,
+    detailsVisible: false
   };
 
   componentDidMount() {
@@ -37,7 +37,7 @@ class CommerceReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate,
-      employeeId: this.props.employeeId,
+      employeeId: this.props.employeeId
     });
 
     this.setState({ selectedDate });
@@ -82,7 +82,7 @@ class CommerceReservationsList extends Component {
         rightIcon={{
           name: 'ios-arrow-forward',
           type: 'ionicon',
-          color: 'black',
+          color: 'black'
         }}
         title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
         subtitle={`${clientName}\n${name}`}
@@ -92,7 +92,7 @@ class CommerceReservationsList extends Component {
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: { ...item, court, service },
+            reservation: { ...item, court, service }
           })
         }
         bottomDivider
@@ -147,36 +147,36 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 0,
     marginLeft: 0,
-    marginRight: 0,
+    marginRight: 0
   },
   buttonGroupSelectedButtonStyle: {
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   },
   buttonGroupButtonStyle: {
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: MAIN_COLOR
   },
   buttonGroupTextStyle: {
-    color: 'white',
+    color: 'white'
   },
   buttonGroupSelectedTextStyle: {
-    color: MAIN_COLOR,
+    color: MAIN_COLOR
   },
   buttonGroupInnerBorderStyle: {
-    width: 0,
+    width: 0
   },
   listItemRightTitleStyle: {
     fontWeight: 'bold',
-    color: 'black',
+    color: 'black'
   },
   listItemRightSubtitleStyle: {
-    color: 'grey',
-  },
+    color: 'grey'
+  }
 });
 
 const mapStateToProps = state => {
   const {
     commerceId,
-    area: { areaId },
+    area: { areaId }
   } = state.commerceData;
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
@@ -187,5 +187,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onCommerceDetailedReservationsRead,
+  onCommerceDetailedReservationsRead
 })(CommerceReservationsList);

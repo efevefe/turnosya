@@ -37,7 +37,7 @@ const chartConfig = {
   backgroundGradientTo: 'white',
   decimalPlaces: 0,
   color: (opacity = 1) => `rgba(199, 44, 65, ${opacity})`,
-  fillShadowGradient: MAIN_COLOR,
+  fillShadowGradient: MAIN_COLOR
 };
 
 const styles = StyleSheet.create({
@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 15,
     color: 'black',
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });
 
 export { PieChart };

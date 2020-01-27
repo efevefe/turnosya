@@ -8,7 +8,7 @@ import {
   ON_RESERVATION_CREATE_FAIL,
   ON_NEW_RESERVATION,
   ON_NEW_SERVICE_RESERVATION,
-  ON_RESERVATION_EXISTS,
+  ON_RESERVATION_EXISTS
 } from './types';
 
 export const onReservationValueChange = payload => {
@@ -32,7 +32,7 @@ export const onClientCourtReservationCreate = ({
   endDate,
   price,
   light,
-  notification,
+  notification
 }) => {
   return onClientReservationCreate(
     {
@@ -42,7 +42,7 @@ export const onClientCourtReservationCreate = ({
       startDate: startDate.toDate(),
       endDate: endDate.toDate(),
       price,
-      light,
+      light
     },
     commerceId,
     notification
@@ -57,7 +57,7 @@ export const onClientServiceReservationCreate = ({
   startDate,
   endDate,
   price,
-  notification,
+  notification
 }) => {
   return onClientReservationCreate(
     {
@@ -66,7 +66,7 @@ export const onClientServiceReservationCreate = ({
       employeeId,
       startDate: startDate.toDate(),
       endDate: endDate.toDate(),
-      price,
+      price
     },
     commerceId,
     notification
@@ -109,19 +109,19 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
     ...reservationObject,
     reservationDate: new Date(),
     cancellationDate: null,
-    state: null,
+    state: null
   };
 
   // reserva que se guarda en el negocio
   batch.set(commerceReservationRef, {
     ...reservationData,
-    clientId: currentUser.uid,
+    clientId: currentUser.uid
   });
 
   // reserva que se guarda en el cliente
   batch.set(clientReservationRef, {
     ...reservationData,
-    commerceId,
+    commerceId
   });
 
   try {
@@ -155,7 +155,7 @@ export const onCommerceCourtReservationCreate = ({
   startDate,
   endDate,
   light,
-  price,
+  price
 }) => async dispatch => {
   dispatch({ type: ON_RESERVATION_CREATING });
 
@@ -167,7 +167,7 @@ export const onCommerceCourtReservationCreate = ({
         commerceId,
         courtId,
         startDate: startDate.toDate(),
-        endDate: endDate.toDate(),
+        endDate: endDate.toDate()
       })
     ) {
       return dispatch({ type: ON_RESERVATION_EXISTS });
@@ -186,7 +186,7 @@ export const onCommerceCourtReservationCreate = ({
       cancellationDate: null,
       price,
       light,
-      state: null,
+      state: null
     });
 
     dispatch({ type: ON_RESERVATION_CREATE });
@@ -204,7 +204,7 @@ export const onCommerceServiceReservationCreate = ({
   clientPhone,
   startDate,
   endDate,
-  price,
+  price
 }) => async dispatch => {
   dispatch({ type: ON_RESERVATION_CREATING });
 
@@ -216,7 +216,7 @@ export const onCommerceServiceReservationCreate = ({
         commerceId,
         employeeId,
         startDate: startDate.toDate(),
-        endDate: endDate.toDate(),
+        endDate: endDate.toDate()
       })
     ) {
       return dispatch({ type: ON_RESERVATION_EXISTS });
@@ -234,7 +234,7 @@ export const onCommerceServiceReservationCreate = ({
       reservationDate: new Date(),
       cancellationDate: null,
       price,
-      state: null,
+      state: null
     });
 
     dispatch({ type: ON_RESERVATION_CREATE });

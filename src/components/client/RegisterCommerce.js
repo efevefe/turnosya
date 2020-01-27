@@ -13,7 +13,7 @@ class RegisterCommerce extends Component {
     nameError: '',
     emailError: '',
     cuitError: '',
-    areaError: '',
+    areaError: ''
   };
 
   componentDidMount() {
@@ -197,7 +197,7 @@ class RegisterCommerce extends Component {
               onChangeText={description => this.props.onCommerceValueChange({ description })}
               onBlur={() =>
                 this.props.onCommerceValueChange({
-                  description: trimString(this.props.description),
+                  description: trimString(this.props.description)
                 })
               }
             />
@@ -224,7 +224,7 @@ const mapStateToProps = state => {
     area,
     areasList,
     error,
-    cuitExists,
+    cuitExists
   };
 };
 
@@ -232,5 +232,5 @@ export default connect(mapStateToProps, {
   onCommerceValueChange,
   onCommerceFormOpen,
   onAreasReadForPicker,
-  onCuitValidate,
+  onCuitValidate
 })(RegisterCommerce);

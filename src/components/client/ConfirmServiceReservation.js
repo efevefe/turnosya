@@ -19,7 +19,7 @@ class ConfirmServiceReservation extends Component {
       employeeId: employee.id,
       startDate,
       endDate,
-      price,
+      price
     });
   };
 
@@ -84,13 +84,13 @@ class ConfirmServiceReservation extends Component {
 
 const styles = StyleSheet.create({
   cardSections: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch',
-  },
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {

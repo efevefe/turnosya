@@ -13,7 +13,7 @@ class ScheduleRegisterConfiguration extends Component {
     reservationDayFrom: 1,
     reservationDayTo: 180,
     reservationDayValue: 1,
-    reservationMinHoursCancelValue: 2,
+    reservationMinHoursCancelValue: 2
   };
 
   componentDidMount() {
@@ -21,7 +21,7 @@ class ScheduleRegisterConfiguration extends Component {
 
     this.setState({
       reservationDayValue: reservationDayPeriod,
-      reservationMinHoursCancelValue: reservationMinCancelTime,
+      reservationMinHoursCancelValue: reservationMinCancelTime
     });
   }
 
@@ -33,7 +33,7 @@ class ScheduleRegisterConfiguration extends Component {
         reservationDayPeriod,
         reservationMinCancelTime,
         commerceId,
-        date: moment(),
+        date: moment()
       },
       this.props.navigation
     );
@@ -41,13 +41,13 @@ class ScheduleRegisterConfiguration extends Component {
 
   onDaySliderValueChange() {
     this.props.onScheduleValueChange({
-      reservationDayPeriod: this.state.reservationDayValue,
+      reservationDayPeriod: this.state.reservationDayValue
     });
   }
 
   onCancelTimeSliderValueChange() {
     this.props.onScheduleValueChange({
-      reservationMinCancelTime: this.state.reservationMinHoursCancelValue,
+      reservationMinCancelTime: this.state.reservationMinHoursCancelValue
     });
   }
 
@@ -112,11 +112,11 @@ const mapStateToProps = state => {
     commerceId: state.commerceData.commerceId,
     loading,
     reservationDayPeriod,
-    reservationMinCancelTime,
+    reservationMinCancelTime
   };
 };
 
 export default connect(mapStateToProps, {
   onScheduleConfigurationSave,
-  onScheduleValueChange,
+  onScheduleValueChange
 })(ScheduleRegisterConfiguration);

@@ -12,7 +12,7 @@ import {
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY,
-  ON_ACTIVE_SCHEDULES_READ,
+  ON_ACTIVE_SCHEDULES_READ
 } from '../actions/types';
 import { Toast } from '../components/common';
 import { formattedMoment } from '../utils/functions';
@@ -26,14 +26,14 @@ const INITIAL_WORKSHIFTS = {
       firstShiftEnd: '',
       secondShiftStart: null,
       secondShiftEnd: null,
-      days: [],
-    },
+      days: []
+    }
   ],
   selectedDays: [],
   startDate: null,
   endDate: null,
   reservationMinLength: 60,
-  employeeId: null,
+  employeeId: null
 };
 
 const INITIAL_STATE = {
@@ -44,7 +44,7 @@ const INITIAL_STATE = {
   error: null,
   slots: [],
   loading: false,
-  refreshing: false,
+  refreshing: false
 };
 
 export default (state = INITIAL_STATE, action) => {

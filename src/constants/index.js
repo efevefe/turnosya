@@ -22,7 +22,7 @@ export const MONTHS = [
   'Septiembre',
   'Octubre',
   'Noviembre',
-  'Diciembre',
+  'Diciembre'
 ];
 
 export const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -32,12 +32,12 @@ export const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vier
 export const ROLES = {
   OWNER: { value: 2, name: 'Dueño', roleId: 'OWNER' },
   ADMIN: { value: 1, name: 'Administrador', roleId: 'ADMIN' },
-  EMPLOYEE: { value: 0, name: 'Empleado', roleId: 'EMPLOYEE' },
+  EMPLOYEE: { value: 0, name: 'Empleado', roleId: 'EMPLOYEE' }
 };
 
 // AREAS
 
 export const AREAS = {
   sports: 'sports',
-  hairdressers: 'hairdressers',
+  hairdressers: 'hairdressers'
 };

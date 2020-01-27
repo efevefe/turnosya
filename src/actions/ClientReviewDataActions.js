@@ -12,7 +12,7 @@ import {
   ON_CLIENT_REVIEW_DELETE_FAIL,
   ON_CLIENT_REVIEW_READING,
   ON_CLIENT_REVIEW_READ,
-  ON_CLIENT_REVIEW_READ_FAIL,
+  ON_CLIENT_REVIEW_READ_FAIL
 } from './types';
 
 export const onClientReviewValueChange = payload => {
@@ -41,16 +41,16 @@ export const onClientReviewCreate = ({ commerceId, rating, comment, reservationI
         date: new Date(),
         commerceId,
         reservationId,
-        softDelete: null,
+        softDelete: null
       });
 
       transaction.update(commerceReservationRef, { reviewId: reviewRef.id });
       transaction.update(clientReservationRef, {
-        receivedReviewId: reviewRef.id,
+        receivedReviewId: reviewRef.id
       });
 
       transaction.update(clientRef, {
-        rating: { total: ratingTotal + rating, count: ratingCount + 1 },
+        rating: { total: ratingTotal + rating, count: ratingCount + 1 }
       });
     });
   })
@@ -74,7 +74,7 @@ export const onClientReviewReadById = ({ clientId, reviewId }) => dispatch => {
           ? dispatch({ type: ON_CLIENT_REVIEW_READ })
           : dispatch({
               type: ON_CLIENT_REVIEW_READ,
-              payload: { rating, comment, reviewId },
+              payload: { rating, comment, reviewId }
             });
       })
       .catch(() => dispatch({ type: ON_CLIENT_REVIEW_READ_FAIL }));
@@ -99,11 +99,11 @@ export const onClientReviewUpdate = ({ clientId, rating, comment, reviewId }) =>
       transaction.update(reviewRef, {
         rating,
         comment,
-        date: new Date(),
+        date: new Date()
       });
 
       transaction.update(clientRef, {
-        rating: { total: total - oldRating + rating, count },
+        rating: { total: total - oldRating + rating, count }
       });
     });
   })
@@ -134,7 +134,7 @@ export const onClientReviewDelete = ({ clientId, reservationId, reviewId, commer
       transaction.update(reviewRef, { softDelete: new Date() });
 
       transaction.update(clientRef, {
-        rating: { total: total - oldRating, count: count - 1 },
+        rating: { total: total - oldRating, count: count - 1 }
       });
     });
   })

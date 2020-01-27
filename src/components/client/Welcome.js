@@ -49,24 +49,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: MAIN_COLOR
   },
   logoContainerStyle: {
     flex: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'stretch',
+    alignSelf: 'stretch'
   },
   textStyle: {
     textAlign: 'center',
     fontSize: 19,
-    color: 'white',
+    color: 'white'
   },
   backContainerStyle: {
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 10,
-  },
+    paddingBottom: 10
+  }
 });
 
 export default Welcome;

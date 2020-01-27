@@ -44,18 +44,18 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 15,
     margin: 0,
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   containerStyle: {
     borderRadius,
     overflow: 'hidden',
-    margin: 0,
+    margin: 0
   },
   titleStyle: {
     fontSize: 15,
     color: color,
-    paddingLeft: 18,
-  },
+    paddingLeft: 18
+  }
 });
 
 export { DrawerItem };

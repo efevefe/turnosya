@@ -20,7 +20,7 @@ import {
   ON_EMAIL_VERIFY_REMINDED,
   ON_REGISTER_FORM_OPEN,
   ON_WORKPLACES_READ,
-  ON_USER_PASSWORD_UPDATE,
+  ON_USER_PASSWORD_UPDATE
 } from './types';
 
 export const onClientDataValueChange = payload => {
@@ -49,7 +49,7 @@ export const onUserRegister = ({ email, password, firstName, lastName, phone }) 
             email,
             phone,
             commerceId: null,
-            softDelete: null,
+            softDelete: null
           })
           .then(() => {
             dispatch({ type: ON_USER_REGISTER_SUCCESS, payload: user });
@@ -73,7 +73,7 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
       .then(doc =>
         dispatch({
           type: ON_USER_READ,
-          payload: { ...doc.data(), clientId: doc.id },
+          payload: { ...doc.data(), clientId: doc.id }
         })
       )
       .catch(error => dispatch({ type: ON_USER_READ_FAIL }));
@@ -105,7 +105,7 @@ export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => 
         firstName,
         lastName,
         phone,
-        profilePicture: url ? url : profilePicture,
+        profilePicture: url ? url : profilePicture
       });
 
     dispatch({ type: ON_USER_UPDATED, payload: url ? url : profilePicture });
@@ -178,7 +178,7 @@ export const onUserWorkplacesRead = () => dispatch => {
       snapshot.forEach(doc =>
         workplaces.push({
           commerceId: doc.data().commerceId,
-          name: doc.data().name,
+          name: doc.data().name
         })
       );
       dispatch({ type: ON_WORKPLACES_READ, payload: workplaces });

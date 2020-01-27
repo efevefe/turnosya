@@ -13,7 +13,7 @@ import {
   Toast,
   ReviewCard,
   ButtonGroup,
-  AreaComponentRenderer,
+  AreaComponentRenderer
 } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import ServiceReservationDetails from '../ServiceReservationDetails';
@@ -27,7 +27,7 @@ import {
   onClientReviewDelete,
   onClientReviewValuesReset,
   onCommerceReviewReadById,
-  onCommerceReviewValuesReset,
+  onCommerceReviewValuesReset
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -44,19 +44,19 @@ class CommerceReservationDetails extends Component {
       error: '',
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0,
+      reviewBGIndex: 0
     };
   }
 
   componentDidMount() {
     this.props.onClientReviewReadById({
       clientId: this.state.reservation.clientId,
-      reviewId: this.state.reservation.reviewId,
+      reviewId: this.state.reservation.reviewId
     });
 
     this.props.onCommerceReviewReadById({
       commerceId: this.props.commerceId,
-      reviewId: this.state.reservation.receivedReviewId,
+      reviewId: this.state.reservation.receivedReviewId
     });
   }
 
@@ -111,7 +111,7 @@ class CommerceReservationDetails extends Component {
         clientId,
         cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation,
-        notification: { title, body },
+        notification: { title, body }
       });
     }
   };
@@ -128,7 +128,7 @@ class CommerceReservationDetails extends Component {
           clientId: this.state.reservation.clientId,
           comment: this.props.clientComment,
           rating: this.props.clientRating,
-          reviewId: this.props.clientReviewId,
+          reviewId: this.props.clientReviewId
         });
       } else {
         // Si la reserva no tiene calificación, crearla
@@ -137,7 +137,7 @@ class CommerceReservationDetails extends Component {
           comment: this.props.clientComment,
           rating: this.props.clientRating,
           reservationId: this.state.reservation.id,
-          commerceId: this.props.commerceId,
+          commerceId: this.props.commerceId
         });
       }
     }
@@ -148,7 +148,7 @@ class CommerceReservationDetails extends Component {
       clientId: this.state.reservation.clientId,
       reviewId: this.props.clientReviewId,
       reservationId: this.state.reservation.id,
-      commerceId: this.props.commerceId,
+      commerceId: this.props.commerceId
     });
     this.setState({ confirmDeleteVisible: false });
   };
@@ -271,7 +271,7 @@ class CommerceReservationDetails extends Component {
       startDate,
       endDate,
       price,
-      light,
+      light
     } = this.state.reservation;
 
     return (
@@ -289,7 +289,7 @@ class CommerceReservationDetails extends Component {
                 color="black"
                 onChangeText={cancellationReason => {
                   this.props.onReservationsListValueChange({
-                    cancellationReason,
+                    cancellationReason
                   });
                   this.setState({ error: '' });
                 }}
@@ -356,10 +356,10 @@ const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.
     margin: 10,
     marginLeft: 40,
     marginRight: 40,
-    backgroundColor: 'grey',
+    backgroundColor: 'grey'
   },
   overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' },
+  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
 
 const mapStateToProps = state => {
@@ -378,7 +378,7 @@ const mapStateToProps = state => {
     commerceComment: state.commerceReviewData.comment,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,
-    reviewDataLoading: dataLoading,
+    reviewDataLoading: dataLoading
   };
 };
 
@@ -392,5 +392,5 @@ export default connect(mapStateToProps, {
   onClientReviewDelete,
   onClientReviewValuesReset,
   onCommerceReviewReadById,
-  onCommerceReviewValuesReset,
+  onCommerceReviewValuesReset
 })(CommerceReservationDetails);

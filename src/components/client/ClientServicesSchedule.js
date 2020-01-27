@@ -8,7 +8,7 @@ import {
   onScheduleValueChange,
   onReservationValueChange,
   onClientCommerceReservationsRead,
-  onNewReservation,
+  onNewReservation
 } from '../../actions';
 
 class ClientServicesSchedule extends Component {
@@ -18,7 +18,7 @@ class ClientServicesSchedule extends Component {
     this.props.onScheduleRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: this.state.selectedDate,
-      employeeId: this.props.employee.id,
+      employeeId: this.props.employee.id
     });
   }
 
@@ -39,14 +39,14 @@ class ClientServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onClientCommerceReservationsRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: date,
-      employeeId: this.props.employee.id,
+      employeeId: this.props.employee.id
     });
 
     if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
         selectedDate: date,
-        employeeId: this.props.employee.id,
+        employeeId: this.props.employee.id
       });
     }
 
@@ -82,30 +82,30 @@ class ClientServicesSchedule extends Component {
   onSlotPress = slot => {
     if (moment() >= slot.startDate) {
       return Toast.show({
-        text: 'Ya no se puede reservar en este horario',
+        text: 'Ya no se puede reservar en este horario'
       });
     }
 
     if (!slot.available) {
       return Toast.show({
-        text: 'Este turno ya ha sido ocupado',
+        text: 'Este turno ya ha sido ocupado'
       });
     }
 
     const res = {
       startDate: moment(slot.startDate),
-      endDate: moment(slot.startDate).add(parseInt(this.props.selectedService.duration), 'minutes'),
+      endDate: moment(slot.startDate).add(parseInt(this.props.selectedService.duration), 'minutes')
     };
 
     if (!this.enoughTime(res)) {
       return Toast.show({
-        text: 'Tiempo insuficiente para el servicio elegido',
+        text: 'Tiempo insuficiente para el servicio elegido'
       });
     }
 
     this.props.onReservationValueChange({
       startDate: res.startDate,
-      endDate: res.endDate,
+      endDate: res.endDate
     });
 
     this.props.onNewReservation();
@@ -141,7 +141,7 @@ class ClientServicesSchedule extends Component {
         free: available ? 1 : 0,
         total: 1,
         available,
-        visible,
+        visible
       };
     });
 
@@ -163,8 +163,8 @@ class ClientServicesSchedule extends Component {
         datesWhitelist={[
           {
             start: moment(),
-            end: moment().add(reservationDayPeriod, 'days'),
-          },
+            end: moment().add(reservationDayPeriod, 'days')
+          }
         ]}
         loading={loadingSchedule || loadingReservations}
         onDateChanged={date => this.onDateChanged(date)}
@@ -184,7 +184,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     refreshing,
-    loading: loadingSchedule,
+    loading: loadingSchedule
   } = state.commerceSchedule;
   const { commerce, service, employee } = state.reservation;
   const { reservations } = state.reservationsList;
@@ -207,7 +207,7 @@ const mapStateToProps = state => {
     services,
     employee,
     loadingSchedule,
-    loadingReservations,
+    loadingReservations
   };
 };
 
@@ -216,5 +216,5 @@ export default connect(mapStateToProps, {
   onScheduleRead,
   onReservationValueChange,
   onClientCommerceReservationsRead,
-  onNewReservation,
+  onNewReservation
 })(ClientServicesSchedule);

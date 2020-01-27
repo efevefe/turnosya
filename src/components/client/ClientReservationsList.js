@@ -72,7 +72,7 @@ class ClientReservationsList extends Component {
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: item,
+            reservation: item
           })
         }
       />
@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 0,
     marginLeft: 0,
-    marginRight: 0,
-  },
+    marginRight: 0
+  }
 });
 
 const mapStateToProps = state => {

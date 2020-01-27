@@ -106,7 +106,7 @@ const mapStateToProps = state => {
   const { profilePicture, firstName, lastName, workplaces, commerceId } = state.clientData;
   const {
     area: { areaId },
-    refreshing: loadingCommerce,
+    refreshing: loadingCommerce
   } = state.commerceData;
   const { loading } = state.auth;
 
@@ -118,7 +118,7 @@ const mapStateToProps = state => {
     workplaces,
     commerceId,
     areaId,
-    loadingCommerce,
+    loadingCommerce
   };
 };
 
@@ -127,5 +127,5 @@ export default connect(mapStateToProps, {
   onLogout,
   onUserRead,
   onUserWorkplacesRead,
-  onCommerceRead,
+  onCommerceRead
 })(ClientDrawerContent);

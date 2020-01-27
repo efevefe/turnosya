@@ -1,7 +1,7 @@
 import {
   COMMERCE_COURT_TYPES_READING,
   COMMERCE_COURT_TYPES_READ,
-  COMMERCE_COURT_TYPES_READ_FAIL,
+  COMMERCE_COURT_TYPES_READ_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = { courtTypesList: [], loading: false, refreshing: false };

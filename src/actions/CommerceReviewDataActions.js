@@ -12,7 +12,7 @@ import {
   ON_COMMERCE_REVIEW_DELETE_FAIL,
   ON_COMMERCE_REVIEW_READ,
   ON_COMMERCE_REVIEW_READING,
-  ON_COMMERCE_REVIEW_READ_FAIL,
+  ON_COMMERCE_REVIEW_READ_FAIL
 } from './types';
 
 export const onCommerceReviewValueChange = payload => {
@@ -42,16 +42,16 @@ export const onCommerceReviewCreate = ({ commerceId, rating, comment, reservatio
         date: new Date(),
         clientId: currentUser.uid,
         reservationId,
-        softDelete: null,
+        softDelete: null
       });
 
       transaction.update(clientReservationRef, { reviewId: reviewRef.id });
       transaction.update(commerceReservationRef, {
-        receivedReviewId: reviewRef.id,
+        receivedReviewId: reviewRef.id
       });
 
       transaction.update(commerceRef, {
-        rating: { total: ratingTotal + rating, count: ratingCount + 1 },
+        rating: { total: ratingTotal + rating, count: ratingCount + 1 }
       });
     });
   })
@@ -75,7 +75,7 @@ export const onCommerceReviewReadById = ({ commerceId, reviewId }) => dispatch =
           ? dispatch({ type: ON_COMMERCE_REVIEW_READ })
           : dispatch({
               type: ON_COMMERCE_REVIEW_READ,
-              payload: { rating, comment, reviewId },
+              payload: { rating, comment, reviewId }
             });
       })
       .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_READ_FAIL }));
@@ -100,11 +100,11 @@ export const onCommerceReviewUpdate = ({ commerceId, rating, comment, reviewId }
       transaction.update(reviewRef, {
         rating,
         comment,
-        date: new Date(),
+        date: new Date()
       });
 
       transaction.update(commerceRef, {
-        rating: { total: total - oldRating + rating, count },
+        rating: { total: total - oldRating + rating, count }
       });
     });
   })
@@ -136,7 +136,7 @@ export const onCommerceReviewDelete = ({ commerceId, reservationId, reviewId }) 
       transaction.update(reviewRef, { softDelete: new Date() });
 
       transaction.update(commerceRef, {
-        rating: { total: total - oldRating, count: count - 1 },
+        rating: { total: total - oldRating, count: count - 1 }
       });
     });
   })

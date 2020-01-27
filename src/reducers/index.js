@@ -47,7 +47,7 @@ const reducers = combineReducers({
   employeesList: EmployeesListReducer,
   employeeData: EmployeeDataReducer,
   roleData: RoleDataReducer,
-  commerceReports: CommerceReportsReducer,
+  commerceReports: CommerceReportsReducer
 });
 
 export default createStore(reducers, {}, applyMiddleware(ReduxThunk));

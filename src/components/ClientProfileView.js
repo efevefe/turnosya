@@ -31,7 +31,7 @@ class ClientProfileView extends React.Component {
 
   onReviewButtonPress = () => {
     this.props.navigation.navigate('clientReviewsList', {
-      clientId: this.state.clientId,
+      clientId: this.state.clientId
     });
   };
 
@@ -65,24 +65,24 @@ class ClientProfileView extends React.Component {
 const { mainContainerStyle, avatarStyle, clientInfoStyle, dividerStyle, ratingStyle } = StyleSheet.create({
   mainContainerStyle: {
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    marginVertical: 20,
+    marginVertical: 20
   },
   clientInfoStyle: {
     fontSize: 14,
-    margin: 5,
+    margin: 5
   },
   dividerStyle: {
     marginHorizontal: 70,
     margin: 10,
     alignSelf: 'stretch',
-    backgroundColor: 'grey',
+    backgroundColor: 'grey'
   },
-  ratingStyle: { padding: 10 },
+  ratingStyle: { padding: 10 }
 });
 
 const mapStateToProps = state => {

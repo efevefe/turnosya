@@ -18,15 +18,15 @@ class CommerceProfileInfo extends Component {
       sports: () => {
         this.props.onScheduleRead({
           commerceId: this.props.commerceId,
-          selectedDate: moment(),
+          selectedDate: moment()
         });
       },
       hairdressers: () => {
         this.props.onEmployeesScheduleRead({
           commerceId: this.props.commerceId,
-          selectedDate: moment(),
+          selectedDate: moment()
         });
-      },
+      }
     });
 
     scheduleRead();
@@ -48,7 +48,7 @@ class CommerceProfileInfo extends Component {
             firstShiftStart,
             firstShiftEnd,
             secondShiftStart,
-            secondShiftEnd,
+            secondShiftEnd
           });
         });
       });
@@ -56,7 +56,7 @@ class CommerceProfileInfo extends Component {
       return {
         id: schedule.id,
         employeeName: schedule.employeeName || null,
-        hoursOnDays: hoursOnDays.sort((a, b) => a.day - b.day),
+        hoursOnDays: hoursOnDays.sort((a, b) => a.day - b.day)
       };
     });
   };
@@ -69,7 +69,7 @@ class CommerceProfileInfo extends Component {
       <View
         style={{
           padding: 10,
-          alignSelf: 'stretch',
+          alignSelf: 'stretch'
         }}
       >
         {item.employeeName ? (
@@ -82,7 +82,7 @@ class CommerceProfileInfo extends Component {
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
-                width: 74,
+                width: 74
               }}
             >
               {hourOnDay.dayName}
@@ -92,7 +92,7 @@ class CommerceProfileInfo extends Component {
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
-                width: 96,
+                width: 96
               }}
             >
               {hourOnDay.firstShiftStart + ' - ' + hourOnDay.firstShiftEnd}
@@ -102,7 +102,7 @@ class CommerceProfileInfo extends Component {
                 key={hourOnDay.day}
                 style={{
                   fontSize: 14,
-                  fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
+                  fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal'
                 }}
               >
                 {hourOnDay.secondShiftStart + ' - ' + hourOnDay.secondShiftEnd}
@@ -156,7 +156,7 @@ const mapStateToProps = state => {
     commerceId,
     refreshing,
     latitude,
-    longitude,
+    longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
   const { schedules, loading } = state.commerceSchedule;
@@ -171,7 +171,7 @@ const mapStateToProps = state => {
       provinceName: province.name,
       latitude,
       longitude,
-      country: 'Argentina',
+      country: 'Argentina'
     };
   }
 
@@ -190,7 +190,7 @@ const mapStateToProps = state => {
     loading,
     refreshing,
     locationData,
-    schedules,
+    schedules
   };
 };
 

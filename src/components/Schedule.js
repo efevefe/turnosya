@@ -114,7 +114,7 @@ class Schedule extends Component {
           disabled: false,
           visible: true,
           free: 0,
-          total: 0,
+          total: 0
         });
 
         slotStartDate.add(reservationMinLength, 'minutes');
@@ -152,7 +152,7 @@ class Schedule extends Component {
           leftIcon={{
             name: 'md-time',
             type: 'ionicon',
-            color: 'black',
+            color: 'black'
           }}
           rightElement={
             <Badge
@@ -229,21 +229,21 @@ const styles = StyleSheet.create({
     width: 'auto',
     borderRadius: 12.5,
     paddingLeft: 5,
-    paddingRight: 5,
+    paddingRight: 5
   },
   slotContainerStyle: {
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   },
   slotRightSubtitleStyle: {
-    color: 'grey',
+    color: 'grey'
   },
   slotDividerContainer: {
     backgroundColor: GREY_DISABLED,
     height: 45,
     alignSelf: 'stretch',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
 
 const mapStateToProps = state => {

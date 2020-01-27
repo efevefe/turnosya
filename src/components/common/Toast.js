@@ -14,12 +14,12 @@ export const Toast = {
 
     NBToast.hide({ ...style, ...params, textStyle });
   },
-  onClose: reason => NBToast.onClose(reason),
+  onClose: reason => NBToast.onClose(reason)
 };
 
 const textStyle = {
   fontSize: 13,
-  margin: 1,
+  margin: 1
 };
 
 const androidStyle = {
@@ -27,13 +27,13 @@ const androidStyle = {
     marginBottom: 65,
     marginLeft: 15,
     marginRight: 15,
-    borderRadius: 5,
-  },
+    borderRadius: 5
+  }
 };
 
 const iosStyle = {
   style: {
     marginBottom: 40,
-    borderRadius: 5,
-  },
+    borderRadius: 5
+  }
 };

@@ -29,15 +29,15 @@ class Picker extends Component {
               ...pickerStyle,
               color: textColor,
               borderColor: color,
-              borderBottomWidth,
+              borderBottomWidth
             },
             inputAndroid: {
               ...pickerStyle,
               color: textColor,
               borderColor: color,
-              borderBottomWidth,
+              borderBottomWidth
             },
-            iconContainer: iconContainer,
+            iconContainer: iconContainer
           }}
           useNativeAndroidPickerStyle={false}
           Icon={() => {
@@ -58,25 +58,25 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     paddingLeft: 5,
-    paddingRight: 5,
+    paddingRight: 5
   },
   iconContainer: {
     top: 11,
-    right: 17,
+    right: 17
   },
   textStyle: {
     fontSize: 12,
     fontWeight: 'normal',
     marginRight: 10,
-    marginLeft: 10,
+    marginLeft: 10
   },
   errorMessageStyle: {
     margin: 5,
     marginLeft: 10,
     marginRight: 10,
     color: 'red',
-    fontSize: 12,
-  },
+    fontSize: 12
+  }
 });
 
 export { Picker };

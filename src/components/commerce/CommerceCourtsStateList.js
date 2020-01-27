@@ -8,11 +8,11 @@ import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 class CommerceCourtsStateList extends Component {
   state = {
     selectedReservation: {},
-    selectedCourt: {},
+    selectedCourt: {}
   };
 
   static navigationOptions = ({ navigation }) => ({
-    title: navigation.getParam('title'),
+    title: navigation.getParam('title')
   });
 
   courtReservation = court => {
@@ -26,11 +26,11 @@ class CommerceCourtsStateList extends Component {
   onReservedCourtPress = (court, courtReservation) => {
     let reservation = {
       ...courtReservation,
-      court: { ...court },
+      court: { ...court }
     };
 
     this.props.navigation.navigate('reservationDetails', {
-      reservation,
+      reservation
     });
   };
 
@@ -102,11 +102,11 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     reservations,
-    detailedReservations,
+    detailedReservations
   };
 };
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onNewReservation,
+  onNewReservation
 })(CommerceCourtsStateList);

@@ -42,18 +42,18 @@ const styles = StyleSheet.create({
     paddingLeft: 13,
     paddingRight: 13,
     margin: 0,
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   containerStyle: {
     overflow: 'hidden',
-    margin: 0,
+    margin: 0
   },
   titleStyle: {
     textAlign: 'left',
     fontSize: 13,
     marginLeft: 13,
-    marginRight: 20,
-  },
+    marginRight: 20
+  }
 });
 
 export { MenuItem };

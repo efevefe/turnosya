@@ -20,14 +20,14 @@ class ClientProfile extends Component {
     stateBeforeChanges: null,
     firstNameError: '',
     lastNameError: '',
-    phoneError: '',
+    phoneError: ''
   };
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: navigation.getParam('title'),
       headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
@@ -56,12 +56,12 @@ class ClientProfile extends Component {
     const { firstName, lastName, phone, profilePicture } = this.props;
     this.setState({
       editEnabled: true,
-      stateBeforeChanges: { firstName, lastName, phone, profilePicture },
+      stateBeforeChanges: { firstName, lastName, phone, profilePicture }
     });
     this.props.navigation.setParams({
       title: 'Modificar Datos',
       rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderCancelButton(),
+      leftIcon: this.renderCancelButton()
     });
   };
 
@@ -77,7 +77,7 @@ class ClientProfile extends Component {
           firstName,
           lastName,
           phone,
-          profilePicture,
+          profilePicture
         });
 
         this.disableEdit();
@@ -97,12 +97,12 @@ class ClientProfile extends Component {
     this.setState({
       editEnabled: false,
       newProfilePicture: false,
-      stateBeforeChanges: null,
+      stateBeforeChanges: null
     });
     this.props.navigation.setParams({
       title: 'Perfil',
       rightIcon: this.renderEditButton(),
-      leftIcon: null,
+      leftIcon: null
     });
   };
 
@@ -137,7 +137,7 @@ class ClientProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: [1, 1],
+        aspect: [1, 1]
       };
 
       const response = await ImagePicker.launchImageLibraryAsync(options);
@@ -161,7 +161,7 @@ class ClientProfile extends Component {
       const options = {
         mediaTypes: 'Images',
         allowsEditing: true,
-        aspect: [1, 1],
+        aspect: [1, 1]
       };
 
       let response = await ImagePicker.launchCameraAsync(options);
@@ -244,7 +244,7 @@ class ClientProfile extends Component {
     this.setState({
       firstNameError: '',
       lastNameError: '',
-      phoneError: '',
+      phoneError: ''
     });
   };
 
@@ -288,7 +288,7 @@ class ClientProfile extends Component {
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('clientReviewsList', {
-                clientId: this.props.clientId,
+                clientId: this.props.clientId
               })
             }
           >
@@ -300,7 +300,7 @@ class ClientProfile extends Component {
             backgroundColor: 'grey',
             margin: 5,
             marginLeft: 10,
-            marginRight: 10,
+            marginRight: 10
           }}
         />
         <View style={infoContainerStyle}>
@@ -368,37 +368,37 @@ const {
   avatarStyle,
   locationContainerStyle,
   infoContainerStyle,
-  ratingStyle,
+  ratingStyle
 } = StyleSheet.create({
   containerStyle: {
     flex: 1,
-    alignSelf: 'stretch',
+    alignSelf: 'stretch'
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    padding: 20,
+    padding: 20
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    alignItems: 'flex-end'
   },
   avatarStyle: {
     borderWidth: 4,
     borderColor: MAIN_COLOR,
-    margin: 10,
+    margin: 10
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   infoContainerStyle: {
     alignSelf: 'stretch',
     padding: 10,
-    paddingBottom: 22,
+    paddingBottom: 22
   },
-  ratingStyle: { paddingTop: 14 },
+  ratingStyle: { paddingTop: 14 }
 });
 
 const mapStateToProps = state => {
@@ -417,7 +417,7 @@ const mapStateToProps = state => {
     loading,
     refreshing,
     city,
-    provinceName,
+    provinceName
   };
 };
 
@@ -425,5 +425,5 @@ export default connect(mapStateToProps, {
   onUserRead,
   onUserUpdate,
   onClientDataValueChange,
-  onLocationValuesReset,
+  onLocationValuesReset
 })(ClientProfile);

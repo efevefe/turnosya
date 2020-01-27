@@ -27,7 +27,7 @@ class CourtList extends Component {
       <CourtListItem
         court={{
           ...item,
-          disabled: this.isCourtDisabled(item),
+          disabled: this.isCourtDisabled(item)
         }}
         commerceId={this.props.commerceId}
         navigation={this.props.navigation}

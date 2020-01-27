@@ -19,8 +19,8 @@ class LineChart extends Component {
             styles.toolTipContainer,
             {
               top: selectedPoint.y + chartPosition.y - 28,
-              left: selectedPoint.x + chartPosition.x - 8,
-            },
+              left: selectedPoint.x + chartPosition.x - 8
+            }
           ])}
         >
           <Text style={styles.toolTipText}>
@@ -46,13 +46,13 @@ class LineChart extends Component {
             fontSize: 12,
             top: chartPosition.y + chartHeight * 0.9,
             left: chartPosition.x + chartWidth / 11,
-            width: chartWidth - chartWidth / 11,
+            width: chartWidth - chartWidth / 11
           }}
         >
           <Text
             style={{
               ...styles.chartText,
-              fontSize: 12,
+              fontSize: 12
             }}
           >
             {this.props.xlabel}
@@ -75,7 +75,7 @@ class LineChart extends Component {
             top: chartPosition.y + chartHeight / 3,
             left: chartPosition.x + chartWidth / 10,
             width: chartWidth - chartWidth / 10,
-            paddingHorizontal: chartWidth / 6.5,
+            paddingHorizontal: chartWidth / 6.5
           }}
         >
           <Text style={styles.chartText}>{this.props.emptyDataMessage}</Text>
@@ -93,8 +93,8 @@ class LineChart extends Component {
             this.setState({
               chartPosition: {
                 x: nativeEvent.layout.x,
-                y: nativeEvent.layout.y,
-              },
+                y: nativeEvent.layout.y
+              }
             });
           }}
         >
@@ -126,8 +126,8 @@ const chartConfig = {
   propsForDots: {
     r: '3',
     strokeWidth: '2',
-    stroke: MAIN_COLOR,
-  },
+    stroke: MAIN_COLOR
+  }
 };
 
 const styles = StyleSheet.create({
@@ -137,27 +137,27 @@ const styles = StyleSheet.create({
     width: 'auto',
     paddingHorizontal: 4,
     borderRadius: 3,
-    backgroundColor: '#333333',
+    backgroundColor: '#333333'
   },
   toolTipText: {
     fontSize: 12,
-    color: 'white',
+    color: 'white'
   },
   title: {
     fontSize: 14,
     padding: 15,
     color: 'black',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   chartText: {
     fontSize: 14,
     color: MAIN_COLOR,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   chartTextContainer: {
     position: 'absolute',
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 });
 
 export { LineChart };

@@ -8,13 +8,13 @@ import { Toast } from '../common';
 class CommercesFiltersMap extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton'),
+      headerRight: navigation.getParam('rightButton')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightButton: this.renderApplyFiltersButton(),
+      rightButton: this.renderApplyFiltersButton()
     });
   }
 
@@ -49,7 +49,7 @@ class CommercesFiltersMap extends Component {
 
 const { windowContainerStyle, applyFilterButtonStyle } = StyleSheet.create({
   windowContainerStyle: { flex: 1 },
-  applyFilterButtonStyle: { paddingRight: 10 },
+  applyFilterButtonStyle: { paddingRight: 10 }
 });
 
 const mapStateToProps = state => {

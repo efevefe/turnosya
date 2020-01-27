@@ -10,7 +10,7 @@ class CommerceEmployeesList extends Component {
     if (this.props.service) {
       this.props.onEmployeesByIdRead({
         commerceId: this.props.commerce.objectID,
-        employeesIds: this.props.service.employeesIds,
+        employeesIds: this.props.service.employeesIds
       });
     } else {
       this.props.onEmployeesRead(this.props.commerce.objectID);
@@ -33,13 +33,13 @@ class CommerceEmployeesList extends Component {
         leftAvatar={{
           source: item.profilePicture ? { uri: item.profilePicture } : null,
           icon: { name: 'person', type: 'material' },
-          size: 'medium',
+          size: 'medium'
         }}
         title={`${item.firstName} ${item.lastName}`}
         rightIcon={{
           name: 'ios-arrow-forward',
           type: 'ionicon',
-          color: 'black',
+          color: 'black'
         }}
         bottomDivider
         onPress={() => this.onEmployeePress(item)}
@@ -75,5 +75,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onReservationValueChange,
   onEmployeesRead,
-  onEmployeesByIdRead,
+  onEmployeesByIdRead
 })(CommerceEmployeesList);

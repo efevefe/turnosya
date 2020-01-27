@@ -16,7 +16,7 @@ class Calendar extends Component {
         daySelectionAnimation={{
           type: 'background',
           duration: 60,
-          highlightColor: 'white',
+          highlightColor: 'white'
         }}
         calendarColor={MAIN_COLOR}
         style={{ height: 115, paddingTop: 10, paddingBottom: 10 }} //main container

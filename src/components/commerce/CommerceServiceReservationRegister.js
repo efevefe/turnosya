@@ -96,7 +96,7 @@ class CommerceCourtReservationRegister extends Component {
         service,
         startDate,
         endDate,
-        price,
+        price
       } = this.props;
 
       this.props.onCommerceServiceReservationCreate({
@@ -108,7 +108,7 @@ class CommerceCourtReservationRegister extends Component {
         clientPhone,
         startDate,
         endDate,
-        price,
+        price
       });
     }
   };
@@ -136,19 +136,19 @@ class CommerceCourtReservationRegister extends Component {
 
 const styles = StyleSheet.create({
   cardSection: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch',
-  },
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {
   const {
     commerceId,
-    area: { areaId },
+    area: { areaId }
   } = state.commerceData;
   const { clientName, clientPhone, service, startDate, endDate, price, saved, exists, loading } = state.reservation;
   const { employeeId } = state.roleData;
@@ -165,11 +165,11 @@ const mapStateToProps = state => {
     price,
     saved,
     exists,
-    loading,
+    loading
   };
 };
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onCommerceServiceReservationCreate,
+  onCommerceServiceReservationCreate
 })(CommerceCourtReservationRegister);

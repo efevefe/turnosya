@@ -42,8 +42,8 @@ class DatePicker extends Component {
             dateTouchBody: {
               borderBottomWidth: borderBottomWidth,
               borderColor: color,
-              paddingRight: 5,
-            },
+              paddingRight: 5
+            }
           }}
           style={{ width }}
         />
@@ -56,30 +56,30 @@ class DatePicker extends Component {
 const styles = StyleSheet.create({
   labelStyle: {
     fontSize: 12,
-    fontWeight: 'normal',
+    fontWeight: 'normal'
   },
   errorMessageStyle: {
     margin: 5,
     marginHorizontal: 0,
     color: 'red',
-    fontSize: 12,
+    fontSize: 12
   },
   dateInput: {
-    borderWidth: 0,
+    borderWidth: 0
   },
   dateText: {
     alignSelf: 'flex-start',
     fontSize: 13,
-    marginLeft: 5,
+    marginLeft: 5
   },
   placeholderText: {
     alignSelf: 'flex-start',
     fontSize: 13,
-    marginLeft: 5,
+    marginLeft: 5
   },
   disabled: {
-    backgroundColor: 'transparent',
-  },
+    backgroundColor: 'transparent'
+  }
 });
 
 export { DatePicker };

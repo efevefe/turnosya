@@ -15,7 +15,7 @@ import {
   onScheduleDelete,
   onNextReservationsRead,
   onScheduleFormOpen,
-  onScheduleRead,
+  onScheduleRead
 } from '../../actions';
 
 class CommerceSchedulesList extends Component {
@@ -25,24 +25,24 @@ class CommerceSchedulesList extends Component {
     optionsVisible: false,
     lastReservationDate: null,
     reservationsToCancel: [],
-    selectedSchedule: {},
+    selectedSchedule: {}
   };
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerLeft: navigation.getParam('leftIcon'),
+      headerLeft: navigation.getParam('leftIcon')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      leftIcon: this.renderBackButton(),
+      leftIcon: this.renderBackButton()
     });
 
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
       date: moment(),
-      employeeId: this.props.employeeId,
+      employeeId: this.props.employeeId
     });
   }
 
@@ -60,7 +60,7 @@ class CommerceSchedulesList extends Component {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.props.navigation.getParam('selectedDate'),
-      employeeId: this.props.employeeId,
+      employeeId: this.props.employeeId
     });
 
     this.props.navigation.goBack();
@@ -69,7 +69,7 @@ class CommerceSchedulesList extends Component {
   onScheduleAddPress = () => {
     this.props.onScheduleFormOpen();
     this.props.navigation.navigate('scheduleRegister', {
-      title: 'Nuevo horario',
+      title: 'Nuevo horario'
     });
   };
 
@@ -90,7 +90,7 @@ class CommerceSchedulesList extends Component {
 
     this.props.navigation.navigate('scheduleRegister', {
       schedule: selectedSchedule,
-      title: 'Modificar horario',
+      title: 'Modificar horario'
     });
   };
 
@@ -106,7 +106,7 @@ class CommerceSchedulesList extends Component {
       commerceId,
       startDate,
       endDate: selectedSchedule.endDate,
-      employeeId,
+      employeeId
     });
 
     this.setState({ optionsVisible: false, reservationsToCancel: [] });
@@ -132,7 +132,7 @@ class CommerceSchedulesList extends Component {
       lastReservationDate: formattedMoment(),
       reservationsToCancel: nextReservations,
       deleteModalVisible: false,
-      deleteConfirmVisible: true,
+      deleteConfirmVisible: true
     });
   };
 
@@ -143,14 +143,14 @@ class CommerceSchedulesList extends Component {
       commerceId: this.props.commerceId,
       schedule: selectedSchedule,
       endDate: lastReservationDate,
-      reservationsToCancel,
+      reservationsToCancel
     });
 
     if (success)
       this.props.onActiveSchedulesRead({
         commerceId: this.props.commerceId,
         date: moment(),
-        employeeId: this.props.employeeId,
+        employeeId: this.props.employeeId
       });
 
     this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
@@ -184,7 +184,7 @@ class CommerceSchedulesList extends Component {
             onPress={() =>
               this.setState({
                 deleteConfirmVisible: true,
-                deleteModalVisible: false,
+                deleteModalVisible: false
               })
             }
           />
@@ -222,7 +222,7 @@ class CommerceSchedulesList extends Component {
   onOptionsPress = selectedSchedule => {
     this.setState({
       selectedSchedule,
-      optionsVisible: true,
+      optionsVisible: true
     });
   };
 
@@ -247,7 +247,7 @@ class CommerceSchedulesList extends Component {
           name: 'md-more',
           type: 'ionicon',
           containerStyle: { height: 20, width: 10 },
-          onPress: () => this.onOptionsPress(item),
+          onPress: () => this.onOptionsPress(item)
         }}
         onLongPress={() => this.onOptionsPress(item)}
         bottomDivider
@@ -316,7 +316,7 @@ const mapStateToProps = state => {
   const { nextReservations } = state.reservationsList;
   const {
     commerceId,
-    area: { areaId },
+    area: { areaId }
   } = state.commerceData;
   const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
@@ -329,5 +329,5 @@ export default connect(mapStateToProps, {
   onScheduleDelete,
   onNextReservationsRead,
   onScheduleFormOpen,
-  onScheduleRead,
+  onScheduleRead
 })(CommerceSchedulesList);

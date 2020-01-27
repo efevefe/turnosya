@@ -5,7 +5,7 @@ import {
   ON_ONLY_FAVORITE_COMMERCES_READING,
   ON_AREAS_READING,
   ON_AREAS_SEARCH_READ,
-  ON_COMMERCES_LIST_VALUE_CHANGE,
+  ON_COMMERCES_LIST_VALUE_CHANGE
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -17,7 +17,7 @@ const INITIAL_STATE = {
   provinceNameFilter: '',
   locationButtonIndex: 0,
   locationRadiusKms: 5,
-  markers: [],
+  markers: []
 };
 
 export default (state = INITIAL_STATE, action) => {

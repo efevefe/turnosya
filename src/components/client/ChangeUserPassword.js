@@ -24,11 +24,11 @@ class ChangeUserPassword extends Component {
       this.setState({ newPasswordError: 'Dato requerido' });
     } else if (!validateValueType('password', this.props.newPassword)) {
       this.setState({
-        newPasswordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres',
+        newPasswordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
       });
     } else if (this.props.newPassword === this.props.password) {
       this.setState({
-        newPasswordError: 'La nueva contraseña debe ser diferente a la actual',
+        newPasswordError: 'La nueva contraseña debe ser diferente a la actual'
       });
     } else {
       this.setState({ newPasswordError: '' });
@@ -60,7 +60,7 @@ class ChangeUserPassword extends Component {
       this.props.onUserPasswordUpdate(
         {
           password: this.props.password,
-          newPassword: this.props.newPassword,
+          newPassword: this.props.newPassword
         },
         this.props.navigation
       );
@@ -74,7 +74,7 @@ class ChangeUserPassword extends Component {
           containerStyle={{
             padding: 5,
             paddingTop: 10,
-            borderRadius: 10,
+            borderRadius: 10
           }}
         >
           <CardSection>
@@ -132,12 +132,12 @@ const mapStateToProps = state => {
     password,
     newPassword,
     confirmPassword,
-    reauthError: error,
+    reauthError: error
   };
 };
 
 export default connect(mapStateToProps, {
   onLoginValueChange,
   onClientDataValueChange,
-  onUserPasswordUpdate,
+  onUserPasswordUpdate
 })(ChangeUserPassword);

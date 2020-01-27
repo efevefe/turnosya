@@ -13,7 +13,7 @@ class RegisterForm extends Component {
     confirmPasswordError: '',
     firstNameError: '',
     lastNameError: '',
-    phoneError: '',
+    phoneError: ''
   };
 
   componentDidMount() {
@@ -27,7 +27,7 @@ class RegisterForm extends Component {
         password: this.props.password,
         firstName: this.props.firstName,
         lastName: this.props.lastName,
-        phone: this.props.phone,
+        phone: this.props.phone
       });
     }
   };
@@ -51,7 +51,7 @@ class RegisterForm extends Component {
       return false;
     } else if (!validateValueType('password', this.props.password)) {
       this.setState({
-        passwordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres',
+        passwordError: 'La contraseña debe ser alfanumérica y contener al menos 6 caracteres'
       });
       return false;
     } else {
@@ -229,12 +229,12 @@ const mapStateToProps = state => {
     lastName,
     phone,
     loading,
-    error,
+    error
   };
 };
 
 export default connect(mapStateToProps, {
   onClientDataValueChange,
   onUserRegister,
-  onRegisterFormOpen,
+  onRegisterFormOpen
 })(RegisterForm);

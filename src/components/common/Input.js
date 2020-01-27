@@ -49,7 +49,7 @@ class Input extends Component {
         {...this.props}
         inputContainerStyle={[
           { borderColor: inputColor, borderBottomWidth: enabled ? 1.5 : 1 },
-          this.props.inputContainerStyle,
+          this.props.inputContainerStyle
         ]}
         inputStyle={[styles.inputStyle, { color: enabled ? 'black' : 'grey' }, this.props.inputStyle]}
         labelStyle={[styles.labelStyle, { color: inputColor }, this.props.labelStyle]}
@@ -67,15 +67,15 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     fontSize: 17,
-    lineHeight: 25,
+    lineHeight: 25
   },
   labelStyle: {
     fontSize: 12,
-    fontWeight: 'normal',
+    fontWeight: 'normal'
   },
   errorStyle: {
-    marginLeft: 0,
-  },
+    marginLeft: 0
+  }
 });
 
 export { Input };

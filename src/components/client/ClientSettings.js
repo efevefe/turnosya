@@ -11,7 +11,7 @@ import {
   onLoginValueChange,
   onCommerceValueChange,
   onClientDataValueChange,
-  sendEmailVefification,
+  sendEmailVefification
 } from '../../actions';
 
 class ClientSettings extends Component {
@@ -19,7 +19,7 @@ class ClientSettings extends Component {
 
   componentDidMount() {
     this.setState({
-      providerId: firebase.auth().currentUser.providerData[0].providerId,
+      providerId: firebase.auth().currentUser.providerData[0].providerId
     });
   }
 
@@ -48,7 +48,7 @@ class ClientSettings extends Component {
   onUserDeletePress = () => {
     if (this.props.commerceId) {
       Toast.show({
-        text: 'No podés eliminar tu cuenta porque tenés un negocio',
+        text: 'No podés eliminar tu cuenta porque tenés un negocio'
       });
     } else {
       this.props.onClientDataValueChange({ confirmDeleteVisible: true });
@@ -149,7 +149,7 @@ class ClientSettings extends Component {
             leftIcon={{
               name: 'md-key',
               type: 'ionicon',
-              color: 'black',
+              color: 'black'
             }}
             title="Cambiar Contraseña"
             onPress={() => this.props.navigation.navigate('changeUserPassword')}
@@ -163,7 +163,7 @@ class ClientSettings extends Component {
             leftIcon={{
               name: 'md-mail-open',
               type: 'ionicon',
-              color: 'black',
+              color: 'black'
             }}
             onPress={this.onEmailVerifyPress}
             bottomDivider
@@ -173,7 +173,7 @@ class ClientSettings extends Component {
           leftIcon={{
             name: 'md-trash',
             type: 'ionicon',
-            color: 'black',
+            color: 'black'
           }}
           title="Eliminar Mi Negocio"
           onPress={this.onCommerceDeletePress}
@@ -184,7 +184,7 @@ class ClientSettings extends Component {
           leftIcon={{
             name: 'md-trash',
             type: 'ionicon',
-            color: 'black',
+            color: 'black'
           }}
           title="Eliminar Cuenta"
           onPress={this.onUserDeletePress}
@@ -202,8 +202,8 @@ class ClientSettings extends Component {
 const styles = StyleSheet.create({
   containerStyle: {
     alignSelf: 'stretch',
-    flex: 1,
-  },
+    flex: 1
+  }
 });
 
 const mapStateToProps = state => {
@@ -224,7 +224,7 @@ const mapStateToProps = state => {
     password,
     reauthError: error,
     confirmUserDeleteVisible,
-    confirmCommerceDeleteVisible,
+    confirmCommerceDeleteVisible
   };
 };
 
@@ -234,5 +234,5 @@ export default connect(mapStateToProps, {
   onLoginValueChange,
   onCommerceValueChange,
   onClientDataValueChange,
-  sendEmailVefification,
+  sendEmailVefification
 })(ClientSettings);

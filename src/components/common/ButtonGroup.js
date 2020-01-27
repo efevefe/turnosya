@@ -20,22 +20,22 @@ const styles = StyleSheet.create({
   containerStyle: {
     borderColor: MAIN_COLOR,
     height: 45,
-    borderRadius: 8,
+    borderRadius: 8
   },
   innerBorderStyle: {
-    color: MAIN_COLOR,
+    color: MAIN_COLOR
   },
   selectedTextStyle: {
-    color: 'white',
+    color: 'white'
   },
   selectedButtonStyle: {
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: MAIN_COLOR
   },
   textStyle: {
     color: MAIN_COLOR,
     textAlign: 'center',
-    fontSize: 12,
-  },
+    fontSize: 12
+  }
 });
 
 export { ButtonGroup };

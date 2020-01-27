@@ -23,7 +23,7 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_ROLE_ASSIGNED,
-  ON_CLIENT_DATA_VALUE_CHANGE,
+  ON_CLIENT_DATA_VALUE_CHANGE
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -60,7 +60,7 @@ export const onCommerceOpen = commerceId => dispatch => {
 
         dispatch({
           type: ON_ROLE_ASSIGNED,
-          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id },
+          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id }
         });
       }
 
@@ -94,7 +94,7 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       latitude,
       longitude,
       softDelete: null,
-      creationDate: new Date(),
+      creationDate: new Date()
     });
 
     const commerceId = commerceRef.id;
@@ -114,7 +114,7 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       softDelete: null,
       role: { name: ROLES.OWNER.name, roleId: ROLES.OWNER.roleId },
       inviteDate: new Date(),
-      startDate: new Date(),
+      startDate: new Date()
     });
 
     await batch.commit();
@@ -127,12 +127,12 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       address,
       city,
       provinceName: province.name,
-      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {}),
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {})
     });
 
     dispatch({
       type: ON_ROLE_ASSIGNED,
-      payload: { role: ROLES.OWNER, employeeId: employeesRef.id },
+      payload: { role: ROLES.OWNER, employeeId: employeesRef.id }
     });
 
     dispatch({ type: ON_COMMERCE_VALUE_CHANGE, payload: { commerceId } });
@@ -168,8 +168,8 @@ export const onCommerceRead = commerceId => async dispatch => {
         ...doc.data(),
         provincesList: [province],
         areasList: [area],
-        commerceId: doc.id,
-      },
+        commerceId: doc.id
+      }
     });
 
     return true;
@@ -210,7 +210,7 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
     headerPicture,
     commerceId,
     latitude,
-    longitude,
+    longitude
   } = commerceData;
 
   let profilePictureURL = null;
@@ -229,7 +229,7 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
       .update({
         ...commerceData,
         profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
-        headerPicture: headerPictureURL ? headerPictureURL : headerPicture,
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
       });
 
     await index.saveObject({
@@ -241,15 +241,15 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
       name,
       city,
       provinceName: province.name,
-      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {}),
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {})
     });
 
     dispatch({
       type: ON_COMMERCE_UPDATED,
       payload: {
         profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
-        headerPicture: headerPictureURL ? headerPictureURL : headerPicture,
-      },
+        headerPicture: headerPictureURL ? headerPictureURL : headerPicture
+      }
     });
 
     navigation.goBack();
@@ -338,7 +338,7 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
 
         dispatch({
           type: ON_CLIENT_DATA_VALUE_CHANGE,
-          payload: { commerceId: null },
+          payload: { commerceId: null }
         });
 
         navigation && navigation.navigate('client');

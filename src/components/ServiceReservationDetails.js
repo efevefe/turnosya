@@ -53,7 +53,7 @@ class ServiceReservationDetails extends Component {
       default:
         return {
           name: 'md-calendar',
-          type: 'ionicon',
+          type: 'ionicon'
         };
     }
   };
@@ -108,40 +108,40 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingTop: 15,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   avatarStyle: {
     borderWidth: 3,
     borderColor: MAIN_COLOR,
     margin: 12,
-    marginBottom: 8,
+    marginBottom: 8
   },
   contentContainer: {
     alignSelf: 'stretch',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   bigText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   mediumText: {
-    fontSize: 17,
+    fontSize: 17
   },
   regularText: {
-    fontSize: 14,
+    fontSize: 14
   },
   infoText: {
-    fontSize: 13,
+    fontSize: 13
   },
   divider: {
     margin: 10,
     marginLeft: 40,
     marginRight: 40,
-    backgroundColor: 'grey',
+    backgroundColor: 'grey'
   },
   cardSections: {
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 });
 
 export default ServiceReservationDetails;

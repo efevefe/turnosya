@@ -15,7 +15,7 @@ import {
   onCommerceReservationsRead,
   onReservationValueChange,
   onCourtsRead,
-  isCourtDisabledOnSlot,
+  isCourtDisabledOnSlot
 } from '../../actions';
 
 class CommerceCourtsSchedule extends Component {
@@ -23,20 +23,20 @@ class CommerceCourtsSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
+      headerRight: navigation.getParam('rightIcon')
     };
   };
 
   componentDidMount() {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
-      selectedDate: this.state.selectedDate,
+      selectedDate: this.state.selectedDate
     });
 
     this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
 
     this.props.navigation.setParams({
-      rightIcon: this.renderConfigurationButton(),
+      rightIcon: this.renderConfigurationButton()
     });
   }
 
@@ -57,13 +57,13 @@ class CommerceCourtsSchedule extends Component {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
-      selectedDate: date,
+      selectedDate: date
     });
 
     if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
-        selectedDate: date,
+        selectedDate: date
       });
     }
 
@@ -75,12 +75,12 @@ class CommerceCourtsSchedule extends Component {
 
     this.props.onReservationValueChange({
       startDate,
-      endDate,
+      endDate
     });
 
     this.props.navigation.navigate('commerceCourtsList', {
       selectedCourtTypes: this.state.selectedCourtTypes,
-      title: startDate.format('DD') + ' de ' + MONTHS[startDate.month()] + ', ' + startDate.format('HH:mm') + ' hs.',
+      title: startDate.format('DD') + ' de ' + MONTHS[startDate.month()] + ', ' + startDate.format('HH:mm') + ' hs.'
     });
   };
 
@@ -123,7 +123,7 @@ class CommerceCourtsSchedule extends Component {
         ...slot,
         free: courtsAvailable - reserved,
         total: courts.length,
-        available,
+        available
       };
     });
 
@@ -145,7 +145,7 @@ class CommerceCourtsSchedule extends Component {
   onScheduleShiftsPress = () => {
     this.setState({ modal: false });
     this.props.navigation.navigate('schedulesList', {
-      selectedDate: this.state.selectedDate,
+      selectedDate: this.state.selectedDate
     });
   };
 
@@ -161,7 +161,7 @@ class CommerceCourtsSchedule extends Component {
       reservationMinLength,
       loadingSchedule,
       loadingReservations,
-      loadingCourts,
+      loadingCourts
     } = this.props;
 
     const { selectedDate } = this.state;
@@ -221,7 +221,7 @@ const mapStateToProps = state => {
     courts,
     loadingSchedule,
     loadingReservations,
-    loadingCourts,
+    loadingCourts
   };
 };
 
@@ -230,5 +230,5 @@ export default connect(mapStateToProps, {
   onScheduleValueChange,
   onCommerceReservationsRead,
   onReservationValueChange,
-  onCourtsRead,
+  onCourtsRead
 })(CommerceCourtsSchedule);

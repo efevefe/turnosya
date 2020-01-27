@@ -34,7 +34,7 @@ class SearchBox extends Component {
 
 SearchBar.propTypes = {
   refine: PropTypes.func.isRequired,
-  currentRefinement: PropTypes.string,
+  currentRefinement: PropTypes.string
 };
 
 const styles = StyleSheet.create({
@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 1
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-    elevation: 2,
+    elevation: 2
   },
   searchBarContainer: {
     alignSelf: 'stretch',
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingRight: 5,
     paddingLeft: 5,
-    marginTop: Constants.statusBarHeight,
-  },
+    marginTop: Constants.statusBarHeight
+  }
 });
 
 const mapStateToProps = state => {

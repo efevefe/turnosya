@@ -39,7 +39,7 @@ class Hits extends Component {
 Hits.propTypes = {
   hits: PropTypes.array.isRequired,
   refine: PropTypes.func.isRequired,
-  hasMore: PropTypes.bool.isRequired,
+  hasMore: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => {

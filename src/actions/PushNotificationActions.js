@@ -55,16 +55,16 @@ const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
           sound: 'default',
           title,
           body,
-          _displayInForeground: true,
+          _displayInForeground: true
         };
         const response = await fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(message),
+          body: JSON.stringify(message)
         });
         const data = response.status;
       });
@@ -94,7 +94,7 @@ const getDeviceToken = async () => {
       return await Notifications.getExpoPushTokenAsync();
     } else {
       Toast.show({
-        text: 'Debe usar un dispositivo físico para el uso de notificaciones',
+        text: 'Debe usar un dispositivo físico para el uso de notificaciones'
       });
       return -1;
     }

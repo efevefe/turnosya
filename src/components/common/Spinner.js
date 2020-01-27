@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
     margin: 0,
     position: 'absolute',
     height: '100%',
-    width: '100%',
-  },
+    width: '100%'
+  }
 });
 
 export { Spinner };

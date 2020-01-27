@@ -7,7 +7,7 @@ import { onReservationValueChange, isCourtDisabledOnSlot, onNewReservation } fro
 
 class CommerceCourtsList extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: navigation.getParam('title'),
+    title: navigation.getParam('title')
   });
 
   courtReservation = court => {

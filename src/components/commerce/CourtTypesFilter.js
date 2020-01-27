@@ -90,7 +90,7 @@ class CourtTypesFilter extends Component {
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: MAIN_COLOR,
-    paddingTop: 4,
+    paddingTop: 4
   },
   buttonStyle: {
     width: 'auto',
@@ -99,27 +99,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     marginRight: 8,
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: MAIN_COLOR
   },
   containerStyle: {
     height: 30,
     borderWidth: 0,
     margin: 0,
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: MAIN_COLOR
   },
   textStyle: {
     fontSize: 13,
-    color: 'white',
+    color: 'white'
   },
   innerBorderStyle: {
-    width: 0,
+    width: 0
   },
   selectedButtonStyle: {
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   },
   selectedTextStyle: {
-    color: MAIN_COLOR,
-  },
+    color: MAIN_COLOR
+  }
 });
 
 const mapStateToProps = state => {

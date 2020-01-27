@@ -10,7 +10,7 @@ class CommerceServicesList extends Component {
     if (this.props.employee) {
       this.unsubscribeServices = this.props.onServicesByEmployeeRead({
         commerceId: this.props.commerce.objectID,
-        employeeId: this.props.employee.id,
+        employeeId: this.props.employee.id
       });
     } else {
       this.unsubscribeServices = this.props.onServicesRead(this.props.commerce.objectID);
@@ -41,7 +41,7 @@ class CommerceServicesList extends Component {
         rightIcon={{
           name: 'ios-arrow-forward',
           type: 'ionicon',
-          color: 'black',
+          color: 'black'
         }}
         bottomDivider
         onPress={() => this.onServicePress(item)}
@@ -77,5 +77,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onServicesRead,
   onReservationValueChange,
-  onServicesByEmployeeRead,
+  onServicesByEmployeeRead
 })(CommerceServicesList);

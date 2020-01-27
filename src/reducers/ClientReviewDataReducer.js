@@ -10,7 +10,7 @@ import {
   ON_CLIENT_REVIEW_DELETE_FAIL,
   ON_CLIENT_REVIEW_READING,
   ON_CLIENT_REVIEW_READ,
-  ON_CLIENT_REVIEW_READ_FAIL,
+  ON_CLIENT_REVIEW_READ_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -20,7 +20,7 @@ const INITIAL_STATE = {
   reviewId: '',
   saveLoading: false,
   deleteLoading: false,
-  dataLoading: false,
+  dataLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {

@@ -15,7 +15,7 @@ import {
   ON_EMAIL_VERIFY_REMINDED,
   ON_PASSWORD_RESET_EMAIL_SENDING,
   ON_PASSWORD_RESET_EMAIL_SENT,
-  ON_PASSWORD_RESET_EMAIL_FAIL,
+  ON_PASSWORD_RESET_EMAIL_FAIL
 } from './types';
 
 import getEnvVars from '../../environment';
@@ -44,7 +44,7 @@ export const onLogin = ({ email, password }) => {
         onPushNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
-            type: ON_EMAIL_VERIFY_REMINDED,
+            type: ON_EMAIL_VERIFY_REMINDED
           });
       })
       .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
@@ -56,7 +56,7 @@ export const onFacebookLogin = () => {
     dispatch({ type: ON_LOGIN_FACEBOOK });
 
     Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
-      permissions: facebookPermissions,
+      permissions: facebookPermissions
     })
       .then(({ type, token }) => {
         if (type === 'success') {
@@ -75,7 +75,7 @@ export const onFacebookLogin = () => {
                 phone: user.phoneNumber,
                 profilePicture: additionalUserInfo.profile.picture.data.url,
                 commerceId: null,
-                softDelete: null,
+                softDelete: null
               };
 
               if (additionalUserInfo.isNewUser) {
@@ -105,7 +105,7 @@ export const onGoogleLogin = () => {
     Google.logInAsync({
       iosClientId,
       androidClientId,
-      scopes: googleScopes,
+      scopes: googleScopes
     })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
@@ -125,7 +125,7 @@ export const onGoogleLogin = () => {
                 phone: user.phoneNumber,
                 profilePicture: additionalUserInfo.profile.picture,
                 commerceId: null,
-                softDelete: null,
+                softDelete: null
               };
 
               if (additionalUserInfo.isNewUser) {
@@ -191,7 +191,7 @@ export const userReauthenticate = async (password = null) => {
       credential = await firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
     } else if (provider == 'facebook.com') {
       await Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
-        permissions: facebookPermissions,
+        permissions: facebookPermissions
       }).then(({ type, token }) => {
         if (type === 'success') {
           credential = firebase.auth.FacebookAuthProvider.credential(token);
@@ -201,7 +201,7 @@ export const userReauthenticate = async (password = null) => {
       await Google.logInAsync({
         iosClientId,
         androidClientId,
-        scopes: googleScopes,
+        scopes: googleScopes
       }).then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
           credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);

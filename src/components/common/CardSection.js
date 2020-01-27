@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
   containerStyle: {
     alignSelf: 'stretch',
     padding: 5,
-    position: 'relative',
-  },
+    position: 'relative'
+  }
 });
 
 export { CardSection };

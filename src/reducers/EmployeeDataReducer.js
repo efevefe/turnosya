@@ -8,7 +8,7 @@ import {
   ON_EMPLOYEE_SAVE_FAIL,
   ON_EMPLOYEE_DELETED,
   ON_EMPLOYEE_CREATED,
-  ON_EMPLOYEE_UPDATED,
+  ON_EMPLOYEE_UPDATED
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -22,7 +22,7 @@ const INITIAL_STATE = {
   employeeId: '',
   emailLoading: false,
   emailError: '',
-  saveLoading: false,
+  saveLoading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -44,7 +44,7 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_EMPLOYEE_SAVE_FAIL:
       Toast.show({
-        text: 'Ha ocurrido un error. Por favor inténtelo de nuevo.',
+        text: 'Ha ocurrido un error. Por favor inténtelo de nuevo.'
       });
       return { ...state, saveLoading: false };
 

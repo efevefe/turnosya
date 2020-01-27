@@ -20,7 +20,7 @@ const onProvincesRead = prop => {
             ? provincesList.push({ value: doc.id, label: doc.data().name })
             : provincesList.push({
                 value: doc.data()[prop],
-                label: doc.data().name,
+                label: doc.data().name
               })
         );
         dispatch({ type: ON_PROVINCES_READ, payload: provincesList });

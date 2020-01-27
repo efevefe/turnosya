@@ -6,7 +6,7 @@ import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onMonthlyEarningsReadByYear,
-  yearsOfActivity,
+  yearsOfActivity
 } from '../../../actions';
 
 class MonthlyEarningsChart extends Component {
@@ -24,7 +24,7 @@ class MonthlyEarningsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />,
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -32,7 +32,7 @@ class MonthlyEarningsChart extends Component {
     this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.modalYear);
 
     this.props.onCommerceReportValueChange({
-      selectedYear: this.state.modalYear,
+      selectedYear: this.state.modalYear
     });
 
     this.setState({ modal: false });
@@ -45,7 +45,7 @@ class MonthlyEarningsChart extends Component {
 
     const dataLine = {
       labels: this.props.data.labels,
-      datasets: [{ data: data.length ? data : Array(12).fill(0) }],
+      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
     };
 
     return (
@@ -56,7 +56,7 @@ class MonthlyEarningsChart extends Component {
           onBackdropPress={() =>
             this.setState({
               modal: false,
-              modalYear: this.props.selectedYear,
+              modalYear: this.props.selectedYear
             })
           }
         >
@@ -94,7 +94,7 @@ const mapStateToProps = state => {
     selectedYear,
     commerceId,
     loading,
-    error,
+    error
   };
 };
 
@@ -102,5 +102,5 @@ export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onMonthlyEarningsReadByYear,
-  yearsOfActivity,
+  yearsOfActivity
 })(MonthlyEarningsChart);

@@ -6,7 +6,7 @@ import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, E
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onReservedAndCancelledShiftReadByRange,
+  onReservedAndCancelledShiftReadByRange
 } from '../../../actions/CommerceReportsActions';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
@@ -23,7 +23,7 @@ class ReservedAndCancelledShiftChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate,
+      modalEndDate: endDate
     };
   }
 
@@ -33,7 +33,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />,
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -46,7 +46,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate),
+      endDate: moment(this.state.modalEndDate)
     });
 
     this.setState({ modal: false });
@@ -61,7 +61,7 @@ class ReservedAndCancelledShiftChart extends Component {
           count: this.props.data.data[i],
           color: colors[i],
           legendFontColor: 'black',
-          legendFontSize: 15,
+          legendFontSize: 15
         });
       }
 
@@ -102,7 +102,7 @@ class ReservedAndCancelledShiftChart extends Component {
             this.setState({
               modal: false,
               modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate,
+              modalEndDate: this.props.endDate
             })
           }
         >
@@ -110,7 +110,7 @@ class ReservedAndCancelledShiftChart extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-around',
-              paddingTop: 10,
+              paddingTop: 10
             }}
           >
             <DatePicker
@@ -150,12 +150,12 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
-    loading,
+    loading
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  onReservedAndCancelledShiftReadByRange,
+  onReservedAndCancelledShiftReadByRange
 })(ReservedAndCancelledShiftChart);

@@ -13,7 +13,7 @@ class CommerceCourtReservationRegister extends Component {
     priceButtons: [],
     prices: [],
     nameError: '',
-    phoneError: '',
+    phoneError: ''
   };
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class CommerceCourtReservationRegister extends Component {
     this.setState({ selectedIndex });
     this.props.onReservationValueChange({
       price: this.state.prices[selectedIndex],
-      light: !!selectedIndex, // 0 = false = no light // 1 = true = light
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -135,7 +135,7 @@ class CommerceCourtReservationRegister extends Component {
         startDate,
         endDate,
         light,
-        price,
+        price
       });
     }
   };
@@ -165,19 +165,19 @@ class CommerceCourtReservationRegister extends Component {
 
 const styles = StyleSheet.create({
   cardSection: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch',
-  },
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {
   const {
     commerceId,
-    area: { areaId },
+    area: { areaId }
   } = state.commerceData;
   const {
     clientName,
@@ -189,7 +189,7 @@ const mapStateToProps = state => {
     price,
     saved,
     exists,
-    loading,
+    loading
   } = state.reservation;
 
   return {
@@ -204,11 +204,11 @@ const mapStateToProps = state => {
     price,
     saved,
     exists,
-    loading,
+    loading
   };
 };
 
 export default connect(mapStateToProps, {
   onReservationValueChange,
-  onCommerceCourtReservationCreate,
+  onCommerceCourtReservationCreate
 })(CommerceCourtReservationRegister);

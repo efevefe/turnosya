@@ -9,14 +9,14 @@ import CommercesAreaItem from './CommercesAreaItem';
 class CommercesAreas extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
+      headerRight: navigation.getParam('rightIcon')
     };
   };
 
   componentDidMount() {
     this.props.onAreasRead();
     this.props.navigation.setParams({
-      rightIcon: this.renderRightIcon(),
+      rightIcon: this.renderRightIcon()
     });
   }
 
@@ -34,7 +34,7 @@ class CommercesAreas extends Component {
               marginRight: 5,
               textAlign: 'center',
               alignSelf: 'center',
-              paddingRight: 2,
+              paddingRight: 2
             }}
           >
             Ver todos

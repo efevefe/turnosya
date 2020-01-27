@@ -14,7 +14,7 @@ import {
   ON_EMAIL_VERIFY_REMINDED,
   ON_PASSWORD_RESET_EMAIL_SENDING,
   ON_PASSWORD_RESET_EMAIL_SENT,
-  ON_PASSWORD_RESET_EMAIL_FAIL,
+  ON_PASSWORD_RESET_EMAIL_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -25,7 +25,7 @@ const INITIAL_STATE = {
   loadingFacebook: false,
   loadingGoogle: false,
   sendingEmail: false,
-  error: '',
+  error: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -39,7 +39,7 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_EMAIL_VERIFY_REMINDED:
       Toast.show({
-        text: 'Recuerda validar tu email para mayores funcionalidades!',
+        text: 'Recuerda validar tu email para mayores funcionalidades!'
       });
       return state;
 
@@ -64,7 +64,7 @@ export default (state = INITIAL_STATE, action) => {
         error: 'Usuario o contraseña incorrectos',
         loadingLogin: false,
         loadingFacebook: false,
-        loadingGoogle: false,
+        loadingGoogle: false
       };
 
     case ON_LOGOUT:
