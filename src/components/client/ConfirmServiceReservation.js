@@ -7,20 +7,40 @@ import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
+import { isEmailVerified } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {
-  onConfirmReservation = () => {
-    const { commerce, service, employee, startDate, endDate, price, areaId } = this.props;
+  state = { modal: false };
 
-    this.props.onClientServiceReservationCreate({
-      commerceId: commerce.objectID,
-      areaId,
-      serviceId: service.id,
-      employeeId: employee.id,
-      startDate,
-      endDate,
-      price
-    });
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const { commerce, service, employee, startDate, endDate, price, areaId } = this.props;
+
+        this.props.onClientServiceReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          serviceId: service.id,
+          employeeId: employee.id,
+          startDate,
+          endDate,
+          price
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
@@ -77,6 +97,7 @@ class ConfirmServiceReservation extends Component {
           price={price}
         />
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }

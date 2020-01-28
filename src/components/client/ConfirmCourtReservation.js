@@ -8,6 +8,8 @@ import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
+import { isEmailVerified } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -59,26 +61,42 @@ class ConfirmCourtReservation extends Component {
     }
   };
 
-  onConfirmReservation = () => {
-    const { commerce, court, courtType, startDate, endDate, areaId, price, light } = this.props;
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const { commerce, court, courtType, startDate, endDate, areaId, price, light } = this.props;
 
-    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
-      MONTHS[moment(startDate).month()]
-    } a las ${moment(startDate).format('HH:mm')} fue reservado`;
+        const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
+          MONTHS[moment(startDate).month()]
+        } a las ${moment(startDate).format('HH:mm')} fue reservado`;
 
-    const title = 'Turno Reservado';
+        const title = 'Turno Reservado';
 
-    this.props.onClientCourtReservationCreate({
-      commerceId: commerce.objectID,
-      areaId,
-      courtId: court.id,
-      courtType,
-      startDate,
-      endDate,
-      price,
-      light,
-      notification: { title, body }
-    });
+        this.props.onClientCourtReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          courtId: court.id,
+          courtType,
+          startDate,
+          endDate,
+          price,
+          light,
+          notification: { title, body }
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
@@ -137,6 +155,7 @@ class ConfirmCourtReservation extends Component {
         />
         {this.renderPriceButtons()}
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }

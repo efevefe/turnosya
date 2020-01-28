@@ -47,9 +47,7 @@ class ClientSettings extends Component {
 
   onUserDeletePress = () => {
     if (this.props.commerceId) {
-      Toast.show({
-        text: 'No podés eliminar tu cuenta porque tenés un negocio'
-      });
+      Toast.show({ text: 'No podés eliminar tu cuenta porque tenés un negocio' });
     } else {
       this.props.onClientDataValueChange({ confirmDeleteVisible: true });
     }
@@ -133,11 +131,7 @@ class ClientSettings extends Component {
   onEmailVerifyPress = async () => {
     const emailVerified = await isEmailVerified();
 
-    if (emailVerified) {
-      Toast.show({ text: 'Su cuenta ya está verificada' });
-    } else {
-      this.props.sendEmailVefification();
-    }
+    emailVerified ? Toast.show({ text: 'Su cuenta ya está verificada' }) : this.props.sendEmailVefification();
   };
 
   render() {
