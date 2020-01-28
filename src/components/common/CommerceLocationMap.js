@@ -236,8 +236,13 @@ class CommerceLocationMap extends React.Component {
     }
   };
 
+  onUserLocationFound = location => {
+    //ver el locationasked
+    this.props.onLocationValueChange({ ...location, userLocation: { ...location } });
+  };
+
   renderLocationMessage = () => {
-    if (this.state.locationAsked) return <LocationMessages />;
+    if (this.state.locationAsked) return <LocationMessages onLocationFound={this.onUserLocationFound} />;
   };
 
   render() {
@@ -327,6 +332,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onLocationValueChange
-})(CommerceLocationMap);
+export default connect(mapStateToProps, { onLocationValueChange })(CommerceLocationMap);

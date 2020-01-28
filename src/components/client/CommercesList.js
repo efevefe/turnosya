@@ -81,11 +81,6 @@ class CommercesList extends Component {
           aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
           aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
         }
-      : this.props.userLocation.latitude
-      ? {
-          aroundLatLng: `${this.props.userLocation.latitude}, ${this.props.userLocation.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-        }
       : null;
   };
 

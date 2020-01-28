@@ -7,10 +7,9 @@ import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Input, Spinner, Menu, MenuItem, IconButton } from '../common';
-import LocationMessages from '../common/LocationMessages';
 import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import { onUserRead, onUserUpdate, onClientDataValueChange, onLocationValuesReset } from '../../actions';
+import { onUserRead, onUserUpdate, onClientDataValueChange } from '../../actions';
 
 class ClientProfile extends Component {
   state = {
@@ -33,7 +32,6 @@ class ClientProfile extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
-    this.props.onLocationValuesReset();
   }
 
   onRefresh = () => {
@@ -283,8 +281,6 @@ class ClientProfile extends Component {
           </View>
           {this.renderFullName()}
           {this.renderLocation()}
-          <LocationMessages />
-          {/* Este componente hace que la app crashee al querer cambiar la foto */}
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('clientReviewsList', {
@@ -421,9 +417,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onUserRead,
-  onUserUpdate,
-  onClientDataValueChange,
-  onLocationValuesReset
-})(ClientProfile);
+export default connect(mapStateToProps, { onUserRead, onUserUpdate, onClientDataValueChange })(ClientProfile);

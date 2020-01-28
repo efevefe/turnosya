@@ -118,8 +118,6 @@ class CommerceProfile extends Component {
         longitude
       }
     });
-
-    // this.props.onLocationChange(location); ///what? de donde sale esta variable 'location' //lo veo en la proxima user
   };
 
   onRefresh = () => {

@@ -76,15 +76,15 @@ class CommerceFiltersScreen extends Component {
   }
 
   onLocationOptionPress(buttonIndex) {
+    //seguir viendo
+    this.props.onCommercesListValueChange({ locationButtonIndex: buttonIndex });
     this.setState({ locationButtonIndex: buttonIndex });
 
     switch (buttonIndex) {
       case 0:
-        this.props.onUserLocationChange();
         this.props.onSelectedLocationChange();
         break;
       case 1:
-        this.props.onSelectedLocationChange();
         break;
       case 2:
         this.props.onUserLocationChange();
@@ -93,8 +93,14 @@ class CommerceFiltersScreen extends Component {
     }
   }
 
+  onCurrentLocationFound = location => {
+    this.props.onSelectedLocationChange(location);
+  };
+
   renderLocationMessage() {
-    return this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+    return this.state.locationButtonIndex === 1 ? (
+      <LocationMessages onLocationFound={this.onCurrentLocationFound} />
+    ) : null;
   }
 
   renderRadiusSlider = () =>
