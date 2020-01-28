@@ -3,12 +3,11 @@ import 'firebase/firestore'
 import {
   ON_CLIENT_NOTIFICATIONS_READ,
   ON_CLIENT_NOTIFICATIONS_READING,
-  ON_CLIENT_NOTIFICATIONS_DELETED,
-  ON_CLIENT_NOTIFICATIONS_DELETED_FAIL,
+  ON_CLIENT_NOTIFICATIONS_DELETED
 } from './types'
-import moment from 'moment'
 
-export const onCommerceNotificationsRead = clientId => dispatch => {
+
+export const onClientNotificationsRead = clientId => dispatch => {
   dispatch({ type: ON_CLIENT_NOTIFICATIONS_READING })
 
   const db = firebase.firestore()
@@ -32,7 +31,7 @@ export const onCommerceNotificationsRead = clientId => dispatch => {
 }
 
 //Registra la notificacion como eliminada
-export const onCommerceNotificationDelete = ({ clientId, notificationId }) => {
+export const onClientNotificationDelete = ({ clientId, notificationId }) => {
   const db = firebase.firestore()
   return dispatch => {
     db.doc(`Profiles/${clientId}/Notifications/${notificationId}`)
