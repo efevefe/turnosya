@@ -35,15 +35,12 @@ class CommerceCourtTypes extends Component {
 
     if (courtTypesList.length) {
       return (
-        <View>
-          <FlatList
-            data={courtTypesList}
-            renderItem={this.renderItem}
-            keyExtractor={courtType => courtType.name}
-            contentContainerStyle={{ paddingBottom: 15 }}
-          />
-          {this.renderModal()}
-        </View>
+        <FlatList
+          data={courtTypesList}
+          renderItem={this.renderItem}
+          keyExtractor={courtType => courtType.name}
+          contentContainerStyle={{ paddingBottom: 15 }}
+        />
       );
     }
 

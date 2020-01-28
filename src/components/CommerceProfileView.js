@@ -11,7 +11,8 @@ import {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
@@ -40,6 +41,8 @@ class CommerceProfileView extends Component {
       commerceId,
       loadingType: 'loading'
     });
+
+    this.props.onEmailVerifyReminded();
   }
 
   componentDidUpdate(prevProps) {
@@ -297,5 +300,6 @@ export default connect(mapStateToProps, {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 })(CommerceProfileView);
