@@ -58,6 +58,9 @@ export const getCurrentPosition = async () => {
       accuracy: Location.Accuracy.High
     });
   } catch (error) {
+    if (error.message.includes('Location services are disabled')) {
+      return { coords: { latitude: null, longitude: null } };
+    }
     console.error(error);
   }
 };

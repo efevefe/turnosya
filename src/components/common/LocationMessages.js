@@ -77,30 +77,32 @@ class LocationMessages extends Component {
       const currentLatLong = await getCurrentPosition();
       const { latitude, longitude } = currentLatLong.coords;
 
-      const [addressResult] = await getAddressFromLatAndLong({ latitude, longitude });
-      const { name, street, city, region, country } = addressResult;
+      if (latitude && longitude) {
+        const [addressResult] = await getAddressFromLatAndLong({ latitude, longitude });
+        const { name, street, city, region, country } = addressResult;
 
-      const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+        const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
-      const location = {
-        address,
-        city,
-        provinceName: region,
-        country,
-        latitude,
-        longitude
-      };
-      // para usar con el simulador
-      const customLocation = {
-        address: 'Prudencio Bustos 23',
-        city: 'Córdoba',
-        country: 'Argentina',
-        latitude: -31.4013135,
-        longitude: -64.226283,
-        provinceName: 'Córdoba'
-      };
-      this.props.onUserLocationChange(customLocation);
-      this.props.onLocationFound && this.props.onLocationFound(customLocation);
+        const location = {
+          address,
+          city,
+          provinceName: region,
+          country,
+          latitude,
+          longitude
+        };
+        // para usar con el simulador
+        const customLocation = {
+          address: 'Prudencio Bustos 23',
+          city: 'Córdoba',
+          country: 'Argentina',
+          latitude: -31.4013135,
+          longitude: -64.226283,
+          provinceName: 'Córdoba'
+        };
+        this.props.onUserLocationChange(customLocation);
+        this.props.onLocationFound && this.props.onLocationFound(customLocation);
+      }
     } catch (error) {
       console.error(error);
     }
