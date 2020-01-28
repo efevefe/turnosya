@@ -21,3 +21,4 @@ export * from './EmployeeDataActions';
 export * from './RoleDataActions';
 export * from './CommerceReportsActions';
 export * from './CommerceNotificationsListAction';
+export * from './ClientNotificationsListAction'

@@ -228,3 +228,12 @@ export const ON_COMMERCE_NOTIFICATIONS_READ = 'on_commerce_notifications_read';
 export const ON_COMMERCE_NOTIFICATIONS_READ_FAIL = 'on_commerce_notifications_read_fail';
 export const ON_COMMERCE_NOTIFICATIONS_DELETED = 'on_commerce_notifications_deleted';
 export const ON_COMMERCE_NOTIFICATIONS_DELETED_FAIL = 'on_commerce_notifications_deleted_fail';
+
+
+
+
+export const ON_CLIENT_NOTIFICATIONS_READING = 'on_client_notifications_reading';
+export const ON_CLIENT_NOTIFICATIONS_READ = 'on_client_notifications_read';
+export const ON_CLIENT_NOTIFICATIONS_READ_FAIL = 'on_cliente_notifications_read_fail';
+export const ON_CLIENT_NOTIFICATIONS_DELETED = 'on_client_notifications_deleted';
+export const ON_CLIENT_NOTIFICATIONS_DELETED_FAIL = 'on_client_notifications_deleted_fail';
