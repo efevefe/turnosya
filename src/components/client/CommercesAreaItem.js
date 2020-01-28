@@ -9,13 +9,10 @@ class CommercesAreaItem extends Component {
 
   render() {
     const { name, image } = this.props.area;
-    
+
     return (
       <View>
-        <TouchableHighlight
-          onPress={() => this.onButtonPressHandler(name)}
-          underlayColor="transparent"
-        >
+        <TouchableHighlight onPress={() => this.onButtonPressHandler(name)} underlayColor="transparent">
           <Card
             image={(source = image ? { uri: image } : null)}
             containerStyle={{ borderRadius: 10, overflow: 'hidden' }}

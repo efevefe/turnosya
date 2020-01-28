@@ -1,8 +1,4 @@
-import {
-  ON_COMMERCE_REVIEWS_READING,
-  ON_COMMERCE_REVIEWS_READ,
-  ON_COMMERCE_REVIEWS_READ_FAIL
-} from '../actions/types';
+import { ON_COMMERCE_REVIEWS_READING, ON_COMMERCE_REVIEWS_READ, ON_COMMERCE_REVIEWS_READ_FAIL } from '../actions/types';
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = { commerceReviews: [], loading: true };

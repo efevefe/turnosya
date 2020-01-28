@@ -5,14 +5,7 @@ import Constants from 'expo-constants';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 
 const Drawer = props => {
-  const {
-    profilePicture,
-    profilePicturePlaceholder,
-    onProfilePicturePress,
-    name,
-    role,
-    children
-  } = props;
+  const { profilePicture, profilePicturePlaceholder, onProfilePicturePress, name, role, children } = props;
 
   renderName = name => {
     if (!!name) {
@@ -24,15 +17,12 @@ const Drawer = props => {
     if (role) {
       return <Text style={styles.roleStyle}>{role}</Text>;
     }
-  }
+  };
 
   return (
     <View>
       <View style={styles.drawerHeader}>
-        <Image
-          source={require('../../../assets/header-logo.png')}
-          style={styles.headerLogo}
-        />
+        <Image source={require('../../../assets/header-logo.png')} style={styles.headerLogo} />
       </View>
       <View style={styles.drawerHeaderContainer}>
         <Avatar
@@ -79,7 +69,7 @@ const styles = StyleSheet.create({
   roleStyle: {
     fontSize: 13,
     textAlign: 'center',
-    marginBottom: 0,
+    marginBottom: 0
   },
   avatarStyle: {
     borderWidth: 3,

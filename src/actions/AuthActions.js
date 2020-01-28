@@ -19,17 +19,8 @@ import {
 } from './types';
 
 import getEnvVars from '../../environment';
-const {
-  facebookApiKey,
-  facebookPermissions,
-  iosClientId,
-  androidClientId,
-  googleScopes
-} = getEnvVars();
-import {
-  onPushNotificationTokenRegister,
-  onPushNotificationTokenDelete
-} from '../actions/PushNotificationActions';
+const { facebookApiKey, facebookPermissions, iosClientId, androidClientId, googleScopes } = getEnvVars();
+import { onPushNotificationTokenRegister, onPushNotificationTokenDelete } from '../actions/PushNotificationActions';
 
 export const onLoginValueChange = payload => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload };
@@ -50,16 +41,10 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        onPushNotificationTokenRegister(),
-          dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
-        if (!user.user.emailVerified)
-          dispatch({
-            type: ON_EMAIL_VERIFY_REMINDED
-          });
+        onPushNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        if (!user.user.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
       })
-      .catch(error =>
-        dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };
 };
 
@@ -72,9 +57,7 @@ export const onFacebookLogin = () => {
     })
       .then(({ type, token }) => {
         if (type === 'success') {
-          const credential = firebase.auth.FacebookAuthProvider.credential(
-            token
-          );
+          const credential = firebase.auth.FacebookAuthProvider.credential(token);
           firebase
             .auth()
             .signInWithCredential(credential)
@@ -98,23 +81,17 @@ export const onFacebookLogin = () => {
                 db.collection('Profiles')
                   .doc(user.uid)
                   .set(userData)
-                  .then(() =>
-                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData })
-                  );
+                  .then(() => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData }));
               } else {
                 dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
               }
             })
-            .catch(error =>
-              dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
-            );
+            .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
         } else {
           dispatch({ type: ON_LOGIN_FAIL, payload: '' });
         }
       })
-      .catch(error =>
-        dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };
 };
 
@@ -129,10 +106,7 @@ export const onGoogleLogin = () => {
     })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
-          const credential = firebase.auth.GoogleAuthProvider.credential(
-            idToken,
-            accessToken
-          );
+          const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
 
           firebase
             .auth()
@@ -164,16 +138,12 @@ export const onGoogleLogin = () => {
                 () => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
               }
             })
-            .catch(error =>
-              dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
-            );
+            .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
         } else {
           dispatch({ type: ON_LOGIN_FAIL, payload: '' });
         }
       })
-      .catch(error =>
-        dispatch({ type: ON_LOGIN_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };
 };
 
@@ -192,6 +162,17 @@ export const onLogout = commerceId => async dispatch => {
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   } catch (error) {
     return dispatch => dispatch({ type: ON_LOGIN_FAIL });
+  }
+};
+
+export const onEmailVerifyReminded = () => async dispatch => {
+  try {
+    const { currentUser } = firebase.auth();
+    await currentUser.reload();
+
+    if (!currentUser.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -215,10 +196,7 @@ export const userReauthenticate = async (password = null) => {
     let credential;
 
     if (provider == 'password') {
-      credential = await firebase.auth.EmailAuthProvider.credential(
-        currentUser.email,
-        password
-      );
+      credential = await firebase.auth.EmailAuthProvider.credential(currentUser.email, password);
     } else if (provider == 'facebook.com') {
       await Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
         permissions: facebookPermissions
@@ -234,10 +212,7 @@ export const userReauthenticate = async (password = null) => {
         scopes: googleScopes
       }).then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
-          credential = firebase.auth.GoogleAuthProvider.credential(
-            idToken,
-            accessToken
-          );
+          credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
         }
       });
     }

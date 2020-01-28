@@ -10,10 +10,7 @@ import RegisterCommerceTwo from '../components/client/RegisterCommerceTwo';
 import LocationMap from '../components/LocationMap';
 import ClientSettings from '../components/client/ClientSettings';
 import ChangeUserPassword from '../components/client/ChangeUserPassword';
-import {
-  stackNavigationOptions,
-  drawerNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 
 const CommerceRegisterStack = createStackNavigator(
   {
@@ -51,13 +48,7 @@ const ClientSettingsStack = createStackNavigator(
       screen: ClientSettings,
       navigationOptions: ({ navigation }) => ({
         title: 'Configuración',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-            title='Back'
-          />
-        )
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
       })
     },
     changeUserPassword: {

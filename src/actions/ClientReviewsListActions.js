@@ -1,10 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import {
-  ON_CLIENT_REVIEWS_READING,
-  ON_CLIENT_REVIEWS_READ,
-  ON_CLIENT_REVIEWS_READ_FAIL
-} from './types';
+import { ON_CLIENT_REVIEWS_READING, ON_CLIENT_REVIEWS_READ, ON_CLIENT_REVIEWS_READ_FAIL } from './types';
 
 export const onClientReviewsRead = clientId => dispatch => {
   dispatch({ type: ON_CLIENT_REVIEWS_READING });

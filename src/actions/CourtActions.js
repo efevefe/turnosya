@@ -54,16 +54,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  {
-    name,
-    court,
-    ground,
-    price,
-    lightPrice,
-    disabledFrom,
-    disabledTo,
-    commerceId
-  },
+  { name, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -122,12 +113,8 @@ const formatCourt = doc => {
   return {
     ...doc.data(),
     id: doc.id,
-    disabledFrom: doc.data().disabledFrom
-      ? moment(doc.data().disabledFrom.toDate())
-      : null,
-    disabledTo: doc.data().disabledTo
-      ? moment(doc.data().disabledTo.toDate())
-      : null
+    disabledFrom: doc.data().disabledFrom ? moment(doc.data().disabledFrom.toDate()) : null,
+    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null
   };
 };
 
@@ -255,10 +242,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsReadByType = ({
-  commerceId,
-  courtType
-}) => dispatch => {
+export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => dispatch => {
   dispatch({ type: ON_COURT_READING, payload: 'loading' });
 
   const db = firebase.firestore();

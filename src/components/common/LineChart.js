@@ -16,30 +16,24 @@ class LineChart extends Component {
       return (
         <View
           style={StyleSheet.flatten([
-            styles.toolTipContainer, {
+            styles.toolTipContainer,
+            {
               top: selectedPoint.y + chartPosition.y - 28,
-              left: selectedPoint.x + chartPosition.x - 8,
-            }])
-          }>
+              left: selectedPoint.x + chartPosition.x - 8
+            }
+          ])}
+        >
           <Text style={styles.toolTipText}>
-            {(this.props.yAxisLabel ?
-              this.props.yAxisLabel : '')
-              + selectedPoint.value.toString()}
+            {(this.props.yAxisLabel ? this.props.yAxisLabel : '') + selectedPoint.value.toString()}
           </Text>
         </View>
       );
-  }
+  };
 
   renderTitle = () => {
     if (this.props.title)
-      return (
-        <Text style={StyleSheet.flatten([
-          styles.title, this.props.titleStyle
-        ])}>
-          {this.props.title}
-        </Text>
-      )
-  }
+      return <Text style={StyleSheet.flatten([styles.title, this.props.titleStyle])}>{this.props.title}</Text>;
+  };
 
   renderXLabel = () => {
     const { chartPosition } = this.state;
@@ -50,20 +44,23 @@ class LineChart extends Component {
           style={{
             ...styles.chartTextContainer,
             fontSize: 12,
-            top: chartPosition.y + (chartHeight * 0.9),
-            left: chartPosition.x + (chartWidth / 11),
-            width: chartWidth - (chartWidth / 11)
+            top: chartPosition.y + chartHeight * 0.9,
+            left: chartPosition.x + chartWidth / 11,
+            width: chartWidth - chartWidth / 11
           }}
         >
-          <Text style={{
-            ...styles.chartText, fontSize: 12
-          }}>
+          <Text
+            style={{
+              ...styles.chartText,
+              fontSize: 12
+            }}
+          >
             {this.props.xlabel}
           </Text>
-        </View >
+        </View>
       );
     }
-  }
+  };
 
   renderEmptyDataMessage = () => {
     const { chartPosition } = this.state;
@@ -72,20 +69,20 @@ class LineChart extends Component {
 
     if (!dataSum && chartPosition) {
       return (
-        <View style={{
-          ...styles.chartTextContainer,
-          top: chartPosition.y + (chartHeight / 3),
-          left: chartPosition.x + (chartWidth / 10),
-          width: chartWidth - (chartWidth / 10),
-          paddingHorizontal: chartWidth / 6.5
-        }}>
-          <Text style={styles.chartText}>
-            {this.props.emptyDataMessage}
-          </Text>
+        <View
+          style={{
+            ...styles.chartTextContainer,
+            top: chartPosition.y + chartHeight / 3,
+            left: chartPosition.x + chartWidth / 10,
+            width: chartWidth - chartWidth / 10,
+            paddingHorizontal: chartWidth / 6.5
+          }}
+        >
+          <Text style={styles.chartText}>{this.props.emptyDataMessage}</Text>
         </View>
       );
     }
-  }
+  };
 
   render() {
     return (
@@ -98,7 +95,7 @@ class LineChart extends Component {
                 x: nativeEvent.layout.x,
                 y: nativeEvent.layout.y
               }
-            })
+            });
           }}
         >
           <RNCLineChart
@@ -127,8 +124,8 @@ const chartConfig = {
   decimalPlaces: 1,
   strokeWidth: 1,
   propsForDots: {
-    r: "3",
-    strokeWidth: "2",
+    r: '3',
+    strokeWidth: '2',
     stroke: MAIN_COLOR
   }
 };
@@ -161,6 +158,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center'
   }
-})
+});
 
 export { LineChart };

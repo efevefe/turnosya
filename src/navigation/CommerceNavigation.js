@@ -74,18 +74,14 @@ const calendarStack = createStackNavigator(
       screen: CommerceCourtsSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     hairdressersCalendar: {
       screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
         title: 'Calendario',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     schedulesList: {
@@ -132,9 +128,7 @@ const reservationsStack = createStackNavigator(
       screen: CommerceReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Turnos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     ...reservationDetailsScreens
@@ -148,15 +142,10 @@ const profileStack = createStackNavigator(
       screen: CommerceProfileView,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        ),
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />,
         headerRight: (
           <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-            <IconButton
-              icon="md-create"
-              onPress={() => navigation.navigate('profileEdit')}
-            />
+            <IconButton icon="md-create" onPress={() => navigation.navigate('profileEdit')} />
           </PermissionsAssigner>
         )
       })
@@ -203,9 +192,7 @@ const reportsStack = createStackNavigator(
       screen: DashBoard,
       navigationOptions: ({ navigation }) => ({
         title: 'Reportes',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     dailyReservationsChart: {
@@ -249,9 +236,7 @@ const servicesStack = createStackNavigator(
       screen: ServicesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Servicios',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     serviceForm: {
@@ -271,9 +256,7 @@ const courtsStack = createStackNavigator(
       screen: CourtList,
       navigationOptions: ({ navigation }) => ({
         title: 'Canchas',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     courtForm: {
@@ -294,7 +277,7 @@ const commonTabs = {
   reservations: reservationsStack,
   calendar: calendarStack,
   profile: profileStack
-}
+};
 
 // TABS FOR SPORTS COMMERCES
 const sportsTabs = createBottomTabNavigator(

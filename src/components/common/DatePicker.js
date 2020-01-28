@@ -9,17 +9,13 @@ const pickerWidth = Math.round(Dimensions.get('window').width) / 2.7;
 class DatePicker extends Component {
   renderErrorMessage = () => {
     if (this.props.errorMessage) {
-      return (
-        <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
-      );
+      return <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>;
     }
   };
 
   renderLabel = color => {
     if (this.props.label) {
-      return (
-        <Text style={[styles.labelStyle, { color }]}>{this.props.label}</Text>
-      );
+      return <Text style={[styles.labelStyle, { color }]}>{this.props.label}</Text>;
     }
   };
 
@@ -37,13 +33,7 @@ class DatePicker extends Component {
           mode={this.props.mode || 'time'}
           confirmBtnText="Confirmar"
           cancelBtnText="Cancelar"
-          iconComponent={
-            <Ionicons
-              name={this.props.mode ? 'md-calendar' : 'md-time'}
-              color={color}
-              size={20}
-            />
-          }
+          iconComponent={<Ionicons name={this.props.mode ? 'md-calendar' : 'md-time'} color={color} size={20} />}
           customStyles={{
             dateInput: styles.dateInput,
             dateText: styles.dateText,

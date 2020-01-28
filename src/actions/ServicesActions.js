@@ -55,7 +55,8 @@ export const onServicesByEmployeeRead = ({ commerceId, employeeId }) => dispatch
 
   const db = firebase.firestore();
 
-  return db.collection(`Commerces/${commerceId}/Services`)
+  return db
+    .collection(`Commerces/${commerceId}/Services`)
     .where('softDelete', '==', null)
     .where('employeesIds', 'array-contains', employeeId)
     .orderBy('name', 'asc')
@@ -64,7 +65,7 @@ export const onServicesByEmployeeRead = ({ commerceId, employeeId }) => dispatch
       snapshot.forEach(doc => services.push({ ...doc.data(), id: doc.id }));
       dispatch({ type: ON_SERVICES_READ, payload: services });
     });
-}
+};
 
 export const onServiceDelete = ({ id, commerceId }) => {
   const db = firebase.firestore();
@@ -91,9 +92,9 @@ export const onServiceUpdate = ({ id, name, duration, price, description, employ
   };
 };
 
-export const onServiceOfferingUpdate = ({ id, employeesIds, commerceId }) => {  // rename
+export const onServiceOfferingUpdate = ({ id, employeesIds, commerceId }) => {
+  // rename
   const db = firebase.firestore();
 
-  db.doc(`Commerces/${commerceId}/Services/${id}`)
-    .update({ employeesIds });
+  db.doc(`Commerces/${commerceId}/Services/${id}`).update({ employeesIds });
 };

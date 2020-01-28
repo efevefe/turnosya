@@ -6,13 +6,7 @@ import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection, Button, Input, Menu, MenuItem, Toast } from './common';
 import { validateValueType } from '../utils';
-import {
-  onLogin,
-  onLoginValueChange,
-  onFacebookLogin,
-  onGoogleLogin,
-  onSendPasswordResetEmail
-} from '../actions';
+import { onLogin, onLoginValueChange, onFacebookLogin, onGoogleLogin, onSendPasswordResetEmail } from '../actions';
 
 const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
@@ -100,20 +94,14 @@ class LoginForm extends Component {
           onPress={this.onSendPasswordResetEmailPress}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={() => this.setState({ resetPasswordModal: false })}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ resetPasswordModal: false })} />
       </Menu>
     );
   };
 
   onSendPasswordResetEmailPress = async () => {
     if (this.renderEmailError()) {
-      const success = await this.props.onSendPasswordResetEmail(
-        this.props.email
-      );
+      const success = await this.props.onSendPasswordResetEmail(this.props.email);
 
       if (success) {
         Toast.show({
@@ -125,21 +113,13 @@ class LoginForm extends Component {
   };
 
   render() {
-    const {
-      containerStyle,
-      logoContainerStyle,
-      loginContainerStyle,
-      createAccountContainerStyle
-    } = styles;
+    const { containerStyle, logoContainerStyle, loginContainerStyle, createAccountContainerStyle } = styles;
 
     return (
       <View style={containerStyle}>
         <StatusBar barStyle="dark-content" />
         <View style={logoContainerStyle}>
-          <Image
-            source={require('../../assets/turnosya-red.png')}
-            style={{ height: iconSize, width: iconSize }}
-          />
+          <Image source={require('../../assets/turnosya-red.png')} style={{ height: iconSize, width: iconSize }} />
         </View>
         <View style={loginContainerStyle}>
           <CardSection>
@@ -162,9 +142,7 @@ class LoginForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
-              onChangeText={password =>
-                this.props.onLoginValueChange({ password })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />
@@ -203,14 +181,7 @@ class LoginForm extends Component {
               loading={this.props.loadingGoogle}
               buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onGoogleLogin()}
-              icon={
-                <Icon
-                  name="google"
-                  size={20}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Icon name="google" size={20} color="white" style={{ marginRight: 10 }} />}
             />
           </CardSection>
 
@@ -221,14 +192,7 @@ class LoginForm extends Component {
               loading={this.props.loadingFacebook}
               buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onFacebookLogin()}
-              icon={
-                <Icon
-                  name="facebook-square"
-                  size={20}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Icon name="facebook-square" size={20} color="white" style={{ marginRight: 10 }} />}
             />
           </CardSection>
         </View>
@@ -288,15 +252,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {
-    email,
-    password,
-    error,
-    loadingLogin,
-    loadingFacebook,
-    loadingGoogle,
-    sendingEmail
-  } = state.auth;
+  const { email, password, error, loadingLogin, loadingFacebook, loadingGoogle, sendingEmail } = state.auth;
 
   return {
     email,

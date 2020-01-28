@@ -45,9 +45,7 @@ class ServicesListItem extends Component {
     let employeesIds = [];
 
     if (this.isEmployeeOfferingService()) {
-      employeesIds = service.employeesIds.filter(id =>
-        id !== employeeId
-      );
+      employeesIds = service.employeesIds.filter(id => id !== employeeId);
     } else {
       employeesIds = [...service.employeesIds, employeeId];
     }
@@ -57,11 +55,11 @@ class ServicesListItem extends Component {
       employeesIds,
       commerceId
     });
-  }
+  };
 
   isEmployeeOfferingService = () => {
     return this.props.service.employeesIds.includes(this.props.employeeId);
-  }
+  };
 
   render() {
     const { name, duration, price, id } = this.props.service;
@@ -69,22 +67,10 @@ class ServicesListItem extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <Menu
-          title={name}
-          onBackdropPress={this.onOptionsPress}
-          isVisible={this.state.optionsVisible}
-        >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onUpdatePress}
-          />
+        <Menu title={name} onBackdropPress={this.onOptionsPress} isVisible={this.state.optionsVisible}>
+          <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
         </Menu>
 
         <Menu
@@ -92,11 +78,7 @@ class ServicesListItem extends Component {
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem
-            title="Sí"
-            icon="md-checkmark"
-            onPress={this.onConfirmDeletePress}
-          />
+          <MenuItem title="Sí" icon="md-checkmark" onPress={this.onConfirmDeletePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
         </Menu>
@@ -105,11 +87,7 @@ class ServicesListItem extends Component {
           title={name}
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
-              <Text
-                style={{ color: 'grey' }}
-              >
-                {`Duración: ${duration} min.`}
-              </Text>
+              <Text style={{ color: 'grey' }}>{`Duración: ${duration} min.`}</Text>
               <Badge
                 value={offering ? 'Dejar de Ofrecer' : 'Ofrecer Servicio'}
                 badgeStyle={{

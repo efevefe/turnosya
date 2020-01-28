@@ -44,9 +44,7 @@ const chartsData = [
     title: 'Turnos Cancelados/Realizados',
     image: require(imagesRoute + 'reservations-chart.png'),
     screen: 'reservedAndCancelledShiftChart',
-    description:
-      'Haga una comparación entre la cantidad de reservas realizadas y ' +
-      'las canceladas.'
+    description: 'Haga una comparación entre la cantidad de reservas realizadas y ' + 'las canceladas.'
   },
   {
     id: 5,
@@ -62,8 +60,7 @@ const chartsData = [
 
 class DashBoard extends Component {
   componentDidUpdate(prevProps) {
-    if (this.props.isFocused && !prevProps.isFocused)
-      this.props.onCommerceReportValueReset();
+    if (this.props.isFocused && !prevProps.isFocused) this.props.onCommerceReportValueReset();
   }
 
   render() {
@@ -75,11 +72,7 @@ class DashBoard extends Component {
             underlayColor="transparent"
             key={chart.id}
           >
-            <Card
-              image={chart.image}
-              containerStyle={styles.cardContainer}
-              imageProps={{ resizeMode: 'stretch' }}
-            >
+            <Card image={chart.image} containerStyle={styles.cardContainer} imageProps={{ resizeMode: 'stretch' }}>
               <Text style={styles.cardTitle}>{chart.title}</Text>
               <Text style={styles.cardDescription}>{chart.description}</Text>
             </Card>
@@ -110,6 +103,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(null, { onCommerceReportValueReset })(
-  withNavigationFocus(DashBoard)
-);
+export default connect(null, { onCommerceReportValueReset })(withNavigationFocus(DashBoard));

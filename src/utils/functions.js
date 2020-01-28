@@ -4,7 +4,7 @@ import store from '../reducers/index';
 
 export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
   if (!area) {
-    const state = store.getState()
+    const state = store.getState();
     area = state.commerceData.area.areaId;
   }
 
@@ -16,7 +16,7 @@ export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
     default:
       return AREAS.sports;
   }
-}
+};
 
 export const formattedMoment = (date = moment()) => {
   // receives moment date and returns the same date at 00:00 in moment format
@@ -41,10 +41,10 @@ export const imageToBlob = async uri => {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
+      xhr.onload = function() {
         resolve(xhr.response);
       };
-      xhr.onerror = function () {
+      xhr.onerror = function() {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';
@@ -181,11 +181,9 @@ export const stringFormatDays = totalDays => {
   const months = Math.floor(totalDays / 30);
   const days = totalDays % 30;
 
-  const stringMonths =
-    months == 0 ? '' : months == 1 ? months + ' mes' : months + ' meses';
+  const stringMonths = months == 0 ? '' : months == 1 ? months + ' mes' : months + ' meses';
 
-  const stringDays =
-    days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
 
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
@@ -202,11 +200,9 @@ export const stringFormatHours = totalHours => {
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
 
-  const stringHours =
-    hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
 
-  const stringDays =
-    days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
 
   if (hours && days) return stringDays + ' y ' + stringHours + '.';
   else if (hours) return stringHours + '.';

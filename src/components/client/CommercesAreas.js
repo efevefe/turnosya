@@ -23,9 +23,7 @@ class CommercesAreas extends Component {
   renderRightIcon = () => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('commercesList', { areaName: '' })
-        }
+        onPress={() => this.props.navigation.navigate('commercesList', { areaName: '' })}
         activeOpacity={0.5}
         style={{ backgorundColor: 'transparent' }}
       >
@@ -41,12 +39,7 @@ class CommercesAreas extends Component {
           >
             Ver todos
           </Text>
-          <Ionicons
-            name="md-arrow-forward"
-            size={24}
-            color="white"
-            style={{ marginRight: 15 }}
-          />
+          <Ionicons name="md-arrow-forward" size={24} color="white" style={{ marginRight: 15 }} />
         </View>
       </TouchableOpacity>
     );
@@ -62,11 +55,7 @@ class CommercesAreas extends Component {
     }
     return (
       <View style={{ flex: 1 }}>
-        <FlatList
-          data={this.props.areas}
-          renderItem={this.renderRow}
-          keyExtractor={area => area.id}
-        />
+        <FlatList data={this.props.areas} renderItem={this.renderRow} keyExtractor={area => area.id} />
       </View>
     );
   }

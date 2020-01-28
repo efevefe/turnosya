@@ -1,8 +1,4 @@
-import {
-  ON_CLIENT_REVIEWS_READING,
-  ON_CLIENT_REVIEWS_READ,
-  ON_CLIENT_REVIEWS_READ_FAIL
-} from '../actions/types';
+import { ON_CLIENT_REVIEWS_READING, ON_CLIENT_REVIEWS_READ, ON_CLIENT_REVIEWS_READ_FAIL } from '../actions/types';
 import { Toast } from '../components/common';
 
 const INITIAL_STATE = { clientReviews: [], loading: true };

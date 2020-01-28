@@ -10,20 +10,7 @@ import {
 } from './types';
 import moment from 'moment';
 
-const arrayOfMonths = [
-  'E',
-  'F',
-  'M',
-  'A',
-  'M',
-  'J',
-  'J',
-  'A',
-  'S',
-  'O',
-  'N',
-  'D'
-]; // Months of year
+const arrayOfMonths = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']; // Months of year
 const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
 
 export const onCommerceReportValueChange = payload => {
@@ -35,11 +22,7 @@ export const onCommerceReportValueReset = () => {
 };
 
 // Daily Reservations report
-export const onDailyReservationsReadByRange = (
-  commerceId,
-  startDate,
-  endDate
-) => dispatch => {
+export const onDailyReservationsReadByRange = (commerceId, startDate, endDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
@@ -82,9 +65,7 @@ export const yearsOfActivity = commerceId => dispatch => {
     .get()
     .then(querySnapshot => {
       if (!querySnapshot.empty) {
-        firstYear = moment(
-          querySnapshot.docs[0].data().startDate.toDate()
-        ).format('YYYY');
+        firstYear = moment(querySnapshot.docs[0].data().startDate.toDate()).format('YYYY');
 
         if (currentYear === firstYear) {
           years.push({
@@ -162,9 +143,7 @@ export const yearsWithReview = commerceId => dispatch => {
     .get()
     .then(querySnapshot => {
       if (!querySnapshot.empty) {
-        firstYear = moment(querySnapshot.docs[0].data().date.toDate()).format(
-          'YYYY'
-        );
+        firstYear = moment(querySnapshot.docs[0].data().date.toDate()).format('YYYY');
 
         if (currentYear === firstYear) {
           years.push({
@@ -236,11 +215,7 @@ export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
 };
 
 // Reserved and Cancelled Shift Report
-export const onReservedAndCancelledShiftReadByRange = (
-  commerceId,
-  startDate,
-  endDate
-) => dispatch => {
+export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, endDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
@@ -272,11 +247,7 @@ export const onReservedAndCancelledShiftReadByRange = (
 };
 
 // Most Popular Shifts Report
-export const onMostPopularShiftsReadByRange = (
-  commerceId,
-  startDate,
-  endDate
-) => dispatch => {
+export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
@@ -295,9 +266,7 @@ export const onMostPopularShiftsReadByRange = (
           shifts[shift] ? (shifts[shift] += 1) : (shifts[shift] = 1);
         });
 
-        let sortedShifts = Object.keys(shifts).sort(
-          (a, b) => shifts[b] - shifts[a]
-        );
+        let sortedShifts = Object.keys(shifts).sort((a, b) => shifts[b] - shifts[a]);
 
         let data = [];
         sortedShifts.forEach(val => data.push(shifts[val]));

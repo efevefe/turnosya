@@ -52,5 +52,4 @@ const reducers = combineReducers({
   paymentData: PaymentDataReducer
 });
 
-
 export default createStore(reducers, {}, applyMiddleware(ReduxThunk));

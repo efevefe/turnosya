@@ -27,11 +27,7 @@ class ServicesList extends Component {
 
   renderAddButton = () => {
     return (
-      <Fab
-        style={{ backgroundColor: MAIN_COLOR }}
-        position="bottomRight"
-        onPress={() => this.onAddPress()}
-      >
+      <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={() => this.onAddPress()}>
         <Ionicons name="md-add" />
       </Fab>
     );
@@ -61,11 +57,7 @@ class ServicesList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={() => this.onAddPress()}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={() => this.onAddPress()}>
           <Ionicons name="md-add" />
         </Fab>
       </View>
