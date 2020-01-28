@@ -40,15 +40,13 @@ app.get('/pay', (req, res) => {
 
   mercadopago.preferences
     .create(preference)
-    .then(function(mpagoResp) {
+    .then(mpagoResp => {
       res.render('pay', {
         init_point: mpagoResp.body.init_point,
         sandbox_init_point: mpagoResp.body.sandbox_init_point
       });
     })
-    .catch(function(error) {
-      console.log(error);
-    });
+    .catch(error => console.error(error));
 });
 //#endregion
 
@@ -128,8 +126,6 @@ app.post('/ipn-notification', (req, res) => {
             const batch = db.batch();
 
             batch.set(paymentRef, {
-              clientId,
-              reservationId,
               date: new Date(),
               collectorId: collector.id,
               method: constants.paymentTypes[payment_type_id],
@@ -137,8 +133,8 @@ app.post('/ipn-notification', (req, res) => {
               payerId: payer_id
             });
 
-            batch.update(commerceReservationRef, { paymentDate: new Date() });
-            batch.update(clientReservationRef, { paymentDate: new Date() });
+            batch.update(commerceReservationRef, { paymentId: id.toString() });
+            batch.update(clientReservationRef, { paymentId: id.toString() });
 
             batch
               .commit()

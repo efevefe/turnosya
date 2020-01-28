@@ -94,7 +94,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button title="Cancelar Reserva" type="solid" onPress={this.onCancelButtonPress} />
+          <Button title="Cancelar Reserva" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -257,11 +257,10 @@ class ClientReservationDetails extends Component {
   // ** Payment buttons **
 
   renderPayButton = () => {
-    return this.state.reservation.paymentDate ? (
+    return this.state.reservation.paymentId ? (
       <CardSection>
         <Button
           title="Ver detalle del pago"
-          type="solid"
           onPress={() =>
             this.props.navigation.navigate('paymentDetails', {
               reservation: this.state.reservation
@@ -280,7 +279,6 @@ class ClientReservationDetails extends Component {
       <CardSection>
         <Button
           title="Pagar con Mercado Pago"
-          type="solid"
           onPress={() =>
             this.props.navigation.navigate('paymentForm', {
               reservation: this.state.reservation,

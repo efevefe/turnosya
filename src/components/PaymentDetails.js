@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
-import { onReservationPaymentMethodRead } from '../actions';
+import { onReservationPaymentRead } from '../actions';
 import { Spinner } from './common';
 
 class PaymentDetails extends Component {
@@ -16,7 +16,7 @@ class PaymentDetails extends Component {
   }
 
   componentDidMount() {
-    this.props.onReservationPaymentMethodRead(this.state.reservation);
+    this.props.onReservationPaymentRead(this.state.reservation);
   }
 
   render() {
@@ -26,12 +26,10 @@ class PaymentDetails extends Component {
       <Card title="Información" textAlign="center" containerStyle={{ borderRadius: 10 }}>
         <View style={{ flexDirection: 'column', marginRight: 15 }}>
           <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Fecha del Pago: ${moment(
-            this.state.reservation.paymentDate.toDate()
+            this.props.date.toDate()
           ).format('DD/MM/YYYY')}`}</Text>
           <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Nombre: ${this.state.client.firstName ||
             this.props.firstName} ${this.state.client.lastName || this.props.lastName}`}</Text>
-          <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Email: ${this.state.client.email ||
-            this.props.email}`}</Text>
           <Text
             style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
           >{`Monto: $${this.state.reservation.price}`}</Text>
@@ -43,9 +41,9 @@ class PaymentDetails extends Component {
 }
 
 const mapStateToProps = state => {
-  const { method, loading } = state.paymentData;
-  const { firstName, lastName, email } = state.clientData;
-  return { method, loading, firstName, lastName, email };
+  const { method, loading, date } = state.paymentData;
+  const { firstName, lastName } = state.clientData;
+  return { method, loading, firstName, lastName, date };
 };
 
-export default connect(mapStateToProps, { onReservationPaymentMethodRead })(PaymentDetails);
+export default connect(mapStateToProps, { onReservationPaymentRead })(PaymentDetails);

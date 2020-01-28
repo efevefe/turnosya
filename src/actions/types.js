@@ -216,9 +216,9 @@ export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
 
 //Payment types
-export const ON_PAYMENT_METHOD_READ = 'on_payment_method_read';
-export const ON_PAYMENT_METHOD_READING = 'on_payment_method_reading';
-export const ON_PAYMENT_METHOD_READ_FAIL = 'on_payment_method_read_fail';
+export const ON_PAYMENT_READ = 'on_payment_method_read';
+export const ON_PAYMENT_READING = 'on_payment_method_reading';
+export const ON_PAYMENT_READ_FAIL = 'on_payment_method_read_fail';
 export const ON_CASH_PAYMENT_REGISTERING = 'on_cash_payment_registering';
 export const ON_CASH_PAYMENT_REGISTERED = 'on_cash_payment_registered';
 export const ON_CASH_PAYMENT_REGISTER_FAIL = 'on_cash_payment_register_fail';

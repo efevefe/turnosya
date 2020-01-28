@@ -38,24 +38,14 @@ class PaymentSettings extends Component {
     ) : (
       <Card title="Información" textAlign="center" containerStyle={{ borderRadius: 10 }}>
         {this.renderConfirmMPagoSwitch()}
-        {this.props.mPagoToken ? (
+        {this.props.hasAnyMPagoToken ? (
           <View>
-            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>Estado Actual: Habilitado</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Estado Actual: ${
+              this.props.mPagoToken ? 'Habilitado' : 'Deshabilitado'
+            }`}</Text>
             <Button
               style={{ paddingTop: 4 }}
-              title="Deshabilitar Cobro"
-              type="solid"
-              onPress={() => this.setState({ mPagoModalVisible: true })}
-              loading={this.props.mPagoTokenSwitchLoading}
-            />
-          </View>
-        ) : this.props.hasAnyMPagoToken ? (
-          <View>
-            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>Estado Actual: Deshabilitado</Text>
-            <Button
-              style={{ paddingTop: 4 }}
-              title="Habilitar Cobro"
-              type="solid"
+              title={`${this.props.mPagoToken ? 'Deshabilitar' : 'Habilitar'} Cobro`}
               onPress={() => this.setState({ mPagoModalVisible: true })}
               loading={this.props.mPagoTokenSwitchLoading}
             />
@@ -66,7 +56,6 @@ class PaymentSettings extends Component {
             <Button
               style={{ paddingTop: 4 }}
               title="Comenzar a Cobrar"
-              type="solid"
               onPress={() => this.props.navigation.navigate('paymentSettingsWeb')}
             />
           </View>

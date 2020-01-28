@@ -290,10 +290,9 @@ class CommerceReservationDetails extends Component {
     return (
       <CardSection>
         {this.renderRegisterPaymentConfirmation()}
-        {this.state.reservation.paymentDate ? (
+        {this.state.reservation.paymentId ? (
           <Button
             title="Ver detalle del pago"
-            type="solid"
             onPress={() =>
               this.props.navigation.navigate('paymentDetails', {
                 reservation: this.state.reservation
@@ -301,11 +300,7 @@ class CommerceReservationDetails extends Component {
             }
           />
         ) : (
-          <Button
-            title="Registrar pago en efectivo"
-            type="solid"
-            onPress={() => this.setState({ confirmCashPayVisible: true })}
-          />
+          <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
         )}
         <Divider
           style={{

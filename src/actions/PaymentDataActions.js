@@ -1,37 +1,27 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import {
-  ON_PAYMENT_METHOD_READ,
-  ON_PAYMENT_METHOD_READING,
-  ON_PAYMENT_METHOD_READ_FAIL,
+  ON_PAYMENT_READ,
+  ON_PAYMENT_READING,
+  ON_PAYMENT_READ_FAIL,
   ON_CASH_PAYMENT_REGISTERED,
   ON_CASH_PAYMENT_REGISTERING,
   ON_CASH_PAYMENT_REGISTER_FAIL
 } from '../actions/types';
 
-export const onReservationPaymentMethodRead = reservation => dispatch => {
-  dispatch({ type: ON_PAYMENT_METHOD_READING });
+export const onReservationPaymentRead = reservation => dispatch => {
+  dispatch({ type: ON_PAYMENT_READING });
 
   const db = firebase.firestore();
-  const { id, commerceId } = reservation;
+  const { commerceId, paymentId } = reservation;
 
   db.collection(`Commerces/${commerceId}/Payments`)
-    .where('reservationId', '==', id)
+    .doc(paymentId)
     .get()
     .then(snapshot => {
-      if (!snapshot.empty) {
-        dispatch({
-          type: ON_PAYMENT_METHOD_READ,
-          payload: snapshot.docs[0].data().method
-        });
-      } else {
-        dispatch({
-          type: ON_PAYMENT_METHOD_READ,
-          payload: 'N/A'
-        });
-      }
+      dispatch({ type: ON_PAYMENT_READ, payload: snapshot.data() });
     })
-    .catch(() => dispatch({ type: ON_PAYMENT_METHOD_READ_FAIL }));
+    .catch(() => dispatch({ type: ON_PAYMENT_READ_FAIL }));
 };
 
 export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
@@ -40,10 +30,6 @@ export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
   const db = firebase.firestore();
 
   const { commerceId, clientId, id: reservationId } = reservation;
-
-  console.log(commerceId);
-  console.log(clientId);
-  console.log(reservationId);
 
   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
   const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
@@ -58,8 +44,8 @@ export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
     method: 'Efectivo'
   });
 
-  batch.update(commerceReservationRef, { paymentDate: new Date() });
-  batch.update(clientReservationRef, { paymentDate: new Date() });
+  batch.update(commerceReservationRef, { paymentId: paymentRef.id });
+  batch.update(clientReservationRef, { paymentId: paymentRef.id });
 
   batch
     .commit()
