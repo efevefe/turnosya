@@ -19,8 +19,10 @@ class ClientNotificationsList extends Component {
   }
 
   onNotificationPerfilPress = () => {
-    const commerceId = this.selectNotification.sendTo
+    const commerceId = this.state.selectNotification.sentFor
     this.props.navigation.navigate('commerceProfileView', { commerceId })
+    this.setState({ optionsVisible: false })
+
   }
 
   onNotificationDeletePress = () => {

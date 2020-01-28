@@ -68,6 +68,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onLogout,
   onCommerceRead,
-  onCommerceRead,
   onScheduleValueChange
 })(CommerceDrawerContent);

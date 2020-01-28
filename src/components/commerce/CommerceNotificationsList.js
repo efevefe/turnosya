@@ -19,8 +19,9 @@ class CommerceNotificationsList extends Component {
   }
 
   onNotificationPerfilPress = () => {
-    const clientId = this.selectNotification.sendTo
+    const clientId = this.state.selectNotification.sentFor
     this.props.navigation.navigate('clientProfileView', { clientId })
+    this.setState({ optionsVisible: false })
   }
 
   onNotificationDeletePress = () => {
@@ -97,7 +98,7 @@ class CommerceNotificationsList extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem title="Detalle del Turno" icon="md-person" onPress={this.onNotificationPerfilPress} />
+          <MenuItem title="Perfil" icon="md-person" onPress={this.onNotificationPerfilPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
         </Menu>

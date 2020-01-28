@@ -18,9 +18,9 @@ export const onCommerceNotificationsRead = commerceId => dispatch => {
     db
       .collection(`Commerces/${commerceId}/Notifications`)
       .where('softDelete', '==', null)
-      .limit(50)
       /*     .where('date', '<=', moment().subtract(1,'month').toDate())*/
-      .orderBy('date', 'asc')
+      //.orderBy('date', 'asc')      
+      .limit(50)
       .onSnapshot(snapshot => {
         snapshot.forEach(doc => notifications.push({ ...doc.data(), id: doc.id }))
         dispatch({

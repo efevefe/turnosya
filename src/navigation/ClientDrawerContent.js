@@ -100,6 +100,11 @@ class ClientDrawerContent extends Component {
           />
           {this.renderWorkplaces()}
           <DrawerItem
+          title="Notificaciones"
+          icon={{ name: 'md-notifications-outline' }}
+          onPress={() => this.props.navigation.navigate('clientNotifications')}
+        />
+          <DrawerItem
             title="Configuración"
             icon={{ name: 'md-settings' }}
             onPress={() => this.props.navigation.navigate('clientSettings')}

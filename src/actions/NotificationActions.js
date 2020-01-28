@@ -52,22 +52,22 @@ export const onCommerceNotificationSend = (notification, commerceId, employeeId,
   employeeId
     ? onEmployeeNotificationTokensRead(commerceId, employeeId).then(tokens => {
         const collectionRef = `Commerces/${commerceId}/Notifications`
-        sendPushNotification({ ...notification, tokens, collectionRef, sentTo:clientId })
+        sendPushNotification({ ...notification, tokens, collectionRef, sentFor:clientId })
       })
     : onCommerceNotificationTokensRead(commerceId).then(tokens => {
         const collectionRef = `Commerces/${commerceId}/Notifications`
-        sendPushNotification({ ...notification, tokens, collectionRef, sentTo:clientId })
+        sendPushNotification({ ...notification, tokens, collectionRef, sentFor:clientId })
       })
 }
 
 export const onClientNotificationSend = (notification, clientId, commerceId) => {
   onClientNotificationTokensRead(clientId).then(tokens => {
     const collectionRef = `Profiles/${clientId}/Notifications`
-    sendPushNotification({ ...notification, tokens, collectionRef , sentTo:commerceId})
+    sendPushNotification({ ...notification, tokens, collectionRef , sentFor:commerceId})
   })
 }
 
-const sendPushNotification = ({ title, body, tokens, collectionRef, sentTo }) => {
+const sendPushNotification = ({ title, body, tokens, collectionRef, sentFor }) => {
   try {
     if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
@@ -91,7 +91,7 @@ const sendPushNotification = ({ title, body, tokens, collectionRef, sentTo }) =>
       })
 
       const db = firebase.firestore()
-      db.collection(collectionRef).add({ title, body, date: new Date(), sofDelete: null, sentTo })
+      db.collection(collectionRef).add({ title, body, date: new Date(), softDelete: null, sentFor })
     }
   } catch (error) {
     console.error(error)
