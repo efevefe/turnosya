@@ -29,7 +29,8 @@ import {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -66,6 +67,8 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
   componentWillUnmount() {
@@ -91,7 +94,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button title="Cancelar Reserva" type="solid" onPress={this.onCancelButtonPress} />
+          <Button title="Cancelar Reserva" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -239,7 +242,6 @@ class ClientReservationDetails extends Component {
     if (this.state.reservation.startDate < moment()) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -250,6 +252,49 @@ class ClientReservationDetails extends Component {
         </CardSection>
       );
     }
+  };
+
+  // ** Payment buttons **
+
+  renderPayButton = () => {
+    return this.state.reservation.paymentId ? (
+      <CardSection>
+        <Button
+          title="Ver detalle del pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentDetails', {
+              reservation: this.state.reservation
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : this.props.mPagoToken ? (
+      <CardSection>
+        <Button
+          title="Pagar con Mercado Pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentForm', {
+              reservation: this.state.reservation,
+              mPagoToken: this.props.mPagoToken
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : null;
   };
 
   // ** Render method **
@@ -308,20 +353,15 @@ class ClientReservationDetails extends Component {
             />
           }
         />
-
-        {this.renderReviewFields()}
+        {this.renderPayButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
-  reviewDividerStyle: {
-    marginBottom: 10,
-    marginHorizontal: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
@@ -332,6 +372,7 @@ const mapStateToProps = state => {
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId } = state.clientData;
+  const { mPagoToken } = state.commerceData;
 
   return {
     loadingReservations,
@@ -344,7 +385,8 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    mPagoToken
   };
 };
 
@@ -358,5 +400,6 @@ export default connect(mapStateToProps, {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 })(ClientReservationDetails);

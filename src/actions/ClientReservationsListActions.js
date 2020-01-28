@@ -10,6 +10,7 @@ import {
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
+import moment from 'moment';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });

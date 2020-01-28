@@ -27,7 +27,8 @@ import {
   onClientReviewDelete,
   onClientReviewValuesReset,
   onCommerceReviewReadById,
-  onCommerceReviewValuesReset
+  onCommerceReviewValuesReset,
+  onCashPaymentCreate
 } from '../../actions';
 import { isOneWeekOld } from '../../utils/functions';
 import { MONTHS, DAYS } from '../../constants';
@@ -44,7 +45,8 @@ class CommerceReservationDetails extends Component {
       error: '',
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
-      reviewBGIndex: 0
+      reviewBGIndex: 0,
+      confirmCashPayVisible: false
     };
   }
 
@@ -58,6 +60,14 @@ class CommerceReservationDetails extends Component {
       commerceId: this.props.commerceId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    if (!this.state.reservation.commerceId)
+      this.setState({
+        reservation: {
+          ...this.state.reservation,
+          commerceId: this.props.commerceId
+        }
+      });
   }
 
   componentWillUnmount() {
@@ -238,7 +248,6 @@ class CommerceReservationDetails extends Component {
     if (this.state.reservation.clientId && this.state.reservation.startDate < moment()) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -254,6 +263,54 @@ class CommerceReservationDetails extends Component {
   onUserProfilePicturePress = () => {
     const { clientId } = this.state.reservation;
     this.props.navigation.navigate('clientProfileView', { clientId });
+  };
+
+  // *** Payment methods ***
+
+  renderRegisterPaymentConfirmation = () => {
+    return (
+      <Menu
+        title="¿Está seguro que desea registrar el pago en efectivo?"
+        onBackdropPress={() => this.setState({ confirmCashPayVisible: false })}
+        isVisible={this.state.confirmCashPayVisible}
+      >
+        <MenuItem
+          title="Confirmar"
+          icon="md-checkmark"
+          loadingWithText={this.props.cashPayRegisterLoading}
+          onPress={() => this.props.onCashPaymentCreate(this.state.reservation, this.props.navigation)}
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem title="Cerrar" icon="md-close" onPress={() => this.setState({ confirmCashPayVisible: false })} />
+      </Menu>
+    );
+  };
+
+  renderRegisterPaymentButton = () => {
+    return (
+      <CardSection>
+        {this.renderRegisterPaymentConfirmation()}
+        {this.state.reservation.paymentId ? (
+          <Button
+            title="Ver detalle del pago"
+            onPress={() =>
+              this.props.navigation.navigate('paymentDetails', {
+                reservation: this.state.reservation
+              })
+            }
+          />
+        ) : (
+          <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
+        )}
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    );
   };
 
   // *** Render method ***
@@ -343,21 +400,15 @@ class CommerceReservationDetails extends Component {
             />
           }
         />
-
-        {this.renderReviewFields()}
+        {this.renderRegisterPaymentButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
-  reviewDividerStyle: {
-    margin: 10,
-    marginLeft: 40,
-    marginRight: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
@@ -366,6 +417,7 @@ const mapStateToProps = state => {
   const { loading, cancellationReason } = state.reservationsList;
   const { commerceId } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
+  const { cashPayRegisterLoading } = state.paymentData;
 
   return {
     loading,
@@ -378,7 +430,8 @@ const mapStateToProps = state => {
     commerceComment: state.commerceReviewData.comment,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,
-    reviewDataLoading: dataLoading
+    reviewDataLoading: dataLoading,
+    cashPayRegisterLoading
   };
 };
 
@@ -392,5 +445,6 @@ export default connect(mapStateToProps, {
   onClientReviewDelete,
   onClientReviewValuesReset,
   onCommerceReviewReadById,
-  onCommerceReviewValuesReset
+  onCommerceReviewValuesReset,
+  onCashPaymentCreate
 })(CommerceReservationDetails);

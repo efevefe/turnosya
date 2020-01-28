@@ -22,6 +22,7 @@ import CommerceProfileInfo from '../components/CommerceProfileInfo';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
 import CommerceReviewsList from '../components/CommerceReviewsList';
 import CommerceCourtReservationRegister from '../components/commerce/CommerceCourtReservationRegister';
+import PaymentDetails from '../components/PaymentDetails';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
 import PermissionsAssigner from '../components/common/PermissionsAssigner';
@@ -57,6 +58,12 @@ const reservationDetailsScreens = {
     screen: ClientReviewsList,
     navigationOptions: {
       title: 'Reseñas del Cliente'
+    }
+  },
+  paymentDetails: {
+    screen: PaymentDetails,
+    navigationOptions: {
+      title: 'Detalles del Pago'
     }
   }
 };

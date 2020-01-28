@@ -9,6 +9,12 @@ import {
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
+  ON_COMMERCE_MP_TOKEN_READ,
+  ON_COMMERCE_MP_TOKEN_READING,
+  ON_COMMERCE_MP_TOKEN_READ_FAIL,
+  ON_COMMERCE_MP_TOKEN_SWITCHING,
+  ON_COMMERCE_MP_TOKEN_SWITCHED,
+  ON_COMMERCE_MP_TOKEN_SWITCH_FAIL,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
@@ -350,4 +356,67 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
       dispatch({ type: ON_REAUTH_FAIL });
       dispatch({ type: ON_COMMERCE_DELETE_FAIL });
     });
+};
+
+export const onCommerceMPagoTokenRead = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_READING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const currentToken = snapshot.docs.find(doc => doc.data().softDelete === null);
+        currentToken
+          ? dispatch({
+              type: ON_COMMERCE_MP_TOKEN_READ,
+              payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
+            })
+          : dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: true } });
+      } else {
+        dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: false } });
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_READ_FAIL }));
+};
+
+export const onCommerceMPagoTokenEnable = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .orderBy('softDelete', 'desc')
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const latestToken = snapshot.docs[0].id;
+        db.doc(`Commerces/${commerceId}/MercadoPagoTokens/${latestToken}`)
+          .update({ softDelete: null })
+          .then(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHED, payload: latestToken }))
+          .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+};
+
+export const onCommerceMPagoTokenDisable = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const latestToken = snapshot.docs[0].id;
+        db.doc(`Commerces/${commerceId}/MercadoPagoTokens/${latestToken}`)
+          .update({ softDelete: new Date() })
+          .then(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHED, payload: null }))
+          .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
 };
