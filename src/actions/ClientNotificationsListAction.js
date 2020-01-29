@@ -16,7 +16,7 @@ export const onClientNotificationsRead = clientId => dispatch => {
       .collection(`Profiles/${clientId}/Notifications`)
       .where('softDelete', '==', null)
       /*     .where('date', '<=', moment().subtract(1,'month').toDate())*/
-     //.orderBy('date','desc')
+     // .orderBy('date','desc')
       .limit(50)
       .onSnapshot(snapshot => {
         const notifications = [];
