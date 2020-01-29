@@ -237,7 +237,6 @@ class CommerceLocationMap extends React.Component {
   };
 
   onUserLocationFound = location => {
-    //ver el locationasked
     this.props.onLocationValueChange({ ...location, userLocation: { ...location } });
   };
 

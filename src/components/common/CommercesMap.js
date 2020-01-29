@@ -19,9 +19,7 @@ class CommercesMap extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.selectedLocation.latitude) {
-      this.setAddressString();
-    }
+    if (this.props.selectedLocation.latitude) this.setAddressString();
   }
 
   setAddressString = () => {
@@ -40,9 +38,7 @@ class CommercesMap extends React.Component {
 
     newAddress += 'Argentina'; // gets error when addres is from other country
 
-    if (newAddress === 'Argentina') {
-      newAddress = this.state.defaultAddress;
-    }
+    if (newAddress === 'Argentina') newAddress = this.state.defaultAddress;
 
     this.setState({ completeAddress: newAddress });
 
@@ -259,6 +255,7 @@ class CommercesMap extends React.Component {
   onCurrentLocationFound = location => {
     this.setState({ locationAsked: false });
     this.props.onLocationValueChange({ ...location, selectedLocation: { ...location } });
+    this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
   };
 
   renderLocationMessage = () => {

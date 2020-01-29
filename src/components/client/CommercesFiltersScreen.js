@@ -7,21 +7,25 @@ import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   onCommercesListValueChange,
+  onLocationValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
   onCommerceHitsUpdate
 } from '../../actions';
 import LocationMessages from '../common/LocationMessages';
+import moment from 'moment';
 
 class CommerceFiltersScreen extends Component {
   state = {
     provinceName: this.props.provinceNameFilter,
     locationButtonIndex: this.props.locationButtonIndex,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
+    userLocationEdited: false,
+    calledOn: null,
     oldData: {
       selectedLocation: this.props.selectedLocation,
-      userLocation: this.props.userLocation,
-      markers: this.props.markers
+      markers: this.props.markers,
+      locationButtonIndex: this.props.locationButtonIndex
     }
   };
 
@@ -58,17 +62,22 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress() {
-    this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
-    this.props.onUserLocationChange(this.state.oldData.userLocation);
-    this.props.onCommerceHitsUpdate(this.state.oldData.markers);
+    if (!this.state.calledOn || moment().diff(this.state.calledOn, 'milliseconds') > 2200) {
+      this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
+      this.props.onCommerceHitsUpdate(this.state.oldData.markers);
+      this.props.onCommercesListValueChange({ locationButtonIndex: this.state.oldData.locationButtonIndex });
 
-    this.props.navigation.goBack(null);
+      if (this.props.userLocation.latitude && this.state.oldData.locationButtonIndex === 0) {
+        this.props.onUserLocationChange({ latitude: null, longitude: null });
+      }
+
+      this.props.navigation.goBack(null);
+    }
   }
 
   onApplyFiltersPress() {
     this.props.onCommercesListValueChange({
       provinceNameFilter: this.state.provinceName,
-      locationButtonIndex: this.state.locationButtonIndex,
       locationRadiusKms: this.state.locationRadiusKms
     });
 
@@ -76,7 +85,6 @@ class CommerceFiltersScreen extends Component {
   }
 
   onLocationOptionPress(buttonIndex) {
-    //seguir viendo
     this.props.onCommercesListValueChange({ locationButtonIndex: buttonIndex });
     this.setState({ locationButtonIndex: buttonIndex });
 
@@ -85,26 +93,26 @@ class CommerceFiltersScreen extends Component {
         this.props.onSelectedLocationChange();
         break;
       case 1:
+        this.setState({ userLocationEdited: true, calledOn: moment() });
         break;
       case 2:
-        this.props.onUserLocationChange();
-        this.props.navigation.navigate('commercesFiltersMap');
+        this.props.navigation.navigate('commercesFiltersMap', { navigation: this.props.navigation });
         break;
     }
   }
 
   onCurrentLocationFound = location => {
-    this.props.onSelectedLocationChange(location);
+    this.props.onLocationValueChange({ selectedLocation: { ...location }, userLocation: { ...location } });
   };
 
   renderLocationMessage() {
-    return this.state.locationButtonIndex === 1 ? (
+    return this.props.locationButtonIndex === 1 ? (
       <LocationMessages onLocationFound={this.onCurrentLocationFound} />
     ) : null;
   }
 
   renderRadiusSlider = () =>
-    this.state.locationButtonIndex !== 0 ? (
+    this.props.locationButtonIndex !== 0 ? (
       <View style={{ flex: 1 }}>
         <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(this.state.locationRadiusKms)} km.`}</Text>
         <Slider
@@ -157,7 +165,7 @@ class CommerceFiltersScreen extends Component {
           <View style={locationContainerStyle}>
             <ButtonGroup
               onPress={this.onLocationOptionPress.bind(this)}
-              selectedIndex={this.state.locationButtonIndex}
+              selectedIndex={this.props.locationButtonIndex} //3
               buttons={['Deshabilitada', 'Ubicación actual', 'Ubicación en mapa']}
               containerStyle={locationBGContainerStyle}
             />
@@ -234,6 +242,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onProvincesNameRead,
   onCommercesListValueChange,
+  onLocationValueChange,
   onUserLocationChange,
   onSelectedLocationChange,
   onCommerceHitsUpdate

@@ -16,12 +16,7 @@ import {
 } from '../../utils';
 
 class LocationMessages extends Component {
-  state = {
-    location: 'location sin setear',
-    appState: AppState.currentState,
-    permissionStatus: null,
-    modal: false
-  };
+  state = { appState: AppState.currentState, permissionStatus: null, modal: false };
 
   async componentDidMount() {
     try {
@@ -41,29 +36,14 @@ class LocationMessages extends Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  _handleAppStateChange = async appState => {
     try {
-      if (this.state.appState === 'active' && prevState.appState !== this.state.appState) {
-        this.setState({
-          permissionStatus: await getPermissionLocationStatus(),
-          modal: true
-        });
-      }
+      appState === 'active' && this.state.appState !== appState
+        ? this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState })
+        : this.setState({ appState });
     } catch (error) {
       console.error(error);
     }
-
-    if (this.state.permissionStatus === 'permissionsAllowed') {
-      const {
-        coords: { latitude, longitude }
-      } = await Location.getCurrentPositionAsync();
-
-      this.props.onUserLocationChange({ latitude, longitude });
-    }
-  }
-
-  _handleAppStateChange = appState => {
-    this.setState({ appState });
   };
 
   renderTitle = () => {
@@ -100,11 +80,23 @@ class LocationMessages extends Component {
           longitude: -64.226283,
           provinceName: 'Córdoba'
         };
-        this.props.onUserLocationChange(customLocation);
+
         this.props.onLocationFound && this.props.onLocationFound(customLocation);
+      } else {
+        this.updateUserLocation();
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  updateUserLocation = () => {
+    if (this.props.latitude && this.props.longitude) {
+      // Esto se hace para que cuando el marker de 'UserLocation' se está mostrando en el mapa,
+      // y  después de apaga el GPS o deje de dar permisos, este marker desaparezca.
+      // PD: El borrado del mapa no es instantáneo porque no queda el compoente escuchando, pero
+      // próxima vez que presione el Fab te aparece el cartel solicitando GPS yse borra el marker
+      this.props.onUserLocationChange({ latitude: null, longitude: null });
     }
   };
 
@@ -186,6 +178,7 @@ class LocationMessages extends Component {
       this.getAndSaveLocation();
       return <View />;
     } else {
+      this.updateUserLocation();
       return (
         <View>
           <Menu
@@ -221,4 +214,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(null, { onUserLocationChange })(LocationMessages);
+const mapStateToProps = state => {
+  const { latitude, longitude } = state.locationData.userLocation;
+
+  return { latitude, longitude };
+};
+
+export default connect(mapStateToProps, { onUserLocationChange })(LocationMessages);
