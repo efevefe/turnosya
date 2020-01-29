@@ -31,7 +31,7 @@ export const onDailyReservationsReadByRange = (commerceId, startDate, endDate) =
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', startDate.toDate())
     .where('startDate', '<=', endDate.toDate())
     .onSnapshot(snapshot => {
@@ -59,7 +59,7 @@ export const yearsOfActivity = commerceId => dispatch => {
   const currentYear = moment().format('YYYY');
 
   db.collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null) // TODO: state should be something that is already paid
+    .where('cancellationDate', '==', null) // TODO: state should be something that is already paid
     .orderBy('startDate', 'asc')
     .limit(1)
     .get()
@@ -99,7 +99,7 @@ export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
 
   return db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null) // TODO: state should be something that is already paid
+    .where('cancellationDate', '==', null) // TODO: state should be something that is already paid
     .where(
       'startDate', // should be from 'startDate' or 'endDate' ??
       '>=',

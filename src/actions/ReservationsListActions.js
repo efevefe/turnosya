@@ -41,7 +41,7 @@ export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, emp
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -76,7 +76,7 @@ export const onCommerceReservationsRead = ({ commerceId, selectedDate, employeeI
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -127,7 +127,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -171,6 +171,24 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
         });
     });
   });
+};
+
+export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async dispatch => {
+  const db = firebase.firestore();
+
+  const doc = await db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).get();
+
+  if (doc.data().method !== 'Efectivo')
+    fetch(`https://api.mercadopago.com/v1/payments/${paymentId}/refunds?access_token=${mPagoToken}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      if (res.status === 200 || res.status === 201) {
+        db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).update({ refundDate: new Date() });
+      }
+    });
 };
 
 export const onCommerceReservationCancel = ({
@@ -232,7 +250,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
   return dispatch => {
     let query = db
       .collection(`Commerces/${commerceId}/Reservations`)
-      .where('state', '==', null)
+      .where('cancellationDate', '==', null)
       .where('startDate', '>=', startDate.toDate());
 
     if (employeeId) query = query.where('employeeId', '==', employeeId);
@@ -271,7 +289,7 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
   return dispatch => {
     db.collection(`Commerces/${commerceId}/Reservations`)
       .where('courtId', '==', courtId)
-      .where('state', '==', null)
+      .where('cancellationDate', '==', null)
       .where('endDate', '>', startDate.toDate())
       .orderBy('endDate')
       .get()

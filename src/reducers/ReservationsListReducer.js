@@ -14,6 +14,7 @@ INITIAL_STATE = {
   detailedReservations: [],
   nextReservations: [],
   loading: false,
+  cancellationLoading: false,
   cancellationReason: ''
 };
 
@@ -23,8 +24,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, ...action.payload };
 
     case ON_COMMERCE_RESERVATIONS_READING:
-    case ON_COMMERCE_RESERVATION_CANCELING:
       return { ...state, loading: true };
+
+    case ON_COMMERCE_RESERVATION_CANCELING:
+      return { ...state, cancellationLoading: true };
 
     case ON_COMMERCE_RESERVATIONS_READ:
       return { ...state, ...action.payload, loading: false };
@@ -36,7 +39,7 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_COMMERCE_RESERVATION_CANCELED:
       Toast.show({ text: 'El turno ha sido cancelado' });
-      return { ...state, loading: false, cancellationReason: '' };
+      return { ...state, cancellationLoading: false, cancellationReason: '' };
 
     default:
       return state;
