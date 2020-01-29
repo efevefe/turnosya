@@ -6,7 +6,7 @@ import { Spinner, EmptyList, MenuItem, Menu } from '../common'
 import { onClientNotificationsRead, onClientNotificationDelete } from '../../actions'
 import { MAIN_COLOR } from '../../constants'
 import moment from 'moment'
-import { stringFormatMinutes } from '../../utils'
+import { stringFormatNotificatones } from '../../utils'
 
 class ClientNotificationsList extends Component {
   state = {
@@ -19,7 +19,8 @@ class ClientNotificationsList extends Component {
   }
 
   onNotificationPerfilPress = () => {
-    const commerceId = this.state.selectNotification.sentFor
+    console.log(this.state.selectNotification.sentFor)
+    let  commerceId = this.state.selectNotification.sentFor
     this.props.navigation.navigate('commerceProfileView', { commerceId })
     this.setState({ optionsVisible: false })
 
@@ -47,7 +48,7 @@ class ClientNotificationsList extends Component {
     return (
       <ListItem
         title={title}
-        rightTitle={`Hace ${stringFormatMinutes(moment().diff(date, 'minutes')).toString()}`}
+        rightTitle={`Hace ${stringFormatNotificatones(moment().diff(date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
         subtitle={body}
         subtitleStyle={{ fontSize: 12 }}

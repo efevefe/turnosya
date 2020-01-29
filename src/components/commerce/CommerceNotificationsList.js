@@ -6,7 +6,7 @@ import { Spinner, EmptyList, MenuItem, Menu } from '../common'
 import { onCommerceNotificationsRead, onCommerceNotificationDelete } from '../../actions'
 import { MAIN_COLOR } from '../../constants'
 import moment from 'moment'
-import { stringFormatMinutes } from '../../utils'
+import { stringFormatNotificatones } from '../../utils'
 
 class CommerceNotificationsList extends Component {
   state = {
@@ -46,7 +46,7 @@ class CommerceNotificationsList extends Component {
     return (
       <ListItem
         title={title}
-        rightTitle={`Hace ${stringFormatMinutes(moment().diff(date, 'minutes')).toString()}`}
+        rightTitle={`Hace ${stringFormatNotificatones(moment().diff(date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
         subtitle={body}
         subtitleStyle={{ fontSize: 12 }}

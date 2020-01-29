@@ -32,6 +32,7 @@ class CommerceDrawerContent extends Component {
         <DrawerItem
           title="Notificaciones"
           icon={{ name: 'md-notifications-outline' }}
+          loadingWithText={this.props.loadingNotifications}
           onPress={() => this.props.navigation.navigate('commerceNotifications')}
         />
         <PermissionsAssigner requiredRole={ROLES.OWNER}>
@@ -61,8 +62,9 @@ const mapStateToProps = state => {
     role: { roleId }
   } = state.roleData;
   const { workplaces } = state.clientData;
+  const { loading: loadingNotifications } = state.commerceNotificationsList;
 
-  return { name, profilePicture, commerceId, loading, roleId, workplaces };
+  return { name, profilePicture, commerceId, loading, roleId, workplaces, loadingNotifications };
 };
 
 export default connect(mapStateToProps, {

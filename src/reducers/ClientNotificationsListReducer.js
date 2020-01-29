@@ -7,7 +7,7 @@ import {
 } from '../actions/types';
 import { Toast } from '../components/common';
 
-const INITIAL_STATE = { notifications: [], loading: true };
+const INITIAL_STATE = { notifications: [], loading: false };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {

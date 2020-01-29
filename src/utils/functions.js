@@ -166,20 +166,13 @@ const validarCuit = cuit => {
  * @return {String}            String with the following format: 'XX h. XX mins.'
  */
 export const stringFormatMinutes = totalMins => {
-  const hours = Math.floor(totalMins / 60)
-  const mins = totalMins % 60
-  const days = Math.floor(totalMins / 3600)
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
 
-  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas'
-
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días'
-
-  if (hours && days) return stringDays + ' y ' + stringHours + '.'
-  else if (hours && mins) return stringHours + mins + ' mins.'
-  else if (hours) return stringHours + '.'
-  else if(days) return stringDays + '.'
-  else return mins + ' mins.'
-}
+  if (hours && mins) return hours + ' h ' + mins + ' mins.';
+  else if (hours) return hours + ' h.';
+  else return mins + ' mins.';
+};
 
 /**
  * Formats the input value (days) into a String containing the months and
@@ -270,4 +263,25 @@ export const cancelReservationNotificationFormat = ({
     title: 'Reserva Cancelada',
     body,
   }
+}
+
+
+/**
+ * Formats the input value (minutes) into a String containing days, hours or
+ * minutes that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalMins The amount of minutes to format
+ * @return {String}            String with the following format: 'XX h. XX mins.'
+ */
+export const stringFormatNotificatones = totalMins => {
+  const hours = Math.floor(totalMins / 60)
+  const days = Math.floor(totalMins / 3600)
+
+  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas'
+
+  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días'
+
+  if (totalMins < 2 )   return '1 min.'
+  else if  (totalMins < 60 )   return totalMins + ' mins.'
+  else if  (totalMins < 1440 ) return stringHours + '.'
+  else return stringDays + '.'
 }

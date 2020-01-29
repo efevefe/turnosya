@@ -10,20 +10,33 @@ export const onClientNotificationsRead = clientId => dispatch => {
   dispatch({ type: ON_CLIENT_NOTIFICATIONS_READING });
 
   const db = firebase.firestore();
-  let notifications = [];
 
   return (
     db
       .collection(`Profiles/${clientId}/Notifications`)
       .where('softDelete', '==', null)
       /*     .where('date', '<=', moment().subtract(1,'month').toDate())*/
-      //.orderBy('date', 'asc')
+     //.orderBy('date','desc')
       .limit(50)
       .onSnapshot(snapshot => {
-        snapshot.forEach(doc => notifications.push({ ...doc.data(), id: doc.id }));
-        dispatch({
-          type: ON_CLIENT_NOTIFICATIONS_READ,
-          payload: notifications
+        const notifications = [];
+        let processedItems = 0;
+        if (snapshot.empty) {
+          return dispatch({
+            type: ON_CLIENT_NOTIFICATIONS_READ,
+            payload: notifications
+          });
+        }
+        snapshot.forEach(doc => {
+          notifications.push({ ...doc.data(), id: doc.id });
+          processedItems++;
+
+          if (processedItems === snapshot.size) {
+            dispatch({
+              type: ON_CLIENT_NOTIFICATIONS_READ,
+              payload: notifications
+            });
+          }
         });
       })
   );

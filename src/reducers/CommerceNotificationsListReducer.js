@@ -7,7 +7,7 @@ import {
 } from '../actions/types';
 import { Toast } from '../components/common';
 
-const INITIAL_STATE = { notifications: [], loading: true };
+const INITIAL_STATE = { notifications: [], loading: false };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -27,10 +27,11 @@ export default (state = INITIAL_STATE, action) => {
           return element;
         }
       });
+      notifications = [];
       return { ...state, notifications: notificationsUpdate };
     case ON_COMMERCE_NOTIFICATIONS_DELETED_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
-      return {...state}
+      return { ...state };
     default:
       return state;
   }
