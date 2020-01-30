@@ -115,16 +115,7 @@ class CommercesList extends Component {
 const mapStateToProps = state => {
   const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
 
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation,
-    selectedLocation
-  } = state.locationData;
+  const { address, city, provinceName, country, latitude, longitude, selectedLocation } = state.locationData;
 
   return {
     refinement,
@@ -137,7 +128,6 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    userLocation,
     selectedLocation
   };
 };

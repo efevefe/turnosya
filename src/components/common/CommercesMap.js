@@ -177,6 +177,7 @@ class CommercesMap extends React.Component {
   renderPointerMarker = () => {
     const { latitude, longitude, address } = this.props.selectedLocation;
     const { latitude: userLat, longitude: userLong } = this.props.userLocation;
+
     if (userLat !== latitude && userLong !== longitude) {
       // La primera validación es para que el "pointMarker" no pise al "User Marker"
       if (latitude && longitude && address) {
@@ -252,10 +253,16 @@ class CommercesMap extends React.Component {
     }
   };
 
-  onCurrentLocationFound = location => {
-    this.setState({ locationAsked: false });
-    this.props.onLocationValueChange({ ...location, selectedLocation: { ...location } });
-    this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
+  onCurrentLocationFound = ({ location }) => {
+    if (location) {
+      this.setState({ locationAsked: false });
+      this.props.onLocationValueChange({
+        ...location,
+        selectedLocation: { ...location },
+        userLocation: { ...location }
+      });
+      this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
+    }
   };
 
   renderLocationMessage = () => {

@@ -89,7 +89,8 @@ class CommerceProfileView extends Component {
       city: this.props.city,
       provinceName: this.props.province.name,
       latitude: this.props.latitude,
-      longitude: this.props.longitude
+      longitude: this.props.longitude,
+      userLocation: { ...this.props.userLocation, latitude: null, longitude: null }
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -270,6 +271,7 @@ const mapStateToProps = state => {
     area: { areaId }
   } = state.commerceData;
 
+  const { userLocation } = state.locationData;
   return {
     name,
     description,
@@ -287,7 +289,8 @@ const mapStateToProps = state => {
     cards,
     loadingCourtTypes,
     loadingProfile,
-    areaId
+    areaId,
+    userLocation
   };
 };
 

@@ -4,8 +4,7 @@ import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
-import * as Location from 'expo-location';
-import { onUserLocationChange } from '../../actions';
+import { onLocationValueChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -38,9 +37,12 @@ class LocationMessages extends Component {
 
   _handleAppStateChange = async appState => {
     try {
-      appState === 'active' && this.state.appState !== appState
-        ? this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState })
-        : this.setState({ appState });
+      if (appState === 'active' && this.state.appState !== appState) {
+        this.props.onLocationFound && this.props.onLocationFound({ updating: true, location: null });
+        this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState });
+      } else {
+        this.setState({ appState });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -57,7 +59,7 @@ class LocationMessages extends Component {
       const currentLatLong = await getCurrentPosition();
       const { latitude, longitude } = currentLatLong.coords;
 
-      if (latitude && longitude) {
+      if (latitude && this.props.latitude !== latitude && longitude && this.props.longitude !== longitude) {
         const [addressResult] = await getAddressFromLatAndLong({ latitude, longitude });
         const { name, street, city, region, country } = addressResult;
 
@@ -71,18 +73,9 @@ class LocationMessages extends Component {
           latitude,
           longitude
         };
-        // para usar con el simulador
-        const customLocation = {
-          address: 'Prudencio Bustos 23',
-          city: 'Córdoba',
-          country: 'Argentina',
-          latitude: -31.4013135,
-          longitude: -64.226283,
-          provinceName: 'Córdoba'
-        };
 
-        this.props.onLocationFound && this.props.onLocationFound(customLocation);
-      } else {
+        this.props.onLocationFound && this.props.onLocationFound({ updating: false, location });
+      } else if (!latitude || !longitude) {
         this.updateUserLocation();
       }
     } catch (error) {
@@ -94,10 +87,13 @@ class LocationMessages extends Component {
     if (this.props.latitude && this.props.longitude) {
       // Esto se hace para que cuando el marker de 'UserLocation' se está mostrando en el mapa,
       // y  después de apaga el GPS o deje de dar permisos, este marker desaparezca.
-      // PD: El borrado del mapa no es instantáneo porque no queda el compoente escuchando, pero
-      // próxima vez que presione el Fab te aparece el cartel solicitando GPS yse borra el marker
-      this.props.onUserLocationChange({ latitude: null, longitude: null });
+      // PD: El borrado del mapa no es instantáneo porque no queda el compoente escuchando, pero la
+      // próxima vez que se presione el Fab y te aparezca el cartel solicitando GPS, se borra el marker
+      this.props.onLocationValueChange({ userLocation: { latitude: null, longitude: null } });
     }
+
+    const updating = this.state.permissionStatus ? false : true;
+    this.props.onLocationFound && this.props.onLocationFound({ updating, location: null });
   };
 
   renderItems = () => {
@@ -220,4 +216,4 @@ const mapStateToProps = state => {
   return { latitude, longitude };
 };
 
-export default connect(mapStateToProps, { onUserLocationChange })(LocationMessages);
+export default connect(mapStateToProps, { onLocationValueChange })(LocationMessages);
