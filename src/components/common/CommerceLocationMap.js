@@ -238,7 +238,7 @@ class CommerceLocationMap extends React.Component {
     if (location) {
       this.setState({ locationAsked: false });
       this.props.onLocationValueChange({ userLocation: { ...location } });
-      if (!this.props.navigation) {
+      if (this.props.searchBar) {
         this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
       }
     }
