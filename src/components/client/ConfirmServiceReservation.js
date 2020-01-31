@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Button as RNEButton } from 'react-native-elements'
-import { connect } from 'react-redux'
-import { Ionicons } from '@expo/vector-icons'
-import { onClientServiceReservationCreate } from '../../actions'
-import ServiceReservationDetails from '../ServiceReservationDetails'
-import { CardSection, Button } from '../common'
-import { MAIN_COLOR } from '../../constants'
-import { newReservationNotificationFormat } from '../../utils'
+import React, { Component } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button as RNEButton } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+import { onClientServiceReservationCreate } from '../../actions';
+import ServiceReservationDetails from '../ServiceReservationDetails';
+import { CardSection, Button } from '../common';
+import { MAIN_COLOR } from '../../constants';
+import { newReservationNotificationFormat } from '../../utils';
 
 class ConfirmServiceReservation extends Component {
   onConfirmReservation = () => {
@@ -20,14 +20,14 @@ class ConfirmServiceReservation extends Component {
       price,
       areaId,
       clientFirstName,
-      clientLastName,
-    } = this.props
+      clientLastName
+    } = this.props;
     const notification = newReservationNotificationFormat({
       startDate,
       service: `${service.name}`,
       actorName: `${clientFirstName} ${clientLastName}`,
-      receptorName: `${commerce.name}`,
-    })
+      receptorName: `${commerce.name}`
+    });
 
     this.props.onClientServiceReservationCreate({
       commerceId: commerce.objectID,
@@ -37,9 +37,9 @@ class ConfirmServiceReservation extends Component {
       startDate,
       endDate,
       price,
-      notification,
-    })
-  }
+      notification
+    });
+  };
 
   renderButtons = () => {
     if (this.props.saved || this.props.exists) {
@@ -67,18 +67,18 @@ class ConfirmServiceReservation extends Component {
             </View>
           ) : null}
         </CardSection>
-      )
+      );
     }
 
     return (
       <CardSection>
         <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
       </CardSection>
-    )
-  }
+    );
+  };
 
   render() {
-    const { commerce, employee, service, startDate, endDate, price } = this.props
+    const { commerce, employee, service, startDate, endDate, price } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -96,25 +96,25 @@ class ConfirmServiceReservation extends Component {
         />
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   cardSections: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
   confirmButtonContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    alignSelf: 'stretch',
-  },
-})
+    alignSelf: 'stretch'
+  }
+});
 
 const mapStateToProps = state => {
-  const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation
+  const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation;
 
-  const { firstName: clientFirstName, lastName: clientLastName } = state.clientData
+  const { firstName: clientFirstName, lastName: clientLastName } = state.clientData;
 
   return {
     commerce,
@@ -128,8 +128,8 @@ const mapStateToProps = state => {
     exists,
     loading,
     clientFirstName,
-    clientLastName,
-  }
-}
+    clientLastName
+  };
+};
 
-export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation)
+export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation);

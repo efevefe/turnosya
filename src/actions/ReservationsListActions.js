@@ -19,14 +19,7 @@ export const onReservationsListValueChange = payload => {
   };
 };
 
-export const formatReservation = ({
-  res,
-  court,
-  client,
-  commerce,
-  employee,
-  service
-}) => {
+export const formatReservation = ({ res, court, client, commerce, employee, service }) => {
   return {
     id: res.id,
     ...res.data(),
@@ -41,12 +34,7 @@ export const formatReservation = ({
   };
 };
 
-export const onClientCommerceReservationsRead = ({
-  commerceId,
-  selectedDate,
-  employeeId,
-  courtType
-}) => dispatch => {
+export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, employeeId, courtType }) => dispatch => {
   dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
@@ -81,11 +69,7 @@ export const onClientCommerceReservationsRead = ({
   });
 };
 
-export const onCommerceReservationsRead = ({
-  commerceId,
-  selectedDate,
-  employeeId
-}) => dispatch => {
+export const onCommerceReservationsRead = ({ commerceId, selectedDate, employeeId }) => dispatch => {
   dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
@@ -136,11 +120,7 @@ export const onCommerceReservationsRead = ({
   });
 };
 
-export const onCommerceDetailedReservationsRead = ({
-  commerceId,
-  selectedDate,
-  employeeId
-}) => dispatch => {
+export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, employeeId }) => dispatch => {
   dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
@@ -219,16 +199,10 @@ export const onCommerceReservationCancel = ({
           cancellationDate: new Date()
         };
 
-        batch.update(
-          db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
-          cancellationData
-        );
+        batch.update(db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`), cancellationData);
 
         if (clientId) {
-          batch.update(
-            db.doc(`Profiles/${clientId}/Reservations/${reservationId}`),
-            cancellationData
-          );
+          batch.update(db.doc(`Profiles/${clientId}/Reservations/${reservationId}`), cancellationData);
         }
 
         batch
@@ -252,12 +226,7 @@ export const onCommerceReservationCancel = ({
   };
 };
 
-export const onNextReservationsRead = ({
-  commerceId,
-  startDate,
-  endDate,
-  employeeId
-}) => {
+export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId }) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -284,10 +253,7 @@ export const onNextReservationsRead = ({
         }
 
         snapshot.forEach(doc => {
-          if (
-            !endDate ||
-            (endDate && endDate >= moment(doc.data().startDate.toDate()))
-          )
+          if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -301,18 +267,11 @@ export const onNextReservationsRead = ({
           payload: { nextReservations }
         });
       })
-      .catch(error =>
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error })
-      );
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };
 };
 
-export const onCourtNextReservationsRead = ({
-  commerceId,
-  courtId,
-  startDate,
-  endDate
-}) => {
+export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -335,10 +294,7 @@ export const onCourtNextReservationsRead = ({
         }
 
         snapshot.forEach(doc => {
-          if (
-            !endDate ||
-            (endDate && endDate > moment(doc.data().startDate.toDate()))
-          )
+          if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
             nextReservations.push({
               id: doc.id,
               clientId: doc.data().clientId,
@@ -352,18 +308,11 @@ export const onCourtNextReservationsRead = ({
           payload: { nextReservations }
         });
       })
-      .catch(error =>
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error })
-      );
+      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };
 };
 
-export const onReservationsCancel = async (
-  db,
-  batch,
-  commerceId,
-  reservations
-) => {
+export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
   // reservations cancel
   try {
     const state = await db.doc(`ReservationStates/canceled`).get();
@@ -373,12 +322,8 @@ export const onReservationsCancel = async (
     };
 
     reservations.forEach(res => {
-      const commerceResRef = db.doc(
-        `Commerces/${commerceId}/Reservations/${res.id}`
-      );
-      const clientResRef = db.doc(
-        `Profiles/${res.clientId}/Reservations/${res.id}`
-      );
+      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
       batch.update(commerceResRef, updateObj);
       batch.update(clientResRef, updateObj);
     });

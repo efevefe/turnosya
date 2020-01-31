@@ -40,9 +40,7 @@ class CommerceDrawerContent extends Component {
           title="Cerrar Sesión"
           icon={{ name: 'md-exit' }}
           loadingWithText={this.props.loading}
-          onPress={() =>
-            this.props.onLogout(this.props.commerceId, this.props.workplaces)
-          }
+          onPress={() => this.props.onLogout(this.props.commerceId, this.props.workplaces)}
         />
       </Drawer>
     );
