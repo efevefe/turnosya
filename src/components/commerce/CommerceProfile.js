@@ -13,12 +13,10 @@ import {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasReadForPicker,
   onLocationValueChange
 } from '../../actions';
 import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import { HeaderBackButton } from 'react-navigation-stack';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
 const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
@@ -202,6 +200,10 @@ class CommerceProfile extends Component {
         }
       }
     } catch (error) {
+      if (error.message.includes('Missing camera roll permission')) {
+        return Toast.show({ text: 'Debe dar permisos primero' });
+      }
+
       console.error(error);
     } finally {
       this.onEditPicturePress();
@@ -233,6 +235,14 @@ class CommerceProfile extends Component {
         }
       }
     } catch (error) {
+      if (error.message.includes('Camera not available on simulator')) {
+        return Toast.show({ text: 'Debe usar un dispositivo físico para el uso de la cámara' });
+      }
+
+      if (error.message.includes('User rejected permissions')) {
+        return console.warn('User reject permissions');
+      }
+
       console.error(error);
     } finally {
       this.onEditPicturePress();
@@ -713,6 +723,5 @@ export default connect(mapStateToProps, {
   onCommerceUpdate,
   onCommerceValueChange,
   onProvincesIdRead,
-  onAreasReadForPicker,
   onLocationValueChange
 })(CommerceProfile);
