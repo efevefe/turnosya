@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { BadgeButtonGroup } from '../common';
-import { onEmployeesRead } from '../../actions';
 
 class EmployeesFilter extends Component {
   state = {
@@ -13,10 +12,6 @@ class EmployeesFilter extends Component {
   };
 
   componentDidMount() {
-    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(
-      this.props.commerceId
-    );
-
     this.generateButtons();
   }
 
@@ -24,10 +19,6 @@ class EmployeesFilter extends Component {
     if (prevProps.employees !== this.props.employees) {
       this.generateButtons();
     }
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeEmployeesRead && this.unsubscribeEmployeesRead();
   }
 
   generateButtons = () => {
@@ -80,4 +71,4 @@ const mapStateToProps = state => {
   };
 }
 
-export default connect(mapStateToProps, { onEmployeesRead })(EmployeesFilter);
+export default connect(mapStateToProps, null)(EmployeesFilter);

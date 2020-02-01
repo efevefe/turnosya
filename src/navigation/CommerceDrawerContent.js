@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { onLogout } from '../actions/AuthActions';
-import { Drawer, DrawerItem } from '../components/common';
+import { Drawer, DrawerItem, PermissionsAssigner } from '../components/common';
 import { onCommerceRead, onScheduleValueChange } from '../actions';
-import PermissionsAssigner from '../components/common/PermissionsAssigner';
 import { ROLES } from '../constants';
 
 class CommerceDrawerContent extends Component {

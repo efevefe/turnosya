@@ -4,11 +4,10 @@ import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
-import { Spinner, EmptyList } from '../common';
+import { Spinner, EmptyList, PermissionsAssigner } from '../common';
 import CourtListItem from './CourtListItem';
 import { onCourtFormOpen } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
-import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class CourtList extends Component {

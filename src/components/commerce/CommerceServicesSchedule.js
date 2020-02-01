@@ -4,17 +4,17 @@ import moment from 'moment';
 import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import Schedule from '../Schedule';
-import { Toast, Menu, MenuItem, IconButton } from '../common';
+import { Toast, Menu, MenuItem, IconButton, PermissionsAssigner } from '../common';
 import { MONTHS, ROLES } from '../../constants';
 import EmployeesFilter from './EmployeesFilter';
-import PermissionsAssigner from '../common/PermissionsAssigner';
 import {
   onScheduleRead,
   onScheduleValueChange,
   onReservationValueChange,
   onCommerceReservationsRead,
   onNewReservation,
-  onServicesRead
+  onServicesRead,
+  onEmployeesRead
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -34,8 +34,13 @@ class CommerceServicesSchedule extends Component {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.state.selectedDate,
-      employeeId: this.state.employeeId //
+      employeeId: this.state.selectedEmployeeId //
     });
+
+
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(
+      this.props.commerceId
+    );
 
     this.unsubscribeServicesRead = this.props.onServicesRead(
       this.props.commerceId
@@ -51,6 +56,7 @@ class CommerceServicesSchedule extends Component {
   componentWillUnmount() {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeServicesRead && this.unsubscribeServicesRead();
+    this.unsubscribeEmployeesRead && this.unsubscribeEmployeesRead();
   }
 
   onDateChanged = date => {
@@ -60,14 +66,14 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date,
-      employeeId: this.state.employeeId //
+      employeeId: this.state.selectedEmployeeId //
     });
 
     if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
-        employeeId: this.state.employeeId //
+        employeeId: this.state.selectedEmployeeId //
       });
     }
 
@@ -87,16 +93,20 @@ class CommerceServicesSchedule extends Component {
   }
 
   onSlotPress = slot => {
-    if (moment() >= slot.startDate && slot.available) {
-      return Toast.show({
-        text: 'Ya no se puede reservar en este horario'
-      });
-    }
-
     if (!slot.available) {
       return this.props.navigation.navigate('reservationDetails', {
         reservation: this.getReservationFromSlot(slot)
       })
+    }
+
+    if (this.props.employeeId !== this.props.selectedEmployeeId) {
+      return Toast.show({ text: 'No puedes reservar turnos a nombre de otro empleado' });
+    }
+
+    if (moment() >= slot.startDate && slot.available) {
+      return Toast.show({
+        text: 'Ya no se puede reservar en este horario'
+      });
     }
 
     const startDate = slot.startDate;
@@ -175,16 +185,16 @@ class CommerceServicesSchedule extends Component {
   };
 
   onEmployeesFilterValueChange = selectedEmployeeId => {
-    if (selectedEmployeeId !== this.state.selectedEmployeeId) {
-      this.props.onScheduleRead({
-        commerceId: this.props.commerceId,
-        selectedDate: this.state.selectedDate,
-        employeeId: selectedEmployeeId
+    if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
+      this.setState({ selectedEmployeeId }, () => {
+        this.props.onScheduleRead({
+          commerceId: this.props.commerceId,
+          selectedDate: this.state.selectedDate,
+          employeeId: selectedEmployeeId
+        });
+
+        this.onDateChanged(this.state.selectedDate);
       });
-
-      this.onDateChanged(this.state.selectedDate);
-
-      this.setState({ selectedEmployeeId });
     }
   }
 
@@ -255,6 +265,7 @@ const mapStateToProps = state => {
   const { services } = state.servicesList;
   const loadingServices = state.servicesList.loading;
   const { employeeId } = state.roleData;
+  const { selectedEmployeeId } = state.employeesList;
 
   return {
     scheduleId: id,
@@ -267,6 +278,7 @@ const mapStateToProps = state => {
     endDate,
     commerceId,
     employeeId,
+    selectedEmployeeId,
     reservations,
     services,
     loadingSchedule,
@@ -281,5 +293,6 @@ export default connect(mapStateToProps, {
   onReservationValueChange,
   onCommerceReservationsRead,
   onNewReservation,
-  onServicesRead
+  onServicesRead,
+  onEmployeesRead
 })(CommerceServicesSchedule);

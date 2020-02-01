@@ -14,7 +14,7 @@ export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
     case AREAS.hairdressers:
       return hairdressers;
     default:
-      return AREAS.sports;
+      return sports;
   }
 }
 

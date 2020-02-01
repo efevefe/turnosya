@@ -3,10 +3,9 @@ import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Menu, MenuItem, IconButton } from '../common';
+import { Menu, MenuItem, IconButton, PermissionsAssigner } from '../common';
 import Schedule from '../Schedule';
 import { MONTHS } from '../../constants';
-import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 import CourtTypesFilter from './CourtTypesFilter';
 import {

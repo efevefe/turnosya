@@ -23,3 +23,4 @@ export * from './SettingsItem';
 export * from './ButtonGroup';
 export * from './AreaComponentRenderer';
 export * from './BadgeButtonGroup';
+export * from './PermissionsAssigner';

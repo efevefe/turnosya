@@ -3,9 +3,10 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import { ListItem, ButtonGroup } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Calendar, Spinner, EmptyList } from '../common';
+import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner } from '../common';
 import { onCommerceDetailedReservationsRead } from '../../actions';
-import { MAIN_COLOR, AREAS } from '../../constants';
+import { MAIN_COLOR, AREAS, ROLES } from '../../constants';
+import EmployeesFilter from './EmployeesFilter';
 
 class CommerceReservationsList extends Component {
   state = {
@@ -13,7 +14,8 @@ class CommerceReservationsList extends Component {
     selectedIndex: 1,
     filteredList: [],
     selectedReservation: {},
-    detailsVisible: false
+    detailsVisible: false,
+    selectedEmployeeId: this.props.employeeId
   };
 
   componentDidMount() {
@@ -37,7 +39,7 @@ class CommerceReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate,
-      employeeId: this.props.employeeId
+      employeeId: this.state.selectedEmployeeId //
     });
 
     this.setState({ selectedDate });
@@ -64,6 +66,12 @@ class CommerceReservationsList extends Component {
 
     this.setState({ filteredList, selectedIndex });
   };
+
+  onEmployeesFilterValueChange = selectedEmployeeId => {
+    if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
+      this.setState({ selectedEmployeeId }, () => this.onDateSelected(this.state.selectedDate));
+    }
+  }
 
   renderItem = ({ item }) => {
     const clientName = item.clientId
@@ -127,10 +135,19 @@ class CommerceReservationsList extends Component {
   render() {
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
+        <AreaComponentRenderer
+          hairdressers={
+            <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+              <EmployeesFilter onValueChange={this.onEmployeesFilterValueChange} />
+            </PermissionsAssigner>
+          }
+        />
+
         <Calendar
           onDateSelected={date => this.onDateSelected(date)}
           startingDate={this.state.selectedDate}
         />
+
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
@@ -193,9 +210,10 @@ const mapStateToProps = state => {
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
+  const { selectedEmployeeId } = state.employeesList;
   const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { commerceId, areaId, employeeId, reservations: detailedReservations, services, courts, loading };
+  return { commerceId, areaId, selectedEmployeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {
