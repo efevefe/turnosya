@@ -54,7 +54,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  { name, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
+  { name, description, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -65,13 +65,14 @@ export const onCourtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: ON_COURT_EXISTS });
         } else {
           db.collection(`Commerces/${commerceId}/Courts`)
             .add({
               name,
+              description,
               court,
               ground,
               price,
@@ -155,6 +156,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
   const {
     id,
     name,
+    description,
     court,
     ground,
     price,
@@ -181,6 +183,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
 
     batch.update(courtsRef.doc(id), {
       name,
+      description,
       court,
       ground,
       price,
