@@ -23,8 +23,7 @@ import EmployeesListReducer from './EmployeesListReducer';
 import EmployeeDataReducer from './EmployeeDataReducer';
 import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
-import CommerceNotificationsListReducer from './CommerceNotificationsListReducer';
-import ClientNotificationsListReducer from './ClientNotificationsListReducer'
+import NotificationsListReducer from './NotificationsListReducer'
 
 const reducers = combineReducers({
   auth: AuthReducer,
@@ -50,8 +49,7 @@ const reducers = combineReducers({
   employeeData: EmployeeDataReducer,
   roleData: RoleDataReducer,
   commerceReports: CommerceReportsReducer,
-  commerceNotificationsList: CommerceNotificationsListReducer,
-  clientNotificationsList: ClientNotificationsListReducer
+  notificationsList: NotificationsListReducer
 
 });
 

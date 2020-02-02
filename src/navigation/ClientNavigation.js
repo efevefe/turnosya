@@ -28,7 +28,7 @@ import CommerceServicesList from '../components/client/CommerceServicesList';
 import CommerceEmployeesList from '../components/client/CommerceEmployeesList';
 import ClientServicesSchedule from '../components/client/ClientServicesSchedule';
 import ConfirmServiceReservation from '../components/client/ConfirmServiceReservation';
-import ClientNotificationsList from '../components/client/ClientNotificationsList' 
+import NotificationsList from '../components/NotificationsList' 
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -245,7 +245,7 @@ const profileStack = createStackNavigator(
 const clientNotificationsStack = createStackNavigator(
   {
     clientNotificationslist: {
-      screen: ClientNotificationsList,
+      screen: NotificationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Notificaciones',
         headerLeft: (

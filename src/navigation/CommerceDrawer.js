@@ -11,7 +11,7 @@ import {
   stackNavigationOptions,
   drawerNavigationOptions
 } from './NavigationOptions';
-import CommerceNotificationsList from '../components/commerce/CommerceNotificationsList';
+import NotificationsList from '../components/NotificationsList' 
 
 
 const CommerceSettingsStack = createStackNavigator(
@@ -61,7 +61,7 @@ const CommerceEmployeesStack = createStackNavigator(
 const CommerceNotificationsStack = createStackNavigator(
   {
     commerceNotificationslist: {
-      screen: CommerceNotificationsList,
+      screen: NotificationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Notificaciones',
         headerLeft: (

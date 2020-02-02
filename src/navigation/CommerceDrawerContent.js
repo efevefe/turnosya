@@ -62,7 +62,7 @@ const mapStateToProps = state => {
     role: { roleId }
   } = state.roleData;
   const { workplaces } = state.clientData;
-  const { loading: loadingNotifications } = state.commerceNotificationsList;
+  const { loading: loadingNotifications } = state.notificationsList;
 
   return { name, profilePicture, commerceId, loading, roleId, workplaces, loadingNotifications };
 };

@@ -115,7 +115,7 @@ const mapStateToProps = state => {
     refreshing: loadingCommerce
   } = state.commerceData;
   const { loading } = state.auth;
-  const { loading: loadingNotifications } = state.clientNotificationsList;
+  const { loading: loadingNotifications } = state.notificationsList;
   return {
     profilePicture,
     firstName,
