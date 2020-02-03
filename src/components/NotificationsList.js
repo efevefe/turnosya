@@ -103,37 +103,31 @@ class NotificationsList extends Component {
     );
   };
 
-  renderList() {
+  render() {
+    if (this.props.loading) return <Spinner />;
     if (this.props.notifications.length)
       return (
-        <FlatList
-          data={this.props.notifications}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={notification => notification.id}
-          extraData={this.props.notifications}
-          refreshControl={this.onRefresh()}
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={this.props.notifications}
+            renderItem={this.renderRow.bind(this)}
+            keyExtractor={notification => notification.id}
+            extraData={this.props.notifications}
+            refreshControl={this.onRefresh()}
+          />
+
+          <Menu
+            title={'Opciones'}
+            onBackdropPress={() => this.setState({ optionsVisible: false })}
+            isVisible={this.state.optionsVisible}
+          >
+            <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} />
+            <Divider style={{ backgroundColor: 'grey' }} />
+            <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
+          </Menu>
+        </View>
       );
-
     return <EmptyList title="No tiene notificaciones" />;
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
-
-        <Menu
-          title={'Opciones'}
-          onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={this.state.optionsVisible}
-        >
-          <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
-        </Menu>
-      </View>
-    );
   }
 }
 

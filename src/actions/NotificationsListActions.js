@@ -17,33 +17,36 @@ export const onNotificationsRead = collectionRef => dispatch => {
 
   const db = firebase.firestore();
 
-  return db
-    .collection(collectionRef)
-    .where('softDelete', '==', null)
-   //no puedo crear indice  .orderBy('date','desc')
-    .limit(50)
-    .onSnapshot(snapshot => {
-      
-      if (snapshot.empty) {
-        return dispatch({
-          type: ON_NOTIFICATIONS_READ,
-          payload: notifications
-        });
-      }
-      const notifications = [];
-      let processedItems = 0;
-      snapshot.forEach(doc => {
-        notifications.push({ ...doc.data(), id: doc.id });
-        processedItems++;
+  return (
+    db
+      .collection(collectionRef)
+      .where('softDelete', '==', null)
+      //no puedo crear indice  .orderBy('date','desc')
+      .limit(50)
+      .onSnapshot(snapshot => {
+        const notifications = [];
+        let processedItems = 0;
 
-        if (processedItems === snapshot.size) {
-          dispatch({
+        if (snapshot.empty) {
+          return dispatch({
             type: ON_NOTIFICATIONS_READ,
             payload: notifications
           });
         }
-      });
-    });
+
+        snapshot.forEach(doc => {
+          notifications.push({ ...doc.data(), id: doc.id });
+          processedItems++;
+
+          if (processedItems === snapshot.size) {
+            dispatch({
+              type: ON_NOTIFICATIONS_READ,
+              payload: notifications
+            });
+          }
+        });
+      })
+  );
 };
 
 export const onClientNotificationDelete = ({ clientId, notificationId }) => {
