@@ -7,7 +7,7 @@ import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
-import { isEmailVerified } from '../../utils';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {

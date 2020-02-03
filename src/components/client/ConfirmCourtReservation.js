@@ -7,7 +7,7 @@ import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
-import { isEmailVerified } from '../../utils';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmCourtReservation extends Component {
