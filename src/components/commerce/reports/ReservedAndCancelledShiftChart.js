@@ -2,16 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { ScrollView, Dimensions } from 'react-native';
-import {
-  PieChart,
-  Spinner,
-  Button,
-  DatePicker,
-  IconButton,
-  Menu,
-  CardSection,
-  EmptyList
-} from '../../common';
+import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -27,11 +18,7 @@ class ReservedAndCancelledShiftChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.onReservedAndCancelledShiftReadByRange(
-      commerceId,
-      startDate,
-      endDate
-    );
+    props.onReservedAndCancelledShiftReadByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
@@ -46,12 +33,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -149,10 +131,7 @@ class ReservedAndCancelledShiftChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 

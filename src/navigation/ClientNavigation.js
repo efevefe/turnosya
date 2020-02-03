@@ -6,10 +6,7 @@ import { IconButton } from '../components/common';
 import ClientProfile from '../components/client/ClientProfile';
 import CommercesList from '../components/client/CommercesList';
 import FavoriteCommercesList from '../components/client/FavoriteCommercesList';
-import {
-  stackNavigationOptions,
-  tabNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, tabNavigationOptions } from './NavigationOptions';
 import CommercesAreas from '../components/client/CommercesAreas';
 import ClientCourtsSchedule from '../components/client/ClientCourtsSchedule';
 import CommerceCourtsList from '../components/client/CommerceCourtsList';
@@ -18,8 +15,10 @@ import ClientReservationsList from '../components/client/ClientReservationsList'
 import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
+import PaymentForm from '../components/client/PaymentForm';
 import CommercesMap from '../components/common/CommercesMap';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
+import PaymentDetails from '../components/PaymentDetails';
 import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
@@ -28,7 +27,6 @@ import CommerceServicesList from '../components/client/CommerceServicesList';
 import CommerceEmployeesList from '../components/client/CommerceEmployeesList';
 import ClientServicesSchedule from '../components/client/ClientServicesSchedule';
 import ConfirmServiceReservation from '../components/client/ConfirmServiceReservation';
-import NotificationsList from '../components/NotificationsList' 
 
 // Aca hay un stack por cada tab que tiene el tab navigation
 
@@ -71,9 +69,7 @@ const searchStack = createStackNavigator(
       screen: CommercesAreas,
       navigationOptions: ({ navigation }) => ({
         title: 'Buscar Negocios',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     commercesList: {
@@ -93,11 +89,7 @@ const searchStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
         headerLeft: (
-          <HeaderBackButton
-            tintColor="white"
-            title="Back"
-            onPress={() => onCommerceProfileGoBack(navigation)}
-          />
+          <HeaderBackButton tintColor="white" title="Back" onPress={() => onCommerceProfileGoBack(navigation)} />
         )
       })
     },
@@ -190,15 +182,25 @@ const calendarStack = createStackNavigator(
       screen: ClientReservationsList,
       navigationOptions: ({ navigation }) => ({
         title: 'Mis Turnos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     reservationDetails: {
       screen: ClientReservationDetails,
       navigationOptions: {
         title: 'Detalle del Turno'
+      }
+    },
+    paymentForm: {
+      screen: PaymentForm,
+      navigationOptions: {
+        title: 'Pagar'
+      }
+    },
+    paymentDetails: {
+      screen: PaymentDetails,
+      navigationOptions: {
+        title: 'Detalles del Pago'
       }
     }
   },
@@ -211,9 +213,7 @@ const favoritesStack = createStackNavigator(
       screen: FavoriteCommercesList,
       navigationOptions: ({ navigation }) => ({
         title: 'Favoritos',
-        headerLeft: (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     }
   },
@@ -226,9 +226,7 @@ const profileStack = createStackNavigator(
       screen: ClientProfile,
       navigationOptions: ({ navigation }) => ({
         title: 'Perfil',
-        headerLeft: navigation.getParam('leftIcon') || (
-          <IconButton icon="md-menu" onPress={navigation.openDrawer} />
-        )
+        headerLeft: navigation.getParam('leftIcon') || <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
     clientReviewsList: {
@@ -241,26 +239,6 @@ const profileStack = createStackNavigator(
   stackNavigationOptions
 );
 
-
-const clientNotificationsStack = createStackNavigator(
-  {
-    clientNotificationslist: {
-      screen: NotificationsList,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Notificaciones',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-            title='Back'
-          />
-        )
-      })
-    }
-  },
-  stackNavigationOptions
-);
-
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
 const clientTabs = createBottomTabNavigator(
@@ -268,8 +246,7 @@ const clientTabs = createBottomTabNavigator(
     search: searchStack,
     calendar: calendarStack,
     favorites: favoritesStack,
-    profile: profileStack,
-    clientNotifications :clientNotificationsStack
+    profile: profileStack
   },
   {
     ...tabNavigationOptions,

@@ -21,14 +21,7 @@ class LocationMap extends React.Component {
       leftIcon: this.renderBackButton()
     });
 
-    const {
-      address,
-      city,
-      provinceName,
-      country,
-      latitude,
-      longitude
-    } = this.props;
+    const { address, city, provinceName, country, latitude, longitude } = this.props;
     this.setState({
       stateBeforeChanges: {
         address,
@@ -41,29 +34,16 @@ class LocationMap extends React.Component {
     });
   }
 
-  renderSaveButton = () => (
-    <IconButton
-      icon="md-checkmark"
-      onPress={() => this.props.navigation.goBack()}
-    />
-  );
+  renderSaveButton = () => <IconButton icon="md-checkmark" onPress={() => this.props.navigation.goBack()} />;
 
-  renderBackButton = () => (
-    <HeaderBackButton
-      onPress={() => this.onBackPress()}
-      tintColor="white"
-      title="Back"
-    />
-  );
+  renderBackButton = () => <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" title="Back" />;
 
   onBackPress = () => {
     this.props.onLocationValueChange(this.state.stateBeforeChanges);
 
     //se puede evitar este metodo
     this.props.navigation.state.params.onProvinceNameChange &&
-      this.props.navigation.state.params.onProvinceNameChange(
-        this.state.stateBeforeChanges.provinceName
-      );
+      this.props.navigation.state.params.onProvinceNameChange(this.state.stateBeforeChanges.provinceName);
 
     this.props.navigation.goBack();
   };
@@ -72,9 +52,7 @@ class LocationMap extends React.Component {
     return (
       <CommerceLocationMap
         searchBar={true}
-        onProvinceNameChange={
-          this.props.navigation.state.params.onProvinceNameChange
-        }
+        onProvinceNameChange={this.props.navigation.state.params.onProvinceNameChange}
         findAddress={true}
       />
     );
@@ -82,14 +60,7 @@ class LocationMap extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude
-  } = state.locationData;
+  const { address, city, provinceName, country, latitude, longitude } = state.locationData;
 
   return { address, city, provinceName, country, latitude, longitude };
 };

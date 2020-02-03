@@ -10,10 +10,8 @@ import RegisterCommerceTwo from '../components/client/RegisterCommerceTwo';
 import LocationMap from '../components/LocationMap';
 import ClientSettings from '../components/client/ClientSettings';
 import ChangeUserPassword from '../components/client/ChangeUserPassword';
-import {
-  stackNavigationOptions,
-  drawerNavigationOptions
-} from './NavigationOptions';
+import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
+import NotificationsList from '../components/NotificationsList';
 
 const CommerceRegisterStack = createStackNavigator(
   {
@@ -51,13 +49,7 @@ const ClientSettingsStack = createStackNavigator(
       screen: ClientSettings,
       navigationOptions: ({ navigation }) => ({
         title: 'Configuración',
-        headerLeft: (
-          <HeaderBackButton
-            onPress={() => navigation.goBack(null)}
-            tintColor="white"
-            title='Back'
-          />
-        )
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
       })
     },
     changeUserPassword: {
@@ -70,11 +62,25 @@ const ClientSettingsStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const clientNotificationsStack = createStackNavigator(
+  {
+    clientNotificationslist: {
+      screen: NotificationsList,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Notificaciones',
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
 const clientDrawer = createDrawerNavigator(
   {
     tabs: ClientNavigation,
     commerceRegister: CommerceRegisterStack,
-    clientSettings: ClientSettingsStack
+    clientSettings: ClientSettingsStack,
+    clientNotifications: clientNotificationsStack
   },
   {
     ...drawerNavigationOptions,

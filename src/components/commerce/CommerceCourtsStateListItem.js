@@ -16,17 +16,10 @@ class CommerceCourtsStateListItem extends Component {
         badgeColor: this.props.courtAvailable ? SUCCESS_COLOR : MAIN_COLOR
       };
     }
-  }
+  };
 
   render() {
-    const {
-      name,
-      court,
-      ground,
-      price,
-      lightPrice,
-      id
-    } = this.props.court;
+    const { name, court, ground, price, lightPrice, id } = this.props.court;
     const { disabled, onPress } = this.props;
     const { badgeTitle, badgeColor } = this.setCourtBadge();
 
@@ -43,22 +36,14 @@ class CommerceCourtsStateListItem extends Component {
                   lineHeight: 20
                 }}
               >
-                {
-                  lightPrice
-                    ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
-                    : `Sin Luz: $${price}`
-                }
+                {lightPrice ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}` : `Sin Luz: $${price}`}
               </Text>
             </View>
           }
           key={id}
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
-              <Text
-                style={{ color: 'grey' }}
-              >
-                {`${court} - ${ground}`}
-              </Text>
+              <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
               <Badge
                 value={badgeTitle}
                 badgeStyle={{

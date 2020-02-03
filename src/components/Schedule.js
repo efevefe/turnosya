@@ -41,39 +41,23 @@ class Schedule extends Component {
     // se estarian generando los slots cada vez que se trae una nueva diagramacion y el schedule
     // esta en primer plano, cosa que no se actualice cuando se esta en otra pantalla y se esta
     // usando el mismo loading, como en la pantalla del listado de schedules
-    if (
-      prevProps.loadingSchedule &&
-      !this.props.loadingSchedule &&
-      this.props.isFocused &&
-      this.props.scheduleId
-    ) {
+    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.isFocused && this.props.scheduleId) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
 
   onDateSelected = selectedDate => {
-    selectedDate = moment([
-      selectedDate.year(),
-      selectedDate.month(),
-      selectedDate.date()
-    ]);
+    selectedDate = moment([selectedDate.year(), selectedDate.month(), selectedDate.date()]);
 
     //slots & shifts
     let slots = [];
     const shifts = [];
     const { cards } = this.props;
-    const dayShifts = cards.find(card =>
-      card.days.includes(selectedDate.day())
-    ); // horario de atención ese día de la semana
+    const dayShifts = cards.find(card => card.days.includes(selectedDate.day())); // horario de atención ese día de la semana
 
     //si hay horario de atención ese día, genera los slots
     if (dayShifts) {
-      const {
-        firstShiftStart,
-        firstShiftEnd,
-        secondShiftStart,
-        secondShiftEnd
-      } = dayShifts;
+      const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = dayShifts;
 
       shifts.push({ shiftStart: firstShiftStart, shiftEnd: firstShiftEnd });
 
@@ -102,21 +86,9 @@ class Schedule extends Component {
       shiftStart = getHourAndMinutes(shiftStart);
       shiftEnd = getHourAndMinutes(shiftEnd);
 
-      const shiftStartDate = moment([
-        year,
-        month,
-        date,
-        shiftStart.hour,
-        shiftStart.minutes
-      ]);
+      const shiftStartDate = moment([year, month, date, shiftStart.hour, shiftStart.minutes]);
 
-      const shiftEndDate = moment([
-        year,
-        month,
-        date,
-        shiftEnd.hour,
-        shiftEnd.minutes
-      ]);
+      const shiftEndDate = moment([year, month, date, shiftEnd.hour, shiftEnd.minutes]);
 
       const slotStartDate = moment(shiftStartDate);
 
@@ -125,11 +97,9 @@ class Schedule extends Component {
       for (
         let j = 0;
         shiftStartDate.add(reservationMinLength, 'minutes') <= shiftEndDate ||
-        (shiftStartDate.format('HH:mm') === '00:00' &&
-          shiftEndDate.format('HH:mm') === '23:59');
+        (shiftStartDate.format('HH:mm') === '00:00' && shiftEndDate.format('HH:mm') === '23:59');
         j++
       ) {
-
         if (divider) {
           slots.push({ id: `divider${j}`, divider });
           divider = false;
@@ -167,17 +137,13 @@ class Schedule extends Component {
   badgeTitle = (free, total) => {
     switch (this.props.mode) {
       case 'courts':
-        return free
-          ? `Disponibles: ${free.toString()} / ${total.toString()}`
-          : 'Ocupadas';
+        return free ? `Disponibles: ${free.toString()} / ${total.toString()}` : 'Ocupadas';
       case 'services':
-        return free
-          ? `Disponible`
-          : 'Ocupado';
+        return free ? `Disponible` : 'Ocupado';
       default:
         return null;
     }
-  }
+  };
 
   renderList = ({ item }) => {
     if (item.visible)
@@ -209,7 +175,7 @@ class Schedule extends Component {
           <Image
             source={require('../../assets/turnosya-white-notext.png')}
             style={{ height: 25 }}
-            resizeMode='contain'
+            resizeMode="contain"
           />
         </View>
       );
@@ -237,12 +203,7 @@ class Schedule extends Component {
         />
       );
     } else {
-      return (
-        <EmptyList
-          title="No se encontraron turnos para este día"
-          refreshControl={this.onRefresh()}
-        />
-      );
+      return <EmptyList title="No se encontraron turnos para este día" refreshControl={this.onRefresh()} />;
     }
   };
 
@@ -256,11 +217,7 @@ class Schedule extends Component {
           datesWhitelist={this.props.datesWhitelist}
         />
 
-        {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
-        ) : (
-            this.renderSlots()
-          )}
+        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderSlots()}
       </View>
     );
   }
@@ -295,6 +252,4 @@ const mapStateToProps = state => {
   return { slots, loadingSchedule: loading, scheduleId: id };
 };
 
-export default connect(mapStateToProps, { onScheduleValueChange })(
-  withNavigationFocus(Schedule)
-);
+export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));

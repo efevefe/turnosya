@@ -9,6 +9,12 @@ import {
   ON_COMMERCE_READING,
   ON_COMMERCE_READ_FAIL,
   ON_COMMERCE_READ,
+  ON_COMMERCE_MP_TOKEN_READ,
+  ON_COMMERCE_MP_TOKEN_READING,
+  ON_COMMERCE_MP_TOKEN_READ_FAIL,
+  ON_COMMERCE_MP_TOKEN_SWITCHING,
+  ON_COMMERCE_MP_TOKEN_SWITCHED,
+  ON_COMMERCE_MP_TOKEN_SWITCH_FAIL,
   ON_COMMERCE_UPDATING,
   ON_COMMERCE_UPDATED,
   ON_COMMERCE_UPDATE_FAIL,
@@ -72,19 +78,7 @@ export const onCommerceOpen = commerceId => dispatch => {
 export const onCommerceCreate = (commerceData, navigation) => async dispatch => {
   dispatch({ type: ON_REGISTER_COMMERCE });
 
-  const {
-    name,
-    cuit,
-    email,
-    phone,
-    description,
-    area,
-    address,
-    city,
-    province,
-    latitude,
-    longitude
-  } = commerceData;
+  const { name, cuit, email, phone, description, area, address, city, province, latitude, longitude } = commerceData;
 
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
@@ -107,7 +101,7 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       longitude,
       softDelete: null,
       creationDate: new Date()
-    })
+    });
 
     const commerceId = commerceRef.id;
     const profileRef = db.doc(`Profiles/${currentUser.uid}`);
@@ -139,9 +133,7 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
       address,
       city,
       provinceName: province.name,
-      ...(latitude && longitude
-        ? { _geoloc: { lat: latitude, lng: longitude } }
-        : {})
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {})
     });
 
     dispatch({
@@ -210,10 +202,7 @@ onPictureUpdate = async (commerceId, picture, type) => {
   }
 };
 
-export const onCommerceUpdate = (
-  commerceData,
-  navigation
-) => async dispatch => {
+export const onCommerceUpdate = (commerceData, navigation) => async dispatch => {
   dispatch({ type: ON_COMMERCE_UPDATING });
 
   const {
@@ -235,18 +224,10 @@ export const onCommerceUpdate = (
 
   try {
     if (profilePicture instanceof Blob)
-      profilePictureURL = await onPictureUpdate(
-        commerceId,
-        profilePicture,
-        'ProfilePicture'
-      );
+      profilePictureURL = await onPictureUpdate(commerceId, profilePicture, 'ProfilePicture');
 
     if (headerPicture instanceof Blob)
-      headerPictureURL = await onPictureUpdate(
-        commerceId,
-        headerPicture,
-        'HeaderPicture'
-      );
+      headerPictureURL = await onPictureUpdate(commerceId, headerPicture, 'HeaderPicture');
 
     await firebase
       .firestore()
@@ -266,9 +247,7 @@ export const onCommerceUpdate = (
       name,
       city,
       provinceName: province.name,
-      ...(latitude && longitude
-        ? { _geoloc: { lat: latitude, lng: longitude } }
-        : {})
+      ...(latitude && longitude ? { _geoloc: { lat: latitude, lng: longitude } } : {})
     });
 
     dispatch({
@@ -295,9 +274,7 @@ export const onAreasReadForPicker = () => {
       .get()
       .then(snapshot => {
         const areasList = [];
-        snapshot.forEach(doc =>
-          areasList.push({ value: doc.id, label: doc.data().name })
-        );
+        snapshot.forEach(doc => areasList.push({ value: doc.id, label: doc.data().name }));
         dispatch({ type: ON_AREAS_READ_FOR_PICKER, payload: areasList });
       });
   };
@@ -379,4 +356,67 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
       dispatch({ type: ON_REAUTH_FAIL });
       dispatch({ type: ON_COMMERCE_DELETE_FAIL });
     });
+};
+
+export const onCommerceMPagoTokenRead = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_READING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const currentToken = snapshot.docs.find(doc => doc.data().softDelete === null);
+        currentToken
+          ? dispatch({
+              type: ON_COMMERCE_MP_TOKEN_READ,
+              payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
+            })
+          : dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: true } });
+      } else {
+        dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: false } });
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_READ_FAIL }));
+};
+
+export const onCommerceMPagoTokenEnable = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .orderBy('softDelete', 'desc')
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const latestToken = snapshot.docs[0].id;
+        db.doc(`Commerces/${commerceId}/MercadoPagoTokens/${latestToken}`)
+          .update({ softDelete: null })
+          .then(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHED, payload: latestToken }))
+          .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+};
+
+export const onCommerceMPagoTokenDisable = commerceId => dispatch => {
+  dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHING });
+
+  const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/MercadoPagoTokens`)
+    .where('softDelete', '==', null)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const latestToken = snapshot.docs[0].id;
+        db.doc(`Commerces/${commerceId}/MercadoPagoTokens/${latestToken}`)
+          .update({ softDelete: new Date() })
+          .then(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCHED, payload: null }))
+          .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
+      }
+    })
+    .catch(() => dispatch({ type: ON_COMMERCE_MP_TOKEN_SWITCH_FAIL }));
 };

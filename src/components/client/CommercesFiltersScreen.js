@@ -54,9 +54,7 @@ class CommerceFiltersScreen extends Component {
   };
 
   renderCloseButton = () => {
-    return (
-      <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />
-    );
+    return <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />;
   };
 
   onClosePress() {
@@ -102,9 +100,7 @@ class CommerceFiltersScreen extends Component {
   renderRadiusSlider = () =>
     this.state.locationButtonIndex !== 0 ? (
       <View style={{ flex: 1 }}>
-        <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(
-          this.state.locationRadiusKms
-        )} km.`}</Text>
+        <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(this.state.locationRadiusKms)} km.`}</Text>
         <Slider
           style={locationSliderStyle}
           animationType="spring"
@@ -156,11 +152,7 @@ class CommerceFiltersScreen extends Component {
             <ButtonGroup
               onPress={this.onLocationOptionPress.bind(this)}
               selectedIndex={this.state.locationButtonIndex}
-              buttons={[
-                'Deshabilitada',
-                'Ubicación actual',
-                'Ubicación en mapa'
-              ]}
+              buttons={['Deshabilitada', 'Ubicación actual', 'Ubicación en mapa']}
               containerStyle={locationBGContainerStyle}
             />
             {this.renderRadiusSlider()}
@@ -219,12 +211,7 @@ const {
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
-  const {
-    provinceNameFilter,
-    locationButtonIndex,
-    locationRadiusKms,
-    markers
-  } = state.commercesList;
+  const { provinceNameFilter, locationButtonIndex, locationRadiusKms, markers } = state.commercesList;
   const { selectedLocation, userLocation } = state.locationData;
 
   return {

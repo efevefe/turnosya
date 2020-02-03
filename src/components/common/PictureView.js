@@ -17,11 +17,7 @@ const PictureView = props => {
         overlayBackgroundColor="black"
       >
         <View style={styles.mainContainerStyle}>
-          <IconButton
-            icon='md-close'
-            containerStyle={styles.iconButtonContainerStyle}
-            onPress={props.onClosePress}
-          />
+          <IconButton icon="md-close" containerStyle={styles.iconButtonContainerStyle} onPress={props.onClosePress} />
           <View style={styles.imageContainerStyle}>
             <Image
               style={{
@@ -38,7 +34,7 @@ const PictureView = props => {
   };
 
   return renderPicture();
-}
+};
 
 const styles = StyleSheet.create({
   overlayStyle: {

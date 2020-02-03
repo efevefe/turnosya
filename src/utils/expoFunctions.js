@@ -13,9 +13,7 @@ export const getPermissionLocationStatus = async () => {
   try {
     const { status } = await getPermissionLocation();
 
-    return Platform.OS === 'ios'
-      ? getLocationIos(status)
-      : getLocationAndroid(status);
+    return Platform.OS === 'ios' ? getLocationIos(status) : getLocationAndroid(status);
   } catch (error) {
     console.error(error);
   }
@@ -85,9 +83,7 @@ export const getLatitudeAndLongitudeFromString = async string => {
 
 export const openGPSAndroid = () => {
   try {
-    IntentLauncher.startActivityAsync(
-      IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
-    ).then(async () => {
+    IntentLauncher.startActivityAsync(IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS).then(async () => {
       if (await Location.hasServicesEnabledAsync()) {
         return LocationStatus.permissionsAllowed;
       }

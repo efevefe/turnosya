@@ -5,7 +5,6 @@ import { onCommerceOpen, onLogout, onUserRead, onUserWorkplacesRead, onCommerceR
 import { Drawer, DrawerItem } from '../components/common';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/client/VerifyEmailModal';
-import { AREAS } from '../constants';
 
 class ClientDrawerContent extends Component {
   state = { modal: false, loadingId: '' };
@@ -15,20 +14,29 @@ class ClientDrawerContent extends Component {
     this.props.onUserWorkplacesRead();
   }
 
+  onMyCommercePress = async () => {
+    try {
+      if (await isEmailVerified()) {
+        this.props.commerceId
+          ? this.onCommercePress(this.props.commerceId)
+          : this.props.navigation.navigate('commerceRegister');
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   onCommercePress = commerceId => {
     this.setState({ loadingId: commerceId }, async () => {
       try {
-        if (await isEmailVerified()) {
-          this.props.onCommerceOpen(commerceId);
+        this.props.onCommerceOpen(commerceId);
+        const success = await this.props.onCommerceRead(commerceId);
 
-          const success = await this.props.onCommerceRead(commerceId);
-
-          if (success && this.props.areaId) {
-            this.props.navigation.navigate(`${this.props.areaId}`);
-            this.props.navigation.navigate(`${this.props.areaId}Calendar`);
-          }
-        } else {
-          this.setState({ modal: true });
+        if (success && this.props.areaId) {
+          this.props.navigation.navigate(`${this.props.areaId}`);
+          this.props.navigation.navigate(`${this.props.areaId}Calendar`);
         }
       } catch (error) {
         console.error(error);
@@ -40,7 +48,7 @@ class ClientDrawerContent extends Component {
     this.setState({ modal: false });
   };
 
-  renderModal = () => {
+  renderEmailModal = () => {
     if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
@@ -77,11 +85,7 @@ class ClientDrawerContent extends Component {
             title="Mi Negocio"
             icon={{ name: 'ios-briefcase' }}
             loadingWithText={this.props.loadingCommerce && this.state.loadingId === this.props.commerceId}
-            onPress={() => {
-              this.props.commerceId
-                ? this.onCommercePress(this.props.commerceId)
-                : this.props.navigation.navigate('commerceRegister');
-            }}
+            onPress={this.onMyCommercePress}
           />
           {this.renderWorkplaces()}
           <DrawerItem
@@ -102,7 +106,7 @@ class ClientDrawerContent extends Component {
             onPress={() => this.props.onLogout(this.props.commerceId, this.props.workplaces)}
           />
         </Drawer>
-        {this.renderModal()}
+        {this.renderEmailModal()}
       </View>
     );
   }

@@ -1,25 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Card,
-  CheckBox,
-  ButtonGroup,
-  Text,
-  Divider
-} from 'react-native-elements';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableWithoutFeedback
-} from 'react-native';
+import { Card, CheckBox, ButtonGroup, Text, Divider } from 'react-native-elements';
+import { View, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
-import {
-  onScheduleValueChange,
-  onScheduleCardValueChange,
-  onScheduleCardDelete
-} from '../../actions';
+import { onScheduleValueChange, onScheduleCardValueChange, onScheduleCardDelete } from '../../actions';
 import { CardSection, DatePicker, Toast } from '../common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
@@ -40,12 +25,7 @@ class ScheduleRegister extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      firstShiftStart,
-      firstShiftEnd,
-      secondShiftStart,
-      secondShiftEnd
-    } = this.props.card;
+    const { firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd } = this.props.card;
 
     if (
       prevProps.card.firstShiftStart !== firstShiftStart ||
@@ -66,8 +46,7 @@ class ScheduleRegister extends Component {
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
         this.setState({
-          firstShiftStartError:
-            'La hora de apertura debe ser anterior al de cierre'
+          firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre'
         });
       } else {
         this.setState({ firstShiftStartError: '' });
@@ -76,17 +55,12 @@ class ScheduleRegister extends Component {
   };
 
   firstShiftEndError = () => {
-    const {
-      firstShiftStart,
-      firstShiftEnd,
-      secondShiftStart
-    } = this.props.card;
+    const { firstShiftStart, firstShiftEnd, secondShiftStart } = this.props.card;
 
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
         this.setState({
-          firstShiftEndError:
-            'La hora de cierre debe ser posterior a la de apertura'
+          firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
         });
       } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
         this.setState({
@@ -104,13 +78,11 @@ class ScheduleRegister extends Component {
     if (secondShiftStart) {
       if (secondShiftStart <= firstShiftEnd) {
         this.setState({
-          secondShiftStartError:
-            'El segundo turno debe arrancar despues del primero'
+          secondShiftStartError: 'El segundo turno debe arrancar despues del primero'
         });
       } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
         this.setState({
-          secondShiftStartError:
-            'La hora de apertura debe ser anterior a la de cierre'
+          secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre'
         });
       } else {
         this.setState({ secondShiftStartError: '' });
@@ -124,8 +96,7 @@ class ScheduleRegister extends Component {
     if (secondShiftEnd) {
       if (secondShiftEnd <= secondShiftStart) {
         this.setState({
-          secondShiftEndError:
-            'La hora de cierre debe ser posterior a la de apertura'
+          secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
         });
       } else {
         this.setState({ secondShiftEndError: '' });
@@ -136,11 +107,7 @@ class ScheduleRegister extends Component {
   onSecondTurnPress = () => {
     const { checked, firstShiftStartError, firstShiftEndError } = this.state;
 
-    if (
-      this.props.card.firstShiftEnd &&
-      !firstShiftStartError &&
-      !firstShiftEndError
-    ) {
+    if (this.props.card.firstShiftEnd && !firstShiftStartError && !firstShiftEndError) {
       this.setState({ checked: !checked });
 
       this.props.onScheduleCardValueChange({
@@ -158,9 +125,7 @@ class ScheduleRegister extends Component {
   };
 
   getDisabledDays = () => {
-    return this.props.selectedDays.filter(
-      day => !this.props.card.days.includes(day)
-    );
+    return this.props.selectedDays.filter(day => !this.props.card.days.includes(day));
   };
 
   updateIndex = selectedIndexes => {
@@ -169,16 +134,11 @@ class ScheduleRegister extends Component {
     if (selectedIndexes.length > card.days.length) {
       //On day Added
       this.props.onScheduleValueChange({
-        selectedDays: [
-          ...selectedDays,
-          selectedIndexes[selectedIndexes.length - 1]
-        ]
+        selectedDays: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
       });
     } else {
       //On day Deleted
-      const valueErased = card.days.filter(
-        day => !selectedIndexes.includes(day)
-      )[0];
+      const valueErased = card.days.filter(day => !selectedIndexes.includes(day))[0];
 
       this.props.onScheduleValueChange({
         selectedDays: selectedDays.filter(day => day !== valueErased)
@@ -239,9 +199,7 @@ class ScheduleRegister extends Component {
                 name="md-close"
                 color="black"
                 size={25}
-                onPress={() =>
-                  this.props.onScheduleCardDelete(this.props.card.id)
-                }
+                onPress={() => this.props.onScheduleCardDelete(this.props.card.id)}
               />
             </View>
           </View>

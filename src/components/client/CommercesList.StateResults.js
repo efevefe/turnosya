@@ -17,6 +17,4 @@ class StateResults extends Component {
 
 const ConnectedStateResults = connectStateResults(StateResults);
 
-export default connect(null, { onCommercesListValueChange })(
-  ConnectedStateResults
-);
+export default connect(null, { onCommercesListValueChange })(ConnectedStateResults);

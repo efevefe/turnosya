@@ -5,10 +5,7 @@ npm-debug.*
 *.p12
 *.key
 *.mobileprovision
-
 yarn.lock
 yarn-error.log
-
 environment.js
-
 .prettierrc

@@ -35,9 +35,7 @@ class CommerceServicesSchedule extends Component {
       employeeId: this.props.employeeId
     });
 
-    this.unsubscribeServicesRead = this.props.onServicesRead(
-      this.props.commerceId
-    );
+    this.unsubscribeServicesRead = this.props.onServicesRead(this.props.commerceId);
   }
 
   componentDidUpdate(prevProps) {
@@ -61,7 +59,7 @@ class CommerceServicesSchedule extends Component {
       employeeId: this.props.employeeId
     });
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
@@ -70,19 +68,15 @@ class CommerceServicesSchedule extends Component {
     }
 
     this.setState({ selectedDate: date });
-  }
+  };
 
   getReservationFromSlot = slot => {
-    const reservation = this.props.reservations.find(res =>
-      res.startDate.toString() === slot.startDate.toString()
-    );
+    const reservation = this.props.reservations.find(res => res.startDate.toString() === slot.startDate.toString());
 
-    const service = this.props.services.find(service =>
-      service.id === reservation.serviceId
-    );
+    const service = this.props.services.find(service => service.id === reservation.serviceId);
 
     return { ...reservation, service };
-  }
+  };
 
   onSlotPress = slot => {
     if (moment() >= slot.startDate && slot.available) {
@@ -94,7 +88,7 @@ class CommerceServicesSchedule extends Component {
     if (!slot.available) {
       return this.props.navigation.navigate('reservationDetails', {
         reservation: this.getReservationFromSlot(slot)
-      })
+      });
     }
 
     const startDate = slot.startDate;
@@ -104,21 +98,13 @@ class CommerceServicesSchedule extends Component {
     this.props.onNewReservation();
 
     this.props.navigation.navigate('employeeServicesList', {
-      title:
-        startDate.format('DD') +
-        ' de ' +
-        MONTHS[startDate.month()] +
-        ', ' +
-        startDate.format('HH:mm') +
-        ' hs.'
+      title: startDate.format('DD') + ' de ' + MONTHS[startDate.month()] + ', ' + startDate.format('HH:mm') + ' hs.'
     });
   };
 
   isResFillingSlot = (slot, res) => {
-    return (
-      slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString()
-    );
-  }
+    return slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString();
+  };
 
   reservationsOnSlots = () => {
     const { reservations, slots } = this.props;
@@ -152,12 +138,7 @@ class CommerceServicesSchedule extends Component {
   };
 
   renderConfigurationButton = () => {
-    return (
-      <IconButton
-        icon="md-options"
-        onPress={() => this.setState({ modal: true })}
-      />
-    );
+    return <IconButton icon="md-options" onPress={() => this.setState({ modal: true })} />;
   };
 
   onScheduleShiftsPress = () => {
@@ -187,7 +168,7 @@ class CommerceServicesSchedule extends Component {
     return (
       <View style={{ flex: 1, alignSelf: 'stretch' }}>
         <Schedule
-          mode='services'
+          mode="services"
           cards={cards}
           selectedDate={selectedDate}
           reservationMinLength={reservationMinLength}
@@ -201,11 +182,7 @@ class CommerceServicesSchedule extends Component {
           onBackdropPress={() => this.setState({ modal: false })}
           isVisible={this.state.modal}
         >
-          <MenuItem
-            title="Días y horarios de atención"
-            icon="md-grid"
-            onPress={this.onScheduleShiftsPress}
-          />
+          <MenuItem title="Días y horarios de atención" icon="md-grid" onPress={this.onScheduleShiftsPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem
             title="Tiempos de reserva y cancelación"

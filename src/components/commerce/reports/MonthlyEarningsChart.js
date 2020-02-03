@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import {
-  LineChart,
-  Spinner,
-  Menu,
-  Picker,
-  Button,
-  IconButton,
-  CardSection
-} from '../../common';
+import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -32,20 +24,12 @@ class MonthlyEarningsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
   onGenerateReportPress = () => {
-    this.props.onMonthlyEarningsReadByYear(
-      this.props.commerceId,
-      this.state.modalYear
-    );
+    this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.modalYear);
 
     this.props.onCommerceReportValueChange({
       selectedYear: this.state.modalYear
@@ -84,20 +68,14 @@ class MonthlyEarningsChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
         <LineChart
           data={dataLine}
           title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
-          emptyDataMessage={
-            this.props.error ||
-            `Parace que aún no tenes ganancias en ${this.props.selectedYear}`
-          }
+          emptyDataMessage={this.props.error || `Parace que aún no tenes ganancias en ${this.props.selectedYear}`}
           xlabel="MESES DEL AÑO"
           yAxisLabel={'$ '}
         />

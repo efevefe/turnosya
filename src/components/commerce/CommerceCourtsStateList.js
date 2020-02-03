@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import { Spinner, EmptyList } from '../common';
-import {
-  onReservationValueChange,
-  isCourtDisabledOnSlot,
-  onNewReservation
-} from '../../actions';
+import { onReservationValueChange, isCourtDisabledOnSlot, onNewReservation } from '../../actions';
 import CommerceCourtsStateListItem from './CommerceCourtsStateListItem';
 
 class CommerceCourtsStateList extends Component {
@@ -23,10 +19,7 @@ class CommerceCourtsStateList extends Component {
     const { reservations, startDate } = this.props;
 
     return reservations.find(reservation => {
-      return (
-        reservation.startDate.toString() === startDate.toString() &&
-        reservation.courtId === court.id
-      );
+      return reservation.startDate.toString() === startDate.toString() && reservation.courtId === court.id;
     });
   };
 
@@ -48,14 +41,9 @@ class CommerceCourtsStateList extends Component {
   };
 
   isCourtTypeSelected = courtType => {
-    const selectedCourtTypes = this.props.navigation.getParam(
-      'selectedCourtTypes'
-    );
+    const selectedCourtTypes = this.props.navigation.getParam('selectedCourtTypes');
 
-    return (
-      selectedCourtTypes.includes('Todas') ||
-      selectedCourtTypes.includes(courtType)
-    );
+    return selectedCourtTypes.includes('Todas') || selectedCourtTypes.includes(courtType);
   };
 
   renderRow({ item }) {
@@ -72,9 +60,7 @@ class CommerceCourtsStateList extends Component {
         courtAvailable={!courtReservation}
         disabled={isCourtDisabledOnSlot(item, { startDate, endDate })}
         onPress={() =>
-          !courtReservation
-            ? this.onAvailableCourtPress(item)
-            : this.onReservedCourtPress(item, courtReservation)
+          !courtReservation ? this.onAvailableCourtPress(item) : this.onReservedCourtPress(item, courtReservation)
         }
       />
     );
@@ -107,11 +93,7 @@ const mapStateToProps = state => {
   const { courts } = state.courtsList;
   const { commerceId } = state.commerceData;
   const { startDate, endDate } = state.reservation;
-  const {
-    loading,
-    reservations,
-    detailedReservations
-  } = state.reservationsList;
+  const { loading, reservations, detailedReservations } = state.reservationsList;
 
   return {
     courts,

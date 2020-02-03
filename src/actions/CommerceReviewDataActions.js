@@ -19,24 +19,15 @@ export const onCommerceReviewValueChange = payload => {
   return { type: ON_COMMERCE_REVIEW_VALUE_CHANGE, payload };
 };
 
-export const onCommerceReviewCreate = ({
-  commerceId,
-  rating,
-  comment,
-  reservationId
-}) => dispatch => {
+export const onCommerceReviewCreate = ({ commerceId, rating, comment, reservationId }) => dispatch => {
   dispatch({ type: ON_COMMERCE_REVIEW_SAVING });
 
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
 
   const reviewRef = db.collection(`Commerces/${commerceId}/Reviews`).doc();
-  const clientReservationRef = db
-    .collection(`Profiles/${currentUser.uid}/Reservations`)
-    .doc(reservationId);
-  const commerceReservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
+  const clientReservationRef = db.collection(`Profiles/${currentUser.uid}/Reservations`).doc(reservationId);
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
   const commerceRef = db.collection('Commerces').doc(commerceId);
 
   db.runTransaction(transaction => {
@@ -70,10 +61,7 @@ export const onCommerceReviewCreate = ({
     .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVE_FAIL }));
 };
 
-export const onCommerceReviewReadById = ({
-  commerceId,
-  reviewId
-}) => dispatch => {
+export const onCommerceReviewReadById = ({ commerceId, reviewId }) => dispatch => {
   const db = firebase.firestore();
 
   if (reviewId) {
@@ -94,20 +82,13 @@ export const onCommerceReviewReadById = ({
   }
 };
 
-export const onCommerceReviewUpdate = ({
-  commerceId,
-  rating,
-  comment,
-  reviewId
-}) => async dispatch => {
+export const onCommerceReviewUpdate = ({ commerceId, rating, comment, reviewId }) => async dispatch => {
   dispatch({ type: ON_COMMERCE_REVIEW_SAVING });
 
   const db = firebase.firestore();
 
   const commerceRef = db.collection('Commerces').doc(commerceId);
-  const reviewRef = db
-    .collection(`Commerces/${commerceId}/Reviews`)
-    .doc(reviewId);
+  const reviewRef = db.collection(`Commerces/${commerceId}/Reviews`).doc(reviewId);
 
   const oldReview = await reviewRef.get();
   const oldRating = oldReview.data().rating;
@@ -131,26 +112,16 @@ export const onCommerceReviewUpdate = ({
     .catch(() => dispatch({ type: ON_COMMERCE_REVIEW_SAVE_FAIL }));
 };
 
-export const onCommerceReviewDelete = ({
-  commerceId,
-  reservationId,
-  reviewId
-}) => async dispatch => {
+export const onCommerceReviewDelete = ({ commerceId, reservationId, reviewId }) => async dispatch => {
   dispatch({ type: ON_COMMERCE_REVIEW_DELETING });
 
   const db = firebase.firestore();
   const { currentUser } = firebase.auth();
 
   const commerceRef = db.collection('Commerces').doc(commerceId);
-  const reviewRef = db
-    .collection(`Commerces/${commerceId}/Reviews`)
-    .doc(reviewId);
-  const clientReservationRef = db
-    .collection(`Profiles/${currentUser.uid}/Reservations`)
-    .doc(reservationId);
-  const commerceReservationRef = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .doc(reservationId);
+  const reviewRef = db.collection(`Commerces/${commerceId}/Reviews`).doc(reviewId);
+  const clientReservationRef = db.collection(`Profiles/${currentUser.uid}/Reservations`).doc(reservationId);
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
 
   const oldReview = await reviewRef.get();
   const oldRating = oldReview.data().rating;

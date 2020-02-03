@@ -39,11 +39,7 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton
-          icon="md-search"
-          containerStyle={{ paddingRight: 0 }}
-          onPress={this.onSearchPress}
-        />
+        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
@@ -65,13 +61,7 @@ class CommercesList extends Component {
 
   renderAlgoliaSearchBar = () => {
     if (this.state.searchVisible) {
-      return (
-        <ConnectedSearchBox
-          autoFocus={true}
-          showLoadingIndicator
-          onCancel={this.onCancelPress}
-        />
-      );
+      return <ConnectedSearchBox autoFocus={true} showLoadingIndicator onCancel={this.onCancelPress} />;
     }
   };
 
@@ -80,10 +70,8 @@ class CommercesList extends Component {
       return {
         filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
       };
-    else if (this.state.areaName)
-      return { filters: `areaName:\'${this.state.areaName}\'` };
-    else if (this.props.provinceNameFilter)
-      return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
+    else if (this.state.areaName) return { filters: `areaName:\'${this.state.areaName}\'` };
+    else if (this.props.provinceNameFilter) return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
     else return null;
   };
 
@@ -118,16 +106,10 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        <Configure
-          {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
-        />
+        <Configure {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }} />
         <ConnectedStateResults />
         <ConnectedHits />
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onMapFabPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onMapFabPress}>
           <Ionicons name="md-compass" />
         </Fab>
       </InstantSearch>
@@ -136,12 +118,7 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    refinement,
-    favoriteCommerces,
-    provinceNameFilter,
-    locationRadiusKms
-  } = state.commercesList;
+  const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
 
   const {
     address,

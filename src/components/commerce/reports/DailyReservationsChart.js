@@ -2,15 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import {
-  BarChart,
-  Spinner,
-  DatePicker,
-  Button,
-  CardSection,
-  Menu,
-  IconButton
-} from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -39,12 +31,7 @@ class DailyReservationsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
@@ -109,10 +96,7 @@ class DailyReservationsChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
