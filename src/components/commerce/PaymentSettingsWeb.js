@@ -34,7 +34,7 @@ class PaymentSettings extends Component {
           scrollEnabled={true}
           startInLoadingState={true}
           thirdPartyCookiesEnabled={false}
-          incognito={true}
+          //incognito={true}
           allowUniversalAccessFromFileURLs={true}
           style={this.state.loading ? { flex: 0, height: 0 } : { flex: 1, flexGrow: 1, alignSelf: 'stretch' }}
           onNavigationStateChange={this.handleWebViewNavigationStateChange}

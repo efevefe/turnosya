@@ -61,45 +61,33 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_CREATING:
     case ON_COMMERCE_READ_FAIL:
       return { ...INITIAL_STATE };
-
     case ON_COMMERCE_VALUE_CHANGE:
       return { ...state, ...action.payload };
-
     case ON_COMMERCE_CREATE_FAIL:
       return { ...state, error: action.payload, loading: false };
-
     case ON_REGISTER_COMMERCE:
     case ON_COMMERCE_DELETING:
       return { ...state, loading: true };
-
     case ON_COMMERCE_PROFILE_CREATE:
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
-
     case ON_COMMERCE_READING:
     case ON_COMMERCE_UPDATING:
       return { ...state, refreshing: true };
-
     case ON_COMMERCE_READ:
       return { ...INITIAL_STATE, ...action.payload };
-
     case ON_COMMERCE_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
       return { ...state, ...action.payload, refreshing: false };
-
     case ON_COMMERCE_UPDATE_FAIL:
       Toast.show({ text: 'Se ha producido un error' });
       return { ...state, refreshing: false };
-
     case ON_AREAS_READ_FOR_PICKER:
       return { ...state, areasList: action.payload };
-
     case ON_CUIT_EXISTS:
       return { ...state, cuitExists: true };
-
     case ON_CUIT_NOT_EXISTS:
       return { ...state, cuitExists: false };
-
     case ON_REAUTH_SUCCESS:
       return { ...state, confirmDeleteVisible: false };
     case ON_COMMERCE_MP_TOKEN_READING:
