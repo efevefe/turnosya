@@ -26,7 +26,6 @@ export const onNotificationsRead = collectionRef => dispatch => {
       .limit(50)
       .onSnapshot(snapshot => {
         const notifications = [];
-        let processedItems = 0;
 
         if (snapshot.empty) {
           return dispatch({
@@ -37,7 +36,6 @@ export const onNotificationsRead = collectionRef => dispatch => {
 
         snapshot.forEach(doc => {
           notifications.push({ ...doc.data(), id: doc.id, date: moment(doc.data().date.toDate()) });
-          processedItems++;
 
           if (notifications.length === snapshot.size) {
             dispatch({

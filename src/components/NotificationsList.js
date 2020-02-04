@@ -21,18 +21,24 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
-    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
-      this.unsubscribeNotificationsRead = this.props.onCommerceNotificationsRead(this.props.commerceId);
-      this.setState({ type: 'commerce' });
-    } else {
-      this.unsubscribeNotificationsRead = this.props.onClientNotificationsRead(this.props.clientId);
-      this.setState({ type: 'client' });
-    }
+    this.onNotificationsRead()
   }
 
   componentWillUnmount() {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
   }
+
+  onNotificationsRead = () => {
+    this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
+    
+    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
+    this.unsubscribeNotificationsRead = this.props.onCommerceNotificationsRead(this.props.commerceId);
+    this.setState({ type: 'commerce' });
+    } else {
+    this.unsubscribeNotificationsRead = this.props.onClientNotificationsRead(this.props.clientId);
+    this.setState({ type: 'client' });
+    }
+    }
 
   onProfilePress = () => {
     if (this.state.type === 'client') {
@@ -93,12 +99,8 @@ class NotificationsList extends Component {
   onRefresh = () => {
     return (
       <RefreshControl
-        refreshing={this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead()}
-        onRefresh={() => {
-          this.state.type === 'client'
-            ? this.props.onClientNotificationsRead(this.props.clientId)
-            : this.props.onCommerceNotificationsRead(this.props.commerceId);
-        }}
+        refreshing={this.props.refreshing}
+        onRefresh={this.onNotificationsRead}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />
