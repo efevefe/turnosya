@@ -88,7 +88,7 @@ class ClientProfile extends Component {
   };
 
   onCancelPress = () => {
-    this.onClientDataValueChange(this.state.stateBeforeChanges);
+    this.props.onClientDataValueChange(this.state.stateBeforeChanges);
     this.cleanErrors();
     this.disableEdit();
   };
