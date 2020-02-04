@@ -32,8 +32,7 @@ import {
   onCommerceMPagoTokenRead,
   onCommercePaymentRefund
 } from '../../actions';
-import { isOneWeekOld } from '../../utils/functions';
-import { MONTHS, DAYS } from '../../constants';
+import { isOneWeekOld, cancelReservationNotificationFormat } from '../../utils';
 
 class CommerceReservationDetails extends Component {
   constructor(props) {
@@ -139,14 +138,15 @@ class CommerceReservationDetails extends Component {
   onConfirmDelete = (id, clientId) => {
     if (this.renderError()) {
       this.setState({ optionsVisible: false });
+      const { client, court, service } = this.state.reservation;
 
-      const { startDate, paymentId } = this.state.reservation;
-
-      const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
-        MONTHS[moment(startDate).month()]
-      } a las ${moment(startDate).format('HH:mm')} fue cancelado. "${this.props.cancellationReason}"`;
-
-      const title = 'Turno Cancelado';
+      const notification = cancelReservationNotificationFormat({
+        startDate: this.state.reservation.startDate,
+        service: court ? `${court.name}` : `${service.name}`,
+        actorName: this.props.name,
+        receptorName: `${client.firstName}`,
+        cancellationReason: this.props.cancellationReason
+      });
 
       if (this.state.reservation.paymentId)
         this.props.onCommercePaymentRefund({
@@ -161,7 +161,7 @@ class CommerceReservationDetails extends Component {
         clientId,
         cancellationReason: this.props.cancellationReason,
         navigation: this.props.navigation,
-        notification: { title, body }
+        notification
       });
     }
   };
@@ -456,13 +456,14 @@ const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { cancellationLoading, cancellationReason } = state.reservationsList;
-  const { commerceId, mPagoToken } = state.commerceData;
+  const { commerceId, name, mPagoToken } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
   const { cashPayRegisterLoading } = state.paymentData;
 
   return {
     cancellationLoading,
     commerceId,
+    name,
     mPagoToken,
     cancellationReason,
     clientRating: state.clientReviewData.rating,

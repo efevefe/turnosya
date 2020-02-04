@@ -31,7 +31,8 @@ class CommerceProfileView extends Component {
   componentDidMount() {
     let { commerceId, favoriteCommerces } = this.props;
 
-    if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
+    if (this.props.navigation.getParam('commerceId')) commerceId = this.props.navigation.getParam('commerceId');
+    else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 

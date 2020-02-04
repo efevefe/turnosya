@@ -29,6 +29,12 @@ class CommerceDrawerContent extends Component {
           icon={{ name: 'md-people' }}
           onPress={() => this.props.navigation.navigate('commerceEmployees')}
         />
+        <DrawerItem
+          title="Notificaciones"
+          icon={{ name: 'md-notifications-outline' }}
+          loadingWithText={this.props.loadingNotifications}
+          onPress={() => this.props.navigation.navigate('commerceNotifications')}
+        />
         <PermissionsAssigner requiredRole={ROLES.OWNER}>
           <DrawerItem
             title="Configuración"
@@ -40,7 +46,7 @@ class CommerceDrawerContent extends Component {
           title="Cerrar Sesión"
           icon={{ name: 'md-exit' }}
           loadingWithText={this.props.loading}
-          onPress={() => this.props.onLogout()}
+          onPress={() => this.props.onLogout(this.props.commerceId, this.props.workplaces)}
         />
       </Drawer>
     );
@@ -50,16 +56,15 @@ class CommerceDrawerContent extends Component {
 const mapStateToProps = state => {
   const { name, profilePicture, commerceId } = state.commerceData;
   const { loading } = state.auth;
-  const {
-    role: { roleId }
-  } = state.roleData;
+  const { role: { roleId } } = state.roleData;
+  const { workplaces } = state.clientData;
+  const { loading: loadingNotifications } = state.notificationsList;
 
-  return { name, profilePicture, commerceId, loading, roleId };
+  return { name, profilePicture, commerceId, loading, roleId, workplaces, loadingNotifications };
 };
 
 export default connect(mapStateToProps, {
   onLogout,
-  onCommerceRead,
   onCommerceRead,
   onScheduleValueChange
 })(CommerceDrawerContent);

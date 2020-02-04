@@ -89,6 +89,12 @@ class ClientDrawerContent extends Component {
           />
           {this.renderWorkplaces()}
           <DrawerItem
+            title="Notificaciones"
+            icon={{ name: 'md-notifications-outline' }}
+            loadingWithText={this.props.loadingNotifications}
+            onPress={() => this.props.navigation.navigate('clientNotifications')}
+          />
+          <DrawerItem
             title="Configuración"
             icon={{ name: 'md-settings' }}
             onPress={() => this.props.navigation.navigate('clientSettings')}
@@ -97,7 +103,7 @@ class ClientDrawerContent extends Component {
             title="Cerrar Sesión"
             icon={{ name: 'md-exit' }}
             loadingWithText={this.props.loading}
-            onPress={() => this.props.onLogout(this.props.commerceId)}
+            onPress={() => this.props.onLogout(this.props.commerceId, this.props.workplaces)}
           />
         </Drawer>
         {this.renderEmailModal()}
@@ -113,7 +119,7 @@ const mapStateToProps = state => {
     refreshing: loadingCommerce
   } = state.commerceData;
   const { loading } = state.auth;
-
+  const { loading: loadingNotifications } = state.notificationsList;
   return {
     profilePicture,
     firstName,
@@ -122,7 +128,8 @@ const mapStateToProps = state => {
     workplaces,
     commerceId,
     areaId,
-    loadingCommerce
+    loadingCommerce,
+    loadingNotifications
   };
 };
 

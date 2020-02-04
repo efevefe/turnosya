@@ -20,7 +20,7 @@ import {
 
 import getEnvVars from '../../environment';
 const { facebookApiKey, facebookPermissions, iosClientId, androidClientId, googleScopes } = getEnvVars();
-import { onPushNotificationTokenRegister, onPushNotificationTokenDelete } from '../actions/PushNotificationActions';
+import { onNotificationTokenRegister, onNotificationTokenDelete } from '../actions/NotificationActions';
 
 export const onLoginValueChange = payload => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload };
@@ -41,8 +41,11 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        onPushNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
-        if (!user.user.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+        onNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        if (!user.user.emailVerified)
+          dispatch({
+            type: ON_EMAIL_VERIFY_REMINDED
+          });
       })
       .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };
@@ -63,7 +66,7 @@ export const onFacebookLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { first_name, last_name } = additionalUserInfo.profile;
-              onPushNotificationTokenRegister();
+              onNotificationTokenRegister();
 
               const userData = {
                 firstName: first_name,
@@ -113,7 +116,7 @@ export const onGoogleLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { given_name, family_name } = additionalUserInfo.profile;
-              onPushNotificationTokenRegister();
+              onNotificationTokenRegister();
 
               const userData = {
                 firstName: given_name,
@@ -147,11 +150,11 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = commerceId => async dispatch => {
+export const onLogout = (commerceId, workplaces) => async dispatch => {
   dispatch({ type: ON_LOGOUT });
 
   try {
-    await onPushNotificationTokenDelete(commerceId);
+    await onNotificationTokenDelete(commerceId, workplaces);
 
     firebase
       .auth()

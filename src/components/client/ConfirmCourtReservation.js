@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { CardSection, Button, ButtonGroup } from '../common';
-import { MAIN_COLOR, MONTHS, DAYS } from '../../constants';
+import { MAIN_COLOR } from '../../constants';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
-import { isEmailVerified } from '../../utils';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmCourtReservation extends Component {
@@ -64,13 +63,25 @@ class ConfirmCourtReservation extends Component {
   onConfirmReservation = async () => {
     try {
       if (await isEmailVerified()) {
-        const { commerce, court, courtType, startDate, endDate, areaId, price, light } = this.props;
+        const {
+          commerce,
+          court,
+          courtType,
+          startDate,
+          endDate,
+          areaId,
+          price,
+          light,
+          firstName,
+          lastName
+        } = this.props;
 
-        const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
-          MONTHS[moment(startDate).month()]
-        } a las ${moment(startDate).format('HH:mm')} fue reservado`;
-
-        const title = 'Turno Reservado';
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${court.name}`,
+          actorName: `${firstName} ${lastName}`,
+          receptorName: `${commerce.name}`
+        });
 
         this.props.onClientCourtReservationCreate({
           commerceId: commerce.objectID,
@@ -81,7 +92,7 @@ class ConfirmCourtReservation extends Component {
           endDate,
           price,
           light,
-          notification: { title, body }
+          notification
         });
       } else {
         this.setState({ modal: true });
@@ -186,8 +197,23 @@ const mapStateToProps = state => {
     exists,
     loading
   } = state.reservation;
+  const { firstName, lastName } = state.clientData;
 
-  return { commerce, courtType, court, startDate, endDate, price, light, areaId, saved, exists, loading };
+  return {
+    commerce,
+    courtType,
+    court,
+    startDate,
+    endDate,
+    price,
+    light,
+    areaId,
+    saved,
+    exists,
+    loading,
+    firstName,
+    lastName
+  };
 };
 
 export default connect(mapStateToProps, {

@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { onCommercePushNotificationSend } from './PushNotificationActions';
+import { onCommerceNotificationSend } from './NotificationActions';
 import {
   ON_RESERVATION_VALUE_CHANGE,
   ON_RESERVATION_CREATING,
@@ -89,6 +89,7 @@ const reservationExists = async ({ commerceId, employeeId, courtId, startDate, e
 
   try {
     const snapshot = await query.get();
+
     return snapshot.docs.some(res => res.data().startDate.toDate() < endDate);
   } catch (error) {
     throw new Error(error);
@@ -127,16 +128,21 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
   try {
     const { employeeId, courtId, startDate, endDate } = reservationData;
 
-    if (await reservationExists({ commerceId, employeeId, courtId, startDate, endDate })) {
+    if (
+      await reservationExists({
+        commerceId,
+        employeeId,
+        courtId,
+        startDate,
+        endDate
+      })
+    ) {
       return dispatch({ type: ON_RESERVATION_EXISTS });
     }
 
     await batch.commit();
 
-    // pongo esto asi porque en el caso de la reserva de un servicio, la notificacion le deberia llegar
-    // unicamente al empleado al que se le reservo el turno, pero como eso todavia no esta, en la reserva
-    // de un servicio todavia no se le estaria pasando la notificacion
-    notification && onCommercePushNotificationSend(notification, commerceId);
+    onCommerceNotificationSend(notification, commerceId, employeeId, currentUser.uid);
 
     dispatch({ type: ON_RESERVATION_CREATE });
   } catch (error) {

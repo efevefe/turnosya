@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { formatReservation } from './ReservationsListActions';
 import { AREAS } from '../constants';
-import { onCommercePushNotificationSend } from './PushNotificationActions';
+import { onCommerceNotificationSend } from './NotificationActions';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
@@ -10,7 +10,6 @@ import {
   ON_CLIENT_RESERVATION_CANCEL_FAIL,
   ON_CLIENT_RESERVATION_CANCELING
 } from './types';
-import moment from 'moment';
 
 export const onClientReservationsListRead = () => dispatch => {
   dispatch({ type: ON_CLIENT_RESERVATIONS_READING });
@@ -88,7 +87,8 @@ export const onClientReservationCancel = ({ reservationId, commerceId, navigatio
           batch
             .commit()
             .then(() => {
-              onCommercePushNotificationSend(notification, commerceId);
+              onCommerceNotificationSend(notification, commerceId, notification.employeeId, currentUser.uid);
+
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

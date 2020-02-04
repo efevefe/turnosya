@@ -23,6 +23,7 @@ import EmployeesListReducer from './EmployeesListReducer';
 import EmployeeDataReducer from './EmployeeDataReducer';
 import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
+import NotificationsListReducer from './NotificationsListReducer';
 import PaymentDataReducer from './PaymentDataReducer';
 
 const reducers = combineReducers({
@@ -49,6 +50,7 @@ const reducers = combineReducers({
   employeeData: EmployeeDataReducer,
   roleData: RoleDataReducer,
   commerceReports: CommerceReportsReducer,
+  notificationsList: NotificationsListReducer,
   paymentData: PaymentDataReducer
 });
 

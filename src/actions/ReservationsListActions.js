@@ -10,7 +10,7 @@ import {
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
-import { onClientPushNotificationSend } from './PushNotificationActions';
+import { onClientNotificationSend } from './NotificationActions';
 
 export const onReservationsListValueChange = payload => {
   return {
@@ -226,7 +226,7 @@ export const onCommerceReservationCancel = ({
         batch
           .commit()
           .then(() => {
-            onClientPushNotificationSend(notification, clientId);
+            onClientNotificationSend(notification, clientId, commerceId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
@@ -264,7 +264,10 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
@@ -277,7 +280,10 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
             });
         });
 
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
       .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };
@@ -299,7 +305,10 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
@@ -312,7 +321,10 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
             });
         });
 
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
       .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };

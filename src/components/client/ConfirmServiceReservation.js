@@ -7,7 +7,7 @@ import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
-import { isEmailVerified } from '../../utils';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {
@@ -16,7 +16,24 @@ class ConfirmServiceReservation extends Component {
   onConfirmReservation = async () => {
     try {
       if (await isEmailVerified()) {
-        const { commerce, service, employee, startDate, endDate, price, areaId } = this.props;
+        const {
+          commerce,
+          service,
+          employee,
+          startDate,
+          endDate,
+          price,
+          areaId,
+          clientFirstName,
+          clientLastName
+        } = this.props;
+
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${service.name}`,
+          actorName: `${clientFirstName} ${clientLastName}`,
+          receptorName: `${commerce.name}`
+        });
 
         this.props.onClientServiceReservationCreate({
           commerceId: commerce.objectID,
@@ -25,7 +42,8 @@ class ConfirmServiceReservation extends Component {
           employeeId: employee.id,
           startDate,
           endDate,
-          price
+          price,
+          notification
         });
       } else {
         this.setState({ modal: true });
@@ -117,7 +135,22 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation;
 
-  return { commerce, employee, service, startDate, endDate, price, areaId, saved, exists, loading };
+  const { firstName: clientFirstName, lastName: clientLastName } = state.clientData;
+
+  return {
+    commerce,
+    employee,
+    service,
+    startDate,
+    endDate,
+    price,
+    areaId,
+    saved,
+    exists,
+    loading,
+    clientFirstName,
+    clientLastName
+  };
 };
 
 export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation);
