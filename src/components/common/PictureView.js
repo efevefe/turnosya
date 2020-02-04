@@ -26,7 +26,6 @@ const PictureView = props => {
               }}
               source={{ uri: props.picture }}
             />
-            <StatusBar hidden />
           </View>
         </View>
       </Overlay>

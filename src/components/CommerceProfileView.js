@@ -18,8 +18,8 @@ import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
 import CommerceServicesEmployees from './client/CommerceServicesEmployees';
 
-const imageSizeWidth = Math.round(Dimensions.get('window').width);
-const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const screenWidth = Math.round(Dimensions.get('window').width);
+const headerPictureHeight = Math.round(Dimensions.get('window').height * 0.2);
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
@@ -127,8 +127,8 @@ class CommerceProfileView extends Component {
         <View>
           <Image
             style={{
-              height: imageSizeHeight,
-              width: imageSizeWidth,
+              height: headerPictureHeight,
+              width: screenWidth,
               position: 'absolute'
             }}
             source={headerPicture ? { uri: headerPicture } : null}
@@ -147,8 +147,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -213,8 +213,8 @@ class CommerceProfileView extends Component {
           isVisible={this.state.pictureVisible}
           onClosePress={this.onPicturePress}
           picture={this.props.profilePicture}
-          width={imageSizeWidth}
-          height={(imageSizeHeight / 0.2) * 0.5}
+          width={screenWidth}
+          height={screenWidth}
         />
       </ScrollView>
     );
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: imageSizeHeight / 2 - 49
+    marginTop: headerPictureHeight / 2 - 49
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
