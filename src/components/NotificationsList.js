@@ -21,24 +21,28 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
-    this.onNotificationsRead()
+    this.onSetType();
   }
 
   componentWillUnmount() {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
   }
 
+  onSetType = () => {
+    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
+      this.setState({ type: 'commerce' });
+    } else {
+      this.setState({ type: 'client' });
+    }
+    this.onNotificationsRead();
+  };
+
   onNotificationsRead = () => {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
-    
-    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
-    this.unsubscribeNotificationsRead = this.props.onCommerceNotificationsRead(this.props.commerceId);
-    this.setState({ type: 'commerce' });
-    } else {
-    this.unsubscribeNotificationsRead = this.props.onClientNotificationsRead(this.props.clientId);
-    this.setState({ type: 'client' });
-    }
-    }
+    if (this.state.type === 'client')
+      this.unsubscribeNotificationsRead = this.props.onClientNotificationsRead(this.props.clientId);
+    else this.unsubscribeNotificationsRead = this.props.onCommerceNotificationsRead(this.props.commerceId);
+  };
 
   onProfilePress = () => {
     if (this.state.type === 'client') {
