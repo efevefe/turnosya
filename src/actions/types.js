@@ -219,7 +219,7 @@ export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
 export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
-export const ON_NOTIFICATIONS_DELETED = 'on_notifications_deleted';
+export const ON_NOTIFICATION_DELETED= 'on_notifications_deleted';
 export const ON_NOTIFICATIONS_DELETED_FAIL = 'on_notifications_deleted_fail';
 
 
