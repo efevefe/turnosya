@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Button } from 'react-native-elements';
 import { onSelectedLocationChange } from '../../actions';
 import CommercesMap from '../common/CommercesMap';
-import { Toast } from '../common';
+import { Toast, IconButton } from '../common';
 
 class CommercesFiltersMap extends Component {
   state = { selectedLocationBeforechanges: null };
@@ -17,32 +16,16 @@ class CommercesFiltersMap extends Component {
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ rightButton: this.renderApplyFiltersButton(), leftButton: this.renderButton() });
+    this.props.navigation.setParams({ rightButton: this.renderSaveButton(), leftButton: this.renderCancelButton() });
     this.setState({ selectedLocationBeforechanges: this.props.selectedLocation });
   }
 
-  renderApplyFiltersButton = () => {
-    return (
-      <Button
-        title="Aceptar"
-        type="clear"
-        titleStyle={{ color: 'white' }}
-        onPress={this.onApplyFiltersPress}
-        containerStyle={applyFilterButtonStyle}
-      />
-    );
+  renderSaveButton = () => {
+    return <IconButton icon="md-checkmark" onPress={this.onApplyFiltersPress} />;
   };
 
-  renderButton = () => {
-    return (
-      <Button
-        title="Cancelar"
-        type="clear"
-        titleStyle={{ color: 'white' }}
-        onPress={this.onCancelButtonPress}
-        containerStyle={cancelFilterButtonStyle}
-      />
-    );
+  renderCancelButton = () => {
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
   };
 
   onApplyFiltersPress = () => {
@@ -51,7 +34,7 @@ class CommercesFiltersMap extends Component {
       : Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' });
   };
 
-  onCancelButtonPress = () => {
+  onCancelPress = () => {
     this.props.onSelectedLocationChange(this.state.selectedLocationBeforechanges);
     this.props.navigation.goBack();
   };
@@ -65,10 +48,8 @@ class CommercesFiltersMap extends Component {
   }
 }
 
-const { windowContainerStyle, applyFilterButtonStyle, cancelFilterButtonStyle } = StyleSheet.create({
-  windowContainerStyle: { flex: 1 },
-  applyFilterButtonStyle: { paddingRight: 10 },
-  cancelFilterButtonStyle: { paddingLeft: 10 }
+const { windowContainerStyle } = StyleSheet.create({
+  windowContainerStyle: { flex: 1 }
 });
 
 const mapStateToProps = state => {
