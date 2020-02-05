@@ -32,11 +32,11 @@ class NotificationsList extends Component {
 
   onProfilePress = () => {
     if (this.state.type === 'client') {
-      let commerceId = this.state.selectedNotification.sentFor;
+      let commerceId = this.state.selectedNotification.sentBy;
       this.props.navigation.navigate('commerceProfileView', { commerceId });
       this.setState({ optionsVisible: false });
     } else {
-      const clientId = this.state.selectedNotification.sentFor;
+      const clientId = this.state.selectedNotification.sentBy;
       this.props.navigation.navigate('clientProfileView', { clientId });
       this.setState({ optionsVisible: false });
     }
@@ -67,7 +67,7 @@ class NotificationsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    const { title, body, id } = item;
+    const { title, body } = item;
     date = moment(item.date.toDate());
     return (
       <ListItem

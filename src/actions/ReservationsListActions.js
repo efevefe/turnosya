@@ -11,6 +11,7 @@ import {
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
 import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
 
 export const onReservationsListValueChange = payload => {
   return {
@@ -208,7 +209,7 @@ export const onCommerceReservationCancel = ({
         batch
           .commit()
           .then(() => {
-            onClientNotificationSend(notification, clientId, commerceId);
+            onClientNotificationSend(notification, clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })

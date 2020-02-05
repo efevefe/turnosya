@@ -12,6 +12,8 @@ import {
   ON_EMPLOYEE_DELETED,
   ON_EMPLOYEE_UPDATED
 } from './types';
+import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
 
 export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -20,29 +22,52 @@ export const onEmployeeValueChange = payload => ({
 
 export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
 
-export const onEmployeeCreate = (
+export const onEmployeeInvite = (
   { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
   navigation
 ) => dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
 
   const db = firebase.firestore();
+
+  db.collection(`Commerces/${commerceId}/Employees`)
+    .add({
+      email,
+      phone,
+      firstName,
+      lastName,
+      role,
+      softDelete: null,
+      inviteDate: new Date(),
+      startDate: null,
+      profileId
+    })
+    .then(employeeRef => {
+      const notification = {
+        title: 'Invitación de Empleo',
+        body: `Usted ha sido invitado como empleado del negocio ${commerceName}. Debe aceptar la invitación para formar parte del comercio y trabajar usando la app!`
+      };
+
+      onClientNotificationSend(notification, profileId, commerceId, NOTIFICATION_TYPES.EMPLOYMENT_INVITE, {
+        employeeId: employeeRef.id
+      });
+
+      dispatch({ type: ON_EMPLOYEE_CREATED });
+      navigation.goBack();
+    })
+    .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
+};
+
+export const onEmployeeCreate = ({ commerceId, commerceName, employeeId, profileId }, navigation) => dispatch => {
+  dispatch({ type: ON_EMPLOYEE_SAVING });
+
+  const db = firebase.firestore();
   const batch = db.batch();
 
-  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc();
+  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
   const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc();
 
-  batch.set(employeeRef, {
-    email,
-    phone,
-    firstName,
-    lastName,
-    role,
-    softDelete: null,
-    inviteDate: new Date(),
-    startDate: null,
-    profileId
-  });
+  batch.update(employeeRef, { startDate: new Date() });
 
   batch.set(workplaceRef, { commerceId, name: commerceName, softDelete: null });
 
@@ -81,15 +106,24 @@ export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async
     .where('commerceId', '==', commerceId)
     .get();
 
-  const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
-  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
+  if (snapshot.empty) {
+    // Empleado fue invitado y todavía no aceptó
+    db.collection(`Commerces/${commerceId}/Employees`)
+      .doc(employeeId)
+      .update({ softDelete: new Date() })
+      .then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+  } else {
+    // Empleado aceptó invitación de trabajo
+    const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
+    const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
 
-  const batch = db.batch();
+    const batch = db.batch();
 
-  batch.update(workplaceRef, { softDelete: new Date() });
-  batch.update(employeeRef, { softDelete: new Date() });
+    batch.update(workplaceRef, { softDelete: new Date() });
+    batch.update(employeeRef, { softDelete: new Date() });
 
-  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+    batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
+  }
 };
 
 export const onEmployeeInfoUpdate = email => dispatch => {

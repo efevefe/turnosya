@@ -10,7 +10,7 @@ import {
   onRolesRead,
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
-  onEmployeeCreate,
+  onEmployeeInvite,
   onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button, IconButton } from '../common';
@@ -92,7 +92,7 @@ class EmployeeForm extends Component {
             navigation
           );
         else
-          this.props.onEmployeeCreate(
+          this.props.onEmployeeInvite(
             {
               commerceId,
               commerceName,
@@ -238,6 +238,6 @@ export default connect(mapStateToProps, {
   onRolesRead,
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
-  onEmployeeCreate,
+  onEmployeeInvite,
   onEmployeeUpdate
 })(EmployeeForm);

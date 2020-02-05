@@ -11,7 +11,7 @@ class CourtListItem extends Component {
   state = {
     optionsVisible: false,
     deleteVisible: false,
-    currentUserEmail: firebase.auth().currentUser.email,
+    currentUserEmail: firebase.auth().currentUser.email
   };
 
   onOptionsPress = () => {
@@ -24,7 +24,7 @@ class CourtListItem extends Component {
 
     this.setState({
       optionsVisible: false,
-      deleteVisible: !this.state.deleteVisible,
+      deleteVisible: !this.state.deleteVisible
     });
   };
 
@@ -34,7 +34,7 @@ class CourtListItem extends Component {
     this.props.onEmployeeDelete({
       employeeId: employee.id,
       commerceId,
-      profileId: employee.profileId,
+      profileId: employee.profileId
     });
 
     this.setState({ deleteVisible: false });
@@ -50,7 +50,7 @@ class CourtListItem extends Component {
   };
 
   render() {
-    const { firstName, lastName, email, role, id } = this.props.employee;
+    const { firstName, lastName, email, role, id, startDate } = this.props.employee;
 
     return (
       <View style={{ flex: 1 }}>
@@ -59,8 +59,12 @@ class CourtListItem extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
-          <Divider style={{ backgroundColor: 'grey' }} />
+          {startDate ? (
+            <View>
+              <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
+              <Divider style={{ backgroundColor: 'grey' }} />
+            </View>
+          ) : null}
           <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
         </Menu>
 
@@ -77,40 +81,19 @@ class CourtListItem extends Component {
         <ListItem
           title={`${firstName} ${lastName}`}
           titleStyle={
-            { textAlign: 'left', display: 'flex' }
-            // true // agregar cuando estén las notificaciones
-            //   ? { textAlign: 'left', display: 'flex' }
-            //   : {
-            //       textAlign: 'left',
-            //       display: 'flex',
-            //       color: 'grey',
-            //       fontStyle: 'italic'
-            //     }
+            startDate
+              ? { textAlign: 'left', display: 'flex' }
+              : {
+                  textAlign: 'left',
+                  display: 'flex',
+                  color: 'grey',
+                  fontStyle: 'italic'
+                }
           }
-          rightTitle={
-            <Text
-            // style={
-            //   true // agregar cuando estén las notificaciones
-            //     ? {}
-            //     : { color: 'grey', fontStyle: 'italic' }
-            // }
-            >
-              {role.name}
-            </Text>
-          }
+          rightTitle={<Text style={startDate ? {} : { color: 'grey', fontStyle: 'italic' }}>{role.name}</Text>}
+          rightSubtitle={startDate ? null : <Text style={{ color: 'grey', fontStyle: 'italic' }}>(Invitado)</Text>}
           key={id}
-          subtitle={
-            <Text
-              style={
-                { color: 'grey' }
-                // true // agregar cuando estén las notificaciones
-                //   ? { color: 'grey' }
-                //   : { color: 'grey', fontStyle: 'italic' }
-              }
-            >
-              {email}
-            </Text>
-          }
+          subtitle={<Text style={startDate ? { color: 'grey' } : { color: 'grey', fontStyle: 'italic' }}>{email}</Text>}
           onLongPress={
             this.props.role.value > ROLES[this.props.employee.role.roleId].value ||
             this.state.currentUserEmail === this.props.employee.email
@@ -124,7 +107,7 @@ class CourtListItem extends Component {
                   name: 'md-more',
                   type: 'ionicon',
                   containerStyle: { height: 20, width: 10 },
-                  onPress: this.onOptionsPress,
+                  onPress: this.onOptionsPress
                 }
               : null
           }
@@ -143,5 +126,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCourtFormOpen,
   onEmployeeDelete,
-  onEmployeeValueChange,
+  onEmployeeValueChange
 })(CourtListItem);

@@ -41,3 +41,10 @@ export const AREAS = {
   sports: 'sports',
   hairdressers: 'hairdressers'
 };
+
+// NOTIFICATION TYPES
+
+export const NOTIFICATION_TYPES = {
+  NOTIFICATION: { id: 'notification', name: 'Notificación' },
+  EMPLOYMENT_INVITE: { id: 'employmentInvite', name: 'Invitación de Empleo' }
+};
