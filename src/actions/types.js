@@ -199,6 +199,7 @@ export const ON_EMPLOYEE_SAVE_FAIL = 'on_employee_save_fail';
 export const ON_EMPLOYEE_DELETED = 'on_employee_deleted';
 export const ON_EMPLOYEE_UPDATED = 'on_employee_updated';
 export const ON_EMPLOYEE_CREATED = 'on_employee_created';
+export const ON_EMPLOYEE_SELECT = 'on_employee_select';
 
 // Roles types
 export const ON_ROLES_READ = 'on_roles_read';
@@ -214,12 +215,12 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change'
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
- 
+
 //Notifications types
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
 export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
-export const ON_NOTIFICATION_DELETED= 'on_notification_deleted';
+export const ON_NOTIFICATION_DELETED = 'on_notification_deleted';
 export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
 
 

@@ -40,6 +40,11 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
 
     this.unsubscribeServicesRead = this.props.onServicesRead(this.props.commerceId);
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -52,6 +57,7 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
     this.unsubscribeServicesRead && this.unsubscribeServicesRead();
     this.unsubscribeEmployeesRead && this.unsubscribeEmployeesRead();
+    this.willFocusSubscription.remove && this.willFocusSubscription.remove();
   }
 
   onDateChanged = date => {

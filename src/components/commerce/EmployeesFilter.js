@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { BadgeButtonGroup } from '../common';
+import { onEmployeeSelect } from '../../actions';
 
 class EmployeesFilter extends Component {
   state = {
@@ -71,4 +72,4 @@ const mapStateToProps = state => {
   };
 }
 
-export default connect(mapStateToProps, null)(EmployeesFilter);
+export default connect(mapStateToProps, { onEmployeeSelect })(EmployeesFilter);

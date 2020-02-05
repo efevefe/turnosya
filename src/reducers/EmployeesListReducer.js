@@ -1,6 +1,6 @@
-import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL } from '../actions/types';
+import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL, ON_EMPLOYEE_SELECT } from '../actions/types';
 
-const INITIAL_STATE = { employees: [], loading: false };
+const INITIAL_STATE = { employees: [], loading: false, selectedEmployeeId: '' };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -13,6 +13,8 @@ export default (state = INITIAL_STATE, action) => {
     case ON_EMPLOYEES_READ_FAIL:
       return { ...state, loading: false };
 
+    case ON_EMPLOYEE_SELECT:
+      return { ...state, ...action.payload };
     default:
       return state;
   }
