@@ -8,47 +8,44 @@ import { Toast } from '../components/common';
 const onCommerceNotificationTokensRead = async commerceId => {
   const db = firebase.firestore();
   const tokens = [];
-
-  return await db
-    .collection(`Commerces/${commerceId}/PushNotificationTokens`)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(doc => tokens.push(doc.id));
-      return tokens;
-    })
-    .catch(error => console.error(error));
+  try {
+    const querySnapshot = await db.collection(`Commerces/${commerceId}/NotificationTokens`).get();
+    querySnapshot.forEach(doc => tokens.push(doc.id));
+    return tokens;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const onEmployeeNotificationTokensRead = async (commerceId, employeeId) => {
   const db = firebase.firestore();
-  const employeeToken = [];
-
-  return await db
-    .collection(`Commerces/${commerceId}/PushNotificationTokens`)
-    .where('employeeId', '==', employeeId)
-    .get()
-    .then(querySnapshot => {
-      employeeToken.push(querySnapshot.docs[0].id);
-      return employeeToken;
-    })
-    .catch(error => console.error(error));
+  const employeeTokens = [];
+  try {
+    const querySnapshot = await db
+      .collection(`Commerces/${commerceId}/NotificationTokens`)
+      .where('employeeId', '==', employeeId)
+      .get();
+    querySnapshot.forEach(doc => employeeTokens.push(doc.id));
+    return employeeTokens;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const onClientNotificationTokensRead = async clientId => {
   const db = firebase.firestore();
   const tokens = [];
+  try {
+    const querySnapshot = await db.collection(`Profiles/${clientId}/NotificationTokens`).get();
+    querySnapshot.forEach(doc => tokens.push(doc.id));
 
-  return await db
-    .collection(`Profiles/${clientId}/PushNotificationTokens`)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(doc => tokens.push(doc.id));
-      return tokens;
-    })
-    .catch(error => console.error(error));
+    return tokens;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const onCommerceNotificationSend = (
+export const onCommerceNotificationSend = async (
   notification,
   commerceId,
   employeeId,
@@ -56,22 +53,21 @@ export const onCommerceNotificationSend = (
   notificationType,
   metadata
 ) => {
-  employeeId
-    ? onEmployeeNotificationTokensRead(commerceId, employeeId).then(tokens => {
-        const collectionRef = `Commerces/${commerceId}/Notifications`;
-        sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId, notificationType, metadata });
-      })
-    : onCommerceNotificationTokensRead(commerceId).then(tokens => {
-        const collectionRef = `Commerces/${commerceId}/Notifications`;
-        sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId, notificationType, metadata });
-      });
+  if (employeeId) {
+    const tokens = await onEmployeeNotificationTokensRead(commerceId, employeeId);
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId, notificationType, metadata });
+  } else {
+    const tokens = await onCommerceNotificationTokensRead(commerceId);
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId, notificationType, metadata });
+  }
 };
 
-export const onClientNotificationSend = (notification, clientId, commerceId, notificationType, metadata) => {
-  onClientNotificationTokensRead(clientId).then(tokens => {
-    const collectionRef = `Profiles/${clientId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionRef, sentBy: commerceId, notificationType, metadata });
-  });
+export const onClientNotificationSend = async (notification, clientId, commerceId, notificationType, metadata) => {
+  const tokens = await onClientNotificationTokensRead(clientId);
+  const collectionRef = `Profiles/${clientId}/Notifications`;
+  sendPushNotification({ ...notification, tokens, collectionRef, sentBy: commerceId, notificationType, metadata });
 };
 
 const sendPushNotification = ({ title, body, tokens, collectionRef, sentBy, notificationType, metadata }) => {
@@ -122,15 +118,12 @@ const getDeviceToken = async () => {
         const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
         finalStatus = status;
       }
-      if (finalStatus !== 'granted') {
-        return 0;
-      }
+      if (finalStatus !== 'granted') return 0;
 
       return await Notifications.getExpoPushTokenAsync();
     } else {
-      Toast.show({
-        text: 'Debe usar un dispositivo físico para el uso de notificaciones'
-      });
+      Toast.show({ text: 'Debe usar un dispositivo físico para el uso de notificaciones' });
+
       return -1;
     }
   } catch (error) {
@@ -148,7 +141,7 @@ export const onNotificationTokenRegister = async () => {
       const batch = db.batch();
 
       // Se guarda el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
+      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/NotificationTokens/${deviceToken}`);
       batch.set(clientPushNotificationRef, {});
 
       const userDoc = await db.doc(`Profiles/${currentUser.uid}`).get();
@@ -162,7 +155,7 @@ export const onNotificationTokenRegister = async () => {
           .where('profileId', '==', currentUser.uid)
           .get();
 
-        const ownerTokenRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+        const ownerTokenRef = db.doc(`Commerces/${commerceId}/NotificationTokens/${deviceToken}`);
         ownerSnapshot.forEach(owner => batch.set(ownerTokenRef, { employeeId: owner.id }));
       }
 
@@ -172,7 +165,7 @@ export const onNotificationTokenRegister = async () => {
         .where('softDelete', '==', null)
         .get();
 
-      for await (const workplace of workplacesSnapshot.docs) {
+      for (const workplace of workplacesSnapshot.docs) {
         const { commerceId: workplaceId } = workplace.data();
 
         const employeeSnapshot = await db
@@ -181,7 +174,7 @@ export const onNotificationTokenRegister = async () => {
           .where('profileId', '==', currentUser.uid)
           .get();
 
-        const employeeTokenRef = db.doc(`Commerces/${workplaceId}/PushNotificationTokens/${deviceToken}`);
+        const employeeTokenRef = db.doc(`Commerces/${workplaceId}/NotificationTokens/${deviceToken}`);
         employeeSnapshot.forEach(employee => batch.set(employeeTokenRef, { employeeId: employee.id }));
       }
 
@@ -202,13 +195,13 @@ export const onNotificationTokenDelete = async (commerceId, workplaces) => {
       const batch = db.batch();
 
       // Se elimina el deviceToken en la colección del cliente
-      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/PushNotificationTokens/${deviceToken}`);
+      const clientPushNotificationRef = db.doc(`Profiles/${currentUser.uid}/NotificationTokens/${deviceToken}`);
 
       batch.delete(clientPushNotificationRef);
 
       if (commerceId) {
         // Se elimina el deviceToken en la colección del comercio donde es dueño
-        const commercePushNotificationRef = db.doc(`Commerces/${commerceId}/PushNotificationTokens/${deviceToken}`);
+        const commercePushNotificationRef = db.doc(`Commerces/${commerceId}/NotificationTokens/${deviceToken}`);
 
         batch.delete(commercePushNotificationRef);
       }
@@ -216,8 +209,9 @@ export const onNotificationTokenDelete = async (commerceId, workplaces) => {
       // Se elimina el deviceToken en las colecciónes de los comercios donde es empleado
       workplaces.forEach(workplace => {
         const workplacePushNotificationRef = db.doc(
-          `Commerces/${workplace.commerceId}/PushNotificationTokens/${deviceToken}`
+          `Commerces/${workplace.commerceId}/NotificationTokens/${deviceToken}`
         );
+
         batch.delete(workplacePushNotificationRef);
       });
 

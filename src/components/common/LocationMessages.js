@@ -4,8 +4,7 @@ import { Divider } from 'react-native-elements';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { connect } from 'react-redux';
-import * as Location from 'expo-location';
-import { onUserLocationChange } from '../../actions';
+import { onLocationValueChange } from '../../actions';
 import {
   openGPSAndroid,
   openSettingIos,
@@ -16,12 +15,7 @@ import {
 } from '../../utils';
 
 class LocationMessages extends Component {
-  state = {
-    location: 'location sin setear',
-    appState: AppState.currentState,
-    permissionStatus: null,
-    modal: false
-  };
+  state = { appState: AppState.currentState, permissionStatus: null, modal: false };
 
   async componentDidMount() {
     try {
@@ -31,39 +25,27 @@ class LocationMessages extends Component {
       } else {
         this.setState({ permissionStatus, modal: true });
       }
-      AppState.addEventListener('change', this._handleAppStateChange);
+      AppState.addEventListener('change', this.onAppStateChange);
     } catch (error) {
       console.error(error);
     }
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener('change', this.onAppStateChange);
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  onAppStateChange = async appState => {
     try {
-      if (this.state.appState === 'active' && prevState.appState !== this.state.appState) {
-        this.setState({
-          permissionStatus: await getPermissionLocationStatus(),
-          modal: true
-        });
+      if (appState === 'active' && this.state.appState !== appState) {
+        this.props.onLocationFound && this.props.onLocationFound({ updating: true, location: null });
+        this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState });
+      } else {
+        this.setState({ appState });
       }
     } catch (error) {
       console.error(error);
     }
-
-    if (this.state.permissionStatus === 'permissionsAllowed') {
-      const {
-        coords: { latitude, longitude }
-      } = await Location.getCurrentPositionAsync();
-
-      this.props.onUserLocationChange({ latitude, longitude });
-    }
-  }
-
-  _handleAppStateChange = appState => {
-    this.setState({ appState });
   };
 
   renderTitle = () => {
@@ -76,27 +58,41 @@ class LocationMessages extends Component {
     try {
       const currentLatLong = await getCurrentPosition();
       const { latitude, longitude } = currentLatLong.coords;
-      const [addressResult] = await getAddressFromLatAndLong({
-        latitude,
-        longitude
-      });
-      const { name, street, city, region, country } = addressResult;
 
-      const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
+      if (latitude && this.props.latitude !== latitude && longitude && this.props.longitude !== longitude) {
+        const [addressResult] = await getAddressFromLatAndLong({ latitude, longitude });
+        const { name, street, city, region, country } = addressResult;
 
-      const location = {
-        address,
-        city,
-        provinceName: region,
-        country,
-        latitude,
-        longitude
-      };
+        const address = Platform.OS === 'ios' ? name : `${street} ${name}`;
 
-      this.props.onUserLocationChange(location);
+        const location = {
+          address,
+          city,
+          provinceName: region,
+          country,
+          latitude,
+          longitude
+        };
+
+        this.props.onLocationFound && this.props.onLocationFound({ updating: false, location });
+      } else if (!latitude || !longitude) {
+        this.updateUserLocation();
+      }
     } catch (error) {
       console.error(error);
     }
+  };
+
+  updateUserLocation = () => {
+    if (this.props.latitude && this.props.longitude) {
+      // Esto se hace para que cuando el marker de 'UserLocation' se está mostrando en el mapa,
+      // y  después de apaga el GPS o deje de dar permisos, este marker desaparezca.
+      // PD: El borrado del mapa no es instantáneo porque no queda el compoente escuchando, pero la
+      // próxima vez que se presione el Fab y te aparezca el cartel solicitando GPS, se borra el marker
+      this.props.onLocationValueChange({ userLocation: { latitude: null, longitude: null } });
+    }
+
+    this.props.onLocationFound && this.props.onLocationFound({ updating: !this.state.permissionStatus, location: null });
   };
 
   renderItems = () => {
@@ -177,6 +173,7 @@ class LocationMessages extends Component {
       this.getAndSaveLocation();
       return <View />;
     } else {
+      this.updateUserLocation();
       return (
         <View>
           <Menu
@@ -212,4 +209,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(null, { onUserLocationChange })(LocationMessages);
+const mapStateToProps = state => {
+  const { latitude, longitude } = state.locationData.userLocation;
+
+  return { latitude, longitude };
+};
+
+export default connect(mapStateToProps, { onLocationValueChange })(LocationMessages);

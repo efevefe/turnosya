@@ -123,27 +123,36 @@ app.post('/ipn-notification', (req, res) => {
           const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
 
           if (status === 'approved') {
-            const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc(id.toString());
-            const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
-            const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
+            db.doc('ReservationStates/paid')
+              .get()
+              .then(state => {
+                const stateObject = { id: state.id, name: state.data().name };
 
-            const batch = db.batch();
+                const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc(id.toString());
+                const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+                const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
 
-            batch.set(paymentRef, {
-              date: new Date(),
-              collectorId: collector.id,
-              method: constants.paymentTypes[payment_type_id],
-              order,
-              payerId: payer_id
-            });
+                const batch = db.batch();
 
-            batch.update(commerceReservationRef, { paymentId: id.toString() });
-            batch.update(clientReservationRef, { paymentId: id.toString() });
+                batch.set(paymentRef, {
+                  date: new Date(),
+                  collectorId: collector.id,
+                  method: constants.paymentTypes[payment_type_id],
+                  order,
+                  payerId: payer_id
+                });
 
-            batch
-              .commit()
-              .then(() => {
-                res.status(200).send('Notification successfully processed');
+                batch.update(commerceReservationRef, { paymentId: id.toString(), state: stateObject });
+                batch.update(clientReservationRef, { paymentId: id.toString(), state: stateObject });
+
+                batch
+                  .commit()
+                  .then(() => {
+                    res.status(200).send('Notification successfully processed');
+                  })
+                  .catch(err => {
+                    res.status(500).send();
+                  });
               })
               .catch(err => {
                 console.log(err);

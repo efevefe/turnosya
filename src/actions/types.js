@@ -127,10 +127,8 @@ export const ON_NEW_SERVICE_RESERVATION = 'on_new_service_reservation';
 
 // Location types
 export const ON_LOCATION_VALUE_CHANGE = 'on_location_value_change';
-export const ON_USER_LOCATION_CHANGE = 'on_user_location_change';
 export const ON_SELECTED_LOCATION_CHANGE = 'on_selected_location_change';
 export const ON_LOCATION_VALUES_RESET = 'on_location_values_reset';
-export const ON_SPECIFIC_LOCATION_ENABLED = 'on_specific_location_enabled';
 
 // Client Reservations List
 export const ON_CLIENT_RESERVATIONS_READ = 'on_client_reservations_read';
@@ -219,8 +217,8 @@ export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
 export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
-export const ON_NOTIFICATIONS_DELETED = 'on_notifications_deleted';
-export const ON_NOTIFICATIONS_DELETED_FAIL = 'on_notifications_deleted_fail';
+export const ON_NOTIFICATION_DELETED= 'on_notification_deleted';
+export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
 
 
 //Payment types

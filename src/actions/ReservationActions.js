@@ -81,7 +81,7 @@ const reservationExists = async ({ commerceId, employeeId, courtId, startDate, e
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('endDate', '>', startDate);
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);

@@ -112,7 +112,7 @@ export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => 
   } catch (error) {
     dispatch({ type: ON_USER_UPDATE_FAIL });
   } finally {
-    profilePicture.close();
+    profilePicture.close && profilePicture.close();
   }
 };
 

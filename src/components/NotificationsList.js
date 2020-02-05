@@ -11,7 +11,7 @@ import {
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import moment from 'moment';
-import { stringFormatNotificatones } from '../utils';
+import { notificationsToFormatString } from '../utils';
 
 class NotificationsList extends Component {
   state = {
@@ -21,25 +21,35 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
+    let type;
     if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
-      this.props.onCommerceNotificationsRead(this.props.commerceId);
-      this.setState({ type: 'commerce' });
+      type = 'commerce';
     } else {
-      this.props.onClientNotificationsRead(this.props.clientId);
-      this.setState({ type: 'client' });
+      type = 'client';
     }
+    this.setState({ type }, this.onNotificationsRead);
   }
+
+  componentWillUnmount() {
+    this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
+  }
+
+  onNotificationsRead = () => {
+    this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
+    if (this.state.type === 'client')
+      this.unsubscribeNotificationsRead = this.props.onClientNotificationsRead(this.props.clientId);
+    else this.unsubscribeNotificationsRead = this.props.onCommerceNotificationsRead(this.props.commerceId);
+  };
 
   onProfilePress = () => {
     if (this.state.type === 'client') {
       let commerceId = this.state.selectedNotification.sentBy;
       this.props.navigation.navigate('commerceProfileView', { commerceId });
-      this.setState({ optionsVisible: false });
     } else {
       const clientId = this.state.selectedNotification.sentBy;
       this.props.navigation.navigate('clientProfileView', { clientId });
-      this.setState({ optionsVisible: false });
     }
+    this.setState({ optionsVisible: false });
   };
 
   onNotificationDeletePress = () => {
@@ -67,14 +77,12 @@ class NotificationsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    const { title, body } = item;
-    date = moment(item.date.toDate());
     return (
       <ListItem
-        title={title}
-        rightTitle={`Hace ${stringFormatNotificatones(moment().diff(date, 'minutes')).toString()}`}
+        title={item.title}
+        rightTitle={`Hace ${notificationsToFormatString(moment().diff(item.date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
-        subtitle={body}
+        subtitle={item.body}
         subtitleStyle={{ fontSize: 12 }}
         rightIcon={{
           name: 'md-more',
@@ -92,11 +100,7 @@ class NotificationsList extends Component {
     return (
       <RefreshControl
         refreshing={this.props.refreshing}
-        onRefresh={() => {
-          this.state.type === 'client'
-            ? this.props.onClientNotificationsRead(this.props.clientId)
-            : this.props.onCommerceNotificationsRead(this.props.commerceId);
-        }}
+        onRefresh={this.onNotificationsRead}
         colors={[MAIN_COLOR]}
         tintColor={MAIN_COLOR}
       />
@@ -127,7 +131,7 @@ class NotificationsList extends Component {
           </Menu>
         </View>
       );
-    return <EmptyList title="No tiene notificaciones" />;
+    return <EmptyList title="No tiene notificaciones" onRefresh={this.onRefresh()} />;
   }
 }
 

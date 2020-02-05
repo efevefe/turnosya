@@ -184,9 +184,9 @@ export const stringFormatDays = totalDays => {
   const months = Math.floor(totalDays / 30);
   const days = totalDays % 30;
 
-  const stringMonths = months == 0 ? '' : months == 1 ? months + ' mes' : months + ' meses';
+  const stringMonths = months + (months == 1 ? ' mes' : ' meses');
 
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days + (days == 1 ? ' día' : ' días');
 
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
@@ -203,9 +203,9 @@ export const stringFormatHours = totalHours => {
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
 
-  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+  const stringHours = hours + (hours == 1 ? ' hora' : ' horas');
 
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days + (days == 1 ? ' día' : ' días');
 
   if (hours && days) return stringDays + ' y ' + stringHours + '.';
   else if (hours) return stringHours + '.';
@@ -271,16 +271,17 @@ export const cancelReservationNotificationFormat = ({
  * @param  {Integer} totalMins The amount of minutes to format
  * @return {String}            String with the following format: 'XX h. XX mins.'
  */
-export const stringFormatNotificatones = totalMins => {
-  const hours = Math.floor(totalMins / 60);
-  const days = Math.floor(totalMins / 3600);
-
-  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
-
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
-
+export const notificationsToFormatString = totalMins => {
   if (totalMins < 2) return '1 min.';
   else if (totalMins < 60) return totalMins + ' mins.';
-  else if (totalMins < 1440) return stringHours + '.';
+
+  const hours = Math.floor(totalMins / 60);
+  const days = Math.floor(totalMins / 1440);
+
+  const stringHours = hours + (hours == 1 ? ' hora' : ' horas');
+
+  const stringDays = days + (days == 1 ? ' día' : ' días');
+
+  if (totalMins < 1440) return stringHours + '.';
   else return stringDays + '.';
 };

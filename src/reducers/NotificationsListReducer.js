@@ -2,8 +2,8 @@ import {
   ON_NOTIFICATIONS_READING,
   ON_NOTIFICATIONS_READ,
   ON_NOTIFICATIONS_READ_FAIL,
-  ON_NOTIFICATIONS_DELETED,
-  ON_NOTIFICATIONS_DELETED_FAIL
+  ON_NOTIFICATION_DELETED,
+  ON_NOTIFICATION_DELETED_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -21,12 +21,12 @@ export default (state = INITIAL_STATE, action) => {
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state, loading: false };
 
-    case ON_NOTIFICATIONS_DELETED:
+    case ON_NOTIFICATION_DELETED:
       Toast.show({ text: 'Notificación borrada.' });
 
       return state;
 
-    case ON_NOTIFICATIONS_DELETED_FAIL:
+    case ON_NOTIFICATION_DELETED_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
       return { ...state };
 

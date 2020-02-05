@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { ON_NOTIFICATIONS_READ, ON_NOTIFICATIONS_READING, ON_NOTIFICATIONS_DELETED } from './types';
+import { ON_NOTIFICATIONS_READ, ON_NOTIFICATIONS_READING, ON_NOTIFICATION_DELETED } from './types';
+import moment from 'moment';
 
 export const onCommerceNotificationsRead = commerceId => {
   const collectionRef = `Commerces/${commerceId}/Notifications`;
@@ -21,11 +22,10 @@ export const onNotificationsRead = collectionRef => dispatch => {
     db
       .collection(collectionRef)
       .where('softDelete', '==', null)
-      //no puedo crear indice  .orderBy('date','desc')
+      .orderBy('date', 'desc')
       .limit(50)
       .onSnapshot(snapshot => {
         const notifications = [];
-        let processedItems = 0;
 
         if (snapshot.empty) {
           return dispatch({
@@ -35,10 +35,9 @@ export const onNotificationsRead = collectionRef => dispatch => {
         }
 
         snapshot.forEach(doc => {
-          notifications.push({ ...doc.data(), id: doc.id });
-          processedItems++;
+          notifications.push({ ...doc.data(), id: doc.id, date: moment(doc.data().date.toDate()) });
 
-          if (processedItems === snapshot.size) {
+          if (notifications.length === snapshot.size) {
             dispatch({
               type: ON_NOTIFICATIONS_READ,
               payload: notifications
@@ -65,6 +64,6 @@ export const onNotificationDelete = collectionRef => {
   return dispatch => {
     db.doc(collectionRef)
       .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: ON_NOTIFICATIONS_DELETED }));
+      .then(() => dispatch({ type: ON_NOTIFICATION_DELETED }));
   };
 };

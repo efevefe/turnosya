@@ -62,7 +62,7 @@ const ClientSettingsStack = createStackNavigator(
   stackNavigationOptions
 );
 
-const clientNotificationsStack = createStackNavigator(
+const ClientNotificationsStack = createStackNavigator(
   {
     clientNotificationslist: {
       screen: NotificationsList,
@@ -80,7 +80,7 @@ const clientDrawer = createDrawerNavigator(
     tabs: ClientNavigation,
     commerceRegister: CommerceRegisterStack,
     clientSettings: ClientSettingsStack,
-    clientNotifications: clientNotificationsStack
+    clientNotifications: ClientNotificationsStack
   },
   {
     ...drawerNavigationOptions,
