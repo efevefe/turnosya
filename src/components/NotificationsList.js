@@ -21,21 +21,18 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
-    this.onSetType();
+    var type;
+    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
+      type = 'commerce';
+    } else {
+      type = 'client';
+    }
+    this.setState({ type }, this.onNotificationsRead);
   }
 
   componentWillUnmount() {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
   }
-
-  onSetType = () => {
-    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
-      this.setState({ type: 'commerce' });
-    } else {
-      this.setState({ type: 'client' });
-    }
-    this.onNotificationsRead();
-  };
 
   onNotificationsRead = () => {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
@@ -80,7 +77,6 @@ class NotificationsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    console.log(item.date);
     return (
       <ListItem
         title={item.title}
