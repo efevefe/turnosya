@@ -102,11 +102,7 @@ export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
-    Google.logInAsync({
-      iosClientId,
-      androidClientId,
-      scopes: googleScopes
-    })
+    Google.logInAsync({ iosClientId, androidClientId, scopes: googleScopes })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
           const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
@@ -209,15 +205,13 @@ export const userReauthenticate = async (password = null) => {
         }
       });
     } else if (provider == 'google.com') {
-      await Google.logInAsync({
-        iosClientId,
-        androidClientId,
-        scopes: googleScopes
-      }).then(({ type, idToken, accessToken }) => {
-        if (type === 'success') {
-          credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+      await Google.logInAsync({ iosClientId, androidClientId, scopes: googleScopes }).then(
+        ({ type, idToken, accessToken }) => {
+          if (type === 'success') {
+            credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+          }
         }
-      });
+      );
     }
 
     return currentUser.reauthenticateWithCredential(credential);
