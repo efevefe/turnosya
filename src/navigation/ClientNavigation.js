@@ -15,8 +15,10 @@ import ClientReservationsList from '../components/client/ClientReservationsList'
 import ClientReservationDetails from '../components/client/ClientReservationDetails';
 import CommercesFiltersScreen from '../components/client/CommercesFiltersScreen';
 import CommercesFiltersMap from '../components/client/CommercesFiltersMap';
+import PaymentForm from '../components/client/PaymentForm';
 import CommercesMap from '../components/common/CommercesMap';
 import CommerceLocationMap from '../components/common/CommerceLocationMap';
+import PaymentDetails from '../components/PaymentDetails';
 import ClientReviewsList from '../components/ClientReviewsList';
 import CommerceProfileView from '../components/CommerceProfileView';
 import CommerceProfileInfo from '../components/CommerceProfileInfo';
@@ -187,6 +189,18 @@ const calendarStack = createStackNavigator(
       screen: ClientReservationDetails,
       navigationOptions: {
         title: 'Detalle del Turno'
+      }
+    },
+    paymentForm: {
+      screen: PaymentForm,
+      navigationOptions: {
+        title: 'Pagar'
+      }
+    },
+    paymentDetails: {
+      screen: PaymentDetails,
+      navigationOptions: {
+        title: 'Detalles del Pago'
       }
     }
   },

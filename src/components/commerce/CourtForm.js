@@ -62,7 +62,7 @@ class CourtForm extends Component {
   };
 
   onCourtSave = () => {
-    const { id, name, court, ground, price, lightPrice, commerceId, navigation, disabledFrom, disabledTo } = this.props;
+    const { id, name, description, court, ground, price, lightPrice, commerceId, navigation, disabledFrom, disabledTo } = this.props;
     const { reservationsToCancel } = this.state;
 
     if (id) {
@@ -70,6 +70,7 @@ class CourtForm extends Component {
         {
           id,
           name,
+          description,
           court,
           ground,
           price,
@@ -85,6 +86,7 @@ class CourtForm extends Component {
       this.props.onCourtCreate(
         {
           name,
+          description,
           court,
           ground,
           price,
@@ -412,6 +414,18 @@ class CourtForm extends Component {
           </CardSection>
 
           <CardSection>
+            <Input
+              label="Descripción:"
+              placeholder="Descripción de la cancha"
+              multiline={true}
+              maxLength={250}
+              maxHeight={180}
+              onChangeText={description => this.props.onCourtValueChange({ description })}
+              value={this.props.description}
+            />
+          </CardSection>
+
+          <CardSection>
             <Picker
               title={'Tipo de cancha:'}
               placeholder={{ value: null, label: 'Seleccionar...' }}
@@ -530,6 +544,7 @@ const mapStateToProps = state => {
   const {
     id,
     name,
+    description,
     courts,
     court,
     grounds,
@@ -549,6 +564,7 @@ const mapStateToProps = state => {
   return {
     id,
     name,
+    description,
     courts,
     court,
     grounds,

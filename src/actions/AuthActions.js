@@ -20,7 +20,7 @@ import {
 
 import getEnvVars from '../../environment';
 const { facebookApiKey, facebookPermissions, iosClientId, androidClientId, googleScopes } = getEnvVars();
-import { onPushNotificationTokenRegister, onPushNotificationTokenDelete } from '../actions/PushNotificationActions';
+import { onNotificationTokenRegister, onNotificationTokenDelete } from '../actions/NotificationActions';
 
 export const onLoginValueChange = payload => {
   return { type: ON_LOGIN_VALUE_CHANGE, payload };
@@ -41,7 +41,7 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        onPushNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        onNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
         if (!user.user.emailVerified)
           dispatch({
             type: ON_EMAIL_VERIFY_REMINDED
@@ -66,7 +66,7 @@ export const onFacebookLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { first_name, last_name } = additionalUserInfo.profile;
-              onPushNotificationTokenRegister();
+              onNotificationTokenRegister();
 
               const userData = {
                 firstName: first_name,
@@ -102,11 +102,7 @@ export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
-    Google.logInAsync({
-      iosClientId,
-      androidClientId,
-      scopes: googleScopes
-    })
+    Google.logInAsync({ iosClientId, androidClientId, scopes: googleScopes })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
           const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
@@ -116,7 +112,7 @@ export const onGoogleLogin = () => {
             .signInWithCredential(credential)
             .then(({ user, additionalUserInfo }) => {
               const { given_name, family_name } = additionalUserInfo.profile;
-              onPushNotificationTokenRegister();
+              onNotificationTokenRegister();
 
               const userData = {
                 firstName: given_name,
@@ -150,11 +146,11 @@ export const onGoogleLogin = () => {
   };
 };
 
-export const onLogout = commerceId => async dispatch => {
+export const onLogout = (commerceId, workplaces) => async dispatch => {
   dispatch({ type: ON_LOGOUT });
 
   try {
-    await onPushNotificationTokenDelete(commerceId);
+    await onNotificationTokenDelete(commerceId, workplaces);
 
     firebase
       .auth()
@@ -165,6 +161,17 @@ export const onLogout = commerceId => async dispatch => {
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   } catch (error) {
     return dispatch => dispatch({ type: ON_LOGIN_FAIL });
+  }
+};
+
+export const onEmailVerifyReminded = () => async dispatch => {
+  try {
+    const { currentUser } = firebase.auth();
+    await currentUser.reload();
+
+    if (!currentUser.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -198,15 +205,13 @@ export const userReauthenticate = async (password = null) => {
         }
       });
     } else if (provider == 'google.com') {
-      await Google.logInAsync({
-        iosClientId,
-        androidClientId,
-        scopes: googleScopes
-      }).then(({ type, idToken, accessToken }) => {
-        if (type === 'success') {
-          credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+      await Google.logInAsync({ iosClientId, androidClientId, scopes: googleScopes }).then(
+        ({ type, idToken, accessToken }) => {
+          if (type === 'success') {
+            credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
+          }
         }
-      });
+      );
     }
 
     return currentUser.reauthenticateWithCredential(credential);

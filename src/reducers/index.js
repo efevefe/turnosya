@@ -23,6 +23,8 @@ import EmployeesListReducer from './EmployeesListReducer';
 import EmployeeDataReducer from './EmployeeDataReducer';
 import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
+import NotificationsListReducer from './NotificationsListReducer';
+import PaymentDataReducer from './PaymentDataReducer';
 
 const reducers = combineReducers({
   auth: AuthReducer,
@@ -47,7 +49,9 @@ const reducers = combineReducers({
   employeesList: EmployeesListReducer,
   employeeData: EmployeeDataReducer,
   roleData: RoleDataReducer,
-  commerceReports: CommerceReportsReducer
+  commerceReports: CommerceReportsReducer,
+  notificationsList: NotificationsListReducer,
+  paymentData: PaymentDataReducer
 });
 
 export default createStore(reducers, {}, applyMiddleware(ReduxThunk));

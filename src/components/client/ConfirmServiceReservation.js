@@ -7,20 +7,58 @@ import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import { onClientServiceReservationCreate } from '../../actions';
 import ServiceReservationDetails from '../ServiceReservationDetails';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {
-  onConfirmReservation = () => {
-    const { commerce, service, employee, startDate, endDate, price, areaId } = this.props;
+  state = { modal: false };
 
-    this.props.onClientServiceReservationCreate({
-      commerceId: commerce.objectID,
-      areaId,
-      serviceId: service.id,
-      employeeId: employee.id,
-      startDate,
-      endDate,
-      price
-    });
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const {
+          commerce,
+          service,
+          employee,
+          startDate,
+          endDate,
+          price,
+          areaId,
+          clientFirstName,
+          clientLastName
+        } = this.props;
+
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${service.name}`,
+          actorName: `${clientFirstName} ${clientLastName}`,
+          receptorName: `${commerce.name}`
+        });
+
+        this.props.onClientServiceReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          serviceId: service.id,
+          employeeId: employee.id,
+          startDate,
+          endDate,
+          price,
+          notification
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
@@ -77,6 +115,7 @@ class ConfirmServiceReservation extends Component {
           price={price}
         />
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }
@@ -96,7 +135,22 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation;
 
-  return { commerce, employee, service, startDate, endDate, price, areaId, saved, exists, loading };
+  const { firstName: clientFirstName, lastName: clientLastName } = state.clientData;
+
+  return {
+    commerce,
+    employee,
+    service,
+    startDate,
+    endDate,
+    price,
+    areaId,
+    saved,
+    exists,
+    loading,
+    clientFirstName,
+    clientLastName
+  };
 };
 
 export default connect(mapStateToProps, { onClientServiceReservationCreate })(ConfirmServiceReservation);

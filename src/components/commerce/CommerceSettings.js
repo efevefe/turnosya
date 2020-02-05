@@ -3,13 +3,15 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../../actions';
-import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, onCommerceMPagoTokenRead } from '../../actions';
+import { MenuItem, Menu, Input, CardSection, SettingsItem, Spinner } from '../common';
 
 class CommerceSettings extends Component {
-  state = { providerId: null };
+  state = { providerId: null, mPagoModalVisible: false };
 
   componentDidMount() {
+    this.props.onCommerceMPagoTokenRead(this.props.commerceId);
+
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
@@ -74,20 +76,31 @@ class CommerceSettings extends Component {
   };
 
   render() {
-    return (
+    return this.props.mPagoTokenReadLoading ? (
+      <Spinner />
+    ) : (
       <ScrollView style={styles.containerStyle}>
+        <SettingsItem
+          leftIcon={{
+            name: 'md-card',
+            type: 'ionicon',
+            color: 'black'
+          }}
+          title="Configurar cobro con Mercado Pago"
+          onPress={() => this.props.navigation.navigate('paymentSettings')}
+          bottomDivider
+        />
         <SettingsItem
           leftIcon={{
             name: 'md-trash',
             type: 'ionicon',
             color: 'black'
           }}
-          title="Eliminar Mi Negocio"
+          title="Eliminar mi negocio"
           onPress={() => this.props.onCommerceValueChange({ confirmDeleteVisible: true })}
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />
-
         {this.renderConfirmCommerceDelete()}
       </ScrollView>
     );
@@ -105,6 +118,7 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
+  const { commerceId, mPagoToken, mPagoTokenSwitchLoading, mPagoTokenReadLoading } = state.commerceData;
   // auth
   const { password, error } = state.auth;
 
@@ -112,12 +126,17 @@ const mapStateToProps = state => {
     loadingCommerceDelete,
     password,
     reauthError: error,
-    confirmCommerceDeleteVisible
+    confirmCommerceDeleteVisible,
+    commerceId,
+    mPagoToken,
+    mPagoTokenSwitchLoading,
+    mPagoTokenReadLoading
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
-  onLoginValueChange
+  onLoginValueChange,
+  onCommerceMPagoTokenRead
 })(CommerceSettings);

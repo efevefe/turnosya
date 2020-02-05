@@ -6,8 +6,7 @@ import { Divider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CourtReservationDetails from '../CourtReservationDetails';
 import ServiceReservationDetails from '../ServiceReservationDetails';
-import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
-import { MONTHS, DAYS } from '../../constants';
+import { stringFormatHours, isOneWeekOld, cancelReservationNotificationFormat } from '../../utils';
 import {
   CardSection,
   Button,
@@ -29,7 +28,8 @@ import {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -66,6 +66,8 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
   componentWillUnmount() {
@@ -91,7 +93,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button title="Cancelar Reserva" type="solid" onPress={this.onCancelButtonPress} />
+          <Button title="Cancelar Reserva" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -124,19 +126,21 @@ class ClientReservationDetails extends Component {
   };
 
   onCancelReservationButtonPress = () => {
-    const { startDate, id, commerceId } = this.state.reservation;
+    const { startDate, id, commerce, commerceId, employeeId, court, service } = this.state.reservation;
+    const { firstName, lastName } = this.props;
 
-    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format('D')} de ${
-      MONTHS[moment(startDate).month()]
-    } a las ${moment(startDate).format('HH:mm')} fue cancelado`;
-
-    const title = 'Turno Cancelado';
+    const notification = cancelReservationNotificationFormat({
+      startDate,
+      service: court ? `${court.name}` : `${service.name}`,
+      actorName: `${firstName} ${lastName}`,
+      receptorName: `${commerce.name}`
+    });
 
     this.props.onClientReservationCancel({
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
-      notification: { title, body }
+      notification: { ...notification, employeeId }
     });
 
     this.setState({ optionsVisible: false });
@@ -239,7 +243,6 @@ class ClientReservationDetails extends Component {
     if (this.state.reservation.startDate < moment()) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -250,6 +253,49 @@ class ClientReservationDetails extends Component {
         </CardSection>
       );
     }
+  };
+
+  // ** Payment buttons **
+
+  renderPayButton = () => {
+    return this.state.reservation.paymentId ? (
+      <CardSection>
+        <Button
+          title="Ver detalle del pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentDetails', {
+              reservation: this.state.reservation
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : this.props.mPagoToken ? (
+      <CardSection>
+        <Button
+          title="Pagar con Mercado Pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentForm', {
+              reservation: this.state.reservation,
+              mPagoToken: this.props.mPagoToken
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : null;
   };
 
   // ** Render method **
@@ -308,20 +354,15 @@ class ClientReservationDetails extends Component {
             />
           }
         />
-
-        {this.renderReviewFields()}
+        {this.renderPayButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const { reviewDividerStyle, overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
-  reviewDividerStyle: {
-    marginBottom: 10,
-    marginHorizontal: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
@@ -331,7 +372,8 @@ const mapStateToProps = state => {
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
-  const { clientId } = state.clientData;
+  const { clientId, firstName, lastName } = state.clientData;
+  const { mPagoToken } = state.commerceData;
 
   return {
     loadingReservations,
@@ -344,7 +386,10 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    firstName,
+    lastName,
+    mPagoToken
   };
 };
 
@@ -358,5 +403,6 @@ export default connect(mapStateToProps, {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 })(ClientReservationDetails);

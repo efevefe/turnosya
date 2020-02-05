@@ -10,7 +10,7 @@ import {
   ON_COMMERCE_RESERVATION_CANCELED,
   ON_COMMERCE_RESERVATION_CANCEL_FAIL
 } from './types';
-import { onClientPushNotificationSend } from './PushNotificationActions';
+import { onClientNotificationSend } from './NotificationActions';
 
 export const onReservationsListValueChange = payload => {
   return {
@@ -41,7 +41,7 @@ export const onClientCommerceReservationsRead = ({ commerceId, selectedDate, emp
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -76,7 +76,7 @@ export const onCommerceReservationsRead = ({ commerceId, selectedDate, employeeI
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -127,7 +127,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('startDate', '>=', selectedDate.toDate())
     .where(
       'startDate',
@@ -173,6 +173,24 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
   });
 };
 
+export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async dispatch => {
+  const db = firebase.firestore();
+
+  const doc = await db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).get();
+
+  if (doc.data().method !== 'Efectivo')
+    fetch(`https://api.mercadopago.com/v1/payments/${paymentId}/refunds?access_token=${mPagoToken}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      if (res.status === 200 || res.status === 201) {
+        db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).update({ refundDate: new Date() });
+      }
+    });
+};
+
 export const onCommerceReservationCancel = ({
   commerceId,
   reservationId,
@@ -208,7 +226,7 @@ export const onCommerceReservationCancel = ({
         batch
           .commit()
           .then(() => {
-            onClientPushNotificationSend(notification, clientId);
+            onClientNotificationSend(notification, clientId, commerceId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
@@ -232,7 +250,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
   return dispatch => {
     let query = db
       .collection(`Commerces/${commerceId}/Reservations`)
-      .where('state', '==', null)
+      .where('cancellationDate', '==', null)
       .where('startDate', '>=', startDate.toDate());
 
     if (employeeId) query = query.where('employeeId', '==', employeeId);
@@ -246,7 +264,10 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
@@ -259,7 +280,10 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
             });
         });
 
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
       .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };
@@ -271,7 +295,7 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
   return dispatch => {
     db.collection(`Commerces/${commerceId}/Reservations`)
       .where('courtId', '==', courtId)
-      .where('state', '==', null)
+      .where('cancellationDate', '==', null)
       .where('endDate', '>', startDate.toDate())
       .orderBy('endDate')
       .get()
@@ -281,7 +305,10 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
         const nextReservations = [];
 
         if (snapshot.empty) {
-          return dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+          return dispatch({
+            type: ON_COMMERCE_RESERVATIONS_READ,
+            payload: { nextReservations }
+          });
         }
 
         snapshot.forEach(doc => {
@@ -294,7 +321,10 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
             });
         });
 
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READ, payload: { nextReservations } });
+        dispatch({
+          type: ON_COMMERCE_RESERVATIONS_READ,
+          payload: { nextReservations }
+        });
       })
       .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
   };

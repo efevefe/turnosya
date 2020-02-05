@@ -26,7 +26,6 @@ const PictureView = props => {
               }}
               source={{ uri: props.picture }}
             />
-            <StatusBar hidden />
           </View>
         </View>
       </Overlay>
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
   },
   iconButtonContainerStyle: {
     padding: 10,
-    position: 'absolute'
+    marginTop: 15
   },
   imageContainerStyle: {
     justifyContent: 'center',

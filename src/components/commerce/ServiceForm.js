@@ -112,7 +112,7 @@ class ServiceForm extends Component {
             </CardSection>
             <CardSection>
               <Input
-                label="Duración:"
+                label="Duración (minutos):"
                 placeholder="Duración del servicio"
                 keyboardType="numeric"
                 value={this.props.duration}

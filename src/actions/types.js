@@ -76,6 +76,14 @@ export const ON_AREAS_READ_FOR_PICKER = 'on_areas_read_for_picker';
 export const ON_CUIT_EXISTS = 'on_cuit_exists';
 export const ON_CUIT_NOT_EXISTS = 'on_cuit_not_exists';
 
+// Commerce MercadoPago Tokens
+export const ON_COMMERCE_MP_TOKEN_READ = 'on_commerce_mp_token_read';
+export const ON_COMMERCE_MP_TOKEN_READING = 'on_commerce_mp_token_reading';
+export const ON_COMMERCE_MP_TOKEN_READ_FAIL = 'on_commerce_mp_token_read_fail';
+export const ON_COMMERCE_MP_TOKEN_SWITCHED = 'on_commerce_mp_token_switched';
+export const ON_COMMERCE_MP_TOKEN_SWITCHING = 'on_commerce_mp_token_switching';
+export const ON_COMMERCE_MP_TOKEN_SWITCH_FAIL = 'on_commerce_mp_token_switch_fail';
+
 // Commerces List
 export const ON_AREAS_READING = 'on_areas_reading';
 export const ON_AREAS_SEARCH_READ = 'on_areas_search_read';
@@ -204,3 +212,19 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change'
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
+ 
+//Notifications types
+export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
+export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
+export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
+export const ON_NOTIFICATION_DELETED= 'on_notification_deleted';
+export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
+
+
+//Payment types
+export const ON_PAYMENT_READ = 'on_payment_method_read';
+export const ON_PAYMENT_READING = 'on_payment_method_reading';
+export const ON_PAYMENT_READ_FAIL = 'on_payment_method_read_fail';
+export const ON_CASH_PAYMENT_REGISTERING = 'on_cash_payment_registering';
+export const ON_CASH_PAYMENT_REGISTERED = 'on_cash_payment_registered';
+export const ON_CASH_PAYMENT_REGISTER_FAIL = 'on_cash_payment_register_fail';

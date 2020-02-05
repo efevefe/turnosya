@@ -5,9 +5,12 @@ import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
 import { SportsNavigation, HairdressersNavigation } from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
+import PaymentSettings from '../components/commerce/PaymentSettings';
+import PaymentSettingsWeb from '../components/commerce/PaymentSettingsWeb';
 import EmployeesList from '../components/commerce/EmployeesList';
 import EmployeeForm from '../components/commerce/EmployeeForm';
 import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
+import NotificationsList from '../components/NotificationsList';
 
 const CommerceSettingsStack = createStackNavigator(
   {
@@ -17,6 +20,18 @@ const CommerceSettingsStack = createStackNavigator(
         title: 'Configuración',
         headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
       })
+    },
+    paymentSettings: {
+      screen: PaymentSettings,
+      navigationOptions: {
+        title: 'Mercado Pago'
+      }
+    },
+    paymentSettingsWeb: {
+      screen: PaymentSettingsWeb,
+      navigationOptions: {
+        title: 'Mercado Pago'
+      }
     }
   },
   stackNavigationOptions
@@ -41,9 +56,23 @@ const CommerceEmployeesStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const CommerceNotificationsStack = createStackNavigator(
+  {
+    commerceNotificationslist: {
+      screen: NotificationsList,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Notificaciones',
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
 const commonNavigations = {
   commerceSettings: CommerceSettingsStack,
-  commerceEmployees: CommerceEmployeesStack
+  commerceEmployees: CommerceEmployeesStack,
+  commerceNotifications: CommerceNotificationsStack
 };
 
 const sportsDrawer = createDrawerNavigator(

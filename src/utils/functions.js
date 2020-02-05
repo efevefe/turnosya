@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { AREAS } from '../constants';
+import { AREAS, MONTHS, DAYS } from '../constants';
 import store from '../reducers/index';
 
 export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
@@ -58,7 +58,7 @@ export const imageToBlob = async uri => {
   }
 };
 
-//Funcion para eliminar espacios vacios antes y despues de un string.
+//Función para eliminar espacios vacíos antes y después de un string.
 //@param: strings -> es un array de strings
 //Valida que el parametro sea un array y devuelve un array de los valores trimeados.
 //Si llega a no ser un array de strings. Devuelve un array vacio
@@ -74,11 +74,12 @@ const trimStrings = strings => {
     return [];
   }
 };
-
-//Función para eliminar espacios vacíos antes y despues de un string, y eliminar espacios dobles.
-//@param: string -> es string
-//Valida que el valor sea un array y devuelve el valor trimeado.
-//Si llega a no ser un string. Devuelve un string vacío
+/**
+ * Función para eliminar espacios vacíos antes y despues de un string, y eliminar espacios dobles.
+ * @param {String} string  string a formatear
+ * Valida que el valor sea un array y devuelve el valor trimeado.
+ * Si llega a no ser un string. Devuelve un string vacío
+ */
 export const trimString = string => {
   try {
     const res = trimStrings([string]);
@@ -88,9 +89,11 @@ export const trimString = string => {
   }
 };
 
-//Función para eliminar doble espacios vacíos.
-//@param: value -> string
-//Si llega a haber un error, devuelve un string vacío
+/**
+ * Función para eliminar doble espacios vacíos.
+ * @param {String}   value  string a formatear
+ * Si llega a haber un error, devuelve un string vacío
+ */
 export const removeDoubleSpaces = value => {
   try {
     return value.replace(/  +/g, ' ');
@@ -181,9 +184,9 @@ export const stringFormatDays = totalDays => {
   const months = Math.floor(totalDays / 30);
   const days = totalDays % 30;
 
-  const stringMonths = months == 0 ? '' : months == 1 ? months + ' mes' : months + ' meses';
+  const stringMonths = months + (months == 1 ? ' mes' : ' meses');
 
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days + (days == 1 ? ' día' : ' días');
 
   if (months && days) return stringMonths + ' y ' + stringDays + '.';
   else if (months) return stringMonths + '.';
@@ -200,9 +203,9 @@ export const stringFormatHours = totalHours => {
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
 
-  const stringHours = hours == 0 ? '' : hours == 1 ? hours + ' hora' : hours + ' horas';
+  const stringHours = hours + (hours == 1 ? ' hora' : ' horas');
 
-  const stringDays = days == 0 ? '' : days == 1 ? days + ' día' : days + ' días';
+  const stringDays = days + (days == 1 ? ' día' : ' días');
 
   if (hours && days) return stringDays + ' y ' + stringHours + '.';
   else if (hours) return stringHours + '.';
@@ -213,4 +216,72 @@ export const isOneWeekOld = date => {
   return !moment()
     .subtract(1, 'w')
     .isBefore(date);
+};
+
+/**
+ * Función para tener un formato único de envío de notificación al comercio
+ * a la hora de reservarle un turno.
+ * @param {Date}    startDate   La fecha de inicio del turno
+ * @param {String}  actorName   Nombre de quién reserva
+ * @return {String, String}     Título (title) y cuerpo (body) del mensaje
+ */
+export const newReservationNotificationFormat = ({ startDate, service, actorName, receptorName }) => {
+  const dayOfWeek = DAYS[startDate.day()];
+  const dayOfMonth = startDate.format('D');
+  const month = MONTHS[moment(startDate).month()];
+  const formattedTime = moment(startDate).format('HH:mm');
+
+  return {
+    title: 'Nueva Reserva',
+    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`
+  };
+};
+
+/**
+ * Función para tener un formato único de envío de notificación al comercio
+ * o cliente a la hora de cancelar un turno.
+ * @param {Date}    startDate           La fecha de inicio del turno
+ * @param {String}  actorName           Nombre de quién cancela
+ * @param {String}  cancellationReason  Motivo de cancelación si cancela un negocio
+ * @return {String, String}             Título (title) y cuerpo (body) del mensaje
+ */
+export const cancelReservationNotificationFormat = ({
+  startDate,
+  service,
+  actorName,
+  receptorName,
+  cancellationReason
+}) => {
+  const dayOfWeek = DAYS[startDate.day()];
+  const dayOfMonth = startDate.format('D');
+  const month = MONTHS[moment(startDate).month()];
+  const formattedTime = moment(startDate).format('HH:mm');
+  let body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
+  body += `${cancellationReason ? ` Motivo: "${cancellationReason}".` : ''}`;
+
+  return {
+    title: 'Reserva Cancelada',
+    body
+  };
+};
+
+/**
+ * Formats the input value (minutes) into a String containing days, hours or
+ * minutes that are equivalent to the input value for easier readability.
+ * @param  {Integer} totalMins The amount of minutes to format
+ * @return {String}            String with the following format: 'XX h. XX mins.'
+ */
+export const notificationsToFormatString = totalMins => {
+  if (totalMins < 2) return '1 min.';
+  else if (totalMins < 60) return totalMins + ' mins.';
+
+  const hours = Math.floor(totalMins / 60);
+  const days = Math.floor(totalMins / 1440);
+
+  const stringHours = hours + (hours == 1 ? ' hora' : ' horas');
+
+  const stringDays = days + (days == 1 ? ' día' : ' días');
+
+  if (totalMins < 1440) return stringHours + '.';
+  else return stringDays + '.';
 };
