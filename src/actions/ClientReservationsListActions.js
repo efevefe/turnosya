@@ -26,10 +26,7 @@ export const onClientReservationsListRead = () => dispatch => {
       const reservations = [];
 
       if (snapshot.empty) {
-        return dispatch({
-          type: ON_CLIENT_RESERVATIONS_READ,
-          payload: reservations
-        });
+        return dispatch({ type: ON_CLIENT_RESERVATIONS_READ, payload: reservations });
       }
 
       snapshot.forEach(async res => {
@@ -81,7 +78,6 @@ export const onClientReservationCancel = ({ reservationId, commerceId, navigatio
           };
 
           batch.update(db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`), cancellationData);
-
           batch.update(db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`), cancellationData);
 
           batch
@@ -93,15 +89,11 @@ export const onClientReservationCancel = ({ reservationId, commerceId, navigatio
               navigation.goBack();
             })
             .catch(() => {
-              dispatch({
-                type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-              });
+              dispatch({ type: ON_CLIENT_RESERVATION_CANCEL_FAIL });
             });
         })
         .catch(() => {
-          dispatch({
-            type: ON_CLIENT_RESERVATION_CANCEL_FAIL
-          });
+          dispatch({ type: ON_CLIENT_RESERVATION_CANCEL_FAIL });
         });
   };
 };

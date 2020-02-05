@@ -21,7 +21,7 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
-    var type;
+    let type;
     if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
       type = 'commerce';
     } else {
