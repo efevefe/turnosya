@@ -61,9 +61,9 @@ class ClientProfile extends Component {
   onSavePress = async () => {
     try {
       if (this.validateMinimumData()) {
-        var { firstName, lastName, phone, profilePicture } = this.props;
+        let { firstName, lastName, phone, profilePicture } = this.props;
 
-        if (this.state.newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
+        if (this.state.newProfilePicture) profilePicture = await imageToBlob(profilePicture);
 
         this.props.onUserUpdate({ firstName, lastName, phone, profilePicture });
         this.disableEdit();
