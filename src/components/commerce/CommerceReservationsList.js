@@ -15,11 +15,16 @@ class CommerceReservationsList extends Component {
     filteredList: [],
     selectedReservation: {},
     detailsVisible: false,
-    selectedEmployeeId: this.props.employeeId
+    selectedEmployeeId: this.props.selectedEmployeeId
   };
 
   componentDidMount() {
     this.onDateSelected(moment());
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -30,6 +35,7 @@ class CommerceReservationsList extends Component {
 
   componentWillUnmount() {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+    this.willFocusSubscription.remove && this.willFocusSubscription.remove();
   }
 
   onDateSelected = date => {

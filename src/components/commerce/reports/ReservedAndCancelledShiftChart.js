@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { ScrollView, Dimensions } from 'react-native';
 import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -130,6 +131,7 @@ class ReservedAndCancelledShiftChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
+          <EmployeesPicker />
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>

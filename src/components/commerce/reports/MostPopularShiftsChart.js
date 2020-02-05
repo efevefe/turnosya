@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton, EmptyList } from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -116,6 +117,7 @@ class MostPopularShiftsChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
+          <EmployeesPicker />
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>

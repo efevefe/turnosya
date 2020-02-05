@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -60,13 +61,15 @@ class MonthlyEarningsChart extends Component {
             })
           }
         >
-          <CardSection>
+          <CardSection style={{ paddingTop: 10 }}>
             <Picker
+              title='Año'
               value={this.state.modalYear}
               items={this.props.years}
               onValueChange={modalYear => this.setState({ modalYear })}
             />
           </CardSection>
+          <EmployeesPicker />
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
