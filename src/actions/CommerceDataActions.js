@@ -20,6 +20,7 @@ import {
   ON_COMMERCE_UPDATE_FAIL,
   ON_AREAS_READ_FOR_PICKER,
   ON_COMMERCE_CREATING,
+  ON_LOCATION_VALUE_CHANGE,
   ON_LOCATION_VALUES_RESET,
   ON_CUIT_NOT_EXISTS,
   ON_CUIT_EXISTS,
@@ -47,7 +48,10 @@ export const onCommerceValueChange = payload => {
 export const onCommerceFormOpen = () => {
   return dispatch => {
     dispatch({ type: ON_COMMERCE_CREATING });
-    dispatch({ type: ON_LOCATION_VALUES_RESET });
+    dispatch({
+      type: ON_LOCATION_VALUE_CHANGE,
+      payload: { address: '', city: '', provinceName: '', country: '', latitude: null, longitude: null }
+    });
   };
 };
 

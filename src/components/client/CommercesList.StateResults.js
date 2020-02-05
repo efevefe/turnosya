@@ -7,9 +7,7 @@ import { connectStateResults } from 'react-instantsearch/connectors';
 
 class StateResults extends Component {
   componentDidUpdate = () => {
-    this.props.onCommercesListValueChange({
-      searching: this.props.isSearchStalled
-    });
+    this.props.onCommercesListValueChange({ searching: this.props.isSearchStalled });
   };
 
   render = () => <View></View>;
