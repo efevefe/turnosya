@@ -42,7 +42,10 @@ export const onLogin = ({ email, password }) => {
       .signInWithEmailAndPassword(email, password)
       .then(user => {
         onNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
-        if (!user.user.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+        if (!user.user.emailVerified)
+          dispatch({
+            type: ON_EMAIL_VERIFY_REMINDED
+          });
       })
       .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };
@@ -52,7 +55,9 @@ export const onFacebookLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_FACEBOOK });
 
-    Facebook.logInWithReadPermissionsAsync(facebookApiKey, { permissions: facebookPermissions })
+    Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
+      permissions: facebookPermissions
+    })
       .then(({ type, token }) => {
         if (type === 'success') {
           const credential = firebase.auth.FacebookAuthProvider.credential(token);
@@ -159,17 +164,26 @@ export const onLogout = (commerceId, workplaces) => async dispatch => {
   }
 };
 
+export const onEmailVerifyReminded = () => async dispatch => {
+  try {
+    const { currentUser } = firebase.auth();
+    await currentUser.reload();
+
+    if (!currentUser.emailVerified) dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const onSendPasswordResetEmail = email => async dispatch => {
   dispatch({ type: ON_PASSWORD_RESET_EMAIL_SENDING });
 
   try {
     await firebase.auth().sendPasswordResetEmail(email);
     dispatch({ type: ON_PASSWORD_RESET_EMAIL_SENT });
-
     return true;
   } catch (error) {
     dispatch({ type: ON_PASSWORD_RESET_EMAIL_FAIL, payload: error.message });
-
     return false;
   }
 };

@@ -22,7 +22,9 @@ class App extends React.Component {
       <Provider store={store}>
         <Root>
           <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" />
-          <View style={styles.container}><MainNavigation /></View>
+          <View style={styles.container}>
+            <MainNavigation />
+          </View>
         </Root>
       </Provider>
     );

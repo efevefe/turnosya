@@ -80,7 +80,7 @@ const reservationExists = async ({ commerceId, employeeId, courtId, startDate, e
 
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .where('endDate', '>', startDate);
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
@@ -142,7 +142,7 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
 
     await batch.commit();
 
-    onCommerceNotificationSend(notification, commerceId, employeeId);
+    onCommerceNotificationSend(notification, commerceId, employeeId, currentUser.uid);
 
     dispatch({ type: ON_RESERVATION_CREATE });
   } catch (error) {

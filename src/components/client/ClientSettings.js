@@ -3,14 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import {
-  MenuItem,
-  Menu,
-  Input,
-  CardSection,
-  SettingsItem,
-  Toast
-} from '../common';
+import { MenuItem, Menu, Input, CardSection, SettingsItem, Toast } from '../common';
 import { isEmailVerified } from '../../utils';
 import {
   onUserDelete,
@@ -35,17 +28,13 @@ class ClientSettings extends Component {
     if (this.state.providerId === 'password') {
       return (
         <View style={{ alignSelf: 'stretch' }}>
-          <CardSection
-            style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}
-          >
+          <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Input
               label="Contraseña:"
               password
               value={this.props.password}
               color="black"
-              onChangeText={password =>
-                this.props.onLoginValueChange({ password })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               errorMessage={this.props.reauthError}
               onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />
@@ -58,9 +47,7 @@ class ClientSettings extends Component {
 
   onUserDeletePress = () => {
     if (this.props.commerceId) {
-      Toast.show({
-        text: 'No podés eliminar tu cuenta porque tenés un negocio'
-      });
+      Toast.show({ text: 'No podés eliminar tu cuenta porque tenés un negocio' });
     } else {
       this.props.onClientDataValueChange({ confirmDeleteVisible: true });
     }
@@ -82,11 +69,7 @@ class ClientSettings extends Component {
           onPress={this.onConfirmUserDelete}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onBackdropPress} />
       </Menu>
     );
   };
@@ -123,11 +106,7 @@ class ClientSettings extends Component {
           onPress={this.onConfirmCommerceDelete}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={this.onBackdropPress}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={this.onBackdropPress} />
       </Menu>
     );
   };
@@ -152,11 +131,7 @@ class ClientSettings extends Component {
   onEmailVerifyPress = async () => {
     const emailVerified = await isEmailVerified();
 
-    if (emailVerified) {
-      Toast.show({ text: 'Su cuenta ya está verificada' });
-    } else {
-      this.props.sendEmailVefification();
-    }
+    emailVerified ? Toast.show({ text: 'Su cuenta ya está verificada' }) : this.props.sendEmailVefification();
   };
 
   render() {

@@ -14,18 +14,14 @@ const ReviewItem = props => (
       {props.comment ? (
         <Text style={commentStyle}>{props.comment}</Text>
       ) : (
-          <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
-        )}
+        <Text style={placeholderStyle}>Esta reseña no posee comentarios.</Text>
+      )}
     </CardSection>
     <Divider />
   </View>
 );
 
-const {
-  topCardContainerStyle,
-  commentStyle,
-  placeholderStyle
-} = StyleSheet.create({
+const { topCardContainerStyle, commentStyle, placeholderStyle } = StyleSheet.create({
   topCardContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',

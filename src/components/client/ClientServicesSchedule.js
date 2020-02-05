@@ -42,7 +42,7 @@ class ClientServicesSchedule extends Component {
       employeeId: this.props.employee.id
     });
 
-    if (!scheduleId || ((scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate)) {
+    if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerce.objectID,
         selectedDate: date,
@@ -51,7 +51,7 @@ class ClientServicesSchedule extends Component {
     }
 
     this.setState({ selectedDate: date });
-  }
+  };
 
   enoughTime = res => {
     const shiftsIds = new Set();
@@ -70,15 +70,14 @@ class ClientServicesSchedule extends Component {
     const endSlot = this.props.slots.some(slot => {
       if (slot.divider) return false;
 
-      return (slot.startDate.toString() < res.endDate.toString() &&
-        slot.endDate.toString() >= res.endDate.toString());
+      return slot.startDate.toString() < res.endDate.toString() && slot.endDate.toString() >= res.endDate.toString();
     });
 
     // endSlot: para verificar que existe un slot que cubre la hora de finalizacion del turno
     // !notAvailableSlot: no tiene que haber slots ocupados entre los slots que ocupa el servicio
     // (shiftsIds.size === 1): todos los slots deben pertenecer al mismo turno (primero o segundo)
     return endSlot && !notAvailableSlot && shiftsIds.size === 1;
-  }
+  };
 
   onSlotPress = slot => {
     if (moment() >= slot.startDate) {
@@ -96,7 +95,7 @@ class ClientServicesSchedule extends Component {
     const res = {
       startDate: moment(slot.startDate),
       endDate: moment(slot.startDate).add(parseInt(this.props.selectedService.duration), 'minutes')
-    }
+    };
 
     if (!this.enoughTime(res)) {
       return Toast.show({
@@ -115,10 +114,8 @@ class ClientServicesSchedule extends Component {
   };
 
   isResFillingSlot = (slot, res) => {
-    return (
-      slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString()
-    );
-  }
+    return slot.startDate.toString() >= res.startDate.toString() && slot.startDate.toString() < res.endDate.toString();
+  };
 
   reservationsOnSlots = () => {
     const { reservations, slots } = this.props;
@@ -152,19 +149,13 @@ class ClientServicesSchedule extends Component {
   };
 
   render() {
-    const {
-      cards,
-      reservationDayPeriod,
-      reservationMinLength,
-      loadingSchedule,
-      loadingReservations,
-    } = this.props;
+    const { cards, reservationDayPeriod, reservationMinLength, loadingSchedule, loadingReservations } = this.props;
 
     const { selectedDate } = this.state;
 
     return (
       <Schedule
-        mode='services'
+        mode="services"
         cards={cards}
         selectedDate={selectedDate}
         reservationMinLength={reservationMinLength}

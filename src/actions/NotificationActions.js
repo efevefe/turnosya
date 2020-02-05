@@ -8,66 +8,62 @@ import { Toast } from '../components/common';
 const onCommerceNotificationTokensRead = async commerceId => {
   const db = firebase.firestore();
   const tokens = [];
-
-  return await db
-    .collection(`Commerces/${commerceId}/NotificationTokens`)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(doc => tokens.push(doc.id));
-      return tokens;
-    })
-    .catch(error => console.error(error));
+  try {
+    const querySnapshot = await db.collection(`Commerces/${commerceId}/NotificationTokens`).get();
+    querySnapshot.forEach(doc => tokens.push(doc.id));
+    return tokens;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const onEmployeeNotificationTokensRead = async (commerceId, employeeId) => {
   const db = firebase.firestore();
-  const employeeToken = [];
-
-  return await db
-    .collection(`Commerces/${commerceId}/NotificationTokens`)
-    .where('employeeId', '==', employeeId)
-    .get()
-    .then(querySnapshot => {
-      if (querySnapshot.docs[0]) employeeToken.push(querySnapshot.docs[0].id);
-      return employeeToken;
-    })
-    .catch(error => console.error(error));
-};
-
-const onClientNotificationTokensRead = async clientId => {
-  const db = firebase.firestore();
-  const tokens = [];
-
-  return await db
-    .collection(`Profiles/${clientId}/NotificationTokens`)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(doc => tokens.push(doc.id));
-
-      return tokens;
-    })
-    .catch(error => console.error(error));
-};
-
-export const onCommerceNotificationSend = async (notification, commerceId, employeeId) => {
-  const tokens = employeeId
-    ? await onEmployeeNotificationTokensRead(commerceId, employeeId)
-    : await onCommerceNotificationTokensRead(commerceId);
-
-  if (tokens.length) {
-    const collectionRef = `Commerces/${commerceId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionRef });
+  const employeeTokens = [];
+  try {
+    const querySnapshot = await db
+      .collection(`Commerces/${commerceId}/NotificationTokens`)
+      .where('employeeId', '==', employeeId)
+      .get();
+    querySnapshot.forEach(doc => employeeTokens.push(doc.id));
+    return employeeTokens;
+  } catch (error) {
+    console.error(error);
   }
 };
 
-export const onClientNotificationSend = (notification, clientId) => {
-  onClientNotificationTokensRead(clientId).then(tokens => {
-    const collectionRef = `Profiles/${clientId}/Notifications`;
-    sendPushNotification({ ...notification, tokens, collectionRef });
-  });
+const onClientNotificationTokensRead = async  clientId => {
+  const db = firebase.firestore();
+  const tokens = [];
+  try {
+    const querySnapshot = await  db.collection(`Profiles/${clientId}/NotificationTokens`).get();
+    querySnapshot.forEach(doc => tokens.push(doc.id));
+
+    return tokens;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
+export const onCommerceNotificationSend = async (notification, commerceId, employeeId, clientId) => {
+  if (employeeId) {
+    const tokens = await onEmployeeNotificationTokensRead(commerceId, employeeId);
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId });
+  } else {
+    const tokens = await onCommerceNotificationTokensRead(commerceId);
+    const collectionRef = `Commerces/${commerceId}/Notifications`;
+    sendPushNotification({ ...notification, tokens, collectionRef, sentBy: clientId });
+  }
+};
+
+export const onClientNotificationSend = async (notification, clientId, commerceId) => {
+  const tokens = await onClientNotificationTokensRead(clientId);
+  const collectionRef = `Profiles/${clientId}/Notifications`;
+  sendPushNotification({ ...notification, tokens, collectionRef, sentBy: commerceId });
+};
+
+const sendPushNotification = ({ title, body, tokens, collectionRef, sentBy }) => {
   try {
     if (Array.isArray(tokens) && tokens.length) {
       tokens.forEach(async token => {
@@ -91,7 +87,7 @@ const sendPushNotification = ({ title, body, tokens, collectionRef }) => {
       });
 
       const db = firebase.firestore();
-      db.collection(collectionRef).add({ title, body, date: new Date() });
+      db.collection(collectionRef).add({ title, body, date: new Date(), softDelete: null, sentBy });
     }
   } catch (error) {
     console.error(error);
@@ -155,7 +151,7 @@ export const onNotificationTokenRegister = async () => {
         .where('softDelete', '==', null)
         .get();
 
-      for await (const workplace of workplacesSnapshot.docs) {
+      for (const workplace of workplacesSnapshot.docs) {
         const { commerceId: workplaceId } = workplace.data();
 
         const employeeSnapshot = await db

@@ -3,11 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
-import CourtReservationDetails from '../CourtReservationDetails';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import { newReservationNotificationFormat } from '../../utils';
+import CourtReservationDetails from '../CourtReservationDetails';
+import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -59,27 +60,54 @@ class ConfirmCourtReservation extends Component {
     }
   };
 
-  onConfirmReservation = () => {
-    const { commerce, court, courtType, startDate, endDate, areaId, price, light, firstName, lastName } = this.props;
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const {
+          commerce,
+          court,
+          courtType,
+          startDate,
+          endDate,
+          areaId,
+          price,
+          light,
+          firstName,
+          lastName
+        } = this.props;
 
-    const notification = newReservationNotificationFormat({
-      startDate,
-      service: `${court.name}`,
-      actorName: `${firstName} ${lastName}`,
-      receptorName: `${commerce.name}`
-    });
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${court.name}`,
+          actorName: `${firstName} ${lastName}`,
+          receptorName: `${commerce.name}`
+        });
 
-    this.props.onClientCourtReservationCreate({
-      commerceId: commerce.objectID,
-      areaId,
-      courtId: court.id,
-      courtType,
-      startDate,
-      endDate,
-      price,
-      light,
-      notification
-    });
+        this.props.onClientCourtReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          courtId: court.id,
+          courtType,
+          startDate,
+          endDate,
+          price,
+          light,
+          notification
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
@@ -138,6 +166,7 @@ class ConfirmCourtReservation extends Component {
         />
         {this.renderPriceButtons()}
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }

@@ -3,42 +3,62 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { onClientServiceReservationCreate } from '../../actions';
-import ServiceReservationDetails from '../ServiceReservationDetails';
 import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import { newReservationNotificationFormat } from '../../utils';
+import { onClientServiceReservationCreate } from '../../actions';
+import ServiceReservationDetails from '../ServiceReservationDetails';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {
-  onConfirmReservation = () => {
-    const {
-      commerce,
-      service,
-      employee,
-      startDate,
-      endDate,
-      price,
-      areaId,
-      clientFirstName,
-      clientLastName
-    } = this.props;
-    const notification = newReservationNotificationFormat({
-      startDate,
-      service: `${service.name}`,
-      actorName: `${clientFirstName} ${clientLastName}`,
-      receptorName: `${commerce.name}`
-    });
+  state = { modal: false };
 
-    this.props.onClientServiceReservationCreate({
-      commerceId: commerce.objectID,
-      areaId,
-      serviceId: service.id,
-      employeeId: employee.id,
-      startDate,
-      endDate,
-      price,
-      notification
-    });
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const {
+          commerce,
+          service,
+          employee,
+          startDate,
+          endDate,
+          price,
+          areaId,
+          clientFirstName,
+          clientLastName
+        } = this.props;
+
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${service.name}`,
+          actorName: `${clientFirstName} ${clientLastName}`,
+          receptorName: `${commerce.name}`
+        });
+
+        this.props.onClientServiceReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          serviceId: service.id,
+          employeeId: employee.id,
+          startDate,
+          endDate,
+          price,
+          notification
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
@@ -95,6 +115,7 @@ class ConfirmServiceReservation extends Component {
           price={price}
         />
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }

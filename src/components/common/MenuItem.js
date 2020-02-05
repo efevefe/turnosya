@@ -9,17 +9,11 @@ class MenuItem extends Component {
     if (this.props.icon) {
       return (
         <View style={{ width: 25, alignItems: 'center' }}>
-          {
-            this.props.loadingWithText ? (
-              <ActivityIndicator
-                style={StyleSheet.flatten({ marginVertical: 2 })}
-                color={color}
-                size="small"
-              />
-            ) : (
-                <Ionicons name={this.props.icon} color={color} size={20} />
-              )
-          }
+          {this.props.loadingWithText ? (
+            <ActivityIndicator style={StyleSheet.flatten({ marginVertical: 2 })} color={color} size="small" />
+          ) : (
+            <Ionicons name={this.props.icon} color={color} size={20} />
+          )}
         </View>
       );
     }

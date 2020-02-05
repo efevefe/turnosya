@@ -53,13 +53,7 @@ class CommerceSchedulesList extends Component {
   }
 
   renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        tintColor="white"
-        title="Back"
-        onPress={this.onBackPress}
-      />
-    );
+    return <HeaderBackButton tintColor="white" title="Back" onPress={this.onBackPress} />;
   };
 
   onBackPress = () => {
@@ -106,8 +100,7 @@ class CommerceSchedulesList extends Component {
 
     let startDate = formattedMoment();
 
-    if (selectedSchedule.startDate > startDate)
-      startDate = selectedSchedule.startDate;
+    if (selectedSchedule.startDate > startDate) startDate = selectedSchedule.startDate;
 
     this.props.onNextReservationsRead({
       commerceId,
@@ -124,9 +117,7 @@ class CommerceSchedulesList extends Component {
     let { lastReservationDate } = this.state;
 
     if (nextReservations.length) {
-      lastReservationDate = formattedMoment(
-        nextReservations[nextReservations.length - 1].startDate
-      ).add(1, 'day');
+      lastReservationDate = formattedMoment(nextReservations[nextReservations.length - 1].startDate).add(1, 'day');
       this.setState({ deleteModalVisible: true, lastReservationDate });
     } else {
       lastReservationDate = formattedMoment();
@@ -146,11 +137,7 @@ class CommerceSchedulesList extends Component {
   };
 
   onScheduleDeleteConfirm = async () => {
-    const {
-      lastReservationDate,
-      selectedSchedule,
-      reservationsToCancel
-    } = this.state;
+    const { lastReservationDate, selectedSchedule, reservationsToCancel } = this.state;
 
     const success = await this.props.onScheduleDelete({
       commerceId: this.props.commerceId,
@@ -202,31 +189,16 @@ class CommerceSchedulesList extends Component {
             }
           />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar reservas y notificar"
-            icon="md-trash"
-            onPress={this.onCancelReservations}
-          />
+          <MenuItem title="Cancelar reservas y notificar" icon="md-trash" onPress={this.onCancelReservations} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Volver"
-            icon="md-close"
-            onPress={() => this.setState({ deleteModalVisible: false })}
-          />
+          <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ deleteModalVisible: false })} />
         </Menu>
       );
     }
   };
 
   cardToText = card => {
-    const {
-      id,
-      firstShiftStart,
-      firstShiftEnd,
-      secondShiftStart,
-      secondShiftEnd,
-      days
-    } = card;
+    const { id, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = card;
 
     let strDays = '';
 
@@ -263,14 +235,12 @@ class CommerceSchedulesList extends Component {
           <View>
             {cards.map(card => this.cardToText(card))}
             <Text style={{ fontSize: 13, marginBottom: 3 }}>
-              {'Duración del turno: ' +
-                stringFormatMinutes(reservationMinLength)}
+              {'Duración del turno: ' + stringFormatMinutes(reservationMinLength)}
             </Text>
           </View>
         }
         subtitle={
-          `Del ${startDate.format('DD/MM/YYYY')} ` +
-          `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
+          `Del ${startDate.format('DD/MM/YYYY')} ` + `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
         }
         subtitleStyle={{ fontSize: 12 }}
         rightIcon={{
@@ -311,11 +281,7 @@ class CommerceSchedulesList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onScheduleAddPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onScheduleAddPress}>
           <Ionicons name="md-add" />
         </Fab>
 
@@ -324,17 +290,9 @@ class CommerceSchedulesList extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onScheduleEditPress}
-          />
+          <MenuItem title="Editar" icon="md-create" onPress={this.onScheduleEditPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onScheduleDeletePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onScheduleDeletePress} />
         </Menu>
 
         <Menu
@@ -342,17 +300,9 @@ class CommerceSchedulesList extends Component {
           onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
           isVisible={this.state.deleteConfirmVisible}
         >
-          <MenuItem
-            title="Aceptar"
-            icon="md-checkmark"
-            onPress={this.onScheduleDeleteConfirm}
-          />
+          <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onScheduleDeleteConfirm} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ deleteConfirmVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ deleteConfirmVisible: false })} />
         </Menu>
 
         {this.renderDeleteScheduleModal()}
@@ -364,8 +314,11 @@ class CommerceSchedulesList extends Component {
 const mapStateToProps = state => {
   const { schedules, loading } = state.commerceSchedule;
   const { nextReservations } = state.reservationsList;
-  const { commerceId, area: { areaId } } = state.commerceData;
-  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
+  const {
+    commerceId,
+    area: { areaId }
+  } = state.commerceData;
+  const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
   return { schedules, commerceId, loading, nextReservations, employeeId };
 };

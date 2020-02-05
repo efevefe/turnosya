@@ -11,22 +11,9 @@ import {
   onCourtUpdate,
   onCourtNextReservationsRead
 } from '../../actions';
-import {
-  CardSection,
-  Input,
-  Picker,
-  Button,
-  DatePicker,
-  Toast,
-  Menu,
-  MenuItem
-} from '../common';
+import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
 import { validateValueType, trimString } from '../../utils';
-import {
-  MAIN_COLOR,
-  MAIN_COLOR_DISABLED,
-  GREY_DISABLED
-} from '../../constants';
+import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../../constants';
 
 class CourtForm extends Component {
   state = {
@@ -53,18 +40,12 @@ class CourtForm extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.grounds !== prevProps.grounds) {
-      const firstIndex = this.props.courts.findIndex(
-        item => item.value === this.props.court
-      );
+      const firstIndex = this.props.courts.findIndex(item => item.value === this.props.court);
 
-      if (firstIndex > -1)
-        this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
+      if (firstIndex > -1) this.setState({ selectedGrounds: this.props.grounds[firstIndex] });
     }
 
-    if (
-      prevProps.disabledFrom !== this.props.disabledFrom ||
-      prevProps.disabledTo !== this.props.disabledTo
-    ) {
+    if (prevProps.disabledFrom !== this.props.disabledFrom || prevProps.disabledTo !== this.props.disabledTo) {
       this.renderDisabledDatesError();
     }
 
@@ -81,18 +62,7 @@ class CourtForm extends Component {
   };
 
   onCourtSave = () => {
-    const {
-      id,
-      name,
-      court,
-      ground,
-      price,
-      lightPrice,
-      commerceId,
-      navigation,
-      disabledFrom,
-      disabledTo
-    } = this.props;
+    const { id, name, description, court, ground, price, lightPrice, commerceId, navigation, disabledFrom, disabledTo } = this.props;
     const { reservationsToCancel } = this.state;
 
     if (id) {
@@ -100,6 +70,7 @@ class CourtForm extends Component {
         {
           id,
           name,
+          description,
           court,
           ground,
           price,
@@ -115,6 +86,7 @@ class CourtForm extends Component {
       this.props.onCourtCreate(
         {
           name,
+          description,
           court,
           ground,
           price,
@@ -210,8 +182,7 @@ class CourtForm extends Component {
     this.setState({ courtError: '' });
 
     if (key > 0) {
-      if (this.props.grounds.length)
-        this.setState({ selectedGrounds: this.props.grounds[key - 1] });
+      if (this.props.grounds.length) this.setState({ selectedGrounds: this.props.grounds[key - 1] });
       this.props.onCourtValueChange({ court });
     } else {
       this.setState({ selectedGrounds: [] });
@@ -224,9 +195,7 @@ class CourtForm extends Component {
 
     this.setState({ groundTypeError: '' });
 
-    grounds !== null && key > 0
-      ? onCourtValueChange({ ground })
-      : onCourtValueChange({ ground: '' });
+    grounds !== null && key > 0 ? onCourtValueChange({ ground }) : onCourtValueChange({ ground: '' });
   };
 
   onCheckBoxPress = () => {
@@ -246,9 +215,7 @@ class CourtForm extends Component {
             keyboardType="numeric"
             value={this.props.lightPrice}
             errorMessage={this.state.lightPriceError}
-            onChangeText={lightPrice =>
-              this.props.onCourtValueChange({ lightPrice })
-            }
+            onChangeText={lightPrice => this.props.onCourtValueChange({ lightPrice })}
             onFocus={() => this.setState({ lightPriceError: '' })}
             onBlur={this.renderLightPriceError}
           />
@@ -297,9 +264,7 @@ class CourtForm extends Component {
                 uncheckedColor={MAIN_COLOR}
                 checkedTitle="Quitar fecha de hasta"
                 checked={!!this.props.disabledTo}
-                onPress={() =>
-                  this.props.onCourtValueChange({ disabledTo: null })
-                }
+                onPress={() => this.props.onCourtValueChange({ disabledTo: null })}
               />
             </CardSection>
           )}
@@ -337,10 +302,7 @@ class CourtForm extends Component {
       if (!this.props.disabledFrom) {
         this.setState({ disabledFromError: 'Dato requerido' });
         return false;
-      } else if (
-        this.props.disabledTo &&
-        this.props.disabledFrom >= this.props.disabledTo
-      ) {
+      } else if (this.props.disabledTo && this.props.disabledFrom >= this.props.disabledTo) {
         this.setState({
           disabledFromError: 'Debe ser anterior a la fecha de deshabilitación',
           disabledToError: 'Debe ser posterior a la fecha de habilitación'
@@ -393,8 +355,7 @@ class CourtForm extends Component {
 
     if (nextReservations.length) {
       const firstReservationDate = nextReservations[0].startDate;
-      const lastReservationDate =
-        nextReservations[nextReservations.length - 1].endDate;
+      const lastReservationDate = nextReservations[nextReservations.length - 1].endDate;
 
       return (
         <Menu
@@ -430,11 +391,7 @@ class CourtForm extends Component {
             }
           />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Volver"
-            icon="md-close"
-            onPress={() => this.setState({ disabledPeriodModal: false })}
-          />
+          <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ disabledPeriodModal: false })} />
         </Menu>
       );
     }
@@ -453,6 +410,18 @@ class CourtForm extends Component {
               onChangeText={name => this.props.onCourtValueChange({ name })}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
+            />
+          </CardSection>
+
+          <CardSection>
+            <Input
+              label="Descripción:"
+              placeholder="Descripción de la cancha"
+              multiline={true}
+              maxLength={250}
+              maxHeight={180}
+              onChangeText={description => this.props.onCourtValueChange({ description })}
+              value={this.props.description}
             />
           </CardSection>
 
@@ -542,17 +511,9 @@ class CourtForm extends Component {
           onBackdropPress={() => this.setState({ confirmationModal: false })}
           isVisible={this.state.confirmationModal}
         >
-          <MenuItem
-            title="Aceptar"
-            icon="md-checkmark"
-            onPress={this.onSaveAndCancelReservations}
-          />
+          <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onSaveAndCancelReservations} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ confirmationModal: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ confirmationModal: false })} />
         </Menu>
       </KeyboardAwareScrollView>
     );
@@ -583,6 +544,7 @@ const mapStateToProps = state => {
   const {
     id,
     name,
+    description,
     courts,
     court,
     grounds,
@@ -602,6 +564,7 @@ const mapStateToProps = state => {
   return {
     id,
     name,
+    description,
     courts,
     court,
     grounds,

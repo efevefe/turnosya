@@ -14,10 +14,7 @@ class CommerceCourtsList extends Component {
     const { reservations, startDate } = this.props;
 
     return reservations.find(reservation => {
-      return (
-        reservation.startDate.toString() === startDate.toString() &&
-        reservation.courtId === court.id
-      );
+      return reservation.startDate.toString() === startDate.toString() && reservation.courtId === court.id;
     });
   };
 
@@ -39,9 +36,7 @@ class CommerceCourtsList extends Component {
         disabled={isCourtDisabledOnSlot(item, { startDate, endDate })}
         courtAvailable={courtAvailable}
         onPress={() =>
-          courtAvailable
-            ? this.onCourtPress(item)
-            : Toast.show({ text: 'Esta cancha ya está reservada' })
+          courtAvailable ? this.onCourtPress(item) : Toast.show({ text: 'Esta cancha ya está reservada' })
         }
       />
     );
@@ -77,7 +72,4 @@ const mapStateToProps = state => {
   return { commerce, courtType, reservations, courts, loading, startDate, endDate };
 };
 
-export default connect(
-  mapStateToProps,
-  { onReservationValueChange, onNewReservation }
-)(CommerceCourtsList);
+export default connect(mapStateToProps, { onReservationValueChange, onNewReservation })(CommerceCourtsList);

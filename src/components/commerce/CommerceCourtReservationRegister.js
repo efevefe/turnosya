@@ -5,10 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Input, Button, CardSection, ButtonGroup } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { validateValueType } from '../../utils';
-import {
-  onReservationValueChange,
-  onCommerceCourtReservationCreate
-} from '../../actions';
+import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 
 class CommerceCourtReservationRegister extends Component {
   state = {
@@ -67,9 +64,7 @@ class CommerceCourtReservationRegister extends Component {
               placeholder="Nombre del cliente"
               autoCapitalize="words"
               value={this.props.clientName}
-              onChangeText={clientName =>
-                this.props.onReservationValueChange({ clientName })
-              }
+              onChangeText={clientName => this.props.onReservationValueChange({ clientName })}
               errorMessage={this.state.nameError}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.nameError}
@@ -80,9 +75,7 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={clientPhone =>
-                this.props.onReservationValueChange({ clientPhone })
-              }
+              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone })}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -116,17 +109,13 @@ class CommerceCourtReservationRegister extends Component {
       this.setState({ phoneError: '' });
       return false;
     }
-  }
+  };
 
   renderButtons = () => {
     if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
-          <Button
-            title="Confirmar Reserva"
-            loading={this.props.loading}
-            onPress={this.onConfirmReservation}
-          />
+          <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
         </CardSection>
       );
     }
@@ -147,23 +136,19 @@ class CommerceCourtReservationRegister extends Component {
         endDate,
         light,
         price
-      })
+      });
     }
-  }
+  };
 
   render() {
     const { clientName, clientPhone, court, startDate, endDate, light, price, saved } = this.props;
 
     return (
-      <KeyboardAwareScrollView
-        enableOnAndroid
-        extraScrollHeight={60}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
+      <KeyboardAwareScrollView enableOnAndroid extraScrollHeight={60} contentContainerStyle={{ flexGrow: 1 }}>
         <CourtReservationDetails
           name={saved && clientName}
           info={saved && clientPhone}
-          infoIcon='ios-call'
+          infoIcon="ios-call"
           court={court}
           startDate={startDate}
           endDate={endDate}
@@ -172,13 +157,11 @@ class CommerceCourtReservationRegister extends Component {
           showPrice={saved}
         />
         {this.renderInputs()}
-        <View style={styles.confirmButtonContainer}>
-          {this.renderButtons()}
-        </View>
+        <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
       </KeyboardAwareScrollView>
     );
   }
-};
+}
 
 const styles = StyleSheet.create({
   cardSection: {
@@ -192,11 +175,38 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId, area: { areaId } } = state.commerceData;
-  const { clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading } = state.reservation;
+  const {
+    commerceId,
+    area: { areaId }
+  } = state.commerceData;
+  const {
+    clientName,
+    clientPhone,
+    court,
+    startDate,
+    endDate,
+    light,
+    price,
+    saved,
+    exists,
+    loading
+  } = state.reservation;
 
-  return { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price, saved, exists, loading };
-}
+  return {
+    commerceId,
+    areaId,
+    clientName,
+    clientPhone,
+    court,
+    startDate,
+    endDate,
+    light,
+    price,
+    saved,
+    exists,
+    loading
+  };
+};
 
 export default connect(mapStateToProps, {
   onReservationValueChange,

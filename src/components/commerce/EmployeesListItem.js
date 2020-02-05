@@ -11,7 +11,7 @@ class CourtListItem extends Component {
   state = {
     optionsVisible: false,
     deleteVisible: false,
-    currentUserEmail: firebase.auth().currentUser.email
+    currentUserEmail: firebase.auth().currentUser.email,
   };
 
   onOptionsPress = () => {
@@ -24,7 +24,7 @@ class CourtListItem extends Component {
 
     this.setState({
       optionsVisible: false,
-      deleteVisible: !this.state.deleteVisible
+      deleteVisible: !this.state.deleteVisible,
     });
   };
 
@@ -34,7 +34,7 @@ class CourtListItem extends Component {
     this.props.onEmployeeDelete({
       employeeId: employee.id,
       commerceId,
-      profileId: employee.profileId
+      profileId: employee.profileId,
     });
 
     this.setState({ deleteVisible: false });
@@ -59,17 +59,9 @@ class CourtListItem extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onUpdatePress}
-          />
+          <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
         </Menu>
 
         <Menu
@@ -77,11 +69,7 @@ class CourtListItem extends Component {
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem
-            title="Sí"
-            icon="md-checkmark"
-            onPress={this.onConfirmDeletePress}
-          />
+          <MenuItem title="Sí" icon="md-checkmark" onPress={this.onConfirmDeletePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
         </Menu>
@@ -124,20 +112,20 @@ class CourtListItem extends Component {
             </Text>
           }
           onLongPress={
-            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
-              || this.state.currentUserEmail === this.props.employee.email)
+            this.props.role.value > ROLES[this.props.employee.role.roleId].value ||
+            this.state.currentUserEmail === this.props.employee.email
               ? this.onOptionsPress
               : null
           }
           rightIcon={
-            (this.props.role.value > ROLES[this.props.employee.role.roleId].value
-              || this.state.currentUserEmail === this.props.employee.email)
+            this.props.role.value > ROLES[this.props.employee.role.roleId].value ||
+            this.state.currentUserEmail === this.props.employee.email
               ? {
-                name: 'md-more',
-                type: 'ionicon',
-                containerStyle: { height: 20, width: 10 },
-                onPress: this.onOptionsPress
-              }
+                  name: 'md-more',
+                  type: 'ionicon',
+                  containerStyle: { height: 20, width: 10 },
+                  onPress: this.onOptionsPress,
+                }
               : null
           }
           bottomDivider
@@ -155,5 +143,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCourtFormOpen,
   onEmployeeDelete,
-  onEmployeeValueChange
+  onEmployeeValueChange,
 })(CourtListItem);

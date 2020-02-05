@@ -19,7 +19,7 @@ export const onClientReservationsListRead = () => dispatch => {
 
   return db
     .collection(`Profiles/${currentUser.uid}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .orderBy('startDate', 'desc')
     .limit(50) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
     .onSnapshot(snapshot => {
@@ -83,7 +83,7 @@ export const onClientReservationCancel = ({ reservationId, commerceId, navigatio
           batch
             .commit()
             .then(() => {
-              onCommerceNotificationSend(notification, commerceId, notification.employeeId);
+              onCommerceNotificationSend(notification, commerceId, notification.employeeId, currentUser.uid);
 
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();

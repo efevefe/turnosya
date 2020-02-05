@@ -7,9 +7,7 @@ import { MAIN_COLOR, GREY_DISABLED } from '../../constants';
 class Picker extends Component {
   renderErrorMessage = () => {
     if (this.props.errorMessage) {
-      return (
-        <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>
-      );
+      return <Text style={styles.errorMessageStyle}>{this.props.errorMessage}</Text>;
     }
   };
 
@@ -43,14 +41,7 @@ class Picker extends Component {
           }}
           useNativeAndroidPickerStyle={false}
           Icon={() => {
-            return (
-              <Ionicons
-                name="ios-arrow-down"
-                type="ionicons"
-                size={20}
-                color={color}
-              />
-            );
+            return <Ionicons name="ios-arrow-down" type="ionicons" size={20} color={color} />;
           }}
         />
         {this.renderErrorMessage()}

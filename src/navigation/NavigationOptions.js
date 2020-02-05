@@ -49,14 +49,7 @@ export const tabNavigationOptions = {
         iconName = `md-stats`;
       }
 
-      return (
-        <Ionicons
-          name={iconName}
-          size={30}
-          color={tintColor}
-          style={{ opacity: focused ? 1 : 0.5 }}
-        />
-      );
+      return <Ionicons name={iconName} size={30} color={tintColor} style={{ opacity: focused ? 1 : 0.5 }} />;
     }
   }),
   tabBarOptions: {

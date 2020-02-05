@@ -34,7 +34,7 @@ const INITIAL_WORKSHIFTS = {
   endDate: null,
   reservationMinLength: 60,
   employeeId: null
-}
+};
 
 const INITIAL_STATE = {
   ...INITIAL_WORKSHIFTS,
@@ -67,9 +67,7 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_SCHEDULE_CARD_DELETE:
       const cardToDelete = state.cards.find(card => card.id === action.payload);
-      const newSelectedDays = state.selectedDays.filter(
-        day => !cardToDelete.days.includes(day)
-      );
+      const newSelectedDays = state.selectedDays.filter(day => !cardToDelete.days.includes(day));
       var newCards = state.cards.filter(card => card.id !== cardToDelete.id);
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
