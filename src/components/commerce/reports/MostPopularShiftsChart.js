@@ -2,16 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import {
-  BarChart,
-  Spinner,
-  DatePicker,
-  Button,
-  CardSection,
-  Menu,
-  IconButton,
-  EmptyList
-} from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton, EmptyList } from '../../common';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -40,9 +31,7 @@ class MostPopularShiftsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton icon="md-create" onPress={() => this.onEditPress()} />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.onEditPress()} />
     });
   }
 
@@ -128,10 +117,7 @@ class MostPopularShiftsChart extends Component {
             />
           </CardSection>
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 

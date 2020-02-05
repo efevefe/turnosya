@@ -1,19 +1,6 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView
-} from 'react-native';
-import {
-  Avatar,
-  Text,
-  Divider,
-  Image,
-  Button,
-  Rating
-} from 'react-native-elements';
+import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Avatar, Text, Divider, Image, Button, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,14 +11,15 @@ import {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
 import CommerceServicesEmployees from './client/CommerceServicesEmployees';
 
-const imageSizeWidth = Math.round(Dimensions.get('window').width);
-const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const screenWidth = Math.round(Dimensions.get('window').width);
+const headerPictureHeight = Math.round(Dimensions.get('window').height * 0.2);
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
@@ -43,8 +31,8 @@ class CommerceProfileView extends Component {
   componentDidMount() {
     let { commerceId, favoriteCommerces } = this.props;
 
-    if (this.props.navigation.state.routeName === 'commerceProfileView')
-      commerceId = this.props.commerce.objectID;
+    if (this.props.navigation.getParam('commerceId')) commerceId = this.props.navigation.getParam('commerceId');
+    else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
@@ -54,11 +42,13 @@ class CommerceProfileView extends Component {
       commerceId,
       loadingType: 'loading'
     });
+
+    this.props.onEmailVerifyReminded();
   }
 
   componentDidUpdate(prevProps) {
     // para evitar esto se deberia guardar el areaId en Algolia
-    if (this.props.areaId && (this.props.areaId !== prevProps.areaId)) {
+    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
       this.props.onReservationValueChange({ areaId: this.props.areaId });
     }
   }
@@ -67,9 +57,7 @@ class CommerceProfileView extends Component {
     if (this.props.description)
       return (
         <View style={styles.descriptionStyle}>
-          <Text style={{ textAlign: 'center', fontSize: 16 }}>
-            {this.props.description}
-          </Text>
+          <Text style={{ textAlign: 'center', fontSize: 16 }}>{this.props.description}</Text>
         </View>
       );
   };
@@ -82,15 +70,10 @@ class CommerceProfileView extends Component {
       const { locationContainerStyle } = styles;
 
       return (
-        <TouchableOpacity
-          onPress={() => this.onMapPress()}
-          style={locationContainerStyle}
-        >
+        <TouchableOpacity onPress={() => this.onMapPress()} style={locationContainerStyle}>
           <Ionicons name="md-pin" type="ionicon" size={16} />
 
-          <Text
-            style={{ textAlign: 'center', paddingLeft: 5 }}
-          >{`${address}, ${city}, ${name}`}</Text>
+          <Text style={{ textAlign: 'center', paddingLeft: 5 }}>{`${address}, ${city}, ${name}`}</Text>
         </TouchableOpacity>
       );
     }
@@ -145,8 +128,8 @@ class CommerceProfileView extends Component {
         <View>
           <Image
             style={{
-              height: imageSizeHeight,
-              width: imageSizeWidth,
+              height: headerPictureHeight,
+              width: screenWidth,
               position: 'absolute'
             }}
             source={headerPicture ? { uri: headerPicture } : null}
@@ -155,13 +138,7 @@ class CommerceProfileView extends Component {
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
               type="clear"
-              icon={
-                <Ionicons
-                  name="md-information-circle-outline"
-                  color={'white'}
-                  size={30}
-                />
-              }
+              icon={<Ionicons name="md-information-circle-outline" color={'white'} size={30} />}
               onPress={() => navigation.navigate('commerceProfileInfo')}
             />
 
@@ -209,12 +186,7 @@ class CommerceProfileView extends Component {
                 })
               }
             >
-              <Rating
-                style={{ padding: 8 }}
-                readonly
-                imageSize={22}
-                startingValue={this.getRatingValue()}
-              />
+              <Rating style={{ padding: 8 }} readonly imageSize={22} startingValue={this.getRatingValue()} />
             </TouchableOpacity>
 
             {this.renderLocation()}
@@ -242,8 +214,8 @@ class CommerceProfileView extends Component {
           isVisible={this.state.pictureVisible}
           onClosePress={this.onPicturePress}
           picture={this.props.profilePicture}
-          width={imageSizeWidth}
-          height={(imageSizeHeight / 0.2) * 0.5}
+          width={screenWidth}
+          height={screenWidth}
         />
       </ScrollView>
     );
@@ -257,7 +229,7 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: imageSizeHeight / 2 - 49
+    marginTop: headerPictureHeight / 2 - 49
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
@@ -329,5 +301,6 @@ export default connect(mapStateToProps, {
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
-  onCommerceCourtTypesRead
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 })(CommerceProfileView);

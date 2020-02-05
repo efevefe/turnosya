@@ -25,7 +25,7 @@ class CommerceProfileInfo extends Component {
         this.props.onEmployeesScheduleRead({
           commerceId: this.props.commerceId,
           selectedDate: moment()
-        })
+        });
       }
     });
 
@@ -57,7 +57,7 @@ class CommerceProfileInfo extends Component {
         id: schedule.id,
         employeeName: schedule.employeeName || null,
         hoursOnDays: hoursOnDays.sort((a, b) => a.day - b.day)
-      }
+      };
     });
   };
 
@@ -66,53 +66,50 @@ class CommerceProfileInfo extends Component {
     const { hoursOnDays } = item;
 
     return (
-      <View style={{
-        padding: 10,
-        alignSelf: 'stretch'
-      }}>
-        {
-          item.employeeName
-            ? <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 5 }}>{item.employeeName}</Text>
-            : null
-        }
-        {
-          hoursOnDays.map(hourOnDay =>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+      <View
+        style={{
+          padding: 10,
+          alignSelf: 'stretch'
+        }}
+      >
+        {item.employeeName ? (
+          <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 5 }}>{item.employeeName}</Text>
+        ) : null}
+        {hoursOnDays.map(hourOnDay => (
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+            <Text
+              key={hourOnDay.day}
+              style={{
+                fontSize: 14,
+                fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
+                width: 74
+              }}
+            >
+              {hourOnDay.dayName}
+            </Text>
+            <Text
+              key={hourOnDay.day}
+              style={{
+                fontSize: 14,
+                fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
+                width: 96
+              }}
+            >
+              {hourOnDay.firstShiftStart + ' - ' + hourOnDay.firstShiftEnd}
+            </Text>
+            {hourOnDay.secondShiftStart && hourOnDay.secondShiftEnd ? (
               <Text
                 key={hourOnDay.day}
                 style={{
                   fontSize: 14,
-                  fontWeight: (hourOnDay.day === currentDay) ? 'bold' : 'normal',
-                  width: 74
+                  fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal'
                 }}
               >
-                {hourOnDay.dayName}
+                {hourOnDay.secondShiftStart + ' - ' + hourOnDay.secondShiftEnd}
               </Text>
-              <Text
-                key={hourOnDay.day}
-                style={{
-                  fontSize: 14,
-                  fontWeight: (hourOnDay.day === currentDay) ? 'bold' : 'normal',
-                  width: 96
-                }}
-              >
-                {hourOnDay.firstShiftStart + ' - ' + hourOnDay.firstShiftEnd}
-              </Text>
-              {(hourOnDay.secondShiftStart && hourOnDay.secondShiftEnd)
-                ? (
-                  <Text
-                    key={hourOnDay.day}
-                    style={{
-                      fontSize: 14,
-                      fontWeight: (hourOnDay.day === currentDay) ? 'bold' : 'normal'
-                    }}
-                  >
-                    {hourOnDay.secondShiftStart + ' - ' + hourOnDay.secondShiftEnd}
-                  </Text>
-                ) : null}
-            </View>
-          )
-        }
+            ) : null}
+          </View>
+        ))}
       </View>
     );
   };
@@ -130,24 +127,12 @@ class CommerceProfileInfo extends Component {
           containerStyle={{ borderRadius: 10 }}
           dividerStyle={{ marginBottom: 8 }}
         >
-          <FlatList
-            data={schedules}
-            renderItem={this.renderRow}
-            keyExtractor={schedule => schedule.id}
-          />
+          <FlatList data={schedules} renderItem={this.renderRow} keyExtractor={schedule => schedule.id} />
         </Card>
-        <Card
-          title="Información de Contacto"
-          textAlign="center"
-          containerStyle={{ borderRadius: 10 }}
-        >
+        <Card title="Información de Contacto" textAlign="center" containerStyle={{ borderRadius: 10 }}>
           <View style={{ flexDirection: 'column', marginRight: 15 }}>
-            <Text
-              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`E-mail: ${this.props.email}`}</Text>
-            <Text
-              style={{ textAlign: 'left', fontSize: 15, padding: 5 }}
-            >{`Teléfono: ${this.props.phone}`}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`E-mail: ${this.props.email}`}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Teléfono: ${this.props.phone}`}</Text>
           </View>
         </Card>
       </View>
@@ -209,7 +194,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onScheduleRead, onEmployeesScheduleRead }
-)(CommerceProfileInfo);
+export default connect(mapStateToProps, { onScheduleRead, onEmployeesScheduleRead })(CommerceProfileInfo);

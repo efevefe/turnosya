@@ -43,7 +43,7 @@ class CommerceReservationsList extends Component {
     });
 
     this.setState({ selectedDate });
-  }
+  };
 
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
@@ -51,14 +51,10 @@ class CommerceReservationsList extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations
-        .filter(res => res.endDate < moment())
-        .reverse();
+      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
     } else if (selectedIndex == 1) {
       // turnos en curso
-      filteredList = reservations.filter(
-        res => res.startDate <= moment() && res.endDate >= moment()
-      );
+      filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
@@ -74,9 +70,7 @@ class CommerceReservationsList extends Component {
   }
 
   renderItem = ({ item }) => {
-    const clientName = item.clientId
-      ? `${item.client.firstName} ${item.client.lastName}`
-      : item.clientName;
+    const clientName = item.clientId ? `${item.client.firstName} ${item.client.lastName}` : item.clientName;
 
     let name;
     let service;
@@ -98,13 +92,11 @@ class CommerceReservationsList extends Component {
           type: 'ionicon',
           color: 'black'
         }}
-        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format(
-          'HH:mm'
-        )}`}
+        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
         subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={(item.light !== undefined) ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
+        rightSubtitle={item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
@@ -143,10 +135,7 @@ class CommerceReservationsList extends Component {
           }
         />
 
-        <Calendar
-          onDateSelected={date => this.onDateSelected(date)}
-          startingDate={this.state.selectedDate}
-        />
+        <Calendar onDateSelected={date => this.onDateSelected(date)} startingDate={this.state.selectedDate} />
 
         <ButtonGroup
           onPress={this.updateIndex}
@@ -160,11 +149,7 @@ class CommerceReservationsList extends Component {
           selectedTextStyle={styles.buttonGroupSelectedTextStyle}
           innerBorderStyle={styles.buttonGroupInnerBorderStyle}
         />
-        {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
-        ) : (
-            this.renderList()
-          )}
+        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
       </View>
     );
   }
@@ -206,14 +191,17 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId, area: { areaId } } = state.commerceData;
+  const {
+    commerceId,
+    area: { areaId }
+  } = state.commerceData;
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
   const { selectedEmployeeId } = state.employeesList;
   const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { commerceId, areaId, selectedEmployeeId, reservations: detailedReservations, services, courts, loading };
+  return { commerceId, areaId, selectedEmployeeId, employeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {

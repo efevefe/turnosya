@@ -57,11 +57,7 @@ class CourtList extends Component {
         {this.renderList()}
 
         <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={() => this.onAddPress()}
-          >
+          <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={() => this.onAddPress()}>
             <Ionicons name="md-add" />
           </Fab>
         </PermissionsAssigner>

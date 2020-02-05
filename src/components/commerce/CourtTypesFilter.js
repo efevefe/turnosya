@@ -26,37 +26,26 @@ class CourtTypesFilter extends Component {
       }
     }
 
-    this.setState(
-      { buttons },
-      () => this.updateIndexes(this.state.selectedIndexes)
-    );
-  }
+    this.setState({ buttons }, () => this.updateIndexes(this.state.selectedIndexes));
+  };
 
   updateIndexes = selectedIndexes => {
     if (!selectedIndexes.length) return;
 
-    const newIndex = selectedIndexes.filter(
-      value => !this.state.selectedIndexes.includes(value)
-    );
+    const newIndex = selectedIndexes.filter(value => !this.state.selectedIndexes.includes(value));
 
     if (
-      (newIndex.length && (newIndex[0] === 0 || selectedIndexes.length === this.state.buttons.length - 1))
-      || (selectedIndexes.length === this.state.selectedIndexes.length && selectedIndexes.includes(0))
+      (newIndex.length && (newIndex[0] === 0 || selectedIndexes.length === this.state.buttons.length - 1)) ||
+      (selectedIndexes.length === this.state.selectedIndexes.length && selectedIndexes.includes(0))
     ) {
-      selectedIndexes = this.state.buttons.map(
-        (button, index) => index
-      );
+      selectedIndexes = this.state.buttons.map((button, index) => index);
     } else if (selectedIndexes.length < this.state.selectedIndexes.length) {
-      const oldIndex = this.state.selectedIndexes.filter(
-        value => !selectedIndexes.includes(value)
-      )[0];
+      const oldIndex = this.state.selectedIndexes.filter(value => !selectedIndexes.includes(value))[0];
 
       if (oldIndex === 0) return;
 
       if (this.state.selectedIndexes.includes(0)) {
-        selectedIndexes = selectedIndexes.filter(
-          value => value !== 0
-        );
+        selectedIndexes = selectedIndexes.filter(value => value !== 0);
       }
     }
 
@@ -67,7 +56,7 @@ class CourtTypesFilter extends Component {
         return selectedIndexes.includes(index);
       })
     );
-  }
+  };
 
   render() {
     // solo se muestra si hay mas de 1 tipo de cancha

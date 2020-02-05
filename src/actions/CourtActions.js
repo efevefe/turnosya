@@ -54,16 +54,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  {
-    name,
-    court,
-    ground,
-    price,
-    lightPrice,
-    disabledFrom,
-    disabledTo,
-    commerceId
-  },
+  { name, description, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -74,13 +65,14 @@ export const onCourtCreate = (
       .where('name', '==', name)
       .where('softDelete', '==', null)
       .get()
-      .then(function(querySnapshot) {
+      .then(function (querySnapshot) {
         if (!querySnapshot.empty) {
           dispatch({ type: ON_COURT_EXISTS });
         } else {
           db.collection(`Commerces/${commerceId}/Courts`)
             .add({
               name,
+              description,
               court,
               ground,
               price,
@@ -122,12 +114,8 @@ const formatCourt = doc => {
   return {
     ...doc.data(),
     id: doc.id,
-    disabledFrom: doc.data().disabledFrom
-      ? moment(doc.data().disabledFrom.toDate())
-      : null,
-    disabledTo: doc.data().disabledTo
-      ? moment(doc.data().disabledTo.toDate())
-      : null
+    disabledFrom: doc.data().disabledFrom ? moment(doc.data().disabledFrom.toDate()) : null,
+    disabledTo: doc.data().disabledTo ? moment(doc.data().disabledTo.toDate()) : null
   };
 };
 
@@ -168,6 +156,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
   const {
     id,
     name,
+    description,
     court,
     ground,
     price,
@@ -194,6 +183,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
 
     batch.update(courtsRef.doc(id), {
       name,
+      description,
       court,
       ground,
       price,
@@ -255,10 +245,7 @@ export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
   };
 };
 
-export const onCommerceCourtsReadByType = ({
-  commerceId,
-  courtType
-}) => dispatch => {
+export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => dispatch => {
   dispatch({ type: ON_COURT_READING, payload: 'loading' });
 
   const db = firebase.firestore();

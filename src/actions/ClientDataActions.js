@@ -31,13 +31,7 @@ export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({
-  email,
-  password,
-  firstName,
-  lastName,
-  phone
-}) => {
+export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -62,13 +56,9 @@ export const onUserRegister = ({
             dispatch({ type: ON_EMAIL_VERIFY_REMINDED });
             user.user.sendEmailVerification();
           })
-          .catch(error =>
-            dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-          );
+          .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
       })
-      .catch(error =>
-        dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message })
-      );
+      .catch(error => dispatch({ type: ON_USER_REGISTER_FAIL, payload: error.message }));
   };
 };
 
@@ -90,12 +80,7 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   };
 };
 
-export const onUserUpdate = ({
-  firstName,
-  lastName,
-  phone,
-  profilePicture
-}) => async dispatch => {
+export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => async dispatch => {
   dispatch({ type: ON_USER_UPDATING });
 
   const { currentUser } = firebase.auth();

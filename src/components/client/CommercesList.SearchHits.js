@@ -10,10 +10,7 @@ import { withNavigationFocus } from 'react-navigation';
 
 class Hits extends Component {
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.hits !== this.props.hits ||
-      (this.props.isFocused && !prevProps.isFocused)
-    ) {
+    if (prevProps.hits !== this.props.hits || (this.props.isFocused && !prevProps.isFocused)) {
       this.props.onCommerceHitsUpdate(this.props.hits);
     }
   }
@@ -52,6 +49,4 @@ const mapStateToProps = state => {
 
 const ConnectedHits = connectInfiniteHits(Hits);
 
-export default connect(mapStateToProps, { onCommerceHitsUpdate })(
-  withNavigationFocus(ConnectedHits)
-);
+export default connect(mapStateToProps, { onCommerceHitsUpdate })(withNavigationFocus(ConnectedHits));

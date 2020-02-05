@@ -11,9 +11,7 @@ import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
   componentDidMount() {
-    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(
-      this.props.commerceId
-    );
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
   }
 
   componentWillUnmount() {
@@ -21,13 +19,7 @@ class EmployeesList extends Component {
   }
 
   renderRow({ item }) {
-    return (
-      <EmployeesListItem
-        employee={item}
-        commerceId={this.props.commerceId}
-        navigation={this.props.navigation}
-      />
-    );
+    return <EmployeesListItem employee={item} commerceId={this.props.commerceId} navigation={this.props.navigation} />;
   }
 
   onAddPress = () => {
@@ -55,11 +47,7 @@ class EmployeesList extends Component {
         {this.renderList()}
 
         <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={() => this.onAddPress()}
-          >
+          <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={() => this.onAddPress()}>
             <Ionicons name="md-add" />
           </Fab>
         </PermissionsAssigner>

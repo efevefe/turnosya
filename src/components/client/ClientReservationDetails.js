@@ -6,8 +6,7 @@ import { Divider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CourtReservationDetails from '../CourtReservationDetails';
 import ServiceReservationDetails from '../ServiceReservationDetails';
-import { stringFormatHours, isOneWeekOld } from '../../utils/functions';
-import { MONTHS, DAYS } from '../../constants';
+import { stringFormatHours, isOneWeekOld, cancelReservationNotificationFormat } from '../../utils';
 import {
   CardSection,
   Button,
@@ -29,7 +28,8 @@ import {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 } from '../../actions';
 
 class ClientReservationDetails extends Component {
@@ -66,6 +66,8 @@ class ClientReservationDetails extends Component {
       clientId: this.props.clientId,
       reviewId: this.state.reservation.receivedReviewId
     });
+
+    this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
   componentWillUnmount() {
@@ -82,9 +84,7 @@ class ClientReservationDetails extends Component {
       this.setState({ optionsVisible: true });
     else
       Toast.show({
-        text:
-          'No puede cancelar el turno, el tiempo mínimo permitido es ' +
-          stringFormatHours(reservationMinCancelTime)
+        text: 'No puede cancelar el turno, el tiempo mínimo permitido es ' + stringFormatHours(reservationMinCancelTime)
       });
   };
 
@@ -93,11 +93,7 @@ class ClientReservationDetails extends Component {
     if (startDate > moment()) {
       return (
         <CardSection>
-          <Button
-            title="Cancelar Reserva"
-            type="solid"
-            onPress={this.onCancelButtonPress}
-          />
+          <Button title="Cancelar Reserva" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
     }
@@ -130,21 +126,21 @@ class ClientReservationDetails extends Component {
   };
 
   onCancelReservationButtonPress = () => {
-    const { startDate, id, commerceId } = this.state.reservation;
+    const { startDate, id, commerce, commerceId, employeeId, court, service } = this.state.reservation;
+    const { firstName, lastName } = this.props;
 
-    const body = `El Turno del día ${DAYS[startDate.day()]} ${startDate.format(
-      'D'
-    )} de ${MONTHS[moment(startDate).month()]} a las ${moment(startDate).format(
-      'HH:mm'
-    )} fue cancelado`;
-
-    const title = 'Turno Cancelado';
+    const notification = cancelReservationNotificationFormat({
+      startDate,
+      service: court ? `${court.name}` : `${service.name}`,
+      actorName: `${firstName} ${lastName}`,
+      receptorName: `${commerce.name}`
+    });
 
     this.props.onClientReservationCancel({
       reservationId: id,
       commerceId,
       navigation: this.props.navigation,
-      notification: { title, body }
+      notification: { ...notification, employeeId }
     });
 
     this.setState({ optionsVisible: false });
@@ -169,17 +165,9 @@ class ClientReservationDetails extends Component {
         onBackdropPress={() => this.setState({ confirmDeleteVisible: false })}
         isVisible={this.state.confirmDeleteVisible}
       >
-        <MenuItem
-          title="Confirmar"
-          icon="md-checkmark"
-          onPress={this.deleteReview}
-        />
+        <MenuItem title="Confirmar" icon="md-checkmark" onPress={this.deleteReview} />
         <Divider style={overlayDividerStyle} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={() => this.setState({ confirmDeleteVisible: false })}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ confirmDeleteVisible: false })} />
       </Menu>
     );
   };
@@ -216,24 +204,20 @@ class ClientReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating =>
-              this.props.onCommerceReviewValueChange({ rating })
-            }
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment =>
-              this.props.onCommerceReviewValueChange({ comment })
-            }
-            commentPlaceholder="Deje un comentario sobre la atención..."
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -249,60 +233,84 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title="El negocio no te ha calificado" />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El negocio no te ha calificado" />
+      </View>
+    );
   };
 
   renderReviewFields = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
         <CardSection>
-          <Divider style={reviewDividerStyle} />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
             buttons={['Calificar al negocio', 'Ver su calificación']}
           />
-          {this.state.reviewBGIndex === 0
-            ? this.renderCommerceReview()
-            : this.renderClientReview()}
+          {this.state.reviewBGIndex === 0 ? this.renderCommerceReview() : this.renderClientReview()}
           {this.renderConfirmReviewDelete()}
         </CardSection>
       );
     }
   };
 
+  // ** Payment buttons **
+
+  renderPayButton = () => {
+    return this.state.reservation.paymentId ? (
+      <CardSection>
+        <Button
+          title="Ver detalle del pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentDetails', {
+              reservation: this.state.reservation
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : this.props.mPagoToken ? (
+      <CardSection>
+        <Button
+          title="Pagar con Mercado Pago"
+          onPress={() =>
+            this.props.navigation.navigate('paymentForm', {
+              reservation: this.state.reservation,
+              mPagoToken: this.props.mPagoToken
+            })
+          }
+        />
+        <Divider
+          style={{
+            backgroundColor: 'gray',
+            marginTop: 10,
+            marginHorizontal: 10
+          }}
+        />
+      </CardSection>
+    ) : null;
+  };
+
   // ** Render method **
 
   render() {
-    const {
-      areaId,
-      commerce,
-      service,
-      employee,
-      court,
-      endDate,
-      startDate,
-      light,
-      price
-    } = this.state.reservation;
+    const { areaId, commerce, service, employee, court, endDate, startDate, light, price } = this.state.reservation;
 
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView
-        enableOnAndroid
-        style={scrollViewStyle}
-        extraScrollHeight={60}
-      >
+      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
-          isVisible={
-            this.state.optionsVisible || this.props.loadingReservations
-          }
+          isVisible={this.state.optionsVisible || this.props.loadingReservations}
         >
           <MenuItem
             title="Aceptar"
@@ -311,11 +319,7 @@ class ClientReservationDetails extends Component {
             onPress={() => this.onCancelReservationButtonPress()}
           />
           <Divider style={overlayDividerStyle} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ optionsVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ optionsVisible: false })} />
         </Menu>
 
         <AreaComponentRenderer
@@ -325,13 +329,7 @@ class ClientReservationDetails extends Component {
               mode="commerce"
               name={commerce.name}
               picture={commerce.profilePicture}
-              info={
-                commerce.address +
-                ', ' +
-                commerce.city +
-                ', ' +
-                commerce.province.name
-              }
+              info={commerce.address + ', ' + commerce.city + ', ' + commerce.province.name}
               infoIcon="md-pin"
               court={court}
               startDate={startDate}
@@ -346,13 +344,7 @@ class ClientReservationDetails extends Component {
               mode="commerce"
               name={commerce.name}
               picture={commerce.profilePicture}
-              info={
-                commerce.address +
-                ', ' +
-                commerce.city +
-                ', ' +
-                commerce.province.name
-              }
+              info={commerce.address + ', ' + commerce.city + ', ' + commerce.province.name}
               infoIcon="md-pin"
               service={service}
               employee={employee}
@@ -362,24 +354,15 @@ class ClientReservationDetails extends Component {
             />
           }
         />
-
-        {this.renderReviewFields()}
+        {this.renderPayButton()}
         {this.renderCancelButton()}
+        {this.renderReviewFields()}
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const {
-  reviewDividerStyle,
-  overlayDividerStyle,
-  scrollViewStyle
-} = StyleSheet.create({
-  reviewDividerStyle: {
-    marginBottom: 10,
-    marginHorizontal: 40,
-    backgroundColor: 'grey'
-  },
+const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
   overlayDividerStyle: { backgroundColor: 'grey' },
   scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
 });
@@ -389,7 +372,8 @@ const mapStateToProps = state => {
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
-  const { clientId } = state.clientData;
+  const { clientId, firstName, lastName } = state.clientData;
+  const { mPagoToken } = state.commerceData;
 
   return {
     loadingReservations,
@@ -402,7 +386,10 @@ const mapStateToProps = state => {
     commerceReviewId: state.commerceReviewData.reviewId,
     clientRating: state.clientReviewData.rating,
     clientComment: state.clientReviewData.comment,
-    clientId
+    clientId,
+    firstName,
+    lastName,
+    mPagoToken
   };
 };
 
@@ -416,5 +403,6 @@ export default connect(mapStateToProps, {
   onCommerceReviewValueChange,
   onCommerceReviewValuesReset,
   onClientReviewValuesReset,
-  onClientReviewReadById
+  onClientReviewReadById,
+  onCommerceMPagoTokenRead
 })(ClientReservationDetails);

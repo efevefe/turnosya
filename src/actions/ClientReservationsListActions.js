@@ -1,8 +1,8 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { formatReservation } from './ReservationsListActions';
 import { AREAS } from '../constants';
-import { onCommercePushNotificationSend } from './PushNotificationActions';
+import { onCommerceNotificationSend } from './NotificationActions';
 import {
   ON_CLIENT_RESERVATIONS_READ,
   ON_CLIENT_RESERVATIONS_READING,
@@ -19,7 +19,7 @@ export const onClientReservationsListRead = () => dispatch => {
 
   return db
     .collection(`Profiles/${currentUser.uid}/Reservations`)
-    .where('state', '==', null)
+    .where('cancellationDate', '==', null)
     .orderBy('startDate', 'desc')
     .limit(50) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
     .onSnapshot(snapshot => {
@@ -34,7 +34,9 @@ export const onClientReservationsListRead = () => dispatch => {
 
       snapshot.forEach(async res => {
         const { commerceId, areaId, serviceId, employeeId, courtId } = res.data();
-        let service, employee, court = null;
+        let service,
+          employee,
+          court = null;
 
         try {
           const commerce = await db.doc(`Commerces/${commerceId}`).get();
@@ -62,12 +64,7 @@ export const onClientReservationsListRead = () => dispatch => {
     });
 };
 
-export const onClientReservationCancel = ({
-  reservationId,
-  commerceId,
-  navigation,
-  notification
-}) => {
+export const onClientReservationCancel = ({ reservationId, commerceId, navigation, notification }) => {
   const { currentUser } = firebase.auth();
   const db = firebase.firestore();
   const batch = db.batch();
@@ -83,20 +80,15 @@ export const onClientReservationCancel = ({
             cancellationDate: new Date()
           };
 
-          batch.update(
-            db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`),
-            cancellationData
-          );
+          batch.update(db.doc(`Profiles/${currentUser.uid}/Reservations/${reservationId}`), cancellationData);
 
-          batch.update(
-            db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`),
-            cancellationData
-          );
+          batch.update(db.doc(`Commerces/${commerceId}/Reservations/${reservationId}`), cancellationData);
 
           batch
             .commit()
             .then(() => {
-              onCommercePushNotificationSend(notification, commerceId);
+              onCommerceNotificationSend(notification, commerceId, notification.employeeId, currentUser.uid);
+
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
             })

@@ -9,10 +9,7 @@ import { onLocationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
 import { Toast } from '.';
-import {
-  getAddressFromLatAndLong,
-  getLatitudeAndLongitudeFromString
-} from '../../utils';
+import { getAddressFromLatAndLong, getLatitudeAndLongitudeFromString } from '../../utils';
 
 class CommerceLocationMap extends React.Component {
   state = {
@@ -29,10 +26,7 @@ class CommerceLocationMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.state.locationAsked &&
-      prevProps.userLocation !== this.props.userLocation
-    ) {
+    if (this.state.locationAsked && prevProps.userLocation !== this.props.userLocation) {
       this.setState({ locationAsked: false });
     }
 
@@ -70,9 +64,7 @@ class CommerceLocationMap extends React.Component {
 
   onStringSearch = async string => {
     try {
-      const [latLongResult] = await getLatitudeAndLongitudeFromString(
-        string ? string : this.state.completeAddress
-      );
+      const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
 
       if (latLongResult !== undefined) {
         const { latitude, longitude } = latLongResult;
@@ -82,8 +74,7 @@ class CommerceLocationMap extends React.Component {
           completeAddress: this.state.completeAddress.replace('Calle', '')
         });
         Toast.show({
-          text:
-            'No se han encontrado resultados, intente modificar la dirección.'
+          text: 'No se han encontrado resultados, intente modificar la dirección.'
         });
       }
     } catch (error) {
@@ -222,10 +213,7 @@ class CommerceLocationMap extends React.Component {
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
-      const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
-          ? this.state.completeAddress
-          : '';
+      const validAddress = this.state.completeAddress !== 'Córdoba, Argentina' ? this.state.completeAddress : '';
 
       return (
         <View style={mainContainer}>
@@ -326,15 +314,7 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation
-  } = state.locationData;
+  const { address, city, provinceName, country, latitude, longitude, userLocation } = state.locationData;
 
   return {
     address,

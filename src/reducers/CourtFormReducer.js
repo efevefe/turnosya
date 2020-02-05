@@ -12,6 +12,7 @@ import { Toast } from '../components/common';
 const INITIAL_STATE = {
   id: '',
   name: '',
+  description: '',
   courts: [],
   court: '',
   grounds: [],

@@ -16,16 +16,7 @@ import {
   onAreasReadForPicker,
   onLocationValueChange
 } from '../../actions';
-import {
-  CardSection,
-  Input,
-  Spinner,
-  Menu,
-  MenuItem,
-  Picker,
-  IconButton,
-  Button
-} from '../common';
+import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 import { HeaderBackButton } from 'react-navigation-stack';
 
@@ -99,30 +90,14 @@ class CommerceProfile extends Component {
   };
 
   renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        onPress={() => this.props.navigation.goBack(null)}
-        tintColor="white"
-        title="Back"
-      />
-    );
+    return <HeaderBackButton onPress={() => this.props.navigation.goBack(null)} tintColor="white" title="Back" />;
   };
 
   onEditPress = () => {
     this.props.onProvincesIdRead();
     this.props.onAreasReadForPicker();
 
-    const {
-      name,
-      cuit,
-      email,
-      phone,
-      description,
-      province,
-      area,
-      profilePicture,
-      headerPicture
-    } = this.props;
+    const { name, cuit, email, phone, description, province, area, profilePicture, headerPicture } = this.props;
 
     const { address, city, latitude, longitude } = this.props.locationData;
 
@@ -170,11 +145,9 @@ class CommerceProfile extends Component {
         const { address, city, latitude, longitude } = this.props.locationData;
         const { newProfilePicture, newHeaderPicture } = this.state;
 
-        if (newProfilePicture)
-          var profilePicture = await imageToBlob(profilePicture);
+        if (newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
 
-        if (newHeaderPicture)
-          var headerPicture = await imageToBlob(headerPicture);
+        if (newHeaderPicture) var headerPicture = await imageToBlob(headerPicture);
 
         this.props.onCommerceUpdate(
           {
@@ -331,9 +304,7 @@ class CommerceProfile extends Component {
       return (
         <View style={locationContainerStyle}>
           <Icon name="md-pin" type="ionicon" size={16} />
-          <Text
-            style={{ textAlign: 'center', paddingLeft: 5 }}
-          >{`${address}, ${city}, ${name}`}</Text>
+          <Text style={{ textAlign: 'center', paddingLeft: 5 }}>{`${address}, ${city}, ${name}`}</Text>
         </View>
       );
     }
@@ -341,9 +312,7 @@ class CommerceProfile extends Component {
 
   onProvincePickerChange = value => {
     if (value) {
-      var { value, label } = this.props.provincesList.find(
-        province => province.value == value
-      );
+      var { value, label } = this.props.provincesList.find(province => province.value == value);
       this.props.onCommerceValueChange({
         province: { provinceId: value, name: label }
       });
@@ -353,9 +322,7 @@ class CommerceProfile extends Component {
 
   onAreaPickerChange = value => {
     if (value) {
-      var { value, label } = this.props.areasList.find(
-        area => area.value == value
-      );
+      var { value, label } = this.props.areasList.find(area => area.value == value);
       this.props.onCommerceValueChange({
         area: { areaId: value, name: label }
       });
@@ -461,9 +428,7 @@ class CommerceProfile extends Component {
   };
 
   onProvinceNameChangeOnMap = name => {
-    const province = this.props.provincesList.find(
-      province => province.label.toLowerCase() === name.toLowerCase()
-    );
+    const province = this.props.provincesList.find(province => province.label.toLowerCase() === name.toLowerCase());
 
     if (province) {
       this.props.onCommerceValueChange({
@@ -537,11 +502,7 @@ class CommerceProfile extends Component {
         <View style={headerContainerStyle}>
           <Image
             style={headerPictureStyle}
-            source={
-              this.props.headerPicture
-                ? { uri: this.props.headerPicture }
-                : null
-            }
+            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
           >
             <Icon
               name="md-camera"
@@ -555,11 +516,7 @@ class CommerceProfile extends Component {
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
-              source={
-                this.props.profilePicture
-                  ? { uri: this.props.profilePicture }
-                  : null
-              }
+              source={this.props.profilePicture ? { uri: this.props.profilePicture } : null}
               size={avatarSize}
               icon={{ name: 'store' }}
               containerStyle={avatarStyle}
@@ -615,9 +572,7 @@ class CommerceProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={phone =>
-                this.props.onCommerceValueChange({ phone })
-              }
+              onChangeText={phone => this.props.onCommerceValueChange({ phone })}
               keyboardType="numeric"
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
@@ -629,9 +584,7 @@ class CommerceProfile extends Component {
               label="E-Mail:"
               value={this.props.email}
               autoCapitalize="none"
-              onChangeText={email =>
-                this.props.onCommerceValueChange({ email })
-              }
+              onChangeText={email => this.props.onCommerceValueChange({ email })}
               keyboardType="email-address"
               errorMessage={this.state.emailError}
               onFocus={() => this.setState({ emailError: '' })}
@@ -642,9 +595,7 @@ class CommerceProfile extends Component {
             <Input
               label="Descripción:"
               value={this.props.description}
-              onChangeText={description =>
-                this.props.onCommerceValueChange({ description })
-              }
+              onChangeText={description => this.props.onCommerceValueChange({ description })}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -654,9 +605,7 @@ class CommerceProfile extends Component {
             <Input
               label="Dirección:"
               value={this.props.locationData.address}
-              onChangeText={address =>
-                this.props.onLocationValueChange({ address })
-              }
+              onChangeText={address => this.props.onLocationValueChange({ address })}
               errorMessage={this.state.addressError}
               onFocus={() => this.setState({ addressError: '' })}
               onBlur={this.renderAddressError}
@@ -691,14 +640,7 @@ class CommerceProfile extends Component {
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}
-              icon={
-                <Ionicons
-                  style={{ marginLeft: 10 }}
-                  name="md-pin"
-                  size={22}
-                  color={MAIN_COLOR}
-                />
-              }
+              icon={<Ionicons style={{ marginLeft: 10 }} name="md-pin" size={22} color={MAIN_COLOR} />}
             />
           </CardSection>
           <CardSection>
@@ -714,29 +656,15 @@ class CommerceProfile extends Component {
         </View>
 
         <Menu
-          title={
-            this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'
-          }
+          title={this.state.profilePictureEdit ? 'Foto de Perfil' : 'Foto de Portada'}
           onBackdropPress={this.onEditPicturePress}
           isVisible={this.state.pictureOptionsVisible}
         >
-          <MenuItem
-            title="Elegir de la galería"
-            icon="md-photos"
-            onPress={this.onChoosePicturePress}
-          />
+          <MenuItem title="Elegir de la galería" icon="md-photos" onPress={this.onChoosePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Tomar Foto"
-            icon="md-camera"
-            onPress={this.onTakePicturePress}
-          />
+          <MenuItem title="Tomar Foto" icon="md-camera" onPress={this.onTakePicturePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePicturePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePicturePress} />
         </Menu>
       </KeyboardAwareScrollView>
     );
