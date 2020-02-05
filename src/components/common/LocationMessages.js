@@ -25,17 +25,17 @@ class LocationMessages extends Component {
       } else {
         this.setState({ permissionStatus, modal: true });
       }
-      AppState.addEventListener('change', this._handleAppStateChange);
+      AppState.addEventListener('change', this.onAppStateChange);
     } catch (error) {
       console.error(error);
     }
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener('change', this.onAppStateChange);
   }
 
-  _handleAppStateChange = async appState => {
+  onAppStateChange = async appState => {
     try {
       if (appState === 'active' && this.state.appState !== appState) {
         this.props.onLocationFound && this.props.onLocationFound({ updating: true, location: null });
@@ -92,8 +92,7 @@ class LocationMessages extends Component {
       this.props.onLocationValueChange({ userLocation: { latitude: null, longitude: null } });
     }
 
-    const updating = this.state.permissionStatus ? false : true;
-    this.props.onLocationFound && this.props.onLocationFound({ updating, location: null });
+    this.props.onLocationFound && this.props.onLocationFound({ updating: !this.state.permissionStatus, location: null });
   };
 
   renderItems = () => {
