@@ -22,7 +22,7 @@ export const onNotificationsRead = collectionRef => dispatch => {
     db
       .collection(collectionRef)
       .where('softDelete', '==', null)
-      .orderBy('date','desc')
+      .orderBy('date', 'desc')
       .limit(50)
       .onSnapshot(snapshot => {
         const notifications = [];
