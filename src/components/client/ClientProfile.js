@@ -66,11 +66,10 @@ class ClientProfile extends Component {
         if (this.state.newProfilePicture) var profilePicture = await imageToBlob(profilePicture);
 
         this.props.onUserUpdate({ firstName, lastName, phone, profilePicture });
+        this.disableEdit();
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      this.disableEdit();
     }
   };
 
