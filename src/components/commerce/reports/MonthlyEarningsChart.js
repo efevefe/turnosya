@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
+import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection, PermissionsAssigner } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import { ROLES } from '../../../constants';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -16,7 +17,7 @@ class MonthlyEarningsChart extends Component {
     props.yearsOfActivity(props.commerceId);
     props.onMonthlyEarningsReadByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: this.props.selectedYear };
+    this.state = { modal: false, modalYear: this.props.selectedYear, selectedEmployee: { id: null } };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -30,14 +31,22 @@ class MonthlyEarningsChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.modalYear);
+    this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.modalYear, this.state.selectedEmployee.id);
 
     this.props.onCommerceReportValueChange({
-      selectedYear: this.state.modalYear
+      selectedYear: this.state.modalYear,
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    if (this.props.selectedEmployee.id)
+      return `Evolución de las ganancias de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}`;
+
+    return `Evolución de mis ganancias en ${this.props.selectedYear}`;
+  }
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -69,7 +78,14 @@ class MonthlyEarningsChart extends Component {
               onValueChange={modalYear => this.setState({ modalYear })}
             />
           </CardSection>
-          <EmployeesPicker />
+
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+            <EmployeesPicker
+              value={this.state.selectedEmployee.id}
+              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+            />
+          </PermissionsAssigner>
+
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
@@ -77,8 +93,8 @@ class MonthlyEarningsChart extends Component {
 
         <LineChart
           data={dataLine}
-          title={`EVOLUCIÓN DE MIS GANANCIAS EN ${this.props.selectedYear}`}
-          emptyDataMessage={this.props.error || `Parace que aún no tenes ganancias en ${this.props.selectedYear}`}
+          title={this.getChartTitle()}
+          emptyDataMessage={this.props.error || `Parace que aún no hay ganancias en ${this.props.selectedYear}`}
           xlabel="MESES DEL AÑO"
           yAxisLabel={'$ '}
         />
@@ -88,13 +104,14 @@ class MonthlyEarningsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, years, selectedYear, loading, error } = state.commerceReports;
+  const { data, years, selectedYear, selectedEmployee, loading, error } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
     data,
     years,
     selectedYear,
+    selectedEmployee,
     commerceId,
     loading,
     error

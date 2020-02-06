@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { ScrollView, Dimensions } from 'react-native';
-import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
+import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList, PermissionsAssigner } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import { ROLES } from '../../../constants';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -24,7 +25,8 @@ class ReservedAndCancelledShiftChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
+      selectedEmployee: { id: null }
     };
   }
 
@@ -42,16 +44,28 @@ class ReservedAndCancelledShiftChart extends Component {
     this.props.onReservedAndCancelledShiftReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
-      moment(this.state.modalEndDate)
+      moment(this.state.modalEndDate),
+      this.state.selectedEmployee.id
     );
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate)
+      endDate: moment(this.state.modalEndDate),
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    let title = 'Turnos reservados y cancelados '
+
+    if (this.props.selectedEmployee.id)
+      title += `de ${this.props.selectedEmployee.name} `;
+
+    return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+  }
 
   renderChart = () => {
     if (this.props.data.data.length) {
@@ -68,12 +82,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
       return (
         <PieChart
-          title={
-            'TURNOS RESERVADOS Y CANCELADOS ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
+          title={this.getChartTitle()}
           data={dataPie}
         />
       );
@@ -131,7 +140,14 @@ class ReservedAndCancelledShiftChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
-          <EmployeesPicker />
+
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+            <EmployeesPicker
+              value={this.state.selectedEmployee.id}
+              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+            />
+          </PermissionsAssigner>
+
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
@@ -144,13 +160,14 @@ class ReservedAndCancelledShiftChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, endDate, loading } = state.commerceReports;
+  const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
     data,
     startDate,
     endDate,
+    selectedEmployee,
     commerceId,
     loading
   };

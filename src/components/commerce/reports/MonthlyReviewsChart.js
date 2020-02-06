@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { LineChart, Spinner, IconButton, Button, Picker, Menu, CardSection } from '../../common';
-import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -71,7 +70,6 @@ class MonthlyReviewsChart extends Component {
               onValueChange={modalYear => this.setState({ modalYear })}
             />
           </CardSection>
-          <EmployeesPicker />
           <CardSection>
             <Button
               title={'Generar Reporte'}
@@ -83,8 +81,8 @@ class MonthlyReviewsChart extends Component {
 
         <LineChart
           data={dataLine}
-          title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
-          emptyDataMessage={this.props.error || `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`}
+          title={`Evolución de mis calificaciones en ${this.props.selectedYear}`}
+          emptyDataMessage={this.props.error || `Parace que aún no hay calificaciones en ${this.props.selectedYear}`}
           xlabel="MESES DEL AÑO"
         />
       </ScrollView>
