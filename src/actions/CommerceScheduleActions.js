@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import moment from 'moment';
+import { onReservationsCancel } from './ReservationsListActions';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
@@ -302,18 +303,7 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
 
     // reservations cancel
     if (reservationsToCancel.length) {
-      const state = await db.doc(`ReservationStates/canceled`).get();
-      const updateObj = {
-        cancellationDate: new Date(),
-        state: { id: state.id, name: state.data().name },
-      };
-
-      reservationsToCancel.forEach(res => {
-        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-        batch.update(commerceResRef, updateObj);
-        batch.update(clientResRef, updateObj);
-      });
+      await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
     }
 
     await batch.commit();
@@ -344,18 +334,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 
     // reservations cancel
     if (reservationsToCancel.length) {
-      const state = await db.doc(`ReservationStates/canceled`).get();
-      const updateObj = {
-        cancellationDate: new Date(),
-        state: { id: state.id, name: state.data().name },
-      };
-
-      reservationsToCancel.forEach(res => {
-        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-        batch.update(commerceResRef, updateObj);
-        batch.update(clientResRef, updateObj);
-      });
+      await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
     }
 
     await batch.commit();
