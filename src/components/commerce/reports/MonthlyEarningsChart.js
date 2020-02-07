@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection, PermissionsAssigner } from '../../common';
+import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
-import { ROLES } from '../../../constants';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -79,12 +78,10 @@ class MonthlyEarningsChart extends Component {
             />
           </CardSection>
 
-          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-            <EmployeesPicker
-              value={this.state.selectedEmployee.id}
-              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
-            />
-          </PermissionsAssigner>
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
 
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />

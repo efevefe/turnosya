@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { CardSection, Picker } from '../../common';
+import { CardSection, Picker, PermissionsAssigner, AreaComponentRenderer } from '../../common';
+import { ROLES } from '../../../constants';
 
 const EmployeesPicker = props => {
   onEmployeesPickerValueChange = (value, index) => {
@@ -13,15 +14,21 @@ const EmployeesPicker = props => {
   }
 
   return (
-    <CardSection>
-      <Picker
-        {...props}
-        title='Empleado:'
-        placeholder={{ label: 'Todos', value: null }}
-        items={props.employees}
-        onValueChange={(value, index) => this.onEmployeesPickerValueChange(value, index)}
-      />
-    </CardSection>
+    <AreaComponentRenderer
+      hairdressers={
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+          <CardSection>
+            <Picker
+              {...props}
+              title='Empleado:'
+              placeholder={{ label: 'Todos', value: null }}
+              items={props.employees}
+              onValueChange={(value, index) => this.onEmployeesPickerValueChange(value, index)}
+            />
+          </CardSection>
+        </PermissionsAssigner>
+      }
+    />
   );
 }
 

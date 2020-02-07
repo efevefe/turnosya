@@ -144,8 +144,9 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   title: {
-    fontSize: 14,
-    padding: 15,
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     color: 'black',
     textAlign: 'center'
   },

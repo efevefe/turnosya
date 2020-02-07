@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { ScrollView, Dimensions } from 'react-native';
-import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList, PermissionsAssigner } from '../../common';
+import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
-import { ROLES } from '../../../constants';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -141,12 +140,10 @@ class ReservedAndCancelledShiftChart extends Component {
             />
           </CardSection>
 
-          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-            <EmployeesPicker
-              value={this.state.selectedEmployee.id}
-              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
-            />
-          </PermissionsAssigner>
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
 
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />

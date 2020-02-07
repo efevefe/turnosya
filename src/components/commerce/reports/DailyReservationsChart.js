@@ -22,7 +22,8 @@ class DailyReservationsChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
+      selectedEmployee: { id: null }
     };
   }
 
@@ -40,16 +41,28 @@ class DailyReservationsChart extends Component {
     this.props.onDailyReservationsReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
-      moment(this.state.modalEndDate)
+      moment(this.state.modalEndDate),
+      this.state.selectedEmployee.id
     );
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate)
+      endDate: moment(this.state.modalEndDate),
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    let title = 'Cantidad de reservas por día '
+
+    if (this.props.selectedEmployee.id)
+      title += `de ${this.props.selectedEmployee.name} `;
+
+    return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+  }
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -96,19 +109,19 @@ class DailyReservationsChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
-          <EmployeesPicker />
+
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
+
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
         <BarChart
-          title={
-            'CANTIDAD DE RESERVAS POR DÍA ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
+          title={this.getChartTitle()}
           emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
           xlabel="DÍAS DE LA SEMANA"
           data={dataBar}
@@ -119,16 +132,15 @@ class DailyReservationsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, endDate, loading } = state.commerceReports;
+  const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
-  const { employees } = state.employeesList;
 
   return {
     data,
     startDate,
     endDate,
     commerceId,
-    employees,
+    selectedEmployee,
     loading
   };
 };

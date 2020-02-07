@@ -42,8 +42,9 @@ const chartConfig = {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 14,
-    padding: 15,
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     color: 'black',
     textAlign: 'center'
   }
