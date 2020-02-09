@@ -173,7 +173,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
   });
 };
 
-export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async dispatch => {
+export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async () => {
   const db = firebase.firestore();
 
   const doc = await db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).get();
@@ -226,7 +226,7 @@ export const onCommerceReservationCancel = ({
         batch
           .commit()
           .then(() => {
-            onClientNotificationSend(notification, clientId, commerceId);
+            notification && onClientNotificationSend(notification, clientId, commerceId);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })

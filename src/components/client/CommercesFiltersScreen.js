@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Divider, Button, Slider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { IconButton, Picker, ButtonGroup } from '../common';
+import { IconButton, Picker, ButtonGroup, Toast } from '../common';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../constants';
 import {
   onProvincesNameRead,
   onCommercesListValueChange,
-  onUserLocationChange,
+  onLocationValueChange,
   onSelectedLocationChange,
   onCommerceHitsUpdate
 } from '../../actions';
@@ -16,12 +16,12 @@ import LocationMessages from '../common/LocationMessages';
 class CommerceFiltersScreen extends Component {
   state = {
     provinceName: this.props.provinceNameFilter,
-    locationButtonIndex: this.props.locationButtonIndex,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
+    locationUpdating: false,
     oldData: {
       selectedLocation: this.props.selectedLocation,
-      userLocation: this.props.userLocation,
-      markers: this.props.markers
+      markers: this.props.markers,
+      locationButtonIndex: this.props.locationButtonIndex
     }
   };
 
@@ -58,47 +58,65 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress() {
-    this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
-    this.props.onUserLocationChange(this.state.oldData.userLocation);
-    this.props.onCommerceHitsUpdate(this.state.oldData.markers);
+    if (!this.state.locationUpdating) {
+      this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
+      this.props.onCommerceHitsUpdate(this.state.oldData.markers);
+      this.props.onCommercesListValueChange({ locationButtonIndex: this.state.oldData.locationButtonIndex });
 
-    this.props.navigation.goBack(null);
+      this.props.navigation.goBack(null);
+    }
   }
 
   onApplyFiltersPress() {
-    this.props.onCommercesListValueChange({
-      provinceNameFilter: this.state.provinceName,
-      locationButtonIndex: this.state.locationButtonIndex,
-      locationRadiusKms: this.state.locationRadiusKms
-    });
+    if (!this.state.locationUpdating) {
+      if (this.props.locationButtonIndex !== 0 && !this.props.selectedLocation.latitude) {
+        return Toast.show({ text: 'Seleccione una ubicación o encienda el GPS' });
+      }
 
-    this.props.navigation.goBack(null);
+      this.props.onCommercesListValueChange({
+        provinceNameFilter: this.state.provinceName,
+        locationRadiusKms: this.state.locationRadiusKms
+      });
+
+      this.props.navigation.goBack(null);
+    }
   }
 
   onLocationOptionPress(buttonIndex) {
-    this.setState({ locationButtonIndex: buttonIndex });
+    this.props.onCommercesListValueChange({ locationButtonIndex: buttonIndex });
 
     switch (buttonIndex) {
       case 0:
-        this.props.onUserLocationChange();
         this.props.onSelectedLocationChange();
         break;
       case 1:
-        this.props.onSelectedLocationChange();
         break;
       case 2:
-        this.props.onUserLocationChange();
-        this.props.navigation.navigate('commercesFiltersMap');
+        this.props.navigation.navigate('commercesFiltersMap', { navigation: this.props.navigation });
         break;
     }
   }
 
+  onCurrentLocationFound = ({ updating, location }) => {
+    if (!updating && !location) return this.setState({ locationUpdating: false });
+
+    if (updating && !location) return this.setState({ locationUpdating: true });
+
+    if (location) {
+      this.setState({ locationUpdating: true }, async () => {
+        await this.props.onLocationValueChange({ selectedLocation: { ...location }, userLocation: { ...location } });
+
+        this.setState({ locationUpdating: false });
+      });
+    }
+  };
+
   renderLocationMessage() {
-    return this.state.locationButtonIndex === 1 ? <LocationMessages /> : null;
+    if (this.props.locationButtonIndex === 1) return <LocationMessages onLocationFound={this.onCurrentLocationFound} />;
   }
 
   renderRadiusSlider = () =>
-    this.state.locationButtonIndex !== 0 ? (
+    this.props.locationButtonIndex !== 0 ? (
       <View style={{ flex: 1 }}>
         <Text style={locationTextStyle}>{`Radio de búsqueda: ${Math.round(this.state.locationRadiusKms)} km.`}</Text>
         <Slider
@@ -151,7 +169,7 @@ class CommerceFiltersScreen extends Component {
           <View style={locationContainerStyle}>
             <ButtonGroup
               onPress={this.onLocationOptionPress.bind(this)}
-              selectedIndex={this.state.locationButtonIndex}
+              selectedIndex={this.props.locationButtonIndex}
               buttons={['Deshabilitada', 'Ubicación actual', 'Ubicación en mapa']}
               containerStyle={locationBGContainerStyle}
             />
@@ -228,7 +246,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onProvincesNameRead,
   onCommercesListValueChange,
-  onUserLocationChange,
+  onLocationValueChange,
   onSelectedLocationChange,
   onCommerceHitsUpdate
 })(CommerceFiltersScreen);

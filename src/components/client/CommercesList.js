@@ -81,11 +81,6 @@ class CommercesList extends Component {
           aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
           aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
         }
-      : this.props.userLocation.latitude
-      ? {
-          aroundLatLng: `${this.props.userLocation.latitude}, ${this.props.userLocation.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-        }
       : null;
   };
 
@@ -120,16 +115,7 @@ class CommercesList extends Component {
 const mapStateToProps = state => {
   const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
 
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation,
-    selectedLocation
-  } = state.locationData;
+  const { address, city, provinceName, country, latitude, longitude, selectedLocation } = state.locationData;
 
   return {
     refinement,
@@ -142,7 +128,6 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    userLocation,
     selectedLocation
   };
 };

@@ -26,14 +26,8 @@ class CommerceLocationMap extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.locationAsked && prevProps.userLocation !== this.props.userLocation) {
-      this.setState({ locationAsked: false });
-    }
-
-    if (this.props.onProvinceNameChange) {
-      if (prevProps.provinceName !== this.props.provinceName) {
-        this.props.onProvinceNameChange(this.props.provinceName);
-      }
+    if (this.props.onProvinceNameChange && prevProps.provinceName !== this.props.provinceName) {
+      this.props.onProvinceNameChange(this.props.provinceName);
     }
   }
 
@@ -189,25 +183,29 @@ class CommerceLocationMap extends React.Component {
 
   renderPointerMarker = () => {
     const { latitude, longitude, address } = this.props;
+    const { latitude: userLat, longitude: userLong } = this.props.userLocation;
 
-    if (latitude && longitude && address) {
-      return (
-        <MapView.Marker
-          coordinate={{
-            latitude,
-            longitude
-          }}
-          draggable={this.state.draggable}
-          title={address}
-          onDragEnd={e =>
-            this.updateAddressFromLatAndLong({
-              latitude: e.nativeEvent.coordinate.latitude,
-              longitude: e.nativeEvent.coordinate.longitude
-            })
-          }
-          pinColor={MAIN_COLOR}
-        />
-      );
+    if (userLat !== latitude && userLong !== longitude) {
+      // La primera validación es para que el "pointMarker" no pise al "User Marker"
+      if (latitude && longitude && address) {
+        return (
+          <MapView.Marker
+            coordinate={{
+              latitude,
+              longitude
+            }}
+            draggable={this.state.draggable}
+            title={address}
+            onDragEnd={e =>
+              this.updateAddressFromLatAndLong({
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude
+              })
+            }
+            pinColor={MAIN_COLOR}
+          />
+        );
+      }
     }
   };
 
@@ -236,8 +234,18 @@ class CommerceLocationMap extends React.Component {
     }
   };
 
+  onUserLocationFound = ({ location }) => {
+    if (location) {
+      this.setState({ locationAsked: false });
+      this.props.onLocationValueChange({ userLocation: { ...location } });
+      if (this.props.searchBar) {
+        this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
+      }
+    }
+  };
+
   renderLocationMessage = () => {
-    if (this.state.locationAsked) return <LocationMessages />;
+    if (this.state.locationAsked) return <LocationMessages onLocationFound={this.onUserLocationFound} />;
   };
 
   render() {
@@ -327,6 +335,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onLocationValueChange
-})(CommerceLocationMap);
+export default connect(mapStateToProps, { onLocationValueChange })(CommerceLocationMap);
