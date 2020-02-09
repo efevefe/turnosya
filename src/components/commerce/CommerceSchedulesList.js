@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList, Menu, MenuItem } from '../common';
 import { DAYS, MONTHS, MAIN_COLOR, AREAS } from '../../constants';
-import { formattedMoment, stringFormatMinutes } from '../../utils';
+import { formattedMoment, stringFormatMinutes, cancelReservationNotificationFormat } from '../../utils';
 import {
   onActiveSchedulesRead,
   onScheduleValueChange,
@@ -126,11 +126,20 @@ class CommerceSchedulesList extends Component {
   };
 
   onCancelReservations = async () => {
-    const { nextReservations } = this.props;
+    const reservationsToCancel = this.props.nextReservations.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          actorName: this.props.commerceName,
+          cancellationReason: 'Cambio en los horarios de atención'
+        })
+      }
+    })
 
     this.setState({
       lastReservationDate: formattedMoment(),
-      reservationsToCancel: nextReservations,
+      reservationsToCancel,
       deleteModalVisible: false,
       deleteConfirmVisible: true
     });
@@ -316,11 +325,12 @@ const mapStateToProps = state => {
   const { nextReservations } = state.reservationsList;
   const {
     commerceId,
+    name: commerceName,
     area: { areaId }
   } = state.commerceData;
   const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
-  return { schedules, commerceId, loading, nextReservations, employeeId };
+  return { schedules, commerceId, commerceName, loading, nextReservations, employeeId };
 };
 
 export default connect(mapStateToProps, {

@@ -12,7 +12,7 @@ import {
   onCourtNextReservationsRead
 } from '../../actions';
 import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
-import { validateValueType, trimString } from '../../utils';
+import { validateValueType, trimString, cancelReservationNotificationFormat } from '../../utils';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../../constants';
 
 class CourtForm extends Component {
@@ -341,9 +341,20 @@ class CourtForm extends Component {
   };
 
   onSaveAndCancelReservations = () => {
+    const reservationsToCancel = this.props.nextReservations.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          actorName: this.props.commerceName,
+          cancellationReason: 'Deshabilitación de la cancha'
+        })
+      }
+    });
+
     this.setState(
       {
-        reservationsToCancel: this.props.nextReservations,
+        reservationsToCancel,
         confirmationModal: false
       },
       this.onCourtSave
@@ -557,7 +568,7 @@ const mapStateToProps = state => {
     disabledFrom,
     disabledTo
   } = state.courtForm;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
   const { nextReservations } = state.reservationsList;
   const loadingReservations = state.reservationsList.loading;
 
@@ -575,6 +586,7 @@ const mapStateToProps = state => {
     existsError,
     disabled,
     commerceId,
+    commerceName,
     disabledFrom,
     disabledTo,
     nextReservations,

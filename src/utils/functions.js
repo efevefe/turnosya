@@ -256,7 +256,16 @@ export const cancelReservationNotificationFormat = ({
   const dayOfMonth = startDate.format('D');
   const month = MONTHS[moment(startDate).month()];
   const formattedTime = moment(startDate).format('HH:mm');
-  let body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
+
+  let body;
+
+  if (!service || !receptorName) {
+    body = `${actorName} te ha cancelado el turno del `;
+  } else {
+    body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el `;
+  }
+
+  body += `día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
   body += `${cancellationReason ? ` Motivo: "${cancellationReason}".` : ''}`;
 
   return {
