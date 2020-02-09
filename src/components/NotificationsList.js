@@ -10,7 +10,8 @@ import {
   onCommerceNotificationDelete,
   onEmployeeCreate,
   onEmployeeDelete,
-  onUserWorkplacesRead
+  onUserWorkplacesRead,
+  onEmploymentInvitationConfirm
 } from '../actions';
 import { MAIN_COLOR, NOTIFICATION_TYPES } from '../constants';
 import moment from 'moment';
@@ -79,21 +80,19 @@ class NotificationsList extends Component {
   };
 
   onEmploymentConfirmPress = () => {
-    const { sentBy, employeeId, id } = this.state.selectedNotification;
+    const { sentBy, employeeId } = this.state.selectedNotification;
 
     if (this.state.isAcceptingEmployment) {
       // Acepta la invitación
       this.props.onEmployeeCreate({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
-      //this.props.onUserWorkplacesRead();
+      this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, true);
+      this.props.onUserWorkplacesRead();
     } else {
       // Rechaza la invitación
       this.props.onEmployeeDelete({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
+      this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, false);
+      this.props.onEmploymentInvitationConfirm;
     }
-
-    this.props.onClientNotificationDelete({
-      clientId: this.props.clientId,
-      notificationId: id
-    });
 
     this.setState({ confirmEmploymentVisible: false });
   };
@@ -120,7 +119,7 @@ class NotificationsList extends Component {
   renderRow = ({ item }) => {
     return (
       <ListItem
-        title={item.title}
+        title={`${item.title}${item.acceptanceDate ? ' (Aceptada)' : item.rejectionDate ? ' (Rechazada)' : ''}`}
         rightTitle={`Hace ${notificationsToFormatString(moment().diff(item.date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
         subtitle={item.body}
@@ -184,7 +183,9 @@ class NotificationsList extends Component {
           >
             {this.state.selectedNotification &&
             this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
-            this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id
+            this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
+            !this.state.selectedNotification.acceptanceDate &&
+            !this.state.selectedNotification.rejectionDate
               ? this.renderEmploymentInvitationOptions()
               : null}
             <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} />
@@ -212,5 +213,6 @@ export default connect(mapStateToProps, {
   onCommerceNotificationDelete,
   onEmployeeCreate,
   onEmployeeDelete,
-  onUserWorkplacesRead
+  onUserWorkplacesRead,
+  onEmploymentInvitationConfirm
 })(NotificationsList);

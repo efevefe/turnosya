@@ -212,14 +212,13 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change'
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
- 
+
 //Notifications types
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
 export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
-export const ON_NOTIFICATION_DELETED= 'on_notification_deleted';
+export const ON_NOTIFICATION_DELETED = 'on_notification_deleted';
 export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
-
 
 //Payment types
 export const ON_PAYMENT_READ = 'on_payment_method_read';

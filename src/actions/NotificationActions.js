@@ -220,3 +220,15 @@ export const onNotificationTokenDelete = async (commerceId, workplaces) => {
     console.error(error);
   }
 };
+
+export const onEmploymentInvitationConfirm = (notification, accepted) => async dispatch => {
+  const db = firebase.firestore();
+  const clientId = firebase.auth().currentUser.uid;
+  try {
+    await db
+      .doc(`Profiles/${clientId}/Notifications/${notification.id}`)
+      .update({ ...(accepted ? { acceptanceDate: new Date() } : { rejectionDate: new Date() }) });
+  } catch (e) {
+    console.error(e);
+  }
+};
