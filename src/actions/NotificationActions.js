@@ -232,3 +232,29 @@ export const onEmploymentInvitationConfirm = (notification, accepted) => async d
     console.error(e);
   }
 };
+
+export const onEmploymentInvitationCancel = ({ employeeId, commerceId, profileId }) => async dispatch => {
+  const db = firebase.firestore();
+
+  try {
+    const employeeRef = db.doc(`Commerces/${commerceId}/Employees/${employeeId}`);
+    const notificationsSnapshot = await db
+      .collection(`Profiles/${profileId}/Notifications`)
+      .where('employeeId', '==', employeeId)
+      .get();
+
+    if (!notificationsSnapshot.empty) {
+      const notificationId = notificationsSnapshot.docs[0].id;
+      const notificationRef = db.doc(`Profiles/${profileId}/Notifications/${notificationId}`);
+
+      const batch = db.batch();
+
+      batch.update(employeeRef, { softDelete: new Date() });
+      batch.update(notificationRef, { softDelete: new Date() });
+
+      await batch.commit();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};

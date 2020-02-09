@@ -4,7 +4,7 @@ import firebase from 'firebase';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem, Toast } from '../common';
-import { onCourtFormOpen, onEmployeeDelete, onEmployeeValueChange } from '../../actions';
+import { onCourtFormOpen, onEmployeeDelete, onEmployeeValueChange, onEmploymentInvitationCancel } from '../../actions';
 import { ROLES } from '../../constants';
 
 class CourtListItem extends Component {
@@ -31,11 +31,9 @@ class CourtListItem extends Component {
   onConfirmDeletePress = () => {
     const { commerceId, employee } = this.props;
 
-    this.props.onEmployeeDelete({
-      employeeId: employee.id,
-      commerceId,
-      profileId: employee.profileId
-    });
+    employee.startDate
+      ? this.props.onEmployeeDelete({ employeeId: employee.id, commerceId, profileId: employee.profileId })
+      : this.props.onEmploymentInvitationCancel({ employeeId: employee.id, commerceId, profileId: employee.profileId });
 
     this.setState({ deleteVisible: false });
   };
@@ -63,13 +61,17 @@ class CourtListItem extends Component {
             <View>
               <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
               <Divider style={{ backgroundColor: 'grey' }} />
+              <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
             </View>
-          ) : null}
-          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
+          ) : (
+            <MenuItem title="Cancelar Invitación" icon="md-trash" onPress={this.onDeletePress} />
+          )}
         </Menu>
 
         <Menu
-          title={`¿Seguro que desea eliminar el empleado '${firstName} ${lastName}'?`}
+          title={`¿Seguro que desea ${
+            this.startDate ? 'eliminar el' : 'cancelar la invitación del'
+          } empleado '${firstName} ${lastName}'?`}
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
@@ -126,5 +128,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCourtFormOpen,
   onEmployeeDelete,
-  onEmployeeValueChange
+  onEmployeeValueChange,
+  onEmploymentInvitationCancel
 })(CourtListItem);
