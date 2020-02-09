@@ -233,7 +233,7 @@ export const newReservationNotificationFormat = ({ startDate, service, actorName
 
   return {
     title: 'Nueva Reserva',
-    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`
+    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime} hs.`
   };
 };
 
@@ -265,7 +265,7 @@ export const cancelReservationNotificationFormat = ({
     body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el `;
   }
 
-  body += `día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
+  body += `día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime} hs.`;
   body += `${cancellationReason ? ` Motivo: "${cancellationReason}".` : ''}`;
 
   return {
