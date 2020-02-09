@@ -91,18 +91,17 @@ const sendPushNotification = ({ title, body, tokens, collectionRef, sentBy, noti
           body: JSON.stringify(message)
         });
       });
-
-      const db = firebase.firestore();
-      db.collection(collectionRef).add({
-        title,
-        body,
-        date: new Date(),
-        softDelete: null,
-        sentBy,
-        notificationType,
-        ...metadata
-      });
     }
+    const db = firebase.firestore();
+    db.collection(collectionRef).add({
+      title,
+      body,
+      date: new Date(),
+      softDelete: null,
+      sentBy,
+      notificationType,
+      ...metadata
+    });
   } catch (error) {
     console.error(error);
   }
@@ -150,7 +149,7 @@ export const onNotificationTokenRegister = async () => {
       if (commerceId) {
         // Se guarda el deviceToken del dueño en un negocio
         const ownerSnapshot = await db
-          .collection(`Commerces/${commerceId}/Employees/`)
+          .collection(`Commerces/${commerceId}/Employees`)
           .where('softDelete', '==', null)
           .where('profileId', '==', currentUser.uid)
           .get();
@@ -169,7 +168,7 @@ export const onNotificationTokenRegister = async () => {
         const { commerceId: workplaceId } = workplace.data();
 
         const employeeSnapshot = await db
-          .collection(`Commerces/${workplaceId}/Employees/`)
+          .collection(`Commerces/${workplaceId}/Employees`)
           .where('softDelete', '==', null)
           .where('profileId', '==', currentUser.uid)
           .get();

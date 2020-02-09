@@ -13,6 +13,7 @@ import {
   ON_EMPLOYEE_UPDATED
 } from './types';
 import { onClientNotificationSend } from './NotificationActions';
+import { onUserWorkplacesRead } from './ClientDataActions';
 import { NOTIFICATION_TYPES } from '../constants';
 
 export const onEmployeeValueChange = payload => ({
@@ -58,10 +59,13 @@ export const onEmployeeInvite = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const onEmployeeCreate = ({ commerceId, commerceName, employeeId, profileId }, navigation) => dispatch => {
+export const onEmployeeCreate = ({ commerceId, employeeId, profileId }) => async dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
 
   const db = firebase.firestore();
+
+  const commerce = await db.doc(`Commerces/${commerceId}`).get();
+
   const batch = db.batch();
 
   const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
@@ -69,13 +73,17 @@ export const onEmployeeCreate = ({ commerceId, commerceName, employeeId, profile
 
   batch.update(employeeRef, { startDate: new Date() });
 
-  batch.set(workplaceRef, { commerceId, name: commerceName, softDelete: null });
+  batch.set(workplaceRef, { commerceId, name: commerce.data().name, softDelete: null });
 
   batch
     .commit()
     .then(() => {
       dispatch({ type: ON_EMPLOYEE_CREATED });
-      navigation.goBack();
+
+      if (profileId === firebase.auth().currentUser.uid) {
+        const callback = onUserWorkplacesRead();
+        callback(dispatch);
+      }
     })
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
@@ -104,6 +112,7 @@ export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async
   const snapshot = await db
     .collection(`Profiles/${profileId}/Workplaces`)
     .where('commerceId', '==', commerceId)
+    .where('softDelete', '==', null)
     .get();
 
   if (snapshot.empty) {
