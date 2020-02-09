@@ -86,12 +86,10 @@ class NotificationsList extends Component {
       // Acepta la invitación
       this.props.onEmployeeCreate({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
       this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, true);
-      this.props.onUserWorkplacesRead();
     } else {
       // Rechaza la invitación
       this.props.onEmployeeDelete({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
       this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, false);
-      this.props.onEmploymentInvitationConfirm;
     }
 
     this.setState({ confirmEmploymentVisible: false });

@@ -80,10 +80,7 @@ export const onEmployeeCreate = ({ commerceId, employeeId, profileId }) => async
     .then(() => {
       dispatch({ type: ON_EMPLOYEE_CREATED });
 
-      if (profileId === firebase.auth().currentUser.uid) {
-        const callback = onUserWorkplacesRead();
-        callback(dispatch);
-      }
+      if (profileId === firebase.auth().currentUser.uid) onUserWorkplacesRead()(dispatch);
     })
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
