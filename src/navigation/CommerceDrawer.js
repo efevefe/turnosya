@@ -24,13 +24,13 @@ const CommerceSettingsStack = createStackNavigator(
     paymentSettings: {
       screen: PaymentSettings,
       navigationOptions: {
-        title: 'Mercado Pago'
+        title: 'Cobro con Mercado Pago'
       }
     },
     paymentSettingsWeb: {
       screen: PaymentSettingsWeb,
       navigationOptions: {
-        title: 'Mercado Pago'
+        title: 'Cobro con Mercado Pago'
       }
     }
   },

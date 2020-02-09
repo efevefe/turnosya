@@ -100,7 +100,7 @@ class CommerceReservationDetails extends Component {
   renderCancelButton = () => {
     if (this.state.reservation.startDate > moment()) {
       return (
-        <CardSection>
+        <CardSection style={{ paddingTop: 0 }}>
           <Button
             title="Cancelar Reserva"
             onPress={() =>
@@ -135,20 +135,21 @@ class CommerceReservationDetails extends Component {
     this.props.onReservationsListValueChange({ cancellationReason: '' });
   };
 
-  onConfirmDelete = (id, clientId) => {
+  onConfirmDelete = () => {
     if (this.renderError()) {
-      this.setState({ optionsVisible: false });
-      const { client, court, service } = this.state.reservation;
+      const { id, clientId, client, court, service, paymentId } = this.state.reservation;
+      let notification = null;
 
-      const notification = cancelReservationNotificationFormat({
-        startDate: this.state.reservation.startDate,
-        service: court ? `${court.name}` : `${service.name}`,
-        actorName: this.props.name,
-        receptorName: `${client.firstName}`,
-        cancellationReason: this.props.cancellationReason
-      });
+      if (clientId)
+        notification = cancelReservationNotificationFormat({
+          startDate: this.state.reservation.startDate,
+          service: court ? `${court.name}` : `${service.name}`,
+          actorName: this.props.name,
+          receptorName: `${client.firstName}`,
+          cancellationReason: this.props.cancellationReason
+        });
 
-      if (this.state.reservation.paymentId)
+      if (paymentId)
         this.props.onCommercePaymentRefund({
           commerceId: this.props.commerceId,
           mPagoToken: this.props.mPagoToken,
@@ -163,6 +164,8 @@ class CommerceReservationDetails extends Component {
         navigation: this.props.navigation,
         notification
       });
+
+      this.setState({ optionsVisible: false });
     }
   };
 
@@ -251,10 +254,10 @@ class CommerceReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El cliente no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El cliente no te ha calificado" />
+        </View>
+      );
   };
 
   renderClientReview = () => {
@@ -268,26 +271,34 @@ class CommerceReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={rating => this.props.onClientReviewValueChange({ rating })}
-          rating={this.props.clientRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={comment => this.props.onClientReviewValueChange({ comment })}
-          commentPlaceholder="Comente sobre el cliente..."
-          commentText={this.props.clientComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={rating => this.props.onClientReviewValueChange({ rating })}
+            rating={this.props.clientRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={comment => this.props.onClientReviewValueChange({ comment })}
+            commentPlaceholder="Comente sobre el cliente..."
+            commentText={this.props.clientComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderReviewFields = () => {
     if (this.state.reservation.clientId && this.state.reservation.startDate < moment()) {
       return (
-        <CardSection>
+        <CardSection style={{ flex: 1 }}>
+          <Divider
+            style={{
+              backgroundColor: 'gray',
+              marginHorizontal: 10,
+              marginTop: 5,
+              marginBottom: 15
+            }}
+          />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -312,13 +323,16 @@ class CommerceReservationDetails extends Component {
       <Menu
         title="¿Está seguro que desea registrar el pago en efectivo?"
         onBackdropPress={() => this.setState({ confirmCashPayVisible: false })}
-        isVisible={this.state.confirmCashPayVisible}
+        isVisible={this.state.confirmCashPayVisible || this.props.cashPayRegisterLoading}
       >
         <MenuItem
           title="Confirmar"
           icon="md-checkmark"
           loadingWithText={this.props.cashPayRegisterLoading}
-          onPress={() => this.props.onCashPaymentCreate(this.state.reservation, this.props.navigation)}
+          onPress={() => {
+            this.props.onCashPaymentCreate(this.state.reservation, this.props.navigation)
+            this.setState({ confirmCashPayVisible: false })
+          }}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
         <MenuItem title="Cerrar" icon="md-close" onPress={() => this.setState({ confirmCashPayVisible: false })} />
@@ -340,15 +354,8 @@ class CommerceReservationDetails extends Component {
             }
           />
         ) : (
-          <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
-        )}
-        <Divider
-          style={{
-            backgroundColor: 'gray',
-            marginTop: 10,
-            marginHorizontal: 10
-          }}
-        />
+            <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
+          )}
       </CardSection>
     );
   };
@@ -357,7 +364,6 @@ class CommerceReservationDetails extends Component {
 
   render() {
     const {
-      id,
       areaId,
       clientId,
       clientName,
@@ -372,7 +378,7 @@ class CommerceReservationDetails extends Component {
     } = this.state.reservation;
 
     return (
-      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle} extraScrollHeight={60}>
+      <KeyboardAwareScrollView enableOnAndroid contentContainerStyle={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title="Informar el motivo de la cancelación"
           onBackdropPress={() => this.onBackdropPress()}
@@ -401,11 +407,12 @@ class CommerceReservationDetails extends Component {
             title="Confirmar Cancelación"
             icon="md-checkmark"
             loadingWithText={this.props.cancellationLoading}
-            onPress={() => this.onConfirmDelete(id, clientId)}
+            onPress={() => this.onConfirmDelete()}
           />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="Cerrar" icon="md-close" onPress={() => this.onBackdropPress()} />
         </Menu>
+
         {this.renderPaymentRefundModal()}
 
         <AreaComponentRenderer
@@ -441,17 +448,30 @@ class CommerceReservationDetails extends Component {
             />
           }
         />
-        {this.renderRegisterPaymentButton()}
-        {this.renderCancelButton()}
-        {this.renderReviewFields()}
+
+        <View style={buttonsContainer}>
+          {this.renderRegisterPaymentButton()}
+          {this.renderCancelButton()}
+          {this.renderReviewFields()}
+        </View>
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
-  overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
+const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.create({
+  overlayDividerStyle: {
+    backgroundColor: 'grey'
+  },
+  scrollViewStyle: {
+    flexGrow: 1,
+    alignSelf: 'stretch'
+  },
+  buttonsContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {

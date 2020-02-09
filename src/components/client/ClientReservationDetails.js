@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
@@ -92,7 +92,7 @@ class ClientReservationDetails extends Component {
     const { startDate } = this.state.reservation;
     if (startDate > moment()) {
       return (
-        <CardSection>
+        <CardSection style={{ paddingTop: 0 }}>
           <Button title="Cancelar Reserva" onPress={this.onCancelButtonPress} />
         </CardSection>
       );
@@ -204,20 +204,20 @@ class ClientReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
-          rating={this.props.commerceRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
-          commentPlaceholder="Deje un comentario sobre la atención..."
-          commentText={this.props.commerceComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
+            rating={this.props.commerceRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
+            commentPlaceholder="Deje un comentario sobre la atención..."
+            commentText={this.props.commerceComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderClientReview = () => {
@@ -233,16 +233,24 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El negocio no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El negocio no te ha calificado" />
+        </View>
+      );
   };
 
   renderReviewFields = () => {
     if (this.state.reservation.startDate < moment()) {
       return (
-        <CardSection>
+        <CardSection style={{ flex: 1 }}>
+          <Divider
+            style={{
+              backgroundColor: 'gray',
+              marginHorizontal: 10,
+              marginTop: 5,
+              marginBottom: 15
+            }}
+          />
           <ButtonGroup
             onPress={index => this.setState({ reviewBGIndex: index })}
             selectedIndex={this.state.reviewBGIndex}
@@ -268,31 +276,25 @@ class ClientReservationDetails extends Component {
             })
           }
         />
-        <Divider
-          style={{
-            backgroundColor: 'gray',
-            marginTop: 10,
-            marginHorizontal: 10
-          }}
-        />
       </CardSection>
     ) : this.props.mPagoToken ? (
       <CardSection>
         <Button
           title="Pagar con Mercado Pago"
+          color='#009EE3'
+          icon={
+            <Image
+              source={require('../../../assets/mercado-pago-logo.png')}
+              style={{ height: 21, width: 31, marginRight: 10 }}
+              resizeMode='contain'
+            />
+          }
           onPress={() =>
             this.props.navigation.navigate('paymentForm', {
               reservation: this.state.reservation,
               mPagoToken: this.props.mPagoToken
             })
           }
-        />
-        <Divider
-          style={{
-            backgroundColor: 'gray',
-            marginTop: 10,
-            marginHorizontal: 10
-          }}
         />
       </CardSection>
     ) : null;
@@ -306,7 +308,7 @@ class ClientReservationDetails extends Component {
     if (this.props.loadingCancel) return <Spinner />;
 
     return (
-      <KeyboardAwareScrollView enableOnAndroid style={scrollViewStyle} extraScrollHeight={60}>
+      <KeyboardAwareScrollView enableOnAndroid contentContainerStyle={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title="¿Está seguro que desea cancelar el turno?"
           onBackdropPress={() => this.setState({ optionsVisible: false })}
@@ -354,17 +356,30 @@ class ClientReservationDetails extends Component {
             />
           }
         />
-        {this.renderPayButton()}
-        {this.renderCancelButton()}
-        {this.renderReviewFields()}
+
+        <View style={buttonsContainer}>
+          {this.renderPayButton()}
+          {this.renderCancelButton()}
+          {this.renderReviewFields()}
+        </View>
       </KeyboardAwareScrollView>
     );
   }
 }
 
-const { overlayDividerStyle, scrollViewStyle } = StyleSheet.create({
-  overlayDividerStyle: { backgroundColor: 'grey' },
-  scrollViewStyle: { flex: 1, alignSelf: 'stretch' }
+const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.create({
+  overlayDividerStyle: {
+    backgroundColor: 'grey'
+  },
+  scrollViewStyle: {
+    flexGrow: 1,
+    alignSelf: 'stretch'
+  },
+  buttonsContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch'
+  }
 });
 
 const mapStateToProps = state => {

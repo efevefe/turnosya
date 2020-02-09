@@ -28,15 +28,10 @@ export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
   dispatch({ type: ON_CASH_PAYMENT_REGISTERING });
 
   const db = firebase.firestore();
-
+  const batch = db.batch();
   const { commerceId, clientId, id: reservationId } = reservation;
 
   const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
-  const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
-
-  const batch = db.batch();
-
   batch.set(paymentRef, {
     clientId,
     reservationId,
@@ -44,8 +39,13 @@ export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
     method: 'Efectivo'
   });
 
+  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
   batch.update(commerceReservationRef, { paymentId: paymentRef.id });
-  batch.update(clientReservationRef, { paymentId: paymentRef.id });
+
+  if (clientId) {
+    const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
+    batch.update(clientReservationRef, { paymentId: paymentRef.id });
+  }
 
   batch
     .commit()
