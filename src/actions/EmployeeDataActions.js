@@ -112,24 +112,18 @@ export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async
     .where('softDelete', '==', null)
     .get();
 
-  if (snapshot.empty) {
-    // Empleado fue invitado y todavía no aceptó
-    db.collection(`Commerces/${commerceId}/Employees`)
-      .doc(employeeId)
-      .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
-  } else {
-    // Empleado aceptó invitación de trabajo
+  const batch = db.batch();
+
+  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
+  batch.update(employeeRef, { softDelete: new Date() });
+
+  if (!snapshot.empty) {
+    // Si el empleado ya había aceptado la invitacion de trabajo
     const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
-    const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
-
-    const batch = db.batch();
-
     batch.update(workplaceRef, { softDelete: new Date() });
-    batch.update(employeeRef, { softDelete: new Date() });
-
-    batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
   }
+
+  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
 };
 
 export const onEmployeeInfoUpdate = email => dispatch => {

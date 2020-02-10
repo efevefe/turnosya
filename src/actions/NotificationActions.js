@@ -4,6 +4,7 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { Toast } from '../components/common';
+import { NOTIFICATION_TYPES } from '../constants';
 
 const onCommerceNotificationTokensRead = async commerceId => {
   const db = firebase.firestore();
@@ -224,7 +225,21 @@ export const onNotificationTokenDelete = async (commerceId, workplaces) => {
 export const onEmploymentInvitationConfirm = (notification, accepted) => async dispatch => {
   const db = firebase.firestore();
   const clientId = firebase.auth().currentUser.uid;
+
   try {
+    let commerceNotif = {
+      title: `Invitación de Empleo ${accepted ? 'aceptada' : 'rechazada'}`,
+      body: `La invitación de empleo que usted envió ha sido ${accepted ? 'aceptada' : 'rechazada'}`
+    };
+
+    onCommerceNotificationSend(
+      commerceNotif,
+      notification.sentBy,
+      clientId,
+      notification.employeeId,
+      NOTIFICATION_TYPES.NOTIFICATION
+    );
+
     await db
       .doc(`Profiles/${clientId}/Notifications/${notification.id}`)
       .update({ ...(accepted ? { acceptanceDate: new Date() } : { rejectionDate: new Date() }) });
