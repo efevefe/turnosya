@@ -163,4 +163,26 @@ app.post('/ipn-notification', (req, res) => {
 });
 //#endregion
 
+// charts
+app.get('/daily-reservations-chart', (req, res) => {
+  res.render('daily-reservations-chart');
+});
+
+app.get('/most-popular-shifts-chart', (req, res) => {
+  res.render('most-popular-shifts-chart');
+});
+
+app.get('/monthly-earnings-chart', (req, res) => {
+  res.render('monthly-earnings-chart');
+});
+
+app.get('/monthly-reviews-chart', (req, res) => {
+  res.render('monthly-reviews-chart');
+});
+
+app.get('/reserved-and-cancelled-chart', (req, res) => {
+  res.render('reserved-and-cancelled-chart');
+});
+// charts end
+
 exports.app = functions.https.onRequest(app);

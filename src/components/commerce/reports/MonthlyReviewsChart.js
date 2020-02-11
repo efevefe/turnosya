@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { View, Dimensions } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
-import { ScrollView } from 'react-native';
-import { LineChart, Spinner, IconButton, Button, Picker, Menu, CardSection } from '../../common';
+import { Spinner, IconButton, Button, Picker, Menu, CardSection } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import SendReportAsPDF from './SendReportAsPDF';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -10,13 +12,15 @@ import {
   yearsWithReview
 } from '../../../actions';
 
+const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
+
 class MonthlyReviewsChart extends Component {
   constructor(props) {
     super(props);
     props.yearsWithReview(props.commerceId);
     props.onMonthlyReviewsReadByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: props.selectedYear, selectedEmployee: { id: null } };
+    this.state = { modal: false, modalYear: props.selectedYear, selectedEmployee: { id: null }, html: '' };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -42,6 +46,14 @@ class MonthlyReviewsChart extends Component {
     this.setState({ modal: false });
   };
 
+  onChartDataLoad = () => {
+    const setData = `document.getElementById("data").innerHTML = '${JSON.stringify(this.props.data)}';`
+    const setTitle = `document.getElementById("title").innerHTML = '${this.getChartTitle()}';`
+    const setHeight = `document.getElementById("height").innerHTML = '${chartHeight.toString()}';`
+    const drawChart = 'google.charts.setOnLoadCallback(drawChart);'
+    return setData + setTitle + setHeight + drawChart;
+  }
+
   getChartTitle = () => {
     if (this.props.selectedEmployee.id)
       return `Evolución de las calificaciones de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}`;
@@ -52,15 +64,8 @@ class MonthlyReviewsChart extends Component {
   render() {
     if (this.props.loading) return <Spinner />;
 
-    const { data } = this.props.data;
-
-    const dataLine = {
-      labels: this.props.data.labels,
-      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
-    };
-
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Año"
           isVisible={this.state.modal}
@@ -80,10 +85,10 @@ class MonthlyReviewsChart extends Component {
             />
           </CardSection>
 
-            <EmployeesPicker
-              value={this.state.selectedEmployee.id}
-              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
-            />
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
 
           <CardSection>
             <Button
@@ -94,13 +99,17 @@ class MonthlyReviewsChart extends Component {
           </CardSection>
         </Menu>
 
-        <LineChart
-          data={dataLine}
-          title={this.getChartTitle()}
-          emptyDataMessage={this.props.error || `Parace que aún no hay calificaciones en ${this.props.selectedYear}`}
-          xlabel="MESES DEL AÑO"
-        />
-      </ScrollView>
+        <SendReportAsPDF html={this.state.html}>
+          <WebView
+            source={{ uri: 'http://10.0.2.2:5000/monthly-reviews-chart' }}
+            style={{ flex: 1 }}
+            domStorageEnabled={true}
+            javaScriptEnabled={true}
+            injectedJavaScript={this.onChartDataLoad()}
+            onMessage={event => this.setState({ html: event.nativeEvent.data })}
+          />
+        </SendReportAsPDF>
+      </View>
     );
   }
 }

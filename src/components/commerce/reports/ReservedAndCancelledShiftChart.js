@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
+import { View, Dimensions } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { ScrollView, Dimensions } from 'react-native';
-import { PieChart, Spinner, Button, DatePicker, IconButton, Menu, CardSection, EmptyList } from '../../common';
+import { Spinner, Button, DatePicker, IconButton, Menu, CardSection } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import SendReportAsPDF from './SendReportAsPDF';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onReservedAndCancelledShiftReadByRange
 } from '../../../actions/CommerceReportsActions';
-import { MAIN_COLOR, MAIN_COLOR_DISABLED } from '../../../constants';
 
+const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
-const colors = [MAIN_COLOR, MAIN_COLOR_DISABLED];
 
 class ReservedAndCancelledShiftChart extends Component {
   constructor(props) {
@@ -25,7 +26,8 @@ class ReservedAndCancelledShiftChart extends Component {
       modal: false,
       modalStartDate: startDate,
       modalEndDate: endDate,
-      selectedEmployee: { id: null }
+      selectedEmployee: { id: null },
+      html: ''
     };
   }
 
@@ -56,6 +58,14 @@ class ReservedAndCancelledShiftChart extends Component {
     this.setState({ modal: false });
   };
 
+  onChartDataLoad = () => {
+    const setData = `document.getElementById("data").innerHTML = '${JSON.stringify(this.props.data)}';`
+    const setTitle = `document.getElementById("title").innerHTML = '${this.getChartTitle()}';`
+    const setHeight = `document.getElementById("height").innerHTML = '${chartHeight.toString()}';`
+    const drawChart = 'google.charts.setOnLoadCallback(drawChart);'
+    return setData + setTitle + setHeight + drawChart;
+  }
+
   getChartTitle = () => {
     let title = 'Turnos reservados y cancelados '
 
@@ -66,44 +76,11 @@ class ReservedAndCancelledShiftChart extends Component {
       ' y el ' + this.props.endDate.format('DD/MM/YYYY');
   }
 
-  renderChart = () => {
-    if (this.props.data.data.length) {
-      let dataPie = [];
-      for (let i = 0; i < this.props.data.data.length; i++) {
-        dataPie.push({
-          name: this.props.data.labels[i],
-          count: this.props.data.data[i],
-          color: colors[i],
-          legendFontColor: 'black',
-          legendFontSize: 15
-        });
-      }
-
-      return (
-        <PieChart
-          title={this.getChartTitle()}
-          data={dataPie}
-        />
-      );
-    }
-
-    return (
-      <EmptyList
-        title={
-          'Parece que no hay reservas entre el ' +
-          this.props.startDate.format('DD/MM/YYYY') +
-          ' y el ' +
-          this.props.endDate.format('DD/MM/YYYY')
-        }
-      />
-    );
-  };
-
   render() {
     if (this.props.loading) return <Spinner />;
 
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Periodo"
           isVisible={this.state.modal}
@@ -150,8 +127,17 @@ class ReservedAndCancelledShiftChart extends Component {
           </CardSection>
         </Menu>
 
-        {this.renderChart()}
-      </ScrollView>
+        <SendReportAsPDF html={this.state.html}>
+          <WebView
+            source={{ uri: 'http://10.0.2.2:5000/reserved-and-cancelled-chart' }}
+            style={{ flex: 1 }}
+            domStorageEnabled={true}
+            javaScriptEnabled={true}
+            injectedJavaScript={this.onChartDataLoad()}
+            onMessage={event => this.setState({ html: event.nativeEvent.data })}
+          />
+        </SendReportAsPDF>
+      </View>
     );
   }
 }

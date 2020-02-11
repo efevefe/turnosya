@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>daily-reservations-chart</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body style="margin: 0;">
+  <div id="chart"></div>
+  <p id='title' style="display: none;"></p>
+  <p id='data' style="display: none;"></p>
+  <p id='height' style="display: none;"></p>
+
+  <!-- Datos para prueba en el navegador -->
+  <!-- <p id='height' style="display: none;">700</p> -->
+  <!-- <p id='title' style="display: none;">Cantidad de Reservas por Dia</p> -->
+  <!-- <p id='data' style="display: none;">{"labels":["L", "M", "M", "J", "V", "S", "D"],"data":[34,23,56,32,76,43,21]}</p> -->
+
+  <script type="text/javascript">
+
+    google.charts.load('current', { 'packages': ['corechart'] });
+    // google.charts.setOnLoadCallback(drawChart); // solo para el navegador
+
+    function drawChart() {
+      var chartData = JSON.parse(document.getElementById('data').innerHTML);
+
+      var dataArray = [['Día', 'Cantidad de Reservas', { 'role': 'style' }, { 'role': 'annotation' }]];
+
+      for (var i = 0; i < chartData.data.length; i++) {
+        dataArray.push([chartData.labels[i], chartData.data[i], '#c72c41', chartData.data[i].toString()]);
+      }
+
+      var data = google.visualization.arrayToDataTable(dataArray);
+
+      var options = {
+        title: document.getElementById('title').innerHTML,
+        width: '100%',
+        height: parseInt(document.getElementById('height').innerHTML),
+        legend: { position: 'none' },
+        vAxis: {
+          title: 'Cantidad de Reservas',
+          format: '#',
+          minValue: 0
+        },
+        hAxis: {
+          title: 'Día',
+          textStyle: {
+            fontSize: 10
+          },
+          slantedText: true,
+          slantedTextAngle: 45
+        },
+        chartArea: {
+          left: '14%',
+          right: '4%',
+          bottom: '14%',
+          top: '14%'
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+
+      google.visualization.events.addListener(chart, 'ready', function () {
+        window.ReactNativeWebView.postMessage(document.getElementById('chart').innerHTML.toString());
+      });
+
+      chart.draw(data, options);
+    }
+  </script>
+</body>

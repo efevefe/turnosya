@@ -10,8 +10,8 @@ import {
 } from './types';
 import moment from 'moment';
 
-const arrayOfMonths = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']; // Months of year
-const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
+const arrayOfMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']; // Months of year
+const arrayOfDays = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']; // Days of week
 
 export const onCommerceReportValueChange = payload => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload };

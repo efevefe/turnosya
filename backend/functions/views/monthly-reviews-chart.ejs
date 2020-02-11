@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>daily-reservations-chart</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body style="margin: 0;">
+  <div id="chart"></div>
+  <p id='title' style="display: none;"></p>
+  <p id='data' style="display: none;"></p>
+  <p id='height' style="display: none;"></p>
+
+  <!-- Datos para prueba en el navegador -->
+  <!-- <p id='height' style="display: none;">700</p> -->
+  <!-- <p id='title' style="display: none;">Calificacion Promedio por Mes</p> -->
+  <!-- <p id='data' style="display: none;">{"labels":["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],"data":[4.5,4.6,4.4,4.3,4.4,4.7,4.8,4.2,4,4.6,4.5,4.4]}</p> -->
+
+  <script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    // google.charts.setOnLoadCallback(drawChart); // solo para el navegador
+
+    function drawChart() {
+      var chartData = JSON.parse(document.getElementById('data').innerHTML);
+
+      var dataArray = [['Día', 'Cantidad de Reservas', { 'role': 'style' }, { 'role': 'annotation' }]];
+
+      for (var i = 0; i < chartData.data.length; i++) {
+        dataArray.push([chartData.labels[i], chartData.data[i], '#c72c41', chartData.data[i].toString()]);
+      }
+
+      var data = google.visualization.arrayToDataTable(dataArray);
+
+      var options = {
+        title: document.getElementById('title').innerHTML,
+        width: '100%',
+        height: parseInt(document.getElementById('height').innerHTML),
+        legend: { position: 'none' },
+        vAxis: {
+          title: 'Ingresos en Pesos',
+          format: 'decimal',
+          viewWindow: {
+            min: 1
+          }
+        },
+        hAxis: {
+          title: 'Mes',
+          textStyle: {
+            fontSize: 9
+          },
+          slantedText: true,
+          slantedTextAngle: 45
+        },
+        chartArea: {
+          left: '14%',
+          right: '5%',
+          bottom: '14%',
+          top: '14%'
+        }
+      };
+
+      var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+      chart.draw(data, options);
+    }
+  </script>
+</body>
