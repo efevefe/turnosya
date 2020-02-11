@@ -129,7 +129,7 @@ class DailyReservationsChart extends Component {
 
         <SendReportAsPDF html={this.state.html}>
           <WebView
-            source={{ uri: 'http://10.0.2.2:5000/daily-reservations-chart' }}
+            source={{ uri: 'https://proyecto-turnosya.web.app/daily-reservations-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}

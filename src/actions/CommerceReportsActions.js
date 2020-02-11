@@ -40,19 +40,15 @@ export const onDailyReservationsReadByRange = (commerceId, startDate, endDate, e
   query
     .get()
     .then(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const numberOfDay = moment(doc.data().startDate.toDate()).day();
-          data[numberOfDay] += 1;
-        });
+      snapshot.forEach(doc => {
+        const numberOfDay = moment(doc.data().startDate.toDate()).day();
+        data[numberOfDay] += 1;
+      });
 
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data }
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
-      }
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: { labels, data }
+      });
     });
 };
 
@@ -234,22 +230,18 @@ export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, en
   query
     .get()
     .then(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const state = doc.data().state ? 1 : 0;
-          counts[state]++;
+      snapshot.forEach(doc => {
+        const state = doc.data().state ? 1 : 0;
+        counts[state]++;
 
-          // TODO: el día de mañana, esto se debería hacer:
-          // if (state) counts[state.id] += 1;
-        });
+        // TODO: el día de mañana, esto se debería hacer:
+        // if (state) counts[state.id] += 1;
+      });
 
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data: counts }
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
-      }
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: { labels, data: counts }
+      });
     });
 };
 
@@ -293,7 +285,10 @@ export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate, e
           payload: { labels: sortedShifts, data }
         });
       } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: { labels: ['Sin Datos'], data: [0] }
+        });
       }
     });
 };

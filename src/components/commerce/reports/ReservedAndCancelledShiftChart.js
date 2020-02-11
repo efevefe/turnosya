@@ -129,7 +129,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
         <SendReportAsPDF html={this.state.html}>
           <WebView
-            source={{ uri: 'http://10.0.2.2:5000/reserved-and-cancelled-chart' }}
+            source={{ uri: 'https://proyecto-turnosya.web.app/reserved-and-cancelled-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}

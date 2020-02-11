@@ -101,7 +101,7 @@ class MonthlyReviewsChart extends Component {
 
         <SendReportAsPDF html={this.state.html}>
           <WebView
-            source={{ uri: 'http://10.0.2.2:5000/monthly-reviews-chart' }}
+            source={{ uri: 'https://proyecto-turnosya.web.app/monthly-reviews-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}

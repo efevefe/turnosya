@@ -129,7 +129,7 @@ class MostPopularShiftsChart extends Component {
 
         <SendReportAsPDF html={this.state.html}>
           <WebView
-            source={{ uri: 'http://10.0.2.2:5000/most-popular-shifts-chart' }}
+            source={{ uri: 'https://proyecto-turnosya.web.app/most-popular-shifts-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}
