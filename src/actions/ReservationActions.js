@@ -10,6 +10,7 @@ import {
   ON_NEW_SERVICE_RESERVATION,
   ON_RESERVATION_EXISTS
 } from './types';
+import { NOTIFICATION_TYPES } from '../constants';
 
 export const onReservationValueChange = payload => {
   return { type: ON_RESERVATION_VALUE_CHANGE, payload };
@@ -142,7 +143,7 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
 
     await batch.commit();
 
-    onCommerceNotificationSend(notification, commerceId, employeeId, currentUser.uid);
+    onCommerceNotificationSend(notification, commerceId, employeeId, currentUser.uid, NOTIFICATION_TYPES.NOTIFICATION);
 
     dispatch({ type: ON_RESERVATION_CREATE });
   } catch (error) {

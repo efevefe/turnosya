@@ -21,6 +21,7 @@ app.use(express.static('public'));
 
 //#region Payment
 app.get('/pay', (req, res) => {
+  console.log('Payment');
   mercadopago.configure({
     access_token: req.query['access-token']
   });
@@ -52,6 +53,7 @@ app.get('/pay', (req, res) => {
 
 //#region OAuth
 app.get('/commerce-oauth', (req, res) => {
+  console.log('OAuth');
   res.render('commerce-oauth', {
     appId: env.marketplace.APP_ID,
     commerceId: req.query['commerce-id']
@@ -59,6 +61,7 @@ app.get('/commerce-oauth', (req, res) => {
 });
 
 app.get('/commerce-oauth-redirect', (req, res) => {
+  console.log('OAuth Redirect');
   let headers = {
     accept: 'application/json',
     'content-type': 'application/x-www-form-urlencoded'
@@ -108,6 +111,7 @@ app.get('/commerce-oauth-redirect', (req, res) => {
 
 //#region Notifications
 app.post('/ipn-notification', (req, res) => {
+  console.log('Notification');
   if (req.query.topic === 'payment') {
     const db = admin.firestore();
 
@@ -151,6 +155,7 @@ app.post('/ipn-notification', (req, res) => {
                   });
               })
               .catch(err => {
+                console.log(err);
                 res.status(500).send();
               });
           }

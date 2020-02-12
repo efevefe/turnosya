@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { formatReservation } from './ReservationsListActions';
-import { AREAS } from '../constants';
+import { AREAS, NOTIFICATION_TYPES } from '../constants';
 import { onCommerceNotificationSend } from './NotificationActions';
 import {
   ON_CLIENT_RESERVATIONS_READ,
@@ -83,7 +83,13 @@ export const onClientReservationCancel = ({ reservationId, commerceId, navigatio
           batch
             .commit()
             .then(() => {
-              onCommerceNotificationSend(notification, commerceId, notification.employeeId, currentUser.uid);
+              onCommerceNotificationSend(
+                notification,
+                commerceId,
+                notification.employeeId,
+                currentUser.uid,
+                NOTIFICATION_TYPES.NOTIFICATION
+              );
 
               dispatch({ type: ON_CLIENT_RESERVATION_CANCEL });
               navigation.goBack();
