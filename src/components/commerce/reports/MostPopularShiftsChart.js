@@ -80,7 +80,7 @@ class MostPopularShiftsChart extends Component {
     if (this.props.loading) return <Spinner />;
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Periodo"
           isVisible={this.state.modal}
@@ -127,22 +127,28 @@ class MostPopularShiftsChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF 
-        html={this.state.html}
-        mailOptions={{
-          subject: `[TurnosYa] Horiarios con Mayor Demanda (${this.props.commerceName})`,
-          body: this.getChartTitle()
-        }}
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Horiarios con Mayor Demanda (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
         >
-          <WebView
-            source={{ uri: 'https://proyecto-turnosya.web.app/most-popular-shifts-chart' }}
-            style={{ flex: 1 }}
-            domStorageEnabled={true}
-            javaScriptEnabled={true}
-            scrollEnabled={false}
-            injectedJavaScript={this.onChartDataLoad()}
-            onMessage={event => this.setState({ html: event.nativeEvent.data })}
-          />
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/most-popular-shifts-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
         </SendReportAsPDF>
       </View>
     );

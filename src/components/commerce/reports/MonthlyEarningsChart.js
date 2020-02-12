@@ -101,15 +101,21 @@ class MonthlyEarningsChart extends Component {
           }}
           horizontal
         >
-          <WebView
-            source={{ uri: 'https://proyecto-turnosya.web.app/monthly-earnings-chart' }}
-            style={{ flex: 1 }}
-            domStorageEnabled={true}
-            javaScriptEnabled={true}
-            scrollEnabled={false}
-            injectedJavaScript={this.onChartDataLoad()}
-            onMessage={event => this.setState({ html: event.nativeEvent.data })}
-          />
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/monthly-earnings-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
         </SendReportAsPDF>
       </View>
     );

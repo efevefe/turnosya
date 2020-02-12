@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Button, CardSection } from '../../common';
+import { Button, CardSection, Toast } from '../../common';
 import * as Print from 'expo-print';
 import * as MailComposer from 'expo-mail-composer';
 
 class SendReportAsPDF extends Component {
   onPDFSend = () => {
+    if (!this.props.html)
+      return Toast.show({ text: 'Espere a que el grafico termine de cargar' })
+
     let options = {
       html: this.props.html,
       height: this.props.horizontal ? 794 : 1123,
@@ -14,10 +17,10 @@ class SendReportAsPDF extends Component {
 
     Print.printToFileAsync(options)
       .then(res => {
-        MailComposer.composeAsync({ 
+        MailComposer.composeAsync({
           subject: this.props.mailOptions.subject || '',
           body: this.props.mailOptions.body || '',
-          attachments: [res.uri] 
+          attachments: [res.uri]
         });
       })
       .catch(error => console.error(error));

@@ -27,6 +27,7 @@ class DailyReservationsChart extends Component {
       modalStartDate: startDate,
       modalEndDate: endDate,
       selectedEmployee: { id: null },
+      loadingHTML: false,
       html: ''
     };
   }
@@ -77,8 +78,6 @@ class DailyReservationsChart extends Component {
   }
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <View style={{ flex: 1 }}>
         <Menu
@@ -127,22 +126,28 @@ class DailyReservationsChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF 
-        html={this.state.html}
-        mailOptions={{
-          subject: `[TurnosYa] Cantidad de Reservas por Día (${this.props.commerceName})`,
-          body: this.getChartTitle()
-        }}
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Cantidad de Reservas por Día (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
         >
-          <WebView
-            source={{ uri: 'https://proyecto-turnosya.web.app/daily-reservations-chart' }}
-            style={{ flex: 1 }}
-            domStorageEnabled={true}
-            javaScriptEnabled={true}
-            scrollEnabled={false}
-            injectedJavaScript={this.onChartDataLoad()}
-            onMessage={event => this.setState({ html: event.nativeEvent.data })}
-          />
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/daily-reservations-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
         </SendReportAsPDF>
       </View>
     );
