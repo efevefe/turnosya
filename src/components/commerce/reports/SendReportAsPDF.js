@@ -7,12 +7,18 @@ import * as MailComposer from 'expo-mail-composer';
 class SendReportAsPDF extends Component {
   onPDFSend = () => {
     let options = {
-      html: this.props.html
+      html: this.props.html,
+      height: this.props.horizontal ? 794 : 1123,
+      width: this.props.horizontal ? 1123 : 794
     };
 
     Print.printToFileAsync(options)
       .then(res => {
-        MailComposer.composeAsync({ attachments: [res.uri] });
+        MailComposer.composeAsync({ 
+          subject: this.props.mailOptions.subject || '',
+          body: this.props.mailOptions.body || '',
+          attachments: [res.uri] 
+        });
       })
       .catch(error => console.error(error));
   };

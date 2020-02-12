@@ -73,7 +73,7 @@ class DailyReservationsChart extends Component {
       title += `de ${this.props.selectedEmployee.name} `;
 
     return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
-      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY') + '.';
   }
 
   render() {
@@ -127,12 +127,19 @@ class DailyReservationsChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF html={this.state.html}>
+        <SendReportAsPDF 
+        html={this.state.html}
+        mailOptions={{
+          subject: `[TurnosYa] Cantidad de Reservas por Día (${this.props.commerceName})`,
+          body: this.getChartTitle()
+        }}
+        >
           <WebView
             source={{ uri: 'https://proyecto-turnosya.web.app/daily-reservations-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}
+            scrollEnabled={false}
             injectedJavaScript={this.onChartDataLoad()}
             onMessage={event => this.setState({ html: event.nativeEvent.data })}
           />
@@ -144,13 +151,14 @@ class DailyReservationsChart extends Component {
 
 const mapStateToProps = state => {
   const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     data,
     startDate,
     endDate,
     commerceId,
+    commerceName,
     selectedEmployee,
     loading
   };

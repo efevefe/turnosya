@@ -73,7 +73,7 @@ class MostPopularShiftsChart extends Component {
       title += `de ${this.props.selectedEmployee.name} `;
 
     return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
-      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY') + '.';
   }
 
   render() {
@@ -127,12 +127,19 @@ class MostPopularShiftsChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF html={this.state.html}>
+        <SendReportAsPDF 
+        html={this.state.html}
+        mailOptions={{
+          subject: `[TurnosYa] Horiarios con Mayor Demanda (${this.props.commerceName})`,
+          body: this.getChartTitle()
+        }}
+        >
           <WebView
             source={{ uri: 'https://proyecto-turnosya.web.app/most-popular-shifts-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}
+            scrollEnabled={false}
             injectedJavaScript={this.onChartDataLoad()}
             onMessage={event => this.setState({ html: event.nativeEvent.data })}
           />
@@ -144,7 +151,7 @@ class MostPopularShiftsChart extends Component {
 
 const mapStateToProps = state => {
   const { labels, data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     labels,
@@ -152,6 +159,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
+    commerceName,
     selectedEmployee,
     loading
   };

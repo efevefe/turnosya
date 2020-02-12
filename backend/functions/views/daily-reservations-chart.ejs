@@ -12,6 +12,7 @@
   <p id='title' style="display: none;"></p>
   <p id='data' style="display: none;"></p>
   <p id='height' style="display: none;"></p>
+  <div id="chart-for-pdf" style="visibility: hidden; position: absolute; top: -9999px; left: -9999px;"></div>
 
   <!-- Datos para prueba en el navegador -->
   <!-- <p id='height' style="display: none;">700</p> -->
@@ -34,10 +35,14 @@
 
       var data = google.visualization.arrayToDataTable(dataArray);
 
-      var options = {
+      // formato para pdf
+      var optionsPDF = {
         title: document.getElementById('title').innerHTML,
-        width: '100%',
-        height: parseInt(document.getElementById('height').innerHTML),
+        titleTextStyle: {
+          fontSize: 20
+        },
+        width: 900,
+        height: 1350,
         legend: { position: 'none' },
         vAxis: {
           title: 'Cantidad de Reservas',
@@ -46,27 +51,58 @@
         },
         hAxis: {
           title: 'Día',
-          textStyle: {
-            fontSize: 10
-          },
           slantedText: true,
           slantedTextAngle: 45
         },
         chartArea: {
-          left: '14%',
-          right: '4%',
+          left: '18%',
+          right: '5%',
           bottom: '14%',
           top: '14%'
         }
       };
 
+      // formato para smartphone
+      var optionsPhone = {
+        ...optionsPDF,
+        titleTextStyle: {
+          fontSize: 12
+        },
+        width: '100%',
+        height: parseInt(document.getElementById('height').innerHTML),
+        vAxis: {
+          ...optionsPDF.vAxis,
+          textStyle: {
+            fontSize: 10
+          }
+        },
+        hAxis: {
+          ...optionsPDF.hAxis,
+          textStyle: {
+            fontSize: 9
+          }
+        },
+        chartArea: {
+          ...optionsPDF.chartArea,
+          left: '14%'
+        },
+        annotations: {
+          textStyle: {
+            fontSize: 9,
+          }
+        }
+      };
+
+      var chartForPDF = new google.visualization.ColumnChart(document.getElementById('chart-for-pdf'))
       var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
 
-      google.visualization.events.addListener(chart, 'ready', function () {
-        window.ReactNativeWebView.postMessage(document.getElementById('chart').innerHTML.toString());
+      google.visualization.events.addListener(chartForPDF, 'ready', function () {
+        document.getElementById('chart-for-pdf').innerHTML = '<img src="' + chartForPDF.getImageURI() + '">';
+        window.ReactNativeWebView.postMessage(document.getElementById('chart-for-pdf').innerHTML.toString());
       });
 
-      chart.draw(data, options);
+      chartForPDF.draw(data, optionsPDF);
+      chart.draw(data, optionsPhone);
     }
   </script>
 </body>

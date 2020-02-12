@@ -12,11 +12,12 @@
   <p id='title' style="display: none;"></p>
   <p id='data' style="display: none;"></p>
   <p id='height' style="display: none;"></p>
+  <div id="chart-for-pdf" style="visibility: hidden; position: absolute; top: -9999px; left: -9999px;"></div>
 
   <!-- Datos para prueba en el navegador -->
   <!-- <p id='height' style="display: none;">700</p> -->
   <!-- <p id='title' style="display: none;">Cantidad de Turnos Reservados vs Cancelados</p> -->
-  <!-- <p id='data' style="display: none;">{"labels":["Reservados", "Cancelados"],"data":[45, 6]}</p> -->
+  <!-- <p id='data' style="display: none;">{"labels":["Reservados", "Cancelados"],"data":[45, 7]}</p> -->
 
   <script type="text/javascript">
     google.charts.load('current', { 'packages': ['corechart'] });
@@ -33,27 +34,51 @@
 
       var data = google.visualization.arrayToDataTable(dataArray);
 
-      var options = {
+      var optionsPDF = {
         title: document.getElementById('title').innerHTML,
-        width: '100%',
-        height: parseInt(document.getElementById('height').innerHTML),
+        titleTextStyle: {
+          fontSize: 20
+        },
+        height: 1350,
+        width: 900,
         legend: { position: 'bottom' },
         chartArea: {
-          left: '16%',
-          right: '10%',
+          left: '19%',
+          right: '15%',
           bottom: '15%',
-          top: '16%'
+          top: '14%'
         },
         is3D: true,
         pieSliceText: 'value-and-percentage',
         slices: {
           0: { color: '#c72c41' },
-          1: { offset: 0.2, color: '#e895a0' },
+          1: { color: '#e895a0' },
         },
       };
 
+      var optionsPhone = {
+        ...optionsPDF,
+        titleTextStyle: {
+          fontSize: 12
+        },
+        width: '100%',
+        height: parseInt(document.getElementById('height').innerHTML),
+        chartArea: {
+          ...optionsPDF.chartArea,
+          left: '15%'
+        },
+      };
+
+      var chartForPDF = new google.visualization.PieChart(document.getElementById('chart-for-pdf'))
       var chart = new google.visualization.PieChart(document.getElementById('chart'));
-      chart.draw(data, options);
+
+      google.visualization.events.addListener(chartForPDF, 'ready', function () {
+        document.getElementById('chart-for-pdf').innerHTML = '<img src="' + chartForPDF.getImageURI() + '">';
+        window.ReactNativeWebView.postMessage(document.getElementById('chart-for-pdf').innerHTML.toString());
+      });
+
+      chartForPDF.draw(data, optionsPDF);
+      chart.draw(data, optionsPhone);
     }
   </script>
 </body>

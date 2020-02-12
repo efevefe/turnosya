@@ -73,7 +73,7 @@ class ReservedAndCancelledShiftChart extends Component {
       title += `de ${this.props.selectedEmployee.name} `;
 
     return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
-      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY') + '.';
   }
 
   render() {
@@ -127,12 +127,19 @@ class ReservedAndCancelledShiftChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF html={this.state.html}>
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Turnos Reservados y Cancelados (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
+        >
           <WebView
             source={{ uri: 'https://proyecto-turnosya.web.app/reserved-and-cancelled-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}
+            scrollEnabled={false}
             injectedJavaScript={this.onChartDataLoad()}
             onMessage={event => this.setState({ html: event.nativeEvent.data })}
           />
@@ -144,7 +151,7 @@ class ReservedAndCancelledShiftChart extends Component {
 
 const mapStateToProps = state => {
   const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     data,
@@ -152,6 +159,7 @@ const mapStateToProps = state => {
     endDate,
     selectedEmployee,
     commerceId,
+    commerceName,
     loading
   };
 };

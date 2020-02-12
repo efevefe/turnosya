@@ -54,9 +54,9 @@ class MonthlyEarningsChart extends Component {
 
   getChartTitle = () => {
     if (this.props.selectedEmployee.id)
-      return `Evolución de las ganancias de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}`;
+      return `Evolución de las ganancias de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}.`;
 
-    return `Evolución de mis ganancias en ${this.props.selectedYear}`;
+    return `Evolución de mis ganancias en ${this.props.selectedYear}.`;
   }
 
   render() {
@@ -93,12 +93,20 @@ class MonthlyEarningsChart extends Component {
           </CardSection>
         </Menu>
 
-        <SendReportAsPDF html={this.state.html}>
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Cantidad de Ingresos por Mes (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
+          horizontal
+        >
           <WebView
             source={{ uri: 'https://proyecto-turnosya.web.app/monthly-earnings-chart' }}
             style={{ flex: 1 }}
             domStorageEnabled={true}
             javaScriptEnabled={true}
+            scrollEnabled={false}
             injectedJavaScript={this.onChartDataLoad()}
             onMessage={event => this.setState({ html: event.nativeEvent.data })}
           />
@@ -110,7 +118,7 @@ class MonthlyEarningsChart extends Component {
 
 const mapStateToProps = state => {
   const { data, years, selectedYear, selectedEmployee, loading, error } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     data,
@@ -118,6 +126,7 @@ const mapStateToProps = state => {
     selectedYear,
     selectedEmployee,
     commerceId,
+    commerceName,
     loading,
     error
   };
