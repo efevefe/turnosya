@@ -7,9 +7,13 @@ import {
   onClientNotificationsRead,
   onClientNotificationDelete,
   onCommerceNotificationsRead,
-  onCommerceNotificationDelete
+  onCommerceNotificationDelete,
+  onEmployeeCreate,
+  onEmployeeDelete,
+  onUserWorkplacesRead,
+  onEmploymentInvitationConfirm
 } from '../actions';
-import { MAIN_COLOR } from '../constants';
+import { MAIN_COLOR, NOTIFICATION_TYPES } from '../constants';
 import moment from 'moment';
 import { notificationsToFormatString } from '../utils';
 
@@ -17,7 +21,9 @@ class NotificationsList extends Component {
   state = {
     optionsVisible: false,
     selectedNotification: null,
-    type: null
+    type: null,
+    confirmEmploymentVisible: false,
+    isAcceptingEmployment: false
   };
 
   componentDidMount() {
@@ -70,16 +76,48 @@ class NotificationsList extends Component {
   };
 
   onOptionsPress = selectedNotification => {
-    this.setState({
-      selectedNotification,
-      optionsVisible: true
-    });
+    this.setState({ selectedNotification, optionsVisible: true });
+  };
+
+  onEmploymentConfirmPress = () => {
+    const { sentBy, employeeId } = this.state.selectedNotification;
+
+    if (this.state.isAcceptingEmployment) {
+      // Acepta la invitación
+      this.props.onEmployeeCreate({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
+      this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, true);
+    } else {
+      // Rechaza la invitación
+      this.props.onEmployeeDelete({ commerceId: sentBy, employeeId, profileId: this.props.clientId });
+      this.props.onEmploymentInvitationConfirm(this.state.selectedNotification, false);
+    }
+
+    this.setState({ confirmEmploymentVisible: false });
+  };
+
+  onEmploymentInvitationPress = action => {
+    this.setState({ confirmEmploymentVisible: true, optionsVisible: false, isAcceptingEmployment: action });
+  };
+
+  renderEmploymentInvitationOptions = () => {
+    return (
+      <View>
+        <MenuItem
+          title="Aceptar Invitación"
+          icon="md-checkmark"
+          onPress={() => this.onEmploymentInvitationPress(true)}
+        />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem title="Rechazar Invitación" icon="md-close" onPress={() => this.onEmploymentInvitationPress(false)} />
+        <Divider style={{ backgroundColor: 'grey' }} />
+      </View>
+    );
   };
 
   renderRow = ({ item }) => {
     return (
       <ListItem
-        title={item.title}
+        title={`${item.title}${item.acceptanceDate ? ' (Aceptada)' : item.rejectionDate ? ' (Rechazada)' : ''}`}
         rightTitle={`Hace ${notificationsToFormatString(moment().diff(item.date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
         subtitle={item.body}
@@ -121,10 +159,33 @@ class NotificationsList extends Component {
           />
 
           <Menu
+            title={`Está seguro que desea ${
+              this.state.isAcceptingEmployment ? 'aceptar' : 'rechazar'
+            } la invitación de empleo? Esta acción no puede ser modificada.`}
+            onBackdropPress={() => this.setState({ confirmEmploymentVisible: false })}
+            isVisible={this.state.confirmEmploymentVisible}
+          >
+            <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onEmploymentConfirmPress} />
+            <Divider style={{ backgroundColor: 'grey' }} />
+            <MenuItem
+              title="Cancelar"
+              icon="md-close"
+              onPress={() => this.setState({ confirmEmploymentVisible: false })}
+            />
+          </Menu>
+
+          <Menu
             title={'Opciones'}
             onBackdropPress={() => this.setState({ optionsVisible: false })}
             isVisible={this.state.optionsVisible}
           >
+            {this.state.selectedNotification &&
+            this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
+            this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
+            !this.state.selectedNotification.acceptanceDate &&
+            !this.state.selectedNotification.rejectionDate
+              ? this.renderEmploymentInvitationOptions()
+              : null}
             <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} />
             <Divider style={{ backgroundColor: 'grey' }} />
             <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
@@ -139,6 +200,7 @@ const mapStateToProps = state => {
   const { notifications, loading } = state.notificationsList;
   const { clientId } = state.clientData;
   const { commerceId } = state.commerceData;
+
   return { notifications, loading, clientId, commerceId };
 };
 
@@ -146,5 +208,9 @@ export default connect(mapStateToProps, {
   onClientNotificationsRead,
   onClientNotificationDelete,
   onCommerceNotificationsRead,
-  onCommerceNotificationDelete
+  onCommerceNotificationDelete,
+  onEmployeeCreate,
+  onEmployeeDelete,
+  onUserWorkplacesRead,
+  onEmploymentInvitationConfirm
 })(NotificationsList);

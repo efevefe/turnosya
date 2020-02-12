@@ -59,7 +59,6 @@ export const onCommerceOpen = commerceId => dispatch => {
   const db = firebase.firestore();
   const profileId = firebase.auth().currentUser.uid;
 
-  // Agregar validaciones por fecha de aceptación (post-Notificaciones)
   db.collection(`Commerces/${commerceId}/Employees`)
     .where('softDelete', '==', null)
     .where('profileId', '==', profileId)

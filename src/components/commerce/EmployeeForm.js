@@ -10,7 +10,7 @@ import {
   onRolesRead,
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
-  onEmployeeCreate,
+  onEmployeeInvite,
   onEmployeeUpdate
 } from '../../actions';
 import { CardSection, Input, Picker, Button, IconButton } from '../common';
@@ -57,7 +57,7 @@ class EmployeeForm extends Component {
       : this.props.onEmployeeValueChange({ email });
   };
 
-  onSavePressHandler = () => {
+  onUserDataValidate = () => {
     const {
       commerceId,
       commerceName,
@@ -71,49 +71,44 @@ class EmployeeForm extends Component {
       employees,
       navigation
     } = this.props;
+
     if (firstName) {
       if (employees.some(employee => employee.profileId === profileId) && !this.state.editing)
         // Si se cargó un usuario y es empleado aca entonces notificar
-        this.props.onEmployeeValueChange({
-          emailError: 'Este usuario ya es empleado de su negocio'
-        });
+        this.props.onEmployeeValueChange({ emailError: 'Este usuario ya es empleado de su negocio' });
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.onEmployeeUpdate(
-            {
-              commerceId,
-              employeeId,
-              firstName,
-              lastName,
-              phone,
-              role
-            },
-            navigation
-          );
+          this.props.onEmployeeUpdate({ commerceId, employeeId, firstName, lastName, phone, role }, navigation);
         else
-          this.props.onEmployeeCreate(
-            {
-              commerceId,
-              commerceName,
-              email,
-              firstName,
-              lastName,
-              phone,
-              role,
-              profileId
-            },
+          this.props.onEmployeeInvite(
+            { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
             navigation
           );
     } else {
-      this.props.onEmployeeValueChange({
-        emailError: 'Debe cargar un usuario antes de guardar'
-      });
+      this.props.onEmployeeValueChange({ emailError: 'Debe cargar un usuario antes de guardar' });
     }
+  };
+
+  onRoleDataValidate = () => {
+    const { role } = this.props;
 
     if (role.name && this.state.roleError) this.setState({ roleError: '' });
     else if (!role.name && !this.state.roleError)
       this.setState({ roleError: 'Debe especificar un rol para el empleado' });
+  };
+
+  onSavePressHandler = () => {
+    this.onUserDataValidate();
+    this.onRoleDataValidate();
+  };
+
+  onRolesComboFilter = () => {
+    return this.props.roles.filter(role => {
+      return this.props.role.roleId === ROLES.OWNER.roleId
+        ? ROLES[role.value.roleId].value <= this.props.currentRole.value
+        : ROLES[role.value.roleId].value <= this.props.currentRole.value && role.value.roleId !== ROLES.OWNER.roleId;
+    });
   };
 
   render() {
@@ -171,7 +166,7 @@ class EmployeeForm extends Component {
                 title={'Rol:'}
                 placeholder={{ value: null, label: 'Seleccionar...' }}
                 value={this.props.role}
-                items={this.props.roles.filter(role => ROLES[role.value.roleId].value <= this.props.currentRole.value)}
+                items={this.onRolesComboFilter()}
                 onValueChange={role => this.props.onEmployeeValueChange({ role: role || {} })}
                 errorMessage={this.state.roleError}
                 disabled={this.props.email === firebase.auth().currentUser.email}
@@ -238,6 +233,6 @@ export default connect(mapStateToProps, {
   onRolesRead,
   onUserByEmailSearch,
   onEmployeeInfoUpdate,
-  onEmployeeCreate,
+  onEmployeeInvite,
   onEmployeeUpdate
 })(EmployeeForm);
