@@ -21,7 +21,9 @@ class SendReportAsPDF extends Component {
           subject: this.props.mailOptions.subject || '',
           body: this.props.mailOptions.body || '',
           attachments: [res.uri]
-        });
+        })
+        .then(() => Toast.show({ text: 'El reporte se envió correctamente' }))
+        .catch(error => Toast.show({ text: 'Falló el envio, intente nuevamente' }));
       })
       .catch(error => console.error(error));
   };
