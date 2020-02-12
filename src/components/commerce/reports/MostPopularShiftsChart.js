@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import { ScrollView, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import { Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import SendReportAsPDF from './SendReportAsPDF';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onMostPopularShiftsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
+const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
 class MostPopularShiftsChart extends Component {
@@ -23,7 +26,8 @@ class MostPopularShiftsChart extends Component {
       modal: false,
       modalStartDate: startDate,
       modalEndDate: endDate,
-      selectedEmployee: { id: null }
+      selectedEmployee: { id: null },
+      html: ''
     };
   }
 
@@ -54,6 +58,14 @@ class MostPopularShiftsChart extends Component {
     this.setState({ modal: false });
   };
 
+  onChartDataLoad = () => {
+    const setData = `document.getElementById("data").innerHTML = '${JSON.stringify(this.props.data)}';`
+    const setTitle = `document.getElementById("title").innerHTML = '${this.getChartTitle()}';`
+    const setHeight = `document.getElementById("height").innerHTML = '${chartHeight.toString()}';`
+    const drawChart = 'google.charts.setOnLoadCallback(drawChart);'
+    return setData + setTitle + setHeight + drawChart;
+  }
+
   getChartTitle = () => {
     let title = 'Horarios con mayor demanda '
 
@@ -61,30 +73,14 @@ class MostPopularShiftsChart extends Component {
       title += `de ${this.props.selectedEmployee.name} `;
 
     return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
-      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY') + '.';
   }
-
-  renderChart = () => {
-    const dataBar = {
-      labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
-    };
-
-    return (
-      <BarChart
-        title={this.getChartTitle()}
-        emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
-        xlabel="HORARIOS"
-        data={dataBar}
-      />
-    );
-  };
 
   render() {
     if (this.props.loading) return <Spinner />;
 
     return (
-      <ScrollView>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Periodo"
           isVisible={this.state.modal}
@@ -131,15 +127,37 @@ class MostPopularShiftsChart extends Component {
           </CardSection>
         </Menu>
 
-        {this.renderChart()}
-      </ScrollView>
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Horiarios con Mayor Demanda (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
+        >
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/most-popular-shifts-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
+        </SendReportAsPDF>
+      </View>
     );
   }
 }
 
 const mapStateToProps = state => {
   const { labels, data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     labels,
@@ -147,6 +165,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
+    commerceName,
     selectedEmployee,
     loading
   };

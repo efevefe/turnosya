@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import { ScrollView, Dimensions } from 'react-native';
+import { Dimensions, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import { Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import SendReportAsPDF from './SendReportAsPDF';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
   onDailyReservationsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
+const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
 class DailyReservationsChart extends Component {
@@ -23,7 +26,9 @@ class DailyReservationsChart extends Component {
       modal: false,
       modalStartDate: startDate,
       modalEndDate: endDate,
-      selectedEmployee: { id: null }
+      selectedEmployee: { id: null },
+      loadingHTML: false,
+      html: ''
     };
   }
 
@@ -54,6 +59,14 @@ class DailyReservationsChart extends Component {
     this.setState({ modal: false });
   };
 
+  onChartDataLoad = () => {
+    const setData = `document.getElementById("data").innerHTML = '${JSON.stringify(this.props.data)}';`
+    const setTitle = `document.getElementById("title").innerHTML = '${this.getChartTitle()}';`
+    const setHeight = `document.getElementById("height").innerHTML = '${chartHeight.toString()}';`
+    const drawChart = 'google.charts.setOnLoadCallback(drawChart);'
+    return setData + setTitle + setHeight + drawChart;
+  }
+
   getChartTitle = () => {
     let title = 'Cantidad de reservas por día '
 
@@ -61,19 +74,12 @@ class DailyReservationsChart extends Component {
       title += `de ${this.props.selectedEmployee.name} `;
 
     return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
-      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY') + '.';
   }
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
-    const dataBar = {
-      labels: this.props.data.labels,
-      datasets: [{ data: this.props.data.data }]
-    };
-
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Periodo"
           isVisible={this.state.modal}
@@ -120,26 +126,44 @@ class DailyReservationsChart extends Component {
           </CardSection>
         </Menu>
 
-        <BarChart
-          title={this.getChartTitle()}
-          emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
-          xlabel="DÍAS DE LA SEMANA"
-          data={dataBar}
-        />
-      </ScrollView>
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Cantidad de Reservas por Día (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
+        >
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/daily-reservations-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
+        </SendReportAsPDF>
+      </View>
     );
   }
 }
 
 const mapStateToProps = state => {
   const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     data,
     startDate,
     endDate,
     commerceId,
+    commerceName,
     selectedEmployee,
     loading
   };

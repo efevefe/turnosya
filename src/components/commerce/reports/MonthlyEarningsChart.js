@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { View, Dimensions } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
-import { ScrollView } from 'react-native';
-import { LineChart, Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
+import { Spinner, Menu, Picker, Button, IconButton, CardSection } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
+import SendReportAsPDF from './SendReportAsPDF';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -10,13 +12,15 @@ import {
   yearsOfActivity
 } from '../../../actions';
 
+const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
+
 class MonthlyEarningsChart extends Component {
   constructor(props) {
     super(props);
     props.yearsOfActivity(props.commerceId);
     props.onMonthlyEarningsReadByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: this.props.selectedYear, selectedEmployee: { id: null } };
+    this.state = { modal: false, modalYear: this.props.selectedYear, selectedEmployee: { id: null }, html: '' };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -40,25 +44,26 @@ class MonthlyEarningsChart extends Component {
     this.setState({ modal: false });
   };
 
+  onChartDataLoad = () => {
+    const setData = `document.getElementById("data").innerHTML = '${JSON.stringify(this.props.data)}';`
+    const setTitle = `document.getElementById("title").innerHTML = '${this.getChartTitle()}';`
+    const setHeight = `document.getElementById("height").innerHTML = '${chartHeight.toString()}';`
+    const drawChart = 'google.charts.setOnLoadCallback(drawChart);'
+    return setData + setTitle + setHeight + drawChart;
+  }
+
   getChartTitle = () => {
     if (this.props.selectedEmployee.id)
-      return `Evolución de las ganancias de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}`;
+      return `Evolución de las ganancias de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}.`;
 
-    return `Evolución de mis ganancias en ${this.props.selectedYear}`;
+    return `Evolución de mis ganancias en ${this.props.selectedYear}.`;
   }
 
   render() {
     if (this.props.loading) return <Spinner />;
 
-    const { data } = this.props.data;
-
-    const dataLine = {
-      labels: this.props.data.labels,
-      datasets: [{ data: data.length ? data : Array(12).fill(0) }]
-    };
-
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{ flex: 1 }}>
         <Menu
           title="Seleccionar Año"
           isVisible={this.state.modal}
@@ -88,21 +93,38 @@ class MonthlyEarningsChart extends Component {
           </CardSection>
         </Menu>
 
-        <LineChart
-          data={dataLine}
-          title={this.getChartTitle()}
-          emptyDataMessage={this.props.error || `Parace que aún no hay ganancias en ${this.props.selectedYear}`}
-          xlabel="MESES DEL AÑO"
-          yAxisLabel={'$ '}
-        />
-      </ScrollView>
+        <SendReportAsPDF
+          html={this.state.html}
+          mailOptions={{
+            subject: `[TurnosYa] Cantidad de Ingresos por Mes (${this.props.commerceName})`,
+            body: this.getChartTitle()
+          }}
+          horizontal
+        >
+          {
+            this.props.loading ?
+              <Spinner style={{ position: 'relative' }} /> :
+              <WebView
+                source={{ uri: 'https://proyecto-turnosya.web.app/monthly-earnings-chart' }}
+                style={{ flex: 1 }}
+                startInLoadingState={true}
+                renderLoading={() => <Spinner />}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                scrollEnabled={false}
+                injectedJavaScript={this.onChartDataLoad()}
+                onMessage={event => this.setState({ html: event.nativeEvent.data })}
+              />
+          }
+        </SendReportAsPDF>
+      </View>
     );
   }
 }
 
 const mapStateToProps = state => {
   const { data, years, selectedYear, selectedEmployee, loading, error } = state.commerceReports;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
 
   return {
     data,
@@ -110,6 +132,7 @@ const mapStateToProps = state => {
     selectedYear,
     selectedEmployee,
     commerceId,
+    commerceName,
     loading,
     error
   };
