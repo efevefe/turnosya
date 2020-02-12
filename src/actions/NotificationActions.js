@@ -232,6 +232,10 @@ export const onEmploymentInvitationConfirm = (notification, accepted) => async d
       body: `La invitación de empleo que usted envió ha sido ${accepted ? 'aceptada' : 'rechazada'}`
     };
 
+    await db
+      .doc(`Profiles/${clientId}/Notifications/${notification.id}`)
+      .update({ ...(accepted ? { acceptanceDate: new Date() } : { rejectionDate: new Date() }) });
+
     onCommerceNotificationSend(
       commerceNotif,
       notification.sentBy,
@@ -239,10 +243,6 @@ export const onEmploymentInvitationConfirm = (notification, accepted) => async d
       notification.employeeId,
       NOTIFICATION_TYPES.NOTIFICATION
     );
-
-    await db
-      .doc(`Profiles/${clientId}/Notifications/${notification.id}`)
-      .update({ ...(accepted ? { acceptanceDate: new Date() } : { rejectionDate: new Date() }) });
   } catch (e) {
     console.error(e);
   }
