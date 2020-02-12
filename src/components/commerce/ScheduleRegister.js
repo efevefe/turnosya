@@ -7,7 +7,7 @@ import { Fab } from 'native-base';
 import moment from 'moment';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS, AREAS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
-import { hourToDate, formattedMoment, stringFormatMinutes } from '../../utils';
+import { hourToDate, formattedMoment, stringFormatMinutes, cancelReservationNotificationFormat } from '../../utils';
 import { Spinner, IconButton, EmptyList, Menu, MenuItem, DatePicker, CardSection, Toast } from '../common';
 import { onScheduleValueChange, onScheduleUpdate, onNextReservationsRead, onActiveSchedulesRead } from '../../actions';
 
@@ -368,7 +368,17 @@ class ScheduleRegister extends Component {
       // only hairdressers
       employeeId
     } = this.props;
-    const { reservationsToCancel } = this.state;
+
+    const reservationsToCancel = this.state.reservationsToCancel.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          actorName: this.props.commerceName,
+          cancellationReason: 'Cambio en los horarios de atención'
+        })
+      }
+    })
 
     if (this.validateMinimumData()) {
       const success = await this.props.onScheduleUpdate({
@@ -696,7 +706,8 @@ const mapStateToProps = state => {
   const loadingReservations = state.reservationsList.loading;
   const {
     commerceId,
-    area: { areaId }
+    area: { areaId },
+    name: commerceName
   } = state.commerceData;
   const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
@@ -716,7 +727,8 @@ const mapStateToProps = state => {
     loadingReservations,
     refreshing,
     nextReservations,
-    employeeId
+    employeeId,
+    commerceName
   };
 };
 

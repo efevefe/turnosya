@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   infoText: {
-    fontSize: 13
+    fontSize: 13,
+    textAlign: 'center'
   },
   divider: {
     margin: 10,

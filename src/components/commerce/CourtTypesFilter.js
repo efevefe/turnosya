@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View, TouchableWithoutFeedback } from 'react-native';
-import { ButtonGroup } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { MAIN_COLOR } from '../../constants';
+import { BadgeButtonGroup } from '../common';
 
 class CourtTypesFilter extends Component {
   state = { selectedIndexes: [0], buttons: ['Todas'] };
@@ -65,65 +63,18 @@ class CourtTypesFilter extends Component {
     if (this.state.buttons.length < 3) return null;
 
     return (
-      <View style={styles.mainContainer}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <ButtonGroup
-            {...this.props}
-            Component={TouchableWithoutFeedback}
-            buttons={this.state.buttons}
-            selectMultiple
-            onPress={this.updateIndexes}
-            selectedIndexes={this.state.selectedIndexes}
-            buttonStyle={styles.buttonStyle}
-            containerStyle={styles.containerStyle}
-            textStyle={styles.textStyle}
-            innerBorderStyle={styles.innerBorderStyle}
-            selectedButtonStyle={styles.selectedButtonStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-          />
-        </ScrollView>
-      </View>
+      <BadgeButtonGroup
+        buttons={this.state.buttons}
+        onPress={this.updateIndexes}
+        selectedIndexes={this.state.selectedIndexes}
+        selectMultiple
+      />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: MAIN_COLOR,
-    paddingTop: 4
-  },
-  buttonStyle: {
-    width: 'auto',
-    paddingHorizontal: 12,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: 'white',
-    marginRight: 8,
-    backgroundColor: MAIN_COLOR
-  },
-  containerStyle: {
-    height: 30,
-    borderWidth: 0,
-    margin: 0,
-    backgroundColor: MAIN_COLOR
-  },
-  textStyle: {
-    fontSize: 13,
-    color: 'white'
-  },
-  innerBorderStyle: {
-    width: 0
-  },
-  selectedButtonStyle: {
-    backgroundColor: 'white'
-  },
-  selectedTextStyle: {
-    color: MAIN_COLOR
-  }
-});
-
 const mapStateToProps = state => {
   return { courts: state.courtsList.courts };
-};
+}
 
 export default connect(mapStateToProps, null)(CourtTypesFilter);

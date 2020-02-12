@@ -197,6 +197,7 @@ export const ON_EMPLOYEE_SAVE_FAIL = 'on_employee_save_fail';
 export const ON_EMPLOYEE_DELETED = 'on_employee_deleted';
 export const ON_EMPLOYEE_UPDATED = 'on_employee_updated';
 export const ON_EMPLOYEE_CREATED = 'on_employee_created';
+export const ON_EMPLOYEE_SELECT = 'on_employee_select';
 
 // Roles types
 export const ON_ROLES_READ = 'on_roles_read';

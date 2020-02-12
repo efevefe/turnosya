@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Card, Divider } from 'react-native-elements';
-import { MenuItem, Menu, Spinner, Button } from '../common';
+import { Ionicons } from '@expo/vector-icons';
+import { MenuItem, Menu, Spinner, Button, CardSection } from '../common';
 import { onCommerceMPagoTokenEnable, onCommerceMPagoTokenDisable } from '../../actions';
+import { SUCCESS_COLOR, MAIN_COLOR } from '../../constants';
 
 class PaymentSettings extends Component {
   state = { mPagoModalVisible: false };
@@ -21,7 +23,7 @@ class PaymentSettings extends Component {
       <Menu
         title={`¿Está seguro que desea ${
           this.props.mPagoToken ? 'deshabilitar' : 'habilitar'
-        } el cobro de sus turnos mediante Mercado Pago?`}
+          } el cobro de sus turnos mediante Mercado Pago?`}
         onBackdropPress={() => this.setState({ mPagoModalVisible: false })}
         isVisible={this.state.mPagoModalVisible}
       >
@@ -36,34 +38,89 @@ class PaymentSettings extends Component {
     return this.props.mPagoTokenReadLoading ? (
       <Spinner />
     ) : (
-      <Card title="Información" textAlign="center" containerStyle={{ borderRadius: 10 }}>
-        {this.renderConfirmMPagoSwitch()}
-        {this.props.hasAnyMPagoToken ? (
-          <View>
-            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Estado Actual: ${
-              this.props.mPagoToken ? 'Habilitado' : 'Deshabilitado'
-            }`}</Text>
-            <Button
-              style={{ paddingTop: 4 }}
-              title={`${this.props.mPagoToken ? 'Deshabilitar' : 'Habilitar'} Cobro`}
-              onPress={() => this.setState({ mPagoModalVisible: true })}
-              loading={this.props.mPagoTokenSwitchLoading}
-            />
-          </View>
-        ) : (
-          <View>
-            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>Estado Actual: Deshabilitado</Text>
-            <Button
-              style={{ paddingTop: 4 }}
-              title="Comenzar a Cobrar"
-              onPress={() => this.props.navigation.navigate('paymentSettingsWeb')}
-            />
-          </View>
-        )}
-      </Card>
-    );
+        <Card
+          title="Estado Actual"
+          textAlign="center"
+          containerStyle={styles.cardStyle}
+          dividerStyle={{ marginHorizontal: 12 }}
+        >
+          {this.renderConfirmMPagoSwitch()}
+          {this.props.hasAnyMPagoToken ? (
+            <View>
+              <CardSection style={styles.stateCardSection}>
+                <View style={styles.stateTextContainer}>
+                  <Text style={styles.stateTextStyle}>
+                    {this.props.mPagoToken ? 'Habilitado' : 'Deshabilitado'}
+                  </Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Ionicons
+                    name={this.props.mPagoToken ? 'md-checkmark-circle' : 'md-close-circle'}
+                    color={this.props.mPagoToken ? SUCCESS_COLOR : MAIN_COLOR}
+                    size={23}
+                  />
+                </View>
+              </CardSection>
+              <CardSection>
+                <Button
+                  title={`${this.props.mPagoToken ? 'Deshabilitar' : 'Habilitar'} Cobro`}
+                  onPress={() => this.setState({ mPagoModalVisible: true })}
+                  loading={this.props.mPagoTokenSwitchLoading}
+                />
+              </CardSection>
+            </View>
+          ) : (
+              <View>
+                <CardSection style={styles.stateCardSection}>
+                  <View style={styles.stateTextContainer}>
+                    <Text style={styles.stateTextStyle}>
+                      Deshabilitado
+                  </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Ionicons
+                      name='md-close-circle'
+                      color={MAIN_COLOR}
+                      size={23}
+                    />
+                  </View>
+                </CardSection>
+                <CardSection>
+                  <Button
+                    title="Comenzar a Cobrar"
+                    onPress={() => this.props.navigation.navigate('paymentSettingsWeb')}
+                  />
+                </CardSection>
+              </View>
+            )}
+        </Card>
+      );
   }
 }
+
+const styles = StyleSheet.create({
+  cardStyle: {
+    padding: 5,
+    paddingTop: 15,
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  stateTextStyle: {
+    textAlign: 'left',
+    fontSize: 15
+  },
+  stateCardSection: {
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingVertical: 5,
+    flexDirection: 'row'
+  },
+  stateTextContainer: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flex: 1
+  }
+});
 
 const mapStateToProps = state => {
   const {

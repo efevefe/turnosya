@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-import { Spinner, EmptyList } from '../common';
+import { Spinner, EmptyList, PermissionsAssigner } from '../common';
 import EmployeesListItem from './EmployeesListItem';
 import { onEmployeesRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
-import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {

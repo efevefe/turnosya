@@ -174,7 +174,7 @@ export const onCommerceDetailedReservationsRead = ({ commerceId, selectedDate, e
   });
 };
 
-export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async dispatch => {
+export const onCommercePaymentRefund = ({ commerceId, mPagoToken, paymentId }) => async () => {
   const db = firebase.firestore();
 
   const doc = await db.doc(`Commerces/${commerceId}/Payments/${paymentId}`).get();
@@ -227,7 +227,8 @@ export const onCommerceReservationCancel = ({
         batch
           .commit()
           .then(() => {
-            onClientNotificationSend(notification, clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+            notification &&
+              onClientNotificationSend(notification, clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
             dispatch({ type: ON_COMMERCE_RESERVATION_CANCELED });
             navigation.goBack();
           })
@@ -333,20 +334,22 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
 
 export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
   // reservations cancel
-  try {
-    const state = await db.doc(`ReservationStates/canceled`).get();
-    const updateObj = {
-      cancellationDate: new Date(),
-      state: { id: state.id, name: state.data().name }
-    };
+  if (reservations.length) {
+    try {
+      const state = await db.doc(`ReservationStates/canceled`).get();
+      const updateObj = {
+        cancellationDate: new Date(),
+        state: { id: state.id, name: state.data().name }
+      };
 
-    reservations.forEach(res => {
-      const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-      const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
-      batch.update(commerceResRef, updateObj);
-      batch.update(clientResRef, updateObj);
-    });
-  } catch (error) {
-    console.error(error);
+      reservations.forEach(res => {
+        const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
+        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+        batch.update(commerceResRef, updateObj);
+        batch.update(clientResRef, updateObj);
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 };

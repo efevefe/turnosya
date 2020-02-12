@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { LineChart, Spinner, IconButton, Button, Picker, Menu, CardSection } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -15,7 +16,7 @@ class MonthlyReviewsChart extends Component {
     props.yearsWithReview(props.commerceId);
     props.onMonthlyReviewsReadByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: props.selectedYear };
+    this.state = { modal: false, modalYear: props.selectedYear, selectedEmployee: { id: null } };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -31,14 +32,22 @@ class MonthlyReviewsChart extends Component {
   }
 
   onGenerateReportPress = () => {
-    this.props.onMonthlyReviewsReadByYear(this.props.commerceId, this.state.modalYear);
+    this.props.onMonthlyReviewsReadByYear(this.props.commerceId, this.state.modalYear, this.state.selectedEmployee.id);
 
     this.props.onCommerceReportValueChange({
-      selectedYear: this.state.modalYear
+      selectedYear: this.state.modalYear,
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    if (this.props.selectedEmployee.id)
+      return `Evolución de las calificaciones de ${this.props.selectedEmployee.name} en ${this.props.selectedYear}`;
+
+    return `Evolución de mis calificaciones en ${this.props.selectedYear}`;
+  }
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -62,13 +71,20 @@ class MonthlyReviewsChart extends Component {
             })
           }
         >
-          <CardSection>
+          <CardSection style={{ paddingTop: 10 }}>
             <Picker
+              title='Año'
               value={this.state.modalYear}
               items={this.props.years}
               onValueChange={modalYear => this.setState({ modalYear })}
             />
           </CardSection>
+
+            <EmployeesPicker
+              value={this.state.selectedEmployee.id}
+              onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+            />
+
           <CardSection>
             <Button
               title={'Generar Reporte'}
@@ -80,8 +96,8 @@ class MonthlyReviewsChart extends Component {
 
         <LineChart
           data={dataLine}
-          title={`EVOLUCIÓN DE MIS CALIFICACIONES EN ${this.props.selectedYear}`}
-          emptyDataMessage={this.props.error || `Parace que aún no tenes calificaciones en ${this.props.selectedYear}`}
+          title={this.getChartTitle()}
+          emptyDataMessage={this.props.error || `Parace que aún no hay calificaciones en ${this.props.selectedYear}`}
           xlabel="MESES DEL AÑO"
         />
       </ScrollView>
@@ -90,13 +106,14 @@ class MonthlyReviewsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, years, selectedYear, loading, error } = state.commerceReports;
+  const { data, years, selectedYear, selectedEmployee, loading, error } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
     data,
     years,
     selectedYear,
+    selectedEmployee,
     commerceId,
     loading,
     error

@@ -1,6 +1,10 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL } from './types';
+import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL, ON_EMPLOYEE_SELECT } from './types';
+
+export const onEmployeeSelect = selectedEmployeeId => {
+  return { type: ON_EMPLOYEE_SELECT, payload: { selectedEmployeeId } };
+}
 
 export const onEmployeesRead = commerceId => dispatch => {
   dispatch({ type: ON_EMPLOYEES_READING });

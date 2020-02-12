@@ -15,6 +15,7 @@ const INITIAL_STATE = {
   loading: false,
   selectedYear: moment().format('YYYY'),
   years: [],
+  selectedEmployee: { id: null, name: null },
   error: ''
 };
 

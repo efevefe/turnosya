@@ -108,10 +108,10 @@ class BarChart extends Component {
             chartConfig={chartConfig}
             showLegend
             fromZero
-            // style={{
-            //   borderWidth: 1,
-            //   borderColor: 'black'
-            // }}
+          // style={{
+          //   borderWidth: 1,
+          //   borderColor: 'black'
+          // }}
           />
         </View>
         {this.renderEmptyDataMessage()}
@@ -143,10 +143,11 @@ const styles = StyleSheet.create({
   // toolTipText: {
   //   fontSize: 12,
   //   color: MAIN_COLOR
-  // },
+  // },  
   title: {
-    fontSize: 14,
-    padding: 15,
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     color: 'black',
     textAlign: 'center'
   },

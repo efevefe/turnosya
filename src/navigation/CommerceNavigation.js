@@ -25,7 +25,7 @@ import CommerceCourtReservationRegister from '../components/commerce/CommerceCou
 import PaymentDetails from '../components/PaymentDetails';
 import ClientProfileView from '../components/ClientProfileView';
 import ClientReviewsList from '../components/ClientReviewsList';
-import PermissionsAssigner from '../components/common/PermissionsAssigner';
+import { PermissionsAssigner } from '../components/common';
 import DashBoard from '../components/commerce/reports/DashBoard';
 import DailyReservationsChart from '../components/commerce/reports/DailyReservationsChart';
 import MonthlyEarningsChart from '../components/commerce/reports/MonthlyEarningsChart';

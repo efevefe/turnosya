@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton, EmptyList } from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -21,7 +22,8 @@ class MostPopularShiftsChart extends Component {
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
+      selectedEmployee: { id: null }
     };
   }
 
@@ -31,29 +33,36 @@ class MostPopularShiftsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.onEditPress()} />
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
-
-  onEditPress = () => {
-    this.setState({ modal: true });
-    if (!this.props.data.length) this.props.onCommerceReportValueReset();
-  };
 
   onGenerateReportPress = () => {
     this.props.onMostPopularShiftsReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
-      moment(this.state.modalEndDate)
+      moment(this.state.modalEndDate),
+      this.state.selectedEmployee.id
     );
 
     this.props.onCommerceReportValueChange({
       startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate)
+      endDate: moment(this.state.modalEndDate),
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    let title = 'Horarios con mayor demanda '
+
+    if (this.props.selectedEmployee.id)
+      title += `de ${this.props.selectedEmployee.name} `;
+
+    return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+  }
 
   renderChart = () => {
     const dataBar = {
@@ -63,12 +72,7 @@ class MostPopularShiftsChart extends Component {
 
     return (
       <BarChart
-        title={
-          'TURNOS CON MAYOR DEMANDA ENTRE EL ' +
-          this.props.startDate.format('DD/MM/YYYY') +
-          ' Y EL ' +
-          this.props.endDate.format('DD/MM/YYYY')
-        }
+        title={this.getChartTitle()}
         emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
         xlabel="HORARIOS"
         data={dataBar}
@@ -116,6 +120,12 @@ class MostPopularShiftsChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
+
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
+
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
@@ -128,7 +138,7 @@ class MostPopularShiftsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { labels, data, startDate, endDate, loading } = state.commerceReports;
+  const { labels, data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -137,6 +147,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
+    selectedEmployee,
     loading
   };
 };

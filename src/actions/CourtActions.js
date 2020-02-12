@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import moment from 'moment';
 import { onReservationsCancel } from './ReservationsListActions';
+import { onClientNotificationSend } from './NotificationActions';
 import {
   ON_COURT_VALUE_CHANGE,
   ON_COURT_FORM_OPEN,
@@ -192,11 +193,14 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
       disabledTo: disabledTo ? disabledTo.toDate() : null
     });
 
-    if (reservationsToCancel.length) {
-      await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
-    }
+    // reservations cancel
+    await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
 
     await batch.commit();
+
+    reservationsToCancel.forEach(res => {
+      onClientNotificationSend(res.notification, res.clientId, commerceId);
+    });
 
     dispatch({ type: ON_COURT_UPDATE });
     navigation.goBack();

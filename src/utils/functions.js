@@ -14,7 +14,7 @@ export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
     case AREAS.hairdressers:
       return hairdressers;
     default:
-      return AREAS.sports;
+      return sports;
   }
 };
 
@@ -41,10 +41,10 @@ export const imageToBlob = async uri => {
     // convierte una imagen desde una uri a un blob para que se pueda subir a firebase storage
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         resolve(xhr.response);
       };
-      xhr.onerror = function() {
+      xhr.onerror = function () {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';
@@ -233,7 +233,7 @@ export const newReservationNotificationFormat = ({ startDate, service, actorName
 
   return {
     title: 'Nueva Reserva',
-    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}`
+    body: `${receptorName}! ${actorName} ha reservado "${service}" para el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime} hs.`
   };
 };
 
@@ -256,7 +256,16 @@ export const cancelReservationNotificationFormat = ({
   const dayOfMonth = startDate.format('D');
   const month = MONTHS[moment(startDate).month()];
   const formattedTime = moment(startDate).format('HH:mm');
-  let body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime}.`;
+
+  let body;
+
+  if (!service || !receptorName) {
+    body = `${actorName} te ha cancelado el turno del `;
+  } else {
+    body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el `;
+  }
+
+  body += `día ${dayOfWeek} ${dayOfMonth} de ${month} a las ${formattedTime} hs.`;
   body += `${cancellationReason ? ` Motivo: "${cancellationReason}".` : ''}`;
 
   return {
@@ -273,15 +282,17 @@ export const cancelReservationNotificationFormat = ({
  */
 export const notificationsToFormatString = totalMins => {
   if (totalMins < 2) return '1 min.';
-  else if (totalMins < 60) return totalMins + ' mins.';
+  if (totalMins < 60) return totalMins + ' mins.';
 
   const hours = Math.floor(totalMins / 60);
+  if (totalMins < 1440) return hours + (hours == 1 ? ' hora.' : ' horas.');
+
   const days = Math.floor(totalMins / 1440);
+  if (days < 30) return days + (days == 1 ? ' día.' : ' días.');
 
-  const stringHours = hours + (hours == 1 ? ' hora' : ' horas');
+  const months = Math.floor(days / 30);
+  if (days < 365) return months + (months == 1 ? ' mes.' : ' meses.');
 
-  const stringDays = days + (days == 1 ? ' día' : ' días');
-
-  if (totalMins < 1440) return stringHours + '.';
-  else return stringDays + '.';
+  const years = Math.floor(days / 365);
+  return years + (years == 1 ? ' año.' : ' años.');
 };

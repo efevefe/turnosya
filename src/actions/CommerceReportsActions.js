@@ -22,19 +22,24 @@ export const onCommerceReportValueReset = () => {
 };
 
 // Daily Reservations report
-export const onDailyReservationsReadByRange = (commerceId, startDate, endDate) => dispatch => {
+export const onDailyReservationsReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
   const data = [0, 0, 0, 0, 0, 0, 0]; // 7 days
   const labels = arrayOfDays;
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('cancellationDate', '==', null)
     .where('startDate', '>=', startDate.toDate())
-    .where('startDate', '<=', endDate.toDate())
-    .onSnapshot(snapshot => {
+    .where('startDate', '<=', endDate.toDate());
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  query
+    .get()
+    .then(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const numberOfDay = moment(doc.data().startDate.toDate()).day();
@@ -88,7 +93,7 @@ export const yearsOfActivity = commerceId => dispatch => {
     });
 };
 
-export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
+export const onMonthlyEarningsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -97,30 +102,21 @@ export const onMonthlyEarningsReadByYear = (commerceId, year) => dispatch => {
   const months = Array(12).fill(0); // 12 months
   const labels = arrayOfMonths;
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('cancellationDate', '==', null) // TODO: state should be something that is already paid
-    .where(
-      'startDate', // should be from 'startDate' or 'endDate' ??
-      '>=',
-      moment(year, 'YYYY')
-        .startOf('year')
-        .toDate()
-    )
-    .where(
-      'startDate',
-      '<=',
-      moment(year, 'YYYY')
-        .endOf('year')
-        .toDate()
-    )
-    .onSnapshot(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const numberOfMonth = moment(doc.data().startDate.toDate()).month();
-          months[numberOfMonth] += parseFloat(doc.data().price);
-        });
-      }
+    .where('startDate', '>=', moment(year, 'YYYY').startOf('year').toDate())
+    .where('startDate', '<=', moment(year, 'YYYY').endOf('year').toDate());
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  query
+    .get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        const numberOfMonth = moment(doc.data().startDate.toDate()).month();
+        months[numberOfMonth] += parseFloat(doc.data().price);
+      });
 
       dispatch({
         type: ON_COMMERCE_REPORT_READ,
@@ -166,7 +162,7 @@ export const yearsWithReview = commerceId => dispatch => {
     });
 };
 
-export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
+export const onMonthlyReviewsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
@@ -177,56 +173,67 @@ export const onMonthlyReviewsReadByYear = (commerceId, year) => dispatch => {
   const data = Array(12).fill(0); // avg rating per month
   const labels = arrayOfMonths;
 
-  return db
+  db
     .collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
-    .where(
-      'date',
-      '>=',
-      moment(year, 'YYYY')
-        .startOf('year')
-        .toDate()
-    )
-    .where(
-      'date',
-      '<=',
-      moment(year, 'YYYY')
-        .endOf('year')
-        .toDate()
-    )
-    .onSnapshot(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const numberOfMonth = moment(doc.data().date.toDate()).month();
-          months[numberOfMonth] += parseFloat(doc.data().rating);
-          counts[numberOfMonth]++;
-        });
+    .where('date', '>=', moment(year, 'YYYY').startOf('year').toDate())
+    .where('date', '<=', moment(year, 'YYYY').endOf('year').toDate())
+    .get()
+    .then(snapshot => {
+      let processedItems = 0;
 
-        months.forEach((month, i) => {
-          data[i] = month ? month / counts[i] : 0;
+      if (!snapshot.empty) {
+        snapshot.forEach(async doc => {
+          let res;
+
+          if (employeeId) res = await db.doc(`Commerces/${commerceId}/Reservations/${doc.data().reservationId}`).get();
+
+          if (!employeeId || employeeId === res.data().employeeId) {
+            const numberOfMonth = moment(doc.data().date.toDate()).month();
+            months[numberOfMonth] += parseFloat(doc.data().rating);
+            counts[numberOfMonth]++;
+          }
+
+          processedItems++;
+
+          if (snapshot.size === processedItems) {
+            months.forEach((month, i) => {
+              data[i] = month ? month / counts[i] : 0;
+            });
+
+            dispatch({
+              type: ON_COMMERCE_REPORT_READ,
+              payload: { labels, data }
+            });
+          }
+        });
+      } else {
+        dispatch({
+          type: ON_COMMERCE_REPORT_READ,
+          payload: { labels, data }
         });
       }
-
-      dispatch({
-        type: ON_COMMERCE_REPORT_READ,
-        payload: { labels, data }
-      });
     });
 };
 
-// Reserved and Cancelled Shift Report
-export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, endDate) => dispatch => {
+// Reserved and Cancelled reservations Report
+export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
   const counts = [0, 0]; // [realizados, cancelados]
   const labels = ['Realizados', 'Cancelados'];
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('startDate', '>=', startDate.toDate())
-    .where('startDate', '<=', endDate.toDate())
-    .onSnapshot(snapshot => {
+    .where('startDate', '<=', endDate.toDate());
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  query
+    .get()
+    .then(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const state = doc.data().state ? 1 : 0;
@@ -247,17 +254,22 @@ export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, en
 };
 
 // Most Popular Shifts Report
-export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate) => dispatch => {
+export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
   const shifts = {};
 
-  return db
+  let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('startDate', '>=', startDate.toDate())
-    .where('startDate', '<=', endDate.toDate())
-    .onSnapshot(snapshot => {
+    .where('startDate', '<=', endDate.toDate());
+
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
+
+  query
+    .get()
+    .then(snapshot => {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const shift = moment(doc.data().startDate.toDate())
