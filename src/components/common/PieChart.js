@@ -8,14 +8,8 @@ const chartWidth = Dimensions.get('window').width - 30;
 class PieChart extends Component {
   renderTitle = () => {
     if (this.props.title)
-      return (
-        <Text style={StyleSheet.flatten([
-          styles.title, this.props.titleStyle
-        ])}>
-          {this.props.title}
-        </Text>
-      )
-  }
+      return <Text style={StyleSheet.flatten([styles.title, this.props.titleStyle])}>{this.props.title}</Text>;
+  };
 
   render() {
     return (
@@ -48,11 +42,12 @@ const chartConfig = {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 14,
-    padding: 15,
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     color: 'black',
     textAlign: 'center'
   }
-})
+});
 
 export { PieChart };

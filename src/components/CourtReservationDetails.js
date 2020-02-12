@@ -11,33 +11,26 @@ class CourtReservationDetails extends Component {
     if (this.props.name) {
       return (
         <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-          <Text style={styles.bigText}>
-            {this.props.name}
-          </Text>
+          <Text style={styles.bigText}>{this.props.name}</Text>
         </CardSection>
       );
     }
-  }
+  };
 
   renderInfo = () => {
     if (this.props.info) {
       return (
-        <CardSection style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}>
-          {this.props.infoIcon &&
-            <Ionicons
-              name={this.props.infoIcon}
-              size={14}
-              color='black'
-              style={{ marginRight: 5 }}
-            />
-          }
-          <Text style={styles.infoText}>
-            {this.props.info}
-          </Text>
+        <CardSection
+          style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}
+        >
+          {this.props.infoIcon && (
+            <Ionicons name={this.props.infoIcon} size={14} color="black" style={{ marginRight: 5 }} />
+          )}
+          <Text style={styles.infoText}>{this.props.info}</Text>
         </CardSection>
       );
     }
-  }
+  };
 
   renderPrice = () => {
     if (this.props.showPrice) {
@@ -61,16 +54,10 @@ class CourtReservationDetails extends Component {
           type: 'ionicon'
         };
     }
-  }
+  };
 
   render() {
-    const {
-      picture,
-      court,
-      startDate,
-      endDate,
-      light,
-    } = this.props;
+    const { picture, court, startDate, endDate, light } = this.props;
 
     return (
       <View style={styles.mainContainer}>
@@ -86,24 +73,20 @@ class CourtReservationDetails extends Component {
           {this.renderName()}
           {this.renderInfo()}
           <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
-            <Text style={styles.mediumText}>
-              {court.name}
-            </Text>
+            <Text style={styles.mediumText}>{court.name}</Text>
           </CardSection>
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
-            <Text style={styles.regularText}>
-              {`${court.court} - ${court.ground}`}
-            </Text>
+            <Text style={styles.regularText}>{`${court.court} - ${court.ground}`}</Text>
           </CardSection>
           <CardSection style={styles.cardSections}>
-            <Text style={styles.regularText}>
-              {light ? 'Con Luz' : 'Sin Luz'}
-            </Text>
+            <Text style={styles.regularText}>{light ? 'Con Luz' : 'Sin Luz'}</Text>
           </CardSection>
           <Divider style={styles.divider} />
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
             <Text style={styles.regularText}>
-              {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${MONTHS[moment(startDate).month()]}`}
+              {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${
+                MONTHS[moment(startDate).month()]
+                }`}
             </Text>
           </CardSection>
           <CardSection style={styles.cardSections}>
@@ -146,7 +129,8 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   infoText: {
-    fontSize: 13
+    fontSize: 13,
+    textAlign: 'center'
   },
   divider: {
     margin: 10,

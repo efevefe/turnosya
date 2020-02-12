@@ -33,7 +33,4 @@ class VerifyEmailModal extends React.Component {
   }
 }
 
-export default connect(
-  null,
-  { sendEmailVefification }
-)(VerifyEmailModal);
+export default connect(null, { sendEmailVefification })(VerifyEmailModal);

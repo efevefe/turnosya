@@ -7,8 +7,8 @@ import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList, Menu, MenuItem } from '../common';
-import { DAYS, MONTHS, MAIN_COLOR } from '../../constants';
-import { formattedMoment, stringFormatMinutes } from '../../utils';
+import { DAYS, MONTHS, MAIN_COLOR, AREAS } from '../../constants';
+import { formattedMoment, stringFormatMinutes, cancelReservationNotificationFormat } from '../../utils';
 import {
   onActiveSchedulesRead,
   onScheduleValueChange,
@@ -41,31 +41,26 @@ class CommerceSchedulesList extends Component {
 
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
-      date: moment()
+      date: moment(),
+      employeeId: this.props.employeeId
     });
   }
 
   componentDidUpdate(prevProps) {
-    this.props.schedules;
     if (prevProps.nextReservations !== this.props.nextReservations) {
       this.props.navigation.isFocused() && this.onScheduleDelete();
     }
   }
 
   renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        tintColor="white"
-        title="Back"
-        onPress={this.onBackPress}
-      />
-    );
+    return <HeaderBackButton tintColor="white" title="Back" onPress={this.onBackPress} />;
   };
 
   onBackPress = () => {
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate')
+      selectedDate: this.props.navigation.getParam('selectedDate'),
+      employeeId: this.props.employeeId
     });
 
     this.props.navigation.goBack();
@@ -82,20 +77,16 @@ class CommerceSchedulesList extends Component {
     const { selectedSchedule } = this.state;
     this.setState({ optionsVisible: false });
 
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+    let startDate = selectedSchedule.startDate;
 
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
+    if (startDate < formattedMoment()) {
+      // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
+      // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
+      // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
+      startDate = formattedMoment();
     }
+
+    this.props.onScheduleValueChange({ ...selectedSchedule, startDate });
 
     this.props.navigation.navigate('scheduleRegister', {
       schedule: selectedSchedule,
@@ -104,87 +95,20 @@ class CommerceSchedulesList extends Component {
   };
 
   onScheduleDeletePress = () => {
-    const { commerceId } = this.props;
+    const { commerceId, employeeId } = this.props;
     const { selectedSchedule } = this.state;
 
     let startDate = formattedMoment();
 
-    if (selectedSchedule.startDate > startDate)
-      startDate = selectedSchedule.startDate;
+    if (selectedSchedule.startDate > startDate) startDate = selectedSchedule.startDate;
 
     this.props.onNextReservationsRead({
       commerceId,
       startDate,
-      endDate: selectedSchedule.endDate
-    });
-    this.setState({ optionsVisible: false, reservationsToCancel: [] });
-  };
-
-  renderBackButton = () => {
-    return (
-      <HeaderBackButton
-        tintColor="white"
-        title="Volver"
-        onPress={this.onBackPress}
-      />
-    );
-  };
-
-  onBackPress = () => {
-    this.props.onScheduleRead({
-      commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate')
+      endDate: selectedSchedule.endDate,
+      employeeId
     });
 
-    this.props.navigation.goBack();
-  };
-
-  onScheduleAddPress = () => {
-    this.props.onScheduleFormOpen();
-    this.props.navigation.navigate('scheduleRegister', {
-      title: 'Nuevo horario'
-    });
-  };
-
-  onScheduleEditPress = () => {
-    const { selectedSchedule } = this.state;
-    this.setState({ optionsVisible: false });
-
-    for (prop in selectedSchedule) {
-      if (prop === 'startDate' && selectedSchedule[prop] < formattedMoment()) {
-        // esto es porque en caso de que se selecciona editar un schedule cuya fecha de inicio
-        // de vigencia es pasada, al modificarlo en realidad se crea uno nuevo cuya fecha de inicio
-        // es por defecto, la actual, para que los horarios pasados queden tal cual estaban
-
-        this.props.onScheduleValueChange({ prop, value: formattedMoment() });
-      } else {
-        this.props.onScheduleValueChange({
-          prop,
-          value: selectedSchedule[prop]
-        });
-      }
-    }
-
-    this.props.navigation.navigate('scheduleRegister', {
-      schedule: selectedSchedule,
-      title: 'Modificar horario'
-    });
-  };
-
-  onScheduleDeletePress = () => {
-    const { commerceId } = this.props;
-    const { selectedSchedule } = this.state;
-
-    let startDate = formattedMoment();
-
-    if (selectedSchedule.startDate > startDate)
-      startDate = selectedSchedule.startDate;
-
-    this.props.onNextReservationsRead({
-      commerceId,
-      startDate,
-      endDate: selectedSchedule.endDate
-    });
     this.setState({ optionsVisible: false, reservationsToCancel: [] });
   };
 
@@ -193,9 +117,7 @@ class CommerceSchedulesList extends Component {
     let { lastReservationDate } = this.state;
 
     if (nextReservations.length) {
-      lastReservationDate = formattedMoment(
-        nextReservations[nextReservations.length - 1].startDate
-      ).add(1, 'day');
+      lastReservationDate = formattedMoment(nextReservations[nextReservations.length - 1].startDate).add(1, 'day');
       this.setState({ deleteModalVisible: true, lastReservationDate });
     } else {
       lastReservationDate = formattedMoment();
@@ -204,22 +126,27 @@ class CommerceSchedulesList extends Component {
   };
 
   onCancelReservations = async () => {
-    const { nextReservations } = this.props;
+    const reservationsToCancel = this.props.nextReservations.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          actorName: this.props.commerceName,
+          cancellationReason: 'Cambio en los horarios de atención'
+        })
+      }
+    })
 
     this.setState({
       lastReservationDate: formattedMoment(),
-      reservationsToCancel: nextReservations,
+      reservationsToCancel,
       deleteModalVisible: false,
       deleteConfirmVisible: true
     });
   };
 
   onScheduleDeleteConfirm = async () => {
-    const {
-      lastReservationDate,
-      selectedSchedule,
-      reservationsToCancel
-    } = this.state;
+    const { lastReservationDate, selectedSchedule, reservationsToCancel } = this.state;
 
     const success = await this.props.onScheduleDelete({
       commerceId: this.props.commerceId,
@@ -231,7 +158,8 @@ class CommerceSchedulesList extends Component {
     if (success)
       this.props.onActiveSchedulesRead({
         commerceId: this.props.commerceId,
-        date: moment()
+        date: moment(),
+        employeeId: this.props.employeeId
       });
 
     this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
@@ -270,31 +198,16 @@ class CommerceSchedulesList extends Component {
             }
           />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar reservas y notificar"
-            icon="md-trash"
-            onPress={this.onCancelReservations}
-          />
+          <MenuItem title="Cancelar reservas y notificar" icon="md-trash" onPress={this.onCancelReservations} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Volver"
-            icon="md-close"
-            onPress={() => this.setState({ deleteModalVisible: false })}
-          />
+          <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ deleteModalVisible: false })} />
         </Menu>
       );
     }
   };
 
   cardToText = card => {
-    const {
-      id,
-      firstShiftStart,
-      firstShiftEnd,
-      secondShiftStart,
-      secondShiftEnd,
-      days
-    } = card;
+    const { id, firstShiftStart, firstShiftEnd, secondShiftStart, secondShiftEnd, days } = card;
 
     let strDays = '';
 
@@ -331,14 +244,12 @@ class CommerceSchedulesList extends Component {
           <View>
             {cards.map(card => this.cardToText(card))}
             <Text style={{ fontSize: 13, marginBottom: 3 }}>
-              {'Duración del turno: ' +
-                stringFormatMinutes(reservationMinLength)}
+              {'Duración del turno: ' + stringFormatMinutes(reservationMinLength)}
             </Text>
           </View>
         }
         subtitle={
-          `Del ${startDate.format('DD/MM/YYYY')} ` +
-          `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
+          `Del ${startDate.format('DD/MM/YYYY')} ` + `${endDate ? `al ${endDate.format('DD/MM/YYYY')}` : 'en adelante'}`
         }
         subtitleStyle={{ fontSize: 12 }}
         rightIcon={{
@@ -379,11 +290,7 @@ class CommerceSchedulesList extends Component {
       <View style={{ flex: 1 }}>
         {this.renderList()}
 
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onScheduleAddPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onScheduleAddPress}>
           <Ionicons name="md-add" />
         </Fab>
 
@@ -392,17 +299,9 @@ class CommerceSchedulesList extends Component {
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible}
         >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onScheduleEditPress}
-          />
+          <MenuItem title="Editar" icon="md-create" onPress={this.onScheduleEditPress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onScheduleDeletePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onScheduleDeletePress} />
         </Menu>
 
         <Menu
@@ -410,17 +309,9 @@ class CommerceSchedulesList extends Component {
           onBackdropPress={() => this.setState({ deleteConfirmVisible: false })}
           isVisible={this.state.deleteConfirmVisible}
         >
-          <MenuItem
-            title="Aceptar"
-            icon="md-checkmark"
-            onPress={this.onScheduleDeleteConfirm}
-          />
+          <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onScheduleDeleteConfirm} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Cancelar"
-            icon="md-close"
-            onPress={() => this.setState({ deleteConfirmVisible: false })}
-          />
+          <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ deleteConfirmVisible: false })} />
         </Menu>
 
         {this.renderDeleteScheduleModal()}
@@ -431,10 +322,15 @@ class CommerceSchedulesList extends Component {
 
 const mapStateToProps = state => {
   const { schedules, loading } = state.commerceSchedule;
-  const { nextReservations } = state.courtReservationsList;
-  const { commerceId } = state.commerceData;
+  const { nextReservations } = state.reservationsList;
+  const {
+    commerceId,
+    name: commerceName,
+    area: { areaId }
+  } = state.commerceData;
+  const employeeId = areaId === AREAS.hairdressers ? state.roleData.employeeId : null;
 
-  return { schedules, commerceId, loading, nextReservations };
+  return { schedules, commerceId, commerceName, loading, nextReservations, employeeId };
 };
 
 export default connect(mapStateToProps, {

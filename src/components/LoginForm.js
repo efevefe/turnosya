@@ -6,13 +6,7 @@ import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CardSection, Button, Input, Menu, MenuItem, Toast } from './common';
 import { validateValueType } from '../utils';
-import {
-  onLogin,
-  onLoginValueChange,
-  onFacebookLogin,
-  onGoogleLogin,
-  onSendPasswordResetEmail
-} from '../actions';
+import { onLogin, onLoginValueChange, onFacebookLogin, onGoogleLogin, onSendPasswordResetEmail } from '../actions';
 
 const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
@@ -76,29 +70,19 @@ class LoginForm extends Component {
         onBackdropPress={() => this.setState({ resetPasswordModal: false })}
         isVisible={this.state.resetPasswordModal}
       >
-        <CardSection
-          style={styles.resetPasswordInputContainer}
-        >
+        <CardSection style={styles.resetPasswordInputContainer}>
           <Input
-            label='E-Mail'
+            label="E-Mail"
             placeholder="E-mail de la cuenta"
             autoCapitalize="none"
             keyboardType="email-address"
-            color='black'
+            color="black"
             value={this.props.email}
             errorMessage={this.props.error || this.state.emailError}
-            onChangeText={value =>
-              this.props.onLoginValueChange({
-                prop: 'email',
-                value
-              })
-            }
+            onChangeText={email => this.props.onLoginValueChange({ email })}
             onFocus={() => {
               this.setState({ emailError: '' });
-              this.props.onLoginValueChange({
-                prop: 'error',
-                value: ''
-              });
+              this.props.onLoginValueChange({ error: '' });
             }}
           />
         </CardSection>
@@ -110,11 +94,7 @@ class LoginForm extends Component {
           onPress={this.onSendPasswordResetEmailPress}
         />
         <Divider style={{ backgroundColor: 'grey' }} />
-        <MenuItem
-          title="Cancelar"
-          icon="md-close"
-          onPress={() => this.setState({ resetPasswordModal: false })}
-        />
+        <MenuItem title="Cancelar" icon="md-close" onPress={() => this.setState({ resetPasswordModal: false })} />
       </Menu>
     );
   };
@@ -124,28 +104,22 @@ class LoginForm extends Component {
       const success = await this.props.onSendPasswordResetEmail(this.props.email);
 
       if (success) {
-        Toast.show({ text: 'El correo de recuperacion se envió correctamente' });
+        Toast.show({
+          text: 'El correo de recuperacion se envió correctamente'
+        });
         this.setState({ resetPasswordModal: false });
       }
     }
-  }
+  };
 
   render() {
-    const {
-      containerStyle,
-      logoContainerStyle,
-      loginContainerStyle,
-      createAccountContainerStyle
-    } = styles;
+    const { containerStyle, logoContainerStyle, loginContainerStyle, createAccountContainerStyle } = styles;
 
     return (
       <View style={containerStyle}>
         <StatusBar barStyle="dark-content" />
         <View style={logoContainerStyle}>
-          <Image
-            source={require('../../assets/turnosya-red.png')}
-            style={{ height: iconSize, width: iconSize }}
-          />
+          <Image source={require('../../assets/turnosya-red.png')} style={{ height: iconSize, width: iconSize }} />
         </View>
         <View style={loginContainerStyle}>
           <CardSection>
@@ -155,12 +129,7 @@ class LoginForm extends Component {
               keyboardType="email-address"
               value={this.props.email}
               errorMessage={this.state.emailError}
-              onChangeText={value =>
-                this.props.onLoginValueChange({
-                  prop: 'email',
-                  value
-                })
-              }
+              onChangeText={email => this.props.onLoginValueChange({ email })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -173,12 +142,7 @@ class LoginForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
-              onChangeText={value =>
-                this.props.onLoginValueChange({
-                  prop: 'password',
-                  value
-                })
-              }
+              onChangeText={password => this.props.onLoginValueChange({ password })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />
@@ -217,14 +181,7 @@ class LoginForm extends Component {
               loading={this.props.loadingGoogle}
               buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onGoogleLogin()}
-              icon={
-                <Icon
-                  name="google"
-                  size={20}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Icon name="google" size={20} color="white" style={{ marginRight: 10 }} />}
             />
           </CardSection>
 
@@ -235,14 +192,7 @@ class LoginForm extends Component {
               loading={this.props.loadingFacebook}
               buttonStyle={styles.buttonStyle}
               onPress={() => this.props.onFacebookLogin()}
-              icon={
-                <Icon
-                  name="facebook-square"
-                  size={20}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Icon name="facebook-square" size={20} color="white" style={{ marginRight: 10 }} />}
             />
           </CardSection>
         </View>
@@ -302,15 +252,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {
-    email,
-    password,
-    error,
-    loadingLogin,
-    loadingFacebook,
-    loadingGoogle,
-    sendingEmail
-  } = state.auth;
+  const { email, password, error, loadingLogin, loadingFacebook, loadingGoogle, sendingEmail } = state.auth;
 
   return {
     email,
@@ -323,7 +265,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  { onLogin, onGoogleLogin, onFacebookLogin, onLoginValueChange, onSendPasswordResetEmail }
-)(LoginForm);
+export default connect(mapStateToProps, {
+  onLogin,
+  onGoogleLogin,
+  onFacebookLogin,
+  onLoginValueChange,
+  onSendPasswordResetEmail
+})(LoginForm);

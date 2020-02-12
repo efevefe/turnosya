@@ -1,63 +1,61 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Button } from 'react-native-elements';
+import { onSelectedLocationChange } from '../../actions';
 import CommercesMap from '../common/CommercesMap';
-import { Toast } from "../common";
+import { Toast, IconButton } from '../common';
 
 class CommercesFiltersMap extends Component {
+  state = { selectedLocationBeforechanges: null };
+
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton')
-    }
+      headerRight: navigation.getParam('rightButton'),
+      headerLeft: navigation.getParam('leftButton')
+    };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({
-      rightButton: this.renderApplyFiltersButton()
-    });
+    this.props.navigation.setParams({ rightButton: this.renderSaveButton(), leftButton: this.renderCancelButton() });
+    this.setState({ selectedLocationBeforechanges: this.props.selectedLocation });
   }
 
-  renderApplyFiltersButton = () => {
-    return (
-      <Button
-        title="Aceptar"
-        type="clear"
-        titleStyle={{ color: "white" }}
-        onPress={this.onApplyFiltersPress}
-        containerStyle={applyFilterButtonStyle}
-      />
-    );
-  }
+  renderSaveButton = () => {
+    return <IconButton icon="md-checkmark" onPress={this.onApplyFiltersPress} />;
+  };
+
+  renderCancelButton = () => {
+    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
+  };
 
   onApplyFiltersPress = () => {
-    if (this.props.latitude) {
-      this.props.navigation.goBack()
-    } else {
-      Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' })
-    }
-  }
+    this.props.selectedLocation.latitude
+      ? this.props.navigation.goBack()
+      : Toast.show({ text: 'Debe seleccionar una ubicación manteniendo presionado sobre el mapa' });
+  };
+
+  onCancelPress = () => {
+    this.props.onSelectedLocationChange(this.state.selectedLocationBeforechanges);
+    this.props.navigation.goBack();
+  };
 
   render() {
     return (
       <View style={windowContainerStyle}>
-        <CommercesMap searchBar={true} longPressAllowed={true} />
+        <CommercesMap searchBar={true} />
       </View>
     );
   }
 }
 
-const {
-  windowContainerStyle,
-  applyFilterButtonStyle
-} = StyleSheet.create({
-  windowContainerStyle: { flex: 1 },
-  applyFilterButtonStyle: { paddingRight: 10 }
+const { windowContainerStyle } = StyleSheet.create({
+  windowContainerStyle: { flex: 1 }
 });
 
 const mapStateToProps = state => {
-  const { latitude } = state.locationData.selectedLocation;
-  return { latitude };
+  const { selectedLocation } = state.locationData;
+
+  return { selectedLocation };
 };
 
-export default connect(mapStateToProps, {})(CommercesFiltersMap);
+export default connect(mapStateToProps, { onSelectedLocationChange })(CommercesFiltersMap);

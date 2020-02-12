@@ -1,23 +1,30 @@
 import React, { Component } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import { ListItem, ButtonGroup, Overlay } from 'react-native-elements';
+import { ListItem, ButtonGroup } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Calendar, Spinner, EmptyList } from '../common';
-import { onCommerceDetailedCourtReservationsRead } from '../../actions';
-import { MAIN_COLOR } from '../../constants';
+import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner } from '../common';
+import { onCommerceDetailedReservationsRead } from '../../actions';
+import { MAIN_COLOR, AREAS, ROLES } from '../../constants';
+import EmployeesFilter from './EmployeesFilter';
 
-class CommerceCourtReservations extends Component {
+class CommerceReservationsList extends Component {
   state = {
     selectedDate: moment(),
     selectedIndex: 1,
     filteredList: [],
     selectedReservation: {},
-    detailsVisible: false
+    detailsVisible: false,
+    selectedEmployeeId: this.props.selectedEmployeeId
   };
 
   componentDidMount() {
     this.onDateSelected(moment());
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -28,19 +35,21 @@ class CommerceCourtReservations extends Component {
 
   componentWillUnmount() {
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
+    this.willFocusSubscription.remove && this.willFocusSubscription.remove();
   }
 
   onDateSelected = date => {
     const selectedDate = moment([date.year(), date.month(), date.date()]);
 
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
-    this.unsubscribeReservationsRead = this.props.onCommerceDetailedCourtReservationsRead({
+    this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
-      selectedDate
+      selectedDate,
+      employeeId: this.state.selectedEmployeeId //
     });
 
     this.setState({ selectedDate });
-  }
+  };
 
   updateIndex = selectedIndex => {
     const { reservations } = this.props;
@@ -48,14 +57,10 @@ class CommerceCourtReservations extends Component {
 
     if (selectedIndex == 0) {
       // turnos pasados
-      filteredList = reservations
-        .filter(res => res.endDate < moment())
-        .reverse();
+      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
     } else if (selectedIndex == 1) {
       // turnos en curso
-      filteredList = reservations.filter(
-        res => res.startDate <= moment() && res.endDate >= moment()
-      );
+      filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
     } else {
       // turnos proximos
       filteredList = reservations.filter(res => res.startDate > moment());
@@ -64,10 +69,27 @@ class CommerceCourtReservations extends Component {
     this.setState({ filteredList, selectedIndex });
   };
 
-  renderList = ({ item }) => {
-    const clientName = item.clientId
-      ? `${item.client.firstName} ${item.client.lastName}`
-      : item.clientName;
+  onEmployeesFilterValueChange = selectedEmployeeId => {
+    if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
+      this.setState({ selectedEmployeeId }, () => this.onDateSelected(this.state.selectedDate));
+    }
+  }
+
+  renderItem = ({ item }) => {
+    const clientName = item.clientId ? `${item.client.firstName} ${item.client.lastName}` : item.clientName;
+
+    let name;
+    let service;
+    let court;
+
+    if (this.props.areaId === AREAS.hairdressers) {
+      service = this.props.services.find(service => service.id === item.serviceId);
+      name = service.name;
+      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
+    } else {
+      court = this.props.courts.find(court => court.id === item.courtId);
+      name = court.name;
+    }
 
     return (
       <ListItem
@@ -76,17 +98,15 @@ class CommerceCourtReservations extends Component {
           type: 'ionicon',
           color: 'black'
         }}
-        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format(
-          'HH:mm'
-        )}`}
-        subtitle={`${clientName}\n${item.court.name}`}
+        title={`${item.startDate.format('HH:mm')} a ${item.endDate.format('HH:mm')}`}
+        subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={item.light ? 'Con Luz' : 'Sin Luz'}
+        rightSubtitle={item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
         rightSubtitleStyle={styles.listItemRightSubtitleStyle}
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: item
+            reservation: { ...item, court, service }
           })
         }
         bottomDivider
@@ -94,14 +114,14 @@ class CommerceCourtReservations extends Component {
     );
   };
 
-  renderItems = () => {
+  renderList = () => {
     const { filteredList } = this.state;
 
     if (filteredList.length) {
       return (
         <FlatList
           data={filteredList}
-          renderItem={this.renderList.bind(this)}
+          renderItem={this.renderItem.bind(this)}
           keyExtractor={reservation => reservation.id}
         />
       );
@@ -113,10 +133,16 @@ class CommerceCourtReservations extends Component {
   render() {
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
-        <Calendar
-          onDateSelected={date => this.onDateSelected(date)}
-          startingDate={this.state.selectedDate}
+        <AreaComponentRenderer
+          hairdressers={
+            <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+              <EmployeesFilter onValueChange={this.onEmployeesFilterValueChange} />
+            </PermissionsAssigner>
+          }
         />
+
+        <Calendar onDateSelected={date => this.onDateSelected(date)} startingDate={this.state.selectedDate} />
+
         <ButtonGroup
           onPress={this.updateIndex}
           selectedIndex={this.state.selectedIndex}
@@ -129,11 +155,7 @@ class CommerceCourtReservations extends Component {
           selectedTextStyle={styles.buttonGroupSelectedTextStyle}
           innerBorderStyle={styles.buttonGroupInnerBorderStyle}
         />
-        {this.props.loading ? (
-          <Spinner style={{ position: 'relative' }} />
-        ) : (
-            this.renderItems()
-          )}
+        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
       </View>
     );
   }
@@ -175,12 +197,19 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId } = state.commerceData;
-  const { detailedReservations, loading } = state.courtReservationsList;
+  const {
+    commerceId,
+    area: { areaId }
+  } = state.commerceData;
+  const { detailedReservations, loading } = state.reservationsList;
+  const { services } = state.servicesList;
+  const { courts } = state.courtsList;
+  const { selectedEmployeeId } = state.employeesList;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
-  return { commerceId, reservations: detailedReservations, loading };
+  return { commerceId, areaId, selectedEmployeeId, employeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {
-  onCommerceDetailedCourtReservationsRead
-})(CommerceCourtReservations);
+  onCommerceDetailedReservationsRead
+})(CommerceReservationsList);

@@ -1,25 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Card,
-  CheckBox,
-  ButtonGroup,
-  Text,
-  Divider
-} from 'react-native-elements';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableWithoutFeedback
-} from 'react-native';
+import { Card, CheckBox, ButtonGroup, Text, Divider } from 'react-native-elements';
+import { View, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MAIN_COLOR } from '../../constants';
-import {
-  onScheduleValueChange,
-  onScheduleCardValueChange,
-  onScheduleCardDelete
-} from '../../actions';
+import { onScheduleValueChange, onScheduleCardValueChange, onScheduleCardDelete } from '../../actions';
 import { CardSection, DatePicker, Toast } from '../common';
 
 const buttonSize = Math.round(Dimensions.get('window').width) / 8.5;
@@ -60,21 +45,27 @@ class ScheduleRegister extends Component {
 
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
-        this.setState({ firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre' });
+        this.setState({
+          firstShiftStartError: 'La hora de apertura debe ser anterior al de cierre'
+        });
       } else {
         this.setState({ firstShiftStartError: '' });
       }
     }
-  }
+  };
 
   firstShiftEndError = () => {
     const { firstShiftStart, firstShiftEnd, secondShiftStart } = this.props.card;
 
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
-        this.setState({ firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+        this.setState({
+          firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
+        });
       } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
-        this.setState({ firstShiftEndError: 'El primer turno debe finalzar antes del segundo' });
+        this.setState({
+          firstShiftEndError: 'El primer turno debe finalzar antes del segundo'
+        });
       } else {
         this.setState({ firstShiftEndError: '' });
       }
@@ -86,26 +77,32 @@ class ScheduleRegister extends Component {
 
     if (secondShiftStart) {
       if (secondShiftStart <= firstShiftEnd) {
-        this.setState({ secondShiftStartError: 'El segundo turno debe arrancar despues del primero' });
+        this.setState({
+          secondShiftStartError: 'El segundo turno debe arrancar despues del primero'
+        });
       } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
-        this.setState({ secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre' });
+        this.setState({
+          secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre'
+        });
       } else {
         this.setState({ secondShiftStartError: '' });
       }
     }
-  }
+  };
 
   secondShiftEndError = () => {
     const { secondShiftStart, secondShiftEnd } = this.props.card;
 
     if (secondShiftEnd) {
       if (secondShiftEnd <= secondShiftStart) {
-        this.setState({ secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
+        this.setState({
+          secondShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
+        });
       } else {
-        this.setState({ secondShiftEndError: '' })
+        this.setState({ secondShiftEndError: '' });
       }
     }
-  }
+  };
 
   onSecondTurnPress = () => {
     const { checked, firstShiftStartError, firstShiftEndError } = this.state;
@@ -119,44 +116,39 @@ class ScheduleRegister extends Component {
         secondShiftEnd: null
       });
     } else {
-      if (!checked) Toast.show({ text: 'Debe completar el primer turno para agregar un segundo' });
+      if (!checked)
+        Toast.show({
+          text: 'Debe completar el primer turno para agregar un segundo'
+        });
       this.setState({ checked: false });
     }
   };
 
   getDisabledDays = () => {
-    return this.props.selectedDays.filter(
-      day => !this.props.card.days.includes(day)
-    );
+    return this.props.selectedDays.filter(day => !this.props.card.days.includes(day));
   };
 
   updateIndex = selectedIndexes => {
-    const {
-      card,
-      selectedDays,
-      onScheduleCardValueChange,
-      onScheduleValueChange
-    } = this.props;
+    const { card, selectedDays, onScheduleCardValueChange } = this.props;
 
     if (selectedIndexes.length > card.days.length) {
       //On day Added
-      onScheduleValueChange({
-        prop: 'selectedDays',
-        value: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
+      this.props.onScheduleValueChange({
+        selectedDays: [...selectedDays, selectedIndexes[selectedIndexes.length - 1]]
       });
     } else {
       //On day Deleted
-      const valueErased = card.days.filter(
-        day => !selectedIndexes.includes(day)
-      )[0];
+      const valueErased = card.days.filter(day => !selectedIndexes.includes(day))[0];
 
-      onScheduleValueChange({
-        prop: 'selectedDays',
-        value: selectedDays.filter(day => day !== valueErased)
+      this.props.onScheduleValueChange({
+        selectedDays: selectedDays.filter(day => day !== valueErased)
       });
     }
 
-    onScheduleCardValueChange({ id: card.id, days: [...selectedIndexes].sort((a, b) => a - b) });
+    onScheduleCardValueChange({
+      id: card.id,
+      days: [...selectedIndexes].sort((a, b) => a - b)
+    });
   };
 
   renderSecondTurn() {
@@ -207,9 +199,7 @@ class ScheduleRegister extends Component {
                 name="md-close"
                 color="black"
                 size={25}
-                onPress={() =>
-                  this.props.onScheduleCardDelete(this.props.card.id)
-                }
+                onPress={() => this.props.onScheduleCardDelete(this.props.card.id)}
               />
             </View>
           </View>
@@ -328,11 +318,8 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onScheduleValueChange,
-    onScheduleCardValueChange,
-    onScheduleCardDelete
-  }
-)(ScheduleRegister);
+export default connect(mapStateToProps, {
+  onScheduleValueChange,
+  onScheduleCardValueChange,
+  onScheduleCardDelete
+})(ScheduleRegister);

@@ -2,19 +2,12 @@ import React, { Component } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import {
-  BarChart,
-  Spinner,
-  DatePicker,
-  Button,
-  CardSection,
-  Menu,
-  IconButton
-} from '../../common';
+import { BarChart, Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import EmployeesPicker from './EmployeesPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readDailyReservationsByRange
+  onDailyReservationsReadByRange
 } from '../../../actions/CommerceReportsActions';
 
 const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
@@ -24,12 +17,13 @@ class DailyReservationsChart extends Component {
     super(props);
     const { commerceId, startDate, endDate } = props;
 
-    props.readDailyReservationsByRange(commerceId, startDate, endDate);
+    props.onDailyReservationsReadByRange(commerceId, startDate, endDate);
 
     this.state = {
       modal: false,
       modalStartDate: startDate,
-      modalEndDate: endDate
+      modalEndDate: endDate,
+      selectedEmployee: { id: null }
     };
   }
 
@@ -39,34 +33,36 @@ class DailyReservationsChart extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: (
-        <IconButton
-          icon="md-create"
-          onPress={() => this.setState({ modal: true })}
-        />
-      )
+      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
     });
   }
 
   onGenerateReportPress = () => {
-    this.props.readDailyReservationsByRange(
+    this.props.onDailyReservationsReadByRange(
       this.props.commerceId,
       moment(this.state.modalStartDate),
-      moment(this.state.modalEndDate)
+      moment(this.state.modalEndDate),
+      this.state.selectedEmployee.id
     );
 
     this.props.onCommerceReportValueChange({
-      prop: 'startDate',
-      value: moment(this.state.modalStartDate)
-    });
-
-    this.props.onCommerceReportValueChange({
-      prop: 'endDate',
-      value: moment(this.state.modalEndDate)
+      startDate: moment(this.state.modalStartDate),
+      endDate: moment(this.state.modalEndDate),
+      selectedEmployee: this.state.selectedEmployee
     });
 
     this.setState({ modal: false });
   };
+
+  getChartTitle = () => {
+    let title = 'Cantidad de reservas por día '
+
+    if (this.props.selectedEmployee.id)
+      title += `de ${this.props.selectedEmployee.name} `;
+
+    return title + 'entre el ' + this.props.startDate.format('DD/MM/YYYY') +
+      ' y el ' + this.props.endDate.format('DD/MM/YYYY');
+  }
 
   render() {
     if (this.props.loading) return <Spinner />;
@@ -113,21 +109,19 @@ class DailyReservationsChart extends Component {
               onDateChange={modalEndDate => this.setState({ modalEndDate })}
             />
           </CardSection>
+
+          <EmployeesPicker
+            value={this.state.selectedEmployee.id}
+            onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
+          />
+
           <CardSection>
-            <Button
-              title={'Generar Reporte'}
-              onPress={this.onGenerateReportPress}
-            />
+            <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
         </Menu>
 
         <BarChart
-          title={
-            'CANTIDAD DE RESERVAS POR DÍA ENTRE EL ' +
-            this.props.startDate.format('DD/MM/YYYY') +
-            ' Y EL ' +
-            this.props.endDate.format('DD/MM/YYYY')
-          }
+          title={this.getChartTitle()}
           emptyDataMessage="Parece que no hay reservas en el periodo ingresado"
           xlabel="DÍAS DE LA SEMANA"
           data={dataBar}
@@ -138,7 +132,7 @@ class DailyReservationsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, startDate, endDate, loading } = state.commerceReports;
+  const { data, startDate, endDate, selectedEmployee, loading } = state.commerceReports;
   const { commerceId } = state.commerceData;
 
   return {
@@ -146,6 +140,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     commerceId,
+    selectedEmployee,
     loading
   };
 };
@@ -153,5 +148,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
-  readDailyReservationsByRange
+  onDailyReservationsReadByRange
 })(DailyReservationsChart);

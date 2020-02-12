@@ -1,36 +1,25 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView
-} from 'react-native';
-import {
-  Avatar,
-  Text,
-  Divider,
-  Image,
-  Button,
-  Rating
-} from 'react-native-elements';
+import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Avatar, Text, Divider, Image, Button, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { PictureView, Spinner } from './common';
+import { PictureView, Spinner, AreaComponentRenderer } from './common';
 import {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
-  onCommerceCourtTypesRead
+  onReservationValueChange,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 } from '../actions';
 import { MAIN_COLOR } from '../constants';
 import CommerceCourtTypes from './client/CommerceCourtTypes';
+import CommerceServicesEmployees from './client/CommerceServicesEmployees';
 
-const imageSizeWidth = Math.round(Dimensions.get('window').width);
-const imageSizeHeight = Math.round(Dimensions.get('window').height * 0.2);
+const screenWidth = Math.round(Dimensions.get('window').width);
+const headerPictureHeight = Math.round(Dimensions.get('window').height * 0.2);
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
@@ -42,8 +31,8 @@ class CommerceProfileView extends Component {
   componentDidMount() {
     let { commerceId, favoriteCommerces } = this.props;
 
-    if (this.props.navigation.state.routeName === 'commerceProfileView')
-      commerceId = this.props.commerce.objectID;
+    if (this.props.navigation.getParam('commerceId')) commerceId = this.props.navigation.getParam('commerceId');
+    else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
     this.setState({ favorite: favoriteCommerces.includes(commerceId) });
 
@@ -54,16 +43,21 @@ class CommerceProfileView extends Component {
       loadingType: 'loading'
     });
 
-    this.props.commerceHitsUpdate([]);
+    this.props.onEmailVerifyReminded();
+  }
+
+  componentDidUpdate(prevProps) {
+    // para evitar esto se deberia guardar el areaId en Algolia
+    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
+      this.props.onReservationValueChange({ areaId: this.props.areaId });
+    }
   }
 
   renderDescription = () => {
     if (this.props.description)
       return (
         <View style={styles.descriptionStyle}>
-          <Text style={{ textAlign: 'center', fontSize: 16 }}>
-            {this.props.description}
-          </Text>
+          <Text style={{ textAlign: 'center', fontSize: 16 }}>{this.props.description}</Text>
         </View>
       );
   };
@@ -76,38 +70,31 @@ class CommerceProfileView extends Component {
       const { locationContainerStyle } = styles;
 
       return (
-        <TouchableOpacity
-          onPress={() => this.onMapPress()}
-          style={locationContainerStyle}
-        >
+        <TouchableOpacity onPress={() => this.onMapPress()} style={locationContainerStyle}>
           <Ionicons name="md-pin" type="ionicon" size={16} />
 
-          <Text
-            style={{ textAlign: 'center', paddingLeft: 5 }}
-          >{`${address}, ${city}, ${name}`}</Text>
+          <Text style={{ textAlign: 'center', paddingLeft: 5 }}>{`${address}, ${city}, ${name}`}</Text>
         </TouchableOpacity>
       );
     }
   };
 
   onFavoritePress = commerceId => {
-    if (this.state.favorite) {
-      this.props.deleteFavoriteCommerce(commerceId);
-    } else {
-      this.props.registerFavoriteCommerce(commerceId);
-    }
+    this.state.favorite
+      ? this.props.onFavoriteCommerceDelete(commerceId)
+      : this.props.onFavoriteCommerceRegister(commerceId);
+
     this.setState({ favorite: !this.state.favorite });
   };
 
   onMapPress = () => {
-    const { address, city, province, latitude, longitude } = this.props;
-
-    this.props.onLocationChange({
-      address,
-      city,
-      provinceName: province.name,
-      latitude,
-      longitude
+    this.props.onLocationValueChange({
+      address: this.props.address,
+      city: this.props.city,
+      provinceName: this.props.province.name,
+      latitude: this.props.latitude,
+      longitude: this.props.longitude,
+      userLocation: { ...this.props.userLocation, latitude: null, longitude: null }
     });
 
     this.props.navigation.navigate('commerceLocationMap');
@@ -142,8 +129,8 @@ class CommerceProfileView extends Component {
         <View>
           <Image
             style={{
-              height: imageSizeHeight,
-              width: imageSizeWidth,
+              height: headerPictureHeight,
+              width: screenWidth,
               position: 'absolute'
             }}
             source={headerPicture ? { uri: headerPicture } : null}
@@ -152,13 +139,7 @@ class CommerceProfileView extends Component {
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
               type="clear"
-              icon={
-                <Ionicons
-                  name="md-information-circle-outline"
-                  color={'white'}
-                  size={30}
-                />
-              }
+              icon={<Ionicons name="md-information-circle-outline" color={'white'} size={30} />}
               onPress={() => navigation.navigate('commerceProfileInfo')}
             />
 
@@ -168,8 +149,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -206,12 +187,7 @@ class CommerceProfileView extends Component {
                 })
               }
             >
-              <Rating
-                style={{ padding: 8 }}
-                readonly
-                imageSize={22}
-                startingValue={this.getRatingValue()}
-              />
+              <Rating style={{ padding: 8 }} readonly imageSize={22} startingValue={this.getRatingValue()} />
             </TouchableOpacity>
 
             {this.renderLocation()}
@@ -228,13 +204,19 @@ class CommerceProfileView extends Component {
             }}
           />
         </View>
-        <CommerceCourtTypes navigation={navigation} />
+
+        <AreaComponentRenderer
+          area={this.props.areaId}
+          sports={<CommerceCourtTypes navigation={navigation} />}
+          hairdressers={<CommerceServicesEmployees navigation={navigation} />}
+        />
+
         <PictureView
           isVisible={this.state.pictureVisible}
           onClosePress={this.onPicturePress}
           picture={this.props.profilePicture}
-          width={imageSizeWidth}
-          height={(imageSizeHeight / 0.2) * 0.5}
+          width={screenWidth}
+          height={screenWidth}
         />
       </ScrollView>
     );
@@ -248,7 +230,7 @@ const styles = StyleSheet.create({
   headerContainerStyle: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: imageSizeHeight / 2 - 49
+    marginTop: headerPictureHeight / 2 - 49
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
@@ -273,7 +255,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerce } = state.courtReservation;
+  const { commerce } = state.reservation;
   const { favoriteCommerces } = state.commercesList;
   const loadingCourtTypes = state.commerceCourtTypes.loading;
   const { cards } = state.commerceSchedule;
@@ -289,9 +271,11 @@ const mapStateToProps = state => {
     commerceId,
     latitude,
     longitude,
-    rating
+    rating,
+    area: { areaId }
   } = state.commerceData;
 
+  const { userLocation } = state.locationData;
   return {
     name,
     description,
@@ -308,15 +292,18 @@ const mapStateToProps = state => {
     favoriteCommerces,
     cards,
     loadingCourtTypes,
-    loadingProfile
+    loadingProfile,
+    areaId,
+    userLocation
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceRead,
-  registerFavoriteCommerce,
-  deleteFavoriteCommerce,
-  onLocationChange,
-  commerceHitsUpdate,
-  onCommerceCourtTypesRead
+  onReservationValueChange,
+  onFavoriteCommerceRegister,
+  onFavoriteCommerceDelete,
+  onLocationValueChange,
+  onCommerceCourtTypesRead,
+  onEmailVerifyReminded
 })(CommerceProfileView);

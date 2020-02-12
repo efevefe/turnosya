@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { CardSection, Button, ButtonGroup } from '../common';
 import { MAIN_COLOR } from '../../constants';
-import {
-  onCourtReservationValueChange,
-  onClientCourtReservationCreate
-} from '../../actions';
 import CourtReservationDetails from '../CourtReservationDetails';
+import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
+import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
+import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
@@ -38,15 +37,9 @@ class ConfirmCourtReservation extends Component {
 
   onPriceSelect = selectedIndex => {
     this.setState({ selectedIndex });
-
-    this.props.onCourtReservationValueChange({
-      prop: 'price',
-      value: this.state.prices[selectedIndex]
-    });
-
-    this.props.onCourtReservationValueChange({
-      prop: 'light',
-      value: !!selectedIndex // 0 = false = no light // 1 = true = light
+    this.props.onReservationValueChange({
+      price: this.state.prices[selectedIndex],
+      light: !!selectedIndex // 0 = false = no light // 1 = true = light
     });
   };
 
@@ -67,97 +60,113 @@ class ConfirmCourtReservation extends Component {
     }
   };
 
-  onConfirmReservation = () => {
-    const { commerce, court, courtType, slot, price, light } = this.props;
+  onConfirmReservation = async () => {
+    try {
+      if (await isEmailVerified()) {
+        const {
+          commerce,
+          court,
+          courtType,
+          startDate,
+          endDate,
+          areaId,
+          price,
+          light,
+          firstName,
+          lastName
+        } = this.props;
 
-    this.props.onClientCourtReservationCreate({
-      commerceId: commerce.objectID,
-      courtId: court.id,
-      courtType,
-      slot,
-      price,
-      light
-    });
+        const notification = newReservationNotificationFormat({
+          startDate,
+          service: `${court.name}`,
+          actorName: `${firstName} ${lastName}`,
+          receptorName: `${commerce.name}`
+        });
+
+        this.props.onClientCourtReservationCreate({
+          commerceId: commerce.objectID,
+          areaId,
+          courtId: court.id,
+          courtType,
+          startDate,
+          endDate,
+          price,
+          light,
+          notification
+        });
+      } else {
+        this.setState({ modal: true });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  onModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  renderEmailModal = () => {
+    if (this.state.modal) return <VerifyEmailModal onModalCloseCallback={this.onModalClose} />;
   };
 
   renderButtons = () => {
-    if (this.props.saved) {
+    if (this.props.saved || this.props.exists) {
       return (
         <CardSection style={{ flexDirection: 'row' }}>
           <View style={{ alignItems: 'flex-start', flex: 1 }}>
             <RNEButton
-              title="Reservar otro"
+              title="Reservar Otro"
               type="clear"
               titleStyle={{ color: MAIN_COLOR }}
-              icon={
-                <Ionicons
-                  name="ios-arrow-back"
-                  size={30}
-                  color={MAIN_COLOR}
-                  style={{ marginRight: 10 }}
-                />
-              }
+              icon={<Ionicons name="ios-arrow-back" size={30} color={MAIN_COLOR} style={{ marginRight: 10 }} />}
               onPress={() => this.props.navigation.navigate('commerceProfileView')}
             />
           </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <RNEButton
-              title="Finalizar"
-              type="clear"
-              titleStyle={{ color: MAIN_COLOR }}
-              iconRight
-              icon={
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={30}
-                  color={MAIN_COLOR}
-                  style={{ marginLeft: 10 }}
-                />
-              }
-              onPress={() => this.props.navigation.navigate('commercesAreas')}
-            />
-          </View>
+          {this.props.saved ? (
+            <View style={{ alignItems: 'flex-end' }}>
+              <RNEButton
+                title="Finalizar"
+                type="clear"
+                titleStyle={{ color: MAIN_COLOR }}
+                iconRight
+                icon={<Ionicons name="ios-arrow-forward" size={30} color={MAIN_COLOR} style={{ marginLeft: 10 }} />}
+                onPress={() => this.props.navigation.navigate('commercesAreas')}
+              />
+            </View>
+          ) : null}
         </CardSection>
       );
     }
 
     return (
       <CardSection>
-        <Button
-          title="Confirmar Reserva"
-          loading={this.props.loading}
-          onPress={this.onConfirmReservation}
-        />
+        <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
       </CardSection>
     );
   };
 
   render() {
-    const { commerce, court, slot, light, price, saved } = this.props;
+    const { commerce, court, startDate, endDate, light, price, saved } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
         <CourtReservationDetails
-          mode='commerce'
+          mode="commerce"
           name={commerce.name}
-          info={
-            commerce.address + ', ' +
-            commerce.city + ', ' +
-            commerce.provinceName
-          }
-          infoIcon='md-pin'
+          info={commerce.address + ', ' + commerce.city + ', ' + commerce.provinceName}
+          infoIcon="md-pin"
           picture={commerce.profilePicture}
           court={court}
-          startDate={slot.startDate}
-          endDate={slot.endDate}
+          startDate={startDate}
+          endDate={endDate}
           price={price}
           light={light}
           showPrice={saved}
         />
         {this.renderPriceButtons()}
-        <View style={styles.confirmButtonContainer}>
-          {this.renderButtons()}
-        </View>
+        <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
+        {this.renderEmailModal()}
       </View>
     );
   }
@@ -179,17 +188,35 @@ const mapStateToProps = state => {
     commerce,
     courtType,
     court,
-    slot,
+    startDate,
+    endDate,
     price,
     light,
+    areaId,
     saved,
+    exists,
     loading
-  } = state.courtReservation;
+  } = state.reservation;
+  const { firstName, lastName } = state.clientData;
 
-  return { commerce, courtType, court, slot, price, light, saved, loading };
+  return {
+    commerce,
+    courtType,
+    court,
+    startDate,
+    endDate,
+    price,
+    light,
+    areaId,
+    saved,
+    exists,
+    loading,
+    firstName,
+    lastName
+  };
 };
 
 export default connect(mapStateToProps, {
-  onCourtReservationValueChange,
+  onReservationValueChange,
   onClientCourtReservationCreate
 })(ConfirmCourtReservation);

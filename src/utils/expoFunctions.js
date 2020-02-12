@@ -13,11 +13,9 @@ export const getPermissionLocationStatus = async () => {
   try {
     const { status } = await getPermissionLocation();
 
-    return Platform.OS === 'ios'
-      ? getLocationIos(status)
-      : getLocationAndroid(status);
-  } catch (e) {
-    console.error(e);
+    return Platform.OS === 'ios' ? getLocationIos(status) : getLocationAndroid(status);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -30,8 +28,8 @@ const getLocationAndroid = async status => {
     return (await Location.hasServicesEnabledAsync())
       ? LocationStatus.permissionsAllowed
       : LocationStatus.permissionsAllowedWithGPSOff;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -48,8 +46,8 @@ const getLocationIos = async status => {
     }
 
     return LocationStatus.permissionsAllowed;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -59,8 +57,11 @@ export const getCurrentPosition = async () => {
     return await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High
     });
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    if (error.message.includes('Location services are disabled')) {
+      return { coords: { latitude: null, longitude: null } };
+    }
+    console.error(error);
   }
 };
 
@@ -70,32 +71,30 @@ export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
       latitude,
       longitude
     });
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
 export const getLatitudeAndLongitudeFromString = async string => {
   try {
     return await Location.geocodeAsync(string);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
 export const openGPSAndroid = () => {
   try {
-    IntentLauncher.startActivityAsync(
-      IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
-    ).then(async () => {
+    IntentLauncher.startActivityAsync(IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS).then(async () => {
       if (await Location.hasServicesEnabledAsync()) {
         return LocationStatus.permissionsAllowed;
       }
 
       return LocationStatus.permissionsAllowedWithGPSOff;
     });
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -106,15 +105,15 @@ export const openSettingIos = () => {
 const getPermissionLocation = async () => {
   try {
     return await Permissions.getAsync(Permissions.LOCATION);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };
 
 export const askPermissionLocation = async () => {
   try {
     return await Permissions.askAsync(Permissions.LOCATION);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
 };

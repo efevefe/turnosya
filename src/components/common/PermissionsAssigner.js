@@ -1,15 +1,16 @@
-import React from 'react';
 import { connect } from 'react-redux';
 
-const PermissionsAssigner = props => {
-  const { requiredRole, sessionRole, children } = props;
-  return sessionRole.value >= requiredRole.value ? children : null;
-};
-
 const mapStateToProps = state => {
-  const { role } = state.roleData;
-
-  return { sessionRole: role };
+  return { sessionRole: state.roleData.role };
 };
 
-export default connect(mapStateToProps, {})(PermissionsAssigner);
+const PermissionsAssigner = connect(
+  mapStateToProps, null
+)(
+  props => {
+    const { requiredRole, sessionRole, children } = props;
+    return sessionRole.value >= requiredRole.value ? children : null;
+  }
+);
+
+export { PermissionsAssigner };

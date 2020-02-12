@@ -5,17 +5,11 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { View, StyleSheet, Platform, Image, Text } from 'react-native';
 import { Fab } from 'native-base';
 import { SearchBar } from 'react-native-elements';
-import {
-  onSelectedLocationChange,
-  onCourtReservationValueChange
-} from '../../actions';
+import { onLocationValueChange, onSelectedLocationChange, onReservationValueChange } from '../../actions';
 import { MAIN_COLOR, NAVIGATION_HEIGHT } from '../../constants';
 import LocationMessages from './LocationMessages';
 import { Toast } from '.';
-import {
-  getAddressFromLatAndLong,
-  getLatitudeAndLongitudeFromString
-} from '../../utils';
+import { getAddressFromLatAndLong, getLatitudeAndLongitudeFromString } from '../../utils';
 
 class CommercesMap extends React.Component {
   state = {
@@ -25,18 +19,7 @@ class CommercesMap extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.selectedLocation.latitude) {
-      this.setAddressString();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.state.locationAsked &&
-      prevProps.userLocation !== this.props.userLocation
-    ) {
-      this.setState({ locationAsked: false });
-    }
+    if (this.props.selectedLocation.latitude) this.setAddressString();
   }
 
   setAddressString = () => {
@@ -55,9 +38,7 @@ class CommercesMap extends React.Component {
 
     newAddress += 'Argentina'; // gets error when addres is from other country
 
-    if (newAddress === 'Argentina') {
-      newAddress = this.state.defaultAddress;
-    }
+    if (newAddress === 'Argentina') newAddress = this.state.defaultAddress;
 
     this.setState({ completeAddress: newAddress });
 
@@ -66,9 +47,7 @@ class CommercesMap extends React.Component {
 
   onStringSearch = async string => {
     try {
-      const [latLongResult] = await getLatitudeAndLongitudeFromString(
-        string ? string : this.state.completeAddress
-      );
+      const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
 
       if (latLongResult !== undefined) {
         const { latitude, longitude } = latLongResult;
@@ -78,12 +57,11 @@ class CommercesMap extends React.Component {
           completeAddress: this.state.completeAddress.replace('Calle', '')
         });
         Toast.show({
-          text:
-            'No se han encontrado resultados, intente modificar la dirección.'
+          text: 'No se han encontrado resultados, intente modificar la dirección.'
         });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -111,8 +89,8 @@ class CommercesMap extends React.Component {
       });
 
       this.props.onSelectedLocationChange(location);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -165,18 +143,17 @@ class CommercesMap extends React.Component {
       arrayOfMarkers.push(selectedLocation);
     }
 
-    if (this.props.markers.length > 0) {
+    if (this.props.markers.length) {
       Array.prototype.push.apply(arrayOfMarkers, this.props.markers);
     }
 
-    return arrayOfMarkers.length > 0
+    return arrayOfMarkers.length
       ? this.calculateMarkersRegion(arrayOfMarkers)
       : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
   };
 
   renderUserMarker = () => {
     const { latitude, longitude, address } = this.props.userLocation;
-
     if (latitude && longitude && address) {
       return (
         <MapView.Marker
@@ -186,6 +163,7 @@ class CommercesMap extends React.Component {
           }}
           title={address}
           pinColor={'#1589FF'}
+          // pinColor={'#008000'}
         >
           {/* <Image
             source={require('../../../assets/turnosya-grey.png')}
@@ -198,24 +176,29 @@ class CommercesMap extends React.Component {
 
   renderPointerMarker = () => {
     const { latitude, longitude, address } = this.props.selectedLocation;
-    if (latitude && longitude && address) {
-      return (
-        <MapView.Marker
-          coordinate={{
-            latitude,
-            longitude
-          }}
-          draggable
-          title={address}
-          onDragEnd={e =>
-            this.updateAddressFromLatAndLong({
-              latitude: e.nativeEvent.coordinate.latitude,
-              longitude: e.nativeEvent.coordinate.longitude
-            })
-          }
-          pinColor={MAIN_COLOR}
-        />
-      );
+    const { latitude: userLat, longitude: userLong } = this.props.userLocation;
+
+    if (userLat !== latitude && userLong !== longitude) {
+      // La primera validación es para que el "pointMarker" no pise al "User Marker"
+      if (latitude && longitude && address) {
+        return (
+          <MapView.Marker
+            coordinate={{
+              latitude,
+              longitude
+            }}
+            draggable
+            title={address}
+            onDragEnd={e =>
+              this.updateAddressFromLatAndLong({
+                latitude: e.nativeEvent.coordinate.latitude,
+                longitude: e.nativeEvent.coordinate.longitude
+              })
+            }
+            pinColor={MAIN_COLOR}
+          />
+        );
+      }
     }
   };
 
@@ -232,10 +215,7 @@ class CommercesMap extends React.Component {
           title={marker.name}
           pinColor={'black'}
         >
-          <MapView.Callout
-            tooltip
-            onPress={() => this.onMarkerTitlePress(marker)}
-          >
+          <MapView.Callout tooltip onPress={() => this.onMarkerTitlePress(marker)}>
             <Text>{marker.name}</Text>
           </MapView.Callout>
         </MapView.Marker>
@@ -243,21 +223,14 @@ class CommercesMap extends React.Component {
     }
   };
 
-  onMarkerTitlePress = marker => {
-    this.props.onCourtReservationValueChange({
-      prop: 'commerce',
-      value: marker
-    });
-
+  onMarkerTitlePress = commerce => {
+    this.props.onReservationValueChange({ commerce });
     this.props.navigation.navigate('commerceProfileView');
   };
 
   renderSearchBar = () => {
     if (this.props.searchBar) {
-      const validAddress =
-        this.state.completeAddress !== 'Córdoba, Argentina'
-          ? this.state.completeAddress
-          : '';
+      const validAddress = this.state.completeAddress !== 'Córdoba, Argentina' ? this.state.completeAddress : '';
 
       return (
         <View style={mainContainer}>
@@ -280,12 +253,24 @@ class CommercesMap extends React.Component {
     }
   };
 
+  onCurrentLocationFound = ({ location }) => {
+    if (location) {
+      this.setState({ locationAsked: false });
+      this.props.onLocationValueChange({
+        ...location,
+        selectedLocation: { ...location },
+        userLocation: { ...location }
+      });
+      this.updateAddressFromLatAndLong({ latitude: location.latitude, longitude: location.longitude });
+    }
+  };
+
   renderLocationMessage = () => {
-    if (this.state.locationAsked) return <LocationMessages />;
+    if (this.state.locationAsked) return <LocationMessages onLocationFound={this.onCurrentLocationFound} />;
   };
 
   renderFabLocation = () => {
-    if (this.props.longPressAllowed) {
+    if (this.props.locationButtonIndex === 2) {
       return (
         <Fab
           style={{ backgroundColor: MAIN_COLOR }}
@@ -299,7 +284,7 @@ class CommercesMap extends React.Component {
   };
 
   onLongPressHandler = e => {
-    if (this.props.selectedLocation.latitude || this.props.longPressAllowed)
+    if (this.props.locationButtonIndex === 2)
       this.updateAddressFromLatAndLong({
         latitude: e.nativeEvent.coordinate.latitude,
         longitude: e.nativeEvent.coordinate.longitude
@@ -368,17 +353,13 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { userLocation, selectedLocation } = state.locationData;
+  const { markers, locationButtonIndex } = state.commercesList;
 
-  const { markers } = state.commercesList;
-
-  return {
-    userLocation,
-    selectedLocation,
-    markers
-  };
+  return { userLocation, selectedLocation, markers, locationButtonIndex };
 };
 
 export default connect(mapStateToProps, {
+  onLocationValueChange,
   onSelectedLocationChange,
-  onCourtReservationValueChange
+  onReservationValueChange
 })(CommercesMap);

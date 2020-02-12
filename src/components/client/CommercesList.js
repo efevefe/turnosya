@@ -10,7 +10,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { readFavoriteCommerces } from '../../actions';
+import { onFavoriteCommercesRead } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -26,7 +26,7 @@ class CommercesList extends Component {
       header: undefined
     });
 
-    this.props.readFavoriteCommerces();
+    this.props.onFavoriteCommercesRead();
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -39,11 +39,7 @@ class CommercesList extends Component {
   renderRightButtons = () => {
     return (
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton
-          icon="md-search"
-          containerStyle={{ paddingRight: 0 }}
-          onPress={this.onSearchPress}
-        />
+        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
         <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
       </View>
     );
@@ -65,13 +61,7 @@ class CommercesList extends Component {
 
   renderAlgoliaSearchBar = () => {
     if (this.state.searchVisible) {
-      return (
-        <ConnectedSearchBox
-          autoFocus={true}
-          showLoadingIndicator
-          onCancel={this.onCancelPress}
-        />
-      );
+      return <ConnectedSearchBox autoFocus={true} showLoadingIndicator onCancel={this.onCancelPress} />;
     }
   };
 
@@ -80,10 +70,8 @@ class CommercesList extends Component {
       return {
         filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
       };
-    else if (this.state.areaName)
-      return { filters: `areaName:\'${this.state.areaName}\'` };
-    else if (this.props.provinceNameFilter)
-      return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
+    else if (this.state.areaName) return { filters: `areaName:\'${this.state.areaName}\'` };
+    else if (this.props.provinceNameFilter) return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
     else return null;
   };
 
@@ -91,11 +79,6 @@ class CommercesList extends Component {
     return this.props.selectedLocation.latitude
       ? {
           aroundLatLng: `${this.props.selectedLocation.latitude}, ${this.props.selectedLocation.longitude}`,
-          aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
-        }
-      : this.props.userLocation.latitude
-      ? {
-          aroundLatLng: `${this.props.userLocation.latitude}, ${this.props.userLocation.longitude}`,
           aroundRadius: Math.round(1000 * this.props.locationRadiusKms)
         }
       : null;
@@ -118,16 +101,10 @@ class CommercesList extends Component {
         }}
       >
         {this.renderAlgoliaSearchBar()}
-        <Configure
-          {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }}
-        />
+        <Configure {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }} />
         <ConnectedStateResults />
         <ConnectedHits />
-        <Fab
-          style={{ backgroundColor: MAIN_COLOR }}
-          position="bottomRight"
-          onPress={this.onMapFabPress}
-        >
+        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onMapFabPress}>
           <Ionicons name="md-compass" />
         </Fab>
       </InstantSearch>
@@ -136,23 +113,9 @@ class CommercesList extends Component {
 }
 
 const mapStateToProps = state => {
-  const {
-    refinement,
-    favoriteCommerces,
-    provinceNameFilter,
-    locationRadiusKms
-  } = state.commercesList;
+  const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
 
-  const {
-    address,
-    city,
-    provinceName,
-    country,
-    latitude,
-    longitude,
-    userLocation,
-    selectedLocation
-  } = state.locationData;
+  const { address, city, provinceName, country, latitude, longitude, selectedLocation } = state.locationData;
 
   return {
     refinement,
@@ -165,11 +128,10 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    userLocation,
     selectedLocation
   };
 };
 
 export default connect(mapStateToProps, {
-  readFavoriteCommerces
+  onFavoriteCommercesRead
 })(CommercesList);

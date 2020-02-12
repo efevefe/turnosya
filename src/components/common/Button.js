@@ -11,11 +11,7 @@ class Button extends Component {
       <View style={this.props.outerContainerStyle}>
         <RNEButton
           {...this.props}
-          buttonStyle={[
-            styles.buttonStyle,
-            { backgroundColor: color },
-            this.props.buttonStyle
-          ]}
+          buttonStyle={[styles.buttonStyle, { backgroundColor: color }, this.props.buttonStyle]}
           containerStyle={[styles.containerStyle, this.props.containerStyle]}
         />
       </View>

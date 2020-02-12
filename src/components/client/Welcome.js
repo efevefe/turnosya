@@ -17,18 +17,14 @@ class Welcome extends Component {
             fadeDuration={0}
           />
           <CardSection>
-            <Text style={styles.textStyle}>
-              ¡Bienvenido, registrá tu negocio!
-            </Text>
+            <Text style={styles.textStyle}>¡Bienvenido, registrá tu negocio!</Text>
           </CardSection>
           <CardSection style={{ paddingLeft: 25, paddingRight: 25 }}>
             <Button
               title="Continuar"
               color="white"
               titleStyle={{ color: MAIN_COLOR }}
-              onPress={() =>
-                this.props.navigation.navigate('commerceRegisterProfile')
-              }
+              onPress={() => this.props.navigation.navigate('commerceRegisterProfile')}
             />
           </CardSection>
         </View>
@@ -38,15 +34,8 @@ class Welcome extends Component {
               title="Volver"
               type="clear"
               titleStyle={{ color: 'white' }}
-              icon={
-                <Ionicons
-                  name="ios-arrow-back"
-                  size={30}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-              }
-              onPress={() => this.props.navigation.navigate('tabs')}
+              icon={<Ionicons name="ios-arrow-back" size={30} color="white" style={{ marginRight: 10 }} />}
+              onPress={() => this.props.navigation.goBack(null)}
             />
           </CardSection>
         </View>

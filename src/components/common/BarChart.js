@@ -12,14 +12,8 @@ class BarChart extends Component {
 
   renderTitle = () => {
     if (this.props.title)
-      return (
-        <Text style={StyleSheet.flatten([
-          styles.title, this.props.titleStyle
-        ])}>
-          {this.props.title}
-        </Text>
-      )
-  }
+      return <Text style={StyleSheet.flatten([styles.title, this.props.titleStyle])}>{this.props.title}</Text>;
+  };
 
   renderXLabel = () => {
     const { chartPosition } = this.state;
@@ -30,40 +24,43 @@ class BarChart extends Component {
           style={{
             ...styles.chartTextContainer,
             fontSize: 12,
-            top: chartPosition.y + (chartHeight * 0.9),
-            left: chartPosition.x + (chartWidth / 11),
-            width: chartWidth - (chartWidth / 11)
+            top: chartPosition.y + chartHeight * 0.9,
+            left: chartPosition.x + chartWidth / 11,
+            width: chartWidth - chartWidth / 11
           }}
         >
-          <Text style={{
-            ...styles.chartText, fontSize: 12
-          }}>
+          <Text
+            style={{
+              ...styles.chartText,
+              fontSize: 12
+            }}
+          >
             {this.props.xlabel}
           </Text>
-        </View >
+        </View>
       );
     }
-  }
+  };
 
   renderEmptyDataMessage = () => {
     const { chartPosition } = this.state;
 
     if (!this.props.data.datasets[0].data.length && chartPosition) {
       return (
-        <View style={{
-          ...styles.chartTextContainer,
-          top: chartPosition.y + (chartHeight / 3),
-          left: chartPosition.x + (chartWidth / 10),
-          width: chartWidth - (chartWidth / 10),
-          paddingHorizontal: chartWidth / 6.5
-        }}>
-          <Text style={styles.chartText}>
-            {this.props.emptyDataMessage}
-          </Text>
+        <View
+          style={{
+            ...styles.chartTextContainer,
+            top: chartPosition.y + chartHeight / 3,
+            left: chartPosition.x + chartWidth / 10,
+            width: chartWidth - chartWidth / 10,
+            paddingHorizontal: chartWidth / 6.5
+          }}
+        >
+          <Text style={styles.chartText}>{this.props.emptyDataMessage}</Text>
         </View>
       );
     }
-  }
+  };
 
   // renderToolTips = () => {
   //   // beta / stand by
@@ -101,7 +98,7 @@ class BarChart extends Component {
                 x: nativeEvent.layout.x,
                 y: nativeEvent.layout.y
               }
-            })
+            });
           }}
         >
           <RNCBarChart
@@ -146,10 +143,11 @@ const styles = StyleSheet.create({
   // toolTipText: {
   //   fontSize: 12,
   //   color: MAIN_COLOR
-  // },
+  // },  
   title: {
-    fontSize: 14,
-    padding: 15,
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     color: 'black',
     textAlign: 'center'
   },
@@ -162,6 +160,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignItems: 'center'
   }
-})
+});
 
 export { BarChart };

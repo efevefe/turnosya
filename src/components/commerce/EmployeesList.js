@@ -3,30 +3,23 @@ import { connect } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-import { Spinner, EmptyList } from '../common';
+import { Spinner, EmptyList, PermissionsAssigner } from '../common';
 import EmployeesListItem from './EmployeesListItem';
-import { readEmployees } from '../../actions';
+import { onEmployeesRead } from '../../actions';
 import { MAIN_COLOR } from '../../constants';
-import PermissionsAssigner from '../common/PermissionsAssigner';
 import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
   componentDidMount() {
-    this.unsubEmployeesRead = this.props.readEmployees(this.props.commerceId);
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
   }
 
   componentWillUnmount() {
-    this.unsubEmployeesRead && this.unsubEmployeesRead();
+    this.unsubscribeEmployeesRead && this.unsubscribeEmployeesRead();
   }
 
   renderRow({ item }) {
-    return (
-      <EmployeesListItem
-        employee={item}
-        commerceId={this.props.commerceId}
-        navigation={this.props.navigation}
-      />
-    );
+    return <EmployeesListItem employee={item} commerceId={this.props.commerceId} navigation={this.props.navigation} />;
   }
 
   onAddPress = () => {
@@ -54,11 +47,7 @@ class EmployeesList extends Component {
         {this.renderList()}
 
         <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-          <Fab
-            style={{ backgroundColor: MAIN_COLOR }}
-            position="bottomRight"
-            onPress={() => this.onAddPress()}
-          >
+          <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={() => this.onAddPress()}>
             <Ionicons name="md-add" />
           </Fab>
         </PermissionsAssigner>
@@ -74,4 +63,4 @@ const mapStateToProps = state => {
   return { employees, loading, commerceId };
 };
 
-export default connect(mapStateToProps, { readEmployees })(EmployeesList);
+export default connect(mapStateToProps, { onEmployeesRead })(EmployeesList);

@@ -4,11 +4,7 @@ import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Menu, MenuItem } from '../common';
 import { ROLES } from '../../constants';
-import {
-  courtDelete,
-  onCourtFormOpen,
-  onCourtValueChange
-} from '../../actions';
+import { onCourtDelete, onCourtFormOpen, onCourtValueChange } from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false };
@@ -25,23 +21,16 @@ class CourtListItem extends Component {
   };
 
   onConfirmDeletePress = () => {
-    const { court, commerceId, courtDelete } = this.props;
+    const { court, commerceId, onCourtDelete } = this.props;
 
-    courtDelete({ id: court.id, commerceId });
+    onCourtDelete({ id: court.id, commerceId });
     this.setState({ deleteVisible: !this.deleteVisible });
   };
 
   onUpdatePress = () => {
     this.props.onCourtFormOpen();
-
-    const { court } = this.props;
-
-    for (prop in court) {
-      this.props.onCourtValueChange({ prop, value: court[prop] });
-    }
-
+    this.props.onCourtValueChange(this.props.court);
     this.setState({ optionsVisible: !this.state.optionsVisible });
-
     this.props.navigation.navigate('courtForm', {
       title: 'Editar Cancha'
     });
@@ -52,18 +41,10 @@ class CourtListItem extends Component {
     let text = '';
 
     if (disabledFrom) {
-      text =
-        'Desde: ' +
-        disabledFrom.format('DD/MM/YYYY') +
-        ' a las ' +
-        disabledFrom.format('HH:mm');
+      text = 'Desde: ' + disabledFrom.format('DD/MM/YYYY') + ' a las ' + disabledFrom.format('HH:mm');
 
       if (disabledTo) {
-        text +=
-          '\nHasta: ' +
-          disabledTo.format('DD/MM/YYYY') +
-          ' a las ' +
-          disabledTo.format('HH:mm');
+        text += '\nHasta: ' + disabledTo.format('DD/MM/YYYY') + ' a las ' + disabledTo.format('HH:mm');
       }
     }
 
@@ -75,22 +56,10 @@ class CourtListItem extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <Menu
-          title={name}
-          onBackdropPress={this.onOptionsPress}
-          isVisible={this.state.optionsVisible}
-        >
-          <MenuItem
-            title="Editar"
-            icon="md-create"
-            onPress={this.onUpdatePress}
-          />
+        <Menu title={name} onBackdropPress={this.onOptionsPress} isVisible={this.state.optionsVisible}>
+          <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem
-            title="Eliminar"
-            icon="md-trash"
-            onPress={this.onDeletePress}
-          />
+          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
         </Menu>
 
         <Menu
@@ -98,11 +67,7 @@ class CourtListItem extends Component {
           onBackdropPress={this.onDeletePress}
           isVisible={this.state.deleteVisible}
         >
-          <MenuItem
-            title="Sí"
-            icon="md-checkmark"
-            onPress={this.onConfirmDeletePress}
-          />
+          <MenuItem title="Sí" icon="md-checkmark" onPress={this.onConfirmDeletePress} />
           <Divider style={{ backgroundColor: 'grey' }} />
           <MenuItem title="No" icon="md-close" onPress={this.onDeletePress} />
         </Menu>
@@ -125,9 +90,7 @@ class CourtListItem extends Component {
                   lineHeight: 20
                 }}
               >
-                {lightPrice
-                  ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}`
-                  : `Sin Luz: $${price}`}
+                {lightPrice ? `Sin Luz: $${price}\nCon Luz: $${lightPrice}` : `Sin Luz: $${price}`}
               </Text>
             </View>
           }
@@ -142,11 +105,7 @@ class CourtListItem extends Component {
               ) : null}
             </View>
           }
-          onLongPress={
-            this.props.role.value >= ROLES.ADMIN.value
-              ? this.onOptionsPress
-              : null
-          }
+          onLongPress={this.props.role.value >= ROLES.ADMIN.value ? this.onOptionsPress : null}
           rightIcon={
             this.props.role.value >= ROLES.ADMIN.value
               ? {
@@ -170,7 +129,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  courtDelete,
+  onCourtDelete,
   onCourtFormOpen,
   onCourtValueChange
 })(CourtListItem);
