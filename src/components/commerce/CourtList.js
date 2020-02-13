@@ -103,7 +103,7 @@ class CourtList extends Component {
       return (
         <View style={styles.mainContainer}>
           <SearchBar
-            placeholder="Buscar servicios.."
+            placeholder="Buscar canchas.."
             value={this.state.search}
             onChangeText={text => this.courtsFilter(text)}
             platform="android"
