@@ -23,12 +23,12 @@
         "NSLocationWhenInUseUsageDescription": "App would like to access your current location to determine",
         "NSLocationAlwaysUsageDescription": "App would like to access your current location",
         "NSCameraUsageDescription": "App would like to access your Camera",
-        "bundleIdentifier": "com.yourcompany.TurnosYa"
+        "bundleIdentifier": "com.yourcompany.turnosya"
       }
     },
     "android": {
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
-      "package": "com.yourcompany.TurnosYa"
+      "package": "com.yourcompany.turnosya"
     }
   }
 }

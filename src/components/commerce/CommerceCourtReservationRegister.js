@@ -17,7 +17,14 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   componentDidMount() {
+    this.loading = false;
     this.priceButtons();
+  }
+
+  componentDidUpdate() {
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
+    }
   }
 
   priceButtons = () => {
@@ -115,14 +122,16 @@ class CommerceCourtReservationRegister extends Component {
     if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
-          <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+          <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
         </CardSection>
       );
     }
   };
 
   onConfirmReservation = () => {
-    if (!this.nameError() && !this.phoneError()) {
+    if (!this.nameError() && !this.phoneError() && !this.loading) {
+      this.loading = true;
+
       const { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price } = this.props;
 
       this.props.onCommerceCourtReservationCreate({

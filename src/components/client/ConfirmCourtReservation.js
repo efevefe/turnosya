@@ -14,7 +14,14 @@ class ConfirmCourtReservation extends Component {
   state = { selectedIndex: 0, priceButtons: [], prices: [] };
 
   componentDidMount() {
+    this.loading = false;
     this.priceButtons();
+  }
+
+  componentDidUpdate() {
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
+    }
   }
 
   priceButtons = () => {
@@ -61,6 +68,10 @@ class ConfirmCourtReservation extends Component {
   };
 
   onConfirmReservation = async () => {
+    if (this.loading) return;
+
+    this.loading = true;
+
     try {
       if (await isEmailVerified()) {
         const {
@@ -141,7 +152,7 @@ class ConfirmCourtReservation extends Component {
 
     return (
       <CardSection>
-        <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+        <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
       </CardSection>
     );
   };
