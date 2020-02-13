@@ -175,15 +175,13 @@ class CommerceProfile extends Component {
   };
 
   onChoosePicturePress = async () => {
-    this.setState({ pictureOptionsVisible: false });
-
     try {
       if (Constants.platform.ios) {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
       }
 
       const options = {
-        mediaTypes: 'Images',
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
       };
@@ -211,14 +209,12 @@ class CommerceProfile extends Component {
   };
 
   onTakePicturePress = async () => {
-    this.setState({ pictureOptionsVisible: false });
-
     try {
       await Permissions.askAsync(Permissions.CAMERA_ROLL);
       await Permissions.askAsync(Permissions.CAMERA);
 
       const options = {
-        mediaTypes: 'Images',
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: this.state.profilePictureEdit ? [1, 1] : [10, 5]
       };
