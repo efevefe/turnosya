@@ -23,7 +23,7 @@ class ReviewCard extends Component {
             showRating={false}
             size={25}
             defaultRating={this.props.rating}
-            isDisabled={this.props.isDisabled}
+            isDisabled={this.props.readOnly}
           />
         </CardSection>
         <CardSection>

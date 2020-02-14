@@ -203,21 +203,25 @@ class ClientReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
+    ) : this.state.reservation.paymentId ? (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
-            commentPlaceholder="Deje un comentario sobre la atención..."
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="Antes de poder calificar al negocio debe registrarse el pago del turno" />
+      </View>
+    );
   };
 
   renderClientReview = () => {
@@ -233,10 +237,10 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard title="El negocio no te ha calificado" />
-        </View>
-      );
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard title="El negocio no te ha calificado" />
+      </View>
+    );
   };
 
   renderReviewFields = () => {
@@ -281,12 +285,12 @@ class ClientReservationDetails extends Component {
       <CardSection>
         <Button
           title="Pagar con Mercado Pago"
-          color='#009EE3'
+          color="#009EE3"
           icon={
             <Image
               source={require('../../../assets/mercado-pago-logo.png')}
               style={{ height: 21, width: 31, marginRight: 10 }}
-              resizeMode='contain'
+              resizeMode="contain"
             />
           }
           onPress={() =>
