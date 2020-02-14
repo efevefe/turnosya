@@ -68,7 +68,44 @@ const reservationDetailsScreens = {
   }
 };
 
-const calendarStack = createStackNavigator(
+const calendarScreens = {
+  schedulesList: {
+    screen: CommerceSchedulesList,
+    navigationOptions: {
+      title: 'Horarios de Atención'
+    }
+  },
+  scheduleRegister: {
+    screen: ScheduleRegister
+  },
+  registerConfiguration: {
+    screen: ScheduleRegisterConfiguration,
+    navigationOptions: {
+      title: 'Límites de turnos'
+    }
+  },
+  commerceCourtsList: {
+    screen: CommerceCourtsStateList
+  },
+  courtReservationRegister: {
+    screen: CommerceCourtReservationRegister,
+    navigationOptions: {
+      title: 'Nuevo Turno'
+    }
+  },
+  employeeServicesList: {
+    screen: EmployeeServicesList
+  },
+  serviceReservationRegister: {
+    screen: CommerceServiceReservationRegister,
+    navigationOptions: {
+      title: 'Nuevo Turno'
+    }
+  },
+  ...reservationDetailsScreens
+}
+
+const sportsCalendarStack = createStackNavigator(
   {
     sportsCalendar: {
       screen: CommerceCourtsSchedule,
@@ -77,6 +114,13 @@ const calendarStack = createStackNavigator(
         headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
+    ...calendarScreens
+  },
+  stackNavigationOptions
+)
+
+const hairdressersCalendarStack = createStackNavigator(
+  {
     hairdressersCalendar: {
       screen: CommerceServicesSchedule,
       navigationOptions: ({ navigation }) => ({
@@ -84,43 +128,10 @@ const calendarStack = createStackNavigator(
         headerLeft: <IconButton icon="md-menu" onPress={navigation.openDrawer} />
       })
     },
-    schedulesList: {
-      screen: CommerceSchedulesList,
-      navigationOptions: {
-        title: 'Horarios de Atención'
-      }
-    },
-    scheduleRegister: {
-      screen: ScheduleRegister
-    },
-    registerConfiguration: {
-      screen: ScheduleRegisterConfiguration,
-      navigationOptions: {
-        title: 'Límites de turnos'
-      }
-    },
-    commerceCourtsList: {
-      screen: CommerceCourtsStateList
-    },
-    courtReservationRegister: {
-      screen: CommerceCourtReservationRegister,
-      navigationOptions: {
-        title: 'Nuevo Turno'
-      }
-    },
-    employeeServicesList: {
-      screen: EmployeeServicesList
-    },
-    serviceReservationRegister: {
-      screen: CommerceServiceReservationRegister,
-      navigationOptions: {
-        title: 'Nuevo Turno'
-      }
-    },
-    ...reservationDetailsScreens
+    ...calendarScreens
   },
   stackNavigationOptions
-);
+)
 
 const reservationsStack = createStackNavigator(
   {
@@ -269,19 +280,28 @@ const courtsStack = createStackNavigator(
 
 // Aca se define el tab navigation y se agrega el stack correspondiente en cada tab
 
-// TABS FOR BOTH AREAS
-const commonTabs = {
-  reports: reportsStack,
-  reservations: reservationsStack,
-  calendar: calendarStack,
-  profile: profileStack
-};
-
 // TABS FOR SPORTS COMMERCES
 const sportsTabs = createBottomTabNavigator(
   {
     courts: courtsStack,
-    ...commonTabs
+    reports: reportsStack,
+    reservations: reservationsStack,
+    calendar: sportsCalendarStack,
+    profile: profileStack
+  },
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'calendar'
+  }
+);
+
+// TABS FOR SPORTS COMMERCES (EMPLOYEES)
+const sportsEmployeesTabs = createBottomTabNavigator(
+  {
+    courts: courtsStack,
+    reservations: reservationsStack,
+    calendar: sportsCalendarStack,
+    profile: profileStack
   },
   {
     ...tabNavigationOptions,
@@ -293,7 +313,24 @@ const sportsTabs = createBottomTabNavigator(
 const hairdressersTabs = createBottomTabNavigator(
   {
     services: servicesStack,
-    ...commonTabs
+    reports: reportsStack,
+    reservations: reservationsStack,
+    calendar: hairdressersCalendarStack,
+    profile: profileStack
+  },
+  {
+    ...tabNavigationOptions,
+    initialRouteName: 'calendar'
+  }
+);
+
+// TABS FOR HAIRDRESSERS COMMERCES (EMPLOYEES)
+const hairdressersEmployeesTabs = createBottomTabNavigator(
+  {
+    services: servicesStack,
+    reservations: reservationsStack,
+    calendar: hairdressersCalendarStack,
+    profile: profileStack
   },
   {
     ...tabNavigationOptions,
@@ -302,6 +339,8 @@ const hairdressersTabs = createBottomTabNavigator(
 );
 
 const SportsNavigation = createAppContainer(sportsTabs);
+const SportsEmployeesNavigation = createAppContainer(sportsEmployeesTabs);
 const HairdressersNavigation = createAppContainer(hairdressersTabs);
+const HairdressersEmployeesNavigation = createAppContainer(hairdressersEmployeesTabs);
 
-export { SportsNavigation, HairdressersNavigation };
+export { SportsNavigation, SportsEmployeesNavigation, HairdressersNavigation, HairdressersEmployeesNavigation };
