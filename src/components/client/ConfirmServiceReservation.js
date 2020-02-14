@@ -11,9 +11,23 @@ import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
 class ConfirmServiceReservation extends Component {
-  state = { modal: false };
+  state = { modal: false, loading: false };
+
+  componentDidMount() {
+    this.loading = false;
+  }
+
+  componentDidUpdate() {
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
+    }
+  }
 
   onConfirmReservation = async () => {
+    if (this.loading) return;
+
+    this.loading = true;
+
     try {
       if (await isEmailVerified()) {
         const {
@@ -92,7 +106,7 @@ class ConfirmServiceReservation extends Component {
 
     return (
       <CardSection>
-        <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+        <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
       </CardSection>
     );
   };

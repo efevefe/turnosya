@@ -10,9 +10,17 @@ import { validateValueType } from '../../utils';
 class CommerceCourtReservationRegister extends Component {
   state = { nameError: '', phoneError: '' };
 
+  componentDidMount() {
+    this.loading = false;
+  }
+
   componentDidUpdate(prevProps) {
     if ((this.props.saved && !prevProps.saved) || (this.props.exists && !prevProps.exists)) {
       this.props.navigation.goBack();
+    }
+
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
     }
   }
 
@@ -79,14 +87,16 @@ class CommerceCourtReservationRegister extends Component {
     if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
-          <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+          <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
         </CardSection>
       );
     }
   };
 
   onConfirmReservation = () => {
-    if (!this.nameError() && !this.phoneError()) {
+    if (!this.nameError() && !this.phoneError() && !this.loading) {
+      this.loading = true;
+
       const {
         commerceId,
         areaId,
