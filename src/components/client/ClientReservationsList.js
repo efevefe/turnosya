@@ -57,14 +57,16 @@ class ClientReservationsList extends Component {
   };
 
   renderRow = ({ item }) => {
-    const { commerce, startDate, endDate, price, reviewId } = item;
+    const { commerce, startDate, endDate, price, reviewId, paymentId } = item;
 
     return (
       <ListItem
         title={commerce.name}
         rightTitle={`$${price}`}
         rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
-        rightSubtitle={endDate < moment() && !isOneWeekOld(endDate) && !reviewId ? '¡Calificá el servicio!' : null}
+        rightSubtitle={
+          endDate < moment() && !isOneWeekOld(endDate) && !reviewId && paymentId ? '¡Calificá el servicio!' : null
+        }
         rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]

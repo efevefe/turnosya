@@ -15,35 +15,36 @@ import { onFavoriteCommercesRead } from '../../actions';
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
 class CommercesList extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: (
+        <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+          <IconButton
+            icon="md-search"
+            containerStyle={{ paddingRight: 0 }}
+            onPress={navigation.getParam('onSearchPress')}
+          />
+          <IconButton icon="ios-funnel" onPress={navigation.getParam('onFiltersPress')} />
+        </View>
+      ),
+      header: navigation.getParam('header')
+    };
+  };
+
   state = {
-    areaName: this.props.navigation.state.params.areaName, // Mover esto a Redux
+    areaName: this.props.navigation.state.params.areaName,
     searchVisible: false
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcons: this.renderRightButtons(),
+      onSearchPress: this.onSearchPress,
+      onFiltersPress: this.onFiltersPress,
       header: undefined
     });
 
     this.props.onFavoriteCommercesRead();
   }
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerRight: navigation.getParam('rightIcons'),
-      header: navigation.getParam('header')
-    };
-  };
-
-  renderRightButtons = () => {
-    return (
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
-        <IconButton icon="ios-funnel" onPress={this.onFiltersPress} />
-      </View>
-    );
-  };
 
   onSearchPress = () => {
     this.props.navigation.setParams({ header: null });

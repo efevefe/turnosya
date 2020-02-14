@@ -37,7 +37,7 @@ class LocationMessages extends Component {
 
   onAppStateChange = async appState => {
     try {
-      if (appState === 'active' && this.state.appState !== appState) {
+      if (appState === 'active') {
         this.props.onLocationFound && this.props.onLocationFound({ updating: true, location: null });
         this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState });
       } else {
@@ -92,7 +92,8 @@ class LocationMessages extends Component {
       this.props.onLocationValueChange({ userLocation: { latitude: null, longitude: null } });
     }
 
-    this.props.onLocationFound && this.props.onLocationFound({ updating: !this.state.permissionStatus, location: null });
+    this.props.onLocationFound &&
+      this.props.onLocationFound({ updating: !this.state.permissionStatus, location: null });
   };
 
   renderItems = () => {
