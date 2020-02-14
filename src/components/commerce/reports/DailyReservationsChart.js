@@ -33,14 +33,14 @@ class DailyReservationsChart extends Component {
   }
 
   static navigationOptions = ({ navigation }) => {
-    return { headerRight: navigation.getParam('rightIcon') };
+    return { headerRight: <IconButton icon="md-create" onPress={navigation.getParam('onEditReportPress')} /> };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({
-      rightIcon: <IconButton icon="md-create" onPress={() => this.setState({ modal: true })} />
-    });
+    this.props.navigation.setParams({ onEditReportPress: this.onEditReportPress });
   }
+
+  onEditReportPress = () => this.setState({ modal: true });
 
   onGenerateReportPress = () => {
     this.props.onDailyReservationsReadByRange(

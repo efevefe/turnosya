@@ -30,14 +30,12 @@ class CommerceSchedulesList extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerLeft: navigation.getParam('leftIcon')
+      headerLeft: <HeaderBackButton tintColor="white" title="Back" onPress={navigation.getParam('onBackPress')} />
     };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({
-      leftIcon: this.renderBackButton()
-    });
+    this.props.navigation.setParams({ onBackPress: this.onBackPress });
 
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
@@ -51,10 +49,6 @@ class CommerceSchedulesList extends Component {
       this.props.navigation.isFocused() && this.onScheduleDelete();
     }
   }
-
-  renderBackButton = () => {
-    return <HeaderBackButton tintColor="white" title="Back" onPress={this.onBackPress} />;
-  };
 
   onBackPress = () => {
     this.props.onScheduleRead({

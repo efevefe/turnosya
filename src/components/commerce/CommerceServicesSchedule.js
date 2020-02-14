@@ -22,13 +22,13 @@ class CommerceServicesSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: <IconButton icon="md-options" onPress={navigation.getParam('onConfigurationPress')} />
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderConfigurationButton()
+      onConfigurationPress: this.onConfigurationPress
     });
 
     this.props.onScheduleRead({
@@ -152,8 +152,8 @@ class CommerceServicesSchedule extends Component {
     this.props.onScheduleValueChange({ slots: newSlots });
   };
 
-  renderConfigurationButton = () => {
-    return <IconButton icon="md-options" onPress={() => this.setState({ modal: true })} />;
+  onConfigurationPress = () => {
+    this.setState({ modal: true });
   };
 
   onScheduleShiftsPress = () => {

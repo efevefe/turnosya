@@ -40,14 +40,14 @@ class ScheduleRegister extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
+      headerRight: <IconButton icon="md-checkmark" onPress={navigation.getParam('onSavePress')} />,
       title: navigation.getParam('title')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton()
+      onSavePress: this.onSavePress
     });
 
     this.setState({
@@ -71,10 +71,6 @@ class ScheduleRegister extends Component {
       this.renderEndDateError();
     }
   }
-
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  };
 
   onSavePress = () => {
     if (!this.validateMinimumData()) return;

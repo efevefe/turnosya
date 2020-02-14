@@ -22,7 +22,10 @@ class CommerceCourtsSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight:
+        <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+          <IconButton icon="md-options" onPress={navigation.getParam('onConfigurationPress')} />
+        </PermissionsAssigner>
     };
   };
 
@@ -34,9 +37,7 @@ class CommerceCourtsSchedule extends Component {
 
     this.unsubscribeCourtsRead = this.props.onCourtsRead(this.props.commerceId);
 
-    this.props.navigation.setParams({
-      rightIcon: this.renderConfigurationButton()
-    });
+    this.props.navigation.setParams({ onConfigurationPress: this.onConfigurationPress });
   }
 
   componentDidUpdate(prevProps) {
@@ -133,12 +134,8 @@ class CommerceCourtsSchedule extends Component {
     this.setState({ selectedCourtTypes }, this.reservationsOnSlots);
   };
 
-  renderConfigurationButton = () => {
-    return (
-      <PermissionsAssigner requiredRole={ROLES.ADMIN}>
-        <IconButton icon="md-options" onPress={() => this.setState({ modal: true })} />
-      </PermissionsAssigner>
-    );
+  onConfigurationPress = () => {
+    this.setState({ modal: true });
   };
 
   onScheduleShiftsPress = () => {

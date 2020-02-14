@@ -23,7 +23,7 @@ class SendReportAsPDF extends Component {
           attachments: [res.uri]
         })
         .then(() => Toast.show({ text: 'El reporte se envió correctamente' }))
-        .catch(error => Toast.show({ text: 'Falló el envio, intente nuevamente' }));
+        .catch(error => Toast.show({ text: 'Falló el envio, por favor intente nuevamente' }));
       })
       .catch(error => console.error(error));
   };

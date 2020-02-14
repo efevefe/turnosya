@@ -42,17 +42,20 @@ class CommerceProfile extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: navigation.getParam('title'),
-      headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon')
+      headerRight: <IconButton icon="md-checkmark" onPress={navigation.getParam('onSavePress')} />,
+      headerLeft: <IconButton icon="md-close" onPress={navigation.getParam('onCancelPress')} />
     };
   };
 
   componentDidMount() {
+    this.props.navigation.setParams({ onCancelPress: this.onCancelPress, onSavePress: this.onSavePress });
+
     this.props.onProvincesIdRead();
 
     const { name, cuit, email, phone, description, province, profilePicture, headerPicture } = this.props;
     const { address, city, latitude, longitude, provinceName, country } = this.props.locationData;
+
+    this.props.onLocationValueChange({ address, city, provinceName, latitude, longitude, country });
 
     this.setState({
       stateBeforeChanges: {
@@ -70,9 +73,6 @@ class CommerceProfile extends Component {
         longitude
       }
     });
-
-    this.props.onLocationValueChange({ address, city, provinceName, latitude, longitude, country });
-    this.props.navigation.setParams({ leftIcon: this.renderCancelButton(), rightIcon: this.renderSaveButton() });
   }
 
   componentDidUpdate(prevProps) {
@@ -80,14 +80,6 @@ class CommerceProfile extends Component {
       this.renderProvinceError();
     }
   }
-
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  };
-
-  renderCancelButton = () => {
-    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
-  };
 
   onRefresh = () => {
     this.props.onCommerceRead(this.props.commerceId);

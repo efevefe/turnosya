@@ -152,11 +152,9 @@ const profileStack = createStackNavigator(
     },
     profileEdit: {
       screen: CommerceProfile,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Editar Perfil',
-        headerLeft: navigation.getParam('leftIcon'),
-        headerRight: navigation.getParam('rightIcon')
-      })
+      navigationOptions: {
+        title: 'Editar Perfil'
+      }
     },
     commerceProfileInfo: {
       screen: CommerceProfileInfo,
