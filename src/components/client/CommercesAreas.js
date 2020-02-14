@@ -9,41 +9,33 @@ import CommercesAreaItem from './CommercesAreaItem';
 class CommercesAreas extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight:
+        <TouchableOpacity
+          onPress={() => navigation.navigate('commercesList', { areaName: '' })}
+          activeOpacity={0.5}
+          style={{ backgorundColor: 'transparent' }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text
+              style={{
+                color: 'white',
+                marginRight: 5,
+                textAlign: 'center',
+                alignSelf: 'center',
+                paddingRight: 2
+              }}
+            >
+              Ver todos
+          </Text>
+            <Ionicons name="md-arrow-forward" size={24} color="white" style={{ marginRight: 15 }} />
+          </View>
+        </TouchableOpacity>
     };
   };
 
   componentDidMount() {
     this.props.onAreasRead();
-    this.props.navigation.setParams({
-      rightIcon: this.renderRightIcon()
-    });
   }
-
-  renderRightIcon = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('commercesList', { areaName: '' })}
-        activeOpacity={0.5}
-        style={{ backgorundColor: 'transparent' }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text
-            style={{
-              color: 'white',
-              marginRight: 5,
-              textAlign: 'center',
-              alignSelf: 'center',
-              paddingRight: 2
-            }}
-          >
-            Ver todos
-          </Text>
-          <Ionicons name="md-arrow-forward" size={24} color="white" style={{ marginRight: 15 }} />
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   renderRow = ({ item }) => {
     return <CommercesAreaItem area={item} navigation={this.props.navigation} />;

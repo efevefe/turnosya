@@ -10,15 +10,14 @@ class LocationMap extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
-      headerLeft: navigation.getParam('leftIcon')
+      headerRight: <IconButton icon="md-checkmark" onPress={navigation.goBack} />,
+      headerLeft: <HeaderBackButton onPress={navigation.getParam('onBackPress')} tintColor="white" title="Back" />
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton(),
-      leftIcon: this.renderBackButton()
+      onBackPress: this.onBackPress
     });
 
     const { address, city, provinceName, country, latitude, longitude } = this.props;
@@ -33,10 +32,6 @@ class LocationMap extends React.Component {
       }
     });
   }
-
-  renderSaveButton = () => <IconButton icon="md-checkmark" onPress={() => this.props.navigation.goBack()} />;
-
-  renderBackButton = () => <HeaderBackButton onPress={() => this.onBackPress()} tintColor="white" title="Back" />;
 
   onBackPress = () => {
     this.props.onLocationValueChange(this.state.stateBeforeChanges);
