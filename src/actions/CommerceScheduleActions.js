@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import moment from 'moment';
 import { onReservationsCancel } from './ReservationsListActions';
 import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
@@ -308,7 +309,8 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_SCHEDULE_CREATED });
@@ -341,7 +343,8 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_SCHEDULE_CREATED });

@@ -62,7 +62,7 @@ class ScheduleRegister extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.nextReservations !== this.props.nextReservations) {
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused()) {
       this.workShiftsValidate();
     }
 

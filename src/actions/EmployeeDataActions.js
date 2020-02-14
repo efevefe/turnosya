@@ -15,6 +15,7 @@ import {
 import { onClientNotificationSend } from './NotificationActions';
 import { onUserWorkplacesRead } from './ClientDataActions';
 import { NOTIFICATION_TYPES } from '../constants';
+import { onReservationsCancel } from './ReservationsListActions';
 
 export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -103,27 +104,41 @@ export const onEmployeeUpdate = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async dispatch => {
+export const onEmployeeDelete = ({ employeeId, commerceId, profileId, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
-
-  const snapshot = await db
-    .collection(`Profiles/${profileId}/Workplaces`)
-    .where('commerceId', '==', commerceId)
-    .where('softDelete', '==', null)
-    .get();
-
   const batch = db.batch();
 
-  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
-  batch.update(employeeRef, { softDelete: new Date() });
+  try {
+    const snapshot = await db
+      .collection(`Profiles/${profileId}/Workplaces`)
+      .where('commerceId', '==', commerceId)
+      .where('softDelete', '==', null)
+      .get();
 
-  if (!snapshot.empty) {
-    // Si el empleado ya había aceptado la invitacion de trabajo
-    const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
-    batch.update(workplaceRef, { softDelete: new Date() });
+
+    const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
+    batch.update(employeeRef, { softDelete: new Date() });
+
+    if (!snapshot.empty) {
+      // Si el empleado ya había aceptado la invitacion de trabajo
+      const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
+      batch.update(workplaceRef, { softDelete: new Date() });
+
+      // reservations cancel
+      await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+    }
+
+    await batch.commit()
+
+    reservationsToCancel.forEach(res => {
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+    });
+
+    dispatch({ type: ON_EMPLOYEE_DELETED })
+  } catch (error) {
+    console.error(error);
   }
-
-  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
 };
 
 export const onEmployeeInfoUpdate = email => dispatch => {

@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import moment from 'moment';
 import { onReservationsCancel } from './ReservationsListActions';
 import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
 import {
   ON_COURT_VALUE_CHANGE,
   ON_COURT_FORM_OPEN,
@@ -199,7 +200,8 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_COURT_UPDATE });

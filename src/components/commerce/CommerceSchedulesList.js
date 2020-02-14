@@ -45,8 +45,8 @@ class CommerceSchedulesList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.nextReservations !== this.props.nextReservations) {
-      this.props.navigation.isFocused() && this.onScheduleDelete();
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused()) {
+      this.onScheduleDelete();
     }
   }
 
@@ -119,7 +119,7 @@ class CommerceSchedulesList extends Component {
     }
   };
 
-  onCancelReservations = async () => {
+  onCancelReservations = () => {
     const reservationsToCancel = this.props.nextReservations.map(res => {
       return {
         ...res,

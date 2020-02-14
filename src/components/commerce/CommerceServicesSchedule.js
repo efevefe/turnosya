@@ -96,7 +96,7 @@ class CommerceServicesSchedule extends Component {
       });
     }
 
-    if (this.props.employeeId !== this.props.selectedEmployeeId) {
+    if (this.props.employeeId !== this.state.selectedEmployeeId) {
       return Toast.show({ text: 'No puedes reservar turnos a nombre de otro empleado' });
     }
 

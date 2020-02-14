@@ -50,7 +50,7 @@ class CourtForm extends Component {
     }
 
     // ver si hay reservas que estén en el periodo de deshabilitación de la cancha
-    if (prevProps.nextReservations !== this.props.nextReservations) {
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused()) {
       this.disabledPeriodValidate();
     }
   }
