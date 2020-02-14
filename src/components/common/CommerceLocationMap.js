@@ -322,7 +322,16 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { address, city, provinceName, country, latitude, longitude, userLocation } = state.locationData;
+  const {
+    address,
+    city,
+    provinceName,
+    country,
+    latitude,
+    longitude,
+    userLocation,
+    locationUpdateInfo
+  } = state.locationData;
 
   return {
     address,
@@ -331,7 +340,8 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    userLocation
+    userLocation,
+    locationUpdateInfo
   };
 };
 

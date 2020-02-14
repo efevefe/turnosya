@@ -27,34 +27,26 @@ class CommerceFiltersScreen extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton'),
-      headerLeft: navigation.getParam('leftButton')
+      headerRight: (
+        <Button
+          title="Aplicar Filtros"
+          type="clear"
+          titleStyle={{ color: 'white' }}
+          onPress={navigation.getParam('onApplyFiltersPress')}
+          containerStyle={applyFilterButtonStyle}
+        />
+      ),
+      headerLeft: <IconButton icon="md-close" onPress={navigation.getParam('onClosePress')} />
     };
   };
 
   componentDidMount = () => {
     this.props.navigation.setParams({
-      rightButton: this.renderApplyFiltersButton(),
-      leftButton: this.renderCloseButton()
+      onApplyFiltersPress: this.onApplyFiltersPress.bind(this),
+      onClosePress: this.onClosePress.bind(this)
     });
 
     this.props.onProvincesNameRead();
-  };
-
-  renderApplyFiltersButton = () => {
-    return (
-      <Button
-        title="Aplicar Filtros"
-        type="clear"
-        titleStyle={{ color: 'white' }}
-        onPress={this.onApplyFiltersPress.bind(this)}
-        containerStyle={applyFilterButtonStyle}
-      />
-    );
-  };
-
-  renderCloseButton = () => {
-    return <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />;
   };
 
   onClosePress() {
@@ -98,6 +90,11 @@ class CommerceFiltersScreen extends Component {
   }
 
   onCurrentLocationFound = ({ updating, location }) => {
+    // Este es el método que tira los errores porque cuando se renderiza este componente intenta renderizar
+    // LocationMessages que dentro de su render ejecuta un metodo que llama a este entonces este metodo llama
+    // a setState. Por lo que el setState se llama durante el render de este componente si bien no es instantaneo.
+    // Ademas que cuando cerras este componente, LocationMessages llama a este metodo y tira el error de que no se
+    // puede actualizar el estado de un componente (osea este) desmontado
     if (!updating && !location) return this.setState({ locationUpdating: false });
 
     if (updating && !location) return this.setState({ locationUpdating: true });
@@ -181,7 +178,6 @@ class CommerceFiltersScreen extends Component {
   }
 }
 
-// region Styles
 const {
   dividerStyle,
   dividerTextStyle,
@@ -225,7 +221,6 @@ const {
   },
   locationSliderStyle: { marginHorizontal: 15 }
 });
-//#endregion
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
