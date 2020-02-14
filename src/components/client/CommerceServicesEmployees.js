@@ -8,14 +8,14 @@ const CommerceCourtTypes = props => {
   onServicesPress = () => {
     if (props.navigation.state.routeName === 'commerceProfileView') {
       props.onNewServiceReservation();
-      props.navigation.navigate('commerceServicesList');
+      props.navigation.navigate('commerceServicesList', { navigatedFromProfile: true });
     }
   };
 
   onEmployeesPress = () => {
     if (props.navigation.state.routeName === 'commerceProfileView') {
       props.onNewServiceReservation();
-      props.navigation.navigate('commerceEmployeesList');
+      props.navigation.navigate('commerceEmployeesList', { navigatedFromProfile: true });
     }
   };
 
