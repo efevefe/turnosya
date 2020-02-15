@@ -107,28 +107,28 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
   const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc();
   const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
 
-  const stateDoc = await db.doc(`ReservationStates/reserved`).get();
-
-  const reservationData = {
-    ...reservationObject,
-    reservationDate: new Date(),
-    cancellationDate: null,
-    state: { id: stateDoc.id, name: stateDoc.data().name }
-  };
-
-  // reserva que se guarda en el negocio
-  batch.set(commerceReservationRef, {
-    ...reservationData,
-    clientId: currentUser.uid
-  });
-
-  // reserva que se guarda en el cliente
-  batch.set(clientReservationRef, {
-    ...reservationData,
-    commerceId
-  });
-
   try {
+    const stateDoc = await db.doc(`ReservationStates/reserved`).get();
+
+    const reservationData = {
+      ...reservationObject,
+      reservationDate: new Date(),
+      cancellationDate: null,
+      state: { id: stateDoc.id, name: stateDoc.data().name }
+    };
+
+    // reserva que se guarda en el negocio
+    batch.set(commerceReservationRef, {
+      ...reservationData,
+      clientId: currentUser.uid
+    });
+
+    // reserva que se guarda en el cliente
+    batch.set(clientReservationRef, {
+      ...reservationData,
+      commerceId
+    });
+
     const { employeeId, courtId, startDate, endDate } = reservationData;
 
     if (
@@ -171,6 +171,8 @@ export const onCommerceCourtReservationCreate = ({
   const db = firebase.firestore();
 
   try {
+    const stateDoc = await db.doc(`ReservationStates/reserved`).get();
+
     if (
       await reservationExists({
         commerceId,
@@ -195,7 +197,7 @@ export const onCommerceCourtReservationCreate = ({
       cancellationDate: null,
       price,
       light,
-      state: null
+      state: { id: stateDoc.id, name: stateDoc.data().name }
     });
 
     dispatch({ type: ON_RESERVATION_CREATE });
@@ -220,6 +222,8 @@ export const onCommerceServiceReservationCreate = ({
   const db = firebase.firestore();
 
   try {
+    const stateDoc = await db.doc(`ReservationStates/reserved`).get();
+
     if (
       await reservationExists({
         commerceId,
@@ -243,7 +247,7 @@ export const onCommerceServiceReservationCreate = ({
       reservationDate: new Date(),
       cancellationDate: null,
       price,
-      state: null
+      state: { id: stateDoc.id, name: stateDoc.data().name }
     });
 
     dispatch({ type: ON_RESERVATION_CREATE });
