@@ -29,7 +29,6 @@ import {
   onCommerceReviewReadById,
   onCommerceReviewValuesReset,
   onCashPaymentCreate,
-  onCommerceMPagoTokenRead,
   onCommercePaymentRefund
 } from '../../actions';
 import { isOneWeekOld, cancelReservationNotificationFormat } from '../../utils';
@@ -62,8 +61,6 @@ class CommerceReservationDetails extends Component {
       commerceId: this.props.commerceId,
       reviewId: this.state.reservation.receivedReviewId
     });
-
-    this.props.onCommerceMPagoTokenRead(this.props.commerceId);
 
     if (!this.state.reservation.commerceId)
       this.setState({
@@ -510,6 +507,5 @@ export default connect(mapStateToProps, {
   onCommerceReviewReadById,
   onCommerceReviewValuesReset,
   onCashPaymentCreate,
-  onCommerceMPagoTokenRead,
   onCommercePaymentRefund
 })(CommerceReservationDetails);

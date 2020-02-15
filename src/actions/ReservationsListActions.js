@@ -12,6 +12,7 @@ import {
 } from './types';
 import { onClientNotificationSend } from './NotificationActions';
 import { NOTIFICATION_TYPES } from '../constants';
+import store from '../reducers';
 
 export const onReservationsListValueChange = payload => {
   return {
@@ -276,6 +277,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
         if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
           nextReservations.push({
             id: doc.id,
+            paymentId: doc.data().paymentId,
             clientId: doc.data().clientId,
             startDate: moment(doc.data().startDate.toDate()),
             endDate: moment(doc.data().endDate.toDate())
@@ -316,6 +318,7 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
         if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
           nextReservations.push({
             id: doc.id,
+            paymentId: doc.data().paymentId,
             clientId: doc.data().clientId,
             startDate: moment(doc.data().startDate.toDate()),
             endDate: moment(doc.data().endDate.toDate())
@@ -331,8 +334,11 @@ export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, en
 };
 
 export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
+
   // reservations cancel
   if (reservations.length) {
+    const mPagoToken = store.getState().commerceData.mPagoToken;
+
     try {
       const state = await db.doc(`ReservationStates/canceled`).get();
       const updateObj = {
@@ -342,9 +348,14 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
 
       reservations.forEach(res => {
         const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
         batch.update(commerceResRef, updateObj);
-        batch.update(clientResRef, updateObj);
+
+        if (res.clientId) {
+          const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+          batch.update(clientResRef, updateObj);
+        }
+
+        if (res.paymentId) onCommercePaymentRefund({ commerceId, paymentId: res.paymentId, mPagoToken });
       });
     } catch (error) {
       console.error(error);

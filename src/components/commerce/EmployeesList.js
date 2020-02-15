@@ -35,8 +35,8 @@ class EmployeesList extends Component {
         contentContainerStyle={{ paddingBottom: 95 }}
       />
     ) : (
-      <EmptyList title="No hay ningún empleado" />
-    );
+        <EmptyList title="No hay ningún empleado" />
+      );
   };
 
   render() {

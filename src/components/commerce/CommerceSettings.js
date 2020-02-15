@@ -3,15 +3,13 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, onCommerceMPagoTokenRead } from '../../actions';
-import { MenuItem, Menu, Input, CardSection, SettingsItem, Spinner } from '../common';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../../actions';
+import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
 
 class CommerceSettings extends Component {
   state = { providerId: null, mPagoModalVisible: false };
 
   componentDidMount() {
-    this.props.onCommerceMPagoTokenRead(this.props.commerceId);
-
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
@@ -76,9 +74,7 @@ class CommerceSettings extends Component {
   };
 
   render() {
-    return this.props.mPagoTokenReadLoading ? (
-      <Spinner />
-    ) : (
+    return (
       <ScrollView style={styles.containerStyle}>
         <SettingsItem
           leftIcon={{
@@ -118,7 +114,7 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
-  const { commerceId, mPagoToken, mPagoTokenSwitchLoading, mPagoTokenReadLoading } = state.commerceData;
+  const { commerceId } = state.commerceData;
   // auth
   const { password, error } = state.auth;
 
@@ -127,16 +123,12 @@ const mapStateToProps = state => {
     password,
     reauthError: error,
     confirmCommerceDeleteVisible,
-    commerceId,
-    mPagoToken,
-    mPagoTokenSwitchLoading,
-    mPagoTokenReadLoading
+    commerceId
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
-  onLoginValueChange,
-  onCommerceMPagoTokenRead
+  onLoginValueChange
 })(CommerceSettings);
