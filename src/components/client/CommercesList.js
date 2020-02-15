@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { InstantSearch, Configure } from 'react-instantsearch/native';
 import { Fab } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
+import algoliasearch from 'algoliasearch';
 import { MAIN_COLOR } from '../../constants';
 import { IconButton } from '../common';
 import getEnvVars from '../../../environment';
@@ -13,6 +14,8 @@ import ConnectedStateResults from './CommercesList.StateResults';
 import { onFavoriteCommercesRead, onCommercesListValueChange, onLocationValueChange } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
+
+const searchClient = algoliasearch(appId, searchApiKey, { _useRequestCache: true });
 
 class CommercesList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -100,24 +103,17 @@ class CommercesList extends Component {
 
   render() {
     return (
-      <InstantSearch
-        appId={appId}
-        apiKey={searchApiKey}
-        indexName={commercesIndex}
-        stalledSearchDelay={0}
-        root={{
-          Root: View, // component to render as the root of InstantSearch
-          props: { style: { flex: 1 } } // props that will be applied on the root component aka View
-        }}
-      >
-        {this.renderAlgoliaSearchBar()}
-        <Configure {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }} />
-        <ConnectedStateResults />
-        <ConnectedHits />
-        <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onMapFabPress}>
-          <Ionicons name="md-compass" />
-        </Fab>
-      </InstantSearch>
+      <View style={{ flex: 1 }}>
+        <InstantSearch searchClient={searchClient} indexName={commercesIndex} stalledSearchDelay={0}>
+          {this.renderAlgoliaSearchBar()}
+          <Configure {...{ ...this.obtainFacetProps(), ...this.obtainGeolocationProps() }} />
+          <ConnectedStateResults />
+          <ConnectedHits />
+          <Fab style={{ backgroundColor: MAIN_COLOR }} position="bottomRight" onPress={this.onMapFabPress}>
+            <Ionicons name="md-compass" />
+          </Fab>
+        </InstantSearch>
+      </View>
     );
   }
 }
