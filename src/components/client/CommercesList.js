@@ -10,7 +10,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { onFavoriteCommercesRead } from '../../actions';
+import { onFavoriteCommercesRead, onCommercesListValueChange, onLocationValueChange } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -45,6 +45,15 @@ class CommercesList extends Component {
 
     this.props.onFavoriteCommercesRead();
   }
+
+  componentWillUnmount() {
+    this.onFiltersClear();
+  }
+
+  onFiltersClear = () => {
+    this.props.onCommercesListValueChange({ provinceNameFilter: '', locationRadiusKms: '' });
+    this.props.onLocationValueChange({ selectedLocation: {} });
+  };
 
   onSearchPress = () => {
     this.props.navigation.setParams({ header: null });
@@ -134,5 +143,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  onFavoriteCommercesRead
+  onFavoriteCommercesRead,
+  onCommercesListValueChange,
+  onLocationValueChange
 })(CommercesList);

@@ -107,11 +107,13 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
   const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc();
   const clientReservationRef = db.doc(`Profiles/${currentUser.uid}/Reservations/${commerceReservationRef.id}`);
 
+  const stateDoc = await db.doc(`ReservationStates/reserved`).get();
+
   const reservationData = {
     ...reservationObject,
     reservationDate: new Date(),
     cancellationDate: null,
-    state: null
+    state: { id: stateDoc.id, name: stateDoc.data().name }
   };
 
   // reserva que se guarda en el negocio
