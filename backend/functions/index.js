@@ -141,8 +141,8 @@ app.post('/ipn-notification', (req, res) => {
                 batch.set(paymentRef, {
                   date: new Date(),
                   method: constants.paymentTypes[payment_type_id],
-                  order,
-                  payerId: payer_id
+                  order: order || null,
+                  payerId: payer_id || null
                 });
 
                 batch.update(commerceReservationRef, { paymentId: id.toString(), state: stateObject });
