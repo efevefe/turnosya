@@ -203,12 +203,12 @@ const mapStateToProps = state => {
     endDate,
     price,
     light,
-    areaId,
     saved,
     exists,
     loading
   } = state.reservation;
   const { firstName, lastName } = state.clientData;
+  const { area: { areaId } } = state.commerceData;
 
   return {
     commerce,

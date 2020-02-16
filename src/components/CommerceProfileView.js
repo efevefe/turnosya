@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PictureView, Spinner, AreaComponentRenderer } from './common';
 import {
   onCommerceRead,
-  onReservationValueChange,
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,
@@ -44,13 +43,6 @@ class CommerceProfileView extends Component {
     });
 
     this.props.onEmailVerifyReminded();
-  }
-
-  componentDidUpdate(prevProps) {
-    // para evitar esto se deberia guardar el areaId en Algolia
-    if (this.props.areaId && this.props.areaId !== prevProps.areaId) {
-      this.props.onReservationValueChange({ areaId: this.props.areaId });
-    }
   }
 
   renderDescription = () => {
@@ -300,7 +292,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   onCommerceRead,
-  onReservationValueChange,
   onFavoriteCommerceRegister,
   onFavoriteCommerceDelete,
   onLocationValueChange,

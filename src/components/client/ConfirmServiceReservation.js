@@ -147,9 +147,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerce, service, employee, startDate, endDate, price, saved, exists, areaId, loading } = state.reservation;
-
+  const { commerce, service, employee, startDate, endDate, price, saved, exists, loading } = state.reservation;
   const { firstName: clientFirstName, lastName: clientLastName } = state.clientData;
+  const { area: { areaId } } = state.commerceData;
 
   return {
     commerce,
