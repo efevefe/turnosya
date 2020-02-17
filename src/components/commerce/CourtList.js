@@ -16,24 +16,16 @@ class CourtList extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcons: this.renderRightButtons(),
+      onSearchPress: this.onSearchPress,
       header: undefined
     });
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcons'),
+      headerRight: <IconButton icon="md-search" onPress={navigation.getParam('onSearchPress')} />,
       header: navigation.getParam('header')
     };
-  };
-
-  renderRightButtons = () => {
-    return (
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <IconButton icon="md-search" containerStyle={{ paddingRight: 0 }} onPress={this.onSearchPress} />
-      </View>
-    );
   };
 
   onSearchPress = () => {
