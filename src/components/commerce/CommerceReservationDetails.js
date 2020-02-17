@@ -71,6 +71,19 @@ class CommerceReservationDetails extends Component {
       });
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.reservations !== this.props.reservations) {
+      let res = this.props.reservations.find(res => res.id === this.state.reservation.id);
+
+      if (res) {
+        res = { ...res, court: this.state.reservation.court };
+
+        if (JSON.stringify(res) !== JSON.stringify(this.state.reservation))
+          this.setState({ reservation: res });
+      }
+    }
+  }
+
   componentWillUnmount() {
     this.props.onClientReviewValuesReset();
     this.props.onCommerceReviewValuesReset();
@@ -472,12 +485,13 @@ const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.cr
 });
 
 const mapStateToProps = state => {
-  const { cancellationLoading, cancellationReason } = state.reservationsList;
+  const { cancellationLoading, cancellationReason, reservations } = state.reservationsList;
   const { commerceId, name, mPagoToken } = state.commerceData;
   const { saveLoading, deleteLoading, dataLoading } = state.clientReviewData;
   const { cashPayRegisterLoading } = state.paymentData;
 
   return {
+    reservations,
     cancellationLoading,
     commerceId,
     name,

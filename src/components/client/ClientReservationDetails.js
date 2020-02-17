@@ -70,6 +70,15 @@ class ClientReservationDetails extends Component {
     this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.reservations !== this.props.reservations) {
+      const res = this.props.reservations.find(res => res.id === this.state.reservation.id);
+
+      if (res && JSON.stringify(res) !== JSON.stringify(this.state.reservation))
+        this.setState({ reservation: res });
+    }
+  }
+
   componentWillUnmount() {
     this.props.onCommerceReviewValuesReset();
     this.props.onClientReviewValuesReset();
@@ -218,10 +227,10 @@ class ClientReservationDetails extends Component {
         {this.renderReviewButtons()}
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="Antes de poder calificar al negocio debe registrarse el pago del turno" />
-      </View>
-    );
+          <View style={{ paddingVertical: 10 }}>
+            <ReviewCard title="Antes de poder calificar al negocio debe registrarse el pago del turno" />
+          </View>
+        );
   };
 
   renderClientReview = () => {
@@ -237,10 +246,10 @@ class ClientReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El negocio no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El negocio no te ha calificado" />
+        </View>
+      );
   };
 
   renderReviewFields = () => {
@@ -387,6 +396,7 @@ const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.cr
 });
 
 const mapStateToProps = state => {
+  const { reservations } = state.clientReservationsList;
   const loadingReservations = state.clientReservationsList.loading;
   const { reservationMinCancelTime } = state.commerceSchedule;
   const loadingCancel = state.commerceSchedule.loading;
@@ -395,6 +405,7 @@ const mapStateToProps = state => {
   const { mPagoToken } = state.commerceData;
 
   return {
+    reservations,
     loadingReservations,
     loadingCancel,
     reservationMinCancelTime,
