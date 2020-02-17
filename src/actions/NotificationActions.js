@@ -101,6 +101,7 @@ const sendPushNotification = ({ title, body, tokens, collectionRef, sentBy, noti
       softDelete: null,
       sentBy,
       notificationType,
+      read:0,
       ...metadata
     });
   } catch (error) {
