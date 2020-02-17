@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Input, Button, CardSection } from '../common';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 import { onReservationValueChange, onCommerceServiceReservationCreate } from '../../actions';
-import { validateValueType } from '../../utils';
+import { validateValueType, newReservationNotificationFormat } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
   state = { nameError: '', phoneError: '' };
@@ -98,27 +98,40 @@ class CommerceCourtReservationRegister extends Component {
       this.loading = true;
 
       const {
+        commerceName,
         commerceId,
         areaId,
         clientName,
         clientPhone,
         employeeId,
+        selectedEmployeeId,
         service,
         startDate,
         endDate,
         price
       } = this.props;
 
+      let notification = null;
+
+      if (employeeId !== selectedEmployeeId)
+        notification = newReservationNotificationFormat({
+          startDate,
+          service: service.name,
+          actorName: clientName,
+          receptorName: commerceName
+        });
+
       this.props.onCommerceServiceReservationCreate({
         commerceId,
         areaId,
         serviceId: service.id,
-        employeeId,
+        employeeId: selectedEmployeeId,
         clientName,
         clientPhone,
         startDate,
         endDate,
-        price
+        price,
+        notification
       });
     }
   };
@@ -156,14 +169,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {
-    commerceId,
-    area: { areaId }
-  } = state.commerceData;
+  const { commerceId, name: commerceName, area: { areaId } } = state.commerceData;
   const { clientName, clientPhone, service, startDate, endDate, price, saved, exists, loading } = state.reservation;
   const { employeeId } = state.roleData;
+  const { selectedEmployeeId } = state.employeesList;
 
   return {
+    commerceName,
     commerceId,
     areaId,
     clientName,
@@ -175,6 +187,7 @@ const mapStateToProps = state => {
     price,
     saved,
     exists,
+    selectedEmployeeId,
     loading
   };
 };

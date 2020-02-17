@@ -14,7 +14,8 @@ import {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead
+  onEmployeesRead,
+  onEmployeeSelect
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -31,10 +32,12 @@ class CommerceServicesSchedule extends Component {
       onConfigurationPress: this.onConfigurationPress
     });
 
+    this.props.onEmployeeSelect(this.state.selectedEmployeeId);
+
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.state.selectedDate,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
     this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
@@ -67,14 +70,14 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
     if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
-        employeeId: this.state.selectedEmployeeId //
+        employeeId: this.state.selectedEmployeeId
       });
     }
 
@@ -94,10 +97,6 @@ class CommerceServicesSchedule extends Component {
       return this.props.navigation.navigate('reservationDetails', {
         reservation: this.getReservationFromSlot(slot)
       });
-    }
-
-    if (this.props.employeeId !== this.state.selectedEmployeeId) {
-      return Toast.show({ text: 'No puedes reservar turnos a nombre de otro empleado' });
     }
 
     if (moment() >= slot.startDate && slot.available) {
@@ -274,5 +273,6 @@ export default connect(mapStateToProps, {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead
+  onEmployeesRead,
+  onEmployeeSelect
 })(CommerceServicesSchedule);

@@ -215,7 +215,8 @@ export const onCommerceServiceReservationCreate = ({
   clientPhone,
   startDate,
   endDate,
-  price
+  price,
+  notification
 }) => async dispatch => {
   dispatch({ type: ON_RESERVATION_CREATING });
 
@@ -249,6 +250,9 @@ export const onCommerceServiceReservationCreate = ({
       price,
       state: { id: stateDoc.id, name: stateDoc.data().name }
     });
+
+    if (notification)
+      onCommerceNotificationSend(notification, commerceId, employeeId, null, NOTIFICATION_TYPES.NOTIFICATION);
 
     dispatch({ type: ON_RESERVATION_CREATE });
   } catch (error) {

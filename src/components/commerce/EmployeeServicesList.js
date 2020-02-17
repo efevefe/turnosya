@@ -86,9 +86,9 @@ class EmployeeServicesList extends Component {
   };
 
   getAvailableServices = () => {
-    const { employeeId, services } = this.props;
+    const { selectedEmployeeId, services } = this.props;
 
-    return services.filter(service => service.employeesIds.includes(employeeId) && this.enoughTime(service));
+    return services.filter(service => service.employeesIds.includes(selectedEmployeeId) && this.enoughTime(service));
   };
 
   render() {
@@ -111,12 +111,12 @@ class EmployeeServicesList extends Component {
 
 const mapStateToProps = state => {
   const { slots } = state.commerceSchedule;
-  const { employeeId } = state.roleData;
   const { commerceId } = state.commerceData;
   const { services, loading } = state.servicesList;
   const { startDate, saved, exists } = state.reservation;
+  const { selectedEmployeeId } = state.employeesList;
 
-  return { commerceId, services, slots, startDate, loading, employeeId, saved, exists };
+  return { commerceId, services, slots, startDate, loading, selectedEmployeeId, saved, exists };
 };
 
 export default connect(mapStateToProps, {

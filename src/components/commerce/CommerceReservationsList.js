@@ -45,7 +45,7 @@ class CommerceReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
     this.setState({ selectedDate });
