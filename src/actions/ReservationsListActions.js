@@ -355,7 +355,7 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
           batch.update(clientResRef, updateObj);
         }
 
-        if (res.paymentId) onCommercePaymentRefund({ commerceId, paymentId: res.paymentId, mPagoToken });
+        if (res.paymentId) onCommercePaymentRefund({ commerceId, paymentId: res.paymentId, mPagoToken })();
       });
     } catch (error) {
       console.error(error);
