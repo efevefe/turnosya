@@ -12,7 +12,7 @@ import { SearchBar } from 'react-native-elements';
 import Constants from 'expo-constants';
 
 class CourtList extends Component {
-  state = { search: '', searchVisible: false, courtsSearching: [] };
+  state = { search: '', searchVisible: false };
 
   componentDidMount() {
     this.props.navigation.setParams({
@@ -73,7 +73,7 @@ class CourtList extends Component {
     if (this.props.courts.length) {
       return (
         <FlatList
-          data={this.state.search === '' ? this.props.courts : this.state.courtsSearching}
+          data={this.courtsFilter()}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={court => court.id}
           contentContainerStyle={{ paddingBottom: 95 }}
@@ -84,28 +84,23 @@ class CourtList extends Component {
     return <EmptyList title="No hay ninguna cancha" />;
   };
 
-  courtsFilter(text) {
-    this.setState({ search: text });
-
-    this.setState({
-      courtsSearching: this.props.courts.filter(
-        court =>
-          court.name
-            .toLowerCase()
-            .trim()
-            .includes(text.toLowerCase().trim()) || court.court.toLowerCase().includes(text.toLowerCase())
-      )
-    });
+  courtsFilter() {
+    const { search } = this.state;
+    return this.props.courts.filter(
+      court =>
+        court.name.toLowerCase().includes(search.toLowerCase().trim()) ||
+        court.court.toLowerCase().includes(search.toLowerCase().trim())
+    );
   }
 
   renderSearchBar = () => {
-    if (this.state.searchVisible === true) {
+    if (this.state.searchVisible) {
       return (
         <View style={styles.mainContainer}>
           <SearchBar
             placeholder="Buscar canchas.."
             value={this.state.search}
-            onChangeText={text => this.courtsFilter(text)}
+            onChangeText={text => this.setState({ search: text })}
             platform="android"
             containerStyle={styles.searchBarContainer}
             inputStyle={{ marginTop: 1, marginLeft: 12, marginRight: 0 }}

@@ -11,7 +11,7 @@ import { SearchBar } from 'react-native-elements';
 import Constants from 'expo-constants';
 
 class ServicesList extends Component {
-  state = { search: '', searchVisible: false, servicesSearching: [] };
+  state = { search: '', searchVisible: false };
 
   componentDidMount() {
     this.props.navigation.setParams({
@@ -73,7 +73,7 @@ class ServicesList extends Component {
     if (this.props.services.length) {
       return (
         <FlatList
-          data={this.state.search === '' ? this.props.services : this.state.servicesSearching}
+          data={this.servicesFilter()}
           renderItem={this.renderRow.bind(this)}
           keyExtractor={service => service.id}
           contentContainerStyle={{ paddingBottom: 95 }}
@@ -84,27 +84,23 @@ class ServicesList extends Component {
     return <EmptyList title="No hay ningun servicio" />;
   };
 
-  servicesFilter(text) {
-    this.setState({ search: text });
-
-    this.setState({
-      servicesSearching: this.props.services.filter(service =>
-        service.name
-          .toLowerCase()
-          .trim()
-          .includes(text.toLowerCase().trim())
-      )
-    });
+  servicesFilter() {
+    return this.props.services.filter(service =>
+      service.name
+        .toLowerCase()
+        .trim()
+        .includes(this.state.search.toLowerCase().trim())
+    );
   }
 
   renderSearchBar = () => {
-    if (this.state.searchVisible === true) {
+    if (this.state.searchVisible) {
       return (
         <View style={styles.mainContainer}>
           <SearchBar
             placeholder="Buscar servicios.."
             value={this.state.search}
-            onChangeText={text => this.servicesFilter(text)}
+            onChangeText={text => this.setState({ search: text })}
             platform="android"
             containerStyle={styles.searchBarContainer}
             inputStyle={{ marginTop: 1, marginLeft: 12, marginRight: 0 }}
