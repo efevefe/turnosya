@@ -75,6 +75,7 @@ export const onEmployeesScheduleRead = ({ commerceId, selectedDate }) => async d
 
   db.collection(`Commerces/${commerceId}/Employees`)
     .where('softDelete', '==', null)
+    .where('visible', '==', true)
     .get()
     .then(snapshot => {
       let index = 0;

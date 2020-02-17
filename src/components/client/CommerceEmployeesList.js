@@ -13,7 +13,7 @@ class CommerceEmployeesList extends Component {
         employeesIds: this.props.service.employeesIds
       });
     } else {
-      this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerce.objectID);
+      this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerce.objectID, true);
     }
   }
 

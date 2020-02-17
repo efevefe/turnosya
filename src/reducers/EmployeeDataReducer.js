@@ -20,6 +20,7 @@ const INITIAL_STATE = {
   lastName: '',
   role: {},
   employeeId: '',
+  visible: true,
   emailLoading: false,
   emailError: '',
   saveLoading: false

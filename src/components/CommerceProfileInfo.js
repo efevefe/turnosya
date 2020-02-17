@@ -76,9 +76,8 @@ class CommerceProfileInfo extends Component {
           <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 5 }}>{item.employeeName}</Text>
         ) : null}
         {hoursOnDays.map(hourOnDay => (
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <View key={hourOnDay.day} style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
             <Text
-              key={hourOnDay.day}
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
@@ -88,7 +87,6 @@ class CommerceProfileInfo extends Component {
               {hourOnDay.dayName}
             </Text>
             <Text
-              key={hourOnDay.day}
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
@@ -99,7 +97,6 @@ class CommerceProfileInfo extends Component {
             </Text>
             {hourOnDay.secondShiftStart && hourOnDay.secondShiftEnd ? (
               <Text
-                key={hourOnDay.day}
                 style={{
                   fontSize: 14,
                   fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal'

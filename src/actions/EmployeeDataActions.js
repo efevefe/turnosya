@@ -25,7 +25,7 @@ export const onEmployeeValueChange = payload => ({
 export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
 
 export const onEmployeeInvite = (
-  { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
+  { commerceId, commerceName, email, firstName, lastName, phone, role, visible, profileId },
   navigation
 ) => dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
@@ -39,6 +39,7 @@ export const onEmployeeInvite = (
       firstName,
       lastName,
       role,
+      visible,
       softDelete: null,
       inviteDate: new Date(),
       startDate: null,
@@ -87,7 +88,7 @@ export const onEmployeeCreate = ({ commerceId, employeeId, profileId }) => async
 };
 
 export const onEmployeeUpdate = (
-  { employeeId, commerceId, firstName, lastName, phone, role },
+  { employeeId, commerceId, firstName, lastName, phone, role, visible },
   navigation
 ) => dispatch => {
   const db = firebase.firestore();
@@ -96,7 +97,7 @@ export const onEmployeeUpdate = (
 
   db.collection(`Commerces/${commerceId}/Employees`)
     .doc(employeeId)
-    .update({ firstName, lastName, phone, role })
+    .update({ firstName, lastName, phone, role, visible })
     .then(() => {
       dispatch({ type: ON_EMPLOYEE_UPDATED });
       navigation.goBack();
