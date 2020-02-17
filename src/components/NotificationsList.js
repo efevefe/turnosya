@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
-import { Divider, ListItem, colors } from 'react-native-elements';
+import { Divider, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Spinner, EmptyList, MenuItem, Menu } from './common';
 import {
@@ -15,7 +15,7 @@ import {
   onCommerceSetNotificationsRead,
   onClientSetNotificationsRead
 } from '../actions';
-import { MAIN_COLOR, NOTIFICATION_TYPES,MAIN_COLOR_OPACITY,MAIN_COLOR_DISABLED } from '../constants';
+import { MAIN_COLOR, NOTIFICATION_TYPES } from '../constants';
 import moment from 'moment';
 import { notificationsToFormatString } from '../utils';
 

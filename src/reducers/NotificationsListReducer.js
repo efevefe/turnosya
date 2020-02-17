@@ -3,8 +3,7 @@ import {
   ON_NOTIFICATIONS_READ,
   ON_NOTIFICATIONS_READ_FAIL,
   ON_NOTIFICATION_DELETED,
-  ON_NOTIFICATION_DELETED_FAIL,
-  ON_NOTIFICATIONS_SET_READ
+  ON_NOTIFICATION_DELETED_FAIL
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -29,9 +28,6 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_NOTIFICATION_DELETED_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
-      return { ...state };
-
-    case ON_NOTIFICATIONS_SET_READ:
       return { ...state };
 
     default:

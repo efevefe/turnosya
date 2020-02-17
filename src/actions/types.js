@@ -220,7 +220,6 @@ export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
 export const ON_NOTIFICATION_DELETED = 'on_notification_deleted';
 export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
-export const ON_NOTIFICATIONS_SET_READ = 'on_notifications_set_read';
 
 //Payment types
 export const ON_PAYMENT_READ = 'on_payment_method_read';

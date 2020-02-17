@@ -3,8 +3,7 @@ import 'firebase/firestore';
 import {
   ON_NOTIFICATIONS_READ,
   ON_NOTIFICATIONS_READING,
-  ON_NOTIFICATION_DELETED,
-  ON_NOTIFICATIONS_SET_READ
+  ON_NOTIFICATION_DELETED
 } from './types';
 import moment from 'moment';
 
@@ -72,18 +71,18 @@ onNotificationDelete = collectionRef => {
 };
 
 export const onClientSetNotificationsRead = (clientId, notifications) => {
-  const collectionRef = `Profiles/${clientId}/Notifications/`;
+  const collectionRef = `Profiles/${clientId}/Notifications`;
   onSetNotificationsRead(collectionRef, notifications);
 };
 
 export const onCommerceSetNotificationsRead = (commerceId, notifications) => {
-  const collectionRef = `Commerces/${commerceId}/Notifications/`;
+  const collectionRef = `Commerces/${commerceId}/Notifications`;
   onSetNotificationsRead(collectionRef, notifications);
 };
 
 onSetNotificationsRead = (collectionRef, notifications) => {
   const db = firebase.firestore();
   notifications.forEach(notification => {
-    if (!notification.read) db.doc(collectionRef + notification.id).update({ read: 1 });
+    if (!notification.read) db.collection(collectionRef).doc(notification.id).update({ read: 1 });
   });
 };
