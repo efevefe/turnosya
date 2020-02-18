@@ -27,23 +27,25 @@ class EmployeeForm extends Component {
   }
 
   static navigationOptions = ({ navigation }) => {
+    const editing = navigation.getParam('editing');
+
     return {
-      headerRight: navigation.getParam('rightButton')
+      headerRight: editing ? <IconButton icon="md-refresh" onPress={navigation.getParam('onUpdatePress')} /> : null
     };
   };
 
   componentDidMount() {
-    if (this.state.editing) {
-      this.props.navigation.setParams({
-        rightButton: <IconButton icon="md-refresh" onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />
-      });
-    }
+    if (this.state.editing) this.props.navigation.setParams({ onUpdatePress: this.onUpdatePress });
 
     this.props.onRolesRead();
   }
 
   componentWillUnmount() {
     this.props.onEmployeeValuesReset();
+  }
+
+  onUpdatePress = () => {
+    this.props.onEmployeeInfoUpdate(this.props.email);
   }
 
   onEmailValueChange = email => {
