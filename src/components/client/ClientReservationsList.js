@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { ListItem, ButtonGroup } from 'react-native-elements';
+import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
+import { ListItem, ButtonGroup, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { MONTHS, DAYS, MAIN_COLOR } from '../../constants';
+import { MONTHS, DAYS, MAIN_COLOR, SUCCESS_COLOR } from '../../constants';
 import { Spinner, EmptyList } from '../common';
 import { onClientReservationsListRead } from '../../actions';
 import moment from 'moment';
@@ -62,15 +62,27 @@ class ClientReservationsList extends Component {
     return (
       <ListItem
         title={commerce.name}
-        rightTitle={`$${price}`}
-        rightTitleStyle={{ color: 'black', fontWeight: 'bold' }}
-        rightSubtitle={
-          endDate < moment() && !isOneWeekOld(endDate) && !reviewId && paymentId ? '¡Calificá el servicio!' : null
-        }
-        rightSubtitleStyle={{ textAlign: 'right', fontSize: 11 }}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
-        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format('HH:mm')} hs.`}
+          }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format('HH:mm')} hs.`}
+        rightTitle={`$${price}`}
+        rightTitleStyle={styles.listItemRightTitleStyle}
+        rightSubtitle={
+          <View style={{ alignItems: 'flex-end' }}>
+            {
+              item.paymentId ?
+                <Badge
+                  value='Pagado'
+                  badgeStyle={styles.stateBadgeStyle}
+                  containerStyle={{ paddingTop: 3 }}
+                /> : null
+            }
+            {
+              endDate < moment() && !isOneWeekOld(endDate) && !reviewId && paymentId ?
+                <Text style={styles.listItemRightSubtitleStyle}>¡Calificá el servicio!</Text> : null
+            }
+          </View>
+        }
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
@@ -129,6 +141,25 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0
+  },
+  listItemRightTitleStyle: {
+    fontWeight: 'bold',
+    color: 'black',
+    marginRight: 2
+  },
+  listItemRightSubtitleStyle: {
+    color: 'grey',
+    fontSize: 11,
+    marginRight: 2,
+    marginTop: 3
+  },
+  stateBadgeStyle: {
+    height: 25,
+    width: 'auto',
+    borderRadius: 12.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    backgroundColor: SUCCESS_COLOR
   }
 });
 
