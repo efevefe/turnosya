@@ -126,17 +126,17 @@ export const onEmployeeDelete = ({ employeeId, commerceId, profileId, reservatio
       batch.update(workplaceRef, { softDelete: new Date() });
 
       // reservations cancel
-      await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+      reservationsToCancel && await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
     }
 
     await batch.commit()
 
-    reservationsToCancel.forEach(res => {
+    reservationsToCancel && reservationsToCancel.forEach(res => {
       if (res.clientId)
         onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
-    dispatch({ type: ON_EMPLOYEE_DELETED })
+    dispatch({ type: ON_EMPLOYEE_DELETED });
   } catch (error) {
     console.error(error);
   }

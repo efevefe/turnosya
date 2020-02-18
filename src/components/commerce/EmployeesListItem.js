@@ -38,7 +38,7 @@ class CourtListItem extends Component {
       return Toast.show({ text: 'No puede eliminarse usted mismo' });
 
     if (this.props.areaId === AREAS.sports || !this.props.employee.startDate) {
-      this.setState({ deleteVisible: true })
+      this.setState({ optionsVisible: false, deleteVisible: true });
     } else {
       this.props.onNextReservationsRead({
         commerceId: this.props.commerceId,
@@ -142,7 +142,7 @@ class CourtListItem extends Component {
 
         <Menu
           title={`¿Seguro que desea ${
-            this.startDate ? 'eliminar el' : 'cancelar la invitación del'
+            startDate ? 'eliminar el' : 'cancelar la invitación del'
             } empleado '${firstName} ${lastName}'?`}
           onBackdropPress={() => this.setState({ deleteVisible: false })}
           isVisible={this.state.deleteVisible}

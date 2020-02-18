@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
   employeeVisibleText: {
     alignItems: 'flex-start',
     flexDirection: 'row',
+    marginTop: 2,
     flex: 1
   }
 });

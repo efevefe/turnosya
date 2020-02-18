@@ -157,15 +157,19 @@ class NotificationsList extends Component {
             extraData={this.props.notifications}
             refreshControl={this.onRefresh()}
           />
-
           <Menu
             title={`Está seguro que desea ${
               this.state.isAcceptingEmployment ? 'aceptar' : 'rechazar'
               } la invitación de empleo? Esta acción no puede ser modificada.`}
             onBackdropPress={() => this.setState({ confirmEmploymentVisible: false })}
-            isVisible={this.state.confirmEmploymentVisible}
+            isVisible={this.state.confirmEmploymentVisible || this.props.employeeSaveLoading}
           >
-            <MenuItem title="Aceptar" icon="md-checkmark" onPress={this.onEmploymentConfirmPress} />
+            <MenuItem
+              title="Aceptar"
+              icon="md-checkmark"
+              onPress={this.onEmploymentConfirmPress}
+              loadingWithText={this.props.employeeSaveLoading}
+            />
             <Divider style={{ backgroundColor: 'grey' }} />
             <MenuItem
               title="Cancelar"
@@ -202,8 +206,9 @@ const mapStateToProps = state => {
   const { notifications, loading } = state.notificationsList;
   const { clientId } = state.clientData;
   const { commerceId } = state.commerceData;
+  const { saveLoading: employeeSaveLoading } = state.employeeData;
 
-  return { notifications, loading, clientId, commerceId };
+  return { notifications, loading, clientId, commerceId, employeeSaveLoading };
 };
 
 export default connect(mapStateToProps, {
