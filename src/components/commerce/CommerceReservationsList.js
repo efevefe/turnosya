@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { ListItem, ButtonGroup } from 'react-native-elements';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { ListItem, ButtonGroup, Badge } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner } from '../common';
 import { onCommerceDetailedReservationsRead } from '../../actions';
-import { MAIN_COLOR, AREAS, ROLES } from '../../constants';
+import { MAIN_COLOR, AREAS, ROLES, SUCCESS_COLOR } from '../../constants';
 import EmployeesFilter from './EmployeesFilter';
 
 class CommerceReservationsList extends Component {
@@ -102,8 +102,25 @@ class CommerceReservationsList extends Component {
         subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
-        rightSubtitleStyle={styles.listItemRightSubtitleStyle}
+        rightSubtitle={
+          <View style={{ alignItems: 'flex-end' }}>
+            <AreaComponentRenderer
+              sports={
+                <Text style={styles.listItemRightSubtitleStyle}>
+                  {item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
+                </Text>
+              }
+            />
+            {
+              item.paymentId ?
+                <Badge
+                  value='Pagado'
+                  badgeStyle={styles.stateBadgeStyle}
+                  containerStyle={{ paddingTop: 3 }}
+                /> : null
+            }
+          </View>
+        }
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
             reservation: { ...item, court, service }
@@ -189,10 +206,21 @@ const styles = StyleSheet.create({
   },
   listItemRightTitleStyle: {
     fontWeight: 'bold',
-    color: 'black'
+    color: 'black',
+    marginRight: 2
   },
   listItemRightSubtitleStyle: {
-    color: 'grey'
+    color: 'grey',
+    fontSize: 12,
+    marginRight: 2
+  },
+  stateBadgeStyle: {
+    height: 25,
+    width: 'auto',
+    borderRadius: 12.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    backgroundColor: SUCCESS_COLOR
   }
 });
 
@@ -204,10 +232,9 @@ const mapStateToProps = state => {
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
-  const { selectedEmployeeId } = state.employeesList;
-  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
+  const selectedEmployeeId = (areaId === AREAS.hairdressers) ? state.employeesList.selectedEmployeeId : null;
 
-  return { commerceId, areaId, selectedEmployeeId, employeeId, reservations: detailedReservations, services, courts, loading };
+  return { commerceId, areaId, selectedEmployeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {
