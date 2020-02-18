@@ -141,8 +141,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -179,6 +179,7 @@ class CommerceProfileView extends Component {
                 })
               }
             >
+              {/* Este componente Rating tira error de update en el render */}
               <Rating style={{ padding: 8 }} readonly imageSize={22} startingValue={this.getRatingValue()} />
             </TouchableOpacity>
 
