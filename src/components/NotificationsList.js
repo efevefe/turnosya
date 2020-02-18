@@ -11,7 +11,9 @@ import {
   onEmployeeCreate,
   onEmployeeDelete,
   onUserWorkplacesRead,
-  onEmploymentInvitationConfirm
+  onEmploymentInvitationConfirm,
+  onCommerceSetNotificationsRead,
+  onClientSetNotificationsRead
 } from '../actions';
 import { MAIN_COLOR, NOTIFICATION_TYPES } from '../constants';
 import moment from 'moment';
@@ -33,11 +35,23 @@ class NotificationsList extends Component {
     } else {
       type = 'client';
     }
+    this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => this.onSetNotificationsRead(type));
     this.setState({ type }, this.onNotificationsRead);
   }
 
+  onSetNotificationsRead =  type => {
+    const { clientId, notifications, commerceId } = this.props;
+
+    if (type === 'client') {
+      onClientSetNotificationsRead(clientId, notifications);
+    } else {
+      onCommerceSetNotificationsRead(commerceId, notifications);
+    }
+  };
+
   componentWillUnmount() {
     this.unsubscribeNotificationsRead && this.unsubscribeNotificationsRead();
+    this.willBlurSubscription.remove && this.willBlurSubscription.remove();
   }
 
   onNotificationsRead = () => {
@@ -121,6 +135,7 @@ class NotificationsList extends Component {
         rightTitle={`Hace ${notificationsToFormatString(moment().diff(item.date, 'minutes')).toString()}`}
         rightTitleStyle={{ fontSize: 12 }}
         subtitle={item.body}
+        containerStyle={{ backgroundColor: item.read ? 'white' : '#f9e4e7' }}
         subtitleStyle={{ fontSize: 12 }}
         rightIcon={{
           name: 'md-more',
@@ -160,7 +175,7 @@ class NotificationsList extends Component {
           <Menu
             title={`Está seguro que desea ${
               this.state.isAcceptingEmployment ? 'aceptar' : 'rechazar'
-              } la invitación de empleo? Esta acción no puede ser modificada.`}
+            } la invitación de empleo? Esta acción no puede ser modificada.`}
             onBackdropPress={() => this.setState({ confirmEmploymentVisible: false })}
             isVisible={this.state.confirmEmploymentVisible || this.props.employeeSaveLoading}
           >
@@ -184,15 +199,15 @@ class NotificationsList extends Component {
             isVisible={this.state.optionsVisible}
           >
             {this.state.selectedNotification &&
-              this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
-              this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
-              !this.state.selectedNotification.acceptanceDate &&
-              !this.state.selectedNotification.rejectionDate
+            this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
+            this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
+            !this.state.selectedNotification.acceptanceDate &&
+            !this.state.selectedNotification.rejectionDate
               ? this.renderEmploymentInvitationOptions()
               : null}
-            {this.state.selectedNotification && this.state.selectedNotification.sentBy ?
-              <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} /> :
-              null}
+            {this.state.selectedNotification && this.state.selectedNotification.sentBy ? (
+              <MenuItem title="Perfil" icon="md-person" onPress={this.onProfilePress} />
+            ) : null}
             <Divider style={{ backgroundColor: 'grey' }} />
             <MenuItem title="Eliminar" icon="md-trash" onPress={this.onNotificationDeletePress} />
           </Menu>
