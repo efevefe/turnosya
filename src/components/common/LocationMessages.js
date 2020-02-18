@@ -38,7 +38,7 @@ class LocationMessages extends Component {
   onAppStateChange = async appState => {
     try {
       if (appState === 'active') {
-        this.props.onLocationFound && this.props.onLocationFound({ updating: true, location: null });
+        this.props.onLocationValueChange({ loading: true });
         this.setState({ permissionStatus: await getPermissionLocationStatus(), modal: true, appState });
       } else {
         this.setState({ appState });
@@ -74,7 +74,8 @@ class LocationMessages extends Component {
           longitude
         };
 
-        this.props.onLocationFound && this.props.onLocationFound({ updating: false, location });
+        this.props.onLocationValueChange({ loading: false });
+        this.props.onLocationFound && this.props.onLocationFound({ location });
       } else if (!latitude || !longitude) {
         this.updateUserLocation();
       }
@@ -84,16 +85,19 @@ class LocationMessages extends Component {
   };
 
   updateUserLocation = () => {
+    let userLocation = null;
     if (this.props.latitude && this.props.longitude) {
       // Esto se hace para que cuando el marker de 'UserLocation' se está mostrando en el mapa,
       // y  después de apaga el GPS o deje de dar permisos, este marker desaparezca.
       // PD: El borrado del mapa no es instantáneo porque no queda el compoente escuchando, pero la
       // próxima vez que se presione el Fab y te aparezca el cartel solicitando GPS, se borra el marker
-      this.props.onLocationValueChange({ userLocation: { latitude: null, longitude: null } });
+      userLocation = { ...this.props.userLocation, latitude: null, longitude: null };
     }
 
-    this.props.onLocationFound &&
-      this.props.onLocationFound({ updating: !this.state.permissionStatus, location: null });
+    userLocation
+      ? this.props.onLocationValueChange({ loading: false, userLocation })
+      : this.props.onLocationValueChange({ loading: false });
+    this.props.onLocationFound && this.props.onLocationFound({ location: null });
   };
 
   renderItems = () => {
@@ -170,6 +174,8 @@ class LocationMessages extends Component {
   };
 
   render() {
+    if (this.state.appState !== 'active' || !this.state.permissionStatus) return null;
+
     if (this.state.permissionStatus === 'permissionsAllowed') {
       this.getAndSaveLocation();
       return <View />;
@@ -211,9 +217,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { latitude, longitude } = state.locationData.userLocation;
+  const { userLocation } = state.locationData;
 
-  return { latitude, longitude };
+  return { userLocation, latitude: userLocation.latitude, longitude: userLocation.longitude };
 };
 
 export default connect(mapStateToProps, { onLocationValueChange })(LocationMessages);

@@ -17,7 +17,6 @@ class CommerceFiltersScreen extends Component {
   state = {
     provinceName: this.props.provinceNameFilter,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
-    locationUpdating: false,
     oldData: {
       selectedLocation: this.props.selectedLocation,
       markers: this.props.markers,
@@ -50,7 +49,7 @@ class CommerceFiltersScreen extends Component {
   };
 
   onClosePress() {
-    if (!this.state.locationUpdating) {
+    if (!this.props.locationLoading) {
       this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
       this.props.onCommerceHitsUpdate(this.state.oldData.markers);
       this.props.onCommercesListValueChange({ locationButtonIndex: this.state.oldData.locationButtonIndex });
@@ -60,7 +59,7 @@ class CommerceFiltersScreen extends Component {
   }
 
   onApplyFiltersPress() {
-    if (!this.state.locationUpdating) {
+    if (!this.props.locationLoading) {
       if (this.props.locationButtonIndex !== 0 && !this.props.selectedLocation.latitude) {
         return Toast.show({ text: 'Seleccione una ubicación o encienda el GPS' });
       }
@@ -89,22 +88,13 @@ class CommerceFiltersScreen extends Component {
     }
   }
 
-  onCurrentLocationFound = ({ updating, location }) => {
-    // Este es el método que tira los errores porque cuando se renderiza este componente intenta renderizar
-    // LocationMessages que dentro de su render ejecuta un metodo que llama a este entonces este metodo llama
-    // a setState. Por lo que el setState se llama durante el render de este componente si bien no es instantaneo.
-    // Ademas que cuando cerras este componente, LocationMessages llama a este metodo y tira el error de que no se
-    // puede actualizar el estado de un componente (osea este) desmontado
-    if (!updating && !location) return this.setState({ locationUpdating: false });
-
-    if (updating && !location) return this.setState({ locationUpdating: true });
-
+  onCurrentLocationFound = async ({ location }) => {
     if (location) {
-      this.setState({ locationUpdating: true }, async () => {
+      try {
         await this.props.onLocationValueChange({ selectedLocation: { ...location }, userLocation: { ...location } });
-
-        this.setState({ locationUpdating: false });
-      });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -225,16 +215,17 @@ const {
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
   const { provinceNameFilter, locationButtonIndex, locationRadiusKms, markers } = state.commercesList;
-  const { selectedLocation, userLocation } = state.locationData;
+  const { selectedLocation, userLocation, loading: locationLoading } = state.locationData;
 
   return {
     provincesList,
     provinceNameFilter,
     locationButtonIndex,
     locationRadiusKms,
+    markers,
     selectedLocation,
     userLocation,
-    markers
+    locationLoading
   };
 };
 
