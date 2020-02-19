@@ -3,9 +3,10 @@ import { View, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Spinner, DatePicker, Button, CardSection, Menu, IconButton } from '../../common';
+import { Spinner, Button, CardSection, Menu, IconButton } from '../../common';
 import EmployeesPicker from './EmployeesPicker';
 import SendReportAsPDF from './SendReportAsPDF';
+import ReportPeriodPicker from './ReportPeriodPicker';
 import {
   onCommerceReportValueChange,
   onCommerceReportValueReset,
@@ -13,7 +14,6 @@ import {
 } from '../../../actions/CommerceReportsActions';
 
 const chartHeight = Math.round(Dimensions.get('window').height) / 1.35;
-const pickerWidth = Math.round(Dimensions.get('window').width) / 3.1;
 
 class MostPopularShiftsChart extends Component {
   constructor(props) {
@@ -24,8 +24,9 @@ class MostPopularShiftsChart extends Component {
 
     this.state = {
       modal: false,
-      modalStartDate: startDate,
-      modalEndDate: endDate,
+      startDate: startDate,
+      endDate: endDate,
+      periodError: false,
       selectedEmployee: { id: null },
       html: ''
     };
@@ -42,16 +43,18 @@ class MostPopularShiftsChart extends Component {
   onEditReportPress = () => this.setState({ modal: true });
 
   onGenerateReportPress = () => {
+    if (this.state.periodError) return;
+
     this.props.onMostPopularShiftsReadByRange(
       this.props.commerceId,
-      moment(this.state.modalStartDate),
-      moment(this.state.modalEndDate),
+      moment(this.state.startDate),
+      moment(this.state.endDate),
       this.state.selectedEmployee.id
     );
 
     this.props.onCommerceReportValueChange({
-      startDate: moment(this.state.modalStartDate),
-      endDate: moment(this.state.modalEndDate),
+      startDate: moment(this.state.startDate),
+      endDate: moment(this.state.endDate),
       selectedEmployee: this.state.selectedEmployee
     });
 
@@ -77,8 +80,6 @@ class MostPopularShiftsChart extends Component {
   }
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <View style={{ flex: 1 }}>
         <Menu
@@ -87,41 +88,22 @@ class MostPopularShiftsChart extends Component {
           onBackdropPress={() =>
             this.setState({
               modal: false,
-              modalStartDate: this.props.startDate,
-              modalEndDate: this.props.endDate
+              startDate: this.props.startDate,
+              endDate: this.props.endDate
             })
           }
         >
-          <CardSection
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: 10
-            }}
-          >
-            <DatePicker
-              date={this.state.modalStartDate}
-              mode="date"
-              label="Desde:"
-              placeholder="Fecha desde"
-              pickerWidth={pickerWidth}
-              onDateChange={modalStartDate => this.setState({ modalStartDate })}
-            />
-            <DatePicker
-              date={this.state.modalEndDate}
-              mode="date"
-              label="Hasta:"
-              placeholder="Opcional"
-              pickerWidth={pickerWidth}
-              onDateChange={modalEndDate => this.setState({ modalEndDate })}
-            />
-          </CardSection>
-
+          <ReportPeriodPicker
+            startDate={this.state.startDate}
+            onStartDateChange={startDate => this.setState({ startDate })}
+            endDate={this.state.endDate}
+            onEndDateChange={endDate => this.setState({ endDate })}
+            onValueChange={periodError => this.setState({ periodError })}
+          />
           <EmployeesPicker
             value={this.state.selectedEmployee.id}
             onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
           />
-
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
