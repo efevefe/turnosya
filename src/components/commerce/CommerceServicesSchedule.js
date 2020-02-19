@@ -40,7 +40,10 @@ class CommerceServicesSchedule extends Component {
       employeeId: this.state.selectedEmployeeId
     });
 
-    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead({
+      commerceId: this.props.commerceId,
+      startDate: true
+    });
 
     this.unsubscribeServicesRead = this.props.onServicesRead(this.props.commerceId);
 

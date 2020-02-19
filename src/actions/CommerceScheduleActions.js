@@ -357,7 +357,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 };
 
 export const onScheduleConfigurationSave = (
-  { reservationDayPeriod, reservationMinCancelTime, commerceId, date },
+  { reservationDayPeriod, reservationMinCancelTime, commerceId, date, employeeId },
   navigation
 ) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
@@ -373,16 +373,24 @@ export const onScheduleConfigurationSave = (
       .where('endDate', '>=', date.toDate())
       .orderBy('endDate')
       .get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+      snapshot.forEach(doc => {
+        if (!employeeId || (employeeId === doc.data().employeeId))
+          batch.update(doc.ref, updateObj)
+      });
     }
 
     snapshot = await schedulesRef
       .where('softDelete', '==', null)
       .where('endDate', '==', null)
       .get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+      snapshot.forEach(doc => {
+        if (!employeeId || (employeeId === doc.data().employeeId))
+          batch.update(doc.ref, updateObj)
+      });
     }
 
     await batch.commit();

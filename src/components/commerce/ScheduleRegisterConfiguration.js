@@ -4,7 +4,7 @@ import { Card, Slider, Divider } from 'react-native-elements';
 import { View, Text } from 'react-native';
 import moment from 'moment';
 import { CardSection, Button } from '../common';
-import { MAIN_COLOR, MAIN_COLOR_OPACITY } from '../../constants';
+import { MAIN_COLOR, MAIN_COLOR_OPACITY, AREAS } from '../../constants';
 import { stringFormatDays, stringFormatHours } from '../../utils';
 import { onScheduleConfigurationSave, onScheduleValueChange } from '../../actions';
 
@@ -26,14 +26,15 @@ class ScheduleRegisterConfiguration extends Component {
   }
 
   onSavePressHandler() {
-    const { reservationDayPeriod, reservationMinCancelTime, commerceId } = this.props;
+    const { reservationDayPeriod, reservationMinCancelTime, commerceId, employeeId } = this.props;
 
     this.props.onScheduleConfigurationSave(
       {
         reservationDayPeriod,
         reservationMinCancelTime,
         commerceId,
-        date: moment()
+        date: moment(),
+        employeeId
       },
       this.props.navigation
     );
@@ -106,13 +107,20 @@ class ScheduleRegisterConfiguration extends Component {
 }
 
 const mapStateToProps = state => {
-  const { loading, reservationDayPeriod, reservationMinCancelTime } = state.commerceSchedule;
+  const {
+    loading,
+    reservationDayPeriod,
+    reservationMinCancelTime
+  } = state.commerceSchedule;
+  const { area: { areaId } } = state.commerceData;
+  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
 
   return {
     commerceId: state.commerceData.commerceId,
     loading,
     reservationDayPeriod,
-    reservationMinCancelTime
+    reservationMinCancelTime,
+    employeeId
   };
 };
 

@@ -1,12 +1,13 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import moment from 'moment';
 import { ON_EMPLOYEES_READ, ON_EMPLOYEES_READING, ON_EMPLOYEES_READ_FAIL, ON_EMPLOYEE_SELECT } from './types';
 
 export const onEmployeeSelect = selectedEmployeeId => {
   return { type: ON_EMPLOYEE_SELECT, payload: { selectedEmployeeId } };
 }
 
-export const onEmployeesRead = (commerceId, visible = false) => dispatch => {
+export const onEmployeesRead = ({ commerceId, visible, startDate }) => dispatch => {
   dispatch({ type: ON_EMPLOYEES_READING });
 
   const db = firebase.firestore();
@@ -19,7 +20,9 @@ export const onEmployeesRead = (commerceId, visible = false) => dispatch => {
   return query
     .onSnapshot(snapshot => {
       let employees = [];
-      snapshot.forEach(doc => employees.push({ ...doc.data(), id: doc.id }));
+      snapshot.forEach(doc => {
+        if (!startDate || (startDate && doc.data().startDate)) employees.push({ ...doc.data(), id: doc.id });
+      });
       dispatch({ type: ON_EMPLOYEES_READ, payload: employees });
     });
 };
@@ -34,7 +37,7 @@ export const onEmployeesByIdRead = ({ commerceId, employeesIds }) => dispatch =>
     db.doc(`Commerces/${commerceId}/Employees/${employeeId}`)
       .get()
       .then(doc => {
-        if (!doc.data().softDelete && doc.data().visible) employees.push({ ...doc.data(), id: doc.id });
+        if (!doc.data().softDelete && doc.data().visible && doc.data().startDate) employees.push({ ...doc.data(), id: doc.id });
 
         if (index === employeesIds.length - 1) dispatch({ type: ON_EMPLOYEES_READ, payload: employees });
       })
