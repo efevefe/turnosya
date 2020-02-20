@@ -14,8 +14,8 @@ import {
   ON_SCHEDULE_READ_EMPTY,
   ON_ACTIVE_SCHEDULES_READ
 } from '../actions/types';
+import moment from 'moment';
 import { Toast } from '../components/common';
-import { formattedMoment } from '../utils/functions';
 
 const INITIAL_WORKSHIFTS = {
   id: '',
@@ -50,7 +50,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ON_SCHEDULE_FORM_OPEN:
-      return { ...state, ...INITIAL_WORKSHIFTS, startDate: formattedMoment() };
+      return { ...state, ...INITIAL_WORKSHIFTS, startDate: moment(moment().format('MM-DD-YYYY')) };
 
     case ON_SCHEDULE_VALUE_CHANGE:
       return { ...state, ...action.payload };

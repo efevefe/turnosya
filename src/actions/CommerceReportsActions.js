@@ -5,8 +5,7 @@ import {
   ON_COMMERCE_REPORT_READ,
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
-  ON_COMMERCE_REPORT_DATA_EMPTY,
-  ON_COMMERCE_REPORT_DATA_ERROR
+  ON_COMMERCE_REPORT_DATA_EMPTY
 } from './types';
 import moment from 'moment';
 
@@ -92,8 +91,6 @@ export const yearsOfActivity = commerceId => dispatch => {
 export const onMonthlyEarningsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
-  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
-
   const db = firebase.firestore();
   const months = Array(12).fill(0); // 12 months
   const labels = arrayOfMonths;
@@ -161,8 +158,6 @@ export const yearsWithReview = commerceId => dispatch => {
 export const onMonthlyReviewsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
-  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
-
   const db = firebase.firestore();
   const months = Array(12).fill(0); // total rating per month
   const counts = Array(12).fill(0); // ratings quantity per month
@@ -213,7 +208,7 @@ export const onMonthlyReviewsReadByYear = (commerceId, year, employeeId = null) 
 };
 
 // Reserved and Cancelled reservations Report
-export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
+export const onReservedAndCancelledReservationsReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();

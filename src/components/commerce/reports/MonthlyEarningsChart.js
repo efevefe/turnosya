@@ -20,7 +20,13 @@ class MonthlyEarningsChart extends Component {
     props.yearsOfActivity(props.commerceId);
     props.onMonthlyEarningsReadByYear(props.commerceId, props.selectedYear);
 
-    this.state = { modal: false, modalYear: this.props.selectedYear, selectedEmployee: { id: null }, html: '' };
+    this.state = {
+      modal: false,
+      year: this.props.selectedYear,
+      yearError: '',
+      selectedEmployee: { id: null },
+      html: ''
+    };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -33,11 +39,17 @@ class MonthlyEarningsChart extends Component {
 
   onEditReportPress = () => this.setState({ modal: true });
 
+  onYearValueChange = year => {
+    this.setState({ year, yearError: year ? '' : 'Debe seleccionar un año' });
+  }
+
   onGenerateReportPress = () => {
-    this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.modalYear, this.state.selectedEmployee.id);
+    if (this.state.yearError) return;
+
+    this.props.onMonthlyEarningsReadByYear(this.props.commerceId, this.state.year, this.state.selectedEmployee.id);
 
     this.props.onCommerceReportValueChange({
-      selectedYear: this.state.modalYear,
+      selectedYear: this.state.year,
       selectedEmployee: this.state.selectedEmployee
     });
 
@@ -60,8 +72,6 @@ class MonthlyEarningsChart extends Component {
   }
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <View style={{ flex: 1 }}>
         <Menu
@@ -70,24 +80,23 @@ class MonthlyEarningsChart extends Component {
           onBackdropPress={() =>
             this.setState({
               modal: false,
-              modalYear: this.props.selectedYear
+              year: this.props.selectedYear
             })
           }
         >
           <CardSection style={{ paddingTop: 10 }}>
             <Picker
               title='Año'
-              value={this.state.modalYear}
+              value={this.state.year}
               items={this.props.years}
-              onValueChange={modalYear => this.setState({ modalYear })}
+              errorMessage={this.state.yearError}
+              onValueChange={this.onYearValueChange}
             />
           </CardSection>
-
           <EmployeesPicker
             value={this.state.selectedEmployee.id}
             onPickerValueChange={selectedEmployee => this.setState({ selectedEmployee })}
           />
-
           <CardSection>
             <Button title={'Generar Reporte'} onPress={this.onGenerateReportPress} />
           </CardSection>
@@ -123,7 +132,7 @@ class MonthlyEarningsChart extends Component {
 }
 
 const mapStateToProps = state => {
-  const { data, years, selectedYear, selectedEmployee, loading, error } = state.commerceReports;
+  const { data, years, selectedYear, selectedEmployee, loading } = state.commerceReports;
   const { commerceId, name: commerceName } = state.commerceData;
 
   return {
@@ -133,8 +142,7 @@ const mapStateToProps = state => {
     selectedEmployee,
     commerceId,
     commerceName,
-    loading,
-    error
+    loading
   };
 };
 
