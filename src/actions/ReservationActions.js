@@ -74,24 +74,37 @@ export const onClientServiceReservationCreate = ({
   );
 };
 
-const reservationExists = async ({ commerceId, employeeId, courtId, startDate, endDate }) => {
-  // creo que lo mejor que pude hacerlo teniendo en cuenta las limitaciones de firestore
+const serviceReservationExists = async ({ commerceId, employeeId, startDate, endDate }) => {
+  // creo que es lo mejor que pude hacerlo teniendo en cuenta las limitaciones de firestore
   // de todas formas traten de no hacer reservas duplicadas xd
   const db = firebase.firestore();
 
-  let query = db
-    .collection(`Commerces/${commerceId}/Reservations`)
-    .where('cancellationDate', '==', null)
-    .where('endDate', '>', startDate);
-
-  if (employeeId) query = query.where('employeeId', '==', employeeId);
-
-  if (courtId) query = query.where('courtId', '==', courtId);
-
   try {
-    const snapshot = await query.get();
+    const snapshot = await db
+      .collection(`Commerces/${commerceId}/Reservations`)
+      .where('cancellationDate', '==', null)
+      .where('endDate', '>', startDate)
+      .where('employeeId', '==', employeeId)
+      .get();
 
     return snapshot.docs.some(res => res.data().startDate.toDate() < endDate);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const courtReservationExists = async ({ commerceId, courtId, startDate }) => {
+  const db = firebase.firestore();
+
+  try {
+    const snapshot = await db
+      .collection(`Commerces/${commerceId}/Reservations`)
+      .where('cancellationDate', '==', null)
+      .where('startDate', '==', startDate)
+      .where('courtId', '==', courtId)
+      .get();
+
+    return !snapshot.empty;
   } catch (error) {
     throw new Error(error);
   }
@@ -131,17 +144,9 @@ const onClientReservationCreate = (reservationObject, commerceId, notification) 
 
     const { employeeId, courtId, startDate, endDate } = reservationData;
 
-    if (
-      await reservationExists({
-        commerceId,
-        employeeId,
-        courtId,
-        startDate,
-        endDate
-      })
-    ) {
+    if ((courtId && await courtReservationExists({ commerceId, courtId, startDate })) ||
+      (employeeId && await serviceReservationExists({ commerceId, employeeId, startDate, endDate })))
       return dispatch({ type: ON_RESERVATION_EXISTS });
-    }
 
     await batch.commit();
 
@@ -173,16 +178,8 @@ export const onCommerceCourtReservationCreate = ({
   try {
     const stateDoc = await db.doc(`ReservationStates/reserved`).get();
 
-    if (
-      await reservationExists({
-        commerceId,
-        courtId,
-        startDate: startDate.toDate(),
-        endDate: endDate.toDate()
-      })
-    ) {
+    if (await courtReservationExists({ commerceId, courtId, startDate: startDate.toDate() }))
       return dispatch({ type: ON_RESERVATION_EXISTS });
-    }
 
     await db.collection(`Commerces/${commerceId}/Reservations`).add({
       areaId,
@@ -225,16 +222,13 @@ export const onCommerceServiceReservationCreate = ({
   try {
     const stateDoc = await db.doc(`ReservationStates/reserved`).get();
 
-    if (
-      await reservationExists({
-        commerceId,
-        employeeId,
-        startDate: startDate.toDate(),
-        endDate: endDate.toDate()
-      })
-    ) {
+    if (await serviceReservationExists({
+      commerceId,
+      employeeId,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate()
+    }))
       return dispatch({ type: ON_RESERVATION_EXISTS });
-    }
 
     await db.collection(`Commerces/${commerceId}/Reservations`).add({
       areaId,
