@@ -43,6 +43,7 @@ class CommerceReservationDetails extends Component {
       reservation,
       optionsVisible: false,
       error: '',
+      receiptNumber: '',
       confirmDeleteVisible: false,
       isOneWeekOld: isOneWeekOld(reservation.endDate),
       reviewBGIndex: 0,
@@ -335,12 +336,24 @@ class CommerceReservationDetails extends Component {
         onBackdropPress={() => this.setState({ confirmCashPayVisible: false })}
         isVisible={this.state.confirmCashPayVisible || this.props.cashPayRegisterLoading}
       >
+        <View style={{ alignSelf: 'stretch' }}>
+          <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
+            <Input
+              label='Numero de comprobante asociado:'
+              placeholder='12345'
+              color="black"
+              onChangeText={receiptNumber => this.setState({ receiptNumber })}
+              value={this.state.receiptNumber}
+            />
+          </CardSection>
+          <Divider style={{ backgroundColor: 'grey' }} />
+        </View>
         <MenuItem
           title="Confirmar"
           icon="md-checkmark"
           loadingWithText={this.props.cashPayRegisterLoading}
           onPress={() => {
-            this.props.onCashPaymentCreate(this.state.reservation, this.props.navigation)
+            this.props.onCashPaymentCreate(this.state.reservation, this.state.receiptNumber, this.props.navigation)
             this.setState({ confirmCashPayVisible: false })
           }}
         />

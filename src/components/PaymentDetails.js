@@ -43,6 +43,10 @@ class PaymentDetails extends Component {
             <Text style={styles.textStyle}>
               {`Método de Pago: ${this.props.method}`}
             </Text>
+            {this.props.method === 'Efectivo' ?
+              <Text style={styles.textStyle}>
+                {`Nro. de Comprobante: ${this.props.receiptNumber}`}
+              </Text> : null}
           </View>
         </Card>
       );
@@ -56,9 +60,9 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => {
-  const { method, loading, date } = state.paymentData;
+  const { method, loading, date, receiptNumber } = state.paymentData;
   const { firstName, lastName } = state.clientData;
-  return { method, loading, firstName, lastName, date };
+  return { method, loading, firstName, lastName, date, receiptNumber };
 };
 
 export default connect(mapStateToProps, { onReservationPaymentRead })(PaymentDetails);
