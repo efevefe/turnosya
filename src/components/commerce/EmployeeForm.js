@@ -130,6 +130,8 @@ class EmployeeForm extends Component {
                 placeholder="Busque por email..."
                 autoCapitalize="none"
                 keyboardType="email-address"
+                returnKeyType='search'
+                onSubmitEditing={() => this.props.onUserByEmailSearch(this.props.email, this.props.commerceId)}
                 value={this.props.email}
                 errorMessage={this.props.emailError}
                 onChangeText={this.onEmailValueChange}

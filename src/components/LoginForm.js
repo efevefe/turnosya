@@ -140,6 +140,8 @@ class LoginForm extends Component {
               placeholder="Contraseña"
               password
               autoCapitalize="none"
+              returnKeyType='done'
+              onSubmitEditing={this.onButonPressHandler.bind(this)}
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
               onChangeText={password => this.props.onLoginValueChange({ password })}
