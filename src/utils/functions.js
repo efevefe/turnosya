@@ -259,7 +259,9 @@ export const cancelReservationNotificationFormat = ({
 
   let body;
 
-  if (!service || !receptorName) {
+  if (!actorName) {
+    body = `Te han cancelado el turno del `;
+  } else if (!service || !receptorName) {
     body = `${actorName} te ha cancelado el turno del `;
   } else {
     body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el `;

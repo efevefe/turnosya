@@ -8,7 +8,7 @@ import { cancelReservationNotificationFormat } from '../../utils';
 import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onCourtNextReservationsRead } from '../../actions';
 
 class CourtListItem extends Component {
-  state = { optionsVisible: false, deleteVisible: false, deleteWithReservations: false };
+  state = { optionsVisible: false, deleteVisible: false, deleteWithReservations: false, reservationsToCancel: [] };
 
   componentDidUpdate(prevProps) {
     // ver si la cancha tenia reservas pendientes

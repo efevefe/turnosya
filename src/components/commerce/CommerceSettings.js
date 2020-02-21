@@ -1,19 +1,81 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
-import { onCommerceDelete, onCommerceValueChange, onLoginValueChange } from '../../actions';
+import { cancelReservationNotificationFormat } from '../../utils';
+import { onCommerceDelete, onCommerceValueChange, onLoginValueChange, onNextReservationsRead } from '../../actions';
 import { MenuItem, Menu, Input, CardSection, SettingsItem } from '../common';
 
 class CommerceSettings extends Component {
-  state = { providerId: null, mPagoModalVisible: false };
+  state = { providerId: null, mPagoModalVisible: false, deleteWithReservations: false, reservationsToCancel: [] };
 
   componentDidMount() {
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
   }
+
+  componentDidUpdate(prevProps) {
+    // ver si el negocio tenia reservas pendientes
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused())
+      this.onCommerceDelete();
+  }
+
+  onCommerceDeletePress = () => {
+    this.props.onNextReservationsRead({
+      commerceId: this.props.commerceId,
+      startDate: moment()
+    })
+
+    this.setState({ reservationsToCancel: [] });
+  }
+
+  onCommerceDelete = () => {
+    if (this.props.nextReservations.length) {
+      this.setState({ deleteWithReservations: true });
+    } else {
+      this.props.onCommerceValueChange({ confirmDeleteVisible: true });
+    }
+  }
+
+  renderDeleteWithReservations = () => {
+    return (
+      <Menu
+        title={
+          'El negocio aún tiene reservas pendientes. ¿Está seguro de que desea eliminarlo? ' +
+          'Seleccione la opción "Cancelar reservas y notificar" para dar de baja su negocio y cancelar dichas reservas, ' +
+          'o la opción "Volver" si desea cancelar esta acción.'
+        }
+        onBackdropPress={() => this.setState({ deleteWithReservations: false })}
+        isVisible={this.state.deleteWithReservations}
+      >
+        <MenuItem title="Cancelar reservas y notificar" icon="md-trash" onPress={this.onCancelReservations} />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ deleteWithReservations: false })} />
+      </Menu>
+    );
+  }
+
+  onCancelReservations = () => {
+    const reservationsToCancel = this.props.nextReservations.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          actorName: this.props.commerceName,
+          cancellationReason: 'Cierre del negocio'
+        })
+      }
+    })
+
+    this.setState({
+      reservationsToCancel,
+      deleteWithReservations: false
+    }, () => this.props.onCommerceValueChange({ confirmDeleteVisible: true }));
+  };
+
 
   renderPasswordInput = () => {
     // muestra el input de contraseña para confirmar eliminacion de cuenta o negocio si ese es el metodo de autenticacion
@@ -63,7 +125,7 @@ class CommerceSettings extends Component {
       this.onBackdropPress();
     }
 
-    this.props.onCommerceDelete(this.props.password, this.props.navigation);
+    this.props.onCommerceDelete(this.props.password, this.state.reservationsToCancel, this.props.navigation);
   };
 
   onBackdropPress = () => {
@@ -93,10 +155,11 @@ class CommerceSettings extends Component {
             color: 'black'
           }}
           title="Eliminar mi negocio"
-          onPress={() => this.props.onCommerceValueChange({ confirmDeleteVisible: true })}
+          onPress={this.onCommerceDeletePress}
           loading={this.props.loadingCommerceDelete}
           bottomDivider
         />
+        {this.renderDeleteWithReservations()}
         {this.renderConfirmCommerceDelete()}
       </ScrollView>
     );
@@ -114,21 +177,26 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
-  const { commerceId } = state.commerceData;
+  const { commerceId, name: commerceName } = state.commerceData;
   // auth
   const { password, error } = state.auth;
+
+  const { nextReservations } = state.reservationsList;
 
   return {
     loadingCommerceDelete,
     password,
     reauthError: error,
     confirmCommerceDeleteVisible,
-    commerceId
+    commerceId,
+    nextReservations,
+    commerceName
   };
 };
 
 export default connect(mapStateToProps, {
   onCommerceDelete,
   onCommerceValueChange,
-  onLoginValueChange
+  onLoginValueChange,
+  onNextReservationsRead
 })(CommerceSettings);
