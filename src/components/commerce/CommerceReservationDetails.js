@@ -339,7 +339,7 @@ class CommerceReservationDetails extends Component {
         <View style={{ alignSelf: 'stretch' }}>
           <CardSection style={{ padding: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Input
-              label='Numero de comprobante asociado:'
+              label='Nro. de comprobante asociado:'
               placeholder='12345'
               color="black"
               onChangeText={receiptNumber => this.setState({ receiptNumber })}

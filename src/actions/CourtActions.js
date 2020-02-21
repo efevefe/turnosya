@@ -142,14 +142,27 @@ export const onCourtsRead = commerceId => dispatch => {
   );
 };
 
-export const onCourtDelete = ({ id, commerceId }) => {
+export const onCourtDelete = ({ id, commerceId, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
+  const batch = db.batch();
 
-  return dispatch => {
-    db.doc(`Commerces/${commerceId}/Courts/${id}`)
-      .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: ON_COURT_DELETE }));
-  };
+  try {
+    batch.update(db.doc(`Commerces/${commerceId}/Courts/${id}`), { softDelete: new Date() });
+
+    // reservations cancel
+    await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+
+    await batch.commit();
+
+    reservationsToCancel.forEach(res => {
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+    });
+
+    dispatch({ type: ON_COURT_DELETE });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const onCourtUpdate = (courtData, navigation) => async dispatch => {
