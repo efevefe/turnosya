@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
-import { ListItem, ButtonGroup, Badge } from 'react-native-elements';
+import { ListItem, ButtonGroup } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { MONTHS, DAYS, MAIN_COLOR, SUCCESS_COLOR } from '../../constants';
-import { Spinner, EmptyList } from '../common';
+import { Spinner, EmptyList, Badge } from '../common';
 import { onClientReservationsListRead } from '../../actions';
 import moment from 'moment';
 import { isOneWeekOld } from '../../utils/functions';
@@ -69,14 +69,7 @@ class ClientReservationsList extends Component {
         rightTitleStyle={styles.listItemRightTitleStyle}
         rightSubtitle={
           <View style={{ alignItems: 'flex-end' }}>
-            {
-              item.paymentId ?
-                <Badge
-                  value='Pagado'
-                  badgeStyle={styles.stateBadgeStyle}
-                  containerStyle={{ paddingTop: 3 }}
-                /> : null
-            }
+            {item.paymentId ? <Badge value='Pagado' color={SUCCESS_COLOR} /> : null}
             {
               endDate < moment() && !isOneWeekOld(endDate) && !reviewId && paymentId ?
                 <Text style={styles.listItemRightSubtitleStyle}>¡Calificá el servicio!</Text> : null
@@ -152,14 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginRight: 2,
     marginTop: 3
-  },
-  stateBadgeStyle: {
-    height: 25,
-    width: 'auto',
-    borderRadius: 12.5,
-    paddingLeft: 5,
-    paddingRight: 5,
-    backgroundColor: SUCCESS_COLOR
   }
 });
 

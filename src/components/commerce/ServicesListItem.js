@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { ListItem, Divider, Badge } from 'react-native-elements';
+import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem } from '../common';
+import { Menu, MenuItem, Badge } from '../common';
 import { SUCCESS_COLOR, MAIN_COLOR } from '../../constants';
 import { onServiceDelete, onFormOpen, onServiceOfferingUpdate } from '../../actions';
 
@@ -90,15 +90,7 @@ class ServicesListItem extends Component {
               <Text style={{ color: 'grey' }}>{`Duración: ${duration} min.`}</Text>
               <Badge
                 value={offering ? 'Dejar de Ofrecer' : 'Ofrecer Servicio'}
-                badgeStyle={{
-                  height: 25,
-                  width: 'auto',
-                  borderRadius: 12.5,
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                  backgroundColor: offering ? MAIN_COLOR : SUCCESS_COLOR
-                }}
-                containerStyle={{ paddingTop: 3 }}
+                color={offering ? MAIN_COLOR : SUCCESS_COLOR}
                 onPress={this.onBadgePress}
               />
             </View>

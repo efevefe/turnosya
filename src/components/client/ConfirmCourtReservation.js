@@ -3,10 +3,10 @@ import { View, StyleSheet } from 'react-native';
 import { Button as RNEButton } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { CardSection, Button, ButtonGroup } from '../common';
+import { CardSection, Button } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import CourtReservationDetails from '../CourtReservationDetails';
-import { onReservationValueChange, onClientCourtReservationCreate } from '../../actions';
+import { onClientCourtReservationCreate } from '../../actions';
 import { isEmailVerified, newReservationNotificationFormat } from '../../utils';
 import VerifyEmailModal from './VerifyEmailModal';
 
@@ -15,7 +15,6 @@ class ConfirmCourtReservation extends Component {
 
   componentDidMount() {
     this.loading = false;
-    this.priceButtons();
   }
 
   componentDidUpdate() {
@@ -23,49 +22,6 @@ class ConfirmCourtReservation extends Component {
       this.loading = this.props.loading;
     }
   }
-
-  priceButtons = () => {
-    const { court } = this.props;
-    const priceButtons = [];
-    const prices = [];
-
-    if (court) {
-      priceButtons.push(`Sin Luz: $${court.price}`);
-      prices.push(court.price);
-
-      if (court.lightPrice) {
-        priceButtons.push(`Con Luz: $${court.lightPrice}`);
-        prices.push(court.lightPrice);
-      }
-    }
-
-    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
-  };
-
-  onPriceSelect = selectedIndex => {
-    this.setState({ selectedIndex });
-    this.props.onReservationValueChange({
-      price: this.state.prices[selectedIndex],
-      light: !!selectedIndex // 0 = false = no light // 1 = true = light
-    });
-  };
-
-  renderPriceButtons = () => {
-    if (!this.props.saved) {
-      return (
-        <View>
-          <CardSection>
-            <ButtonGroup
-              onPress={this.onPriceSelect}
-              selectedIndex={this.state.selectedIndex}
-              buttons={this.state.priceButtons}
-              textStyle={{ fontSize: 14 }}
-            />
-          </CardSection>
-        </View>
-      );
-    }
-  };
 
   onConfirmReservation = async () => {
     if (this.loading) return;
@@ -158,7 +114,7 @@ class ConfirmCourtReservation extends Component {
   };
 
   render() {
-    const { commerce, court, startDate, endDate, light, price, saved } = this.props;
+    const { commerce, court, startDate, endDate, light, price } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -173,9 +129,7 @@ class ConfirmCourtReservation extends Component {
           endDate={endDate}
           price={price}
           light={light}
-          showPrice={saved}
         />
-        {this.renderPriceButtons()}
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>
         {this.renderEmailModal()}
       </View>
@@ -227,7 +181,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onReservationValueChange,
-  onClientCourtReservationCreate
-})(ConfirmCourtReservation);
+export default connect(mapStateToProps, { onClientCourtReservationCreate })(ConfirmCourtReservation);

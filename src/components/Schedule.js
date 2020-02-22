@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native';
-import { ListItem, Badge } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Calendar } from './common/Calendar';
-import { Spinner } from './common/Spinner';
-import { EmptyList } from './common/EmptyList';
+import { Badge, Calendar, Spinner, EmptyList } from './common';
 import { getHourAndMinutes } from '../utils';
 import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR, GREY_DISABLED } from '../constants';
 import { onScheduleValueChange } from '../actions';
@@ -155,7 +153,8 @@ class Schedule extends Component {
           rightElement={
             <Badge
               value={this.badgeTitle(item.free, item.total)}
-              badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+              color={this.badgeColor(item.free, item.total)}
+              containerStyle={{ paddingTop: 0 }}
             />
           }
           title={`${item.startDate.format('HH:mm')}`}
@@ -222,13 +221,6 @@ class Schedule extends Component {
 }
 
 const styles = StyleSheet.create({
-  slotBadgeStyle: {
-    height: 25,
-    width: 'auto',
-    borderRadius: 12.5,
-    paddingLeft: 5,
-    paddingRight: 5
-  },
   slotContainerStyle: {
     backgroundColor: 'white'
   },

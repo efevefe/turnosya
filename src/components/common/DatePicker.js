@@ -56,6 +56,7 @@ class DatePicker extends Component {
 const styles = StyleSheet.create({
   labelStyle: {
     fontSize: 12,
+    marginBottom: 1.2,
     fontWeight: 'normal'
   },
   errorMessageStyle: {

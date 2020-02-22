@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Card, CheckBox, Divider } from 'react-native-elements';
-import { View, StyleSheet, Switch, Text } from 'react-native';
+import { View, StyleSheet, Switch, Text, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 import {
@@ -15,13 +15,16 @@ import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem }
 import { validateValueType, trimString, cancelReservationNotificationFormat } from '../../utils';
 import { MAIN_COLOR, MAIN_COLOR_DISABLED, GREY_DISABLED } from '../../constants';
 
-class CourtForm extends Component {
+const pickerWidth = Math.round(Dimensions.get('window').width) / 3.5;
+
+class CourtForm extends PureComponent {
   state = {
     nameError: '',
     courtError: '',
     groundTypeError: '',
     priceError: '',
     lightPriceError: '',
+    lightHourError: '',
     disabledFromError: '',
     disabledToError: '',
     selectedGrounds: [],
@@ -53,6 +56,8 @@ class CourtForm extends Component {
     if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused()) {
       this.disabledPeriodValidate();
     }
+
+    if (prevProps.lightHour !== this.props.lightHour) this.renderLightHourError();
   }
 
   isCourtDisabled = () => {
@@ -62,7 +67,20 @@ class CourtForm extends Component {
   };
 
   onCourtSave = () => {
-    const { id, name, description, court, ground, price, lightPrice, commerceId, navigation, disabledFrom, disabledTo } = this.props;
+    const {
+      id,
+      name,
+      description,
+      court,
+      ground,
+      price,
+      lightPrice,
+      lightHour,
+      commerceId,
+      navigation,
+      disabledFrom,
+      disabledTo
+    } = this.props;
     const { reservationsToCancel } = this.state;
 
     if (id) {
@@ -75,6 +93,7 @@ class CourtForm extends Component {
           ground,
           price,
           lightPrice,
+          lightHour,
           commerceId,
           disabledFrom,
           disabledTo,
@@ -91,6 +110,7 @@ class CourtForm extends Component {
           ground,
           price,
           lightPrice,
+          lightHour,
           disabledFrom,
           disabledTo,
           commerceId
@@ -104,7 +124,8 @@ class CourtForm extends Component {
     const name = trimString(this.props.name);
 
     this.props.onCourtValueChange({ name });
-    if (name === '') {
+
+    if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -114,7 +135,7 @@ class CourtForm extends Component {
   };
 
   renderCourtError = () => {
-    if (this.props.court === '') {
+    if (!this.props.court) {
       this.setState({ courtError: 'Dato requerido' });
       return false;
     } else {
@@ -124,7 +145,7 @@ class CourtForm extends Component {
   };
 
   renderGroundTypeError = () => {
-    if (this.props.ground === '') {
+    if (!this.props.ground) {
       this.setState({ groundTypeError: 'Dato requerido' });
       return false;
     } else {
@@ -134,13 +155,10 @@ class CourtForm extends Component {
   };
 
   renderPriceError = () => {
-    const price = this.props.price.trim();
-
-    this.props.onCourtValueChange({ price });
-    if (price === '') {
+    if (!this.props.price) {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', price)) {
+    } else if (!validateValueType('number', this.props.price)) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -151,19 +169,26 @@ class CourtForm extends Component {
 
   renderLightPriceError = () => {
     if (this.state.lightPriceOpen) {
-      const lightPrice = this.props.lightPrice.trim();
-
-      this.props.onCourtValueChange({ lightPrice });
-      if (lightPrice === '') {
+      if (!this.props.lightPrice) {
         this.setState({ lightPriceError: 'Dato requerido' });
         return false;
-      } else if (!validateValueType('number', lightPrice)) {
+      } else if (!validateValueType('number', this.props.lightPrice)) {
         this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
         return false;
       }
     }
 
     this.setState({ lightPriceError: '' });
+    return true;
+  };
+
+  renderLightHourError = () => {
+    if (this.state.lightPriceOpen && !this.props.lightHour) {
+      this.setState({ lightHourError: 'Dato requerido' });
+      return false;
+    }
+
+    this.setState({ lightHourError: '' });
     return true;
   };
 
@@ -174,6 +199,7 @@ class CourtForm extends Component {
       this.renderGroundTypeError() &&
       this.renderPriceError() &&
       this.renderLightPriceError() &&
+      this.renderLightHourError() &&
       this.renderDisabledDatesError()
     );
   };
@@ -208,17 +234,35 @@ class CourtForm extends Component {
   renderLightPriceInput() {
     if (this.state.lightPriceOpen) {
       return (
-        <CardSection>
-          <Input
-            label="Precio por turno (con luz):"
-            placeholder="Precio de la cancha"
-            keyboardType="numeric"
-            value={this.props.lightPrice}
-            errorMessage={this.state.lightPriceError}
-            onChangeText={lightPrice => this.props.onCourtValueChange({ lightPrice })}
-            onFocus={() => this.setState({ lightPriceError: '' })}
-            onBlur={this.renderLightPriceError}
-          />
+        <CardSection
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-around'
+          }}
+        >
+          <View style={{ flex: 3 }}>
+            <Input
+              label="Precio por turno (con luz):"
+              placeholder="Precio de la cancha"
+              keyboardType="numeric"
+              value={this.props.lightPrice}
+              errorMessage={this.state.lightPriceError}
+              onChangeText={lightPrice => this.props.onCourtValueChange({ lightPrice: lightPrice.trim() })}
+              onFocus={() => this.setState({ lightPriceError: '' })}
+              onBlur={this.renderLightPriceError}
+            />
+          </View>
+          <View style={{ flex: 2, alignItems: 'flex-end', paddingRight: 10 }}>
+            <DatePicker
+              date={this.props.lightHour}
+              label="Hora:"
+              placeholder="Prenden luces"
+              onDateChange={lightHour => this.props.onCourtValueChange({ lightHour })}
+              errorMessage={this.state.lightHourError}
+              pickerWidth={pickerWidth}
+            />
+          </View>
         </CardSection>
       );
     }
@@ -431,7 +475,8 @@ class CourtForm extends Component {
               multiline={true}
               maxLength={250}
               maxHeight={180}
-              onChangeText={description => this.props.onCourtValueChange({ description })}
+              onChangeText={description => this.props.onCourtValueChange({ description: description })}
+              onBlur={() => this.props.onCourtValueChange({ description: this.props.description.trim() })}
               value={this.props.description}
             />
           </CardSection>
@@ -466,7 +511,7 @@ class CourtForm extends Component {
               keyboardType="numeric"
               value={this.props.price}
               errorMessage={this.state.priceError}
-              onChangeText={price => this.props.onCourtValueChange({ price })}
+              onChangeText={price => this.props.onCourtValueChange({ price: price.trim() })}
               onFocus={() => this.setState({ priceError: '' })}
               onBlur={this.renderPriceError}
             />
@@ -562,6 +607,7 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
+    lightHour,
     loading,
     existsError,
     disabled,
@@ -582,6 +628,7 @@ const mapStateToProps = state => {
     ground,
     price,
     lightPrice,
+    lightHour,
     loading,
     existsError,
     disabled,

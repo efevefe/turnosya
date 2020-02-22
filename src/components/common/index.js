@@ -21,3 +21,4 @@ export * from './ButtonGroup';
 export * from './AreaComponentRenderer';
 export * from './BadgeButtonGroup';
 export * from './PermissionsAssigner';
+export * from './Badge';

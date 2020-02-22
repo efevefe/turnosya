@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Menu, MenuItem } from '../common';
+import { Menu, MenuItem, Badge } from '../common';
 import { cancelReservationNotificationFormat } from '../../utils';
 import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onCourtNextReservationsRead } from '../../actions';
 
@@ -161,11 +161,9 @@ class CourtListItem extends Component {
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
               <Text style={{ color: 'grey' }}>{`${court} - ${ground}`}</Text>
-              {this.props.court.disabled ? (
-                <Text style={{ color: 'grey', fontSize: 12, marginTop: 3 }}>
-                  {'Deshabilitada\n' + this.formatDisabledDates()}
-                </Text>
-              ) : null}
+              {this.props.court.lightHour ?
+                <Text style={{ color: 'grey' }}>{`Prenden Luces: ${this.props.court.lightHour} hs.`}</Text> : null}
+              {this.props.court.disabled ? <Badge value='Deshabilitada' color='grey' /> : null}
             </View>
           }
           onLongPress={this.onOptionsPress}

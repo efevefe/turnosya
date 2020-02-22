@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Input, Button, CardSection, ButtonGroup } from '../common';
+import { Input, Button, CardSection } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
 import { validateValueType } from '../../utils';
 import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
@@ -18,7 +18,6 @@ class CommerceCourtReservationRegister extends Component {
 
   componentDidMount() {
     this.loading = false;
-    this.priceButtons();
   }
 
   componentDidUpdate() {
@@ -27,44 +26,10 @@ class CommerceCourtReservationRegister extends Component {
     }
   }
 
-  priceButtons = () => {
-    const { court } = this.props;
-    const priceButtons = [];
-    const prices = [];
-
-    if (court) {
-      priceButtons.push(`Sin Luz: $${court.price}`);
-      prices.push(court.price);
-
-      if (court.lightPrice) {
-        priceButtons.push(`Con Luz: $${court.lightPrice}`);
-        prices.push(court.lightPrice);
-      }
-    }
-
-    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
-  };
-
-  onPriceSelect = selectedIndex => {
-    this.setState({ selectedIndex });
-    this.props.onReservationValueChange({
-      price: this.state.prices[selectedIndex],
-      light: !!selectedIndex // 0 = false = no light // 1 = true = light
-    });
-  };
-
   renderInputs = () => {
     if (!this.props.saved) {
       return (
         <View>
-          <CardSection>
-            <ButtonGroup
-              onPress={this.onPriceSelect}
-              selectedIndex={this.state.selectedIndex}
-              buttons={this.state.priceButtons}
-              textStyle={{ fontSize: 14 }}
-            />
-          </CardSection>
           <CardSection style={styles.cardSection}>
             <Input
               label="Nombre:"
@@ -163,7 +128,6 @@ class CommerceCourtReservationRegister extends Component {
           endDate={endDate}
           price={price}
           light={light}
-          showPrice={saved}
         />
         {this.renderInputs()}
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>

@@ -56,7 +56,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  { name, description, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
+  { name, description, court, ground, price, lightPrice, lightHour, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -79,6 +79,7 @@ export const onCourtCreate = (
               ground,
               price,
               lightPrice,
+              lightHour,
               disabledFrom: disabledFrom ? disabledFrom.toDate() : null,
               disabledTo: disabledTo ? disabledTo.toDate() : null,
               softDelete: null,
@@ -176,6 +177,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
     ground,
     price,
     lightPrice,
+    lightHour,
     commerceId,
     disabledFrom,
     disabledTo,
@@ -203,6 +205,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
       ground,
       price,
       lightPrice,
+      lightHour,
       disabledFrom: disabledFrom ? disabledFrom.toDate() : null,
       disabledTo: disabledTo ? disabledTo.toDate() : null
     });

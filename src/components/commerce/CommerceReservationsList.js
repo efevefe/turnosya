@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, FlatList, StyleSheet, Text } from 'react-native';
-import { ListItem, ButtonGroup, Badge } from 'react-native-elements';
+import { ListItem, ButtonGroup } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner } from '../common';
+import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner, Badge } from '../common';
 import { onCommerceDetailedReservationsRead } from '../../actions';
 import { MAIN_COLOR, AREAS, ROLES, SUCCESS_COLOR } from '../../constants';
 import EmployeesFilter from './EmployeesFilter';
@@ -111,14 +111,7 @@ class CommerceReservationsList extends Component {
                 </Text>
               }
             />
-            {
-              item.paymentId ?
-                <Badge
-                  value='Pagado'
-                  badgeStyle={styles.stateBadgeStyle}
-                  containerStyle={{ paddingTop: 3 }}
-                /> : null
-            }
+            {item.paymentId ? <Badge value='Pagado' color={SUCCESS_COLOR} /> : null}
           </View>
         }
         onPress={() =>
@@ -213,14 +206,6 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 12,
     marginRight: 2
-  },
-  stateBadgeStyle: {
-    height: 25,
-    width: 'auto',
-    borderRadius: 12.5,
-    paddingLeft: 5,
-    paddingRight: 5,
-    backgroundColor: SUCCESS_COLOR
   }
 });
 
