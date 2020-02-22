@@ -3,8 +3,6 @@ import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native'
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-// import { Ionicons } from '@expo/vector-icons';
-import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -41,7 +39,7 @@ class Schedule extends Component {
     // se estarian generando los slots cada vez que se trae una nueva diagramacion y el schedule
     // esta en primer plano, cosa que no se actualice cuando se esta en otra pantalla y se esta
     // usando el mismo loading, como en la pantalla del listado de schedules
-    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.isFocused && this.props.scheduleId) {
+    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.scheduleId) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
@@ -247,9 +245,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { slots, loading, id } = state.commerceSchedule;
+  const { slots, loadingSchedule, id } = state.commerceSchedule;
 
-  return { slots, loadingSchedule: loading, scheduleId: id };
+  return { slots, loadingSchedule, scheduleId: id };
 };
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);

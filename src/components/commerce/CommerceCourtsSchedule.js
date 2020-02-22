@@ -196,8 +196,16 @@ class CommerceCourtsSchedule extends Component {
 }
 
 const mapStateToProps = state => {
-  const { id, cards, slots, reservationDayPeriod, reservationMinLength, startDate, endDate } = state.commerceSchedule;
-  const loadingSchedule = state.commerceSchedule.loading;
+  const {
+    id,
+    cards,
+    slots,
+    reservationDayPeriod,
+    reservationMinLength,
+    startDate,
+    endDate,
+    loadingSchedule
+  } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
   const { reservations } = state.reservationsList;
   const loadingReservations = state.reservationsList.loading;

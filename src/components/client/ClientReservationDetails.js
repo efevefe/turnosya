@@ -318,7 +318,7 @@ class ClientReservationDetails extends Component {
   render() {
     const { areaId, commerce, service, employee, court, endDate, startDate, light, price } = this.state.reservation;
 
-    if (this.props.loadingCancel) return <Spinner />;
+    if (this.props.loadingSchedule) return <Spinner />;
 
     return (
       <KeyboardAwareScrollView enableOnAndroid contentContainerStyle={scrollViewStyle} extraScrollHeight={60}>
@@ -398,8 +398,7 @@ const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.cr
 const mapStateToProps = state => {
   const { reservations } = state.clientReservationsList;
   const loadingReservations = state.clientReservationsList.loading;
-  const { reservationMinCancelTime } = state.commerceSchedule;
-  const loadingCancel = state.commerceSchedule.loading;
+  const { reservationMinCancelTime, loadingSchedule } = state.commerceSchedule;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId, firstName, lastName } = state.clientData;
   const { mPagoToken } = state.commerceData;
@@ -407,7 +406,7 @@ const mapStateToProps = state => {
   return {
     reservations,
     loadingReservations,
-    loadingCancel,
+    loadingSchedule,
     reservationMinCancelTime,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,

@@ -239,7 +239,7 @@ const mapStateToProps = state => {
     reservationMinLength,
     startDate,
     endDate,
-    loading: loadingSchedule
+    loadingSchedule
   } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
   const { reservations } = state.reservationsList;
