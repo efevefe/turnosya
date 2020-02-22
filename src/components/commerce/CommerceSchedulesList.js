@@ -3,7 +3,6 @@ import { FlatList, View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Fab } from 'native-base';
-import { HeaderBackButton } from 'react-navigation-stack';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { Spinner, EmptyList, Menu, MenuItem } from '../common';
@@ -28,15 +27,7 @@ class CommerceSchedulesList extends Component {
     selectedSchedule: {}
   };
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: <HeaderBackButton tintColor="white" title="Back" onPress={navigation.getParam('onBackPress')} />
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({ onBackPress: this.onBackPress });
-
     this.props.onActiveSchedulesRead({
       commerceId: this.props.commerceId,
       date: moment(),
@@ -50,20 +41,11 @@ class CommerceSchedulesList extends Component {
     }
   }
 
-  onBackPress = () => {
-    this.props.onScheduleRead({
-      commerceId: this.props.commerceId,
-      selectedDate: this.props.navigation.getParam('selectedDate'),
-      employeeId: this.props.employeeId
-    });
-
-    this.props.navigation.goBack();
-  };
-
   onScheduleAddPress = () => {
     this.props.onScheduleFormOpen();
     this.props.navigation.navigate('scheduleRegister', {
-      title: 'Nuevo horario'
+      title: 'Nuevo horario',
+      selectedDate: this.props.navigation.getParam('selectedDate')
     });
   };
 
@@ -84,7 +66,8 @@ class CommerceSchedulesList extends Component {
 
     this.props.navigation.navigate('scheduleRegister', {
       schedule: selectedSchedule,
-      title: 'Modificar horario'
+      title: 'Modificar horario',
+      selectedDate: this.props.navigation.getParam('selectedDate')
     });
   };
 
@@ -149,12 +132,19 @@ class CommerceSchedulesList extends Component {
       reservationsToCancel
     });
 
-    if (success)
+    if (success) {
       this.props.onActiveSchedulesRead({
         commerceId: this.props.commerceId,
         date: moment(),
         employeeId: this.props.employeeId
       });
+
+      this.props.onScheduleRead({
+        commerceId: this.props.commerceId,
+        selectedDate: this.props.navigation.getParam('selectedDate'),
+        employeeId: this.props.employeeId
+      });
+    }
 
     this.setState({ deleteModalVisible: false, deleteConfirmVisible: false });
   };

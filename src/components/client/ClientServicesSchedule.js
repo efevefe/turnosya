@@ -184,7 +184,7 @@ const mapStateToProps = state => {
     startDate,
     endDate,
     refreshing,
-    loading: loadingSchedule
+    loadingSchedule
   } = state.commerceSchedule;
   const { commerce, service, employee } = state.reservation;
   const { reservations } = state.reservationsList;
