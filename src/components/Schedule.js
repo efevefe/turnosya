@@ -3,8 +3,6 @@ import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native'
 import { ListItem, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-// import { Ionicons } from '@expo/vector-icons';
-import { withNavigationFocus } from 'react-navigation';
 import { Calendar } from './common/Calendar';
 import { Spinner } from './common/Spinner';
 import { EmptyList } from './common/EmptyList';
@@ -252,4 +250,4 @@ const mapStateToProps = state => {
   return { slots, loadingSchedule, scheduleId: id };
 };
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);
