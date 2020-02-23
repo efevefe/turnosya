@@ -129,8 +129,6 @@ class CommerceReservationDetails extends Component {
 
   renderCancellationReasonError = () => {
     const cancellationReason = trimString(this.props.cancellationReason);
-    console.log('prop: ', this.props.cancellationReason);
-    console.log('var: ', cancellationReason);
 
     this.props.onReservationsListValueChange({ cancellationReason });
     if (cancellationReason === '') {

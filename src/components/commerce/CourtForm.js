@@ -62,7 +62,19 @@ class CourtForm extends Component {
   };
 
   onCourtSave = () => {
-    const { id, name, description, court, ground, price, lightPrice, commerceId, navigation, disabledFrom, disabledTo } = this.props;
+    const {
+      id,
+      name,
+      description,
+      court,
+      ground,
+      price,
+      lightPrice,
+      commerceId,
+      navigation,
+      disabledFrom,
+      disabledTo
+    } = this.props;
     const { reservationsToCancel } = this.state;
 
     if (id) {
@@ -349,7 +361,7 @@ class CourtForm extends Component {
           actorName: this.props.commerceName,
           cancellationReason: 'Deshabilitación de la cancha'
         })
-      }
+      };
     });
 
     this.setState(
@@ -418,7 +430,10 @@ class CourtForm extends Component {
               placeholder="Cancha 1"
               value={this.props.name}
               errorMessage={this.state.nameError || this.props.existsError}
-              onChangeText={name => this.props.onCourtValueChange({ name })}
+              onChangeText={name => {
+                this.props.onCourtValueChange({ name });
+                this.props.onCourtValueChange({ existsError: '' });
+              }}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
             />

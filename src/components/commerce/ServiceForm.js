@@ -4,7 +4,7 @@ import { Card } from 'react-native-elements';
 import { View, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CardSection, Button, Input } from '../common';
-import { validateValueType } from '../../utils';
+import { validateValueType, trimString } from '../../utils';
 import { onServiceValueChange, onServiceCreate, onServiceUpdate } from '../../actions';
 
 class ServiceForm extends Component {
@@ -16,7 +16,7 @@ class ServiceForm extends Component {
     if (params) this.props.onServiceValueChange(params.service);
   }
 
-  onButtonPressHandler() {
+  onSaveButtonPress() {
     if (this.validateMinimumData()) {
       const { name, duration, price, description, navigation, commerceId, employeeId, employeesIds } = this.props;
       const { params } = this.props.navigation.state;
@@ -53,7 +53,10 @@ class ServiceForm extends Component {
   }
 
   renderNameError = () => {
-    if (this.props.name === '') {
+    const name = trimString(this.props.name);
+
+    this.props.onServiceValueChange({ name });
+    if (name === '') {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -63,10 +66,13 @@ class ServiceForm extends Component {
   };
 
   renderDurationError = () => {
-    if (this.props.duration === '') {
+    const duration = trimString(this.props.duration);
+
+    this.props.onServiceValueChange({ duration });
+    if (duration === '') {
       this.setState({ durationError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('int', this.props.duration)) {
+    } else if (!validateValueType('int', duration)) {
       this.setState({ durationError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -76,10 +82,13 @@ class ServiceForm extends Component {
   };
 
   renderPriceError = () => {
-    if (this.props.price === '') {
+    const price = trimString(this.props.price);
+
+    this.props.onServiceValueChange({ price });
+    if (price === '') {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', this.props.price)) {
+    } else if (!validateValueType('number', price)) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -104,9 +113,12 @@ class ServiceForm extends Component {
                 label="Nombre:"
                 placeholder="Nombre del servicio"
                 value={this.props.name}
-                errorMessage={this.state.nameError}
+                errorMessage={this.state.nameError || this.props.existsError}
                 onChangeText={name => this.props.onServiceValueChange({ name })}
-                onFocus={() => this.setState({ nameError: '' })}
+                onFocus={() => {
+                  this.setState({ nameError: '' });
+                  this.props.onServiceValueChange({ existsError: '' });
+                }}
                 onBlur={this.renderNameError}
               />
             </CardSection>
@@ -148,7 +160,7 @@ class ServiceForm extends Component {
               />
             </CardSection>
             <CardSection>
-              <Button title="Guardar" loading={this.props.loading} onPress={this.onButtonPressHandler.bind(this)} />
+              <Button title="Guardar" loading={this.props.loading} onPress={this.onSaveButtonPress.bind(this)} />
             </CardSection>
           </Card>
         </View>
@@ -166,11 +178,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { name, duration, price, description, error, loading, employeesIds } = state.serviceForm;
+  const { name, duration, price, description, error, loading, employeesIds, existsError } = state.serviceForm;
   const { commerceId } = state.commerceData;
   const { employeeId } = state.roleData;
 
-  return { name, duration, price, description, error, loading, commerceId, employeeId, employeesIds };
+  return { name, duration, price, description, error, loading, commerceId, employeeId, employeesIds, existsError };
 };
 
 export default connect(mapStateToProps, {
