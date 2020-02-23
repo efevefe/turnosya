@@ -452,7 +452,6 @@ class CommerceReservationDetails extends Component {
               endDate={endDate}
               price={price}
               light={light}
-              showPrice={true}
               onPicturePress={this.onUserProfilePicturePress}
             />
           }

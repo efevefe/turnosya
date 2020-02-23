@@ -351,7 +351,6 @@ class ClientReservationDetails extends Component {
               endDate={endDate}
               price={price}
               light={light}
-              showPrice={true}
             />
           }
           hairdressers={

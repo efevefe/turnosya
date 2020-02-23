@@ -30,19 +30,9 @@ class CommerceCourtsStateListItem extends Component {
         <ListItem
           title={name}
           titleStyle={{ textAlign: 'left', display: 'flex' }}
-          rightTitle={
-            <View style={{ justifyContent: 'flex-start', flex: 1, paddingTop: 2 }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  lineHeight: 20
-                }}
-              >
-                {!lightPrice || (lightPrice && lightHour && (lightHour > startDate.format('HH:mm'))) ?
-                  `Sin Luz: $${price}` : `Con Luz: $${lightPrice}`}
-              </Text>
-            </View>
-          }
+          rightTitle={`$${lightPrice && lightHour && (lightHour <= startDate.format('HH:mm')) ? lightPrice : price}`}
+          rightTitleStyle={{ fontWeight: 'bold', color: 'black' }}
+          rightSubtitle={lightPrice && lightHour && (lightHour <= startDate.format('HH:mm')) ? 'Con Luz' : 'Sin Luz'}
           key={id}
           subtitle={
             <View style={{ alignItems: 'flex-start' }}>
