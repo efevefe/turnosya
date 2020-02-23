@@ -226,7 +226,7 @@ class CourtForm extends PureComponent {
 
   onCheckBoxPress = () => {
     if (this.state.lightPriceOpen) {
-      this.props.onCourtValueChange({ lightPrice: '' });
+      this.props.onCourtValueChange({ lightPrice: '', lightHour: '' });
     }
     this.setState({ lightPriceOpen: !this.state.lightPriceOpen });
   };
