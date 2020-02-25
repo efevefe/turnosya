@@ -8,10 +8,7 @@ import { MAIN_COLOR, SUCCESS_COLOR } from '../../constants';
 class CommerceCourtsStateListItem extends Component {
   setCourtBadge = () => {
     if (this.props.disabled) {
-      return {
-        badgeTitle: 'Deshabilitada',
-        badgeColor: 'grey'
-      };
+      return { badgeTitle: 'Deshabilitada', badgeColor: 'grey' };
     } else {
       return {
         badgeTitle: this.props.courtAvailable ? 'Disponible' : 'Ocupada',

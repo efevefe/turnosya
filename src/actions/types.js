@@ -8,6 +8,7 @@ export const ON_SERVICES_READING = 'on_services_reading';
 export const ON_SERVICES_READ = 'on_services_read';
 export const ON_SERVICE_DELETE = 'on_service_delete';
 export const ON_SERVICE_UPDATE = 'on_service_update';
+export const ON_SERVICE_EXISTS = 'on_service_exists';
 
 // Authentication types
 export const ON_LOGIN_VALUE_CHANGE = 'on_login_value_change';

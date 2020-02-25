@@ -124,7 +124,7 @@ class CourtForm extends PureComponent {
     const name = trimString(this.props.name);
 
     this.props.onCourtValueChange({ name });
-
+    
     if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
@@ -393,7 +393,7 @@ class CourtForm extends PureComponent {
           actorName: this.props.commerceName,
           cancellationReason: 'Deshabilitación de la cancha'
         })
-      }
+      };
     });
 
     this.setState(
@@ -462,7 +462,10 @@ class CourtForm extends PureComponent {
               placeholder="Cancha 1"
               value={this.props.name}
               errorMessage={this.state.nameError || this.props.existsError}
-              onChangeText={name => this.props.onCourtValueChange({ name })}
+              onChangeText={name => {
+                this.props.onCourtValueChange({ name });
+                this.props.onCourtValueChange({ existsError: '' });
+              }}
               onFocus={() => this.setState({ nameError: '' })}
               onBlur={this.renderNameError}
             />

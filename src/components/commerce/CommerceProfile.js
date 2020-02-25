@@ -286,7 +286,7 @@ class CommerceProfile extends Component {
     const name = trimString(this.props.name);
 
     this.props.onCommerceValueChange({ name });
-    if (name === '') {
+    if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -296,7 +296,7 @@ class CommerceProfile extends Component {
   };
 
   renderCuitError = () => {
-    if (this.props.cuit === '') {
+    if (!this.props.cuit) {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('cuit', this.props.cuit)) {
@@ -309,7 +309,7 @@ class CommerceProfile extends Component {
   };
 
   renderEmailError = () => {
-    if (this.props.email == '') {
+    if (!this.props.email) {
       this.setState({ emailError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('email', this.props.email)) {
@@ -322,7 +322,7 @@ class CommerceProfile extends Component {
   };
 
   renderPhoneError = () => {
-    if (this.props.phone == '') {
+    if (!this.props.phone) {
       this.setState({ phoneError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('phone', this.props.phone)) {
@@ -338,7 +338,7 @@ class CommerceProfile extends Component {
     const address = trimString(this.props.locationData.address);
 
     this.props.onLocationValueChange({ address });
-    if (address === '') {
+    if (!address) {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -351,7 +351,7 @@ class CommerceProfile extends Component {
     const city = trimString(this.props.locationData.city);
 
     this.props.onLocationValueChange({ city });
-    if (city === '') {
+    if (!city) {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -361,7 +361,7 @@ class CommerceProfile extends Component {
   };
 
   renderProvinceError = () => {
-    if (this.props.province.provinceId === '') {
+    if (!this.props.province.provinceId) {
       this.setState({ provinceError: 'Dato requerido' });
       return false;
     } else {
@@ -487,7 +487,7 @@ class CommerceProfile extends Component {
             <Input
               label="CUIT:"
               value={this.props.cuit}
-              onChangeText={cuit => this.props.onCommerceValueChange({ cuit })}
+              onChangeText={cuit => this.props.onCommerceValueChange({ cuit: cuit.trim() })}
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
               onFocus={() => this.setState({ cuitError: '' })}
@@ -498,7 +498,7 @@ class CommerceProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={phone => this.props.onCommerceValueChange({ phone })}
+              onChangeText={phone => this.props.onCommerceValueChange({ phone: phone.trim() })}
               keyboardType="numeric"
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
@@ -510,7 +510,7 @@ class CommerceProfile extends Component {
               label="E-Mail:"
               value={this.props.email}
               autoCapitalize="none"
-              onChangeText={email => this.props.onCommerceValueChange({ email })}
+              onChangeText={email => this.props.onCommerceValueChange({ email: email.trim() })}
               keyboardType="email-address"
               errorMessage={this.state.emailError}
               onFocus={() => this.setState({ emailError: '' })}

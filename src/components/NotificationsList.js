@@ -29,17 +29,12 @@ class NotificationsList extends Component {
   };
 
   componentDidMount() {
-    let type;
-    if (this.props.navigation.state.routeName === 'commerceNotificationslist') {
-      type = 'commerce';
-    } else {
-      type = 'client';
-    }
+    const type = this.props.navigation.state.routeName === 'commerceNotificationslist' ? 'commerce' : 'client';
     this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => this.onSetNotificationsRead(type));
     this.setState({ type }, this.onNotificationsRead);
   }
 
-  onSetNotificationsRead =  type => {
+  onSetNotificationsRead = type => {
     const { clientId, notifications, commerceId } = this.props;
 
     if (type === 'client') {

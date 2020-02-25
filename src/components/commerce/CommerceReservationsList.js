@@ -21,9 +21,8 @@ class CommerceReservationsList extends Component {
   componentDidMount() {
     this.onDateSelected(moment());
 
-    this.willFocusSubscription = this.props.navigation.addListener(
-      'willFocus',
-      () => this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
+    this.willFocusSubscription = this.props.navigation.addListener('willFocus', () =>
+      this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
     );
   }
 
@@ -62,7 +61,7 @@ class CommerceReservationsList extends Component {
       // turnos en curso
       filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
     } else {
-      // turnos proximos
+      // turnos próximos
       filteredList = reservations.filter(res => res.startDate > moment());
     }
 
@@ -73,7 +72,7 @@ class CommerceReservationsList extends Component {
     if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
       this.setState({ selectedEmployeeId }, () => this.onDateSelected(this.state.selectedDate));
     }
-  }
+  };
 
   renderItem = ({ item }) => {
     const clientName = item.clientId ? `${item.client.firstName} ${item.client.lastName}` : item.clientName;
@@ -85,7 +84,7 @@ class CommerceReservationsList extends Component {
     if (this.props.areaId === AREAS.hairdressers) {
       service = this.props.services.find(service => service.id === item.serviceId);
       name = service.name;
-      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
+      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenían el areaId
     } else {
       court = this.props.courts.find(court => court.id === item.courtId);
       name = court.name;
@@ -217,7 +216,7 @@ const mapStateToProps = state => {
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
-  const selectedEmployeeId = (areaId === AREAS.hairdressers) ? state.employeesList.selectedEmployeeId : null;
+  const selectedEmployeeId = areaId === AREAS.hairdressers ? state.employeesList.selectedEmployeeId : null;
 
   return { commerceId, areaId, selectedEmployeeId, reservations: detailedReservations, services, courts, loading };
 };

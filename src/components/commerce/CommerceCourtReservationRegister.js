@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Input, Button, CardSection } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
-import { validateValueType } from '../../utils';
+import { validateValueType, trimString } from '../../utils';
 import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 
 class CommerceCourtReservationRegister extends Component {
@@ -47,7 +47,7 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone })}
+              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone: clientPhone.trim() })}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -59,8 +59,9 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   nameError = () => {
-    const { clientName } = this.props;
+    const clientName = trimString(this.props.clientName);
 
+    this.props.onReservationValueChange({ clientName });
     if (!clientName) {
       this.setState({ nameError: 'Dato requerido' });
     } else if (!validateValueType('name', clientName)) {
@@ -72,9 +73,7 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   phoneError = () => {
-    const { clientPhone } = this.props;
-
-    if (clientPhone && !validateValueType('phone', clientPhone)) {
+    if (this.props.clientPhone && !validateValueType('phone', this.props.clientPhone)) {
       this.setState({ phoneError: 'Formato no válido' });
       return true;
     } else {

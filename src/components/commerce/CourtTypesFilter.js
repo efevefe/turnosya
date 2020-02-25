@@ -59,7 +59,7 @@ class CourtTypesFilter extends Component {
   };
 
   render() {
-    // solo se muestra si hay mas de 1 tipo de cancha
+    // solo se muestra si hay más de 1 tipo de cancha
     if (this.state.buttons.length < 3) return null;
 
     return (
@@ -75,6 +75,6 @@ class CourtTypesFilter extends Component {
 
 const mapStateToProps = state => {
   return { courts: state.courtsList.courts };
-}
+};
 
 export default connect(mapStateToProps, null)(CourtTypesFilter);

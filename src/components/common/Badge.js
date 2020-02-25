@@ -7,11 +7,7 @@ const Badge = props => {
     <RNEBadge
       value={props.value}
       onPress={props.onPress}
-      badgeStyle={{
-        ...styles.badgeStyle,
-        backgroundColor: props.color,
-
-      }}
+      badgeStyle={{ ...styles.badgeStyle, backgroundColor: props.color }}
       containerStyle={[styles.containerStyle, props.containerStyle]}
     />
   )

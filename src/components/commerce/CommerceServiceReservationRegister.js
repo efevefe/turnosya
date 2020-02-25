@@ -45,7 +45,7 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone })}
+              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone: clientPhone.trim() })}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -72,9 +72,7 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   phoneError = () => {
-    const { clientPhone } = this.props;
-
-    if (clientPhone && !validateValueType('phone', clientPhone)) {
+    if (this.props.clientPhone && !validateValueType('phone', this.props.clientPhone)) {
       this.setState({ phoneError: 'Formato no valido' });
       return true;
     } else {
@@ -169,7 +167,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { commerceId, name: commerceName, area: { areaId } } = state.commerceData;
+  const {
+    commerceId,
+    name: commerceName,
+    area: { areaId }
+  } = state.commerceData;
   const { clientName, clientPhone, service, startDate, endDate, price, saved, exists, loading } = state.reservation;
   const { employeeId } = state.roleData;
   const { selectedEmployeeId } = state.employeesList;
