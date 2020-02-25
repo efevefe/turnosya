@@ -13,7 +13,11 @@ class CommerceEmployeesList extends Component {
         employeesIds: this.props.service.employeesIds
       });
     } else {
-      this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerce.objectID);
+      this.unsubscribeEmployeesRead = this.props.onEmployeesRead({
+        commerceId: this.props.commerce.objectID,
+        visible: true,
+        startDate: true
+      });
     }
   }
 
@@ -24,10 +28,10 @@ class CommerceEmployeesList extends Component {
   onEmployeePress = employee => {
     this.props.onReservationValueChange({ employee });
 
-    if (this.props.service) {
-      this.props.navigation.navigate('commerceServicesSchedule');
-    } else {
+    if (this.props.navigation.getParam('navigatedFromProfile')) {
       this.props.navigation.navigate('commerceServicesList');
+    } else {
+      this.props.navigation.navigate('commerceServicesSchedule');
     }
   };
 

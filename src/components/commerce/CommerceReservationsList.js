@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
 import { ListItem, ButtonGroup } from 'react-native-elements';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner } from '../common';
+import { Calendar, Spinner, EmptyList, AreaComponentRenderer, PermissionsAssigner, Badge } from '../common';
 import { onCommerceDetailedReservationsRead } from '../../actions';
-import { MAIN_COLOR, AREAS, ROLES } from '../../constants';
+import { MAIN_COLOR, AREAS, ROLES, SUCCESS_COLOR } from '../../constants';
 import EmployeesFilter from './EmployeesFilter';
 
 class CommerceReservationsList extends Component {
@@ -21,9 +21,8 @@ class CommerceReservationsList extends Component {
   componentDidMount() {
     this.onDateSelected(moment());
 
-    this.willFocusSubscription = this.props.navigation.addListener(
-      'willFocus',
-      () => this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
+    this.willFocusSubscription = this.props.navigation.addListener('willFocus', () =>
+      this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
     );
   }
 
@@ -45,7 +44,7 @@ class CommerceReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceDetailedReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
     this.setState({ selectedDate });
@@ -62,7 +61,7 @@ class CommerceReservationsList extends Component {
       // turnos en curso
       filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
     } else {
-      // turnos proximos
+      // turnos próximos
       filteredList = reservations.filter(res => res.startDate > moment());
     }
 
@@ -73,7 +72,7 @@ class CommerceReservationsList extends Component {
     if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
       this.setState({ selectedEmployeeId }, () => this.onDateSelected(this.state.selectedDate));
     }
-  }
+  };
 
   renderItem = ({ item }) => {
     const clientName = item.clientId ? `${item.client.firstName} ${item.client.lastName}` : item.clientName;
@@ -85,7 +84,7 @@ class CommerceReservationsList extends Component {
     if (this.props.areaId === AREAS.hairdressers) {
       service = this.props.services.find(service => service.id === item.serviceId);
       name = service.name;
-      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenian el areaId
+      // } else if (this.props.areaId === AREAS.sports) { // no anda para reservas viejas que no tenían el areaId
     } else {
       court = this.props.courts.find(court => court.id === item.courtId);
       name = court.name;
@@ -102,8 +101,18 @@ class CommerceReservationsList extends Component {
         subtitle={`${clientName}\n${name}`}
         rightTitle={`$${item.price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
-        rightSubtitle={item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
-        rightSubtitleStyle={styles.listItemRightSubtitleStyle}
+        rightSubtitle={
+          <View style={{ alignItems: 'flex-end' }}>
+            <AreaComponentRenderer
+              sports={
+                <Text style={styles.listItemRightSubtitleStyle}>
+                  {item.light !== undefined ? (item.light ? 'Con Luz' : 'Sin Luz') : null}
+                </Text>
+              }
+            />
+            {item.paymentId ? <Badge value='Pagado' color={SUCCESS_COLOR} /> : null}
+          </View>
+        }
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
             reservation: { ...item, court, service }
@@ -189,10 +198,13 @@ const styles = StyleSheet.create({
   },
   listItemRightTitleStyle: {
     fontWeight: 'bold',
-    color: 'black'
+    color: 'black',
+    marginRight: 2
   },
   listItemRightSubtitleStyle: {
-    color: 'grey'
+    color: 'grey',
+    fontSize: 12,
+    marginRight: 2
   }
 });
 
@@ -204,10 +216,9 @@ const mapStateToProps = state => {
   const { detailedReservations, loading } = state.reservationsList;
   const { services } = state.servicesList;
   const { courts } = state.courtsList;
-  const { selectedEmployeeId } = state.employeesList;
-  const employeeId = (areaId === AREAS.hairdressers) ? state.roleData.employeeId : null;
+  const selectedEmployeeId = areaId === AREAS.hairdressers ? state.employeesList.selectedEmployeeId : null;
 
-  return { commerceId, areaId, selectedEmployeeId, employeeId, reservations: detailedReservations, services, courts, loading };
+  return { commerceId, areaId, selectedEmployeeId, reservations: detailedReservations, services, courts, loading };
 };
 
 export default connect(mapStateToProps, {

@@ -24,10 +24,10 @@ class CommerceServicesList extends Component {
   onServicePress = service => {
     this.props.onReservationValueChange({ service, price: service.price });
 
-    if (this.props.employee) {
-      this.props.navigation.navigate('commerceServicesSchedule');
-    } else {
+    if (this.props.navigation.getParam('navigatedFromProfile')) {
       this.props.navigation.navigate('commerceEmployeesList');
+    } else {
+      this.props.navigation.navigate('commerceServicesSchedule');
     }
   };
 

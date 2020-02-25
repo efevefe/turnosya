@@ -22,7 +22,8 @@ const INITIAL_STATE = {
     country: '',
     latitude: null,
     longitude: null
-  }
+  },
+  loading: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -32,8 +33,8 @@ export default (state = INITIAL_STATE, action) => {
 
     case ON_SELECTED_LOCATION_CHANGE:
       return action.payload
-        ? { ...state, selectedLocation: { ...action.payload } }
-        : { ...state, selectedLocation: { ...INITIAL_STATE.selectedLocation } };
+        ? { ...state, selectedLocation: { ...action.payload }, loading: false }
+        : { ...state, selectedLocation: { ...INITIAL_STATE.selectedLocation }, loading: false };
 
     case ON_LOCATION_VALUES_RESET:
       return { ...INITIAL_STATE };

@@ -10,23 +10,15 @@ class CommercesFiltersMap extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton'),
-      headerLeft: navigation.getParam('leftButton')
+      headerRight: <IconButton icon="md-checkmark" onPress={navigation.getParam('onApplyFiltersPress')} />,
+      headerLeft: <IconButton icon="md-close" onPress={navigation.getParam('onCancelPress')} />
     };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ rightButton: this.renderSaveButton(), leftButton: this.renderCancelButton() });
+    this.props.navigation.setParams({ onApplyFiltersPress: this.onApplyFiltersPress, onCancelPress: this.onCancelPress });
     this.setState({ selectedLocationBeforechanges: this.props.selectedLocation });
   }
-
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onApplyFiltersPress} />;
-  };
-
-  renderCancelButton = () => {
-    return <IconButton icon="md-close" onPress={this.onCancelPress} />;
-  };
 
   onApplyFiltersPress = () => {
     this.props.selectedLocation.latitude

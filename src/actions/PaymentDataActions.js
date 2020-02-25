@@ -24,7 +24,7 @@ export const onReservationPaymentRead = reservation => dispatch => {
     .catch(() => dispatch({ type: ON_PAYMENT_READ_FAIL }));
 };
 
-export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
+export const onCashPaymentCreate = (reservation, receiptNumber, navigation) => dispatch => {
   dispatch({ type: ON_CASH_PAYMENT_REGISTERING });
 
   const db = firebase.firestore();
@@ -35,6 +35,7 @@ export const onCashPaymentCreate = (reservation, navigation) => dispatch => {
   batch.set(paymentRef, {
     clientId,
     reservationId,
+    receiptNumber,
     date: new Date(),
     method: 'Efectivo'
   });

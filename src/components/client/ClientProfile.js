@@ -110,14 +110,11 @@ class ClientProfile extends Component {
   };
 
   onChoosePicturePress = async () => {
-    this.onEditPicturePress();
-
     try {
       if (Constants.platform.ios) {
         await Permissions.askAsync(Permissions.CAMERA_ROLL);
       }
-
-      const options = { mediaTypes: 'Images', allowsEditing: true, aspect: [1, 1] };
+      const options = { mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1] };
 
       const response = await ImagePicker.launchImageLibraryAsync(options);
 
@@ -129,19 +126,18 @@ class ClientProfile extends Component {
       if (error.message.includes('Missing camera roll permission')) {
         return Toast.show({ text: 'Debe dar permisos primero' });
       }
-
-      console.error(error);
+      console.log(error);
+    } finally {
+      this.onEditPicturePress();
     }
   };
 
   onTakePicturePress = async () => {
     try {
-      this.onEditPicturePress();
-
       await Permissions.askAsync(Permissions.CAMERA_ROLL);
       await Permissions.askAsync(Permissions.CAMERA);
 
-      const options = { mediaTypes: 'Images', allowsEditing: true, aspect: [1, 1] };
+      const options = { mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1] };
 
       let response = await ImagePicker.launchCameraAsync(options);
 
@@ -159,6 +155,8 @@ class ClientProfile extends Component {
       }
 
       console.error(error);
+    } finally {
+      this.onEditPicturePress();
     }
   };
 
@@ -194,7 +192,7 @@ class ClientProfile extends Component {
     const firstName = trimString(this.props.firstName);
 
     this.props.onClientDataValueChange({ firstName });
-    if (firstName === '') {
+    if (!firstName) {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -207,7 +205,7 @@ class ClientProfile extends Component {
     const lastName = trimString(this.props.lastName);
 
     this.props.onClientDataValueChange({ lastName });
-    if (lastName === '') {
+    if (!lastName) {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -217,7 +215,7 @@ class ClientProfile extends Component {
   };
 
   renderPhoneError = () => {
-    if (this.props.phone != '' && !validateValueType('phone', this.props.phone)) {
+    if (this.props.phone && !validateValueType('phone', this.props.phone)) {
       this.setState({ phoneError: 'Formato de teléfono incorrecto' });
       return false;
     } else {
@@ -305,7 +303,7 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
+              onChangeText={phone => this.props.onClientDataValueChange({ phone: phone.trim() })}
               keyboardType="numeric"
               editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}

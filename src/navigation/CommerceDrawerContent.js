@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { onLogout } from '../actions/AuthActions';
 import { Drawer, DrawerItem, PermissionsAssigner } from '../components/common';
-import { onCommerceRead, onScheduleValueChange } from '../actions';
+import { onCommerceRead, onScheduleValueChange, onCommerceMPagoTokenRead } from '../actions';
 import { ROLES } from '../constants';
 
 class CommerceDrawerContent extends Component {
+  componentDidMount() {
+    this.props.onCommerceMPagoTokenRead(this.props.commerceId);
+  }
+
   render() {
     return (
       <Drawer
@@ -65,5 +69,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   onLogout,
   onCommerceRead,
-  onScheduleValueChange
+  onScheduleValueChange,
+  onCommerceMPagoTokenRead
 })(CommerceDrawerContent);

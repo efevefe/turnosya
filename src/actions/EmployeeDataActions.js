@@ -15,6 +15,7 @@ import {
 import { onClientNotificationSend } from './NotificationActions';
 import { onUserWorkplacesRead } from './ClientDataActions';
 import { NOTIFICATION_TYPES } from '../constants';
+import { onReservationsCancel } from './ReservationsListActions';
 
 export const onEmployeeValueChange = payload => ({
   type: ON_EMPLOYEE_VALUE_CHANGE,
@@ -24,7 +25,7 @@ export const onEmployeeValueChange = payload => ({
 export const onEmployeeValuesReset = () => ({ type: ON_EMPLOYEE_VALUES_RESET });
 
 export const onEmployeeInvite = (
-  { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
+  { commerceId, commerceName, email, firstName, lastName, phone, role, visible, profileId },
   navigation
 ) => dispatch => {
   dispatch({ type: ON_EMPLOYEE_SAVING });
@@ -38,6 +39,7 @@ export const onEmployeeInvite = (
       firstName,
       lastName,
       role,
+      visible,
       softDelete: null,
       inviteDate: new Date(),
       startDate: null,
@@ -86,7 +88,7 @@ export const onEmployeeCreate = ({ commerceId, employeeId, profileId }) => async
 };
 
 export const onEmployeeUpdate = (
-  { employeeId, commerceId, firstName, lastName, phone, role },
+  { employeeId, commerceId, firstName, lastName, phone, role, visible },
   navigation
 ) => dispatch => {
   const db = firebase.firestore();
@@ -95,7 +97,7 @@ export const onEmployeeUpdate = (
 
   db.collection(`Commerces/${commerceId}/Employees`)
     .doc(employeeId)
-    .update({ firstName, lastName, phone, role })
+    .update({ firstName, lastName, phone, role, visible })
     .then(() => {
       dispatch({ type: ON_EMPLOYEE_UPDATED });
       navigation.goBack();
@@ -103,27 +105,41 @@ export const onEmployeeUpdate = (
     .catch(() => dispatch({ type: ON_EMPLOYEE_SAVE_FAIL }));
 };
 
-export const onEmployeeDelete = ({ employeeId, commerceId, profileId }) => async dispatch => {
+export const onEmployeeDelete = ({ employeeId, commerceId, profileId, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
-
-  const snapshot = await db
-    .collection(`Profiles/${profileId}/Workplaces`)
-    .where('commerceId', '==', commerceId)
-    .where('softDelete', '==', null)
-    .get();
-
   const batch = db.batch();
 
-  const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
-  batch.update(employeeRef, { softDelete: new Date() });
+  try {
+    const snapshot = await db
+      .collection(`Profiles/${profileId}/Workplaces`)
+      .where('commerceId', '==', commerceId)
+      .where('softDelete', '==', null)
+      .get();
 
-  if (!snapshot.empty) {
-    // Si el empleado ya había aceptado la invitacion de trabajo
-    const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
-    batch.update(workplaceRef, { softDelete: new Date() });
+
+    const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
+    batch.update(employeeRef, { softDelete: new Date() });
+
+    if (!snapshot.empty) {
+      // Si el empleado ya había aceptado la invitacion de trabajo
+      const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
+      batch.update(workplaceRef, { softDelete: new Date() });
+
+      // reservations cancel
+      reservationsToCancel && await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+    }
+
+    await batch.commit()
+
+    reservationsToCancel && reservationsToCancel.forEach(res => {
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+    });
+
+    dispatch({ type: ON_EMPLOYEE_DELETED });
+  } catch (error) {
+    console.error(error);
   }
-
-  batch.commit().then(() => dispatch({ type: ON_EMPLOYEE_DELETED }));
 };
 
 export const onEmployeeInfoUpdate = email => dispatch => {

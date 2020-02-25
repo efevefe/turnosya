@@ -1,6 +1,6 @@
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import ClientDrawer from './ClientDrawer';
-import { SportsDrawer, HairdressersDrawer } from './CommerceDrawer';
+import { SportsDrawer, SportsEmployeesDrawer, HairdressersDrawer, HairdressersEmployeesDrawer } from './CommerceDrawer';
 import GuestNavigation from './GuestNavigation';
 import LoadingScreen from '../components/LoadingScreen';
 
@@ -10,7 +10,9 @@ const mainNavigation = createSwitchNavigator(
     login: GuestNavigation,
     client: ClientDrawer,
     sports: SportsDrawer,
-    hairdressers: HairdressersDrawer
+    sportsEmployees: SportsEmployeesDrawer,
+    hairdressers: HairdressersDrawer,
+    hairdressersEmployees: HairdressersEmployeesDrawer
   },
   {
     initialRouteName: 'loading'

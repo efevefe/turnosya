@@ -32,16 +32,6 @@ class CourtReservationDetails extends Component {
     }
   };
 
-  renderPrice = () => {
-    if (this.props.showPrice) {
-      return (
-        <CardSection style={[styles.cardSections, { marginTop: 8 }]}>
-          <Text style={styles.bigText}>{`$${this.props.price}`}</Text>
-        </CardSection>
-      );
-    }
-  };
-
   setPicturePlaceholder = () => {
     switch (this.props.mode) {
       case 'commerce':
@@ -94,7 +84,9 @@ class CourtReservationDetails extends Component {
               {`De ${moment(startDate).format('HH:mm')} hs. a ${moment(endDate).format('HH:mm')} hs.`}
             </Text>
           </CardSection>
-          {this.renderPrice()}
+          <CardSection style={[styles.cardSections, { marginTop: 8 }]}>
+            <Text style={styles.bigText}>{`$${this.props.price}`}</Text>
+          </CardSection>
         </View>
       </View>
     );

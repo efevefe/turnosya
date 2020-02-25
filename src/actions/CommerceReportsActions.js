@@ -5,13 +5,25 @@ import {
   ON_COMMERCE_REPORT_READ,
   ON_COMMERCE_REPORT_VALUE_CHANGE,
   ON_COMMERCE_REPORT_VALUE_RESET,
-  ON_COMMERCE_REPORT_DATA_EMPTY,
-  ON_COMMERCE_REPORT_DATA_ERROR
+  ON_COMMERCE_REPORT_DATA_EMPTY
 } from './types';
 import moment from 'moment';
 
-const arrayOfMonths = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']; // Months of year
-const arrayOfDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S']; // Days of week
+const arrayOfMonths = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+]; // Months of year
+const arrayOfDays = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; // Days of week
 
 export const onCommerceReportValueChange = payload => {
   return { type: ON_COMMERCE_REPORT_VALUE_CHANGE, payload };
@@ -37,23 +49,17 @@ export const onDailyReservationsReadByRange = (commerceId, startDate, endDate, e
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-  query
-    .get()
-    .then(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const numberOfDay = moment(doc.data().startDate.toDate()).day();
-          data[numberOfDay] += 1;
-        });
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data }
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
-      }
+  query.get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const numberOfDay = moment(doc.data().startDate.toDate()).day();
+      data[numberOfDay] += 1;
     });
+
+    dispatch({
+      type: ON_COMMERCE_REPORT_READ,
+      payload: { labels, data }
+    });
+  });
 };
 
 // Monthly Earnings Report
@@ -96,8 +102,6 @@ export const yearsOfActivity = commerceId => dispatch => {
 export const onMonthlyEarningsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
-  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
-
   const db = firebase.firestore();
   const months = Array(12).fill(0); // 12 months
   const labels = arrayOfMonths;
@@ -105,24 +109,34 @@ export const onMonthlyEarningsReadByYear = (commerceId, year, employeeId = null)
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('cancellationDate', '==', null) // TODO: state should be something that is already paid
-    .where('startDate', '>=', moment(year, 'YYYY').startOf('year').toDate())
-    .where('startDate', '<=', moment(year, 'YYYY').endOf('year').toDate());
+    .where(
+      'startDate',
+      '>=',
+      moment(year, 'YYYY')
+        .startOf('year')
+        .toDate()
+    )
+    .where(
+      'startDate',
+      '<=',
+      moment(year, 'YYYY')
+        .endOf('year')
+        .toDate()
+    );
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-  query
-    .get()
-    .then(snapshot => {
-      snapshot.forEach(doc => {
-        const numberOfMonth = moment(doc.data().startDate.toDate()).month();
-        months[numberOfMonth] += parseFloat(doc.data().price);
-      });
-
-      dispatch({
-        type: ON_COMMERCE_REPORT_READ,
-        payload: { labels, data: months }
-      });
+  query.get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const numberOfMonth = moment(doc.data().startDate.toDate()).month();
+      months[numberOfMonth] += parseFloat(doc.data().price);
     });
+
+    dispatch({
+      type: ON_COMMERCE_REPORT_READ,
+      payload: { labels, data: months }
+    });
+  });
 };
 
 // Monthly Reviews Report
@@ -165,19 +179,28 @@ export const yearsWithReview = commerceId => dispatch => {
 export const onMonthlyReviewsReadByYear = (commerceId, year, employeeId = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
-  if (!year) return dispatch({ type: ON_COMMERCE_REPORT_DATA_ERROR });
-
   const db = firebase.firestore();
   const months = Array(12).fill(0); // total rating per month
   const counts = Array(12).fill(0); // ratings quantity per month
   const data = Array(12).fill(0); // avg rating per month
   const labels = arrayOfMonths;
 
-  db
-    .collection(`Commerces/${commerceId}/Reviews`)
+  db.collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
-    .where('date', '>=', moment(year, 'YYYY').startOf('year').toDate())
-    .where('date', '<=', moment(year, 'YYYY').endOf('year').toDate())
+    .where(
+      'date',
+      '>=',
+      moment(year, 'YYYY')
+        .startOf('year')
+        .toDate()
+    )
+    .where(
+      'date',
+      '<=',
+      moment(year, 'YYYY')
+        .endOf('year')
+        .toDate()
+    )
     .get()
     .then(snapshot => {
       let processedItems = 0;
@@ -217,7 +240,12 @@ export const onMonthlyReviewsReadByYear = (commerceId, year, employeeId = null) 
 };
 
 // Reserved and Cancelled reservations Report
-export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, endDate, employeeId = null) => dispatch => {
+export const onReservedAndCancelledReservationsReadByRange = (
+  commerceId,
+  startDate,
+  endDate,
+  employeeId = null
+) => dispatch => {
   dispatch({ type: ON_COMMERCE_REPORT_READING });
 
   const db = firebase.firestore();
@@ -231,26 +259,20 @@ export const onReservedAndCancelledShiftReadByRange = (commerceId, startDate, en
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-  query
-    .get()
-    .then(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const state = doc.data().state ? 1 : 0;
-          counts[state]++;
+  query.get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const state = doc.data().state ? 1 : 0;
+      counts[state]++;
 
-          // TODO: el día de mañana, esto se debería hacer:
-          // if (state) counts[state.id] += 1;
-        });
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: { labels, data: counts }
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
-      }
+      // TODO: el día de mañana, esto se debería hacer:
+      // if (state) counts[state.id] += 1;
     });
+
+    dispatch({
+      type: ON_COMMERCE_REPORT_READ,
+      payload: { labels, data: counts }
+    });
+  });
 };
 
 // Most Popular Shifts Report
@@ -267,33 +289,34 @@ export const onMostPopularShiftsReadByRange = (commerceId, startDate, endDate, e
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-  query
-    .get()
-    .then(snapshot => {
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const shift = moment(doc.data().startDate.toDate())
-            .format('HH:mm')
-            .toString();
-          shifts[shift] ? (shifts[shift] += 1) : (shifts[shift] = 1);
-        });
+  query.get().then(snapshot => {
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => {
+        const shift = moment(doc.data().startDate.toDate())
+          .format('HH:mm')
+          .toString();
+        shifts[shift] ? (shifts[shift] += 1) : (shifts[shift] = 1);
+      });
 
-        let sortedShifts = Object.keys(shifts).sort((a, b) => shifts[b] - shifts[a]);
+      let sortedShifts = Object.keys(shifts).sort((a, b) => shifts[b] - shifts[a]);
 
-        let data = [];
-        sortedShifts.forEach(val => data.push(shifts[val]));
+      let data = [];
+      sortedShifts.forEach(val => data.push(shifts[val]));
 
-        if (data.length > 7) {
-          data = data.slice(0, 7);
-          sortedShifts = sortedShifts.slice(0, 7);
-        }
-
-        dispatch({
-          type: ON_COMMERCE_REPORT_READ,
-          payload: { labels: sortedShifts, data }
-        });
-      } else {
-        dispatch({ type: ON_COMMERCE_REPORT_DATA_EMPTY });
+      if (data.length > 7) {
+        data = data.slice(0, 7);
+        sortedShifts = sortedShifts.slice(0, 7);
       }
-    });
+
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: { labels: sortedShifts, data }
+      });
+    } else {
+      dispatch({
+        type: ON_COMMERCE_REPORT_READ,
+        payload: { labels: ['Sin Datos'], data: [0] }
+      });
+    }
+  });
 };

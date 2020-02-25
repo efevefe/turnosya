@@ -8,8 +8,14 @@ import moment from 'moment';
 import { MAIN_COLOR, MAIN_COLOR_OPACITY, DAYS, MONTHS, AREAS } from '../../constants';
 import ScheduleRegisterItem from './ScheduleRegisterItem';
 import { hourToDate, formattedMoment, stringFormatMinutes, cancelReservationNotificationFormat } from '../../utils';
-import { Spinner, IconButton, EmptyList, Menu, MenuItem, DatePicker, CardSection, Toast } from '../common';
-import { onScheduleValueChange, onScheduleUpdate, onNextReservationsRead, onActiveSchedulesRead } from '../../actions';
+import { IconButton, EmptyList, Menu, MenuItem, DatePicker, CardSection, Toast } from '../common';
+import {
+  onScheduleValueChange,
+  onScheduleUpdate,
+  onNextReservationsRead,
+  onActiveSchedulesRead,
+  onScheduleRead
+} from '../../actions';
 
 class ScheduleRegister extends Component {
   constructor(props) {
@@ -40,14 +46,14 @@ class ScheduleRegister extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon'),
+      headerRight: <IconButton icon="md-checkmark" onPress={navigation.getParam('onSavePress')} />,
       title: navigation.getParam('title')
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderSaveButton()
+      onSavePress: this.onSavePress
     });
 
     this.setState({
@@ -59,10 +65,18 @@ class ScheduleRegister extends Component {
 
     const prevSchedule = this.props.navigation.getParam('schedule');
     prevSchedule && this.setState({ prevSchedule });
+
+    this.onBlurListener = this.props.navigation.addListener('willBlur', () => {
+      this.props.onScheduleRead({
+        commerceId: this.props.commerceId,
+        selectedDate: this.props.navigation.getParam('selectedDate'),
+        employeeId: this.props.employeeId
+      });
+    })
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.nextReservations !== this.props.nextReservations) {
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused()) {
       this.workShiftsValidate();
     }
 
@@ -72,9 +86,9 @@ class ScheduleRegister extends Component {
     }
   }
 
-  renderSaveButton = () => {
-    return <IconButton icon="md-checkmark" onPress={this.onSavePress} />;
-  };
+  componentWillUnmount() {
+    this.onBlurListener.remove && this.onBlurListener.remove();
+  }
 
   onSavePress = () => {
     if (!this.validateMinimumData()) return;
@@ -620,7 +634,7 @@ class ScheduleRegister extends Component {
   renderRow = ({ item }) => {
     if (item.id === 'firstItem') {
       // esto es para que el primer item que tiene las fechas de vigencia y la duración del
-      // turno este en la FlatList, sino se quedaría anclada arriba y no scrollearía
+      // turno este en la FlatList, sino se quedaría anclado arriba y no scrollearía
       return this.renderFirstItem();
     }
 
@@ -653,8 +667,6 @@ class ScheduleRegister extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <View style={{ flex: 1 }}>
         {this.renderList()}
@@ -699,7 +711,6 @@ const mapStateToProps = state => {
     endDate,
     schedules,
     error,
-    loading,
     refreshing
   } = state.commerceSchedule;
   const { nextReservations } = state.reservationsList;
@@ -723,7 +734,6 @@ const mapStateToProps = state => {
     endDate,
     schedules,
     error,
-    loading,
     loadingReservations,
     refreshing,
     nextReservations,
@@ -736,5 +746,6 @@ export default connect(mapStateToProps, {
   onScheduleValueChange,
   onScheduleUpdate,
   onNextReservationsRead,
-  onActiveSchedulesRead
+  onActiveSchedulesRead,
+  onScheduleRead
 })(ScheduleRegister);

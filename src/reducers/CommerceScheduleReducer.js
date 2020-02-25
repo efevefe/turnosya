@@ -12,10 +12,12 @@ import {
   ON_SCHEDULE_CONFIG_UPDATING,
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY,
-  ON_ACTIVE_SCHEDULES_READ
+  ON_ACTIVE_SCHEDULES_READ,
+  ON_ACTIVE_SCHEDULES_READING,
+  ON_ACTIVE_SCHEDULES_READ_FAIL
 } from '../actions/types';
+import moment from 'moment';
 import { Toast } from '../components/common';
-import { formattedMoment } from '../utils/functions';
 
 const INITIAL_WORKSHIFTS = {
   id: '',
@@ -44,13 +46,20 @@ const INITIAL_STATE = {
   error: null,
   slots: [],
   loading: false,
+  loadingSchedule: false,
   refreshing: false
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case ON_SCHEDULE_READ_EMPTY:
     case ON_SCHEDULE_FORM_OPEN:
-      return { ...state, ...INITIAL_WORKSHIFTS, startDate: formattedMoment() };
+      return {
+        ...state,
+        ...INITIAL_WORKSHIFTS,
+        startDate: moment(moment().format('MM-DD-YYYY')),
+        loadingSchedule: false
+      };
 
     case ON_SCHEDULE_VALUE_CHANGE:
       return { ...state, ...action.payload };
@@ -72,24 +81,27 @@ export default (state = INITIAL_STATE, action) => {
 
       return { ...state, cards: newCards, selectedDays: newSelectedDays };
 
-    case ON_SCHEDULE_READING:
+    case ON_ACTIVE_SCHEDULES_READING:
     case ON_SCHEDULE_CONFIG_UPDATING:
       return { ...state, loading: true };
 
+    case ON_SCHEDULE_READING:
+      return { ...state, loadingSchedule: true };
+
     case ON_SCHEDULE_READ:
-      return { ...state, ...action.payload, loading: false };
+      return { ...state, ...action.payload, loadingSchedule: false };
 
-    case ON_ACTIVE_SCHEDULES_READ: // este capaz ni hace falta, se podria usar la misma otra action
+    case ON_ACTIVE_SCHEDULES_READ:
       return { ...state, schedules: action.payload, loading: false };
-
-    case ON_SCHEDULE_READ_EMPTY:
-      Toast.show({ text: 'No se encontraron horarios de atención' });
-      return { ...INITIAL_STATE };
 
     case ON_SCHEDULE_CONFIG_UPDATED:
       Toast.show({ text: 'Cambios guardados' });
-    case ON_SCHEDULE_READ_FAIL:
+
+    case ON_ACTIVE_SCHEDULES_READ_FAIL:
       return { ...state, loading: false };
+
+    case ON_SCHEDULE_READ_FAIL:
+      return { ...state, loadingSchedule: false };
 
     case ON_SCHEDULE_CREATING:
       return { ...state, refreshing: true };

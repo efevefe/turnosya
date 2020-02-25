@@ -32,21 +32,21 @@ class RegisterForm extends Component {
     }
   };
 
-    renderEmailError = () => {
-        if (this.props.email == '') {
-            this.setState({ emailError: 'Dato requerido' });
-            return false;
-        } else if (!validateValueType('email', this.props.email)) {
-            this.setState({ emailError: 'Formato de email incorrecto' });
-            return false;
-        } else {
-            this.setState({ emailError: '' });
-            return true;
-        }
-    };
+  renderEmailError = () => {
+    if (!this.props.email) {
+      this.setState({ emailError: 'Dato requerido' });
+      return false;
+    } else if (!validateValueType('email', this.props.email)) {
+      this.setState({ emailError: 'Formato de email incorrecto' });
+      return false;
+    } else {
+      this.setState({ emailError: '' });
+      return true;
+    }
+  };
 
   renderPasswordError = () => {
-    if (this.props.password == '') {
+    if (!this.props.password) {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
@@ -60,26 +60,24 @@ class RegisterForm extends Component {
     }
   };
 
-    renderConfirmPasswordError = () => {
-        if (this.props.confirmPassword == '') {
-            this.setState({ confirmPasswordError: 'Dato requerido' });
-            return false;
-        } else if (this.props.password != this.props.confirmPassword) {
-            this.setState({
-                confirmPasswordError: 'Las contraseñas no coinciden',
-            });
-            return false;
-        } else {
-            this.setState({ confirmPasswordError: '' });
-            return true;
-        }
-    };
+  renderConfirmPasswordError = () => {
+    if (!this.props.confirmPassword) {
+      this.setState({ confirmPasswordError: 'Dato requerido' });
+      return false;
+    } else if (this.props.password != this.props.confirmPassword) {
+      this.setState({ confirmPasswordError: 'Las contraseñas no coinciden' });
+      return false;
+    } else {
+      this.setState({ confirmPasswordError: '' });
+      return true;
+    }
+  };
 
   renderFirstNameError = () => {
     const firstName = trimString(this.props.firstName);
 
     this.props.onClientDataValueChange({ firstName });
-    if (firstName === '') {
+    if (!firstName) {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('name', firstName)) {
@@ -95,7 +93,7 @@ class RegisterForm extends Component {
     const lastName = trimString(this.props.lastName);
 
     this.props.onClientDataValueChange({ lastName });
-    if (lastName === '') {
+    if (!lastName) {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('name', lastName)) {
@@ -108,7 +106,7 @@ class RegisterForm extends Component {
   };
 
   renderPhoneError = () => {
-    if (this.props.phone === '') {
+    if (!this.props.phone) {
       this.setState({ phoneError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('phone', this.props.phone)) {
@@ -143,7 +141,7 @@ class RegisterForm extends Component {
               keyboardType="email-address"
               value={this.props.email}
               errorMessage={this.state.emailError || this.props.error}
-              onChangeText={email => this.props.onClientDataValueChange({ email })}
+              onChangeText={email => this.props.onClientDataValueChange({ email: email.trim() })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -206,7 +204,7 @@ class RegisterForm extends Component {
               textContentType="telephoneNumber"
               value={this.props.phone}
               errorMessage={this.state.phoneError}
-              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
+              onChangeText={phone => this.props.onClientDataValueChange({ phone: phone.trim() })}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
             />

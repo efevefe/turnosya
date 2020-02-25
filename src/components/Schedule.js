@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, Image } from 'react-native';
-import { ListItem, Badge } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-// import { Ionicons } from '@expo/vector-icons';
-import { withNavigationFocus } from 'react-navigation';
-import { Calendar } from './common/Calendar';
-import { Spinner } from './common/Spinner';
-import { EmptyList } from './common/EmptyList';
+import { Badge, Calendar, Spinner, EmptyList } from './common';
 import { getHourAndMinutes } from '../utils';
 import { MAIN_COLOR, WARNING_COLOR, SUCCESS_COLOR, GREY_DISABLED } from '../constants';
 import { onScheduleValueChange } from '../actions';
@@ -41,7 +37,7 @@ class Schedule extends Component {
     // se estarian generando los slots cada vez que se trae una nueva diagramacion y el schedule
     // esta en primer plano, cosa que no se actualice cuando se esta en otra pantalla y se esta
     // usando el mismo loading, como en la pantalla del listado de schedules
-    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.isFocused && this.props.scheduleId) {
+    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.scheduleId) {
       this.onDateSelected(this.props.selectedDate);
     }
   }
@@ -139,7 +135,7 @@ class Schedule extends Component {
       case 'courts':
         return free ? `Disponibles: ${free.toString()} / ${total.toString()}` : 'Ocupadas';
       case 'services':
-        return free ? `Disponible` : 'Ocupado';
+        return free ? 'Disponible' : 'Ocupado';
       default:
         return null;
     }
@@ -157,7 +153,8 @@ class Schedule extends Component {
           rightElement={
             <Badge
               value={this.badgeTitle(item.free, item.total)}
-              badgeStyle={{ ...styles.slotBadgeStyle, backgroundColor: this.badgeColor(item.free, item.total) }}
+              color={this.badgeColor(item.free, item.total)}
+              containerStyle={{ paddingTop: 0 }}
             />
           }
           title={`${item.startDate.format('HH:mm')}`}
@@ -224,13 +221,6 @@ class Schedule extends Component {
 }
 
 const styles = StyleSheet.create({
-  slotBadgeStyle: {
-    height: 25,
-    width: 'auto',
-    borderRadius: 12.5,
-    paddingLeft: 5,
-    paddingRight: 5
-  },
   slotContainerStyle: {
     backgroundColor: 'white'
   },
@@ -247,9 +237,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { slots, loading, id } = state.commerceSchedule;
+  const { slots, loadingSchedule, id } = state.commerceSchedule;
 
-  return { slots, loadingSchedule: loading, scheduleId: id };
+  return { slots, loadingSchedule, scheduleId: id };
 };
 
-export default connect(mapStateToProps, { onScheduleValueChange })(withNavigationFocus(Schedule));
+export default connect(mapStateToProps, { onScheduleValueChange })(Schedule);

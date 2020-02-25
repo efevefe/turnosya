@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>daily-reservations-chart</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body style="margin: 0;">
+  <div id="chart"></div>
+  <p id='title' style="display: none;"></p>
+  <p id='data' style="display: none;"></p>
+  <p id='height' style="display: none;"></p>
+  <div id="chart-for-pdf" style="visibility: hidden; position: absolute; top: -9999px; left: -9999px;"></div>
+
+  <!-- Datos para prueba en el navegador -->
+  <!-- <p id='height' style="display: none;">700</p> -->
+  <!-- <p id='title' style="display: none;">Horarios con Mayor Demanda</p> -->
+  <!-- <p id='data' style="display: none;">{"labels":["20:00", "21:00", "23:00", "17:00", "18:00","16:00"],"data":[45,38,33,26,20,14]}</p> -->
+
+  <script type="text/javascript">
+
+    google.charts.load('current', { 'packages': ['corechart'] });
+    // google.charts.setOnLoadCallback(drawChart); // solo para el navegador
+
+    function drawChart() {
+      var chartData = JSON.parse(document.getElementById('data').innerHTML);
+
+      var dataArray = [['Día', 'Cantidad de Reservas', { 'role': 'style' }, { 'role': 'annotation' }]];
+
+      for (var i = 0; i < chartData.data.length; i++) {
+        dataArray.push([chartData.labels[i], chartData.data[i], '#c72c41', chartData.data[i].toString()]);
+      }
+
+      var data = google.visualization.arrayToDataTable(dataArray);
+
+      // formato para pdf
+      var optionsPDF = {
+        title: document.getElementById('title').innerHTML,
+        titleTextStyle: {
+          fontSize: 20
+        },
+        width: 900,
+        height: 1350,
+        legend: { position: 'none' },
+        vAxis: {
+          title: 'Cantidad de Reservas',
+          format: '#',
+          minValue: 0
+        },
+        hAxis: {
+          title: 'Horario',
+        },
+        chartArea: {
+          left: '18%',
+          right: '5%',
+          bottom: '12%',
+          top: '14%'
+        }
+      };
+
+      // formato para smartphone
+      var optionsPhone = {
+        ...optionsPDF,
+        titleTextStyle: {
+          fontSize: 12
+        },
+        width: '100%',
+        height: parseInt(document.getElementById('height').innerHTML),
+        vAxis: {
+          ...optionsPDF.vAxis,
+          textStyle: {
+            fontSize: 10
+          }
+        },
+        hAxis: {
+          ...optionsPDF.hAxis,
+          textStyle: {
+            fontSize: 11
+          }
+        },
+        chartArea: {
+          ...optionsPDF.chartArea,
+          bottom: '14%',
+          left: '14%'
+        },
+        annotations: {
+          textStyle: {
+            fontSize: 9,
+          }
+        }
+      };
+
+      var chartForPDF = new google.visualization.ColumnChart(document.getElementById('chart-for-pdf'))
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+
+      google.visualization.events.addListener(chartForPDF, 'ready', function () {
+        document.getElementById('chart-for-pdf').innerHTML = '<img src="' + chartForPDF.getImageURI() + '">';
+        window.ReactNativeWebView.postMessage(document.getElementById('chart-for-pdf').innerHTML.toString());
+      });
+
+      chartForPDF.draw(data, optionsPDF);
+      chart.draw(data, optionsPhone);
+    }
+  </script>
+</body>

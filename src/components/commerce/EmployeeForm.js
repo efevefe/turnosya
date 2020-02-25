@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import { Card, Button as RNEButton } from 'react-native-elements';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text, Switch } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   onEmployeeValueChange,
@@ -13,8 +13,8 @@ import {
   onEmployeeInvite,
   onEmployeeUpdate
 } from '../../actions';
-import { CardSection, Input, Picker, Button, IconButton } from '../common';
-import { MAIN_COLOR, ROLES } from '../../constants';
+import { CardSection, Input, Picker, Button, IconButton, AreaComponentRenderer } from '../common';
+import { MAIN_COLOR, GREY_DISABLED, MAIN_COLOR_DISABLED, ROLES } from '../../constants';
 
 class EmployeeForm extends Component {
   constructor(props) {
@@ -27,17 +27,15 @@ class EmployeeForm extends Component {
   }
 
   static navigationOptions = ({ navigation }) => {
+    const editing = navigation.getParam('editing');
+
     return {
-      headerRight: navigation.getParam('rightButton')
+      headerRight: editing ? <IconButton icon="md-refresh" onPress={navigation.getParam('onUpdatePress')} /> : null
     };
   };
 
   componentDidMount() {
-    if (this.state.editing) {
-      this.props.navigation.setParams({
-        rightButton: <IconButton icon="md-refresh" onPress={() => this.props.onEmployeeInfoUpdate(this.props.email)} />
-      });
-    }
+    if (this.state.editing) this.props.navigation.setParams({ onUpdatePress: this.onUpdatePress });
 
     this.props.onRolesRead();
   }
@@ -45,6 +43,10 @@ class EmployeeForm extends Component {
   componentWillUnmount() {
     this.props.onEmployeeValuesReset();
   }
+
+  onUpdatePress = () => {
+    this.props.onEmployeeInfoUpdate(this.props.email);
+  };
 
   onEmailValueChange = email => {
     this.props.firstName
@@ -68,6 +70,7 @@ class EmployeeForm extends Component {
       role,
       profileId,
       employeeId,
+      visible,
       employees,
       navigation
     } = this.props;
@@ -79,10 +82,13 @@ class EmployeeForm extends Component {
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.onEmployeeUpdate({ commerceId, employeeId, firstName, lastName, phone, role }, navigation);
+          this.props.onEmployeeUpdate(
+            { commerceId, employeeId, firstName, lastName, phone, role, visible },
+            navigation
+          );
         else
           this.props.onEmployeeInvite(
-            { commerceId, commerceName, email, firstName, lastName, phone, role, profileId },
+            { commerceId, commerceName, email, firstName, lastName, phone, role, visible, profileId },
             navigation
           );
     } else {
@@ -127,6 +133,8 @@ class EmployeeForm extends Component {
                 placeholder="Busque por email..."
                 autoCapitalize="none"
                 keyboardType="email-address"
+                returnKeyType="search"
+                onSubmitEditing={() => this.props.onUserByEmailSearch(this.props.email, this.props.commerceId)}
                 value={this.props.email}
                 errorMessage={this.props.emailError}
                 onChangeText={this.onEmailValueChange}
@@ -173,6 +181,27 @@ class EmployeeForm extends Component {
               />
             </CardSection>
 
+            <AreaComponentRenderer
+              hairdressers={
+                <CardSection style={styles.employeeVisibleCardSection}>
+                  <View style={styles.employeeVisibleText}>
+                    <Text>Visible en el perfil:</Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Switch
+                      onValueChange={visible => this.props.onEmployeeValueChange({ visible })}
+                      value={this.props.visible}
+                      trackColor={{
+                        false: GREY_DISABLED,
+                        true: MAIN_COLOR_DISABLED
+                      }}
+                      thumbColor={this.props.visible ? MAIN_COLOR : 'grey'}
+                    />
+                  </View>
+                </CardSection>
+              }
+            />
+
             <CardSection>
               <Button title="Guardar" loading={this.props.saveLoading} onPress={this.onSavePressHandler} />
             </CardSection>
@@ -188,6 +217,19 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingTop: 10,
     borderRadius: 10
+  },
+  employeeVisibleCardSection: {
+    paddingRight: 12,
+    paddingLeft: 16,
+    paddingBottom: 5,
+    paddingTop: 15,
+    flexDirection: 'row'
+  },
+  employeeVisibleText: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    marginTop: 2,
+    flex: 1
   }
 });
 
@@ -201,6 +243,7 @@ const mapStateToProps = state => {
     profileId,
     id,
     role,
+    visible,
     emailLoading,
     emailError,
     saveLoading
@@ -219,6 +262,7 @@ const mapStateToProps = state => {
     employeeId: id,
     role,
     roles,
+    visible,
     currentRole,
     emailLoading,
     emailError,

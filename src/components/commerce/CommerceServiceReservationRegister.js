@@ -5,14 +5,22 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Input, Button, CardSection } from '../common';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 import { onReservationValueChange, onCommerceServiceReservationCreate } from '../../actions';
-import { validateValueType } from '../../utils';
+import { validateValueType, newReservationNotificationFormat } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
   state = { nameError: '', phoneError: '' };
 
+  componentDidMount() {
+    this.loading = false;
+  }
+
   componentDidUpdate(prevProps) {
     if ((this.props.saved && !prevProps.saved) || (this.props.exists && !prevProps.exists)) {
       this.props.navigation.goBack();
+    }
+
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
     }
   }
 
@@ -37,7 +45,7 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone })}
+              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone: clientPhone.trim() })}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -64,9 +72,7 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   phoneError = () => {
-    const { clientPhone } = this.props;
-
-    if (clientPhone && !validateValueType('phone', clientPhone)) {
+    if (this.props.clientPhone && !validateValueType('phone', this.props.clientPhone)) {
       this.setState({ phoneError: 'Formato no valido' });
       return true;
     } else {
@@ -79,36 +85,51 @@ class CommerceCourtReservationRegister extends Component {
     if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
-          <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+          <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
         </CardSection>
       );
     }
   };
 
   onConfirmReservation = () => {
-    if (!this.nameError() && !this.phoneError()) {
+    if (!this.nameError() && !this.phoneError() && !this.loading) {
+      this.loading = true;
+
       const {
+        commerceName,
         commerceId,
         areaId,
         clientName,
         clientPhone,
         employeeId,
+        selectedEmployeeId,
         service,
         startDate,
         endDate,
         price
       } = this.props;
 
+      let notification = null;
+
+      if (employeeId !== selectedEmployeeId)
+        notification = newReservationNotificationFormat({
+          startDate,
+          service: service.name,
+          actorName: clientName,
+          receptorName: commerceName
+        });
+
       this.props.onCommerceServiceReservationCreate({
         commerceId,
         areaId,
         serviceId: service.id,
-        employeeId,
+        employeeId: selectedEmployeeId,
         clientName,
         clientPhone,
         startDate,
         endDate,
-        price
+        price,
+        notification
       });
     }
   };
@@ -148,12 +169,15 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const {
     commerceId,
+    name: commerceName,
     area: { areaId }
   } = state.commerceData;
   const { clientName, clientPhone, service, startDate, endDate, price, saved, exists, loading } = state.reservation;
   const { employeeId } = state.roleData;
+  const { selectedEmployeeId } = state.employeesList;
 
   return {
+    commerceName,
     commerceId,
     areaId,
     clientName,
@@ -165,6 +189,7 @@ const mapStateToProps = state => {
     price,
     saved,
     exists,
+    selectedEmployeeId,
     loading
   };
 };

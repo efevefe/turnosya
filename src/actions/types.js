@@ -8,6 +8,7 @@ export const ON_SERVICES_READING = 'on_services_reading';
 export const ON_SERVICES_READ = 'on_services_read';
 export const ON_SERVICE_DELETE = 'on_service_delete';
 export const ON_SERVICE_UPDATE = 'on_service_update';
+export const ON_SERVICE_EXISTS = 'on_service_exists';
 
 // Authentication types
 export const ON_LOGIN_VALUE_CHANGE = 'on_login_value_change';
@@ -104,7 +105,9 @@ export const ON_SCHEDULE_READ = 'on_schedule_shifts_read';
 export const ON_SCHEDULE_READING = 'on_schedule_shifts_reading';
 export const ON_SCHEDULE_READ_FAIL = 'on_schedule_shifts_read_fail';
 export const ON_SCHEDULE_READ_EMPTY = 'on_schedule_read_empty';
+export const ON_ACTIVE_SCHEDULES_READING = 'on_active_schedules_reading';
 export const ON_ACTIVE_SCHEDULES_READ = 'on_active_schedules_read';
+export const ON_ACTIVE_SCHEDULES_READ_FAIL = 'on_active_schedules_read_fail';
 export const ON_SCHEDULE_CREATED = 'on_schedule_create';
 export const ON_SCHEDULE_CREATING = 'on_schedule_creating';
 export const ON_SCHEDULE_CREATE_FAIL = 'on_schedule_create_fail';
@@ -212,7 +215,6 @@ export const ON_COMMERCE_REPORT_READ = 'on_commerce_report_read';
 export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change';
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
-export const ON_COMMERCE_REPORT_DATA_ERROR = 'on_commerce_report_data_error';
 
 //Notifications types
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';

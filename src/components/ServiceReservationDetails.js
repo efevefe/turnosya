@@ -81,14 +81,8 @@ class ServiceReservationDetails extends Component {
           <Divider style={styles.divider} />
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
             <Text style={styles.regularText}>
-              {DAYS[moment(startDate).day()] +
-                ' ' +
-                moment(startDate).format('D') +
-                ' de ' +
-                MONTHS[moment(startDate).month()] +
-                ', ' +
-                moment(startDate).format('HH:mm') +
-                ' hs.'}
+              {DAYS[moment(startDate).day()] + ' ' + moment(startDate).format('D') +
+                ' de ' + MONTHS[moment(startDate).month()] + ', ' + moment(startDate).format('HH:mm') + ' hs.'}
             </Text>
           </CardSection>
           <CardSection style={styles.cardSections}>

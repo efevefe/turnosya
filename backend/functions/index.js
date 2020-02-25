@@ -112,14 +112,18 @@ app.get('/commerce-oauth-redirect', (req, res) => {
 //#region Notifications
 app.post('/ipn-notification', (req, res) => {
   console.log('Notification');
+  console.log(req.body);
+  console.log(req.query);
   if (req.query.topic === 'payment') {
     const db = admin.firestore();
 
     request(
       `https://api.mercadopago.com/v1/payments/${req.query.id}?access_token=${env.marketplace.ACCESS_TOKEN}`,
       (error, response, body) => {
+        console.log('error: ' + error);
+        console.log(response.statusCode);
         if (!error && response.statusCode == 200) {
-          const { id, collector, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
+          const { id, order, payer_id, payment_type_id, status, external_reference } = JSON.parse(body);
           const { clientId, reservationId, commerceId } = JSON.parse(external_reference);
 
           if (status === 'approved') {
@@ -136,10 +140,9 @@ app.post('/ipn-notification', (req, res) => {
 
                 batch.set(paymentRef, {
                   date: new Date(),
-                  collectorId: collector.id,
                   method: constants.paymentTypes[payment_type_id],
-                  order,
-                  payerId: payer_id
+                  order: order || null,
+                  payerId: payer_id || null
                 });
 
                 batch.update(commerceReservationRef, { paymentId: id.toString(), state: stateObject });
@@ -167,5 +170,27 @@ app.post('/ipn-notification', (req, res) => {
   }
 });
 //#endregion
+
+// charts
+app.get('/daily-reservations-chart', (req, res) => {
+  res.render('daily-reservations-chart');
+});
+
+app.get('/most-popular-shifts-chart', (req, res) => {
+  res.render('most-popular-shifts-chart');
+});
+
+app.get('/monthly-earnings-chart', (req, res) => {
+  res.render('monthly-earnings-chart');
+});
+
+app.get('/monthly-reviews-chart', (req, res) => {
+  res.render('monthly-reviews-chart');
+});
+
+app.get('/reserved-and-cancelled-chart', (req, res) => {
+  res.render('reserved-and-cancelled-chart');
+});
+// charts end
 
 exports.app = functions.https.onRequest(app);

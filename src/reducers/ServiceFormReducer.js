@@ -4,7 +4,8 @@ import {
   ON_SERVICE_FORM_SUBMIT,
   ON_SERVICE_CREATE,
   ON_SERVICE_UPDATE,
-  ON_SERVICE_DELETE
+  ON_SERVICE_DELETE,
+  ON_SERVICE_EXISTS
 } from '../actions/types';
 import { Toast } from '../components/common';
 
@@ -14,7 +15,8 @@ const INITIAL_STATE = {
   price: '',
   description: '',
   employeesIds: [],
-  loading: false
+  loading: false,
+  existsError: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -39,6 +41,13 @@ export default (state = INITIAL_STATE, action) => {
     case ON_SERVICE_DELETE:
       Toast.show({ text: 'El servicio se ha eliminado' });
       return { ...INITIAL_STATE };
+
+    case ON_SERVICE_EXISTS:
+      return {
+        ...state,
+        loading: false,
+        existsError: 'Nombre de servicio existente'
+      };
 
     default:
       return state;

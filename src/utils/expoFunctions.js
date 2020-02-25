@@ -53,10 +53,10 @@ const getLocationIos = async status => {
 
 export const getCurrentPosition = async () => {
   try {
-    // ver bien el tema de cuando es por primera vez en la vida. En android da medio raro
-    return await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High
-    });
+    let result = await Location.getLastKnownPositionAsync();
+    result = result ? result : await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+
+    return result;
   } catch (error) {
     if (error.message.includes('Location services are disabled')) {
       return { coords: { latitude: null, longitude: null } };
@@ -67,10 +67,7 @@ export const getCurrentPosition = async () => {
 
 export const getAddressFromLatAndLong = async ({ latitude, longitude }) => {
   try {
-    return await Location.reverseGeocodeAsync({
-      latitude,
-      longitude
-    });
+    return await Location.reverseGeocodeAsync({ latitude, longitude });
   } catch (error) {
     console.error(error);
   }

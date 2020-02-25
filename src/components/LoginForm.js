@@ -15,19 +15,12 @@ class LoginForm extends Component {
 
   onButonPressHandler() {
     if (this.validateMinimumData()) {
-      this.props.onLogin({
-        email: this.props.email,
-        password: this.props.password
-      });
+      this.props.onLogin({ email: this.props.email, password: this.props.password });
     }
   }
 
   onCreateAcount() {
-    const navigateAction = NavigationActions.navigate({
-      routeName: 'registerForm'
-    });
-
-    this.props.navigation.navigate(navigateAction);
+    this.props.navigation.navigate(NavigationActions.navigate({ routeName: 'registerForm' }));
   }
 
   renderEmailError = () => {
@@ -48,9 +41,7 @@ class LoginForm extends Component {
       this.setState({ passwordError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('password', this.props.password)) {
-      this.setState({
-        passwordError: 'Usuario o contraseña incorrectos'
-      });
+      this.setState({ passwordError: 'Usuario o contraseña incorrectos' });
       return false;
     } else {
       this.setState({ passwordError: '' });
@@ -63,7 +54,7 @@ class LoginForm extends Component {
   };
 
   renderResetUserPasswordModal = () => {
-    // ventana de recuperacion de contraseña
+    // ventana de recuperación de contraseña
     return (
       <Menu
         title="Enviar correo de recuperación:"
@@ -79,7 +70,7 @@ class LoginForm extends Component {
             color="black"
             value={this.props.email}
             errorMessage={this.props.error || this.state.emailError}
-            onChangeText={email => this.props.onLoginValueChange({ email })}
+            onChangeText={email => this.props.onLoginValueChange({ email: email.trim() })}
             onFocus={() => {
               this.setState({ emailError: '' });
               this.props.onLoginValueChange({ error: '' });
@@ -140,6 +131,8 @@ class LoginForm extends Component {
               placeholder="Contraseña"
               password
               autoCapitalize="none"
+              returnKeyType="done"
+              onSubmitEditing={this.onButonPressHandler.bind(this)}
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
               onChangeText={password => this.props.onLoginValueChange({ password })}

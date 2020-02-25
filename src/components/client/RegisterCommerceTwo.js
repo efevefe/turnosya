@@ -63,11 +63,11 @@ class RegisterCommerceTwo extends Component {
   renderAddressError = () => {
     const address = trimString(this.props.address);
 
-    if (address === '') {
+    this.props.onLocationValueChange({ address });
+    if (!address) {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
-      this.props.onCommerceValueChange({ address });
       this.setState({ addressError: '' });
       return true;
     }
@@ -76,18 +76,18 @@ class RegisterCommerceTwo extends Component {
   renderCityError = () => {
     const city = trimString(this.props.city);
 
-    if (city === '') {
+    this.props.onLocationValueChange({ city });
+    if (!city) {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
-      this.props.onCommerceValueChange({ city });
       this.setState({ cityError: '' });
       return true;
     }
   };
 
   renderProvinceError = () => {
-    if (this.props.province.provinceId === '') {
+    if (!this.props.province.provinceId) {
       this.setState({ provinceError: 'Dato requerido' });
       return false;
     } else {

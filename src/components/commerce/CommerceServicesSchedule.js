@@ -14,7 +14,8 @@ import {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead
+  onEmployeesRead,
+  onEmployeeSelect
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -22,22 +23,27 @@ class CommerceServicesSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightIcon')
+      headerRight: <IconButton icon="md-options" onPress={navigation.getParam('onConfigurationPress')} />
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      rightIcon: this.renderConfigurationButton()
+      onConfigurationPress: this.onConfigurationPress
     });
+
+    this.props.onEmployeeSelect(this.state.selectedEmployeeId);
 
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
       selectedDate: this.state.selectedDate,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
-    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead({
+      commerceId: this.props.commerceId,
+      startDate: true
+    });
 
     this.unsubscribeServicesRead = this.props.onServicesRead(this.props.commerceId);
 
@@ -67,14 +73,14 @@ class CommerceServicesSchedule extends Component {
     this.unsubscribeReservationsRead = this.props.onCommerceReservationsRead({
       commerceId: this.props.commerceId,
       selectedDate: date,
-      employeeId: this.state.selectedEmployeeId //
+      employeeId: this.state.selectedEmployeeId
     });
 
     if (!scheduleId || (scheduleEndDate && date >= scheduleEndDate) || date < scheduleStartDate) {
       this.props.onScheduleRead({
         commerceId: this.props.commerceId,
         selectedDate: date,
-        employeeId: this.state.selectedEmployeeId //
+        employeeId: this.state.selectedEmployeeId
       });
     }
 
@@ -94,10 +100,6 @@ class CommerceServicesSchedule extends Component {
       return this.props.navigation.navigate('reservationDetails', {
         reservation: this.getReservationFromSlot(slot)
       });
-    }
-
-    if (this.props.employeeId !== this.props.selectedEmployeeId) {
-      return Toast.show({ text: 'No puedes reservar turnos a nombre de otro empleado' });
     }
 
     if (moment() >= slot.startDate && slot.available) {
@@ -152,8 +154,8 @@ class CommerceServicesSchedule extends Component {
     this.props.onScheduleValueChange({ slots: newSlots });
   };
 
-  renderConfigurationButton = () => {
-    return <IconButton icon="md-options" onPress={() => this.setState({ modal: true })} />;
+  onConfigurationPress = () => {
+    this.setState({ modal: true });
   };
 
   onScheduleShiftsPress = () => {
@@ -237,7 +239,7 @@ const mapStateToProps = state => {
     reservationMinLength,
     startDate,
     endDate,
-    loading: loadingSchedule
+    loadingSchedule
   } = state.commerceSchedule;
   const { commerceId } = state.commerceData;
   const { reservations } = state.reservationsList;
@@ -274,5 +276,6 @@ export default connect(mapStateToProps, {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead
+  onEmployeesRead,
+  onEmployeeSelect
 })(CommerceServicesSchedule);

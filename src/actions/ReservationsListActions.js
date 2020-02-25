@@ -12,6 +12,7 @@ import {
 } from './types';
 import { onClientNotificationSend } from './NotificationActions';
 import { NOTIFICATION_TYPES } from '../constants';
+import store from '../reducers';
 
 export const onReservationsListValueChange = payload => {
   return {
@@ -246,95 +247,98 @@ export const onCommerceReservationCancel = ({
   };
 };
 
-export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId }) => {
+export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId }) => dispatch => {
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
+
   const db = firebase.firestore();
 
-  return dispatch => {
-    let query = db
-      .collection(`Commerces/${commerceId}/Reservations`)
-      .where('cancellationDate', '==', null)
-      .where('startDate', '>=', startDate.toDate());
+  let query = db
+    .collection(`Commerces/${commerceId}/Reservations`)
+    .where('cancellationDate', '==', null)
+    .where('startDate', '>=', startDate.toDate());
 
-    if (employeeId) query = query.where('employeeId', '==', employeeId);
+  if (employeeId) query = query.where('employeeId', '==', employeeId);
 
-    query
-      .orderBy('startDate')
-      .get()
-      .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
+  query
+    .orderBy('startDate')
+    .get()
+    .then(snapshot => {
 
-        const nextReservations = [];
+      const nextReservations = [];
 
-        if (snapshot.empty) {
-          return dispatch({
-            type: ON_COMMERCE_RESERVATIONS_READ,
-            payload: { nextReservations }
-          });
-        }
-
-        snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
-            nextReservations.push({
-              id: doc.id,
-              clientId: doc.data().clientId,
-              startDate: moment(doc.data().startDate.toDate()),
-              endDate: moment(doc.data().endDate.toDate())
-            });
-        });
-
-        dispatch({
+      if (snapshot.empty) {
+        return dispatch({
           type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { nextReservations }
         });
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
-  };
+      }
+
+      snapshot.forEach(doc => {
+        if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
+          nextReservations.push({
+            id: doc.id,
+            paymentId: doc.data().paymentId,
+            clientId: doc.data().clientId,
+            startDate: moment(doc.data().startDate.toDate()),
+            endDate: moment(doc.data().endDate.toDate())
+          });
+      });
+
+      dispatch({
+        type: ON_COMMERCE_RESERVATIONS_READ,
+        payload: { nextReservations }
+      });
+    })
+    .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
 };
 
-export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => {
+export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => dispatch => {
+  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
+
   const db = firebase.firestore();
 
-  return dispatch => {
-    db.collection(`Commerces/${commerceId}/Reservations`)
-      .where('courtId', '==', courtId)
-      .where('cancellationDate', '==', null)
-      .where('endDate', '>', startDate.toDate())
-      .orderBy('endDate')
-      .get()
-      .then(snapshot => {
-        dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
+  db.collection(`Commerces/${commerceId}/Reservations`)
+    .where('courtId', '==', courtId)
+    .where('cancellationDate', '==', null)
+    .where('endDate', '>', startDate.toDate())
+    .orderBy('endDate')
+    .get()
+    .then(snapshot => {
 
-        const nextReservations = [];
+      const nextReservations = [];
 
-        if (snapshot.empty) {
-          return dispatch({
-            type: ON_COMMERCE_RESERVATIONS_READ,
-            payload: { nextReservations }
-          });
-        }
-
-        snapshot.forEach(doc => {
-          if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
-            nextReservations.push({
-              id: doc.id,
-              clientId: doc.data().clientId,
-              startDate: moment(doc.data().startDate.toDate()),
-              endDate: moment(doc.data().endDate.toDate())
-            });
-        });
-
-        dispatch({
+      if (snapshot.empty) {
+        return dispatch({
           type: ON_COMMERCE_RESERVATIONS_READ,
           payload: { nextReservations }
         });
-      })
-      .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
-  };
+      }
+
+      snapshot.forEach(doc => {
+        if (!endDate || (endDate && endDate > moment(doc.data().startDate.toDate())))
+          nextReservations.push({
+            id: doc.id,
+            paymentId: doc.data().paymentId,
+            clientId: doc.data().clientId,
+            startDate: moment(doc.data().startDate.toDate()),
+            endDate: moment(doc.data().endDate.toDate())
+          });
+      });
+
+      dispatch({
+        type: ON_COMMERCE_RESERVATIONS_READ,
+        payload: { nextReservations }
+      });
+    })
+    .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
 };
 
 export const onReservationsCancel = async (db, batch, commerceId, reservations) => {
+
   // reservations cancel
   if (reservations.length) {
+    const mPagoToken = store.getState().commerceData.mPagoToken;
+
     try {
       const state = await db.doc(`ReservationStates/canceled`).get();
       const updateObj = {
@@ -344,9 +348,14 @@ export const onReservationsCancel = async (db, batch, commerceId, reservations) 
 
       reservations.forEach(res => {
         const commerceResRef = db.doc(`Commerces/${commerceId}/Reservations/${res.id}`);
-        const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
         batch.update(commerceResRef, updateObj);
-        batch.update(clientResRef, updateObj);
+
+        if (res.clientId) {
+          const clientResRef = db.doc(`Profiles/${res.clientId}/Reservations/${res.id}`);
+          batch.update(clientResRef, updateObj);
+        }
+
+        if (res.paymentId) onCommercePaymentRefund({ commerceId, paymentId: res.paymentId, mPagoToken })();
       });
     } catch (error) {
       console.error(error);

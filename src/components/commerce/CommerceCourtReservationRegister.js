@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Input, Button, CardSection, ButtonGroup } from '../common';
+import { Input, Button, CardSection } from '../common';
 import CourtReservationDetails from '../CourtReservationDetails';
-import { validateValueType } from '../../utils';
+import { validateValueType, trimString } from '../../utils';
 import { onReservationValueChange, onCommerceCourtReservationCreate } from '../../actions';
 
 class CommerceCourtReservationRegister extends Component {
@@ -17,47 +17,19 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   componentDidMount() {
-    this.priceButtons();
+    this.loading = false;
   }
 
-  priceButtons = () => {
-    const { court } = this.props;
-    const priceButtons = [];
-    const prices = [];
-
-    if (court) {
-      priceButtons.push(`Sin Luz: $${court.price}`);
-      prices.push(court.price);
-
-      if (court.lightPrice) {
-        priceButtons.push(`Con Luz: $${court.lightPrice}`);
-        prices.push(court.lightPrice);
-      }
+  componentDidUpdate() {
+    if (this.props.loading !== this.loading) {
+      this.loading = this.props.loading;
     }
-
-    this.setState({ priceButtons, prices }, () => this.onPriceSelect(0));
-  };
-
-  onPriceSelect = selectedIndex => {
-    this.setState({ selectedIndex });
-    this.props.onReservationValueChange({
-      price: this.state.prices[selectedIndex],
-      light: !!selectedIndex // 0 = false = no light // 1 = true = light
-    });
-  };
+  }
 
   renderInputs = () => {
     if (!this.props.saved) {
       return (
         <View>
-          <CardSection>
-            <ButtonGroup
-              onPress={this.onPriceSelect}
-              selectedIndex={this.state.selectedIndex}
-              buttons={this.state.priceButtons}
-              textStyle={{ fontSize: 14 }}
-            />
-          </CardSection>
           <CardSection style={styles.cardSection}>
             <Input
               label="Nombre:"
@@ -75,7 +47,7 @@ class CommerceCourtReservationRegister extends Component {
               label="Teléfono:"
               placeholder="Teléfono del cliente (opcional)"
               value={this.props.clientPhone}
-              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone })}
+              onChangeText={clientPhone => this.props.onReservationValueChange({ clientPhone: clientPhone.trim() })}
               errorMessage={this.state.phoneError}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.phoneError}
@@ -87,8 +59,9 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   nameError = () => {
-    const { clientName } = this.props;
+    const clientName = trimString(this.props.clientName);
 
+    this.props.onReservationValueChange({ clientName });
     if (!clientName) {
       this.setState({ nameError: 'Dato requerido' });
     } else if (!validateValueType('name', clientName)) {
@@ -100,9 +73,7 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   phoneError = () => {
-    const { clientPhone } = this.props;
-
-    if (clientPhone && !validateValueType('phone', clientPhone)) {
+    if (this.props.clientPhone && !validateValueType('phone', this.props.clientPhone)) {
       this.setState({ phoneError: 'Formato no válido' });
       return true;
     } else {
@@ -115,14 +86,16 @@ class CommerceCourtReservationRegister extends Component {
     if (!this.props.saved && !this.props.exists) {
       return (
         <CardSection>
-          <Button title="Confirmar Reserva" loading={this.props.loading} onPress={this.onConfirmReservation} />
+          <Button title="Confirmar Reserva" loading={this.loading} onPress={this.onConfirmReservation} />
         </CardSection>
       );
     }
   };
 
   onConfirmReservation = () => {
-    if (!this.nameError() && !this.phoneError()) {
+    if (!this.nameError() && !this.phoneError() && !this.loading) {
+      this.loading = true;
+
       const { commerceId, areaId, clientName, clientPhone, court, startDate, endDate, light, price } = this.props;
 
       this.props.onCommerceCourtReservationCreate({
@@ -154,7 +127,6 @@ class CommerceCourtReservationRegister extends Component {
           endDate={endDate}
           price={price}
           light={light}
-          showPrice={saved}
         />
         {this.renderInputs()}
         <View style={styles.confirmButtonContainer}>{this.renderButtons()}</View>

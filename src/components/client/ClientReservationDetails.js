@@ -70,6 +70,15 @@ class ClientReservationDetails extends Component {
     this.props.onCommerceMPagoTokenRead(this.state.reservation.commerceId);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.reservations !== this.props.reservations) {
+      const res = this.props.reservations.find(res => res.id === this.state.reservation.id);
+
+      if (res && JSON.stringify(res) !== JSON.stringify(this.state.reservation))
+        this.setState({ reservation: res });
+    }
+  }
+
   componentWillUnmount() {
     this.props.onCommerceReviewValuesReset();
     this.props.onClientReviewValuesReset();
@@ -203,21 +212,25 @@ class ClientReservationDetails extends Component {
       <View style={{ paddingVertical: 10 }}>
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
+    ) : this.state.reservation.paymentId ? (
+      <View style={{ paddingVertical: 10 }}>
+        <ReviewCard
+          title={title}
+          onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
+          rating={this.props.commerceRating}
+          readOnly={this.state.isOneWeekOld}
+          onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
+          commentPlaceholder="Deje un comentario sobre la atención..."
+          commentText={this.props.commerceComment}
+          fieldsVisible
+        />
+        {this.renderReviewButtons()}
+      </View>
     ) : (
-        <View style={{ paddingVertical: 10 }}>
-          <ReviewCard
-            title={title}
-            onFinishRating={rating => this.props.onCommerceReviewValueChange({ rating })}
-            rating={this.props.commerceRating}
-            readOnly={this.state.isOneWeekOld}
-            onChangeText={comment => this.props.onCommerceReviewValueChange({ comment })}
-            commentPlaceholder="Deje un comentario sobre la atención..."
-            commentText={this.props.commerceComment}
-            fieldsVisible
-          />
-          {this.renderReviewButtons()}
-        </View>
-      );
+          <View style={{ paddingVertical: 10 }}>
+            <ReviewCard title="Antes de poder calificar al negocio debe registrarse el pago del turno" />
+          </View>
+        );
   };
 
   renderClientReview = () => {
@@ -281,12 +294,12 @@ class ClientReservationDetails extends Component {
       <CardSection>
         <Button
           title="Pagar con Mercado Pago"
-          color='#009EE3'
+          color="#009EE3"
           icon={
             <Image
               source={require('../../../assets/mercado-pago-logo.png')}
               style={{ height: 21, width: 31, marginRight: 10 }}
-              resizeMode='contain'
+              resizeMode="contain"
             />
           }
           onPress={() =>
@@ -305,7 +318,7 @@ class ClientReservationDetails extends Component {
   render() {
     const { areaId, commerce, service, employee, court, endDate, startDate, light, price } = this.state.reservation;
 
-    if (this.props.loadingCancel) return <Spinner />;
+    if (this.props.loadingSchedule) return <Spinner />;
 
     return (
       <KeyboardAwareScrollView enableOnAndroid contentContainerStyle={scrollViewStyle} extraScrollHeight={60}>
@@ -338,7 +351,6 @@ class ClientReservationDetails extends Component {
               endDate={endDate}
               price={price}
               light={light}
-              showPrice={true}
             />
           }
           hairdressers={
@@ -383,16 +395,17 @@ const { overlayDividerStyle, scrollViewStyle, buttonsContainer } = StyleSheet.cr
 });
 
 const mapStateToProps = state => {
+  const { reservations } = state.clientReservationsList;
   const loadingReservations = state.clientReservationsList.loading;
-  const { reservationMinCancelTime } = state.commerceSchedule;
-  const loadingCancel = state.commerceSchedule.loading;
+  const { reservationMinCancelTime, loadingSchedule } = state.commerceSchedule;
   const { saveLoading, deleteLoading } = state.commerceReviewData;
   const { clientId, firstName, lastName } = state.clientData;
   const { mPagoToken } = state.commerceData;
 
   return {
+    reservations,
     loadingReservations,
-    loadingCancel,
+    loadingSchedule,
     reservationMinCancelTime,
     saveReviewLoading: saveLoading,
     deleteReviewLoading: deleteLoading,

@@ -4,32 +4,19 @@ import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import moment from 'moment';
 import { View } from 'native-base';
-import { onScheduleRead, onEmployeesScheduleRead } from '../actions';
+import { onScheduleRead, onCommerceSchedulesRead } from '../actions';
 import { Spinner } from './common';
 import { DAYS } from '../constants';
-import { areaFunctionReturn } from '../utils';
 
 class CommerceProfileInfo extends Component {
   state = { currentDay: new Date().getDay() };
 
   componentDidMount() {
-    const scheduleRead = areaFunctionReturn({
-      area: this.props.area.areaId,
-      sports: () => {
-        this.props.onScheduleRead({
-          commerceId: this.props.commerceId,
-          selectedDate: moment()
-        });
-      },
-      hairdressers: () => {
-        this.props.onEmployeesScheduleRead({
-          commerceId: this.props.commerceId,
-          selectedDate: moment()
-        });
-      }
+    this.props.onCommerceSchedulesRead({
+      commerceId: this.props.commerceId,
+      selectedDate: moment(),
+      areaId: this.props.area.areaId
     });
-
-    scheduleRead();
   }
 
   getFormattedSchedules = () => {
@@ -76,9 +63,8 @@ class CommerceProfileInfo extends Component {
           <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 5 }}>{item.employeeName}</Text>
         ) : null}
         {hoursOnDays.map(hourOnDay => (
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <View key={hourOnDay.day} style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
             <Text
-              key={hourOnDay.day}
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
@@ -88,7 +74,6 @@ class CommerceProfileInfo extends Component {
               {hourOnDay.dayName}
             </Text>
             <Text
-              key={hourOnDay.day}
               style={{
                 fontSize: 14,
                 fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal',
@@ -99,7 +84,6 @@ class CommerceProfileInfo extends Component {
             </Text>
             {hourOnDay.secondShiftStart && hourOnDay.secondShiftEnd ? (
               <Text
-                key={hourOnDay.day}
                 style={{
                   fontSize: 14,
                   fontWeight: hourOnDay.day === currentDay ? 'bold' : 'normal'
@@ -115,7 +99,7 @@ class CommerceProfileInfo extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
+    if (this.props.loading || this.props.loadingSchedule) return <Spinner />;
 
     const schedules = this.getFormattedSchedules();
 
@@ -159,7 +143,7 @@ const mapStateToProps = state => {
     longitude
   } = state.commerceData;
   const { provincesList } = state.provinceData;
-  const { schedules, loading } = state.commerceSchedule;
+  const { schedules, loading, loadingSchedule } = state.commerceSchedule;
 
   let locationData = { ...state.locationData };
 
@@ -188,10 +172,11 @@ const mapStateToProps = state => {
     profilePicture,
     commerceId,
     loading,
+    loadingSchedule,
     refreshing,
     locationData,
     schedules
   };
 };
 
-export default connect(mapStateToProps, { onScheduleRead, onEmployeesScheduleRead })(CommerceProfileInfo);
+export default connect(mapStateToProps, { onScheduleRead, onCommerceSchedulesRead })(CommerceProfileInfo);

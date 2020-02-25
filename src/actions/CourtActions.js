@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import moment from 'moment';
 import { onReservationsCancel } from './ReservationsListActions';
 import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
 import {
   ON_COURT_VALUE_CHANGE,
   ON_COURT_FORM_OPEN,
@@ -55,7 +56,7 @@ export const onCourtAndGroundTypesRead = () => {
 };
 
 export const onCourtCreate = (
-  { name, description, court, ground, price, lightPrice, disabledFrom, disabledTo, commerceId },
+  { name, description, court, ground, price, lightPrice, lightHour, disabledFrom, disabledTo, commerceId },
   navigation
 ) => {
   const db = firebase.firestore();
@@ -78,6 +79,7 @@ export const onCourtCreate = (
               ground,
               price,
               lightPrice,
+              lightHour,
               disabledFrom: disabledFrom ? disabledFrom.toDate() : null,
               disabledTo: disabledTo ? disabledTo.toDate() : null,
               softDelete: null,
@@ -141,14 +143,27 @@ export const onCourtsRead = commerceId => dispatch => {
   );
 };
 
-export const onCourtDelete = ({ id, commerceId }) => {
+export const onCourtDelete = ({ id, commerceId, reservationsToCancel }) => async dispatch => {
   const db = firebase.firestore();
+  const batch = db.batch();
 
-  return dispatch => {
-    db.doc(`Commerces/${commerceId}/Courts/${id}`)
-      .update({ softDelete: new Date() })
-      .then(() => dispatch({ type: ON_COURT_DELETE }));
-  };
+  try {
+    batch.update(db.doc(`Commerces/${commerceId}/Courts/${id}`), { softDelete: new Date() });
+
+    // reservations cancel
+    await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+
+    await batch.commit();
+
+    reservationsToCancel.forEach(res => {
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+    });
+
+    dispatch({ type: ON_COURT_DELETE });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const onCourtUpdate = (courtData, navigation) => async dispatch => {
@@ -162,6 +177,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
     ground,
     price,
     lightPrice,
+    lightHour,
     commerceId,
     disabledFrom,
     disabledTo,
@@ -189,6 +205,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
       ground,
       price,
       lightPrice,
+      lightHour,
       disabledFrom: disabledFrom ? disabledFrom.toDate() : null,
       disabledTo: disabledTo ? disabledTo.toDate() : null
     });
@@ -199,7 +216,8 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_COURT_UPDATE });

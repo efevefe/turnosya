@@ -8,7 +8,8 @@ import {
   ON_SERVICES_READ,
   ON_SERVICE_FORM_SUBMIT,
   ON_SERVICE_DELETE,
-  ON_SERVICE_UPDATE
+  ON_SERVICE_UPDATE,
+  ON_SERVICE_EXISTS
 } from './types';
 
 export const onServiceValueChange = payload => {
@@ -26,10 +27,20 @@ export const onServiceCreate = ({ name, duration, price, description, commerceId
     dispatch({ type: ON_SERVICE_FORM_SUBMIT });
 
     db.collection(`Commerces/${commerceId}/Services`)
-      .add({ name, duration, price, description, employeesIds, softDelete: null })
-      .then(() => {
-        dispatch({ type: ON_SERVICE_CREATE });
-        navigation.goBack();
+      .where('name', '==', name)
+      .where('softDelete', '==', null)
+      .get()
+      .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+          dispatch({ type: ON_SERVICE_EXISTS });
+        } else {
+          db.collection(`Commerces/${commerceId}/Services`)
+            .add({ name, duration, price, description, employeesIds, softDelete: null })
+            .then(() => {
+              dispatch({ type: ON_SERVICE_CREATE });
+              navigation.goBack();
+            });
+        }
       });
   };
 };
@@ -79,16 +90,30 @@ export const onServiceDelete = ({ id, commerceId }) => {
 
 export const onServiceUpdate = ({ id, name, duration, price, description, employeesIds, commerceId }, navigation) => {
   const db = firebase.firestore();
+  const servicesRef = db.collection(`Commerces/${commerceId}/Services`);
 
-  return dispatch => {
+  return async dispatch => {
     dispatch({ type: ON_SERVICE_FORM_SUBMIT });
+    try {
+      const snapshot = await servicesRef
+        .where('name', '==', name)
+        .where('softDelete', '==', null)
+        .get();
 
-    db.doc(`Commerces/${commerceId}/Services/${id}`)
-      .update({ name, duration, price, description, employeesIds })
-      .then(() => {
-        dispatch({ type: ON_SERVICE_UPDATE });
-        navigation.goBack();
-      });
+      if (!snapshot.empty && snapshot.docs[0].id !== id) {
+        return dispatch({ type: ON_SERVICE_EXISTS });
+      }
+
+      servicesRef
+        .doc(id)
+        .update({ name, duration, price, description, employeesIds })
+        .then(() => {
+          dispatch({ type: ON_SERVICE_UPDATE });
+          navigation.goBack();
+        });
+    } catch (error) {
+      console.error(error);
+    }
   };
 };
 

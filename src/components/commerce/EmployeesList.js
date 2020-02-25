@@ -11,7 +11,7 @@ import { ROLES } from '../../constants';
 
 class EmployeesList extends Component {
   componentDidMount() {
-    this.unsubscribeEmployeesRead = this.props.onEmployeesRead(this.props.commerceId);
+    this.unsubscribeEmployeesRead = this.props.onEmployeesRead({ commerceId: this.props.commerceId });
   }
 
   componentWillUnmount() {
@@ -35,8 +35,8 @@ class EmployeesList extends Component {
         contentContainerStyle={{ paddingBottom: 95 }}
       />
     ) : (
-      <EmptyList title="No hay ningún empleado" />
-    );
+        <EmptyList title="No hay ningún empleado" />
+      );
   };
 
   render() {

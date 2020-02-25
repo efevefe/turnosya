@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { AREAS, MONTHS, DAYS } from '../constants';
 import store from '../reducers/index';
+import { AREAS, MONTHS, DAYS } from '../constants';
 
 export const areaFunctionReturn = ({ area, sports, hairdressers }) => {
   if (!area) {
@@ -259,7 +259,9 @@ export const cancelReservationNotificationFormat = ({
 
   let body;
 
-  if (!service || !receptorName) {
+  if (!actorName) {
+    body = `Te han cancelado el turno del `;
+  } else if (!service || !receptorName) {
     body = `${actorName} te ha cancelado el turno del `;
   } else {
     body = `${receptorName}! ${actorName} te ha cancelado "${service}" reservado el `;

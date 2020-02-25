@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator, HeaderBackButton } from 'react-navigation-stack';
-import { SportsNavigation, HairdressersNavigation } from './CommerceNavigation';
+import { SportsNavigation, SportsEmployeesNavigation, HairdressersNavigation, HairdressersEmployeesNavigation } from './CommerceNavigation';
 import CommerceDrawerContent from './CommerceDrawerContent';
 import CommerceSettings from '../components/commerce/CommerceSettings';
 import PaymentSettings from '../components/commerce/PaymentSettings';
@@ -75,6 +75,7 @@ const commonNavigations = {
   commerceNotifications: CommerceNotificationsStack
 };
 
+// DRAWER FOR SPORTS COMMERCES
 const sportsDrawer = createDrawerNavigator(
   {
     sportsNavigation: SportsNavigation,
@@ -86,6 +87,19 @@ const sportsDrawer = createDrawerNavigator(
   }
 );
 
+// DRAWER FOR SPORTS COMMERCES (EMPLOYEES)
+const sportsEmployeesDrawer = createDrawerNavigator(
+  {
+    sportsNavigation: SportsEmployeesNavigation,
+    ...commonNavigations
+  },
+  {
+    ...drawerNavigationOptions,
+    contentComponent: CommerceDrawerContent
+  }
+);
+
+// DRAWER FOR HAIRDRESSERS COMMERCES
 const hairdressersDrawer = createDrawerNavigator(
   {
     hairdressersNavigation: HairdressersNavigation,
@@ -97,7 +111,21 @@ const hairdressersDrawer = createDrawerNavigator(
   }
 );
 
-const SportsDrawer = createAppContainer(sportsDrawer);
-const HairdressersDrawer = createAppContainer(hairdressersDrawer);
+// DRAWER FOR HAIRDRESSERS COMMERCES (EMPLOYEES)
+const hairdressersEmployeesDrawer = createDrawerNavigator(
+  {
+    hairdressersNavigation: HairdressersEmployeesNavigation,
+    ...commonNavigations
+  },
+  {
+    ...drawerNavigationOptions,
+    contentComponent: CommerceDrawerContent
+  }
+);
 
-export { SportsDrawer, HairdressersDrawer };
+const SportsDrawer = createAppContainer(sportsDrawer);
+const SportsEmployeesDrawer = createAppContainer(sportsEmployeesDrawer);
+const HairdressersDrawer = createAppContainer(hairdressersDrawer);
+const HairdressersEmployeesDrawer = createAppContainer(hairdressersEmployeesDrawer);
+
+export { SportsDrawer, SportsEmployeesDrawer, HairdressersDrawer, HairdressersEmployeesDrawer };

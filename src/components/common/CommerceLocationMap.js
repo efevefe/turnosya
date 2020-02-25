@@ -11,18 +11,24 @@ import LocationMessages from './LocationMessages';
 import { Toast } from '.';
 import { getAddressFromLatAndLong, getLatitudeAndLongitudeFromString } from '../../utils';
 
+const defaultLocation = {
+  address: 'Baltazar Maciel 190',
+  city: 'Córdoba',
+  country: 'Argentina',
+  latitude: -31.401369,
+  longitude: -64.193822,
+  provinceName: 'Córdoba'
+};
+
 class CommerceLocationMap extends React.Component {
   state = {
-    defaultAddress: 'Córdoba, Argentina',
     completeAddress: '',
     locationAsked: false,
     draggable: !this.props.navigation
   };
 
   componentDidMount() {
-    if (this.props.findAddress) {
-      this.onStringSearch(this.setAddressString());
-    }
+    if (this.props.findAddress) this.onStringSearch(this.setAddressString());
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -33,6 +39,8 @@ class CommerceLocationMap extends React.Component {
 
   setAddressString = () => {
     const { address, city, provinceName } = this.props;
+
+    if (!address && !city && !provinceName) return null;
 
     /* 
     Se le agrega 'Calle' antes para que el mapa lo busque mejor. Sirve por mas que ya se le haya puesto 'Calle' 
@@ -47,32 +55,35 @@ class CommerceLocationMap extends React.Component {
 
     newAddress += 'Argentina'; // gets error when address is from other country
 
-    if (newAddress === 'Argentina') {
-      newAddress = this.state.defaultAddress;
-    }
-
     this.setState({ completeAddress: newAddress });
 
     return newAddress;
   };
 
   onStringSearch = async string => {
-    try {
-      const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
+    if (!string) {
+      const { address, city, provinceName, country } = defaultLocation;
+      this.setState({ completeAddress: `${address}, ${city}, ${provinceName}, ${country}` });
 
-      if (latLongResult !== undefined) {
-        const { latitude, longitude } = latLongResult;
-        this.updateAddressFromLatAndLong({ latitude, longitude });
-      } else {
-        this.setState({
-          completeAddress: this.state.completeAddress.replace('Calle', '')
-        });
-        Toast.show({
-          text: 'No se han encontrado resultados, intente modificar la dirección.'
-        });
+      this.props.onLocationValueChange(defaultLocation);
+    } else {
+      try {
+        const [latLongResult] = await getLatitudeAndLongitudeFromString(string ? string : this.state.completeAddress);
+
+        if (latLongResult !== undefined) {
+          const { latitude, longitude } = latLongResult;
+          this.updateAddressFromLatAndLong({ latitude, longitude });
+        } else {
+          this.setState({
+            completeAddress: this.state.completeAddress.replace('Calle', '')
+          });
+          Toast.show({
+            text: 'No se han encontrado resultados, intente modificar la dirección.'
+          });
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -156,7 +167,12 @@ class CommerceLocationMap extends React.Component {
 
     return arrayOfMarkers.length
       ? this.calculateMarkersRegion(arrayOfMarkers)
-      : { latitudeDelta: 0.01, longitudeDelta: 0.01 };
+      : {
+          latitude: defaultLocation.latitude,
+          longitude: defaultLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01
+        };
   };
 
   renderUserMarker = () => {
@@ -322,7 +338,16 @@ const { mainContainer, searchBarContainer, searchInput } = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { address, city, provinceName, country, latitude, longitude, userLocation } = state.locationData;
+  const {
+    address,
+    city,
+    provinceName,
+    country,
+    latitude,
+    longitude,
+    userLocation,
+    locationUpdateInfo
+  } = state.locationData;
 
   return {
     address,
@@ -331,7 +356,8 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    userLocation
+    userLocation,
+    locationUpdateInfo
   };
 };
 

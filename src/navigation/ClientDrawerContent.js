@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { onCommerceOpen, onLogout, onUserRead, onUserWorkplacesRead, onCommerceRead } from '../actions';
 import { Drawer, DrawerItem } from '../components/common';
+import { ROLES } from '../constants';
 import { isEmailVerified } from '../utils';
 import VerifyEmailModal from '../components/client/VerifyEmailModal';
 
@@ -34,9 +35,10 @@ class ClientDrawerContent extends Component {
         this.props.onCommerceOpen(commerceId);
         const success = await this.props.onCommerceRead(commerceId);
 
-        if (success && this.props.areaId) {
-          this.props.navigation.navigate(`${this.props.areaId}`);
-          this.props.navigation.navigate(`${this.props.areaId}Calendar`);
+        if (success && this.props.areaId && this.props.role.roleId) {
+          this.props.navigation.navigate(
+            `${this.props.areaId}${this.props.role.value === ROLES.EMPLOYEE.value ? 'Employees' : ''}`
+          );
         }
       } catch (error) {
         console.error(error);
@@ -120,6 +122,8 @@ const mapStateToProps = state => {
   } = state.commerceData;
   const { loading } = state.auth;
   const { loading: loadingNotifications } = state.notificationsList;
+  const { role } = state.roleData;
+
   return {
     profilePicture,
     firstName,
@@ -128,6 +132,7 @@ const mapStateToProps = state => {
     workplaces,
     commerceId,
     areaId,
+    role,
     loadingCommerce,
     loadingNotifications
   };

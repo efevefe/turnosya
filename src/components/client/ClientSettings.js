@@ -3,24 +3,32 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import firebase from 'firebase';
+import moment from 'moment';
 import { MenuItem, Menu, Input, CardSection, SettingsItem, Toast } from '../common';
-import { isEmailVerified } from '../../utils';
+import { isEmailVerified, cancelReservationNotificationFormat } from '../../utils';
 import {
   onUserDelete,
   onCommerceDelete,
   onLoginValueChange,
   onCommerceValueChange,
   onClientDataValueChange,
-  sendEmailVefification
+  sendEmailVefification,
+  onNextReservationsRead
 } from '../../actions';
 
 class ClientSettings extends Component {
-  state = { providerId: null };
+  state = { providerId: null, deleteWithReservations: false, reservationsToCancel: [] };
 
   componentDidMount() {
     this.setState({
       providerId: firebase.auth().currentUser.providerData[0].providerId
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    // ver si el negocio tenia reservas pendientes
+    if (prevProps.nextReservations !== this.props.nextReservations && this.props.navigation.isFocused())
+      this.onCommerceDelete();
   }
 
   renderPasswordInput = () => {
@@ -84,10 +92,58 @@ class ClientSettings extends Component {
 
   onCommerceDeletePress = () => {
     if (this.props.commerceId) {
-      this.props.onCommerceValueChange({ confirmDeleteVisible: true });
+      this.props.onNextReservationsRead({
+        commerceId: this.props.commerceId,
+        startDate: moment()
+      })
+
+      this.setState({ reservationsToCancel: [] });
     } else {
       Toast.show({ text: 'No tienes ningún negocio' });
     }
+  };
+
+  onCommerceDelete = () => {
+    if (this.props.nextReservations.length) {
+      this.setState({ deleteWithReservations: true });
+    } else {
+      this.props.onCommerceValueChange({ confirmDeleteVisible: true });
+    }
+  }
+
+  renderDeleteWithReservations = () => {
+    return (
+      <Menu
+        title={
+          'El negocio aún tiene reservas pendientes. ¿Está seguro de que desea eliminarlo? ' +
+          'Seleccione la opción "Cancelar reservas y notificar" para dar de baja su negocio y cancelar dichas reservas, ' +
+          'o la opción "Volver" si desea cancelar esta acción.'
+        }
+        onBackdropPress={() => this.setState({ deleteWithReservations: false })}
+        isVisible={this.state.deleteWithReservations}
+      >
+        <MenuItem title="Cancelar reservas y notificar" icon="md-trash" onPress={this.onCancelReservations} />
+        <Divider style={{ backgroundColor: 'grey' }} />
+        <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ deleteWithReservations: false })} />
+      </Menu>
+    );
+  }
+
+  onCancelReservations = () => {
+    const reservationsToCancel = this.props.nextReservations.map(res => {
+      return {
+        ...res,
+        notification: cancelReservationNotificationFormat({
+          startDate: res.startDate,
+          cancellationReason: 'Cierre del negocio'
+        })
+      }
+    })
+
+    this.setState({
+      reservationsToCancel,
+      deleteWithReservations: false
+    }, () => this.props.onCommerceValueChange({ confirmDeleteVisible: true }));
   };
 
   renderConfirmCommerceDelete = () => {
@@ -116,7 +172,7 @@ class ClientSettings extends Component {
       this.onBackdropPress();
     }
 
-    this.props.onCommerceDelete(this.props.password);
+    this.props.onCommerceDelete(this.props.password, this.state.reservationsToCancel);
   };
 
   onBackdropPress = () => {
@@ -138,31 +194,31 @@ class ClientSettings extends Component {
     return (
       <ScrollView style={styles.containerStyle}>
         {// opción de cambiar contraseña es solo para los que se autenticaron con email y password
-        this.state.providerId === 'password' && (
-          <SettingsItem
-            leftIcon={{
-              name: 'md-key',
-              type: 'ionicon',
-              color: 'black'
-            }}
-            title="Cambiar Contraseña"
-            onPress={() => this.props.navigation.navigate('changeUserPassword')}
-            bottomDivider
-          />
-        )}
+          this.state.providerId === 'password' && (
+            <SettingsItem
+              leftIcon={{
+                name: 'md-key',
+                type: 'ionicon',
+                color: 'black'
+              }}
+              title="Cambiar Contraseña"
+              onPress={() => this.props.navigation.navigate('changeUserPassword')}
+              bottomDivider
+            />
+          )}
         {// opción de validar mail es solo para los que se autenticaron con email y password
-        this.state.providerId === 'password' && (
-          <SettingsItem
-            title="Verificar mi Cuenta"
-            leftIcon={{
-              name: 'md-mail-open',
-              type: 'ionicon',
-              color: 'black'
-            }}
-            onPress={this.onEmailVerifyPress}
-            bottomDivider
-          />
-        )}
+          this.state.providerId === 'password' && (
+            <SettingsItem
+              title="Verificar mi Cuenta"
+              leftIcon={{
+                name: 'md-mail-open',
+                type: 'ionicon',
+                color: 'black'
+              }}
+              onPress={this.onEmailVerifyPress}
+              bottomDivider
+            />
+          )}
         <SettingsItem
           leftIcon={{
             name: 'md-trash',
@@ -187,6 +243,7 @@ class ClientSettings extends Component {
         />
 
         {this.renderConfirmUserDelete()}
+        {this.renderDeleteWithReservations()}
         {this.renderConfirmCommerceDelete()}
       </ScrollView>
     );
@@ -208,6 +265,7 @@ const mapStateToProps = state => {
   // commerce
   const loadingCommerceDelete = state.commerceData.loading;
   const confirmCommerceDeleteVisible = state.commerceData.confirmDeleteVisible;
+  const { nextReservations } = state.reservationsList;
   // auth
   const { password, error } = state.auth;
 
@@ -215,6 +273,7 @@ const mapStateToProps = state => {
     loadingUserDelete,
     loadingCommerceDelete,
     commerceId,
+    nextReservations,
     password,
     reauthError: error,
     confirmUserDeleteVisible,
@@ -228,5 +287,6 @@ export default connect(mapStateToProps, {
   onLoginValueChange,
   onCommerceValueChange,
   onClientDataValueChange,
-  sendEmailVefification
+  sendEmailVefification,
+  onNextReservationsRead
 })(ClientSettings);

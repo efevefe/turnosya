@@ -17,7 +17,6 @@ class CommerceFiltersScreen extends Component {
   state = {
     provinceName: this.props.provinceNameFilter,
     locationRadiusKms: this.props.locationRadiusKms, // Must transform to meters
-    locationUpdating: false,
     oldData: {
       selectedLocation: this.props.selectedLocation,
       markers: this.props.markers,
@@ -27,38 +26,30 @@ class CommerceFiltersScreen extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: navigation.getParam('rightButton'),
-      headerLeft: navigation.getParam('leftButton')
+      headerRight: (
+        <Button
+          title="Aplicar Filtros"
+          type="clear"
+          titleStyle={{ color: 'white' }}
+          onPress={navigation.getParam('onApplyFiltersPress')}
+          containerStyle={applyFilterButtonStyle}
+        />
+      ),
+      headerLeft: <IconButton icon="md-close" onPress={navigation.getParam('onClosePress')} />
     };
   };
 
   componentDidMount = () => {
     this.props.navigation.setParams({
-      rightButton: this.renderApplyFiltersButton(),
-      leftButton: this.renderCloseButton()
+      onApplyFiltersPress: this.onApplyFiltersPress.bind(this),
+      onClosePress: this.onClosePress.bind(this)
     });
 
     this.props.onProvincesNameRead();
   };
 
-  renderApplyFiltersButton = () => {
-    return (
-      <Button
-        title="Aplicar Filtros"
-        type="clear"
-        titleStyle={{ color: 'white' }}
-        onPress={this.onApplyFiltersPress.bind(this)}
-        containerStyle={applyFilterButtonStyle}
-      />
-    );
-  };
-
-  renderCloseButton = () => {
-    return <IconButton icon="md-close" onPress={this.onClosePress.bind(this)} />;
-  };
-
   onClosePress() {
-    if (!this.state.locationUpdating) {
+    if (!this.props.locationLoading) {
       this.props.onSelectedLocationChange(this.state.oldData.selectedLocation);
       this.props.onCommerceHitsUpdate(this.state.oldData.markers);
       this.props.onCommercesListValueChange({ locationButtonIndex: this.state.oldData.locationButtonIndex });
@@ -68,7 +59,7 @@ class CommerceFiltersScreen extends Component {
   }
 
   onApplyFiltersPress() {
-    if (!this.state.locationUpdating) {
+    if (!this.props.locationLoading) {
       if (this.props.locationButtonIndex !== 0 && !this.props.selectedLocation.latitude) {
         return Toast.show({ text: 'Seleccione una ubicación o encienda el GPS' });
       }
@@ -97,17 +88,13 @@ class CommerceFiltersScreen extends Component {
     }
   }
 
-  onCurrentLocationFound = ({ updating, location }) => {
-    if (!updating && !location) return this.setState({ locationUpdating: false });
-
-    if (updating && !location) return this.setState({ locationUpdating: true });
-
+  onCurrentLocationFound = async ({ location }) => {
     if (location) {
-      this.setState({ locationUpdating: true }, async () => {
+      try {
         await this.props.onLocationValueChange({ selectedLocation: { ...location }, userLocation: { ...location } });
-
-        this.setState({ locationUpdating: false });
-      });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -181,7 +168,6 @@ class CommerceFiltersScreen extends Component {
   }
 }
 
-// region Styles
 const {
   dividerStyle,
   dividerTextStyle,
@@ -225,21 +211,21 @@ const {
   },
   locationSliderStyle: { marginHorizontal: 15 }
 });
-//#endregion
 
 const mapStateToProps = state => {
   const { provincesList } = state.provinceData;
   const { provinceNameFilter, locationButtonIndex, locationRadiusKms, markers } = state.commercesList;
-  const { selectedLocation, userLocation } = state.locationData;
+  const { selectedLocation, userLocation, loading: locationLoading } = state.locationData;
 
   return {
     provincesList,
     provinceNameFilter,
     locationButtonIndex,
     locationRadiusKms,
+    markers,
     selectedLocation,
     userLocation,
-    markers
+    locationLoading
   };
 };
 

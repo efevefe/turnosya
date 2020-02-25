@@ -20,13 +20,13 @@ class ClientCourtsSchedule extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerLeft: navigation.getParam('leftButton')
+      headerLeft: <HeaderBackButton onPress={navigation.getParam('onBackPress')} tintColor="white" title="Back" />
     };
   };
 
   componentDidMount() {
     this.props.navigation.setParams({
-      leftButton: this.renderBackButton()
+      onBackPress: this.onBackPress
     });
 
     this.props.onScheduleRead({
@@ -50,10 +50,6 @@ class ClientCourtsSchedule extends Component {
     this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
   }
-
-  renderBackButton = () => {
-    return <HeaderBackButton onPress={this.onBackPress} tintColor="white" title="Back" />;
-  };
 
   onBackPress = () => {
     // hace lo mismo que haría si se volviera a montar la pantalla anterior
@@ -180,9 +176,9 @@ const mapStateToProps = state => {
     reservationMinLength,
     startDate,
     endDate,
-    refreshing
+    refreshing,
+    loadingSchedule
   } = state.commerceSchedule;
-  const loadingSchedule = state.commerceSchedule.loading;
   const { commerce, courtType } = state.reservation;
   const { reservations } = state.reservationsList;
   const loadingReservations = state.reservationsList.loading;

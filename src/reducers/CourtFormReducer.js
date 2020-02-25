@@ -19,6 +19,7 @@ const INITIAL_STATE = {
   ground: '',
   price: '',
   lightPrice: '',
+  lightHour: '',
   courtState: true,
   disabled: false,
   disabledFrom: null,

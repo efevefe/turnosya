@@ -20,7 +20,14 @@ class CommerceCourtsList extends Component {
 
   onCourtPress = court => {
     this.props.onNewReservation();
-    this.props.onReservationValueChange({ court });
+
+    const light = court.lightPrice && court.lightHour && court.lightHour <= this.props.startDate.format('HH:mm');
+    this.props.onReservationValueChange({
+      court,
+      light,
+      price: light ? court.lightPrice : court.price
+    });
+    
     this.props.navigation.navigate('confirmCourtReservation');
   };
 

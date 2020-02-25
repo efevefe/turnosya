@@ -35,6 +35,9 @@ import {
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
 import { ROLES } from '../constants';
+import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES } from '../constants';
+import { onReservationsCancel } from './ReservationsListActions';
 
 const { appId, adminApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -301,7 +304,7 @@ export const onCuitValidate = cuit => {
   };
 };
 
-export const onCommerceDelete = (password, navigation = null) => dispatch => {
+export const onCommerceDelete = (password, reservationsToCancel, navigation = null) => dispatch => {
   dispatch({ type: ON_COMMERCE_DELETING });
 
   const { currentUser } = firebase.auth();
@@ -327,7 +330,7 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
           .where('softDelete', '==', null)
           .get();
 
-        for await (const employee of employees.docs) {
+        for (const employee of employees.docs) {
           const workplaces = await db
             .collection(`Profiles/${employee.data().profileId}/Workplaces`)
             .where('softDelete', '==', null)
@@ -339,9 +342,17 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
           });
         }
 
+        // reservations cancel
+        await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
+
         await batch.commit();
 
         await index.deleteObject(commerceId);
+
+        reservationsToCancel.forEach(res => {
+          if (res.clientId)
+            onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
+        });
 
         dispatch({ type: ON_COMMERCE_DELETED });
 
@@ -358,6 +369,7 @@ export const onCommerceDelete = (password, navigation = null) => dispatch => {
     .catch(error => {
       dispatch({ type: ON_REAUTH_FAIL });
       dispatch({ type: ON_COMMERCE_DELETE_FAIL });
+      console.error(error);
     });
 };
 
@@ -373,9 +385,9 @@ export const onCommerceMPagoTokenRead = commerceId => dispatch => {
         const currentToken = snapshot.docs.find(doc => doc.data().softDelete === null);
         currentToken
           ? dispatch({
-              type: ON_COMMERCE_MP_TOKEN_READ,
-              payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
-            })
+            type: ON_COMMERCE_MP_TOKEN_READ,
+            payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
+          })
           : dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: true } });
       } else {
         dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: false } });

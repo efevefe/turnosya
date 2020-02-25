@@ -55,44 +55,46 @@ export const onFacebookLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_FACEBOOK });
 
-    Facebook.logInWithReadPermissionsAsync(facebookApiKey, {
-      permissions: facebookPermissions
-    })
-      .then(({ type, token }) => {
-        if (type === 'success') {
-          const credential = firebase.auth.FacebookAuthProvider.credential(token);
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .then(({ user, additionalUserInfo }) => {
-              const { first_name, last_name } = additionalUserInfo.profile;
-              onNotificationTokenRegister();
+    Facebook.initializeAsync(facebookApiKey)
+      .then(() => {
+        Facebook.logInWithReadPermissionsAsync({ permissions: facebookPermissions })
+          .then(({ type, token }) => {
+            if (type === 'success') {
+              const credential = firebase.auth.FacebookAuthProvider.credential(token);
+              firebase
+                .auth()
+                .signInWithCredential(credential)
+                .then(({ user, additionalUserInfo }) => {
+                  const { first_name, last_name } = additionalUserInfo.profile;
+                  onNotificationTokenRegister();
 
-              const userData = {
-                firstName: first_name,
-                lastName: last_name,
-                email: user.email,
-                phone: user.phoneNumber,
-                profilePicture: additionalUserInfo.profile.picture.data.url,
-                commerceId: null,
-                softDelete: null
-              };
+                  const userData = {
+                    firstName: first_name,
+                    lastName: last_name,
+                    email: user.email,
+                    phone: user.phoneNumber,
+                    profilePicture: additionalUserInfo.profile.picture.data.url,
+                    commerceId: null,
+                    softDelete: null
+                  };
 
-              if (additionalUserInfo.isNewUser) {
-                const db = firebase.firestore();
+                  if (additionalUserInfo.isNewUser) {
+                    const db = firebase.firestore();
 
-                db.collection('Profiles')
-                  .doc(user.uid)
-                  .set(userData)
-                  .then(() => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData }));
-              } else {
-                dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
-              }
-            })
-            .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
-        } else {
-          dispatch({ type: ON_LOGIN_FAIL, payload: '' });
-        }
+                    db.collection('Profiles')
+                      .doc(user.uid)
+                      .set(userData)
+                      .then(() => dispatch({ type: ON_LOGIN_SUCCESS, payload: userData }));
+                  } else {
+                    dispatch({ type: ON_LOGIN_SUCCESS, payload: userData });
+                  }
+                })
+                .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
+            } else {
+              dispatch({ type: ON_LOGIN_FAIL, payload: '' });
+            }
+          })
+          .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
       })
       .catch(error => dispatch({ type: ON_LOGIN_FAIL, payload: error.message }));
   };

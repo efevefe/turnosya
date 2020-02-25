@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import moment from 'moment';
 import { onReservationsCancel } from './ReservationsListActions';
 import { onClientNotificationSend } from './NotificationActions';
+import { NOTIFICATION_TYPES, AREAS } from '../constants';
 import {
   ON_SCHEDULE_FORM_OPEN,
   ON_SCHEDULE_VALUE_CHANGE,
@@ -18,6 +19,8 @@ import {
   ON_SCHEDULE_CONFIG_UPDATED,
   ON_SCHEDULE_READ_EMPTY,
   ON_ACTIVE_SCHEDULES_READ,
+  ON_ACTIVE_SCHEDULES_READING,
+  ON_ACTIVE_SCHEDULES_READ_FAIL
 } from './types';
 
 export const onScheduleValueChange = payload => {
@@ -57,7 +60,6 @@ export const onScheduleRead = ({ commerceId, selectedDate, employeeId }) => asyn
 
     if (schedule) {
       dispatch({ type: ON_SCHEDULE_READ, payload: schedule });
-      dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: [schedule] });
     } else {
       dispatch({ type: ON_SCHEDULE_READ_EMPTY });
     }
@@ -66,16 +68,21 @@ export const onScheduleRead = ({ commerceId, selectedDate, employeeId }) => asyn
   }
 };
 
-export const onEmployeesScheduleRead = ({ commerceId, selectedDate }) => async dispatch => {
-  dispatch({ type: ON_SCHEDULE_READING });
+export const onCommerceSchedulesRead = ({ commerceId, selectedDate, areaId }) => async dispatch => {
+  dispatch({ type: ON_ACTIVE_SCHEDULES_READING });
 
   const db = firebase.firestore();
   const schedules = [];
 
-  db.collection(`Commerces/${commerceId}/Employees`)
-    .where('softDelete', '==', null)
-    .get()
-    .then(snapshot => {
+  try {
+    if (areaId === AREAS.hairdressers) {
+      const snapshot = await db.collection(`Commerces/${commerceId}/Employees`)
+        .where('softDelete', '==', null)
+        .where('visible', '==', true)
+        .get();
+
+      if (snapshot.empty) return dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
+
       let index = 0;
 
       snapshot.forEach(async employee => {
@@ -84,6 +91,7 @@ export const onEmployeesScheduleRead = ({ commerceId, selectedDate }) => async d
 
         try {
           const schedule = await scheduleRead({ commerceId, selectedDate, employeeId });
+
           if (schedule) {
             schedules.push({
               ...schedule,
@@ -93,15 +101,19 @@ export const onEmployeesScheduleRead = ({ commerceId, selectedDate }) => async d
 
           index++;
 
-          if (index === snapshot.size) {
-            dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
-          }
+          if (index === snapshot.size) dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
         } catch (error) {
-          dispatch({ type: ON_SCHEDULE_READ_FAIL });
+          dispatch({ type: ON_ACTIVE_SCHEDULES_READ_FAIL });
         }
       });
-    })
-    .catch(error => dispatch({ type: ON_SCHEDULE_READ_FAIL }));
+    } else {
+      const schedule = await scheduleRead({ commerceId, selectedDate });
+      if (schedule) schedules.push(schedule);
+      dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
+    }
+  } catch (error) {
+    dispatch({ type: ON_ACTIVE_SCHEDULES_READ_FAIL });
+  }
 };
 
 const scheduleRead = async ({ commerceId, selectedDate, employeeId }) => {
@@ -157,7 +169,7 @@ const scheduleRead = async ({ commerceId, selectedDate, employeeId }) => {
 };
 
 export const onActiveSchedulesRead = ({ commerceId, date, employeeId }) => async dispatch => {
-  dispatch({ type: ON_SCHEDULE_READING });
+  dispatch({ type: ON_ACTIVE_SCHEDULES_READING });
 
   const db = firebase.firestore();
   const schedulesRef = db.collection(`Commerces/${commerceId}/Schedules`);
@@ -191,7 +203,7 @@ export const onActiveSchedulesRead = ({ commerceId, date, employeeId }) => async
       });
     }
 
-    if (!schedules.length) return dispatch({ type: ON_SCHEDULE_READ_EMPTY });
+    if (!schedules.length) return dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
 
     // reading cards for each active schedule
     for (i in schedules) {
@@ -210,7 +222,7 @@ export const onActiveSchedulesRead = ({ commerceId, date, employeeId }) => async
 
     dispatch({ type: ON_ACTIVE_SCHEDULES_READ, payload: schedules });
   } catch (error) {
-    dispatch({ type: ON_SCHEDULE_READ_FAIL });
+    dispatch({ type: ON_ACTIVE_SCHEDULES_READ_FAIL });
   }
 };
 
@@ -308,7 +320,8 @@ export const onScheduleUpdate = scheduleData => async dispatch => {
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_SCHEDULE_CREATED });
@@ -341,7 +354,8 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
     await batch.commit();
 
     reservationsToCancel.forEach(res => {
-      onClientNotificationSend(res.notification, res.clientId, commerceId);
+      if (res.clientId)
+        onClientNotificationSend(res.notification, res.clientId, commerceId, NOTIFICATION_TYPES.NOTIFICATION);
     });
 
     dispatch({ type: ON_SCHEDULE_CREATED });
@@ -353,7 +367,7 @@ export const onScheduleDelete = ({ commerceId, schedule, endDate, reservationsTo
 };
 
 export const onScheduleConfigurationSave = (
-  { reservationDayPeriod, reservationMinCancelTime, commerceId, date },
+  { reservationDayPeriod, reservationMinCancelTime, commerceId, date, employeeId },
   navigation
 ) => async dispatch => {
   dispatch({ type: ON_SCHEDULE_CONFIG_UPDATING });
@@ -369,16 +383,24 @@ export const onScheduleConfigurationSave = (
       .where('endDate', '>=', date.toDate())
       .orderBy('endDate')
       .get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+      snapshot.forEach(doc => {
+        if (!employeeId || (employeeId === doc.data().employeeId))
+          batch.update(doc.ref, updateObj)
+      });
     }
 
     snapshot = await schedulesRef
       .where('softDelete', '==', null)
       .where('endDate', '==', null)
       .get();
+
     if (!snapshot.empty) {
-      snapshot.forEach(doc => batch.update(doc.ref, updateObj));
+      snapshot.forEach(doc => {
+        if (!employeeId || (employeeId === doc.data().employeeId))
+          batch.update(doc.ref, updateObj)
+      });
     }
 
     await batch.commit();
