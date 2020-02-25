@@ -5,7 +5,13 @@ import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Menu, MenuItem, Toast } from '../common';
-import { onCourtFormOpen, onEmployeeDelete, onEmployeeValueChange, onEmploymentInvitationCancel, onNextReservationsRead } from '../../actions';
+import {
+  onCourtFormOpen,
+  onEmployeeDelete,
+  onEmployeeValueChange,
+  onEmploymentInvitationCancel,
+  onNextReservationsRead
+} from '../../actions';
 import { cancelReservationNotificationFormat } from '../../utils';
 import { ROLES, AREAS } from '../../constants';
 
@@ -25,7 +31,7 @@ class CourtListItem extends Component {
       this.props.navigation.isFocused() &&
       this.state.optionsVisible
     ) {
-      this.setState({ optionsVisible: false }, this.onEmployeeDelete)
+      this.setState({ optionsVisible: false }, this.onEmployeeDelete);
     }
   }
 
@@ -44,7 +50,7 @@ class CourtListItem extends Component {
         commerceId: this.props.commerceId,
         startDate: moment(),
         employeeId: this.props.employee.id
-      })
+      });
 
       this.setState({ reservationsToCancel: [] });
     }
@@ -65,10 +71,10 @@ class CourtListItem extends Component {
         notification: cancelReservationNotificationFormat({
           startDate: res.startDate,
           actorName: this.props.commerceName,
-          cancellationReason: 'El empleado con quién reservó el turno no trabaja mas ahí'
+          cancellationReason: 'El empleado con quién reservó el turno no trabaja más ahí'
         })
-      }
-    })
+      };
+    });
 
     this.setState({
       reservationsToCancel,
@@ -82,7 +88,12 @@ class CourtListItem extends Component {
     const { reservationsToCancel } = this.state;
 
     employee.startDate
-      ? this.props.onEmployeeDelete({ employeeId: employee.id, commerceId, profileId: employee.profileId, reservationsToCancel })
+      ? this.props.onEmployeeDelete({
+          employeeId: employee.id,
+          commerceId,
+          profileId: employee.profileId,
+          reservationsToCancel
+        })
       : this.props.onEmploymentInvitationCancel({ employeeId: employee.id, commerceId, profileId: employee.profileId });
 
     this.setState({ deleteVisible: false });
@@ -113,7 +124,7 @@ class CourtListItem extends Component {
         <MenuItem title="Volver" icon="md-close" onPress={() => this.setState({ deleteWithReservations: false })} />
       </Menu>
     );
-  }
+  };
 
   render() {
     const { firstName, lastName, email, role, id, startDate } = this.props.employee;
@@ -130,20 +141,21 @@ class CourtListItem extends Component {
               <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
               <Divider style={{ backgroundColor: 'grey' }} />
               <MenuItem
-                title="Eliminar" icon="md-trash"
+                title="Eliminar"
+                icon="md-trash"
                 onPress={this.onDeletePress}
                 loadingWithText={this.props.loadingReservations}
               />
             </View>
           ) : (
-              <MenuItem title="Cancelar Invitación" icon="md-trash" onPress={this.onDeletePress} />
-            )}
+            <MenuItem title="Cancelar Invitación" icon="md-trash" onPress={this.onDeletePress} />
+          )}
         </Menu>
 
         <Menu
           title={`¿Seguro que desea ${
             startDate ? 'eliminar el' : 'cancelar la invitación del'
-            } empleado '${firstName} ${lastName}'?`}
+          } empleado '${firstName} ${lastName}'?`}
           onBackdropPress={() => this.setState({ deleteVisible: false })}
           isVisible={this.state.deleteVisible}
         >
@@ -160,11 +172,11 @@ class CourtListItem extends Component {
             startDate
               ? { textAlign: 'left', display: 'flex' }
               : {
-                textAlign: 'left',
-                display: 'flex',
-                color: 'grey',
-                fontStyle: 'italic'
-              }
+                  textAlign: 'left',
+                  display: 'flex',
+                  color: 'grey',
+                  fontStyle: 'italic'
+                }
           }
           rightTitle={<Text style={startDate ? {} : { color: 'grey', fontStyle: 'italic' }}>{role.name}</Text>}
           rightSubtitle={startDate ? null : <Text style={{ color: 'grey', fontStyle: 'italic' }}>(Invitado)</Text>}
@@ -172,19 +184,19 @@ class CourtListItem extends Component {
           subtitle={<Text style={startDate ? { color: 'grey' } : { color: 'grey', fontStyle: 'italic' }}>{email}</Text>}
           onLongPress={
             this.props.role.value > ROLES[this.props.employee.role.roleId].value ||
-              this.state.currentUserEmail === this.props.employee.email
+            this.state.currentUserEmail === this.props.employee.email
               ? this.onOptionsPress
               : null
           }
           rightIcon={
             this.props.role.value > ROLES[this.props.employee.role.roleId].value ||
-              this.state.currentUserEmail === this.props.employee.email
+            this.state.currentUserEmail === this.props.employee.email
               ? {
-                name: 'md-more',
-                type: 'ionicon',
-                containerStyle: { height: 20, width: 10 },
-                onPress: this.onOptionsPress
-              }
+                  name: 'md-more',
+                  type: 'ionicon',
+                  containerStyle: { height: 20, width: 10 },
+                  onPress: this.onOptionsPress
+                }
               : null
           }
           bottomDivider
@@ -197,7 +209,10 @@ class CourtListItem extends Component {
 const mapStateToProps = state => {
   const { role } = state.roleData;
   const { nextReservations, loading: loadingReservations } = state.reservationsList;
-  const { name: commerceName, area: { areaId } } = state.commerceData;
+  const {
+    name: commerceName,
+    area: { areaId }
+  } = state.commerceData;
 
   return { role, nextReservations, commerceName, areaId, loadingReservations };
 };

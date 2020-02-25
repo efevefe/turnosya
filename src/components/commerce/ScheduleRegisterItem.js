@@ -59,13 +59,9 @@ class ScheduleRegister extends Component {
 
     if (firstShiftEnd) {
       if (firstShiftStart >= firstShiftEnd) {
-        this.setState({
-          firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura'
-        });
+        this.setState({ firstShiftEndError: 'La hora de cierre debe ser posterior a la de apertura' });
       } else if (secondShiftStart && firstShiftEnd >= secondShiftStart) {
-        this.setState({
-          firstShiftEndError: 'El primer turno debe finalzar antes del segundo'
-        });
+        this.setState({ firstShiftEndError: 'El primer turno debe finalzar antes del segundo' });
       } else {
         this.setState({ firstShiftEndError: '' });
       }
@@ -77,13 +73,9 @@ class ScheduleRegister extends Component {
 
     if (secondShiftStart) {
       if (secondShiftStart <= firstShiftEnd) {
-        this.setState({
-          secondShiftStartError: 'El segundo turno debe arrancar despues del primero'
-        });
+        this.setState({ secondShiftStartError: 'El segundo turno debe arrancar después del primero' });
       } else if (secondShiftEnd && secondShiftStart >= secondShiftEnd) {
-        this.setState({
-          secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre'
-        });
+        this.setState({ secondShiftStartError: 'La hora de apertura debe ser anterior a la de cierre' });
       } else {
         this.setState({ secondShiftStartError: '' });
       }

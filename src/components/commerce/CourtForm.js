@@ -116,7 +116,7 @@ class CourtForm extends Component {
     const name = trimString(this.props.name);
 
     this.props.onCourtValueChange({ name });
-    if (name === '') {
+    if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -126,7 +126,7 @@ class CourtForm extends Component {
   };
 
   renderCourtError = () => {
-    if (this.props.court === '') {
+    if (!this.props.court) {
       this.setState({ courtError: 'Dato requerido' });
       return false;
     } else {
@@ -136,7 +136,7 @@ class CourtForm extends Component {
   };
 
   renderGroundTypeError = () => {
-    if (this.props.ground === '') {
+    if (!this.props.ground) {
       this.setState({ groundTypeError: 'Dato requerido' });
       return false;
     } else {
@@ -146,13 +146,10 @@ class CourtForm extends Component {
   };
 
   renderPriceError = () => {
-    const price = this.props.price.trim();
-
-    this.props.onCourtValueChange({ price });
-    if (price === '') {
+    if (!this.props.price) {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', price)) {
+    } else if (!validateValueType('number', this.props.price)) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -163,13 +160,10 @@ class CourtForm extends Component {
 
   renderLightPriceError = () => {
     if (this.state.lightPriceOpen) {
-      const lightPrice = this.props.lightPrice.trim();
-
-      this.props.onCourtValueChange({ lightPrice });
-      if (lightPrice === '') {
+      if (!this.props.lightPrice) {
         this.setState({ lightPriceError: 'Dato requerido' });
         return false;
-      } else if (!validateValueType('number', lightPrice)) {
+      } else if (!validateValueType('number', this.props.lightPrice)) {
         this.setState({ lightPriceError: 'Debe ingresar un valor numérico' });
         return false;
       }
@@ -227,7 +221,7 @@ class CourtForm extends Component {
             keyboardType="numeric"
             value={this.props.lightPrice}
             errorMessage={this.state.lightPriceError}
-            onChangeText={lightPrice => this.props.onCourtValueChange({ lightPrice })}
+            onChangeText={lightPrice => this.props.onCourtValueChange({ lightPrice: lightPrice.trim() })}
             onFocus={() => this.setState({ lightPriceError: '' })}
             onBlur={this.renderLightPriceError}
           />
@@ -481,7 +475,7 @@ class CourtForm extends Component {
               keyboardType="numeric"
               value={this.props.price}
               errorMessage={this.state.priceError}
-              onChangeText={price => this.props.onCourtValueChange({ price })}
+              onChangeText={price => this.props.onCourtValueChange({ price: price.trim() })}
               onFocus={() => this.setState({ priceError: '' })}
               onBlur={this.renderPriceError}
             />

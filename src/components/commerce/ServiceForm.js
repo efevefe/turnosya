@@ -56,7 +56,7 @@ class ServiceForm extends Component {
     const name = trimString(this.props.name);
 
     this.props.onServiceValueChange({ name });
-    if (name === '') {
+    if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -66,13 +66,10 @@ class ServiceForm extends Component {
   };
 
   renderDurationError = () => {
-    const duration = trimString(this.props.duration);
-
-    this.props.onServiceValueChange({ duration });
-    if (duration === '') {
+    if (this.props.duration) {
       this.setState({ durationError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('int', duration)) {
+    } else if (!validateValueType('int', this.props.duration)) {
       this.setState({ durationError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -82,13 +79,10 @@ class ServiceForm extends Component {
   };
 
   renderPriceError = () => {
-    const price = trimString(this.props.price);
-
-    this.props.onServiceValueChange({ price });
-    if (price === '') {
+    if (!this.props.price) {
       this.setState({ priceError: 'Dato requerido' });
       return false;
-    } else if (!validateValueType('number', price)) {
+    } else if (!validateValueType('number', this.props.price)) {
       this.setState({ priceError: 'Debe ingresar un valor numérico' });
       return false;
     } else {
@@ -129,9 +123,7 @@ class ServiceForm extends Component {
                 keyboardType="numeric"
                 value={this.props.duration}
                 errorMessage={this.state.durationError}
-                onChangeText={duration => {
-                  this.props.onServiceValueChange({ duration });
-                }}
+                onChangeText={duration => this.props.onServiceValueChange({ duration: duration.trim() })}
                 onFocus={() => this.setState({ durationError: '' })}
                 onBlur={this.renderDurationError}
               />
@@ -143,7 +135,7 @@ class ServiceForm extends Component {
                 keyboardType="numeric"
                 value={this.props.price}
                 errorMessage={this.state.priceError}
-                onChangeText={price => this.props.onServiceValueChange({ price })}
+                onChangeText={price => this.props.onServiceValueChange({ price: price.trim() })}
                 onFocus={() => this.setState({ priceError: '' })}
                 onBlur={this.renderPriceError}
               />

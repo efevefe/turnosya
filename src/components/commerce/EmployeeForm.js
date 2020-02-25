@@ -46,16 +46,16 @@ class EmployeeForm extends Component {
 
   onUpdatePress = () => {
     this.props.onEmployeeInfoUpdate(this.props.email);
-  }
+  };
 
   onEmailValueChange = email => {
     this.props.firstName
       ? this.props.onEmployeeValueChange({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email
-      })
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email
+        })
       : this.props.onEmployeeValueChange({ email });
   };
 
@@ -82,7 +82,10 @@ class EmployeeForm extends Component {
       // Si se cargó un usuario y no es empleado aca entonces guardarlo
       else if (role.name)
         if (this.state.editing)
-          this.props.onEmployeeUpdate({ commerceId, employeeId, firstName, lastName, phone, role, visible }, navigation);
+          this.props.onEmployeeUpdate(
+            { commerceId, employeeId, firstName, lastName, phone, role, visible },
+            navigation
+          );
         else
           this.props.onEmployeeInvite(
             { commerceId, commerceName, email, firstName, lastName, phone, role, visible, profileId },
@@ -130,7 +133,7 @@ class EmployeeForm extends Component {
                 placeholder="Busque por email..."
                 autoCapitalize="none"
                 keyboardType="email-address"
-                returnKeyType='search'
+                returnKeyType="search"
                 onSubmitEditing={() => this.props.onUserByEmailSearch(this.props.email, this.props.commerceId)}
                 value={this.props.email}
                 errorMessage={this.props.emailError}

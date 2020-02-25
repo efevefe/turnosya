@@ -131,7 +131,7 @@ class CommerceReservationDetails extends Component {
     const cancellationReason = trimString(this.props.cancellationReason);
 
     this.props.onReservationsListValueChange({ cancellationReason });
-    if (cancellationReason === '') {
+    if (!cancellationReason) {
       this.setState({ cancellationReasonError: 'Debe informar el motivo' });
       return false;
     } else {

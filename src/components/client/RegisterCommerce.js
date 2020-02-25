@@ -54,7 +54,7 @@ class RegisterCommerce extends Component {
   };
 
   renderEmailError = () => {
-    if (this.props.email == '') {
+    if (!this.props.email) {
       this.setState({ emailError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('email', this.props.email)) {
@@ -70,7 +70,7 @@ class RegisterCommerce extends Component {
     const name = trimString(this.props.name);
 
     this.props.onCommerceValueChange({ name });
-    if (name === '') {
+    if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
     } else {
@@ -80,7 +80,7 @@ class RegisterCommerce extends Component {
   };
 
   renderPhoneError = () => {
-    if (this.props.phone === '') {
+    if (!this.props.phone) {
       this.setState({ phoneError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('phone', this.props.phone)) {
@@ -95,7 +95,7 @@ class RegisterCommerce extends Component {
   renderCuitError = () => {
     this.props.onCuitValidate(this.props.cuit);
 
-    if (this.props.cuit === '') {
+    if (!this.props.cuit) {
       this.setState({ cuitError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('cuit', this.props.cuit)) {
@@ -111,7 +111,7 @@ class RegisterCommerce extends Component {
   };
 
   renderAreaError = () => {
-    if (this.props.area.areaId === '') {
+    if (!this.props.area.areaId) {
       this.setState({ areaError: 'Dato requerido' });
       return false;
     } else {
@@ -143,7 +143,8 @@ class RegisterCommerce extends Component {
               placeholder="Cuit"
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
-              onChangeText={cuit => this.props.onCommerceValueChange({ cuit })}
+              value={this.props.cuit}
+              onChangeText={cuit => this.props.onCommerceValueChange({ cuit: cuit.trim() })}
               onFocus={() => this.setState({ cuitError: '' })}
               onBlur={this.renderCuitError}
             />
@@ -154,8 +155,9 @@ class RegisterCommerce extends Component {
               label="Teléfono"
               placeholder="Teléfono"
               keyboardType="phone-pad"
+              value={this.props.phone}
               errorMessage={this.state.phoneError}
-              onChangeText={phone => this.props.onCommerceValueChange({ phone })}
+              onChangeText={phone => this.props.onCommerceValueChange({ phone: phone.trim() })}
               onFocus={() => this.setState({ phoneError: '' })}
               onBlur={this.renderPhoneError}
             />

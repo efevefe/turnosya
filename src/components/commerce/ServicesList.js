@@ -73,7 +73,7 @@ class ServicesList extends Component {
       );
     }
 
-    return <EmptyList title="No hay ningun servicio" />;
+    return <EmptyList title="No hay ningún servicio" />;
   };
 
   servicesFilter() {

@@ -137,7 +137,7 @@ class Schedule extends Component {
       case 'courts':
         return free ? `Disponibles: ${free.toString()} / ${total.toString()}` : 'Ocupadas';
       case 'services':
-        return free ? `Disponible` : 'Ocupado';
+        return free ? 'Disponible' : 'Ocupado';
       default:
         return null;
     }

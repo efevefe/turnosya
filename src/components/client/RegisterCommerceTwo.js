@@ -64,7 +64,7 @@ class RegisterCommerceTwo extends Component {
     const address = trimString(this.props.address);
 
     this.props.onLocationValueChange({ address });
-    if (address === '') {
+    if (!address) {
       this.setState({ addressError: 'Dato requerido' });
       return false;
     } else {
@@ -77,7 +77,7 @@ class RegisterCommerceTwo extends Component {
     const city = trimString(this.props.city);
 
     this.props.onLocationValueChange({ city });
-    if (city === '') {
+    if (!city) {
       this.setState({ cityError: 'Dato requerido' });
       return false;
     } else {
@@ -87,7 +87,7 @@ class RegisterCommerceTwo extends Component {
   };
 
   renderProvinceError = () => {
-    if (this.props.province.provinceId === '') {
+    if (!this.props.province.provinceId) {
       this.setState({ provinceError: 'Dato requerido' });
       return false;
     } else {

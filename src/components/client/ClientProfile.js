@@ -192,7 +192,7 @@ class ClientProfile extends Component {
     const firstName = trimString(this.props.firstName);
 
     this.props.onClientDataValueChange({ firstName });
-    if (firstName === '') {
+    if (!firstName) {
       this.setState({ firstNameError: 'Dato requerido' });
       return false;
     } else {
@@ -205,7 +205,7 @@ class ClientProfile extends Component {
     const lastName = trimString(this.props.lastName);
 
     this.props.onClientDataValueChange({ lastName });
-    if (lastName === '') {
+    if (!lastName) {
       this.setState({ lastNameError: 'Dato requerido' });
       return false;
     } else {
@@ -215,7 +215,7 @@ class ClientProfile extends Component {
   };
 
   renderPhoneError = () => {
-    if (this.props.phone != '' && !validateValueType('phone', this.props.phone)) {
+    if (this.props.phone && !validateValueType('phone', this.props.phone)) {
       this.setState({ phoneError: 'Formato de teléfono incorrecto' });
       return false;
     } else {
@@ -303,7 +303,7 @@ class ClientProfile extends Component {
             <Input
               label="Teléfono:"
               value={this.props.phone}
-              onChangeText={phone => this.props.onClientDataValueChange({ phone })}
+              onChangeText={phone => this.props.onClientDataValueChange({ phone: phone.trim() })}
               keyboardType="numeric"
               editable={this.state.editEnabled}
               errorMessage={this.state.phoneError}
