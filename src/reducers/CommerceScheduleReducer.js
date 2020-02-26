@@ -57,7 +57,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         ...INITIAL_WORKSHIFTS,
-        startDate: moment(moment().format('MM-DD-YYYY')),
+        startDate: moment(moment().format('YYYY-MM-DD')),
         loadingSchedule: false
       };
 

@@ -77,6 +77,12 @@ export const onEmployeeCreate = ({ commerceId, employeeId, profileId }) => async
 
   batch.set(workplaceRef, { commerceId, name: commerce.data().name, softDelete: null });
 
+  const tokens = await db.collection(`Profiles/${profileId}/NotificationTokens`).get();
+
+  if (!tokens.empty) tokens.forEach(token =>
+    batch.set(db.doc(`Commerces/${commerceId}/NotificationTokens/${token.id}`), { employeeId })
+  );
+
   batch
     .commit()
     .then(() => {
@@ -110,24 +116,30 @@ export const onEmployeeDelete = ({ employeeId, commerceId, profileId, reservatio
   const batch = db.batch();
 
   try {
-    const snapshot = await db
+    const workplaces = await db
       .collection(`Profiles/${profileId}/Workplaces`)
       .where('commerceId', '==', commerceId)
       .where('softDelete', '==', null)
       .get();
 
+    const tokens = await db
+      .collection(`Commerces/${commerceId}/NotificationTokens`)
+      .where('employeeId', '==', employeeId)
+      .get();
 
     const employeeRef = db.collection(`Commerces/${commerceId}/Employees`).doc(employeeId);
     batch.update(employeeRef, { softDelete: new Date() });
 
-    if (!snapshot.empty) {
+    if (!workplaces.empty) {
       // Si el empleado ya había aceptado la invitacion de trabajo
-      const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(snapshot.docs[0].id);
+      const workplaceRef = db.collection(`Profiles/${profileId}/Workplaces`).doc(workplaces.docs[0].id);
       batch.update(workplaceRef, { softDelete: new Date() });
 
       // reservations cancel
       reservationsToCancel && await onReservationsCancel(db, batch, commerceId, reservationsToCancel);
     }
+
+    if (!tokens.empty) tokens.forEach(token => batch.delete(token.ref));
 
     await batch.commit()
 

@@ -41,7 +41,10 @@ export const onLogin = ({ email, password }) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        onNotificationTokenRegister(), dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+        onNotificationTokenRegister();
+
+        dispatch({ type: ON_LOGIN_SUCCESS, payload: user });
+
         if (!user.user.emailVerified)
           dispatch({
             type: ON_EMAIL_VERIFY_REMINDED

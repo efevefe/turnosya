@@ -30,7 +30,8 @@ import {
   ON_REAUTH_FAIL,
   ON_REAUTH_SUCCESS,
   ON_ROLE_ASSIGNED,
-  ON_CLIENT_DATA_VALUE_CHANGE
+  ON_CLIENT_DATA_VALUE_CHANGE,
+  ON_EMPLOYEE_SELECT
 } from './types';
 import getEnvVars from '../../environment';
 import { userReauthenticate } from './AuthActions';
@@ -70,10 +71,9 @@ export const onCommerceOpen = commerceId => dispatch => {
       if (!snapshot.empty) {
         const doc = snapshot.docs[0];
 
-        dispatch({
-          type: ON_ROLE_ASSIGNED,
-          payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id }
-        });
+        dispatch({ type: ON_ROLE_ASSIGNED, payload: { role: ROLES[doc.data().role.roleId], employeeId: doc.id } });
+
+        dispatch({ type: ON_EMPLOYEE_SELECT, payload: { selectedEmployeeId: doc.id } });
       }
 
       dispatch({ type: ON_LOCATION_VALUES_RESET });

@@ -134,7 +134,7 @@ export const onUserDelete = password => {
           batch.update(userRef, { softDelete: new Date() });
 
           const workplaces = await db
-            .doc(`Profiles/${currentUser.uid}/Workplaces`)
+            .collection(`Profiles/${currentUser.uid}/Workplaces`)
             .where('softDelete', '==', null)
             .get();
 

@@ -3,8 +3,8 @@ import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Menu, MenuItem, Badge } from '../common';
-import { SUCCESS_COLOR, MAIN_COLOR } from '../../constants';
+import { Menu, MenuItem, Badge, PermissionsAssigner } from '../common';
+import { SUCCESS_COLOR, MAIN_COLOR, ROLES } from '../../constants';
 import { onServiceDelete, onFormOpen, onServiceOfferingUpdate } from '../../actions';
 
 class ServicesListItem extends Component {
@@ -69,8 +69,10 @@ class ServicesListItem extends Component {
       <View style={{ flex: 1 }}>
         <Menu title={name} onBackdropPress={this.onOptionsPress} isVisible={this.state.optionsVisible}>
           <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+            <Divider style={{ backgroundColor: 'grey' }} />
+            <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
+          </PermissionsAssigner>
         </Menu>
 
         <Menu

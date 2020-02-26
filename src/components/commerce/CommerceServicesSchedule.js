@@ -14,8 +14,7 @@ import {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead,
-  onEmployeeSelect
+  onEmployeesRead
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -31,8 +30,6 @@ class CommerceServicesSchedule extends Component {
     this.props.navigation.setParams({
       onConfigurationPress: this.onConfigurationPress
     });
-
-    this.props.onEmployeeSelect(this.state.selectedEmployeeId);
 
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
@@ -276,6 +273,5 @@ export default connect(mapStateToProps, {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead,
-  onEmployeeSelect
+  onEmployeesRead
 })(CommerceServicesSchedule);
