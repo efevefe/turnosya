@@ -239,7 +239,14 @@ export const onCommerceUpdate = (commerceData, navigation) => async dispatch => 
       .firestore()
       .doc(`Commerces/${commerceId}`)
       .update({
-        ...commerceData,
+        name,
+        description,
+        address,
+        city,
+        province,
+        area,
+        latitude,
+        longitude,
         profilePicture: profilePictureURL ? profilePictureURL : profilePicture,
         headerPicture: headerPictureURL ? headerPictureURL : headerPicture
       });
