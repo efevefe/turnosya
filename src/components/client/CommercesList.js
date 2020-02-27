@@ -47,6 +47,9 @@ class CommercesList extends Component {
     });
 
     this.props.onFavoriteCommercesRead();
+    if (this.props.provinceNameFilter == null) {
+      this.props.onCommercesListValueChange({ provinceNameFilter: this.props.provinceClientName });
+    }
   }
 
   componentWillUnmount() {
@@ -134,7 +137,8 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    selectedLocation
+    selectedLocation,
+    provinceClientName: state.clientData.province.name
   };
 };
 

@@ -48,6 +48,7 @@ export const onUserRegister = ({ email, password, firstName, lastName, phone }) 
             lastName,
             email,
             phone,
+            province: { provinceId: '', name: '' },
             commerceId: null,
             softDelete: null
           })
@@ -80,7 +81,7 @@ export const onUserRead = (clientId = firebase.auth().currentUser.uid) => {
   };
 };
 
-export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => async dispatch => {
+export const onUserUpdate = ({ firstName, lastName, phone, province, profilePicture }) => async dispatch => {
   dispatch({ type: ON_USER_UPDATING });
 
   const { currentUser } = firebase.auth();
@@ -105,6 +106,7 @@ export const onUserUpdate = ({ firstName, lastName, phone, profilePicture }) => 
         firstName,
         lastName,
         phone,
+        province,
         profilePicture: url ? url : profilePicture
       });
 

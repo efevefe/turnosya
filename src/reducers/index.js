@@ -1,4 +1,5 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
+// import { ON_LOGOUT_SUCCESS } from '../actions';
 import ReduxThunk from 'redux-thunk';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
@@ -54,4 +55,11 @@ const reducers = combineReducers({
   paymentData: PaymentDataReducer
 });
 
-export default createStore(reducers, {}, applyMiddleware(ReduxThunk));
+const rootReducer = (state, action) => {
+  if (action.type === 'ON_LOGOUT_SUCCESS') {
+    state = undefined;
+  }
+
+  return reducers(state, action);
+};
+export default createStore(rootReducer, {}, applyMiddleware(ReduxThunk));

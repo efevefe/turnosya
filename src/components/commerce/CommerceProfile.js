@@ -275,9 +275,7 @@ class CommerceProfile extends Component {
   onProvincePickerChange = value => {
     if (value) {
       var { value, label } = this.props.provincesList.find(province => province.value == value);
-      this.props.onCommerceValueChange({
-        province: { provinceId: value, name: label }
-      });
+      this.props.onCommerceValueChange({ province: { provinceId: value, name: label } });
       this.props.onLocationValueChange({ provinceName: label });
     }
   };
