@@ -62,6 +62,7 @@ class CommerceCourtReservationRegister extends Component {
     const clientName = trimString(this.props.clientName);
 
     this.props.onReservationValueChange({ clientName });
+
     if (!clientName) {
       this.setState({ nameError: 'Dato requerido' });
     } else if (!validateValueType('name', clientName)) {
@@ -70,6 +71,8 @@ class CommerceCourtReservationRegister extends Component {
       this.setState({ nameError: '' });
       return false;
     }
+
+    return true;
   };
 
   phoneError = () => {

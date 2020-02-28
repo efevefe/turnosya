@@ -154,7 +154,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError}
-              onChangeText={password => this.props.onClientDataValueChange({ password })}
+              onChangeText={password => this.props.onClientDataValueChange({ password: password.trim() })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />
@@ -167,7 +167,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.confirmPassword}
               errorMessage={this.state.confirmPasswordError}
-              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword })}
+              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword: confirmPassword.trim() })}
               onFocus={() => this.setState({ confirmPasswordError: '' })}
               onBlur={this.renderConfirmPasswordError}
             />

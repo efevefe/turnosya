@@ -83,7 +83,7 @@ class ChangeUserPassword extends Component {
               placeholder="Ingresar contraseña actual"
               password
               value={this.props.password}
-              onChangeText={password => this.props.onLoginValueChange({ password })}
+              onChangeText={password => this.props.onLoginValueChange({ password: password.trim() })}
               errorMessage={this.props.reauthError || this.state.passwordError}
               onFocus={() => this.props.onLoginValueChange({ error: '' })}
               onBlur={this.passwordError}
@@ -95,7 +95,7 @@ class ChangeUserPassword extends Component {
               placeholder="Ingresar nueva contraseña"
               password
               value={this.props.newPassword}
-              onChangeText={password => this.props.onClientDataValueChange({ password })}
+              onChangeText={password => this.props.onClientDataValueChange({ password: password.trim() })}
               errorMessage={this.state.newPasswordError}
               onFocus={() => this.setState({ newPasswordError: '' })}
               onBlur={this.newPasswordError}
@@ -107,7 +107,7 @@ class ChangeUserPassword extends Component {
               placeholder="Confirmar nueva contraseña"
               password
               value={this.props.confirmPassword}
-              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword })}
+              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword: confirmPassword.trim() })}
               errorMessage={this.state.confirmPasswordError}
               onFocus={() => this.setState({ confirmPasswordError: '' })}
               onBlur={this.confirmPasswordError}

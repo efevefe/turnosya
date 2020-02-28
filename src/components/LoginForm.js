@@ -120,7 +120,7 @@ class LoginForm extends Component {
               keyboardType="email-address"
               value={this.props.email}
               errorMessage={this.state.emailError}
-              onChangeText={email => this.props.onLoginValueChange({ email })}
+              onChangeText={email => this.props.onLoginValueChange({ email: email.trim() })}
               onFocus={() => this.setState({ emailError: '' })}
               onBlur={this.renderEmailError}
             />
@@ -135,7 +135,7 @@ class LoginForm extends Component {
               onSubmitEditing={this.onButonPressHandler.bind(this)}
               value={this.props.password}
               errorMessage={this.state.passwordError || this.props.error}
-              onChangeText={password => this.props.onLoginValueChange({ password })}
+              onChangeText={password => this.props.onLoginValueChange({ password: password.trim() })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />

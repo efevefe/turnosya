@@ -522,6 +522,7 @@ class CommerceProfile extends Component {
               label="Descripción:"
               value={this.props.description}
               onChangeText={description => this.props.onCommerceValueChange({ description })}
+              onBlur={() => this.props.onCommerceValueChange({ description: trimString(this.props.description) })}
               multiline={true}
               maxLength={250}
               maxHeight={180}

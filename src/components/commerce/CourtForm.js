@@ -124,7 +124,7 @@ class CourtForm extends PureComponent {
     const name = trimString(this.props.name);
 
     this.props.onCourtValueChange({ name });
-    
+
     if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
@@ -479,7 +479,7 @@ class CourtForm extends PureComponent {
               maxLength={250}
               maxHeight={180}
               onChangeText={description => this.props.onCourtValueChange({ description: description })}
-              onBlur={() => this.props.onCourtValueChange({ description: this.props.description.trim() })}
+              onBlur={() => this.props.onCourtValueChange({ description: trimString(this.props.description) })}
               value={this.props.description}
             />
           </CardSection>

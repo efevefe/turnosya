@@ -148,6 +148,7 @@ class ServiceForm extends Component {
                 maxLength={250}
                 maxHeight={180}
                 onChangeText={description => this.props.onServiceValueChange({ description })}
+                onBlur={() => this.props.onServiceValueChange({ description: trimString(this.props.description) })}
                 value={this.props.description}
               />
             </CardSection>
