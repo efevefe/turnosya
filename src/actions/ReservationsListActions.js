@@ -255,7 +255,7 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('cancellationDate', '==', null)
-    .where('endDate', '>=', startDate.toDate());
+    .where('endDate', '>', startDate.toDate());
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
