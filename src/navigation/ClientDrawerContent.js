@@ -104,7 +104,7 @@ class ClientDrawerContent extends Component {
           <DrawerItem
             title="Cerrar Sesión"
             icon={{ name: 'md-exit' }}
-            loadingWithText={this.props.loading}
+            loadingWithText={this.props.loadingLogout}
             onPress={() => this.props.onLogout(this.props.commerceId, this.props.workplaces)}
           />
         </Drawer>
@@ -118,9 +118,9 @@ const mapStateToProps = state => {
   const { profilePicture, firstName, lastName, workplaces, commerceId } = state.clientData;
   const {
     area: { areaId },
-    refreshing: loadingCommerce
+    loading: loadingCommerce
   } = state.commerceData;
-  const { loading } = state.auth;
+  const { loading: loadingLogout } = state.auth;
   const { loading: loadingNotifications } = state.notificationsList;
   const { role } = state.roleData;
 
@@ -128,7 +128,7 @@ const mapStateToProps = state => {
     profilePicture,
     firstName,
     lastName,
-    loading,
+    loadingLogout,
     workplaces,
     commerceId,
     areaId,

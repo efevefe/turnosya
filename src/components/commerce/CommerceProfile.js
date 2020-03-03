@@ -15,7 +15,7 @@ import {
   onProvincesIdRead,
   onLocationValueChange
 } from '../../actions';
-import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
+import { CardSection, Input, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
@@ -82,7 +82,7 @@ class CommerceProfile extends Component {
   }
 
   onRefresh = () => {
-    this.props.onCommerceRead(this.props.commerceId);
+    this.props.onCommerceRead(this.props.commerceId, 'refreshing');
   };
 
   onSavePress = async () => {
@@ -138,9 +138,9 @@ class CommerceProfile extends Component {
     const locationProps = ['address', 'city', 'latitude', 'longitude'];
     let location = {};
 
-    for (prop in stateBeforeChanges) {
+    for (const prop in stateBeforeChanges) {
       if (locationProps.includes(prop)) {
-        location = { ...location, prop: stateBeforeChanges[prop] };
+        location = { ...location, [prop]: stateBeforeChanges[prop] };
       }
     }
 
@@ -409,8 +409,6 @@ class CommerceProfile extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <KeyboardAwareScrollView
         enableOnAndroid
@@ -668,7 +666,6 @@ const mapStateToProps = state => {
     profilePicture,
     headerPicture,
     commerceId,
-    loading,
     refreshing,
     latitude,
     longitude
@@ -701,7 +698,6 @@ const mapStateToProps = state => {
     profilePicture,
     headerPicture,
     commerceId,
-    loading,
     refreshing,
     locationData
   };

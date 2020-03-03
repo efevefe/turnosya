@@ -138,7 +138,6 @@ const mapStateToProps = state => {
     areasList,
     profilePicture,
     commerceId,
-    refreshing,
     latitude,
     longitude
   } = state.commerceData;
@@ -173,7 +172,6 @@ const mapStateToProps = state => {
     commerceId,
     loading,
     loadingSchedule,
-    refreshing,
     locationData,
     schedules
   };

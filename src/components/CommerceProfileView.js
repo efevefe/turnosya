@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Image, Button, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,10 +37,7 @@ class CommerceProfileView extends Component {
 
     this.props.onCommerceRead(commerceId);
 
-    this.props.onCommerceCourtTypesRead({
-      commerceId,
-      loadingType: 'loading'
-    });
+    this.props.onCommerceCourtTypesRead(commerceId);
 
     this.props.onEmailVerifyReminded();
   }
@@ -117,7 +114,19 @@ class CommerceProfileView extends Component {
     if (loadingProfile || loadingCourtTypes) return <Spinner />;
 
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.refreshingProfile || this.props.refreshingCourtTypes}
+            colors={[MAIN_COLOR]}
+            onRefresh={() => {
+              this.props.onCommerceRead(this.props.commerceId, 'refreshing');
+              this.props.onCommerceCourtTypesRead(this.props.commerceId, 'refreshing');
+            }}
+          />
+        }
+      >
         <View>
           <Image
             style={{
@@ -141,8 +150,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                  <Icon name="favorite-border" color={'white'} size={30} />
-                )
+                    <Icon name="favorite-border" color={'white'} size={30} />
+                  )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
@@ -250,9 +259,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { commerce } = state.reservation;
   const { favoriteCommerces } = state.commercesList;
-  const loadingCourtTypes = state.commerceCourtTypes.loading;
+  const { loading: loadingCourtTypes, refreshing: refreshingCourtTypes } = state.commerceCourtTypes;
   const { cards } = state.commerceSchedule;
-  const loadingProfile = state.commerceData.loading;
   const {
     name,
     description,
@@ -265,6 +273,8 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     rating,
+    refreshing: refreshingProfile,
+    loading: loadingProfile,
     area: { areaId }
   } = state.commerceData;
 
@@ -285,7 +295,9 @@ const mapStateToProps = state => {
     favoriteCommerces,
     cards,
     loadingCourtTypes,
+    refreshingCourtTypes,
     loadingProfile,
+    refreshingProfile,
     areaId,
     userLocation
   };

@@ -227,7 +227,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
   }
 };
 
-export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
+export const onCommerceCourtTypesRead = (commerceId, loadingType = 'loading') => {
   const db = firebase.firestore();
 
   return dispatch => {

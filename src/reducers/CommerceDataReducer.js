@@ -72,6 +72,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_COMMERCE_DELETE_FAIL:
       return { ...state, loading: false };
     case ON_COMMERCE_READING:
+      return { ...state, [action.payload]: true };
     case ON_COMMERCE_UPDATING:
       return { ...state, refreshing: true };
     case ON_COMMERCE_READ:

@@ -158,8 +158,8 @@ export const onCommerceCreate = (commerceData, navigation) => async dispatch => 
   }
 };
 
-export const onCommerceRead = commerceId => async dispatch => {
-  dispatch({ type: ON_COMMERCE_READING });
+export const onCommerceRead = (commerceId, loadingType = 'loading') => async dispatch => {
+  dispatch({ type: ON_COMMERCE_READING, payload: loadingType });
 
   const db = firebase.firestore();
 
