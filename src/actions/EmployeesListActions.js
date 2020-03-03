@@ -33,6 +33,8 @@ export const onEmployeesByIdRead = ({ commerceId, employeesIds }) => dispatch =>
   const db = firebase.firestore();
   const employees = [];
 
+  if (!employeesIds.length) dispatch({ type: ON_EMPLOYEES_READ, payload: employees });
+
   employeesIds.forEach((employeeId, index) => {
     db.doc(`Commerces/${commerceId}/Employees/${employeeId}`)
       .get()
