@@ -12,6 +12,7 @@ import ClientSettings from '../components/client/ClientSettings';
 import ChangeUserPassword from '../components/client/ChangeUserPassword';
 import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 import NotificationsList from '../components/NotificationsList';
+import Help from '../components/Help';
 
 const CommerceRegisterStack = createStackNavigator(
   {
@@ -75,12 +76,26 @@ const ClientNotificationsStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const ClientHelpStack = createStackNavigator(
+  {
+    clientHelp: {
+      screen: Help,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Ayuda',
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
 const clientDrawer = createDrawerNavigator(
   {
     tabs: ClientNavigation,
     commerceRegister: CommerceRegisterStack,
     clientSettings: ClientSettingsStack,
-    clientNotifications: ClientNotificationsStack
+    clientNotifications: ClientNotificationsStack,
+    clientHelp: ClientHelpStack
   },
   {
     ...drawerNavigationOptions,

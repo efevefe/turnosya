@@ -102,6 +102,11 @@ class ClientDrawerContent extends Component {
             onPress={() => this.props.navigation.navigate('clientSettings')}
           />
           <DrawerItem
+            title="Ayuda"
+            icon={{ name: 'md-help-circle-outline' }}
+            onPress={() => this.props.navigation.navigate('clientHelp')}
+          />
+          <DrawerItem
             title="Cerrar Sesión"
             icon={{ name: 'md-exit' }}
             loadingWithText={this.props.loading}
