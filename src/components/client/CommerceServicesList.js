@@ -32,6 +32,8 @@ class CommerceServicesList extends Component {
   };
 
   renderItem = ({ item }) => {
+    if (!item.employeesIds.length) return;
+
     return (
       <ListItem
         title={item.name}
