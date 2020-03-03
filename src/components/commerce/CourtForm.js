@@ -9,7 +9,7 @@ import {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 } from '../../actions';
 import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
 import { validateValueType, trimString, cancelReservationNotificationFormat } from '../../utils';
@@ -364,7 +364,7 @@ class CourtForm extends PureComponent {
 
     if (this.validateMinimumData()) {
       if (this.props.disabled && this.props.id) {
-        this.props.onCourtNextReservationsRead({
+        this.props.onNextReservationsRead({
           commerceId: this.props.commerceId,
           courtId: this.props.id,
           startDate: this.props.disabledFrom,
@@ -649,5 +649,5 @@ export default connect(mapStateToProps, {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 })(CourtForm);

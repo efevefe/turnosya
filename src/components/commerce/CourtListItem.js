@@ -6,7 +6,7 @@ import moment from 'moment';
 import { Menu, MenuItem, Badge, PermissionsAssigner } from '../common';
 import { cancelReservationNotificationFormat } from '../../utils';
 import { ROLES } from '../../constants';
-import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onCourtNextReservationsRead } from '../../actions';
+import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onNextReservationsRead } from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false, deleteWithReservations: false, reservationsToCancel: [] };
@@ -27,7 +27,7 @@ class CourtListItem extends Component {
   };
 
   onDeletePress = () => {
-    this.props.onCourtNextReservationsRead({
+    this.props.onNextReservationsRead({
       commerceId: this.props.commerceId,
       courtId: this.props.court.id,
       startDate: moment()
@@ -194,5 +194,5 @@ export default connect(mapStateToProps, {
   onCourtDelete,
   onCourtFormOpen,
   onCourtValueChange,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 })(CourtListItem);
