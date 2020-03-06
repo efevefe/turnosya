@@ -126,7 +126,7 @@ class RegisterCommerceTwo extends Component {
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
             <Input
-              label="Calle"
+              label="Dirección:"
               placeholder="San Martín 30"
               value={this.props.address}
               onChangeText={address => this.props.onLocationValueChange({ address })}
