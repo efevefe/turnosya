@@ -21,7 +21,7 @@ class CommerceCourtsList extends Component {
   onCourtPress = court => {
     this.props.onNewReservation();
 
-    const light = court.lightPrice && court.lightHour && court.lightHour <= this.props.startDate.format('HH:mm');
+    const light = !!(court.lightPrice && court.lightHour && court.lightHour <= this.props.startDate.format('HH:mm'));
     this.props.onReservationValueChange({
       court,
       light,

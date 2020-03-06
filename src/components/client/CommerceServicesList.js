@@ -32,7 +32,7 @@ class CommerceServicesList extends Component {
   };
 
   renderItem = ({ item }) => {
-    if (!item.employeesIds.length) return;
+    // if (!item.employeesIds.length) return;
 
     return (
       <ListItem
@@ -57,7 +57,7 @@ class CommerceServicesList extends Component {
     if (this.props.services.length) {
       return (
         <FlatList
-          data={this.props.services}
+          data={[{ id:'a', name: 'Corte de Hombre', duration: 20, price: 200 }, { id:'b', name: 'Corte de Mujer', duration: 40, price: 400 }, { id:'c', name: 'Reflejos', duration: 90, price: 600 }]}
           renderItem={this.renderItem}
           keyExtractor={service => service.id}
           contentContainerStyle={{ paddingBottom: 15 }}
