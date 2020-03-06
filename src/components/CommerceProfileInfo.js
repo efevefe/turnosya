@@ -116,7 +116,7 @@ class CommerceProfileInfo extends Component {
         <Card title="Información de Contacto" textAlign="center" containerStyle={{ borderRadius: 10 }}>
           <View style={{ flexDirection: 'column', marginRight: 15 }}>
             <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`E-mail: ${this.props.email}`}</Text>
-            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Teléfono: 035115508234`}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Teléfono: ${this.props.phone}`}</Text>
           </View>
         </Card>
       </View>
