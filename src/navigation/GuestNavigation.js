@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { stackNavigationOptions } from './NavigationOptions';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/client/RegisterForm';
+import Help from '../components/Help';
 
 const guestScreenStack = createStackNavigator(
   {
@@ -16,6 +17,12 @@ const guestScreenStack = createStackNavigator(
       screen: RegisterForm,
       navigationOptions: {
         title: 'Registrarse'
+      }
+    },
+    guestHelp: {
+      screen: Help,
+      navigationOptions: {
+        title: 'Ayuda'
       }
     }
   },

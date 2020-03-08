@@ -46,6 +46,11 @@ class CommerceDrawerContent extends Component {
           />
         </PermissionsAssigner>
         <DrawerItem
+          title="Ayuda"
+          icon={{ name: 'md-help-circle-outline' }}
+          onPress={() => this.props.navigation.navigate('commerceHelp')}
+        />
+        <DrawerItem
           title="Cerrar Sesión"
           icon={{ name: 'md-exit' }}
           loadingWithText={this.props.loading}

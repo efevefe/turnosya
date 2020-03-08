@@ -9,6 +9,7 @@ import PaymentSettings from '../components/commerce/PaymentSettings';
 import PaymentSettingsWeb from '../components/commerce/PaymentSettingsWeb';
 import EmployeesList from '../components/commerce/EmployeesList';
 import EmployeeForm from '../components/commerce/EmployeeForm';
+import Help from '../components/Help';
 import { stackNavigationOptions, drawerNavigationOptions } from './NavigationOptions';
 import NotificationsList from '../components/NotificationsList';
 
@@ -69,10 +70,24 @@ const CommerceNotificationsStack = createStackNavigator(
   stackNavigationOptions
 );
 
+const CommerceHelpStack = createStackNavigator(
+  {
+    commerceHelp: {
+      screen: Help,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Ayuda',
+        headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} tintColor="white" title="Back" />
+      })
+    }
+  },
+  stackNavigationOptions
+);
+
 const commonNavigations = {
   commerceSettings: CommerceSettingsStack,
   commerceEmployees: CommerceEmployeesStack,
-  commerceNotifications: CommerceNotificationsStack
+  commerceNotifications: CommerceNotificationsStack,
+  commerceHelp: CommerceHelpStack
 };
 
 // DRAWER FOR SPORTS COMMERCES
