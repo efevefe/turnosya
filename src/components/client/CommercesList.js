@@ -44,8 +44,8 @@ class CommercesList extends Component {
     });
 
     this.props.onFavoriteCommercesRead();
-    if (this.props.provinceNameFilter == null) {
-      this.props.onCommercesListValueChange({ provinceNameFilter: this.props.provinceClientName });
+    if (!this.props.provinceNameFilter) {
+      this.props.onCommercesListValueChange({ provinceNameFilter: this.props.clientProvinceName });
     }
   }
 
@@ -56,7 +56,7 @@ class CommercesList extends Component {
   onFiltersClear = () => {
     this.props.onCommercesListValueChange({
       locationButtonIndex: 0,
-      provinceNameFilter: this.props.provinceClientName ? this.props.provinceClientName : ''
+      provinceNameFilter: this.props.clientProvinceName ? this.props.clientProvinceName : ''
     });
     this.props.onSelectedLocationChange();
   };
@@ -135,7 +135,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     selectedLocation,
-    provinceClientName: state.clientData.province.name
+    clientProvinceName: state.clientData.province.name
   };
 };
 

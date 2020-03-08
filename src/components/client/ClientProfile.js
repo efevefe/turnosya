@@ -236,7 +236,7 @@ class ClientProfile extends Component {
 
   onProvincePickerChange = value => {
     if (value) {
-      var { value, label } = this.props.provincesList.find(province => province.value == value);
+      var { value, label } = this.props.provincesList.find(province => province.value === value);
       this.props.onClientDataValueChange({ province: { provinceId: value, name: label } });
     }
   };

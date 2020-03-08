@@ -31,7 +31,7 @@ export const onRegisterFormOpen = () => {
   return { type: ON_REGISTER_FORM_OPEN };
 };
 
-export const onUserRegister = ({ email, password, firstName, lastName, phone }) => {
+export const onUserRegister = ({ email, password, firstName, lastName, phone, province }) => {
   return dispatch => {
     dispatch({ type: ON_USER_REGISTER });
 
@@ -48,7 +48,7 @@ export const onUserRegister = ({ email, password, firstName, lastName, phone }) 
             lastName,
             email,
             phone,
-            province: { provinceId: '', name: '' },
+            province,
             commerceId: null,
             softDelete: null
           })
