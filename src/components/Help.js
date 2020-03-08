@@ -14,9 +14,6 @@ class Help extends Component {
         break;
       case 'commerceHelp':
         section = 'commerce';
-        break;
-      default:
-        break;
     }
 
     this.props.onManualRead(section);
