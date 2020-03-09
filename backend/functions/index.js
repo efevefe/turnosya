@@ -7,7 +7,7 @@ const mercadopago = require('mercadopago');
 const request = require('request');
 const admin = require('firebase-admin');
 const moment = require('moment');
-let serviceAccount = require('./turnosYaServiceAccountKey.json');
+let serviceAccount = require('./firebaseServiceAccountKey.json');
 const app = express();
 
 admin.initializeApp({
