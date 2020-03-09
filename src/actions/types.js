@@ -216,17 +216,22 @@ export const ON_COMMERCE_REPORT_VALUE_CHANGE = 'on_commerce_report_value_change'
 export const ON_COMMERCE_REPORT_VALUE_RESET = 'on_commerce_report_value_reset';
 export const ON_COMMERCE_REPORT_DATA_EMPTY = 'on_commerce_report_data_empty';
 
-//Notifications types
+// Notifications types
 export const ON_NOTIFICATIONS_READING = 'on_notifications_reading';
 export const ON_NOTIFICATIONS_READ = 'on_notifications_read';
 export const ON_NOTIFICATIONS_READ_FAIL = 'on_notifications_read_fail';
 export const ON_NOTIFICATION_DELETED = 'on_notification_deleted';
 export const ON_NOTIFICATION_DELETED_FAIL = 'on_notification_deleted_fail';
 
-//Payment types
+// Payment types
 export const ON_PAYMENT_READ = 'on_payment_method_read';
 export const ON_PAYMENT_READING = 'on_payment_method_reading';
 export const ON_PAYMENT_READ_FAIL = 'on_payment_method_read_fail';
 export const ON_CASH_PAYMENT_REGISTERING = 'on_cash_payment_registering';
 export const ON_CASH_PAYMENT_REGISTERED = 'on_cash_payment_registered';
 export const ON_CASH_PAYMENT_REGISTER_FAIL = 'on_cash_payment_register_fail';
+
+// Manuals types
+export const ON_MANUAL_READING = 'on_manual_reading';
+export const ON_MANUAL_READ = 'on_manual_read';
+export const ON_MANUAL_READ_FAIL = 'on_manual_read_fail';
