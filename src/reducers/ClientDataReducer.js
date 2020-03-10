@@ -28,6 +28,7 @@ const INITIAL_STATE = {
   firstName: '',
   lastName: '',
   phone: '',
+  province: { provinceId: '', name: '' },
   commerceId: null,
   rating: { total: 0, count: 0 },
   loading: false,

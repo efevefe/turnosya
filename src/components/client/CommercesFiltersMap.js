@@ -16,7 +16,10 @@ class CommercesFiltersMap extends Component {
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ onApplyFiltersPress: this.onApplyFiltersPress, onCancelPress: this.onCancelPress });
+    this.props.navigation.setParams({
+      onApplyFiltersPress: this.onApplyFiltersPress,
+      onCancelPress: this.onCancelPress
+    });
     this.setState({ selectedLocationBeforechanges: this.props.selectedLocation });
   }
 
@@ -40,9 +43,7 @@ class CommercesFiltersMap extends Component {
   }
 }
 
-const { windowContainerStyle } = StyleSheet.create({
-  windowContainerStyle: { flex: 1 }
-});
+const { windowContainerStyle } = StyleSheet.create({ windowContainerStyle: { flex: 1 } });
 
 const mapStateToProps = state => {
   const { selectedLocation } = state.locationData;

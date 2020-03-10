@@ -6,10 +6,10 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { CardSection, Input, Spinner, Menu, MenuItem, IconButton, Toast } from '../common';
+import { CardSection, Input, Spinner, Menu, MenuItem, IconButton, Toast, Picker } from '../common';
 import { MAIN_COLOR } from '../../constants';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
-import { onUserRead, onUserUpdate, onClientDataValueChange } from '../../actions';
+import { onUserRead, onUserUpdate, onClientDataValueChange, onProvincesIdRead } from '../../actions';
 
 class ClientProfile extends Component {
   state = {
@@ -19,7 +19,8 @@ class ClientProfile extends Component {
     stateBeforeChanges: null,
     firstNameError: '',
     lastNameError: '',
-    phoneError: ''
+    phoneError: '',
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' }
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -32,6 +33,7 @@ class ClientProfile extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({ rightIcon: this.renderEditButton() });
+    this.props.onProvincesIdRead();
   }
 
   renderEditButton = () => {
@@ -61,11 +63,11 @@ class ClientProfile extends Component {
   onSavePress = async () => {
     try {
       if (this.validateMinimumData()) {
-        let { firstName, lastName, phone, profilePicture } = this.props;
+        let { firstName, lastName, phone, profilePicture, province } = this.props;
 
         if (this.state.newProfilePicture) profilePicture = await imageToBlob(profilePicture);
 
-        this.props.onUserUpdate({ firstName, lastName, phone, profilePicture });
+        this.props.onUserUpdate({ firstName, lastName, phone, province, profilePicture });
         this.disableEdit();
       }
     } catch (error) {
@@ -232,6 +234,13 @@ class ClientProfile extends Component {
     return this.renderFirstNameError() && this.renderLastNameError() && this.renderPhoneError();
   };
 
+  onProvincePickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.provincesList.find(province => province.value === value);
+      this.props.onClientDataValueChange({ province: { provinceId: value, name: label } });
+    }
+  };
+
   render() {
     if (this.props.loading) return <Spinner />;
 
@@ -312,6 +321,16 @@ class ClientProfile extends Component {
             />
           </CardSection>
           <CardSection>
+            <Picker
+              title="Provincia:"
+              placeholder={this.state.pickerPlaceholder}
+              items={this.props.provincesList}
+              value={this.props.province.provinceId}
+              disabled={!this.state.editEnabled}
+              onValueChange={value => this.onProvincePickerChange(value)}
+            />
+          </CardSection>
+          <CardSection>
             <Input label="E-Mail:" value={this.props.email} editable={false} />
           </CardSection>
         </View>
@@ -373,23 +392,39 @@ const {
 });
 
 const mapStateToProps = state => {
-  const { clientId, firstName, lastName, phone, email, profilePicture, rating, loading, refreshing } = state.clientData;
+  const {
+    clientId,
+    firstName,
+    lastName,
+    phone,
+    province,
+    email,
+    profilePicture,
+    rating,
+    loading,
+    refreshing
+  } = state.clientData;
 
   const { city, provinceName } = state.locationData.userLocation;
+  const { provincesList } = state.provinceData;
 
   return {
     clientId,
     firstName,
     lastName,
     phone,
+    province,
     email,
     profilePicture,
     rating,
     loading,
     refreshing,
     city,
-    provinceName
+    provinceName,
+    provincesList
   };
 };
 
-export default connect(mapStateToProps, { onUserRead, onUserUpdate, onClientDataValueChange })(ClientProfile);
+export default connect(mapStateToProps, { onUserRead, onUserUpdate, onClientDataValueChange, onProvincesIdRead })(
+  ClientProfile
+);

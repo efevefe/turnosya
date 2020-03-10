@@ -160,9 +160,7 @@ export const onLogout = (commerceId, workplaces) => async dispatch => {
     firebase
       .auth()
       .signOut()
-      .then(() => {
-        dispatch({ type: ON_LOGOUT_SUCCESS });
-      })
+      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS })) //tira error cuando uso la variable importada
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   } catch (error) {
     return dispatch => dispatch({ type: ON_LOGIN_FAIL });

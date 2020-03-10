@@ -11,7 +11,7 @@ import getEnvVars from '../../../environment';
 import ConnectedHits from './CommercesList.SearchHits';
 import ConnectedSearchBox from './CommercesList.SearchBox';
 import ConnectedStateResults from './CommercesList.StateResults';
-import { onFavoriteCommercesRead, onCommercesListValueChange, onLocationValueChange } from '../../actions';
+import { onFavoriteCommercesRead, onCommercesListValueChange, onSelectedLocationChange } from '../../actions';
 
 const { appId, searchApiKey, commercesIndex } = getEnvVars().algoliaConfig;
 
@@ -34,10 +34,7 @@ class CommercesList extends Component {
     };
   };
 
-  state = {
-    areaName: this.props.navigation.state.params.areaName,
-    searchVisible: false
-  };
+  state = { areaName: this.props.navigation.state.params.areaName, searchVisible: false };
 
   componentDidMount() {
     this.props.navigation.setParams({
@@ -47,6 +44,9 @@ class CommercesList extends Component {
     });
 
     this.props.onFavoriteCommercesRead();
+    if (!this.props.provinceNameFilter) {
+      this.props.onCommercesListValueChange({ provinceNameFilter: this.props.clientProvinceName });
+    }
   }
 
   componentWillUnmount() {
@@ -54,8 +54,11 @@ class CommercesList extends Component {
   }
 
   onFiltersClear = () => {
-    this.props.onCommercesListValueChange({ provinceNameFilter: '', locationRadiusKms: '' });
-    this.props.onLocationValueChange({ selectedLocation: {} });
+    this.props.onCommercesListValueChange({
+      locationButtonIndex: 0,
+      provinceNameFilter: this.props.clientProvinceName ? this.props.clientProvinceName : ''
+    });
+    this.props.onSelectedLocationChange();
   };
 
   onSearchPress = () => {
@@ -80,9 +83,7 @@ class CommercesList extends Component {
 
   obtainFacetProps = () => {
     if (this.state.areaName && this.props.provinceNameFilter)
-      return {
-        filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'`
-      };
+      return { filters: `areaName:\'${this.state.areaName}\' AND provinceName:\'${this.props.provinceNameFilter}\'` };
     else if (this.state.areaName) return { filters: `areaName:\'${this.state.areaName}\'` };
     else if (this.props.provinceNameFilter) return { filters: `provinceName:\'${this.props.provinceNameFilter}\'` };
     else return null;
@@ -120,7 +121,6 @@ class CommercesList extends Component {
 
 const mapStateToProps = state => {
   const { refinement, favoriteCommerces, provinceNameFilter, locationRadiusKms } = state.commercesList;
-
   const { address, city, provinceName, country, latitude, longitude, selectedLocation } = state.locationData;
 
   return {
@@ -134,12 +134,13 @@ const mapStateToProps = state => {
     country,
     latitude,
     longitude,
-    selectedLocation
+    selectedLocation,
+    clientProvinceName: state.clientData.province.name
   };
 };
 
 export default connect(mapStateToProps, {
   onFavoriteCommercesRead,
   onCommercesListValueChange,
-  onLocationValueChange
+  onSelectedLocationChange
 })(CommercesList);
