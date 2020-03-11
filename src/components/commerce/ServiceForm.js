@@ -66,7 +66,7 @@ class ServiceForm extends Component {
   };
 
   renderDurationError = () => {
-    if (this.props.duration) {
+    if (!this.props.duration) {
       this.setState({ durationError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('int', this.props.duration)) {
