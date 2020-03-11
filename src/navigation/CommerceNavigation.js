@@ -103,7 +103,7 @@ const calendarScreens = {
     }
   },
   ...reservationDetailsScreens
-}
+};
 
 const sportsCalendarStack = createStackNavigator(
   {
@@ -117,7 +117,7 @@ const sportsCalendarStack = createStackNavigator(
     ...calendarScreens
   },
   stackNavigationOptions
-)
+);
 
 const hairdressersCalendarStack = createStackNavigator(
   {
@@ -131,7 +131,7 @@ const hairdressersCalendarStack = createStackNavigator(
     ...calendarScreens
   },
   stackNavigationOptions
-)
+);
 
 const reservationsStack = createStackNavigator(
   {
