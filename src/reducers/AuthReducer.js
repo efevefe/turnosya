@@ -5,6 +5,7 @@ import {
   ON_LOGIN_FAIL,
   ON_LOGOUT,
   ON_LOGOUT_FAIL,
+  ON_LOGOUT_SUCCESS,
   ON_LOGIN_FACEBOOK,
   ON_LOGIN_GOOGLE,
   ON_REAUTH_SUCCESS,
@@ -54,6 +55,7 @@ export default (state = INITIAL_STATE, action) => {
     case ON_LOGIN_SUCCESS:
     case ON_LOGOUT_FAIL:
     case ON_REAUTH_SUCCESS:
+    case ON_LOGOUT_SUCCESS:
       return { ...INITIAL_STATE };
 
     case ON_LOGIN_FAIL:

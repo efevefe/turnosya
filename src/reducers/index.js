@@ -1,5 +1,5 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { ON_LOGOUT_SUCCESS } from '../actions/types';
+import { ON_LOGOUT_FINISHED } from '../actions/types';
 import ReduxThunk from 'redux-thunk';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
@@ -58,7 +58,7 @@ const reducers = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === ON_LOGOUT_SUCCESS) {
+  if (action.type === ON_LOGOUT_FINISHED) {
     state = undefined;
   }
 

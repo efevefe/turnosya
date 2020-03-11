@@ -9,6 +9,7 @@ import {
   ON_LOGIN_FAIL,
   ON_LOGOUT,
   ON_LOGOUT_SUCCESS,
+  ON_LOGOUT_FINISHED,
   ON_LOGIN_FACEBOOK,
   ON_LOGIN_GOOGLE,
   ON_EMAIL_VERIFY_ASKED,
@@ -19,7 +20,15 @@ import {
 } from './types';
 
 import getEnvVars from '../../environment';
-const { facebookApiKey, facebookPermissions, iosClientId, iosStandaloneAppClientId, androidClientId, androidStandaloneAppClientId, googleScopes } = getEnvVars();
+const {
+  facebookApiKey,
+  facebookPermissions,
+  iosClientId,
+  iosStandaloneAppClientId,
+  androidClientId,
+  androidStandaloneAppClientId,
+  googleScopes
+} = getEnvVars();
 import { onNotificationTokenRegister, onNotificationTokenDelete } from '../actions/NotificationActions';
 
 export const onLoginValueChange = payload => {
@@ -107,7 +116,13 @@ export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
-    Google.logInAsync({ iosClientId, iosStandaloneAppClientId, androidClientId, androidStandaloneAppClientId, scopes: googleScopes })
+    Google.logInAsync({
+      iosClientId,
+      iosStandaloneAppClientId,
+      androidClientId,
+      androidStandaloneAppClientId,
+      scopes: googleScopes
+    })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
           const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
@@ -160,11 +175,15 @@ export const onLogout = (commerceId, workplaces) => async dispatch => {
     firebase
       .auth()
       .signOut()
-      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS })) //tira error cuando uso la variable importada
+      .then(() => dispatch({ type: ON_LOGOUT_SUCCESS }))
       .catch(() => dispatch({ type: ON_LOGIN_FAIL }));
   } catch (error) {
     return dispatch => dispatch({ type: ON_LOGIN_FAIL });
   }
+};
+
+export const onLogoutFinished = () => {
+  return { type: ON_LOGOUT_FINISHED };
 };
 
 export const onEmailVerifyReminded = () => async dispatch => {

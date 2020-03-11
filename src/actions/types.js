@@ -19,6 +19,7 @@ export const ON_LOGIN_SUCCESS = 'on_login_success';
 export const ON_LOGIN_FAIL = 'on_login_fail';
 export const ON_LOGOUT = 'on_logout';
 export const ON_LOGOUT_SUCCESS = 'on_logout_success';
+export const ON_LOGOUT_FINISHED = 'on_logout_finished';
 export const ON_LOGOUT_FAIL = 'on_logout_fail';
 export const ON_REAUTH_SUCCESS = 'on_reauth_success';
 export const ON_REAUTH_FAIL = 'on_reauth_fail';

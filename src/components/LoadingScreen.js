@@ -2,13 +2,20 @@ import React, { Component } from 'react';
 import { View, ActivityIndicator, Image, StyleSheet, Dimensions } from 'react-native';
 import firebase from 'firebase';
 import { MAIN_COLOR } from '../constants';
+import { onLogoutFinished } from '../actions';
+import { connect } from 'react-redux';
 
 const logoSize = Math.round(Dimensions.get('window').width) / 2;
 
 class LoadingScreen extends Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
-      user ? this.props.navigation.navigate('client') : this.props.navigation.navigate('login');
+      if (user) {
+        this.props.navigation.navigate('client');
+      } else {
+        this.props.navigation.navigate('login');
+        this.props.onLogoutFinished();
+      }
     });
   }
 
@@ -41,4 +48,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LoadingScreen;
+export default connect(null, { onLogoutFinished })(LoadingScreen);
