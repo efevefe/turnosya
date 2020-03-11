@@ -129,11 +129,7 @@ class CommerceProfileView extends Component {
       >
         <View>
           <Image
-            style={{
-              height: headerPictureHeight,
-              width: screenWidth,
-              position: 'absolute'
-            }}
+            style={styles.headerPictureStyle}
             source={headerPicture ? { uri: headerPicture } : null}
           />
 
@@ -233,6 +229,11 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     alignItems: 'center',
     marginTop: headerPictureHeight / 2 - 49
+  },
+  headerPictureStyle: {
+    height: headerPictureHeight,
+    width: screenWidth,
+    position: 'absolute'
   },
   avatarContainerStyle: {
     justifyContent: 'flex-end',

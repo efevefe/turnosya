@@ -421,20 +421,20 @@ class CommerceProfile extends Component {
           />
         }
       >
+        <Image
+          style={headerPictureStyle}
+          source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
+        />
         <View style={headerContainerStyle}>
-          <Image
-            style={headerPictureStyle}
-            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
-          >
-            <Icon
-              name="md-camera"
-              color={MAIN_COLOR}
-              type="ionicon"
-              size={20}
-              reverse
-              onPress={this.onEditHeaderPicturePress}
-            />
-          </Image>
+          <Icon
+            name="md-camera"
+            color={MAIN_COLOR}
+            type="ionicon"
+            size={20}
+            containerStyle={{ alignSelf: 'flex-end' }}
+            reverse
+            onPress={this.onEditHeaderPicturePress}
+          />
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
@@ -453,8 +453,6 @@ class CommerceProfile extends Component {
               onPress={this.onEditProfilePicturePress}
             />
           </View>
-        </View>
-        <View style={textContainerStyle}>
           {this.renderName()}
           {this.renderLocation()}
         </View>
@@ -600,7 +598,6 @@ const {
   headerPictureStyle,
   avatarContainerStyle,
   avatarStyle,
-  textContainerStyle,
   locationContainerStyle,
   infoContainerStyle
 } = StyleSheet.create({
@@ -610,31 +607,22 @@ const {
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
-    alignItems: 'center',
-    height: imageSizeHeight * 1.5,
-    marginBottom: 15
+    alignItems: 'center'
   },
   headerPictureStyle: {
     height: imageSizeHeight,
     width: imageSizeWidth,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    position: 'absolute'
   },
   avatarContainerStyle: {
-    position: 'absolute',
-    paddingTop: imageSizeHeight * 0.5,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    paddingTop: 10
   },
   avatarStyle: {
-    margin: 5,
-    marginTop: 0,
+    marginBottom: 10,
     borderWidth: 4,
     borderColor: MAIN_COLOR
-  },
-  textContainerStyle: {
-    alignSelf: 'stretch',
-    alignItems: 'center'
   },
   locationContainerStyle: {
     justifyContent: 'space-around',

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Text, FlatList } from 'react-native';
+import { Text, FlatList, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
 import moment from 'moment';
-import { View } from 'native-base';
 import { onScheduleRead, onCommerceSchedulesRead } from '../actions';
 import { Spinner } from './common';
 import { DAYS } from '../constants';
@@ -104,7 +103,7 @@ class CommerceProfileInfo extends Component {
     const schedules = this.getFormattedSchedules();
 
     return (
-      <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 15 }}>
         <Card
           title="Horarios"
           textAlign="center"
@@ -119,7 +118,7 @@ class CommerceProfileInfo extends Component {
             <Text style={{ textAlign: 'left', fontSize: 15, padding: 5 }}>{`Teléfono: ${this.props.phone}`}</Text>
           </View>
         </Card>
-      </View>
+      </ScrollView>
     );
   }
 }
