@@ -19,7 +19,7 @@ import {
 } from './types';
 
 import getEnvVars from '../../environment';
-const { facebookApiKey, facebookPermissions, iosClientId, androidClientId, googleScopes } = getEnvVars();
+const { facebookApiKey, facebookPermissions, iosClientId, iosStandaloneAppClientId, androidClientId, androidStandaloneAppClientId, googleScopes } = getEnvVars();
 import { onNotificationTokenRegister, onNotificationTokenDelete } from '../actions/NotificationActions';
 
 export const onLoginValueChange = payload => {
@@ -107,7 +107,7 @@ export const onGoogleLogin = () => {
   return dispatch => {
     dispatch({ type: ON_LOGIN_GOOGLE });
 
-    Google.logInAsync({ iosClientId, androidClientId, scopes: googleScopes })
+    Google.logInAsync({ iosClientId, iosStandaloneAppClientId, androidClientId, androidStandaloneAppClientId, scopes: googleScopes })
       .then(({ type, idToken, accessToken }) => {
         if (type === 'success') {
           const credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);

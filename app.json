@@ -29,11 +29,25 @@
         "NSLocationAlwaysUsageDescription": "App would like to access your current location",
         "NSCameraUsageDescription": "App would like to access your Camera",
         "bundleIdentifier": "com.yourcompany.turnosya"
+      },
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.425889819253-hl3aj8aejqhsualahjmuc6895e7sen6a"
+        }
       }
     },
     "android": {
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
-      "package": "com.yourcompany.turnosya"
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.yourcompany.turnosya",
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyCLlXEjNHBx1D7WJPf7UHi3jdR2LmRV_yE",
+          "certificateHash": "500660122235AAC015DB096CB65956A56D1A4E24"
+        }
+      }
     }
   }
 }
