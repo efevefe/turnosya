@@ -10,7 +10,7 @@ class LocationMap extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerRight: <IconButton icon="md-checkmark" onPress={navigation.goBack} />,
+      headerRight: <IconButton icon="md-checkmark" onPress={() => navigation.goBack()} />,
       headerLeft: <HeaderBackButton onPress={navigation.getParam('onBackPress')} tintColor="white" title="Back" />
     };
   };
