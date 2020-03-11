@@ -34,11 +34,13 @@ import { onScheduleValueChange } from '../actions';
 
 class Schedule extends Component {
   componentDidUpdate(prevProps) {
-    // se estarian generando los slots cada vez que se trae una nueva diagramacion y el schedule
-    // esta en primer plano, cosa que no se actualice cuando se esta en otra pantalla y se esta
-    // usando el mismo loading, como en la pantalla del listado de schedules
-    if (prevProps.loadingSchedule && !this.props.loadingSchedule && this.props.scheduleId) {
-      this.onDateSelected(this.props.selectedDate);
+    // se estarian generando los slots cada vez que se trae una nueva diagramacion
+    if (prevProps.loadingSchedule && !this.props.loadingSchedule) {
+      if (this.props.scheduleId) {
+        this.onDateSelected(this.props.selectedDate);
+      } else {
+        this.props.onScheduleValueChange({ slots: [] });
+      }
     }
   }
 
