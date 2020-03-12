@@ -4,7 +4,7 @@ import {
   ON_MANUAL_READ_FAIL
 } from '../actions/types';
 
-INITIAL_STATE = { manualURL: '', loading: false };
+const INITIAL_STATE = { manualURL: '', loading: false };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
