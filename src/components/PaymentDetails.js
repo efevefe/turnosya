@@ -43,7 +43,7 @@ class PaymentDetails extends Component {
             <Text style={styles.textStyle}>
               {`Método de Pago: ${this.props.method}`}
             </Text>
-            {this.props.method === 'Efectivo' ?
+            {this.props.method === 'Efectivo' && this.props.receiptNumber ?
               <Text style={styles.textStyle}>
                 {`Nro. de Comprobante: ${this.props.receiptNumber}`}
               </Text> : null}
