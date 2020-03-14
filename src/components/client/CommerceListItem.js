@@ -33,9 +33,7 @@ class CommerceListItem extends Component {
 
   onCommercePress = () => {
     this.props.onReservationValueChange({ commerce: this.props.commerce });
-    this.props.navigation.navigate('commerceProfileView', {
-      navigatedFrom: this.props.navigation.state.routeName
-    });
+    this.props.navigation.navigate('commerceProfileView', { navigatedFrom: this.props.navigation.state.routeName });
   };
 
   renderSubtitle = () => {

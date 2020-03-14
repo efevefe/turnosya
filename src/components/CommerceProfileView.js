@@ -22,25 +22,30 @@ const headerPictureHeight = Math.round(Dimensions.get('window').height * 0.2);
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
-  state = {
-    favorite: false,
-    pictureVisible: false
-  };
+  state = { favorite: false, pictureVisible: false };
 
   componentDidMount() {
-    let { commerceId, favoriteCommerces } = this.props;
+    let { commerceId } = this.props;
 
     if (this.props.navigation.getParam('commerceId')) commerceId = this.props.navigation.getParam('commerceId');
     else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
-    this.setState({ favorite: favoriteCommerces.includes(commerceId) });
-
-    this.props.onCommerceRead(commerceId);
-
-    this.props.onCommerceCourtTypesRead(commerceId);
+    this.setCommercePropsByID(commerceId);
 
     this.props.onEmailVerifyReminded();
   }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.commerceId && !this.props.loadingProfile && this.props.commerce.objectID !== this.props.commerceId) {
+      this.setCommercePropsByID(this.props.commerce.objectID);
+    }
+  }
+
+  setCommercePropsByID = commerceId => {
+    this.setState({ favorite: this.props.favoriteCommerces.includes(commerceId) });
+    this.props.onCommerceRead(commerceId);
+    this.props.onCommerceCourtTypesRead(commerceId);
+  };
 
   renderDescription = () => {
     if (this.props.description)
@@ -128,10 +133,7 @@ class CommerceProfileView extends Component {
         }
       >
         <View>
-          <Image
-            style={styles.headerPictureStyle}
-            source={headerPicture ? { uri: headerPicture } : null}
-          />
+          <Image style={styles.headerPictureStyle} source={headerPicture ? { uri: headerPicture } : null} />
 
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
@@ -146,8 +148,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />

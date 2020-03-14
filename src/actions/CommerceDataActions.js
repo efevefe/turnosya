@@ -392,9 +392,9 @@ export const onCommerceMPagoTokenRead = commerceId => dispatch => {
         const currentToken = snapshot.docs.find(doc => doc.data().softDelete === null);
         currentToken
           ? dispatch({
-            type: ON_COMMERCE_MP_TOKEN_READ,
-            payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
-          })
+              type: ON_COMMERCE_MP_TOKEN_READ,
+              payload: { mPagoToken: currentToken.id, hasAnyMPagoToken: true }
+            })
           : dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: true } });
       } else {
         dispatch({ type: ON_COMMERCE_MP_TOKEN_READ, payload: { mPagoToken: null, hasAnyMPagoToken: false } });
