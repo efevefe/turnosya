@@ -99,12 +99,6 @@ class CommerceServicesSchedule extends Component {
       });
     }
 
-    if (moment() >= slot.startDate && slot.available) {
-      return Toast.show({
-        text: 'Ya no se puede reservar en este horario'
-      });
-    }
-
     const startDate = slot.startDate;
 
     this.props.onReservationValueChange({ startDate });
