@@ -31,13 +31,15 @@ class CommerceProfileView extends Component {
     else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
     this.setCommercePropsByID(commerceId);
-
-    this.props.onEmailVerifyReminded();
   }
 
   componentDidUpdate() {
     if (this.props.navigation.state.routeName === 'commerceProfileView') {
-      if (this.props.commerceId && !this.props.loadingProfile && this.props.commerce.objectID !== this.props.commerceId) {
+      if (
+        this.props.commerceId &&
+        !this.props.loadingProfile &&
+        this.props.commerce.objectID !== this.props.commerceId
+      ) {
         this.setCommercePropsByID(this.props.commerce.objectID);
       }
     }
@@ -47,6 +49,7 @@ class CommerceProfileView extends Component {
     this.setState({ favorite: this.props.favoriteCommerces.includes(commerceId) });
     this.props.onCommerceRead(commerceId);
     this.props.onCommerceCourtTypesRead(commerceId);
+    this.props.onEmailVerifyReminded();
   };
 
   renderDescription = () => {
@@ -150,8 +153,8 @@ class CommerceProfileView extends Component {
                 this.state.favorite ? (
                   <Icon name="favorite" color={'red'} size={30} />
                 ) : (
-                    <Icon name="favorite-border" color={'white'} size={30} />
-                  )
+                  <Icon name="favorite-border" color={'white'} size={30} />
+                )
               }
               onPress={() => this.onFavoritePress(commerceId)}
             />
