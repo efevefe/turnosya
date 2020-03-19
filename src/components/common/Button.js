@@ -5,14 +5,20 @@ import { MAIN_COLOR } from '../../constants';
 
 class Button extends Component {
   render() {
-    const color = this.props.color || MAIN_COLOR;
+    const { type } = this.props;
+
+    const backgroundColor = !type || type === 'solid' ? this.props.color || MAIN_COLOR : 'white';
+    const color = !type || type === 'solid' ? 'white' : this.props.color || MAIN_COLOR;
+    const border = type === 'outline' ? { borderColor: color, borderWidth: 1 } : {};
 
     return (
       <View style={this.props.outerContainerStyle}>
         <RNEButton
           {...this.props}
-          buttonStyle={[styles.buttonStyle, { backgroundColor: color }, this.props.buttonStyle]}
+          buttonStyle={[styles.buttonStyle, { backgroundColor, ...border }, this.props.buttonStyle]}
           containerStyle={[styles.containerStyle, this.props.containerStyle]}
+          titleStyle={{ color }}
+          loadingProps={{ color }}
         />
       </View>
     );
