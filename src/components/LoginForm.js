@@ -155,7 +155,7 @@ class LoginForm extends Component {
             <Button
               title="Olvidé mi contraseña"
               type="clear"
-              color="white"
+              color="grey"
               titleStyle={styles.resetPasswordTitleStyle}
               buttonStyle={styles.resetPasswordButtonStyle}
               onPress={() => this.setState({ resetPasswordModal: true })}
@@ -196,7 +196,7 @@ class LoginForm extends Component {
             <Button
               title="Crear Cuenta"
               type="clear"
-              color="white"
+              color="#2089dc"
               buttonStyle={styles.buttonStyle}
               onPress={this.onCreateAcount.bind(this)}
             />
@@ -239,8 +239,7 @@ const styles = StyleSheet.create({
     marginVertical: 4
   },
   resetPasswordTitleStyle: {
-    fontSize: 14,
-    color: 'grey'
+    fontSize: 14
   },
   resetPasswordButtonStyle: {
     margin: 0,
