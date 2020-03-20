@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, RefreshControl } from 'react-native';
 import { Avatar, Text, Divider, Image, Button, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,28 +22,35 @@ const headerPictureHeight = Math.round(Dimensions.get('window').height * 0.2);
 const avatarSize = Math.round(Dimensions.get('window').width * 0.4);
 
 class CommerceProfileView extends Component {
-  state = {
-    favorite: false,
-    pictureVisible: false
-  };
+  state = { favorite: false, pictureVisible: false };
 
   componentDidMount() {
-    let { commerceId, favoriteCommerces } = this.props;
+    let { commerceId } = this.props;
 
     if (this.props.navigation.getParam('commerceId')) commerceId = this.props.navigation.getParam('commerceId');
     else if (this.props.navigation.state.routeName === 'commerceProfileView') commerceId = this.props.commerce.objectID;
 
-    this.setState({ favorite: favoriteCommerces.includes(commerceId) });
-
-    this.props.onCommerceRead(commerceId);
-
-    this.props.onCommerceCourtTypesRead({
-      commerceId,
-      loadingType: 'loading'
-    });
-
-    this.props.onEmailVerifyReminded();
+    this.setCommercePropsByID(commerceId);
   }
+
+  componentDidUpdate() {
+    if (this.props.navigation.state.routeName === 'commerceProfileView') {
+      if (
+        this.props.commerceId &&
+        !this.props.loadingProfile &&
+        this.props.commerce.objectID !== this.props.commerceId
+      ) {
+        this.setCommercePropsByID(this.props.commerce.objectID);
+      }
+    }
+  }
+
+  setCommercePropsByID = commerceId => {
+    this.setState({ favorite: this.props.favoriteCommerces.includes(commerceId) });
+    this.props.onCommerceRead(commerceId);
+    this.props.onCommerceCourtTypesRead(commerceId);
+    this.props.onEmailVerifyReminded();
+  };
 
   renderDescription = () => {
     if (this.props.description)
@@ -117,16 +124,21 @@ class CommerceProfileView extends Component {
     if (loadingProfile || loadingCourtTypes) return <Spinner />;
 
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View>
-          <Image
-            style={{
-              height: headerPictureHeight,
-              width: screenWidth,
-              position: 'absolute'
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.refreshingProfile || this.props.refreshingCourtTypes}
+            colors={[MAIN_COLOR]}
+            onRefresh={() => {
+              this.props.onCommerceRead(this.props.commerceId, 'refreshing');
+              this.props.onCommerceCourtTypesRead(this.props.commerceId, 'refreshing');
             }}
-            source={headerPicture ? { uri: headerPicture } : null}
           />
+        }
+      >
+        <View>
+          <Image style={styles.headerPictureStyle} source={headerPicture ? { uri: headerPicture } : null} />
 
           <View style={{ flexDirection: 'row-reverse' }}>
             <Button
@@ -225,6 +237,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: headerPictureHeight / 2 - 49
   },
+  headerPictureStyle: {
+    height: headerPictureHeight,
+    width: screenWidth,
+    position: 'absolute'
+  },
   avatarContainerStyle: {
     justifyContent: 'flex-end',
     alignItems: 'flex-end'
@@ -250,9 +267,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { commerce } = state.reservation;
   const { favoriteCommerces } = state.commercesList;
-  const loadingCourtTypes = state.commerceCourtTypes.loading;
+  const { loading: loadingCourtTypes, refreshing: refreshingCourtTypes } = state.commerceCourtTypes;
   const { cards } = state.commerceSchedule;
-  const loadingProfile = state.commerceData.loading;
   const {
     name,
     description,
@@ -265,6 +281,8 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     rating,
+    refreshing: refreshingProfile,
+    loading: loadingProfile,
     area: { areaId }
   } = state.commerceData;
 
@@ -285,7 +303,9 @@ const mapStateToProps = state => {
     favoriteCommerces,
     cards,
     loadingCourtTypes,
+    refreshingCourtTypes,
     loadingProfile,
+    refreshingProfile,
     areaId,
     userLocation
   };

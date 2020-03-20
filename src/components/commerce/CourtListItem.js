@@ -3,9 +3,10 @@ import { View, Text } from 'react-native';
 import { ListItem, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Menu, MenuItem, Badge } from '../common';
+import { Menu, MenuItem, Badge, PermissionsAssigner } from '../common';
 import { cancelReservationNotificationFormat } from '../../utils';
-import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onCourtNextReservationsRead } from '../../actions';
+import { ROLES } from '../../constants';
+import { onCourtDelete, onCourtFormOpen, onCourtValueChange, onNextReservationsRead } from '../../actions';
 
 class CourtListItem extends Component {
   state = { optionsVisible: false, deleteVisible: false, deleteWithReservations: false, reservationsToCancel: [] };
@@ -26,7 +27,7 @@ class CourtListItem extends Component {
   };
 
   onDeletePress = () => {
-    this.props.onCourtNextReservationsRead({
+    this.props.onNextReservationsRead({
       commerceId: this.props.commerceId,
       courtId: this.props.court.id,
       startDate: moment()
@@ -119,8 +120,10 @@ class CourtListItem extends Component {
       <View style={{ flex: 1 }}>
         <Menu title={name} onBackdropPress={this.onOptionsPress} isVisible={this.state.optionsVisible}>
           <MenuItem title="Editar" icon="md-create" onPress={this.onUpdatePress} />
-          <Divider style={{ backgroundColor: 'grey' }} />
-          <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
+          <PermissionsAssigner requiredRole={ROLES.ADMIN}>
+            <Divider style={{ backgroundColor: 'grey' }} />
+            <MenuItem title="Eliminar" icon="md-trash" onPress={this.onDeletePress} />
+          </PermissionsAssigner>
         </Menu>
 
         <Menu
@@ -191,5 +194,5 @@ export default connect(mapStateToProps, {
   onCourtDelete,
   onCourtFormOpen,
   onCourtValueChange,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 })(CourtListItem);

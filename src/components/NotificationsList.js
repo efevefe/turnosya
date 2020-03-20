@@ -170,9 +170,10 @@ class NotificationsList extends Component {
           <Menu
             title={`Está seguro que desea ${
               this.state.isAcceptingEmployment ? 'aceptar' : 'rechazar'
-            } la invitación de empleo? Esta acción no puede ser modificada.`}
+              } la invitación de empleo? Esta acción no puede ser modificada.`}
             onBackdropPress={() => this.setState({ confirmEmploymentVisible: false })}
-            isVisible={this.state.confirmEmploymentVisible || this.props.employeeSaveLoading}
+            isVisible={(this.state.confirmEmploymentVisible || this.props.employeeSaveLoading)
+              && this.props.navigation.isFocused()}
           >
             <MenuItem
               title="Aceptar"
@@ -194,10 +195,10 @@ class NotificationsList extends Component {
             isVisible={this.state.optionsVisible}
           >
             {this.state.selectedNotification &&
-            this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
-            this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
-            !this.state.selectedNotification.acceptanceDate &&
-            !this.state.selectedNotification.rejectionDate
+              this.state.selectedNotification.notificationType && // cuando se limpien notificaciones viejas se podría sacar
+              this.state.selectedNotification.notificationType.id === NOTIFICATION_TYPES.EMPLOYMENT_INVITE.id &&
+              !this.state.selectedNotification.acceptanceDate &&
+              !this.state.selectedNotification.rejectionDate
               ? this.renderEmploymentInvitationOptions()
               : null}
             {this.state.selectedNotification && this.state.selectedNotification.sentBy ? (

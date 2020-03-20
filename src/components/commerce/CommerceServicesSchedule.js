@@ -14,8 +14,7 @@ import {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead,
-  onEmployeeSelect
+  onEmployeesRead
 } from '../../actions';
 
 class CommerceServicesSchedule extends Component {
@@ -31,8 +30,6 @@ class CommerceServicesSchedule extends Component {
     this.props.navigation.setParams({
       onConfigurationPress: this.onConfigurationPress
     });
-
-    this.props.onEmployeeSelect(this.state.selectedEmployeeId);
 
     this.props.onScheduleRead({
       commerceId: this.props.commerceId,
@@ -99,12 +96,6 @@ class CommerceServicesSchedule extends Component {
     if (!slot.available) {
       return this.props.navigation.navigate('reservationDetails', {
         reservation: this.getReservationFromSlot(slot)
-      });
-    }
-
-    if (moment() >= slot.startDate && slot.available) {
-      return Toast.show({
-        text: 'Ya no se puede reservar en este horario'
       });
     }
 
@@ -276,6 +267,5 @@ export default connect(mapStateToProps, {
   onCommerceReservationsRead,
   onNewReservation,
   onServicesRead,
-  onEmployeesRead,
-  onEmployeeSelect
+  onEmployeesRead
 })(CommerceServicesSchedule);

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { CardSection, Button, Input } from '../common';
-import { onClientDataValueChange, onUserRegister, onRegisterFormOpen } from '../../actions';
+import { CardSection, Button, Input, Picker } from '../common';
+import { onClientDataValueChange, onUserRegister, onRegisterFormOpen, onProvincesIdRead } from '../../actions';
 import { validateValueType, trimString } from '../../utils';
 
 class RegisterForm extends Component {
@@ -13,11 +13,13 @@ class RegisterForm extends Component {
     confirmPasswordError: '',
     firstNameError: '',
     lastNameError: '',
-    phoneError: ''
+    phoneError: '',
+    pickerPlaceholder: { value: '', label: 'Seleccionar...' }
   };
 
   componentDidMount() {
     this.props.onRegisterFormOpen();
+    this.props.onProvincesIdRead();
   }
 
   onButtonPressHandler = () => {
@@ -27,7 +29,8 @@ class RegisterForm extends Component {
         password: this.props.password,
         firstName: this.props.firstName,
         lastName: this.props.lastName,
-        phone: this.props.phone
+        phone: this.props.phone,
+        province: this.props.province
       });
     }
   };
@@ -118,6 +121,13 @@ class RegisterForm extends Component {
     }
   };
 
+  onProvincePickerChange = value => {
+    if (value) {
+      var { value, label } = this.props.provincesList.find(province => province.value === value);
+      this.props.onClientDataValueChange({ province: { provinceId: value, name: label } });
+    }
+  };
+
   validateMinimumData = () => {
     return (
       this.renderEmailError() &&
@@ -154,7 +164,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.password}
               errorMessage={this.state.passwordError}
-              onChangeText={password => this.props.onClientDataValueChange({ password })}
+              onChangeText={password => this.props.onClientDataValueChange({ password: password.trim() })}
               onFocus={() => this.setState({ passwordError: '' })}
               onBlur={this.renderPasswordError}
             />
@@ -167,7 +177,7 @@ class RegisterForm extends Component {
               autoCapitalize="none"
               value={this.props.confirmPassword}
               errorMessage={this.state.confirmPasswordError}
-              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword })}
+              onChangeText={confirmPassword => this.props.onClientDataValueChange({ confirmPassword: confirmPassword.trim() })}
               onFocus={() => this.setState({ confirmPasswordError: '' })}
               onBlur={this.renderConfirmPasswordError}
             />
@@ -210,6 +220,15 @@ class RegisterForm extends Component {
             />
           </CardSection>
           <CardSection>
+            <Picker
+              title="Provincia:"
+              placeholder={this.state.pickerPlaceholder}
+              items={this.props.provincesList}
+              value={this.props.province.provinceId}
+              onValueChange={value => this.onProvincePickerChange(value)}
+            />
+          </CardSection>
+          <CardSection>
             <Button title="Confirmar" loading={this.props.loading} onPress={this.onButtonPressHandler} />
           </CardSection>
         </View>
@@ -219,7 +238,8 @@ class RegisterForm extends Component {
 }
 
 const mapStateToProps = state => {
-  const { email, password, confirmPassword, firstName, lastName, phone, loading, error } = state.clientData;
+  const { email, password, confirmPassword, firstName, lastName, phone, province, loading, error } = state.clientData;
+  const { provincesList } = state.provinceData;
 
   return {
     email,
@@ -228,13 +248,16 @@ const mapStateToProps = state => {
     firstName,
     lastName,
     phone,
+    province,
     loading,
-    error
+    error,
+    provincesList
   };
 };
 
 export default connect(mapStateToProps, {
   onClientDataValueChange,
   onUserRegister,
-  onRegisterFormOpen
+  onRegisterFormOpen,
+  onProvincesIdRead
 })(RegisterForm);

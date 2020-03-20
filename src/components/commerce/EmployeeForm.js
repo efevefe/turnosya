@@ -56,7 +56,7 @@ class EmployeeForm extends Component {
           phone: '',
           email
         })
-      : this.props.onEmployeeValueChange({ email });
+      : this.props.onEmployeeValueChange({ email: email.trim() });
   };
 
   onUserDataValidate = () => {

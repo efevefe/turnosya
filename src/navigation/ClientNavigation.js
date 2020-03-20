@@ -147,7 +147,7 @@ const searchStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas del Comercio'
+        title: 'Reseñas del Negocio'
       }
     },
     filtersStack: {

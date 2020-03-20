@@ -15,7 +15,7 @@ import {
   onProvincesIdRead,
   onLocationValueChange
 } from '../../actions';
-import { CardSection, Input, Spinner, Menu, MenuItem, Picker, IconButton, Button } from '../common';
+import { CardSection, Input, Menu, MenuItem, Picker, IconButton, Button } from '../common';
 import { imageToBlob, validateValueType, trimString } from '../../utils';
 
 const imageSizeWidth = Math.round(Dimensions.get('window').width);
@@ -82,7 +82,7 @@ class CommerceProfile extends Component {
   }
 
   onRefresh = () => {
-    this.props.onCommerceRead(this.props.commerceId);
+    this.props.onCommerceRead(this.props.commerceId, 'refreshing');
   };
 
   onSavePress = async () => {
@@ -138,9 +138,9 @@ class CommerceProfile extends Component {
     const locationProps = ['address', 'city', 'latitude', 'longitude'];
     let location = {};
 
-    for (prop in stateBeforeChanges) {
+    for (const prop in stateBeforeChanges) {
       if (locationProps.includes(prop)) {
-        location = { ...location, prop: stateBeforeChanges[prop] };
+        location = { ...location, [prop]: stateBeforeChanges[prop] };
       }
     }
 
@@ -274,10 +274,8 @@ class CommerceProfile extends Component {
 
   onProvincePickerChange = value => {
     if (value) {
-      var { value, label } = this.props.provincesList.find(province => province.value == value);
-      this.props.onCommerceValueChange({
-        province: { provinceId: value, name: label }
-      });
+      var { value, label } = this.props.provincesList.find(province => province.value === value);
+      this.props.onCommerceValueChange({ province: { provinceId: value, name: label } });
       this.props.onLocationValueChange({ provinceName: label });
     }
   };
@@ -409,8 +407,6 @@ class CommerceProfile extends Component {
   };
 
   render() {
-    if (this.props.loading) return <Spinner />;
-
     return (
       <KeyboardAwareScrollView
         enableOnAndroid
@@ -425,20 +421,20 @@ class CommerceProfile extends Component {
           />
         }
       >
+        <Image
+          style={headerPictureStyle}
+          source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
+        />
         <View style={headerContainerStyle}>
-          <Image
-            style={headerPictureStyle}
-            source={this.props.headerPicture ? { uri: this.props.headerPicture } : null}
-          >
-            <Icon
-              name="md-camera"
-              color={MAIN_COLOR}
-              type="ionicon"
-              size={20}
-              reverse
-              onPress={this.onEditHeaderPicturePress}
-            />
-          </Image>
+          <Icon
+            name="md-camera"
+            color={MAIN_COLOR}
+            type="ionicon"
+            size={20}
+            containerStyle={{ alignSelf: 'flex-end' }}
+            reverse
+            onPress={this.onEditHeaderPicturePress}
+          />
           <View style={avatarContainerStyle}>
             <Avatar
               rounded
@@ -457,8 +453,6 @@ class CommerceProfile extends Component {
               onPress={this.onEditProfilePicturePress}
             />
           </View>
-        </View>
-        <View style={textContainerStyle}>
           {this.renderName()}
           {this.renderLocation()}
         </View>
@@ -522,6 +516,7 @@ class CommerceProfile extends Component {
               label="Descripción:"
               value={this.props.description}
               onChangeText={description => this.props.onCommerceValueChange({ description })}
+              onBlur={() => this.props.onCommerceValueChange({ description: trimString(this.props.description) })}
               multiline={true}
               maxLength={250}
               maxHeight={180}
@@ -560,9 +555,6 @@ class CommerceProfile extends Component {
           <CardSection>
             <Button
               title="Buscar en el Mapa"
-              titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{ borderColor: MAIN_COLOR }}
-              color="white"
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}
@@ -603,7 +595,6 @@ const {
   headerPictureStyle,
   avatarContainerStyle,
   avatarStyle,
-  textContainerStyle,
   locationContainerStyle,
   infoContainerStyle
 } = StyleSheet.create({
@@ -613,31 +604,22 @@ const {
   },
   headerContainerStyle: {
     alignSelf: 'stretch',
-    alignItems: 'center',
-    height: imageSizeHeight * 1.5,
-    marginBottom: 15
+    alignItems: 'center'
   },
   headerPictureStyle: {
     height: imageSizeHeight,
     width: imageSizeWidth,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    position: 'absolute'
   },
   avatarContainerStyle: {
-    position: 'absolute',
-    paddingTop: imageSizeHeight * 0.5,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    paddingTop: 10
   },
   avatarStyle: {
-    margin: 5,
-    marginTop: 0,
+    marginBottom: 10,
     borderWidth: 4,
     borderColor: MAIN_COLOR
-  },
-  textContainerStyle: {
-    alignSelf: 'stretch',
-    alignItems: 'center'
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
@@ -667,7 +649,6 @@ const mapStateToProps = state => {
     profilePicture,
     headerPicture,
     commerceId,
-    loading,
     refreshing,
     latitude,
     longitude
@@ -700,7 +681,6 @@ const mapStateToProps = state => {
     profilePicture,
     headerPicture,
     commerceId,
-    loading,
     refreshing,
     locationData
   };

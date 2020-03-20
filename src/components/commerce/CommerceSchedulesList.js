@@ -153,15 +153,17 @@ class CommerceSchedulesList extends Component {
     const { lastReservationDate, deleteModalVisible } = this.state;
 
     if (lastReservationDate && deleteModalVisible) {
+      const date = moment(lastReservationDate).subtract(1, 'day');
+
       return (
         <Menu
           title={
             'Tienes reservas hasta el ' +
-            DAYS[lastReservationDate.day()] +
+            DAYS[date.day()] +
             ' ' +
-            lastReservationDate.format('D') +
+            date.format('D') +
             ' de ' +
-            MONTHS[lastReservationDate.month()] +
+            MONTHS[date.month()] +
             ' ' +
             'por lo que la baja de los horarios de atención entrará en ' +
             'vigencia luego de esa fecha. Seleccione "Aceptar" para ' +

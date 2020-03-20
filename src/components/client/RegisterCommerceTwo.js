@@ -126,7 +126,7 @@ class RegisterCommerceTwo extends Component {
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
             <Input
-              label="Calle"
+              label="Dirección:"
               placeholder="San Martín 30"
               value={this.props.address}
               onChangeText={address => this.props.onLocationValueChange({ address })}
@@ -161,9 +161,6 @@ class RegisterCommerceTwo extends Component {
           <CardSection>
             <Button
               title="Buscar en el mapa"
-              titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{ borderColor: MAIN_COLOR }}
-              color="white"
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}

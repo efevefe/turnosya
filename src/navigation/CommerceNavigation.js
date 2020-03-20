@@ -103,7 +103,7 @@ const calendarScreens = {
     }
   },
   ...reservationDetailsScreens
-}
+};
 
 const sportsCalendarStack = createStackNavigator(
   {
@@ -117,7 +117,7 @@ const sportsCalendarStack = createStackNavigator(
     ...calendarScreens
   },
   stackNavigationOptions
-)
+);
 
 const hairdressersCalendarStack = createStackNavigator(
   {
@@ -131,7 +131,7 @@ const hairdressersCalendarStack = createStackNavigator(
     ...calendarScreens
   },
   stackNavigationOptions
-)
+);
 
 const reservationsStack = createStackNavigator(
   {
@@ -188,7 +188,7 @@ const profileStack = createStackNavigator(
     commerceReviewsList: {
       screen: CommerceReviewsList,
       navigationOptions: {
-        title: 'Reseñas del Comercio'
+        title: 'Reseñas del Negocio'
       }
     }
   },

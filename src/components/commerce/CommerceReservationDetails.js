@@ -77,7 +77,7 @@ class CommerceReservationDetails extends Component {
       let res = this.props.reservations.find(res => res.id === this.state.reservation.id);
 
       if (res) {
-        res = { ...res, court: this.state.reservation.court };
+        res = { ...res, court: this.state.reservation.court, service: this.state.reservation.service };
 
         if (JSON.stringify(res) !== JSON.stringify(this.state.reservation)) this.setState({ reservation: res });
       }
@@ -270,10 +270,10 @@ class CommerceReservationDetails extends Component {
         />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard title="El cliente no te ha calificado" />
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard title="El cliente no te ha calificado" />
+        </View>
+      );
   };
 
   renderClientReview = () => {
@@ -287,20 +287,20 @@ class CommerceReservationDetails extends Component {
         <ReviewCard title="Ya pasó el período de calificación" />
       </View>
     ) : (
-      <View style={{ paddingVertical: 10 }}>
-        <ReviewCard
-          title={title}
-          onFinishRating={rating => this.props.onClientReviewValueChange({ rating })}
-          rating={this.props.clientRating}
-          readOnly={this.state.isOneWeekOld}
-          onChangeText={comment => this.props.onClientReviewValueChange({ comment })}
-          commentPlaceholder="Comente sobre el cliente..."
-          commentText={this.props.clientComment}
-          fieldsVisible
-        />
-        {this.renderReviewButtons()}
-      </View>
-    );
+        <View style={{ paddingVertical: 10 }}>
+          <ReviewCard
+            title={title}
+            onFinishRating={rating => this.props.onClientReviewValueChange({ rating })}
+            rating={this.props.clientRating}
+            readOnly={this.state.isOneWeekOld}
+            onChangeText={comment => this.props.onClientReviewValueChange({ comment })}
+            commentPlaceholder="Comente sobre el cliente..."
+            commentText={this.props.clientComment}
+            fieldsVisible
+          />
+          {this.renderReviewButtons()}
+        </View>
+      );
   };
 
   renderReviewFields = () => {
@@ -382,8 +382,8 @@ class CommerceReservationDetails extends Component {
             }
           />
         ) : (
-          <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
-        )}
+            <Button title="Registrar pago en efectivo" onPress={() => this.setState({ confirmCashPayVisible: true })} />
+          )}
       </CardSection>
     );
   };

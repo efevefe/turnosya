@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { HeaderBackButton } from 'react-navigation-stack';
 import Schedule from '../Schedule';
 import { Toast } from '../common';
 import { MONTHS } from '../../constants';
@@ -11,24 +10,13 @@ import {
   onReservationValueChange,
   onClientCommerceReservationsRead,
   onCommerceCourtsReadByType,
-  onCommerceCourtTypesRead,
   isCourtDisabledOnSlot
 } from '../../actions';
 
 class ClientCourtsSchedule extends Component {
   state = { selectedDate: moment() };
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: <HeaderBackButton onPress={navigation.getParam('onBackPress')} tintColor="white" title="Back" />
-    };
-  };
-
   componentDidMount() {
-    this.props.navigation.setParams({
-      onBackPress: this.onBackPress
-    });
-
     this.props.onScheduleRead({
       commerceId: this.props.commerce.objectID,
       selectedDate: this.state.selectedDate
@@ -50,16 +38,6 @@ class ClientCourtsSchedule extends Component {
     this.unsubscribeCourtsRead && this.unsubscribeCourtsRead();
     this.unsubscribeReservationsRead && this.unsubscribeReservationsRead();
   }
-
-  onBackPress = () => {
-    // hace lo mismo que haría si se volviera a montar la pantalla anterior
-    this.props.navigation.goBack(null);
-
-    this.props.onCommerceCourtTypesRead({
-      commerceId: this.props.commerce.objectID,
-      loadingType: 'loading'
-    });
-  };
 
   onDateChanged = date => {
     const { scheduleStartDate, scheduleEndDate, scheduleId } = this.props;
@@ -209,6 +187,5 @@ export default connect(mapStateToProps, {
   onScheduleRead,
   onReservationValueChange,
   onClientCommerceReservationsRead,
-  onCommerceCourtsReadByType,
-  onCommerceCourtTypesRead
+  onCommerceCourtsReadByType
 })(ClientCourtsSchedule);

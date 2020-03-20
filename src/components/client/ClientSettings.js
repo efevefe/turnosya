@@ -42,7 +42,7 @@ class ClientSettings extends Component {
               password
               value={this.props.password}
               color="black"
-              onChangeText={password => this.props.onLoginValueChange({ password })}
+              onChangeText={password => this.props.onLoginValueChange({ password: password.trim() })}
               errorMessage={this.props.reauthError}
               onFocus={() => this.props.onLoginValueChange({ error: '' })}
             />

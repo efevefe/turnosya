@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Input, Button, CardSection } from '../common';
 import ServiceReservationDetails from '../ServiceReservationDetails';
 import { onReservationValueChange, onCommerceServiceReservationCreate } from '../../actions';
-import { validateValueType, newReservationNotificationFormat } from '../../utils';
+import { validateValueType, newReservationNotificationFormat, trimString } from '../../utils';
 
 class CommerceCourtReservationRegister extends Component {
   state = { nameError: '', phoneError: '' };
@@ -57,7 +57,9 @@ class CommerceCourtReservationRegister extends Component {
   };
 
   nameError = () => {
-    const { clientName } = this.props;
+    const clientName = trimString(this.props.clientName);
+
+    this.props.onReservationValueChange({ clientName });
 
     if (!clientName) {
       this.setState({ nameError: 'Dato requerido' });

@@ -11,6 +11,7 @@ export const onCommerceReviewsRead = commerceId => dispatch => {
   db.collection(`Commerces/${commerceId}/Reviews`)
     .where('softDelete', '==', null)
     .orderBy('date', 'desc')
+    .limit(50)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(doc => reviews.push({ ...doc.data(), id: doc.id }));

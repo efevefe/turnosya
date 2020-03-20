@@ -1,4 +1,5 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { ON_LOGOUT_FINISHED } from '../actions/types';
 import ReduxThunk from 'redux-thunk';
 import ServiceFormReducer from './ServiceFormReducer';
 import ServicesListReducer from './ServicesListReducer';
@@ -25,6 +26,7 @@ import RoleDataReducer from './RoleDataReducer';
 import CommerceReportsReducer from './CommerceReportsReducer';
 import NotificationsListReducer from './NotificationsListReducer';
 import PaymentDataReducer from './PaymentDataReducer';
+import ManualsReducer from './ManualsReducer';
 
 const reducers = combineReducers({
   auth: AuthReducer,
@@ -51,7 +53,15 @@ const reducers = combineReducers({
   roleData: RoleDataReducer,
   commerceReports: CommerceReportsReducer,
   notificationsList: NotificationsListReducer,
-  paymentData: PaymentDataReducer
+  paymentData: PaymentDataReducer,
+  manuals: ManualsReducer
 });
 
-export default createStore(reducers, {}, applyMiddleware(ReduxThunk));
+const rootReducer = (state, action) => {
+  if (action.type === ON_LOGOUT_FINISHED) {
+    state = undefined;
+  }
+
+  return reducers(state, action);
+};
+export default createStore(rootReducer, {}, applyMiddleware(ReduxThunk));

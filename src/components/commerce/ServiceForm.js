@@ -66,7 +66,7 @@ class ServiceForm extends Component {
   };
 
   renderDurationError = () => {
-    if (this.props.duration) {
+    if (!this.props.duration) {
       this.setState({ durationError: 'Dato requerido' });
       return false;
     } else if (!validateValueType('int', this.props.duration)) {
@@ -148,6 +148,7 @@ class ServiceForm extends Component {
                 maxLength={250}
                 maxHeight={180}
                 onChangeText={description => this.props.onServiceValueChange({ description })}
+                onBlur={() => this.props.onServiceValueChange({ description: trimString(this.props.description) })}
                 value={this.props.description}
               />
             </CardSection>

@@ -22,3 +22,4 @@ export * from './RoleDataActions';
 export * from './CommerceReportsActions';
 export * from './NotificationsListActions';
 export * from './PaymentDataActions';
+export * from './ManualsActions';

@@ -9,7 +9,7 @@ import {
 } from '../actions/types';
 import { Toast } from '../components/common';
 
-INITIAL_STATE = {
+const INITIAL_STATE = {
   reservations: [],
   detailedReservations: [],
   nextReservations: [],

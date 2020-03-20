@@ -4,9 +4,11 @@ import { View, StyleSheet, Image, Dimensions, StatusBar } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { CardSection, Button, Input, Menu, MenuItem, Toast } from './common';
+import Constants from 'expo-constants';
+import { CardSection, Button, Input, Menu, MenuItem, Toast, IconButton } from './common';
 import { validateValueType } from '../utils';
 import { onLogin, onLoginValueChange, onFacebookLogin, onGoogleLogin, onSendPasswordResetEmail } from '../actions';
+import { MAIN_COLOR } from '../constants';
 
 const iconSize = Math.round(Dimensions.get('window').height) * 0.22;
 
@@ -107,99 +109,107 @@ class LoginForm extends Component {
     const { containerStyle, logoContainerStyle, loginContainerStyle, createAccountContainerStyle } = styles;
 
     return (
-      <View style={containerStyle}>
-        <StatusBar barStyle="dark-content" />
-        <View style={logoContainerStyle}>
-          <Image source={require('../../assets/turnosya-red.png')} style={{ height: iconSize, width: iconSize }} />
-        </View>
-        <View style={loginContainerStyle}>
-          <CardSection>
-            <Input
-              placeholder="E-Mail"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={this.props.email}
-              errorMessage={this.state.emailError}
-              onChangeText={email => this.props.onLoginValueChange({ email })}
-              onFocus={() => this.setState({ emailError: '' })}
-              onBlur={this.renderEmailError}
-            />
-          </CardSection>
+      <View style={{ flex: 1 }}>
+        <View style={containerStyle}>
+          <StatusBar barStyle="dark-content" />
+          <View style={logoContainerStyle}>
+            <Image source={require('../../assets/turnosya-red.png')} style={{ height: iconSize, width: iconSize }} />
+          </View>
+          <View style={loginContainerStyle}>
+            <CardSection>
+              <Input
+                placeholder="E-Mail"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={this.props.email}
+                errorMessage={this.state.emailError}
+                onChangeText={email => this.props.onLoginValueChange({ email: email.trim() })}
+                onFocus={() => this.setState({ emailError: '' })}
+                onBlur={this.renderEmailError}
+              />
+            </CardSection>
 
-          <CardSection>
-            <Input
-              placeholder="Contraseña"
-              password
-              autoCapitalize="none"
-              returnKeyType="done"
-              onSubmitEditing={this.onButonPressHandler.bind(this)}
-              value={this.props.password}
-              errorMessage={this.state.passwordError || this.props.error}
-              onChangeText={password => this.props.onLoginValueChange({ password })}
-              onFocus={() => this.setState({ passwordError: '' })}
-              onBlur={this.renderPasswordError}
-            />
-          </CardSection>
+            <CardSection>
+              <Input
+                placeholder="Contraseña"
+                password
+                autoCapitalize="none"
+                returnKeyType="done"
+                onSubmitEditing={this.onButonPressHandler.bind(this)}
+                value={this.props.password}
+                errorMessage={this.state.passwordError || this.props.error}
+                onChangeText={password => this.props.onLoginValueChange({ password: password.trim() })}
+                onFocus={() => this.setState({ passwordError: '' })}
+                onBlur={this.renderPasswordError}
+              />
+            </CardSection>
 
-          <CardSection>
+            <CardSection>
+              <Button
+                title="Iniciar Sesión"
+                loading={this.props.loadingLogin}
+                onPress={this.onButonPressHandler.bind(this)}
+              />
+            </CardSection>
+
             <Button
-              title="Iniciar Sesión"
-              loading={this.props.loadingLogin}
-              onPress={this.onButonPressHandler.bind(this)}
+              title="Olvidé mi contraseña"
+              type="clear"
+              color="white"
+              titleStyle={styles.resetPasswordTitleStyle}
+              buttonStyle={styles.resetPasswordButtonStyle}
+              onPress={() => this.setState({ resetPasswordModal: true })}
             />
-          </CardSection>
 
-          <Button
-            title="Olvidé mi contraseña"
-            type="clear"
-            color="white"
-            titleStyle={styles.resetPasswordTitleStyle}
-            buttonStyle={styles.resetPasswordButtonStyle}
-            onPress={() => this.setState({ resetPasswordModal: true })}
-          />
+            <Divider
+              style={{
+                backgroundColor: 'grey',
+                margin: 10,
+                marginTop: 12,
+                marginBottom: 12
+              }}
+            />
 
-          <Divider
-            style={{
-              backgroundColor: 'grey',
-              margin: 10,
-              marginTop: 12,
-              marginBottom: 12
-            }}
-          />
+            <CardSection>
+              <Button
+                title="Conectar con Google"
+                color="#de5145"
+                loading={this.props.loadingGoogle}
+                buttonStyle={styles.buttonStyle}
+                onPress={() => this.props.onGoogleLogin()}
+                icon={<Icon name="google" size={20} color="white" style={{ marginRight: 10 }} />}
+              />
+            </CardSection>
 
-          <CardSection>
+            <CardSection>
+              <Button
+                title="Conectar con Facebook"
+                color="#4267b2"
+                loading={this.props.loadingFacebook}
+                buttonStyle={styles.buttonStyle}
+                onPress={() => this.props.onFacebookLogin()}
+                icon={<Icon name="facebook-square" size={20} color="white" style={{ marginRight: 10 }} />}
+              />
+            </CardSection>
+          </View>
+          <View style={createAccountContainerStyle}>
             <Button
-              title="Conectar con Google"
-              color="#de5145"
-              loading={this.props.loadingGoogle}
+              title="Crear Cuenta"
+              type="clear"
+              color="white"
               buttonStyle={styles.buttonStyle}
-              onPress={() => this.props.onGoogleLogin()}
-              icon={<Icon name="google" size={20} color="white" style={{ marginRight: 10 }} />}
+              onPress={this.onCreateAcount.bind(this)}
             />
-          </CardSection>
-
-          <CardSection>
-            <Button
-              title="Conectar con Facebook"
-              color="#4267b2"
-              loading={this.props.loadingFacebook}
-              buttonStyle={styles.buttonStyle}
-              onPress={() => this.props.onFacebookLogin()}
-              icon={<Icon name="facebook-square" size={20} color="white" style={{ marginRight: 10 }} />}
-            />
-          </CardSection>
+          </View>
+          {this.renderResetUserPasswordModal()}
         </View>
-        <View style={createAccountContainerStyle}>
-          <Button
-            title="Crear Cuenta"
-            type="clear"
-            color="white"
-            buttonStyle={styles.buttonStyle}
-            onPress={this.onCreateAcount.bind(this)}
+        <View style={styles.helpButtonContainer}>
+          <IconButton
+            icon='md-help-circle-outline'
+            color={MAIN_COLOR}
+            onPress={() => this.props.navigation.navigate('guestHelp')}
           />
         </View>
-
-        {this.renderResetUserPasswordModal()}
       </View>
     );
   }
@@ -241,6 +251,12 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingLeft: 10,
     paddingRight: 10
+  },
+  helpButtonContainer: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    marginTop: Constants.statusBarHeight + 10,
+    paddingRight: 5
   }
 });
 

@@ -247,7 +247,7 @@ export const onCommerceReservationCancel = ({
   };
 };
 
-export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId }) => dispatch => {
+export const onNextReservationsRead = ({ commerceId, startDate, endDate, employeeId, courtId }) => dispatch => {
   dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
 
   const db = firebase.firestore();
@@ -255,52 +255,13 @@ export const onNextReservationsRead = ({ commerceId, startDate, endDate, employe
   let query = db
     .collection(`Commerces/${commerceId}/Reservations`)
     .where('cancellationDate', '==', null)
-    .where('startDate', '>=', startDate.toDate());
+    .where('endDate', '>', startDate.toDate());
 
   if (employeeId) query = query.where('employeeId', '==', employeeId);
 
+  if (courtId) query = query.where('courtId', '==', courtId);
+
   query
-    .orderBy('startDate')
-    .get()
-    .then(snapshot => {
-
-      const nextReservations = [];
-
-      if (snapshot.empty) {
-        return dispatch({
-          type: ON_COMMERCE_RESERVATIONS_READ,
-          payload: { nextReservations }
-        });
-      }
-
-      snapshot.forEach(doc => {
-        if (!endDate || (endDate && endDate >= moment(doc.data().startDate.toDate())))
-          nextReservations.push({
-            id: doc.id,
-            paymentId: doc.data().paymentId,
-            clientId: doc.data().clientId,
-            startDate: moment(doc.data().startDate.toDate()),
-            endDate: moment(doc.data().endDate.toDate())
-          });
-      });
-
-      dispatch({
-        type: ON_COMMERCE_RESERVATIONS_READ,
-        payload: { nextReservations }
-      });
-    })
-    .catch(error => dispatch({ type: ON_COMMERCE_RESERVATIONS_READ_FAIL, payload: error }));
-};
-
-export const onCourtNextReservationsRead = ({ commerceId, courtId, startDate, endDate }) => dispatch => {
-  dispatch({ type: ON_COMMERCE_RESERVATIONS_READING });
-
-  const db = firebase.firestore();
-
-  db.collection(`Commerces/${commerceId}/Reservations`)
-    .where('courtId', '==', courtId)
-    .where('cancellationDate', '==', null)
-    .where('endDate', '>', startDate.toDate())
     .orderBy('endDate')
     .get()
     .then(snapshot => {

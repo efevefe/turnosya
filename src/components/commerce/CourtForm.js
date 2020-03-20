@@ -9,7 +9,7 @@ import {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 } from '../../actions';
 import { CardSection, Input, Picker, Button, DatePicker, Toast, Menu, MenuItem } from '../common';
 import { validateValueType, trimString, cancelReservationNotificationFormat } from '../../utils';
@@ -124,7 +124,7 @@ class CourtForm extends PureComponent {
     const name = trimString(this.props.name);
 
     this.props.onCourtValueChange({ name });
-    
+
     if (!name) {
       this.setState({ nameError: 'Dato requerido' });
       return false;
@@ -364,7 +364,7 @@ class CourtForm extends PureComponent {
 
     if (this.validateMinimumData()) {
       if (this.props.disabled && this.props.id) {
-        this.props.onCourtNextReservationsRead({
+        this.props.onNextReservationsRead({
           commerceId: this.props.commerceId,
           courtId: this.props.id,
           startDate: this.props.disabledFrom,
@@ -479,7 +479,7 @@ class CourtForm extends PureComponent {
               maxLength={250}
               maxHeight={180}
               onChangeText={description => this.props.onCourtValueChange({ description: description })}
-              onBlur={() => this.props.onCourtValueChange({ description: this.props.description.trim() })}
+              onBlur={() => this.props.onCourtValueChange({ description: trimString(this.props.description) })}
               value={this.props.description}
             />
           </CardSection>
@@ -649,5 +649,5 @@ export default connect(mapStateToProps, {
   onCourtAndGroundTypesRead,
   onCourtCreate,
   onCourtUpdate,
-  onCourtNextReservationsRead
+  onNextReservationsRead
 })(CourtForm);

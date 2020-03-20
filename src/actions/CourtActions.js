@@ -131,8 +131,6 @@ export const onCourtsRead = commerceId => dispatch => {
     db
       .collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
-      // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
-      .orderBy('courtState', 'desc') // después se borra este campo
       .orderBy('court', 'asc')
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
@@ -227,7 +225,7 @@ export const onCourtUpdate = (courtData, navigation) => async dispatch => {
   }
 };
 
-export const onCommerceCourtTypesRead = ({ commerceId, loadingType }) => {
+export const onCommerceCourtTypesRead = (commerceId, loadingType = 'loading') => {
   const db = firebase.firestore();
 
   return dispatch => {
@@ -277,7 +275,6 @@ export const onCommerceCourtsReadByType = ({ commerceId, courtType }) => dispatc
       .collection(`Commerces/${commerceId}/Courts`)
       .where('softDelete', '==', null)
       .where('court', '==', courtType)
-      // .orderBy('disabledFrom', 'asc') // necesita que todos los courts tengan ese campo disabledFrom
       .orderBy('name', 'asc')
       .onSnapshot(snapshot => {
         const courts = [];
