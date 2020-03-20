@@ -18,7 +18,7 @@ class Button extends Component {
           buttonStyle={[styles.buttonStyle, { backgroundColor, ...border }, this.props.buttonStyle]}
           containerStyle={[styles.containerStyle, this.props.containerStyle]}
           titleStyle={[{ color }, this.props.titleStyle]}
-          loadingProps={[{ color }, this.props.loadingProps]}
+          loadingProps={{ color }}
         />
       </View>
     );
