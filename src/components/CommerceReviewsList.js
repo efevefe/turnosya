@@ -43,19 +43,20 @@ class CommerceReviewsList extends Component {
   };
 
   render() {
-    return this.props.loading ? (
-      <Spinner />
-    ) : this.props.commerceReviews && this.props.commerceReviews.length ? (
-      <FlatList
-        data={this.props.commerceReviews}
-        renderItem={this.renderItem}
-        keyExtractor={review => review.id}
-        ListFooterComponent={this.renderFooter()}
-        refreshing={this.props.refreshing}
-      />
-    ) : (
-          <EmptyList title="Parece que no hay reseñas" />
-        );
+    if (this.props.loading) return <Spinner />;
+
+    if (this.props.commerceReviews && this.props.commerceReviews.length)
+      return (
+        <FlatList
+          data={this.props.commerceReviews}
+          renderItem={this.renderItem}
+          keyExtractor={review => review.id}
+          ListFooterComponent={this.renderFooter()}
+          refreshing={this.props.refreshing}
+        />
+      )
+
+    return <EmptyList title="Parece que no hay reseñas" />
   }
 }
 

@@ -1,7 +1,7 @@
 import { ON_COMMERCE_REVIEWS_READING, ON_COMMERCE_REVIEWS_READ, ON_COMMERCE_REVIEWS_READ_FAIL } from '../actions/types';
 import { Toast } from '../components/common';
 
-const INITIAL_STATE = { commerceReviews: [], loading: true, refreshing: false, moreData: true };
+const INITIAL_STATE = { commerceReviews: [], loading: false, refreshing: false, moreData: true };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -12,7 +12,7 @@ export default (state = INITIAL_STATE, action) => {
       let { reviews, firstRead } = action.payload;
       const commerceReviews = firstRead ? reviews : [...state.commerceReviews, ...reviews];
 
-      return { ...state, commerceReviews, loading: false, refreshing: false, moreData: !!reviews.length };
+      return { ...state, commerceReviews, loading: false, refreshing: false, moreData: !!(reviews.length < 12) };
 
     case ON_COMMERCE_REVIEWS_READ_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
