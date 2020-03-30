@@ -31,28 +31,38 @@ export const onCashPaymentCreate = (reservation, receiptNumber, navigation) => d
   const batch = db.batch();
   const { commerceId, clientId, id: reservationId } = reservation;
 
-  const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
-  batch.set(paymentRef, {
-    clientId,
-    reservationId,
-    receiptNumber,
-    date: new Date(),
-    method: 'Efectivo'
-  });
+  db.doc('ReservationStates/paid')
+    .get()
+    .then(state => {
+      const stateObject = { id: state.id, name: state.data().name };
 
-  const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
-  batch.update(commerceReservationRef, { paymentId: paymentRef.id });
+      const paymentRef = db.collection(`Commerces/${commerceId}/Payments`).doc();
+      batch.set(paymentRef, {
+        clientId,
+        reservationId,
+        receiptNumber,
+        date: new Date(),
+        method: 'Efectivo'
+      });
 
-  if (clientId) {
-    const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
-    batch.update(clientReservationRef, { paymentId: paymentRef.id });
-  }
+      const commerceReservationRef = db.collection(`Commerces/${commerceId}/Reservations`).doc(reservationId);
+      batch.update(commerceReservationRef, { paymentId: paymentRef.id, state: stateObject });
 
-  batch
-    .commit()
-    .then(() => {
-      dispatch({ type: ON_CASH_PAYMENT_REGISTERED });
-      navigation.goBack();
+      if (clientId) {
+        const clientReservationRef = db.collection(`Profiles/${clientId}/Reservations`).doc(reservationId);
+        batch.update(clientReservationRef, { paymentId: paymentRef.id, state: stateObject });
+      }
+
+      batch
+        .commit()
+        .then(() => {
+          dispatch({ type: ON_CASH_PAYMENT_REGISTERED });
+          navigation.goBack();
+        })
+        .catch(() => {
+          dispatch({ type: ON_CASH_PAYMENT_REGISTER_FAIL });
+          navigation.goBack();
+        });
     })
     .catch(() => {
       dispatch({ type: ON_CASH_PAYMENT_REGISTER_FAIL });

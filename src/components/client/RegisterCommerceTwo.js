@@ -161,9 +161,6 @@ class RegisterCommerceTwo extends Component {
           <CardSection>
             <Button
               title="Buscar en el mapa"
-              titleStyle={{ color: MAIN_COLOR }}
-              buttonStyle={{ borderColor: MAIN_COLOR }}
-              color="white"
               type="outline"
               iconRight={true}
               onPress={() => this.onMapPress()}

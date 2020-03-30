@@ -126,7 +126,7 @@ class RegisterCommerce extends Component {
         <View style={{ padding: 15, alignSelf: 'stretch' }}>
           <CardSection>
             <Input
-              label="Razón Social"
+              label="Razón Social:"
               placeholder="Razón Social"
               autoCapitalize="words"
               value={this.props.name}
@@ -139,8 +139,8 @@ class RegisterCommerce extends Component {
 
           <CardSection>
             <Input
-              label="Cuit"
-              placeholder="Cuit"
+              label="CUIT/CUIL:"
+              placeholder="CUIT/CUIL"
               keyboardType="numeric"
               errorMessage={this.state.cuitError}
               value={this.props.cuit}
@@ -152,7 +152,7 @@ class RegisterCommerce extends Component {
 
           <CardSection>
             <Input
-              label="Teléfono"
+              label="Teléfono:"
               placeholder="Teléfono"
               keyboardType="phone-pad"
               value={this.props.phone}
@@ -165,7 +165,7 @@ class RegisterCommerce extends Component {
 
           <CardSection>
             <Input
-              label="E-mail"
+              label="E-mail:"
               placeholder="E-mail"
               value={this.props.email}
               autoCapitalize="none"
@@ -190,7 +190,7 @@ class RegisterCommerce extends Component {
 
           <CardSection>
             <Input
-              label="Descripción"
+              label="Descripción:"
               placeholder="Descripción"
               value={this.props.description}
               multiline={true}
