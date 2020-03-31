@@ -9,16 +9,10 @@ import moment from 'moment';
 import { isOneWeekOld } from '../../utils/functions';
 
 class ClientReservationsList extends Component {
-  state = { selectedIndex: 1, filteredList: [] };
+  state = { selectedIndex: 1 };
 
   componentDidMount() {
     this.onReservationsRead();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
-      this.updateIndex(this.state.selectedIndex);
-    }
   }
 
   componentWillUnmount() {
@@ -30,19 +24,19 @@ class ClientReservationsList extends Component {
     this.unsubscribeReservationsRead = this.props.onClientReservationsListRead();
   };
 
-  updateIndex = selectedIndex => {
-    const { reservations } = this.props;
-    let filteredList = [];
+  filterLists = () => {
+    const pastList = [];
+    const nextList = [];
 
-    if (selectedIndex == 0) {
-      // turnos pasados
-      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
-    } else {
-      // turnos proximos
-      filteredList = reservations.filter(res => res.startDate > moment());
-    }
+    this.props.reservations.forEach(res => {
+      if (res.endDate < moment()) {
+        pastList.push(res);
+      } else {
+        nextList.push(res);
+      }
+    })
 
-    this.setState({ filteredList, selectedIndex });
+    return [pastList.reverse(), nextList];
   };
 
   onRefresh = () => {
@@ -86,27 +80,13 @@ class ClientReservationsList extends Component {
     );
   };
 
-  renderList() {
-    const { filteredList } = this.state;
-
-    if (filteredList.length)
-      return (
-        <FlatList
-          data={filteredList}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={reservation => reservation.id}
-          refreshControl={this.onRefresh()}
-        />
-      );
-
-    return <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />;
-  }
-
   render() {
+    const filteredLists = this.filterLists();
+
     return (
       <View style={{ flex: 1 }}>
         <ButtonGroup
-          onPress={this.updateIndex}
+          onPress={selectedIndex => this.setState({ selectedIndex })}
           selectedIndex={this.state.selectedIndex}
           buttons={['PASADOS', 'PRÓXIMOS']}
           containerBorderRadius={0}
@@ -118,7 +98,17 @@ class ClientReservationsList extends Component {
           innerBorderStyle={{ width: 0 }}
         />
 
-        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
+        {
+          this.props.loading ? <Spinner style={{ position: 'relative' }} />
+            : filteredLists[this.state.selectedIndex].length ?
+              <FlatList
+                data={filteredLists[this.state.selectedIndex]}
+                renderItem={this.renderRow.bind(this)}
+                keyExtractor={reservation => reservation.id}
+                refreshControl={this.onRefresh()}
+              />
+              : <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />
+        }
       </View>
     );
   }
@@ -126,7 +116,7 @@ class ClientReservationsList extends Component {
 
 const styles = StyleSheet.create({
   buttonGroupStyle: {
-    height: 40,
+    height: 45,
     borderRadius: 0,
     borderWidth: 0,
     borderBottomWidth: 0.5,

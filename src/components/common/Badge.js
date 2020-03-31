@@ -5,9 +5,8 @@ import { Badge as RNEBadge } from 'react-native-elements';
 const Badge = props => {
   return (
     <RNEBadge
-      value={props.value}
-      onPress={props.onPress}
-      badgeStyle={{ ...styles.badgeStyle, backgroundColor: props.color }}
+      {...props}
+      badgeStyle={[{ ...styles.badgeStyle, backgroundColor: props.color }, props.badgeStyle]}
       containerStyle={[styles.containerStyle, props.containerStyle]}
     />
   )
