@@ -36,6 +36,7 @@ class CommerceProfileView extends Component {
   componentDidUpdate() {
     if (this.props.navigation.state.routeName === 'commerceProfileView') {
       if (
+        this.props.commerce &&
         this.props.commerceId &&
         !this.props.loadingProfile &&
         this.props.commerce.objectID !== this.props.commerceId

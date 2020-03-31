@@ -261,7 +261,8 @@ export const onReservedAndCancelledReservationsReadByRange = (
 
   query.get().then(snapshot => {
     snapshot.forEach(doc => {
-      const state = (doc.data().state && doc.data().state.id === 'cancelled') ? 1 : 0;
+      let { state } = doc.data();
+      state = (state && (state.id === 'canceled' || state.id === 'cancelled')) ? 1 : 0;
       counts[state]++;
 
       // TODO: el día de mañana, esto se debería hacer:
