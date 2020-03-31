@@ -12,7 +12,7 @@ export default (state = INITIAL_STATE, action) => {
       let { reviews, firstRead } = action.payload;
       const commerceReviews = firstRead ? reviews : [...state.commerceReviews, ...reviews];
 
-      return { ...state, commerceReviews, loading: false, refreshing: false, moreData: !!(reviews.length < 12) };
+      return { ...state, commerceReviews, loading: false, refreshing: false, moreData: !!(reviews.length === 12) };
 
     case ON_COMMERCE_REVIEWS_READ_FAIL:
       Toast.show({ text: 'Se ha producido un error, inténtelo de nuevo.' });
