@@ -50,7 +50,7 @@ class CommerceReservationsList extends Component {
 
     this.props.reservations.forEach(res => {
       if (res.endDate < moment()) {
-        pastList.push(res);
+        pastList.unshift(res);
       } else if (res.startDate <= moment() && res.endDate >= moment()) {
         currentList.push(res);
       } else {
@@ -58,7 +58,7 @@ class CommerceReservationsList extends Component {
       }
     });
 
-    return [pastList.reverse(), currentList, nextList];
+    return [pastList, currentList, nextList];
   }
 
   onEmployeesFilterValueChange = selectedEmployeeId => {
@@ -122,7 +122,7 @@ class CommerceReservationsList extends Component {
     return (
       <View style={{
         flexDirection: 'row',
-        alignSelf: 'center'
+        alignItems: 'center'
       }}
       >
         <Text style={{

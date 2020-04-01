@@ -30,13 +30,13 @@ class ClientReservationsList extends Component {
 
     this.props.reservations.forEach(res => {
       if (res.endDate < moment()) {
-        pastList.push(res);
+        pastList.unshift(res);
       } else {
         nextList.push(res);
       }
     })
 
-    return [pastList.reverse(), nextList];
+    return [pastList, nextList];
   };
 
   onRefresh = () => {
