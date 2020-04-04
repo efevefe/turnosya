@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: 15,
     color: color,
-    paddingLeft: 18
+    paddingLeft: 10,
+    paddingRight: 18
   }
 });
 

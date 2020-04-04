@@ -20,11 +20,9 @@ class CourtReservationDetails extends Component {
   renderInfo = () => {
     if (this.props.info) {
       return (
-        <CardSection
-          style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}
-        >
+        <CardSection style={{ paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }}>
           {this.props.infoIcon && (
-            <Ionicons name={this.props.infoIcon} size={14} color="black" style={{ marginRight: 5 }} />
+            <Ionicons name={this.props.infoIcon} size={14} color="black" style={{ marginRight: 5, marginLeft: 5 }} />
           )}
           <Text style={styles.infoText}>{this.props.info}</Text>
         </CardSection>
@@ -62,7 +60,7 @@ class CourtReservationDetails extends Component {
         <View style={styles.contentContainer}>
           {this.renderName()}
           {this.renderInfo()}
-          <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
+          <CardSection style={{ paddingTop: 8, paddingBottom: 0 }}>
             <Text style={styles.mediumText}>{court.name}</Text>
           </CardSection>
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
@@ -76,7 +74,7 @@ class CourtReservationDetails extends Component {
             <Text style={styles.regularText}>
               {`${DAYS[moment(startDate).day()]} ${moment(startDate).format('D')} de ${
                 MONTHS[moment(startDate).month()]
-                }`}
+              }`}
             </Text>
           </CardSection>
           <CardSection style={styles.cardSections}>
@@ -112,10 +110,12 @@ const styles = StyleSheet.create({
   },
   bigText: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
   mediumText: {
-    fontSize: 17
+    fontSize: 17,
+    textAlign: 'center'
   },
   regularText: {
     fontSize: 14

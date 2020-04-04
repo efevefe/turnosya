@@ -183,7 +183,9 @@ class CommerceProfileView extends Component {
               />
             </View>
 
-            <Text h4>{name}</Text>
+            <Text h4 style={{ textAlign: 'center' }}>
+              {name}
+            </Text>
 
             <TouchableOpacity
               onPress={() =>
