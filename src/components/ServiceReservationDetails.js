@@ -35,7 +35,7 @@ class ServiceReservationDetails extends Component {
 
     if (employee) {
       return (
-        <CardSection style={{ padding: 30, paddingTop: 5, paddingBottom: 0 }}>
+        <CardSection style={{ padding: 15, paddingTop: 5, paddingBottom: 5 }}>
           <Text style={styles.regularText}>{`Con ${employee.firstName} ${employee.lastName}`}</Text>
         </CardSection>
       );
