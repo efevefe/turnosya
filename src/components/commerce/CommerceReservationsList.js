@@ -12,7 +12,6 @@ class CommerceReservationsList extends Component {
   state = {
     selectedDate: moment(),
     selectedIndex: 1,
-    filteredList: [],
     selectedReservation: {},
     detailsVisible: false,
     selectedEmployeeId: this.props.selectedEmployeeId
@@ -24,12 +23,6 @@ class CommerceReservationsList extends Component {
     this.willFocusSubscription = this.props.navigation.addListener('willFocus', () =>
       this.onEmployeesFilterValueChange(this.props.selectedEmployeeId)
     );
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.reservations !== this.props.reservations) {
-      this.updateIndex(this.state.selectedIndex);
-    }
   }
 
   componentWillUnmount() {
@@ -50,23 +43,23 @@ class CommerceReservationsList extends Component {
     this.setState({ selectedDate });
   };
 
-  updateIndex = selectedIndex => {
-    const { reservations } = this.props;
-    let filteredList = [];
+  filterLists = () => {
+    const pastList = [];
+    const currentList = [];
+    const nextList = [];
 
-    if (selectedIndex == 0) {
-      // turnos pasados
-      filteredList = reservations.filter(res => res.endDate < moment()).reverse();
-    } else if (selectedIndex == 1) {
-      // turnos en curso
-      filteredList = reservations.filter(res => res.startDate <= moment() && res.endDate >= moment());
-    } else {
-      // turnos próximos
-      filteredList = reservations.filter(res => res.startDate > moment());
-    }
+    this.props.reservations.forEach(res => {
+      if (res.endDate < moment()) {
+        pastList.unshift(res);
+      } else if (res.startDate <= moment() && res.endDate >= moment()) {
+        currentList.push(res);
+      } else {
+        nextList.push(res);
+      }
+    });
 
-    this.setState({ filteredList, selectedIndex });
-  };
+    return [pastList, currentList, nextList];
+  }
 
   onEmployeesFilterValueChange = selectedEmployeeId => {
     if (selectedEmployeeId && selectedEmployeeId !== this.state.selectedEmployeeId) {
@@ -123,23 +116,44 @@ class CommerceReservationsList extends Component {
     );
   };
 
-  renderList = () => {
-    const { filteredList } = this.state;
+  getButton = ({ title, listLength, listIndex }) => {
+    const isSelected = listIndex === this.state.selectedIndex;
 
-    if (filteredList.length) {
-      return (
-        <FlatList
-          data={filteredList}
-          renderItem={this.renderItem.bind(this)}
-          keyExtractor={reservation => reservation.id}
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center'
+      }}
+      >
+        <Text style={{
+          color: isSelected ? MAIN_COLOR : 'white',
+          paddingRight: 6,
+          fontSize: 12,
+          textAlignVertical: 'center'
+        }}
+        >
+          {title}
+        </Text>
+        <Badge
+          value={listLength}
+          color={isSelected ? MAIN_COLOR : 'white'}
+          textStyle={{ color: isSelected ? 'white' : MAIN_COLOR, fontSize: 12 }}
+          containerStyle={{ paddingTop: 0 }}
+          badgeStyle={{ paddingLeft: 3, paddingRight: 3, height: 21, borderRadius: 10.5 }}
         />
-      );
-    }
-
-    return <EmptyList title="No hay turnos" />;
-  };
+      </View>
+    )
+  }
 
   render() {
+    const filteredLists = this.filterLists();
+
+    const buttons = [
+      { element: () => this.getButton({ title: 'PASADOS', listLength: filteredLists[0].length, listIndex: 0 }) },
+      { element: () => this.getButton({ title: 'EN CURSO', listLength: filteredLists[1].length, listIndex: 1 }) },
+      { element: () => this.getButton({ title: 'PRÓXIMOS', listLength: filteredLists[2].length, listIndex: 2 }) }
+    ];
+
     return (
       <View style={{ alignSelf: 'stretch', flex: 1 }}>
         <AreaComponentRenderer
@@ -153,9 +167,9 @@ class CommerceReservationsList extends Component {
         <Calendar onDateSelected={date => this.onDateSelected(date)} startingDate={this.state.selectedDate} />
 
         <ButtonGroup
-          onPress={this.updateIndex}
+          onPress={selectedIndex => this.setState({ selectedIndex })}
           selectedIndex={this.state.selectedIndex}
-          buttons={['PASADOS', 'EN CURSO', 'PRÓXIMOS']}
+          buttons={buttons}
           containerBorderRadius={0}
           containerStyle={styles.buttonGroupContainerStyle}
           selectedButtonStyle={styles.buttonGroupSelectedButtonStyle}
@@ -164,7 +178,17 @@ class CommerceReservationsList extends Component {
           selectedTextStyle={styles.buttonGroupSelectedTextStyle}
           innerBorderStyle={styles.buttonGroupInnerBorderStyle}
         />
-        {this.props.loading ? <Spinner style={{ position: 'relative' }} /> : this.renderList()}
+
+        {
+          this.props.loading ? <Spinner style={{ position: 'relative' }} />
+            : filteredLists[this.state.selectedIndex].length ?
+              <FlatList
+                data={filteredLists[this.state.selectedIndex]}
+                renderItem={this.renderItem.bind(this)}
+                keyExtractor={reservation => reservation.id}
+              />
+              : <EmptyList title="No hay turnos" />
+        }
       </View>
     );
   }
@@ -172,7 +196,7 @@ class CommerceReservationsList extends Component {
 
 const styles = StyleSheet.create({
   buttonGroupContainerStyle: {
-    height: 40,
+    height: 45,
     borderRadius: 0,
     borderWidth: 0,
     borderBottomWidth: 0.5,
