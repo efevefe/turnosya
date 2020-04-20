@@ -32,8 +32,6 @@ class Welcome extends Component {
           <CardSection>
             <Button
               title="Volver"
-              type="clear"
-              titleStyle={{ color: 'white' }}
               icon={<Ionicons name="ios-arrow-back" size={30} color="white" style={{ marginRight: 10 }} />}
               onPress={() => this.props.navigation.goBack(null)}
             />
