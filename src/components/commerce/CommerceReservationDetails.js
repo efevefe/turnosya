@@ -77,7 +77,7 @@ class CommerceReservationDetails extends Component {
       let res = this.props.reservations.find(res => res.id === this.state.reservation.id);
 
       if (res) {
-        res = { ...res, court: this.state.reservation.court, service: this.state.reservation.service };
+        res = { ...res, commerceId: this.props.commerceId, court: this.state.reservation.court, service: this.state.reservation.service };
 
         if (JSON.stringify(res) !== JSON.stringify(this.state.reservation)) this.setState({ reservation: res });
       }
