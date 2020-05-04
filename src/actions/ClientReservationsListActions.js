@@ -21,7 +21,7 @@ export const onClientReservationsListRead = () => dispatch => {
     .collection(`Profiles/${currentUser.uid}/Reservations`)
     .where('cancellationDate', '==', null)
     .orderBy('startDate', 'desc')
-    .limit(50) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
+    .limit(20) // lo puse por ahora para no buscar todas al pedo, habria que ver de ir cargando mas a medida que se scrollea
     .onSnapshot(snapshot => {
       const reservations = [];
 
@@ -31,9 +31,7 @@ export const onClientReservationsListRead = () => dispatch => {
 
       snapshot.forEach(async res => {
         const { commerceId, areaId, serviceId, employeeId, courtId } = res.data();
-        let service,
-          employee,
-          court = null;
+        let service, employee, court = null;
 
         try {
           const commerce = await db.doc(`Commerces/${commerceId}`).get();

@@ -324,7 +324,7 @@ class ClientReservationDetails extends Component {
       <KeyboardAwareScrollView enableOnAndroid contentContainerStyle={scrollViewStyle} extraScrollHeight={60}>
         <Menu
           title={"¿Está seguro que desea cancelar el turno? Tenga en cuenta que si ya realizó el pago mediante MercadoPago,"
-            + "el dinero no le será devuelto"}
+            + " el dinero no le será devuelto"}
           onBackdropPress={() => this.setState({ optionsVisible: false })}
           isVisible={this.state.optionsVisible || this.props.loadingReservations}
         >

@@ -112,7 +112,7 @@ class MostPopularShiftsChart extends Component {
         <SendReportAsPDF
           html={this.state.html}
           mailOptions={{
-            subject: `[TurnosYa] Horiarios con Mayor Demanda (${this.props.commerceName})`,
+            subject: `[TurnosYa] Horarios con Mayor Demanda (${this.props.commerceName})`,
             body: this.getChartTitle()
           }}
         >

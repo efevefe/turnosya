@@ -10,7 +10,7 @@ class ServiceReservationDetails extends Component {
   renderName = () => {
     if (this.props.name) {
       return (
-        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+        <CardSection style={{ paddingBottom: 0 }}>
           <Text style={styles.bigText}>{this.props.name}</Text>
         </CardSection>
       );
@@ -20,9 +20,7 @@ class ServiceReservationDetails extends Component {
   renderInfo = () => {
     if (this.props.info) {
       return (
-        <CardSection
-          style={[styles.cardSections, { paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }]}
-        >
+        <CardSection style={{ paddingBottom: 5, flexDirection: 'row', justifyContent: 'center' }}>
           {this.props.infoIcon && (
             <Ionicons name={this.props.infoIcon} size={14} color="black" style={{ marginRight: 5 }} />
           )}
@@ -37,7 +35,7 @@ class ServiceReservationDetails extends Component {
 
     if (employee) {
       return (
-        <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
+        <CardSection style={{ padding: 15, paddingTop: 5, paddingBottom: 5 }}>
           <Text style={styles.regularText}>{`Con ${employee.firstName} ${employee.lastName}`}</Text>
         </CardSection>
       );
@@ -74,15 +72,21 @@ class ServiceReservationDetails extends Component {
         <View style={styles.contentContainer}>
           {this.renderName()}
           {this.renderInfo()}
-          <CardSection style={[styles.cardSections, { paddingTop: 8, paddingBottom: 0 }]}>
+          <CardSection style={{ paddingTop: 8, paddingBottom: 0 }}>
             <Text style={styles.mediumText}>{service.name}</Text>
           </CardSection>
           {this.renderEmployee()}
           <Divider style={styles.divider} />
           <CardSection style={[styles.cardSections, { paddingBottom: 0 }]}>
             <Text style={styles.regularText}>
-              {DAYS[moment(startDate).day()] + ' ' + moment(startDate).format('D') +
-                ' de ' + MONTHS[moment(startDate).month()] + ', ' + moment(startDate).format('HH:mm') + ' hs.'}
+              {DAYS[moment(startDate).day()] +
+                ' ' +
+                moment(startDate).format('D') +
+                ' de ' +
+                MONTHS[moment(startDate).month()] +
+                ', ' +
+                moment(startDate).format('HH:mm') +
+                ' hs.'}
             </Text>
           </CardSection>
           <CardSection style={styles.cardSections}>
@@ -116,13 +120,16 @@ const styles = StyleSheet.create({
   },
   bigText: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
   mediumText: {
-    fontSize: 17
+    fontSize: 17,
+    textAlign: 'center'
   },
   regularText: {
-    fontSize: 14
+    fontSize: 14,
+    textAlign: 'center'
   },
   infoText: {
     fontSize: 13,

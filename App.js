@@ -21,7 +21,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <Root>
-          <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" />
+          <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" translucent={true} />
           <View style={styles.container}>
             <MainNavigation />
           </View>

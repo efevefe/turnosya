@@ -84,11 +84,7 @@ class ClientProfile extends Component {
   disableEdit = () => {
     this.setState({ editEnabled: false, newProfilePicture: false, stateBeforeChanges: null });
 
-    this.props.navigation.setParams({
-      title: 'Perfil',
-      rightIcon: this.renderEditButton(),
-      leftIcon: null
-    });
+    this.props.navigation.setParams({ title: 'Perfil', rightIcon: this.renderEditButton(), leftIcon: null });
   };
 
   renderEditPictureButton = () => {
@@ -175,7 +171,7 @@ class ClientProfile extends Component {
 
   renderFullName = () => {
     if (this.props.firstName || this.props.lastName) {
-      return <Text h4>{`${this.props.firstName} ${this.props.lastName}`}</Text>;
+      return <Text h4 style={{ textAlign: 'center' }}>{`${this.props.firstName} ${this.props.lastName}`}</Text>;
     }
   };
 
@@ -184,7 +180,7 @@ class ClientProfile extends Component {
       return (
         <View style={locationContainerStyle}>
           <Icon name="md-pin" type="ionicon" size={16} containerStyle={{ marginRight: 5 }} />
-          <Text>{`${this.props.city}, ${this.props.provinceName}`}</Text>
+          <Text style={{ textAlign: 'center' }}>{`${this.props.city} ${this.props.provinceName}`}</Text>
         </View>
       );
     }
@@ -380,8 +376,7 @@ const {
   },
   locationContainerStyle: {
     justifyContent: 'space-around',
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: 'row'
   },
   infoContainerStyle: {
     alignSelf: 'stretch',

@@ -13,8 +13,8 @@ class DrawerItem extends Component {
           ) : this.props.icon.type ? (
             <Icon name={this.props.icon.name} type={this.props.icon.type} color={color} size={22} />
           ) : (
-            <Ionicons name={this.props.icon.name} color={color} size={22} />
-          )}
+                <Ionicons name={this.props.icon.name} color={color} size={22} />
+              )}
         </View>
       );
     }
@@ -54,7 +54,9 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: 15,
     color: color,
-    paddingLeft: 18
+    textAlign: 'left',
+    paddingLeft: 15,
+    paddingRight: 18
   }
 });
 

@@ -54,9 +54,7 @@ export const onClientReviewCreate = ({ commerceId, rating, comment, reservationI
       });
     });
   })
-    .then(() => {
-      dispatch({ type: ON_CLIENT_REVIEW_CREATED, payload: reviewRef.id });
-    })
+    .then(() => dispatch({ type: ON_CLIENT_REVIEW_CREATED, payload: reviewRef.id }))
     .catch(() => dispatch({ type: ON_CLIENT_REVIEW_SAVE_FAIL }));
 };
 

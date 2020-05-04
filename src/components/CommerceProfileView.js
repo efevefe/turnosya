@@ -36,6 +36,7 @@ class CommerceProfileView extends Component {
   componentDidUpdate() {
     if (this.props.navigation.state.routeName === 'commerceProfileView') {
       if (
+        this.props.commerce &&
         this.props.commerceId &&
         !this.props.loadingProfile &&
         this.props.commerce.objectID !== this.props.commerceId
@@ -182,7 +183,9 @@ class CommerceProfileView extends Component {
               />
             </View>
 
-            <Text h4>{name}</Text>
+            <Text h4 style={{ textAlign: 'center' }}>
+              {name}
+            </Text>
 
             <TouchableOpacity
               onPress={() =>
