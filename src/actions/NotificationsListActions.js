@@ -17,7 +17,7 @@ export const onClientNotificationsRead = clientId => {
   return onNotificationsRead(collectionRef);
 };
 
-onNotificationsRead = collectionRef => dispatch => {
+const onNotificationsRead = collectionRef => dispatch => {
   dispatch({ type: ON_NOTIFICATIONS_READING });
 
   const db = firebase.firestore();
@@ -61,7 +61,7 @@ export const onCommerceNotificationDelete = ({ commerceId, notificationId }) => 
 };
 
 //Registra la notificacion como eliminada
-onNotificationDelete = collectionRef => {
+const onNotificationDelete = collectionRef => {
   const db = firebase.firestore();
   return dispatch => {
     db.doc(collectionRef)
@@ -80,7 +80,7 @@ export const onCommerceSetNotificationsRead = (commerceId, notifications) => {
   onSetNotificationsRead(collectionRef, notifications);
 };
 
-onSetNotificationsRead = (collectionRef, notifications) => {
+const onSetNotificationsRead = (collectionRef, notifications) => {
   const db = firebase.firestore();
   notifications.forEach(notification => {
     if (!notification.read) db.collection(collectionRef).doc(notification.id).update({ read: 1 });

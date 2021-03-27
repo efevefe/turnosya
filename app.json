@@ -3,7 +3,7 @@
     "name": "TurnosYa",
     "slug": "turnosya",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
+    "sdkVersion": "40.0.0",
     "platforms": [
       "ios",
       "android"
@@ -37,6 +37,10 @@
       }
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
@@ -48,6 +52,9 @@
           "certificateHash": "500660122235AAC015DB096CB65956A56D1A4E24"
         }
       }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }

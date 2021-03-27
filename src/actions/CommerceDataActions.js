@@ -191,7 +191,7 @@ export const onCommerceRead = (commerceId, loadingType = 'loading') => async dis
   }
 };
 
-onPictureUpdate = async (commerceId, picture, type) => {
+const onPictureUpdate = async (commerceId, picture, type) => {
   const ref = firebase
     .storage()
     .ref(`Commerces/${commerceId}`)
