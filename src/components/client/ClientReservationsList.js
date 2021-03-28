@@ -34,7 +34,7 @@ class ClientReservationsList extends Component {
       } else {
         nextList.push(res);
       }
-    })
+    });
 
     return [pastList, nextList];
   };
@@ -58,22 +58,30 @@ class ClientReservationsList extends Component {
         title={commerce.name}
         subtitle={`${DAYS[startDate.day()]} ${startDate.format('D')} de ${
           MONTHS[startDate.month()]
-          }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format('HH:mm')} hs.`}
+        }\nDe ${startDate.format('HH:mm')} hs. a ${endDate.format(
+          'HH:mm'
+        )} hs.`}
         rightTitle={`$${price}`}
         rightTitleStyle={styles.listItemRightTitleStyle}
         rightSubtitle={
           <View style={{ alignItems: 'flex-end' }}>
-            {item.paymentId ? <Badge value='Pagado' color={SUCCESS_COLOR} /> : null}
-            {
-              endDate < moment() && !isOneWeekOld(endDate) && !reviewId && paymentId ?
-                <Text style={styles.listItemRightSubtitleStyle}>¡Calificá el servicio!</Text> : null
-            }
+            {item.paymentId ? (
+              <Badge value="Pagado" color={SUCCESS_COLOR} />
+            ) : null}
+            {endDate < moment() &&
+            !isOneWeekOld(endDate) &&
+            !reviewId &&
+            paymentId ? (
+              <Text style={styles.listItemRightSubtitleStyle}>
+                ¡Calificá el servicio!
+              </Text>
+            ) : null}
           </View>
         }
         bottomDivider
         onPress={() =>
           this.props.navigation.navigate('reservationDetails', {
-            reservation: item
+            reservation: item,
           })
         }
       />
@@ -82,6 +90,8 @@ class ClientReservationsList extends Component {
 
   render() {
     const filteredLists = this.filterLists();
+
+    debugger;
 
     return (
       <View style={{ flex: 1 }}>
@@ -98,17 +108,18 @@ class ClientReservationsList extends Component {
           innerBorderStyle={{ width: 0 }}
         />
 
-        {
-          this.props.loading ? <Spinner style={{ position: 'relative' }} />
-            : filteredLists[this.state.selectedIndex].length ?
-              <FlatList
-                data={filteredLists[this.state.selectedIndex]}
-                renderItem={this.renderRow.bind(this)}
-                keyExtractor={reservation => reservation.id}
-                refreshControl={this.onRefresh()}
-              />
-              : <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />
-        }
+        {this.props.loading ? (
+          <Spinner style={{ position: 'relative' }} />
+        ) : filteredLists[this.state.selectedIndex].length ? (
+          <FlatList
+            data={filteredLists[this.state.selectedIndex]}
+            renderItem={this.renderRow.bind(this)}
+            keyExtractor={reservation => reservation.id}
+            refreshControl={this.onRefresh()}
+          />
+        ) : (
+          <EmptyList title="No tiene reservas" onRefresh={this.onRefresh()} />
+        )}
       </View>
     );
   }
@@ -123,19 +134,19 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginTop: 0,
     marginLeft: 0,
-    marginRight: 0
+    marginRight: 0,
   },
   listItemRightTitleStyle: {
     fontWeight: 'bold',
     color: 'black',
-    marginRight: 2
+    marginRight: 2,
   },
   listItemRightSubtitleStyle: {
     color: 'grey',
     fontSize: 11,
     marginRight: 2,
-    marginTop: 3
-  }
+    marginTop: 3,
+  },
 });
 
 const mapStateToProps = state => {
@@ -143,4 +154,6 @@ const mapStateToProps = state => {
   return { reservations, loading };
 };
 
-export default connect(mapStateToProps, { onClientReservationsListRead })(ClientReservationsList);
+export default connect(mapStateToProps, { onClientReservationsListRead })(
+  ClientReservationsList
+);

@@ -8,14 +8,18 @@ const CommerceCourtTypes = props => {
   onServicesPress = () => {
     if (props.navigation.state.routeName === 'commerceProfileView') {
       props.onNewServiceReservation();
-      props.navigation.navigate('commerceServicesList', { navigatedFromProfile: true });
+      props.navigation.navigate('commerceServicesList', {
+        navigatedFromProfile: true,
+      });
     }
   };
 
   onEmployeesPress = () => {
     if (props.navigation.state.routeName === 'commerceProfileView') {
       props.onNewServiceReservation();
-      props.navigation.navigate('commerceEmployeesList', { navigatedFromProfile: true });
+      props.navigation.navigate('commerceEmployeesList', {
+        navigatedFromProfile: true,
+      });
     }
   };
 
@@ -30,7 +34,10 @@ const CommerceCourtTypes = props => {
           <Text>Servicios</Text>
         </Card>
       </TouchableHighlight>
-      <TouchableHighlight onPress={onEmployeesPress} underlayColor="transparent">
+      <TouchableHighlight
+        onPress={onEmployeesPress}
+        underlayColor="transparent"
+      >
         <Card
           image={require('../../../assets/hairdressers/hairdressers.jpg')}
           imageStyle={styles.imageStyle}
@@ -45,15 +52,15 @@ const CommerceCourtTypes = props => {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   imageStyle: {
-    height: 80
+    height: 80,
   },
   containerStyle: {
     overflow: 'hidden',
-    borderRadius: 10
-  }
+    borderRadius: 10,
+  },
 });
 
 export default connect(null, { onNewServiceReservation })(CommerceCourtTypes);
